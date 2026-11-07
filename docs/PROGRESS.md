@@ -1002,3 +1002,6 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **T13 category-return:** author reports correction committed at `8a881e369`; finishing the sealed report after freeze-ceiling clarification (readiness freeze ceiling separate from ≤256 MiB test/evidence scratch). No native grant or timing acceptance.
 - Companion R8, creature F2 review, exact-mask regression prep, Lark density resume, and fauna blind visual remain active. Screenshot cleanup stays STOPPED. No main/remote/PR/Trunk action.
 - Index: `docs/review-records/20261107-effects-animation-independent-pass.json` (9 retained seal files).
+
+- **Creature F2 `ccdcb1b`:** independent SOURCE/CPU REVISE. Original cancellation ownership is PARTIAL; new P2 F2-R2 late same-group fork after the final process snapshot can still seal cleanup=verified and admit a retry while a child lives. Author owns that narrow observation/admission fix. Seal retained under `docs/review-records/p1-e08-t08/lifecycle-review-ccdcb1b/`. F1 exact-float and native/visual remain open.
+

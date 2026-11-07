@@ -1,0 +1,94 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_driver.py",
+    "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/stage.py",
+    "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py",
+    "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork",
+    "leader"
+  ],
+  "supervisorExit": 1,
+  "spawned": {
+    "leader": 96601,
+    "leaf": 96605,
+    "pgid": 96601
+  },
+  "leafAfterSupervisor": "96605     1 96601 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf",
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "c87b68a3ce0541168ec3530a5331e92f",
+    "supervisorPID": 96600,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork",
+      "leader"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root",
+    "beforeFree": 48616984576,
+    "beforePayload": 1538274,
+    "start": 1794055217.33473,
+    "samples": [
+      {
+        "time": 1794055217.37731,
+        "rss": 6062080,
+        "free": 48616960000,
+        "processes": [
+          {
+            "pid": 96601,
+            "ppid": 96600,
+            "pgid": 96601,
+            "rss": 6062080,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [
+      15
+    ],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 96601,
+    "ownership": {
+      "directChild": {
+        "pid": 96601,
+        "birth": [
+          1794055217,
+          335011
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": []
+    },
+    "end": 1794055217.545412,
+    "maxRSS": 6062080,
+    "afterFree": 48616615936,
+    "afterPayload": 1538862,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "cancelled"
+  },
+  "settled": {
+    "runId": "c87b68a3ce0541168ec3530a5331e92f",
+    "admissionSHA256": "2bd2c280c01b7329196b3a8216d530ae5d16b517a27e162bb7d3465a958a75f5",
+    "terminalSHA256": "52f4160e7e048d81c982e883769e62d4c58d37390310b6d49015e731ebc1a788"
+  },
+  "retryExit": 0,
+  "leafAfterRetry": "96605     1 96601 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf",
+  "finalizerExit": 1,
+  "defectReproduced": true,
+  "cleanupRemaining": ""
+}

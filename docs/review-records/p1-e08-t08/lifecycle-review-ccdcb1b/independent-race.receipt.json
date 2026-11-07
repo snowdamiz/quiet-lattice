@@ -1,0 +1,115 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_race.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "start": 1794055217.244378,
+  "end": 1794055217.8547819,
+  "exit": 0,
+  "limitFailure": null,
+  "maxSampledRSS": 67813376,
+  "samples": [
+    {
+      "time": 1794055217.294723,
+      "rss": 4308992,
+      "processes": [
+        [
+          "96598",
+          "96589",
+          "4208",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_race.py"
+        ]
+      ]
+    },
+    {
+      "time": 1794055217.449284,
+      "rss": 67813376,
+      "processes": [
+        [
+          "96598",
+          "96589",
+          "23696",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_race.py"
+        ],
+        [
+          "96600",
+          "96598",
+          "25760",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_driver.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/stage.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork /opt/homebrew/opt/python@3.14/bin/python3.14 /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leader"
+        ],
+        [
+          "96601",
+          "96600",
+          "16768",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leader"
+        ]
+      ]
+    },
+    {
+      "time": 1794055217.600397,
+      "rss": 41385984,
+      "processes": [
+        [
+          "96598",
+          "96589",
+          "23696",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_race.py"
+        ],
+        [
+          "96600",
+          "96598",
+          "0",
+          "<defunct>"
+        ],
+        [
+          "96605",
+          "1",
+          "16720",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf"
+        ]
+      ]
+    },
+    {
+      "time": 1794055217.751415,
+      "rss": 41385984,
+      "processes": [
+        [
+          "96598",
+          "96589",
+          "23696",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_race.py"
+        ],
+        [
+          "96605",
+          "1",
+          "16720",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf"
+        ]
+      ]
+    }
+  ],
+  "tail": [
+    "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/stage.py\",",
+    "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork\",",
+    "    \"/opt/homebrew/opt/python@3.14/bin/python3.14\",",
+    "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py\",",
+    "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork\",",
+    "    \"leader\"",
+    "  ],",
+    "  \"supervisorExit\": 1,",
+    "  \"spawned\": {",
+    "    \"leader\": 96601,",
+    "    \"leaf\": 96605,",
+    "    \"pgid\": 96601",
+    "  },",
+    "  \"leafAfterSupervisor\": \"96605     1 96601 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf\",",
+    "  \"retryExit\": 0,",
+    "  \"leafAfterRetry\": \"96605     1 96601 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf\",",
+    "  \"finalizerExit\": 1,",
+    "  \"defectReproduced\": true,",
+    "  \"cleanupRemaining\": \"\"",
+    "}"
+  ]
+}

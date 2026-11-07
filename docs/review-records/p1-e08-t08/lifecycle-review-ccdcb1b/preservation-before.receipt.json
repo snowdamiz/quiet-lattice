@@ -1,0 +1,38 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py",
+    "before"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "start": 1794055031.12765,
+  "end": 1794055031.285952,
+  "exit": 1,
+  "limitFailure": null,
+  "maxSampledRSS": 5488640,
+  "samples": [
+    {
+      "time": 1794055031.179371,
+      "rss": 5488640,
+      "processes": [
+        [
+          "78148",
+          "78137",
+          "5360",
+          "(python3.14)"
+        ]
+      ]
+    }
+  ],
+  "tail": [
+    "Traceback (most recent call last):",
+    "  File \"/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py\", line 40, in <module>",
+    "    if __name__=='__main__':run()",
+    "                            ~~~^^",
+    "  File \"/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py\", line 23, in run",
+    "    else:pins.update({a['path']:a['sha256'] for a in pngs})",
+    "                      ~^^^^^^^^",
+    "TypeError: string indices must be integers, not 'str'"
+  ]
+}

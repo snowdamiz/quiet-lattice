@@ -1,0 +1,1687 @@
+[
+  {
+    "file": "current-22/admission_failure/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root",
+    "start": 1794055112.5008252,
+    "end": 1794055112.547211,
+    "exit": 1
+  },
+  {
+    "file": "current-22/admission_failure/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root",
+    "start": 1794055112.358783,
+    "end": 1794055112.407089,
+    "exit": 1
+  },
+  {
+    "file": "current-22/admission_failure/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root",
+    "start": 1794055112.40742,
+    "end": 1794055112.452142,
+    "exit": 1
+  },
+  {
+    "file": "current-22/admission_failure/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root",
+    "start": 1794055112.452396,
+    "end": 1794055112.5004249,
+    "exit": 1
+  },
+  {
+    "file": "current-22/exception/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root",
+    "start": 1794055088.639615,
+    "end": 1794055088.682932,
+    "exit": 1
+  },
+  {
+    "file": "current-22/exception/finalize-after-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root",
+    "start": 1794055091.1390579,
+    "end": 1794055091.185364,
+    "exit": 1
+  },
+  {
+    "file": "current-22/exception/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root",
+    "start": 1794055090.813121,
+    "end": 1794055090.899342,
+    "exit": 1
+  },
+  {
+    "file": "current-22/exception/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root",
+    "start": 1794055090.899692,
+    "end": 1794055091.133614,
+    "exit": 0
+  },
+  {
+    "file": "current-22/exception/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root",
+    "start": 1794055088.555302,
+    "end": 1794055088.635123,
+    "exit": 1
+  },
+  {
+    "file": "current-22/failed/finalize-after-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root",
+    "start": 1794055111.098687,
+    "end": 1794055111.1440089,
+    "exit": 1
+  },
+  {
+    "file": "current-22/failed/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root",
+    "start": 1794055110.794231,
+    "end": 1794055110.8407848,
+    "exit": 1
+  },
+  {
+    "file": "current-22/failed/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root",
+    "start": 1794055110.841127,
+    "end": 1794055111.098363,
+    "exit": 0
+  },
+  {
+    "file": "current-22/finalizer_sigint/successful-stage.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/finalizer_sigint/root/packages/tools/blender/e08t08/stage.py",
+      "work",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/finalizer_sigint/root",
+    "start": 1794055122.8113449,
+    "end": 1794055122.955435,
+    "exit": 0
+  },
+  {
+    "file": "current-22/finalizer_sigterm/successful-stage.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/finalizer_sigterm/root/packages/tools/blender/e08t08/stage.py",
+      "work",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/finalizer_sigterm/root",
+    "start": 1794055115.623384,
+    "end": 1794055115.76219,
+    "exit": 0
+  },
+  {
+    "file": "current-22/leader_loss/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root",
+    "start": 1794055094.550695,
+    "end": 1794055094.595912,
+    "exit": 1
+  },
+  {
+    "file": "current-22/leader_loss/finalize-after-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root",
+    "start": 1794055097.015497,
+    "end": 1794055097.0553532,
+    "exit": 1
+  },
+  {
+    "file": "current-22/leader_loss/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root",
+    "start": 1794055096.6868448,
+    "end": 1794055096.765622,
+    "exit": 1
+  },
+  {
+    "file": "current-22/leader_loss/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root",
+    "start": 1794055096.766037,
+    "end": 1794055097.010113,
+    "exit": 0
+  },
+  {
+    "file": "current-22/leader_loss/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root",
+    "start": 1794055094.467764,
+    "end": 1794055094.5465422,
+    "exit": 1
+  },
+  {
+    "file": "current-22/leader_zero/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root",
+    "start": 1794055097.589556,
+    "end": 1794055097.630452,
+    "exit": 1
+  },
+  {
+    "file": "current-22/leader_zero/finalize-after-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root",
+    "start": 1794055100.190797,
+    "end": 1794055100.231492,
+    "exit": 1
+  },
+  {
+    "file": "current-22/leader_zero/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root",
+    "start": 1794055099.85279,
+    "end": 1794055099.927095,
+    "exit": 1
+  },
+  {
+    "file": "current-22/leader_zero/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root",
+    "start": 1794055099.927434,
+    "end": 1794055100.184222,
+    "exit": 0
+  },
+  {
+    "file": "current-22/leader_zero/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root",
+    "start": 1794055097.5397792,
+    "end": 1794055097.5853288,
+    "exit": 1
+  },
+  {
+    "file": "current-22/observation_failure/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root",
+    "start": 1794055091.6413891,
+    "end": 1794055091.68759,
+    "exit": 1
+  },
+  {
+    "file": "current-22/observation_failure/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root",
+    "start": 1794055093.964139,
+    "end": 1794055094.0124228,
+    "exit": 1
+  },
+  {
+    "file": "current-22/observation_failure/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root",
+    "start": 1794055093.744545,
+    "end": 1794055093.824172,
+    "exit": 1
+  },
+  {
+    "file": "current-22/observation_failure/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root",
+    "start": 1794055093.824523,
+    "end": 1794055093.900357,
+    "exit": 1
+  },
+  {
+    "file": "current-22/observation_failure/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root",
+    "start": 1794055093.9194582,
+    "end": 1794055093.96385,
+    "exit": 1
+  },
+  {
+    "file": "current-22/observation_failure/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root",
+    "start": 1794055091.589917,
+    "end": 1794055091.635778,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_after/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root",
+    "start": 1794055114.5812008,
+    "end": 1794055114.900862,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_after/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root",
+    "start": 1794055114.9011981,
+    "end": 1794055115.165555,
+    "exit": 0
+  },
+  {
+    "file": "current-22/publication_after/retry-publication.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/stage.py",
+      "during_publication",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root",
+    "start": 1794055114.522094,
+    "end": 1794055114.566421,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_before/finalize-after-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root",
+    "start": 1794055113.5121331,
+    "end": 1794055113.5555341,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_before/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root",
+    "start": 1794055113.256458,
+    "end": 1794055113.304959,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_before/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root",
+    "start": 1794055113.305282,
+    "end": 1794055113.511832,
+    "exit": 0
+  },
+  {
+    "file": "current-22/publication_before/retry-publication.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage.py",
+      "during_publication",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root",
+    "start": 1794055113.157575,
+    "end": 1794055113.205178,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_during/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root",
+    "start": 1794055113.806588,
+    "end": 1794055114.118506,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_during/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root",
+    "start": 1794055114.118856,
+    "end": 1794055114.366851,
+    "exit": 0
+  },
+  {
+    "file": "current-22/publication_during/retry-publication.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/stage.py",
+      "during_publication",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root",
+    "start": 1794055113.710262,
+    "end": 1794055113.758425,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_failure/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root",
+    "start": 1794055115.555777,
+    "end": 1794055115.604091,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_failure/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root",
+    "start": 1794055115.420227,
+    "end": 1794055115.461792,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_failure/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root",
+    "start": 1794055115.462081,
+    "end": 1794055115.509654,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_failure/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root",
+    "start": 1794055115.509911,
+    "end": 1794055115.55551,
+    "exit": 1
+  },
+  {
+    "file": "current-22/publication_failure/retry-publication.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py",
+      "during_publication",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root",
+    "start": 1794055115.3304782,
+    "end": 1794055115.373583,
+    "exit": 1
+  },
+  {
+    "file": "current-22/receipt_failure/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root",
+    "start": 1794055111.448936,
+    "end": 1794055111.494533,
+    "exit": 1
+  },
+  {
+    "file": "current-22/receipt_failure/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root",
+    "start": 1794055111.30827,
+    "end": 1794055111.354636,
+    "exit": 1
+  },
+  {
+    "file": "current-22/receipt_failure/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root",
+    "start": 1794055111.354937,
+    "end": 1794055111.400314,
+    "exit": 1
+  },
+  {
+    "file": "current-22/receipt_failure/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root",
+    "start": 1794055111.400598,
+    "end": 1794055111.4486651,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_failure/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root",
+    "start": 1794055111.804607,
+    "end": 1794055111.8529012,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_failure/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root",
+    "start": 1794055111.660884,
+    "end": 1794055111.70898,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_failure/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root",
+    "start": 1794055111.709259,
+    "end": 1794055111.7573419,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_failure/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root",
+    "start": 1794055111.757587,
+    "end": 1794055111.8043652,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_sync_failure/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root",
+    "start": 1794055112.172557,
+    "end": 1794055112.247227,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_sync_failure/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root",
+    "start": 1794055112.007757,
+    "end": 1794055112.0491068,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_sync_failure/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root",
+    "start": 1794055112.049365,
+    "end": 1794055112.094691,
+    "exit": 1
+  },
+  {
+    "file": "current-22/seal_sync_failure/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root",
+    "start": 1794055112.094956,
+    "end": 1794055112.1722538,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigint/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root",
+    "start": 1794055085.516144,
+    "end": 1794055085.5552452,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigint/finalize-after-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root",
+    "start": 1794055088.004011,
+    "end": 1794055088.048779,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigint/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root",
+    "start": 1794055087.663245,
+    "end": 1794055087.74305,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigint/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root",
+    "start": 1794055087.7452538,
+    "end": 1794055087.998216,
+    "exit": 0
+  },
+  {
+    "file": "current-22/sigint/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root",
+    "start": 1794055085.434013,
+    "end": 1794055085.51183,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigterm/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root",
+    "start": 1794055082.398892,
+    "end": 1794055082.4473448,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigterm/finalize-after-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root",
+    "start": 1794055084.8872352,
+    "end": 1794055084.968694,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigterm/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root",
+    "start": 1794055084.504838,
+    "end": 1794055084.589227,
+    "exit": 1
+  },
+  {
+    "file": "current-22/sigterm/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root",
+    "start": 1794055084.5895948,
+    "end": 1794055084.8795662,
+    "exit": 0
+  },
+  {
+    "file": "current-22/sigterm/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root",
+    "start": 1794055082.3504362,
+    "end": 1794055082.394678,
+    "exit": 1
+  },
+  {
+    "file": "current-22/supervisor_loss/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root",
+    "start": 1794055110.363853,
+    "end": 1794055110.410562,
+    "exit": 1
+  },
+  {
+    "file": "current-22/supervisor_loss/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root",
+    "start": 1794055110.577999,
+    "end": 1794055110.624814,
+    "exit": 1
+  },
+  {
+    "file": "current-22/supervisor_loss/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root",
+    "start": 1794055110.416298,
+    "end": 1794055110.462133,
+    "exit": 1
+  },
+  {
+    "file": "current-22/supervisor_loss/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root",
+    "start": 1794055110.46241,
+    "end": 1794055110.5078888,
+    "exit": 1
+  },
+  {
+    "file": "current-22/supervisor_loss/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root",
+    "start": 1794055110.529451,
+    "end": 1794055110.577739,
+    "exit": 1
+  },
+  {
+    "file": "current-22/supervisor_loss/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root",
+    "start": 1794055110.285568,
+    "end": 1794055110.3600519,
+    "exit": 1
+  },
+  {
+    "file": "current-22/uncertain_cleanup/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root",
+    "start": 1794055105.4176059,
+    "end": 1794055105.4554582,
+    "exit": 1
+  },
+  {
+    "file": "current-22/uncertain_cleanup/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root",
+    "start": 1794055109.8383732,
+    "end": 1794055109.9176419,
+    "exit": 1
+  },
+  {
+    "file": "current-22/uncertain_cleanup/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root",
+    "start": 1794055109.6382852,
+    "end": 1794055109.7270741,
+    "exit": 1
+  },
+  {
+    "file": "current-22/uncertain_cleanup/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root",
+    "start": 1794055109.727401,
+    "end": 1794055109.7736802,
+    "exit": 1
+  },
+  {
+    "file": "current-22/uncertain_cleanup/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root",
+    "start": 1794055109.791434,
+    "end": 1794055109.83814,
+    "exit": 1
+  },
+  {
+    "file": "current-22/uncertain_cleanup/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root",
+    "start": 1794055105.365988,
+    "end": 1794055105.4137878,
+    "exit": 1
+  },
+  {
+    "file": "current-22/valid/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/valid/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/valid/root",
+    "start": 1794055081.3338711,
+    "end": 1794055081.642283,
+    "exit": 1
+  },
+  {
+    "file": "current-22/valid/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/valid/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/valid/root",
+    "start": 1794055081.642598,
+    "end": 1794055081.901987,
+    "exit": 0
+  },
+  {
+    "file": "current-22/waiter_loss/finalize-active.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root",
+    "start": 1794055100.748288,
+    "end": 1794055100.788863,
+    "exit": 1
+  },
+  {
+    "file": "current-22/waiter_loss/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root",
+    "start": 1794055104.939496,
+    "end": 1794055104.984642,
+    "exit": 1
+  },
+  {
+    "file": "current-22/waiter_loss/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root",
+    "start": 1794055104.748665,
+    "end": 1794055104.796138,
+    "exit": 1
+  },
+  {
+    "file": "current-22/waiter_loss/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root",
+    "start": 1794055104.796426,
+    "end": 1794055104.8759181,
+    "exit": 1
+  },
+  {
+    "file": "current-22/waiter_loss/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root",
+    "start": 1794055104.8942652,
+    "end": 1794055104.939242,
+    "exit": 1
+  },
+  {
+    "file": "current-22/waiter_loss/retry-while-owned.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py",
+      "overlap",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root",
+    "start": 1794055100.699556,
+    "end": 1794055100.7432199,
+    "exit": 1
+  },
+  {
+    "file": "current-22/watch_failure/finalize-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root",
+    "start": 1794055112.9295309,
+    "end": 1794055112.977149,
+    "exit": 1
+  },
+  {
+    "file": "current-22/watch_failure/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root",
+    "start": 1794055112.715461,
+    "end": 1794055112.760602,
+    "exit": 1
+  },
+  {
+    "file": "current-22/watch_failure/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root",
+    "start": 1794055112.76092,
+    "end": 1794055112.8388941,
+    "exit": 1
+  },
+  {
+    "file": "current-22/watch_failure/retry-after-manual-cleanup.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage.py",
+      "after_manual_cleanup",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root",
+    "start": 1794055112.849191,
+    "end": 1794055112.929226,
+    "exit": 1
+  },
+  {
+    "file": "current-finalizer-5/finalizer_sigint/finalizer-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root",
+    "start": 1794055157.630048,
+    "end": 1794055157.939248,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/finalizer_sigint/successful-stage.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root/packages/tools/blender/e08t08/stage.py",
+      "work",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root",
+    "start": 1794055157.169109,
+    "end": 1794055157.3074932,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/finalizer_sigterm/finalizer-retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root",
+    "start": 1794055156.840632,
+    "end": 1794055157.148754,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/finalizer_sigterm/successful-stage.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root/packages/tools/blender/e08t08/stage.py",
+      "work",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root",
+    "start": 1794055156.403061,
+    "end": 1794055156.53871,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/publication_after/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root",
+    "start": 1794055155.828908,
+    "end": 1794055156.13051,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/publication_after/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root",
+    "start": 1794055156.130861,
+    "end": 1794055156.383241,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/publication_after/retry-publication.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/stage.py",
+      "during_publication",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root",
+    "start": 1794055155.738635,
+    "end": 1794055155.780258,
+    "exit": 1
+  },
+  {
+    "file": "current-finalizer-5/publication_during/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root",
+    "start": 1794055155.014656,
+    "end": 1794055155.3343701,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/publication_during/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root",
+    "start": 1794055155.334771,
+    "end": 1794055155.580418,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/publication_during/retry-publication.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/stage.py",
+      "during_publication",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root",
+    "start": 1794055154.955424,
+    "end": 1794055154.999954,
+    "exit": 1
+  },
+  {
+    "file": "current-finalizer-5/valid/finalize-terminal.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/valid/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/valid/root",
+    "start": 1794055154.2441092,
+    "end": 1794055154.5595798,
+    "exit": 0
+  },
+  {
+    "file": "current-finalizer-5/valid/retry-after-exit.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/valid/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/valid/root",
+    "start": 1794055154.559975,
+    "end": 1794055154.8053372,
+    "exit": 0
+  },
+  {
+    "file": "diff-check.receipt.json",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "f9294a466d6223f695f102dc1a13ed526f155e67",
+      "HEAD"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "exit": 0
+  },
+  {
+    "file": "diff.receipt.json",
+    "command": [
+      "git",
+      "diff",
+      "--no-ext-diff",
+      "--no-textconv",
+      "f9294a466d6223f695f102dc1a13ed526f155e67",
+      "HEAD",
+      "--",
+      ".",
+      ":!packages/tools/blender/e08t08/revisions"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "exit": 0
+  },
+  {
+    "file": "independent-finalizer-controls.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/finalizer_controls.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055279.8007638,
+    "end": 1794055280.586834,
+    "exit": 0,
+    "limitFailure": null,
+    "maxSampledRSS": 101253120,
+    "tail": [
+      "{\"oldFinalizerExit\": 0, \"oldOmittedInterruptedReceipt\": true, \"corruptRetryExit\": 1, \"corruptFinalizerExit\": 1, \"authenticTerminalSHA256\": \"a2f1adcc8fdb53f6aea02f8cf9842461482d6d54febb0ae5cb97a77f35f22ab0\", \"mutatedTerminalSHA256\": \"386074dc26ec2a0886ba9b5a02dba69f272e98c33d77a6156b5b8995f368fb2d\", \"cleanupRemaining\": []}"
+    ]
+  },
+  {
+    "file": "independent-race.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_race.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055217.244378,
+    "end": 1794055217.8547819,
+    "exit": 0,
+    "limitFailure": null,
+    "maxSampledRSS": 67813376,
+    "tail": [
+      "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/stage.py\",",
+      "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork\",",
+      "    \"/opt/homebrew/opt/python@3.14/bin/python3.14\",",
+      "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py\",",
+      "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork\",",
+      "    \"leader\"",
+      "  ],",
+      "  \"supervisorExit\": 1,",
+      "  \"spawned\": {",
+      "    \"leader\": 96601,",
+      "    \"leaf\": 96605,",
+      "    \"pgid\": 96601",
+      "  },",
+      "  \"leafAfterSupervisor\": \"96605     1 96601 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf\",",
+      "  \"retryExit\": 0,",
+      "  \"leafAfterRetry\": \"96605     1 96601 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/independent_worker.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork leaf\",",
+      "  \"finalizerExit\": 1,",
+      "  \"defectReproduced\": true,",
+      "  \"cleanupRemaining\": \"\"",
+      "}"
+    ]
+  },
+  {
+    "file": "late-same-group-fork/finalize.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root",
+    "start": 1794055217.7113879,
+    "end": 1794055217.7576609,
+    "exit": 1
+  },
+  {
+    "file": "late-same-group-fork/retry.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root",
+    "start": 1794055217.570252,
+    "end": 1794055217.703604,
+    "exit": 0
+  },
+  {
+    "file": "matrix-current.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py",
+      "--evidence",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055081.07473,
+    "end": 1794055130.094869,
+    "exit": 1,
+    "limitFailure": null,
+    "maxSampledRSS": 118734848,
+    "tail": [
+      "{\"mode\": \"sigint\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"successful retry does not erase failed admission\": true}}",
+      "{\"mode\": \"exception\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"successful retry does not erase failed admission\": true}}",
+      "{\"mode\": \"observation_failure\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"leader_loss\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"successful retry does not erase failed admission\": true}}",
+      "{\"mode\": \"leader_zero\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"successful retry does not erase failed admission\": true}}",
+      "{\"mode\": \"waiter_loss\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"known descendants drained despite lost direct waiter\": true, \"lost waiter does not synthesize exit zero\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"uncertain_cleanup\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"supervisor_loss\", \"passed\": true, \"assertions\": {\"retry rejected while descendant alive\": true, \"actual finalizer rejects active/uncertain ownership\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"failed\", \"passed\": true, \"assertions\": {\"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"successful retry does not erase failed admission\": true}}",
+      "{\"mode\": \"receipt_failure\", \"passed\": true, \"assertions\": {\"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"seal_failure\", \"passed\": true, \"assertions\": {\"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"unsealed proposal cannot count as completion\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"seal_sync_failure\", \"passed\": true, \"assertions\": {\"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"unsealed proposal cannot count as completion\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"admission_failure\", \"passed\": true, \"assertions\": {\"no dispatch before durable admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"watch_failure\", \"passed\": true, \"assertions\": {\"Popen handle survives watcher exception\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"publication_before\", \"passed\": true, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"successful retry does not erase failed admission\": true}}",
+      "{\"mode\": \"publication_during\", \"passed\": false, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": false, \"no failed/incomplete promotion\": false, \"admission after settlement only\": true}}",
+      "{\"mode\": \"publication_after\", \"passed\": false, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": false, \"no failed/incomplete promotion\": false, \"admission after settlement only\": true}}",
+      "{\"mode\": \"publication_failure\", \"passed\": true, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"unsealed proposal cannot count as completion\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true, \"uncertainty survives manual fixture cleanup\": true, \"finalizer still rejects unresolved ownership\": true}}",
+      "{\"mode\": \"finalizer_sigterm\", \"passed\": false, \"assertions\": {\"harness completed\": false}}",
+      "{\"mode\": \"finalizer_sigint\", \"passed\": false, \"assertions\": {\"harness completed\": false}}"
+    ]
+  },
+  {
+    "file": "matrix-finalizer-corrected.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py",
+      "--evidence",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5",
+      "--cases",
+      "valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055154.04917,
+    "end": 1794055157.9596229,
+    "exit": 0,
+    "limitFailure": null,
+    "maxSampledRSS": 123813888,
+    "tail": [
+      "{\"mode\": \"valid\", \"passed\": true, \"assertions\": {\"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true}}",
+      "{\"mode\": \"publication_during\", \"passed\": true, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true}}",
+      "{\"mode\": \"publication_after\", \"passed\": true, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true}}",
+      "{\"mode\": \"finalizer_sigterm\", \"passed\": true, \"assertions\": {\"interrupted actual finalizer cannot publish\": true, \"retry publishes a new generation\": true, \"partial evidence preserved\": true}}",
+      "{\"mode\": \"finalizer_sigint\", \"passed\": true, \"assertions\": {\"interrupted actual finalizer cannot publish\": true, \"retry publishes a new generation\": true, \"partial evidence preserved\": true}}"
+    ]
+  },
+  {
+    "file": "original-red/actual-old-finalizer.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/lifecycle-root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/lifecycle-root",
+    "start": 1794055279.85099,
+    "end": 1794055280.162678,
+    "exit": 0
+  },
+  {
+    "file": "original-red.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/stage-interrupt.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055072.2574878,
+    "end": 1794055073.203709,
+    "exit": 0,
+    "limitFailure": null,
+    "maxSampledRSS": 47988736,
+    "tail": [
+      "  \"stageSHA256\": \"65f142c9dda0c6fd89fe5bbd8479690745c12c96aed8dc001f96ed746b2e97cb\",",
+      "  \"wrapperPID\": 89372,",
+      "  \"childPID\": 89377,",
+      "  \"beforeSignal\": \"89377 89372 89377 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)\",",
+      "  \"wrapperExit\": -15,",
+      "  \"childAfterWrapperExit\": \"89377     1 89377 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)\",",
+      "  \"terminalReceiptExists\": false,",
+      "  \"secondStageCommand\": [",
+      "    \"/opt/homebrew/opt/python@3.14/bin/python3.14\",",
+      "    \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/lifecycle-root/packages/tools/blender/e08t08/stage.py\",",
+      "    \"next_lane\",",
+      "    \"/opt/homebrew/opt/python@3.14/bin/python3.14\",",
+      "    \"-c\",",
+      "    \"pass\"",
+      "  ],",
+      "  \"secondStageExit\": 0,",
+      "  \"originalChildDuringSecondStage\": \"89377     1 89377 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)\",",
+      "  \"cleanupRemainingChild\": \"\"",
+      "}",
+      "REPRODUCED: wrapper cancellation releases lane with live child and no terminal receipt; reviewer cleaned child"
+    ]
+  },
+  {
+    "file": "pins.receipt.json",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD",
+      "HEAD^{tree}",
+      "f9294a466d6223f695f102dc1a13ed526f155e67",
+      "f9294a466d6223f695f102dc1a13ed526f155e67^{tree}"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "exit": 0
+  },
+  {
+    "file": "preservation-after.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit-v2.py",
+      "after"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055307.720715,
+    "end": 1794055312.87515,
+    "exit": 0,
+    "limitFailure": null,
+    "maxSampledRSS": 97517568,
+    "tail": [
+      "{\"status\": \"preserved\", \"head\": \"ccdcb1b6079c4f6d6a64506e889f4a6e170464ba\", \"tree\": \"6cd252ce39721ba4355942ab967fe8148d562bc0\", \"assets\": 14, \"pngs\": 79, \"repoEntries\": 30806, \"taskEntries\": 25911, \"reviewOriginals\": 60, \"dependencies\": {\"node_modules\": {\"target\": \"/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules\", \"entries\": 17259, \"metadataSHA256\": \"2e6058d50a901acf30707f6686bbc25258d5a241934b033a7339d3bf18d46d7f\"}, \"packages/client/node_modules\": {\"target\": \"/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/client/node_modules\", \"entries\": 46, \"metadataSHA256\": \"42382a42dc0536d75729b5943ca9a22dcb4e9093e50d1699c884b605248a2fb9\"}, \"packages/tools/node_modules\": {\"target\": \"/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules\", \"entries\": 14, \"metadataSHA256\": \"5616fbd363b2d2849b141765f8b2178471ef266aa6cd8c709144da11884c0a47\"}}}"
+    ]
+  },
+  {
+    "file": "preservation-before-v2.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit-v2.py",
+      "before"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055042.238262,
+    "end": 1794055047.516983,
+    "exit": 0,
+    "limitFailure": null,
+    "maxSampledRSS": 62570496,
+    "tail": [
+      "{\"status\": \"preserved\", \"head\": \"ccdcb1b6079c4f6d6a64506e889f4a6e170464ba\", \"tree\": \"6cd252ce39721ba4355942ab967fe8148d562bc0\", \"assets\": 14, \"pngs\": 79, \"repoEntries\": 30806, \"taskEntries\": 25911, \"reviewOriginals\": 60, \"dependencies\": {\"node_modules\": {\"target\": \"/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules\", \"entries\": 17259, \"metadataSHA256\": \"2e6058d50a901acf30707f6686bbc25258d5a241934b033a7339d3bf18d46d7f\"}, \"packages/client/node_modules\": {\"target\": \"/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/client/node_modules\", \"entries\": 46, \"metadataSHA256\": \"42382a42dc0536d75729b5943ca9a22dcb4e9093e50d1699c884b605248a2fb9\"}, \"packages/tools/node_modules\": {\"target\": \"/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules\", \"entries\": 14, \"metadataSHA256\": \"5616fbd363b2d2849b141765f8b2178471ef266aa6cd8c709144da11884c0a47\"}}}"
+    ]
+  },
+  {
+    "file": "preservation-before.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py",
+      "before"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "start": 1794055031.12765,
+    "end": 1794055031.285952,
+    "exit": 1,
+    "limitFailure": null,
+    "maxSampledRSS": 5488640,
+    "tail": [
+      "Traceback (most recent call last):",
+      "  File \"/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py\", line 40, in <module>",
+      "    if __name__=='__main__':run()",
+      "                            ~~~^^",
+      "  File \"/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py\", line 23, in run",
+      "    else:pins.update({a['path']:a['sha256'] for a in pngs})",
+      "                      ~^^^^^^^^",
+      "TypeError: string indices must be integers, not 'str'"
+    ]
+  },
+  {
+    "file": "scope.receipt.json",
+    "command": [
+      "git",
+      "diff",
+      "--name-status",
+      "f9294a466d6223f695f102dc1a13ed526f155e67",
+      "HEAD"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+    "exit": 0
+  },
+  {
+    "file": "terminal-integrity/finalize-corrupt.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/finalize.py"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root",
+    "start": 1794055280.4672608,
+    "end": 1794055280.514061,
+    "exit": 1
+  },
+  {
+    "file": "terminal-integrity/retry-corrupt.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage.py",
+      "retry",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root",
+    "start": 1794055280.376589,
+    "end": 1794055280.466933,
+    "exit": 1
+  },
+  {
+    "file": "terminal-integrity/success.receipt.json",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage.py",
+      "work",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "pass"
+    ],
+    "cwd": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root",
+    "start": 1794055280.18309,
+    "end": 1794055280.375681,
+    "exit": 0
+  }
+]

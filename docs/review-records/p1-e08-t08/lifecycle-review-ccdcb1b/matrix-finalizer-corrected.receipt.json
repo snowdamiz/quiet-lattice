@@ -1,0 +1,524 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py",
+    "--evidence",
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5",
+    "--cases",
+    "valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "start": 1794055154.04917,
+  "end": 1794055157.9596229,
+  "exit": 0,
+  "limitFailure": null,
+  "maxSampledRSS": 123813888,
+  "samples": [
+    {
+      "time": 1794055154.102093,
+      "rss": 4734976,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "4624",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ]
+      ]
+    },
+    {
+      "time": 1794055154.2615738,
+      "rss": 57606144,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "25248",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93772",
+          "93770",
+          "26320",
+          "(Python)"
+        ],
+        [
+          "93773",
+          "93772",
+          "0",
+          "<defunct>"
+        ],
+        [
+          "93775",
+          "93772",
+          "4688",
+          "(ps)"
+        ]
+      ]
+    },
+    {
+      "time": 1794055154.4196548,
+      "rss": 104284160,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26000",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93777",
+          "93770",
+          "75840",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/valid/root/packages/tools/blender/e08t08/finalize.py"
+        ]
+      ]
+    },
+    {
+      "time": 1794055154.5710359,
+      "rss": 101335040,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26000",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93777",
+          "93770",
+          "72960",
+          "(Python)"
+        ]
+      ]
+    },
+    {
+      "time": 1794055154.732063,
+      "rss": 92225536,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26000",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93783",
+          "93770",
+          "59296",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/valid/root/packages/tools/blender/e08t08/stage.py retry /opt/homebrew/opt/python@3.14/bin/python3.14 -c pass"
+        ],
+        [
+          "93784",
+          "93783",
+          "0",
+          "<defunct>"
+        ],
+        [
+          "93785",
+          "93783",
+          "4768",
+          "(ps)"
+        ]
+      ]
+    },
+    {
+      "time": 1794055154.885936,
+      "rss": 42467328,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26016",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93789",
+          "93770",
+          "15456",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/stage.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during publication_during candidate /opt/homebrew/opt/python@3.14/bin/python3.14 -c from pathlib import Path; Path('/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/command-ran').touch(); print(\"finite success\")"
+        ]
+      ]
+    },
+    {
+      "time": 1794055155.048073,
+      "rss": 53968896,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26016",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93789",
+          "93770",
+          "26688",
+          "(Python)"
+        ],
+        [
+          "93794",
+          "93770",
+          "0",
+          "<defunct>"
+        ]
+      ]
+    },
+    {
+      "time": 1794055155.206126,
+      "rss": 115048448,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26016",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93803",
+          "93770",
+          "86336",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/finalize.py"
+        ]
+      ]
+    },
+    {
+      "time": 1794055155.366751,
+      "rss": 26640384,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26016",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93803",
+          "93770",
+          "0",
+          "<defunct>"
+        ]
+      ]
+    },
+    {
+      "time": 1794055155.5152209,
+      "rss": 90816512,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26016",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93814",
+          "93770",
+          "59360",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/stage.py retry /opt/homebrew/opt/python@3.14/bin/python3.14 -c pass"
+        ],
+        [
+          "93815",
+          "93814",
+          "0",
+          "<defunct>"
+        ],
+        [
+          "93817",
+          "93814",
+          "3312",
+          "(ps)"
+        ]
+      ]
+    },
+    {
+      "time": 1794055155.665332,
+      "rss": 43368448,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26016",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93819",
+          "93770",
+          "16336",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/stage.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after publication_after candidate /opt/homebrew/opt/python@3.14/bin/python3.14 -c from pathlib import Path; Path('/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/command-ran').touch(); print(\"finite success\")"
+        ]
+      ]
+    },
+    {
+      "time": 1794055155.8212962,
+      "rss": 79003648,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26016",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93819",
+          "93770",
+          "26688",
+          "(Python)"
+        ],
+        [
+          "93824",
+          "93770",
+          "24448",
+          "(Python)"
+        ]
+      ]
+    },
+    {
+      "time": 1794055155.98325,
+      "rss": 98795520,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26032",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93827",
+          "93770",
+          "70448",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/finalize.py"
+        ]
+      ]
+    },
+    {
+      "time": 1794055156.133339,
+      "rss": 123813888,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26032",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93827",
+          "93770",
+          "94880",
+          "(Python)"
+        ]
+      ]
+    },
+    {
+      "time": 1794055156.289054,
+      "rss": 90800128,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26032",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93833",
+          "93770",
+          "58640",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/stage.py retry /opt/homebrew/opt/python@3.14/bin/python3.14 -c pass"
+        ],
+        [
+          "93840",
+          "93833",
+          "0",
+          "<defunct>"
+        ],
+        [
+          "93841",
+          "93833",
+          "4000",
+          "(ps)"
+        ]
+      ]
+    },
+    {
+      "time": 1794055156.443711,
+      "rss": 26656768,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26032",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ]
+      ]
+    },
+    {
+      "time": 1794055156.6051352,
+      "rss": 39108608,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26048",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93852",
+          "93770",
+          "12144",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root/packages/tools/blender/e08t08/finalize.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm finalize_publication candidate"
+        ]
+      ]
+    },
+    {
+      "time": 1794055156.766742,
+      "rss": 117784576,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26048",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93852",
+          "93770",
+          "88976",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root/packages/tools/blender/e08t08/finalize.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm finalize_publication candidate"
+        ]
+      ]
+    },
+    {
+      "time": 1794055156.9214988,
+      "rss": 61734912,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26048",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93858",
+          "93770",
+          "34240",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root/packages/tools/blender/e08t08/finalize.py"
+        ]
+      ]
+    },
+    {
+      "time": 1794055157.0705762,
+      "rss": 118013952,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26048",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93858",
+          "93770",
+          "89200",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigterm/root/packages/tools/blender/e08t08/finalize.py"
+        ]
+      ]
+    },
+    {
+      "time": 1794055157.220351,
+      "rss": 26836992,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26080",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93864",
+          "93770",
+          "128",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root/packages/tools/blender/e08t08/stage.py work /opt/homebrew/opt/python@3.14/bin/python3.14 -c pass"
+        ]
+      ]
+    },
+    {
+      "time": 1794055157.369308,
+      "rss": 40239104,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26096",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93869",
+          "93770",
+          "13200",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root/packages/tools/blender/e08t08/finalize.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint finalize_publication candidate"
+        ]
+      ]
+    },
+    {
+      "time": 1794055157.52453,
+      "rss": 121503744,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26096",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93869",
+          "93770",
+          "92560",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root/packages/tools/blender/e08t08/finalize.py /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint finalize_publication candidate"
+        ]
+      ]
+    },
+    {
+      "time": 1794055157.675806,
+      "rss": 26722304,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26096",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93869",
+          "93770",
+          "0",
+          "<defunct>"
+        ]
+      ]
+    },
+    {
+      "time": 1794055157.849473,
+      "rss": 110952448,
+      "processes": [
+        [
+          "93770",
+          "93761",
+          "26096",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5 --cases valid,publication_during,publication_after,finalizer_sigterm,finalizer_sigint"
+        ],
+        [
+          "93877",
+          "93770",
+          "82256",
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/finalizer_sigint/root/packages/tools/blender/e08t08/finalize.py"
+        ]
+      ]
+    }
+  ],
+  "tail": [
+    "{\"mode\": \"valid\", \"passed\": true, \"assertions\": {\"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true}}",
+    "{\"mode\": \"publication_during\", \"passed\": true, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true}}",
+    "{\"mode\": \"publication_after\", \"passed\": true, \"assertions\": {\"publication retains admission\": true, \"terminal or durable unfinished admission exists\": true, \"supervisor outcome\": true, \"explicit outcome\": true, \"cleanup terminal\": true, \"direct child reaped\": true, \"no surviving fixture worker\": true, \"actual finalizer outcome\": true, \"no failed/incomplete promotion\": true, \"admission after settlement only\": true}}",
+    "{\"mode\": \"finalizer_sigterm\", \"passed\": true, \"assertions\": {\"interrupted actual finalizer cannot publish\": true, \"retry publishes a new generation\": true, \"partial evidence preserved\": true}}",
+    "{\"mode\": \"finalizer_sigint\", \"passed\": true, \"assertions\": {\"interrupted actual finalizer cannot publish\": true, \"retry publishes a new generation\": true, \"partial evidence preserved\": true}}"
+  ]
+}

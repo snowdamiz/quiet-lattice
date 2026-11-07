@@ -1,0 +1,1845 @@
+diff --git a/packages/tools/blender/e08t08/.gitattributes b/packages/tools/blender/e08t08/.gitattributes
+index 5c8be3a98..7d5a0b521 100644
+--- a/packages/tools/blender/e08t08/.gitattributes
++++ b/packages/tools/blender/e08t08/.gitattributes
+@@ -1,2 +1,3 @@
+ # Preserve raw tool logs byte for byte, including whitespace diagnostics.
+ reports/*.log -whitespace
++revisions/** -whitespace
+diff --git a/packages/tools/blender/e08t08/.gitignore b/packages/tools/blender/e08t08/.gitignore
+index f462f0dd0..42737a7ea 100644
+--- a/packages/tools/blender/e08t08/.gitignore
++++ b/packages/tools/blender/e08t08/.gitignore
+@@ -2,3 +2,8 @@ __pycache__/
+ reports/*.lock
+ reports/vite-cache/
+ !reports/*.log
++!revisions/**/*.log
++revisions/**/lane.lock
++revisions/**/root/assets
++revisions/**/root/pnpm-lock.yaml
++revisions/**/root/packages/client/public/models
+diff --git a/packages/tools/blender/e08t08/README.md b/packages/tools/blender/e08t08/README.md
+index b190fa246..ca55d38d6 100644
+--- a/packages/tools/blender/e08t08/README.md
++++ b/packages/tools/blender/e08t08/README.md
+@@ -14,7 +14,8 @@ The open acceptance discrepancy is documented in
+ [reports/export-mask-limit.json](reports/export-mask-limit.json): pinned Blender
+ exports four-channel colors as normalized uint16 even from float source masks.
+ The test measures this rounding bound; it does not treat it as exact float
+-preservation. The parent/exporter owner must resolve the brief's stricter wording.
++preservation. F1 remains assigned to the shared-exporter owner; the exact-float
++format is still required and no normalized-color exception is adopted.
+ 
+ ## Evidence
+ 
+@@ -43,12 +44,46 @@ The one-time library-link and portable-path repair scripts remain as history;
+ the current authoring script already writes persistent relative library links.
+ 
+ Run commands through `stage.py <unique-stage-name> <command...>` only after CPU
+-admission. It admits one lane, samples owned descendants across process groups,
+-enforces the task budgets, and refuses to overwrite a stage log. `bin/blender`
+-forces `-t 2`; `bin/ktx` serializes the pinned local codec and forces one encode
+-thread. It does not alter encoder quality or format options. The pinned tool
+-paths and dependency symlinks are recorded in the hash inventory; no installation
+-is performed.
++admission. The R1/F2 supervisor acquires a durable `reports/runs/<stage>/admitted.json`
++before dispatch. The file lock and a hash-bound settlement record both govern
++admission. Missing, corrupt, or unsealed records keep subsequent admission closed,
++including after supervisor death; PID disappearance does not retire that debt.
++There is no automatic stale-owner reset. Preserve the evidence and return an
++unresolved run to the task owner for recovery.
++
++This supervisor targets the pinned macOS host. It retains the actual direct child
++with `waitid(WNOWAIT)` through cleanup and watches known detached descendants with
++kqueue process-exit handles. SIGTERM, SIGINT, exceptions, and leader exit converge
++on bounded TERM/KILL drain and finally publication. Known processes are signaled
++independently even if another signal/observation fails. Observation uncertainty
++prevents settlement. This is sampled descendant discovery, not OS-wide containment
++of arbitrary unobserved daemons. No ownership is inferred from a command name or
++from a reused PID on restart.
++
++After cleanup is verified, receipt publication masks SIGTERM/SIGINT for its short
++local persistence transaction. Cancellation observed before the commit decision
++wins; cancellation during an entirely successful sealed publication is late and
++completion wins. A write/fsync failure or hard kill during publication leaves the
++admission closed. A terminal JSON alone is never sufficient: `settled.json` must
++bind both its bytes and its admission, with no pending publication or failure
++record. Pending names survive link or directory-sync failure. Their final removal
++is the last publication operation; a crash that restores a pending name closes
++admission conservatively. A failed/cancelled run with verified cleanup
++can free the execution lane, but it still blocks finalization; a later successful
++run does not silently erase it.
++
++`finalize.py` takes the same lane lock and checks every new admission before reading
++the retained art proof. The 63 pre-F2 receipts are explicitly hash-pinned in
++`legacy-stages.json` as historical evidence, not fresh lifecycle proof. Orphan logs
++and unknown stage records block finalization. Reports are written into a new
++exclusive `reports/finalized/<generation>/`; only its final, durable `PUBLISHED.json`
++marks complete assembly. Partial generations remain as evidence. No full-task PASS
++follows from report assembly.
++
++`bin/blender` now forces `-t 2 --factory-startup --python-exit-code 1` for future
++checks. This revision does not invoke Blender. `bin/ktx` remains unchanged. The
++tool paths and dependency symlinks are recorded in the original hash inventory;
++no installation is performed.
+ 
+ The exact successful stock commands and all failure tails are in C.2. The focused
+ consumer command is:
+@@ -62,3 +97,21 @@ python3 packages/tools/blender/e08t08/stage.py consumer-new \
+ `preview.py` is a compact CPU-only look check. Its preserved revisions are not a
+ native grader packet. Do not run capture, turntable, or live performance from this
+ unit; the exact parent-owned inventory is listed separately.
++
++## R1 evidence correction and F2 regression
++
++The old 23 malformed decoded controls reject mutations through custom
++`checkRig`, `checkMarkers`, and `checkInventory` assertions. They are not production
++GLTFLoader/Review rejection routes. In particular, Review falls back to an available
++LOD rather than rejecting a missing LOD. The historical receipts and C.2 report
++remain unchanged; future generated descriptions make that boundary explicit.
++
++`stage_lifecycle_test.py` exercises actual processes and the actual finalizer caller
++in exclusive fixture directories. It uses at most two finite sleeping workload
++processes at a time; tests run serially. `lifecycle_driver.py` injects observation
++and persistence failures and controls publication barriers only in those copies.
++Persistence controls obstruct real atomic links and fail a real `fsync` syscall
++after the seal link becomes visible; they do not substitute terminal receipts.
++Neither helper is part of the production supervisor path. Run the test only under
++an admitted small-CPU budget and choose a new evidence directory. Existing runs,
++including failed implementations and their partial publications, are preserved.
+diff --git a/packages/tools/blender/e08t08/bin/blender b/packages/tools/blender/e08t08/bin/blender
+index 4da34198a..448e03812 100755
+--- a/packages/tools/blender/e08t08/bin/blender
++++ b/packages/tools/blender/e08t08/bin/blender
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-exec /Applications/Blender.app/Contents/MacOS/Blender -t 2 "$@"
++exec /Applications/Blender.app/Contents/MacOS/Blender -t 2 --factory-startup --python-exit-code 1 "$@"
+diff --git a/packages/tools/blender/e08t08/consumer.test.js b/packages/tools/blender/e08t08/consumer.test.js
+index f2c6d2746..cf6683767 100644
+--- a/packages/tools/blender/e08t08/consumer.test.js
++++ b/packages/tools/blender/e08t08/consumer.test.js
+@@ -208,6 +208,8 @@ it('P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and
+     expect(model.helpers.some((o) => /^(Door|Interact|Socket_|HP_|Mount|Spin)/i.test(nodeName(o)))).toBe(false);
+     const first = meshes(model.assets[0].variants[0].lods.get(0))[0];
+     if (file.family === 'creatures') {
++      // Mutations below exercise task assertions, not production-loader rejection.
++      // Stock Review intentionally falls back when a requested LOD is absent.
+       const raw = first.geometry;
+       const fractured = raw.clone(); fractured.attributes._limb.setX(0, 1.5);
+       expect(() => checkRig(fractured, file.stem !== 'flyer')).toThrow('integer limb'); controls++;
+@@ -237,5 +239,5 @@ it('P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and
+   expect(totalVariants).toBe(38); expect(totalLods).toBe(152);
+   expect(parseSpec('creatures').url).toBe('/models/creatures.glb');
+   expect(hash(readFileSync(`${ROOT}packages/client/public/models/creatures.glb`))).toBe('4065f277d602a1ef0e5e79ecb597258c313b710a32cc89256c0b17d9d8f09b2b');
+-  writeFileSync(new URL('./reports/consumer-contract.json',import.meta.url),JSON.stringify({ totalVariants,totalLods,malformedControls:controls,maskBoundary:'FLOAT_COLOR source; pinned stock Blender writes normalized UINT16 COLOR_0, error <= 0.5/65535 plus float tolerance per channel; not exact float export',textureBoundary:'metadata proxy in GLTFLoader; actual CPU transcode and PBR checks in stock validation',files:reports },null,2)+'\n');
++  writeFileSync(new URL('./reports/consumer-contract.json',import.meta.url),JSON.stringify({ totalVariants,totalLods,malformedControls:controls,malformedControlBoundary:'custom checkRig/checkMarkers/checkInventory assertion rejections; not GLTFLoader/Review rejection routes',maskBoundary:'FLOAT_COLOR source; pinned stock Blender writes normalized UINT16 COLOR_0, error <= 0.5/65535 plus float tolerance per channel; not exact float export',textureBoundary:'metadata proxy in GLTFLoader; actual CPU transcode and PBR checks in stock validation',files:reports },null,2)+'\n');
+ });
+diff --git a/packages/tools/blender/e08t08/finalize.py b/packages/tools/blender/e08t08/finalize.py
+index ef1d74370..b14598be0 100644
+--- a/packages/tools/blender/e08t08/finalize.py
++++ b/packages/tools/blender/e08t08/finalize.py
+@@ -2,156 +2,177 @@
+ import hashlib
+ import json
+ import math
++import os
+ from pathlib import Path
+ import shlex
+ import subprocess
++import sys
++import time
++sys.dont_write_bytecode=True
++from stage_ownership import lane_lock, settled_runs, write_json
+ 
+ HERE=Path(__file__).resolve().parent; ROOT=HERE.parents[3]; REPORTS=HERE/'reports'
+ BASE='5731dc4c92954dd995c4a8ed5975bdbd2f7fdb45'
+ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+ def read(p):return json.loads(p.read_text())
+ def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).strip()
+-source=read(REPORTS/'source-contract.json'); consumer=read(REPORTS/'consumer-contract.json')
+-assert consumer['totalVariants']==38 and consumer['totalLods']==152
+-stages=[]
+-for p in REPORTS.glob('*.json'):
+-    r=read(p)
+-    if isinstance(r,dict) and 'command' in r and 'samples' in r: stages.append(r)
+-stages.sort(key=lambda r:r['start'])
+-mandatory=['export-creatures-03','export-constructs-01','validate-sources-creatures-02','validate-sources-constructs-02','validate-glbs-creatures-02','validate-glbs-constructs-02','consumer-08']
+-for name in mandatory:
+-    r=next(s for s in stages if s['stage']==name)
+-    assert r['exit']==0 and not r['remainingProcesses'] and not r['stopReason'],name
+-    assert r['sampling']=='process group and descendant closure',name
+-    assert r['beforeSources']==r['afterSources'],name
+-    if name.startswith('validate-'):
+-        assert r['beforeExports']==r['afterExports'],name
+-        for p,h in {**r['afterSources'],**r['afterExports']}.items(): assert sha(ROOT/p)==h,(name,p)
+-assert all(not r['remainingProcesses'] for r in stages)
+-validations=[read(p) for p in (REPORTS/'validate-final').glob('*.json')]
+-assert len(validations)==14 and all(v['status']=='PASS' for v in validations)
+-assets=[]; native=[]
+-for f in source['files']:
+-    p=ROOT/f['source']; assert sha(p)==f['sha256']
+-    export=ROOT/'packages/client/public/models'/f['family']/(f['stem']+'.glb')
+-    c=next(c for c in consumer['files'] if c['stem']==f['stem']); assert sha(export)==c['sha256']
+-    for a in [p,export]:assets.append(dict(path=str(a.relative_to(ROOT)),bytes=a.stat().st_size,sha256=sha(a)))
+-    native.append(dict(family=f['family'],stem=f['stem'],asset=f['stem'],
+-                       variants=[dict(id=v['id'],review=f"#review:{f['family']}/{f['stem']}:{f['stem']}/{v['id']}") for v in f['variants']],
+-                       captureCommand=f"pnpm capture -- --review {f['family']}/{f['stem']}",
+-                       turntableCommand=f"pnpm turntable -- packages/client/public/models/{f['family']}/{f['stem']}.glb",
+-                       familyCommand=f"pnpm turntable -- packages/client/public/models/{f['family']}/{f['stem']}.glb --family",
+-                       familySheets=math.ceil(len(f['variants'])/6)))
+-protected={
+- 'assets/blend/_library.blend':'33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c',
+- 'packages/client/public/models/creatures.glb':'4065f277d602a1ef0e5e79ecb597258c313b710a32cc89256c0b17d9d8f09b2b',
+- 'pnpm-lock.yaml':'120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f'}
+-assert all(sha(ROOT/p)==h for p,h in protected.items())
+-assert not (ROOT/'packages/tools/blender/artlib/__pycache__').exists()
+-codecs=[json.loads(line) for line in (REPORTS/'codec.jsonl').read_text().splitlines()]
+-assert all(c['exit']==0 for c in codecs)
+-assert all(c['actual'][c['actual'].index('--threads')+1]=='1' for c in codecs if c['actual'][0]=='create')
+-assert all(b['start']>=a['end'] for a,b in zip(codecs,codecs[1:]))
+-threads=max(len([row for row in s['rows'] if row[0]!='USER']) for c in codecs for s in c['threadSamples'])
+-assert threads==1
+-previews=[p for fam in ['creatures','constructs'] for p in (ROOT/'assets/renders'/fam/'e08t08').glob('*.png')]
+-assert len(previews)<=96 and sum(p.stat().st_size for p in previews)<=256*1024**2
+-qualified=[s for s in stages if s.get('sampling')=='process group and descendant closure']
+-resources=dict(qualifiedMaxAggregateRSS=max(s['maxRSS'] for s in qualified),
+-               sampling='0.5 second process group plus descendant closure; samples, not an unsampled peak claim',
+-               initialExportResourceLimit='export-creatures-01 tracked only its initial process group; superseded by export-creatures-02',
+-               maxStageSeconds=max(s['end']-s['start'] for s in stages),
+-               minimumPreStageFreeBytes=min(s['beforeFree'] for s in stages),
+-               minimumSampledFreeBytes=min(x['free'] for s in stages for x in s['samples']),
+-               codecCalls=len(codecs),codecThreadsSampled=threads,codecMaximumConcurrent=1,
+-               previewPNGs=len(previews),previewBytes=sum(p.stat().st_size for p in previews),
+-               allStageProcessesReaped=all(not s['remainingProcesses'] for s in stages),
+-               worktreeBaselineKiB=4521824,
+-               worktreeFinalKiB=int(subprocess.check_output(['du','-sk',str(ROOT)],text=True).split()[0]))
+-resources['worktreeGrowthBytes']=(resources['worktreeFinalKiB']-resources['worktreeBaselineKiB'])*1024
+-assert resources['qualifiedMaxAggregateRSS']<=8*1024**3
+-assert resources['minimumSampledFreeBytes']>=12*1024**3
+-assert resources['maxStageSeconds']<=2700 and resources['worktreeGrowthBytes']<6*1024**3
+-manifest=dict(task='P1.E08.T08',scope='CPU source/export unit only',base=BASE,branch=git('branch','--show-current'),
+-              assets=assets,protectedUnchanged=protected,resources=resources,
+-              sourceContract='reports/source-contract.json',consumerContract='reports/consumer-contract.json',
+-              stockValidations=[dict(file=v['file'],status=v['status']) for v in validations],
+-              toolchain=dict(blender='5.2.3 LTS',ktx='4.4.2',
+-                             ktxSHA256=sha(Path('/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx'))),
+-              dependencies=dict(strategy='read-only local symlinks, matching parent lockfile; no install',vitestCache='reports/vite-cache',
+-                                links={p:str((ROOT/p).resolve()) for p in ['node_modules','packages/tools/node_modules','packages/client/node_modules']}))
+-mask_limit=[]
+-for f in source['files']:
+-    if f['family']!='creatures': continue
+-    p=ROOT/'packages/client/public/models/creatures'/(f['stem']+'.glb'); data=p.read_bytes()
+-    j=json.loads(data[20:20+int.from_bytes(data[12:16],'little')])
+-    formats={}
+-    for mesh in j['meshes']:
+-        for primitive in mesh['primitives']:
+-            for key in ['COLOR_0','_LIMB','_PIVOT','_GLOW']:
+-                if key not in primitive['attributes']: continue
+-                accessor=j['accessors'][primitive['attributes'][key]]
+-                formats.setdefault(key,set()).add((accessor['componentType'],accessor.get('normalized',False),accessor['type']))
+-    assert formats['COLOR_0']=={(5123,True,'VEC4')},formats
+-    assert formats['_PIVOT']=={(5126,False,'VEC3')},formats
+-    mask_limit.append(dict(file=str(p.relative_to(ROOT)),sha256=sha(p),formats={k:sorted(v) for k,v in formats.items()}))
+-limit=dict(status='OPEN SPEC DISCREPANCY; not exact float mask export',
+-           owner='Parent P1.E08.T08 decision / P1.E14.T12 export tooling',
+-           brief='geometry.quantize=false is described as preserving the mask as exact floats',
+-           actual='Pinned Blender 5.2.3 RGBA export selects BYTE_COLOR, converted to normalized UINT16. Stock meshopt preserves that stream. Sources remain POINT FLOAT_COLOR; _limb/_pivot/_glow remain exact Float32 values.',
+-           source='/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py:1323',
+-           rounding='/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_attributes.py:184',
+-           consumerBoundary=consumer['maskBoundary'],files=mask_limit,
+-           resolution='No exporter/toolchain/runtime edits authorized here. Parent must resolve the specification or route an exporter correction; normalized-mask behavioral PASS is not an exact-float PASS.')
+-(REPORTS/'export-mask-limit.json').write_text(json.dumps(limit,indent=2)+'\n')
+-manifest['openMaskPrecisionLimit']='reports/export-mask-limit.json'
+-(REPORTS/'asset-hash-inventory.json').write_text(json.dumps(manifest,indent=2)+'\n')
+-(REPORTS/'native-pending.json').write_text(json.dumps(dict(status='NOT RUN; parent admission required',files=native,
+-    targets=38,reviewImagesPerTarget=['noon-lush_lod0.png','noon-lush_lod2.png','night-exotic_lod0.png','night-exotic_lod2.png','open-space_lod0.png','open-space_lod2.png','wireframe_lod0.png','wireframe_lod2.png','overlay.png','far_lod2.png'],
+-    reviewPNGs=380,reviewContactSheets=38,perfReports=38,perfLightingMeasurements=114,
+-    turntableSheets=38,materialCloseupSheets=38,siblingSheets=9,
+-    additionalGates=['fresh independent code review','fresh blind rubric grade','separate native frame-budget qualification; no CPU timing substitution'],
+-    animationLimit='Stock Review selects posed meshes; it does not play the Fauna vertex gait or attack phases.'),indent=2)+'\n')
+-lines=[
+-'TASK: P1.E08.T08 (art) Creatures at the new bar',
+-'STATUS: BLOCKED for full task acceptance: CPU authorship/export and behavioral checks delivered, but stock RGBA mask precision conflicts with the brief; parent/exporter-owner resolution and separate native gates remain. Whole-task/native/visual PASS is NOT CLAIMED.',
+-'SUMMARY: Seven editable saved Blender sources and seven stock-compressed GLBs; 34 creature rest/attack variants, one Compact outpost drone, three Overseer phase reads; all 152 LODs saved and exported. Integer point limb IDs, Z-up joints, sparse glow tips, active POINT masks and shaped knee/ankle loops are preserved. Shared packed 2k PBR paint sets. Sources link the frozen library by relative path. Compact CPU previews were inspected and revised; all previous images and failed-stage logs remain.',
+-'BRANCH: '+git('branch','--show-current'),
+-'BASE: '+BASE,
+-'COMMIT: final SHA/tree are returned with this report in the handoff; this report does not self-reference its enclosing commit.',
+-'FILES CHANGED: '+', '.join(a['path'] for a in assets)+'; packages/tools/blender/e08t08/**; assets/renders/{creatures,constructs}/e08t08/**.',
+-'VERIFY:']
+-for s in stages:
+-    lines.append(f"- {s['stage']}: exit {s['exit']}; {shlex.join(s['command'])}; {s['end']-s['start']:.3f}s; remaining processes {len(s['remainingProcesses'])}. Log: reports/{s['stage']}.log")
+-    if s['exit']:
+-        lines.append('  Last 20 lines of retained failure:')
+-        lines.extend(('  '+line).rstrip() for line in (REPORTS/(s['stage']+'.log')).read_text(errors='replace').splitlines()[-20:])
+-lines.extend([
+-'- Four explicit stock validate commands passed all fourteen files. Stock export sources unchanged before/after; all source/export hashes in reports/asset-hash-inventory.json.',
+-f"- Actual GLTFLoader + MeshoptDecoder, stock collectLods/showLod/parseSpec/applyGameLook: {consumer['totalVariants']} variants, {consumer['totalLods']} LODs, {consumer['malformedControls']} malformed decoded consumer controls rejected. Saved source geometry/joint/mask samples checked after real decode. Source audit rejected four additional malformed attribute controls.",
+-'- Texture boundary: the CPU consumer test substitutes texture metadata only to avoid browser/WebGL. Actual KTX pixels, PBR, mips, codecs, quantization and budgets are checked by the unchanged stock exporter and validator, which transcode the actual images. No native image equivalence claim.',
+-'- Mask precision boundary: sources are POINT FLOAT_COLOR, but pinned stock Blender exports RGBA COLOR_0 as normalized UINT16. Actual decoded samples are within 0.5/65535 plus float tolerance per channel; this is not exact float preservation. _limb, _pivot and _glow are exact Float32. reports/export-mask-limit.json records the actual accessor formats and tooling source lines.',
+-'DECISIONS:',
+-'- How to express hand weights with an integer consumer? -> Place authored knee/ankle rings inside the existing shader bend bands; keep integer IDs and one pose joint per limb -> fractional weights are rounded away. No armature or new weight channel.',
+-'- How to represent attacks? -> Separate posed geometry variants -> stock Review never drives morphTargetInfluences or the fauna shader.',
+-'- Which predators? -> quad_small pack, biped stalker, flyer diver -> the concrete temperament contract selects these three only.',
+-'- How to contain stock codecs? -> Task-local KTX launcher serializes encode/decode and changes only --threads to 1 -> stock jobs=1 otherwise requests all 15 host CPUs, and decode otherwise permits two calls. Process-thread samples prove one actual codec thread.',
+-'- How to remove low-LOD warnings? -> Save lower LODs produced by stock artlib.lods.generate and remove its duplicate collapsed faces with Blender mesh.validate -> LOD0 hashes and lower-LOD point attributes remain unchanged; final stock export has no invalid-mesh warning.',
+-'- How to preserve discrete attributes through decimation? -> Snap sub-1e-5 arithmetic drift in saved lower-LOD IDs and joints to the authored exact values -> decoded consumer test found 3.000000238 as a limb ID. All geometry and LOD0 remain unchanged; source audit now checks all 152 LODs and actual decoded IDs are integers.',
+-'- Where do Overseer helpers live? -> One shared root COL_Body and four Muzzle_laser empties, inherited by all three phase reads -> stock source layout cannot have a second collection with the same name as the asset. Body massing and laser positions are shared; no duplicate helper sets.',
+-'- Why relative library paths? -> //../_library.blend -> source can move to the parent checkout without retaining this worktree path.',
+-'- Scope incident -> helper imports generated 11 local artlib .pyc cache files; tracked source was never edited. Files were preserved in reports/history/artlib-bytecode.zip and moved under task evidence; artlib cache directory restored absent. Explicit sys.dont_write_bytecode prevents recurrence. Details: reports/bytecode-restoration.json.',
+-'OUT OF SCOPE FOUND:',
+-'- Parent P1.E08.T08 / P1.E14.T12: exact-float mask wording conflicts with pinned stock RGBA export. No forbidden exporter edits or post-export GLB rewrite made. The normalized mask passes the actual consumer and stock validator, but exact-float acceptance is unresolved.',
+-'- Parent P1.E08.T08 gates: native Review for the exact 38-target inventory, three lighting cases at LOD0/2, wireframes, overlays, 100 m views, paired performance, native turntable/material/family sheets, fresh code review and blind grade. reports/native-pending.json enumerates all targets and counts. None run here.',
+-'- P1.E08.T02 owns gait and attack-phase playback and per-instance runtime scale; P1.E08.T06 owns drone/Overseer live behavior; P1.E14.T07 owns loader adoption and generator removal. P1.E14.T13 owns native frame-budget qualification. Legacy creatures.glb and all runtime code remain unchanged.',
+-'ARTIFACTS:',
+-'- reports/asset-hash-inventory.json: fourteen exact SHA-256 digests, resource evidence and pinned toolchain.',
+-'- reports/source-contract.json, reports/consumer-contract.json, reports/validate-final/*.json, reports/export-final/*.json.',
+-'- reports/saved-lods.json and reports/lod-repair-probe.json: real lower-LOD repair evidence; reports/history preserves prior sources/exports.',
+-'- assets/renders/creatures/e08t08/* and assets/renders/constructs/e08t08/*: '+str(len(previews))+' compact CPU PNGs; not a grader packet.',
+-'- reports/native-pending.json: exact remaining native inventory. reports/*.log and reports/*.json retain every bounded stage, failures, samples, terminal exits and process cleanup.',
+-'RESOURCE SUMMARY: '+json.dumps(resources,sort_keys=True),
+-'No push, PR, merge, native/browser/server/database run, cloud launch, installation, toolchain upgrade, or screenshot cleanup.'])
+-(HERE/'C2-report.txt').write_text('\n'.join(lines)+'\n')
+-print(json.dumps(dict(assets=len(assets),validations=len(validations),resources=resources)))
++def assemble(registered):
++    source=read(REPORTS/'source-contract.json'); consumer=read(REPORTS/'consumer-contract.json')
++    assert consumer['totalVariants']==38 and consumer['totalLods']==152
++    stages=[]
++    for p in REPORTS.glob('*.json'):
++        r=read(p)
++        if isinstance(r,dict) and 'command' in r and 'samples' in r: stages.append(r)
++    stages.sort(key=lambda r:r['start'])
++    mandatory=['export-creatures-03','export-constructs-01','validate-sources-creatures-02','validate-sources-constructs-02','validate-glbs-creatures-02','validate-glbs-constructs-02','consumer-08']
++    for name in mandatory:
++        r=next(s for s in stages if s['stage']==name)
++        assert r['exit']==0 and not r['remainingProcesses'] and not r['stopReason'],name
++        assert r['sampling']=='process group and descendant closure',name
++        assert r['beforeSources']==r['afterSources'],name
++        if name.startswith('validate-'):
++            assert r['beforeExports']==r['afterExports'],name
++            for p,h in {**r['afterSources'],**r['afterExports']}.items(): assert sha(ROOT/p)==h,(name,p)
++    assert all(not r['remainingProcesses'] for r in stages)
++    validations=[read(p) for p in (REPORTS/'validate-final').glob('*.json')]
++    assert len(validations)==14 and all(v['status']=='PASS' for v in validations)
++    assets=[]; native=[]
++    for f in source['files']:
++        p=ROOT/f['source']; assert sha(p)==f['sha256']
++        export=ROOT/'packages/client/public/models'/f['family']/(f['stem']+'.glb')
++        c=next(c for c in consumer['files'] if c['stem']==f['stem']); assert sha(export)==c['sha256']
++        for a in [p,export]:assets.append(dict(path=str(a.relative_to(ROOT)),bytes=a.stat().st_size,sha256=sha(a)))
++        native.append(dict(family=f['family'],stem=f['stem'],asset=f['stem'],
++                           variants=[dict(id=v['id'],review=f"#review:{f['family']}/{f['stem']}:{f['stem']}/{v['id']}") for v in f['variants']],
++                           captureCommand=f"pnpm capture -- --review {f['family']}/{f['stem']}",
++                           turntableCommand=f"pnpm turntable -- packages/client/public/models/{f['family']}/{f['stem']}.glb",
++                           familyCommand=f"pnpm turntable -- packages/client/public/models/{f['family']}/{f['stem']}.glb --family",
++                           familySheets=math.ceil(len(f['variants'])/6)))
++    protected={
++     'assets/blend/_library.blend':'33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c',
++     'packages/client/public/models/creatures.glb':'4065f277d602a1ef0e5e79ecb597258c313b710a32cc89256c0b17d9d8f09b2b',
++     'pnpm-lock.yaml':'120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f'}
++    assert all(sha(ROOT/p)==h for p,h in protected.items())
++    assert not (ROOT/'packages/tools/blender/artlib/__pycache__').exists()
++    codecs=[json.loads(line) for line in (REPORTS/'codec.jsonl').read_text().splitlines()]
++    assert all(c['exit']==0 for c in codecs)
++    assert all(c['actual'][c['actual'].index('--threads')+1]=='1' for c in codecs if c['actual'][0]=='create')
++    assert all(b['start']>=a['end'] for a,b in zip(codecs,codecs[1:]))
++    threads=max(len([row for row in s['rows'] if row[0]!='USER']) for c in codecs for s in c['threadSamples'])
++    assert threads==1
++    previews=[p for fam in ['creatures','constructs'] for p in (ROOT/'assets/renders'/fam/'e08t08').glob('*.png')]
++    assert len(previews)<=96 and sum(p.stat().st_size for p in previews)<=256*1024**2
++    qualified=[s for s in stages if s.get('sampling')=='process group and descendant closure']
++    resources=dict(qualifiedMaxAggregateRSS=max(s['maxRSS'] for s in qualified),
++                   sampling='0.5 second process group plus descendant closure; samples, not an unsampled peak claim',
++                   initialExportResourceLimit='export-creatures-01 tracked only its initial process group; superseded by export-creatures-02',
++                   maxStageSeconds=max(s['end']-s['start'] for s in stages),
++                   minimumPreStageFreeBytes=min(s['beforeFree'] for s in stages),
++                   minimumSampledFreeBytes=min(x['free'] for s in stages for x in s['samples']),
++                   codecCalls=len(codecs),codecThreadsSampled=threads,codecMaximumConcurrent=1,
++                   previewPNGs=len(previews),previewBytes=sum(p.stat().st_size for p in previews),
++                   allStageProcessesReaped=all(not s['remainingProcesses'] for s in stages),
++                   worktreeBaselineKiB=4521824,
++                   worktreeFinalKiB=int(subprocess.check_output(['du','-sk',str(ROOT)],text=True).split()[0]))
++    resources['worktreeGrowthBytes']=(resources['worktreeFinalKiB']-resources['worktreeBaselineKiB'])*1024
++    assert resources['qualifiedMaxAggregateRSS']<=8*1024**3
++    assert resources['minimumSampledFreeBytes']>=12*1024**3
++    assert resources['maxStageSeconds']<=2700 and resources['worktreeGrowthBytes']<6*1024**3
++    manifest=dict(task='P1.E08.T08',scope='CPU source/export unit only',base=BASE,branch=git('branch','--show-current'),
++                  assets=assets,protectedUnchanged=protected,resources=resources,
++                  sourceContract='reports/source-contract.json',consumerContract='reports/consumer-contract.json',
++                  stockValidations=[dict(file=v['file'],status=v['status']) for v in validations],
++                  toolchain=dict(blender='5.2.3 LTS',ktx='4.4.2',
++                                 ktxSHA256=sha(Path('/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx'))),
++                  dependencies=dict(strategy='read-only local symlinks, matching parent lockfile; no install',vitestCache='reports/vite-cache',
++                                    links={p:str((ROOT/p).resolve()) for p in ['node_modules','packages/tools/node_modules','packages/client/node_modules']}))
++    mask_limit=[]
++    for f in source['files']:
++        if f['family']!='creatures': continue
++        p=ROOT/'packages/client/public/models/creatures'/(f['stem']+'.glb'); data=p.read_bytes()
++        j=json.loads(data[20:20+int.from_bytes(data[12:16],'little')])
++        formats={}
++        for mesh in j['meshes']:
++            for primitive in mesh['primitives']:
++                for key in ['COLOR_0','_LIMB','_PIVOT','_GLOW']:
++                    if key not in primitive['attributes']: continue
++                    accessor=j['accessors'][primitive['attributes'][key]]
++                    formats.setdefault(key,set()).add((accessor['componentType'],accessor.get('normalized',False),accessor['type']))
++        assert formats['COLOR_0']=={(5123,True,'VEC4')},formats
++        assert formats['_PIVOT']=={(5126,False,'VEC3')},formats
++        mask_limit.append(dict(file=str(p.relative_to(ROOT)),sha256=sha(p),formats={k:sorted(v) for k,v in formats.items()}))
++    limit=dict(status='OPEN SPEC DISCREPANCY; not exact float mask export',
++               owner='Parent P1.E08.T08 decision / P1.E14.T12 export tooling',
++               brief='geometry.quantize=false is described as preserving the mask as exact floats',
++               actual='Pinned Blender 5.2.3 RGBA export selects BYTE_COLOR, converted to normalized UINT16. Stock meshopt preserves that stream. Sources remain POINT FLOAT_COLOR; _limb/_pivot/_glow remain exact Float32 values.',
++               source='/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py:1323',
++               rounding='/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_attributes.py:184',
++               consumerBoundary=consumer['maskBoundary'],files=mask_limit,
++               resolution='No exporter/toolchain/runtime edits authorized here. Parent must resolve the specification or route an exporter correction; normalized-mask behavioral PASS is not an exact-float PASS.')
++    OUTPUT=REPORTS/'finalized'/str(time.time_ns())
++    OUTPUT.mkdir(parents=True,exist_ok=False)
++    (OUTPUT/'export-mask-limit.json').write_text(json.dumps(limit,indent=2)+'\n')
++    manifest['openMaskPrecisionLimit']='reports/export-mask-limit.json'
++    (OUTPUT/'asset-hash-inventory.json').write_text(json.dumps(manifest,indent=2)+'\n')
++    (OUTPUT/'native-pending.json').write_text(json.dumps(dict(status='NOT RUN; parent admission required',files=native,
++        targets=38,reviewImagesPerTarget=['noon-lush_lod0.png','noon-lush_lod2.png','night-exotic_lod0.png','night-exotic_lod2.png','open-space_lod0.png','open-space_lod2.png','wireframe_lod0.png','wireframe_lod2.png','overlay.png','far_lod2.png'],
++        reviewPNGs=380,reviewContactSheets=38,perfReports=38,perfLightingMeasurements=114,
++        turntableSheets=38,materialCloseupSheets=38,siblingSheets=9,
++        additionalGates=['fresh independent code review','fresh blind rubric grade','separate native frame-budget qualification; no CPU timing substitution'],
++        animationLimit='Stock Review selects posed meshes; it does not play the Fauna vertex gait or attack phases.'),indent=2)+'\n')
++    lines=[
++    'TASK: P1.E08.T08 (art) Creatures at the new bar',
++    'STATUS: BLOCKED for full task acceptance: CPU authorship/export and behavioral checks delivered, but stock RGBA mask precision conflicts with the brief; parent/exporter-owner resolution and separate native gates remain. Whole-task/native/visual PASS is NOT CLAIMED.',
++    'SUMMARY: Seven editable saved Blender sources and seven stock-compressed GLBs; 34 creature rest/attack variants, one Compact outpost drone, three Overseer phase reads; all 152 LODs saved and exported. Integer point limb IDs, Z-up joints, sparse glow tips, active POINT masks and shaped knee/ankle loops are preserved. Shared packed 2k PBR paint sets. Sources link the frozen library by relative path. Compact CPU previews were inspected and revised; all previous images and failed-stage logs remain.',
++    'BRANCH: '+git('branch','--show-current'),
++    'BASE: '+BASE,
++    'COMMIT: final SHA/tree are returned with this report in the handoff; this report does not self-reference its enclosing commit.',
++    'FILES CHANGED: '+', '.join(a['path'] for a in assets)+'; packages/tools/blender/e08t08/**; assets/renders/{creatures,constructs}/e08t08/**.',
++    'VERIFY:']
++    for s in stages:
++        lines.append(f"- {s['stage']}: exit {s['exit']}; {shlex.join(s['command'])}; {s['end']-s['start']:.3f}s; remaining processes {len(s['remainingProcesses'])}. Log: reports/{s['stage']}.log")
++        if s['exit']:
++            lines.append('  Last 20 lines of retained failure:')
++            lines.extend(('  '+line).rstrip() for line in (REPORTS/(s['stage']+'.log')).read_text(errors='replace').splitlines()[-20:])
++    lines.extend([
++    '- Four explicit stock validate commands passed all fourteen files. Stock export sources unchanged before/after; all source/export hashes in reports/asset-hash-inventory.json.',
++    f"- Actual GLTFLoader + MeshoptDecoder, stock collectLods/showLod/parseSpec/applyGameLook: {consumer['totalVariants']} variants, {consumer['totalLods']} LODs, {consumer['malformedControls']} task-local malformed assertion controls (not production loader/Review rejection routes). Saved source geometry/joint/mask samples checked after real decode. Source audit rejected four additional mutations in its custom assertions; no production validator rejection claim.",
++    '- Texture boundary: the CPU consumer test substitutes texture metadata only to avoid browser/WebGL. Actual KTX pixels, PBR, mips, codecs, quantization and budgets are checked by the unchanged stock exporter and validator, which transcode the actual images. No native image equivalence claim.',
++    '- Mask precision boundary: sources are POINT FLOAT_COLOR, but pinned stock Blender exports RGBA COLOR_0 as normalized UINT16. Actual decoded samples are within 0.5/65535 plus float tolerance per channel; this is not exact float preservation. _limb, _pivot and _glow are exact Float32. reports/export-mask-limit.json records the actual accessor formats and tooling source lines.',
++    'DECISIONS:',
++    '- How to express hand weights with an integer consumer? -> Place authored knee/ankle rings inside the existing shader bend bands; keep integer IDs and one pose joint per limb -> fractional weights are rounded away. No armature or new weight channel.',
++    '- How to represent attacks? -> Separate posed geometry variants -> stock Review never drives morphTargetInfluences or the fauna shader.',
++    '- Which predators? -> quad_small pack, biped stalker, flyer diver -> the concrete temperament contract selects these three only.',
++    '- How to contain stock codecs? -> Task-local KTX launcher serializes encode/decode and changes only --threads to 1 -> stock jobs=1 otherwise requests all 15 host CPUs, and decode otherwise permits two calls. Process-thread samples prove one actual codec thread.',
++    '- How to remove low-LOD warnings? -> Save lower LODs produced by stock artlib.lods.generate and remove its duplicate collapsed faces with Blender mesh.validate -> LOD0 hashes and lower-LOD point attributes remain unchanged; final stock export has no invalid-mesh warning.',
++    '- How to preserve discrete attributes through decimation? -> Snap sub-1e-5 arithmetic drift in saved lower-LOD IDs and joints to the authored exact values -> decoded consumer test found 3.000000238 as a limb ID. All geometry and LOD0 remain unchanged; source audit now checks all 152 LODs and actual decoded IDs are integers.',
++    '- Where do Overseer helpers live? -> One shared root COL_Body and four Muzzle_laser empties, inherited by all three phase reads -> stock source layout cannot have a second collection with the same name as the asset. Body massing and laser positions are shared; no duplicate helper sets.',
++    '- Why relative library paths? -> //../_library.blend -> source can move to the parent checkout without retaining this worktree path.',
++    '- Scope incident -> helper imports generated 11 local artlib .pyc cache files; tracked source was never edited. Files were preserved in reports/history/artlib-bytecode.zip and moved under task evidence; artlib cache directory restored absent. Explicit sys.dont_write_bytecode prevents recurrence. Details: reports/bytecode-restoration.json.',
++    'OUT OF SCOPE FOUND:',
++    '- Parent P1.E08.T08 / P1.E14.T12: exact-float mask wording conflicts with pinned stock RGBA export. No forbidden exporter edits or post-export GLB rewrite made. The normalized mask passes the actual consumer and stock validator, but exact-float acceptance is unresolved.',
++    '- Parent P1.E08.T08 gates: native Review for the exact 38-target inventory, three lighting cases at LOD0/2, wireframes, overlays, 100 m views, paired performance, native turntable/material/family sheets, fresh code review and blind grade. reports/native-pending.json enumerates all targets and counts. None run here.',
++    '- P1.E08.T02 owns gait and attack-phase playback and per-instance runtime scale; P1.E08.T06 owns drone/Overseer live behavior; P1.E14.T07 owns loader adoption and generator removal. P1.E14.T13 owns native frame-budget qualification. Legacy creatures.glb and all runtime code remain unchanged.',
++    'ARTIFACTS:',
++    '- reports/asset-hash-inventory.json: fourteen exact SHA-256 digests, resource evidence and pinned toolchain.',
++    '- reports/source-contract.json, reports/consumer-contract.json, reports/validate-final/*.json, reports/export-final/*.json.',
++    '- reports/saved-lods.json and reports/lod-repair-probe.json: real lower-LOD repair evidence; reports/history preserves prior sources/exports.',
++    '- assets/renders/creatures/e08t08/* and assets/renders/constructs/e08t08/*: '+str(len(previews))+' compact CPU PNGs; not a grader packet.',
++    '- reports/native-pending.json: exact remaining native inventory. reports/*.log and reports/*.json retain every bounded stage, failures, samples, terminal exits and process cleanup.',
++    'RESOURCE SUMMARY: '+json.dumps(resources,sort_keys=True),
++    'No push, PR, merge, native/browser/server/database run, cloud launch, installation, toolchain upgrade, or screenshot cleanup.'])
++    (OUTPUT/'C2-report.txt').write_text('\n'.join(lines)+'\n')
++    print(json.dumps(dict(assets=len(assets),validations=len(validations),resources=resources)))
++
++    for path in OUTPUT.iterdir():
++        with path.open('rb') as handle:
++            os.fsync(handle.fileno())
++    write_json(OUTPUT/'PUBLISHED.json',dict(status='assembled; full task remains blocked',newSettledRuns=sorted(registered),files={p.name:sha(p) for p in OUTPUT.iterdir() if p.is_file()}))
++
++def main():
++    with lane_lock(REPORTS):
++        registered=settled_runs(REPORTS,promotion=True)
++        assemble(registered)
++
++if __name__=='__main__':
++    main()
+diff --git a/packages/tools/blender/e08t08/legacy-stages.json b/packages/tools/blender/e08t08/legacy-stages.json
+new file mode 100644
+index 000000000..1db624440
+--- /dev/null
++++ b/packages/tools/blender/e08t08/legacy-stages.json
+@@ -0,0 +1,258 @@
++{
++  "base": "f9294a466d6223f695f102dc1a13ed526f155e67",
++  "qualification": "Historical receipts only; not cancellation or complete admission proof",
++  "stages": {
++    "preview-flyer-01": {
++      "preview-flyer-01.json": "9391d13ea79349ec04bb3e973a9f5b0957c402cc171f9c68fa6c6d0cfbc7fd0f",
++      "preview-flyer-01.log": "0c332e26dd26a51be1e00f44ece3076da8578b7cfb9275f9d26d0260b80c63c9"
++    },
++    "preview-small-01": {
++      "preview-small-01.json": "2a278c770c2e33cdcc7ec9060d5126526b82825901d1ea7754875ec40630002e",
++      "preview-small-01.log": "2f9fcb72dca066274e9cd640ae713285fac8ffdb59a15ce0e417f50c26b7dabb"
++    },
++    "consumer-04": {
++      "consumer-04.json": "3f5b9c82d1020fad7608fab4582a0ac11e9180eba1d3661388afb7546462843d",
++      "consumer-04.log": "11851fef560f0120b42f27946426d56a45b209c8bb1f58fea8a4a2b8671dae3e"
++    },
++    "author-heavy-03": {
++      "author-heavy-03.json": "49bca05d5665f299bc4306009bfed38080732b02164bfb305165841697d93f36",
++      "author-heavy-03.log": "ffac4dc2362f84baa91548875d0df45d562e18ae7355df19c52049eebc8d1433"
++    },
++    "source-contract-01": {
++      "source-contract-01.json": "8b796b0dac6b4c0a034c9b3c556e7eacf9a93aed7364597a1ec793143fda3471",
++      "source-contract-01.log": "51418e64caa4e212d01aab489f424c167463594148695b06025de679d0e45262"
++    },
++    "export-constructs-01": {
++      "export-constructs-01.json": "455cd10172248e17eca51d072a16da39978014f0a690d9adc74931c6ae121dcb",
++      "export-constructs-01.log": "00e365cd8cac977e31eb80e456f49220e853c699f15c4cc9f8d725bd4ff17cdf"
++    },
++    "consumer-08": {
++      "consumer-08.json": "c86044d549c6ee47f54a99ecd04022b93830a24a399e2df1a2d358d119cf36b1",
++      "consumer-08.log": "5df53be2fef17a16623ef813d50c56b8f85dcf6fe03da32165cbbf09846d8d59"
++    },
++    "author-heavy-02": {
++      "author-heavy-02.json": "3d72fd329603c097d5b922c6709fd4e95ecab13980300620be47dd8166587ff8",
++      "author-heavy-02.log": "599d1534900c0b835401e00decac2a17900034fa1de53b1fc6c5a612d476c8b9"
++    },
++    "staged-diff-check-01": {
++      "staged-diff-check-01.json": "1f7d56539a6615b3a9a1936365843138b86a914ed0780f27706293c5b57ea1fe",
++      "staged-diff-check-01.log": "906f8b1c4ff7c37c4fa667be7b2b67d9515630794f5e316c102764cdff32abe4"
++    },
++    "consumer-05": {
++      "consumer-05.json": "b030c77d75a7e70990d9fc19b60e2bacfc986a0444384ddd3110350316283099",
++      "consumer-05.log": "7450bfb864d224da1902e7ed6ee8556e5fe019b90abbeb834e7ce72e81b02391"
++    },
++    "author-overseer-02": {
++      "author-overseer-02.json": "3fa8c18e62b87eafba2792ea66e680ddc38b46bc8c252f5d38a93e9240b1a354",
++      "author-overseer-02.log": "f6fb665b53c08b72d9a4122c9553a3b0626730c8c478098e59cd727320ef9004"
++    },
++    "author-biped-02": {
++      "author-biped-02.json": "8f15e6fc4df698eb2318ba3f5a2db0d2f467e53ef2b1ece616a5ada05d3f2ee2",
++      "author-biped-02.log": "4a729a4a6c461c4f0a2b2df641cec75d7af71d8c6ba6c8b883ebd63d3d0837a7"
++    },
++    "validate-glbs-constructs-02": {
++      "validate-glbs-constructs-02.json": "0f434e3e7d976d4b987f47911de6b5d425efca2c76e659db21f09ffce411860d",
++      "validate-glbs-constructs-02.log": "e8cefca88746876b0aae03d0f92ebdaa60fae57ff398564e5fd20dd3d896ac3e"
++    },
++    "validate-glbs-constructs": {
++      "validate-glbs-constructs.json": "a41ce08e3d5477e9a2cf913e73677553dad96dcb86f382f82eb4498fb852a0c5",
++      "validate-glbs-constructs.log": "ada33ee814c6c44506c041b7eb3eedf9d9c674000fc0383f79e78553308b5755"
++    },
++    "reference-library-01": {
++      "reference-library-01.json": "03e79feb43bddbb9d7ce3ddc69a7f45d15ce28749d5449482a1be1ad5746b9c4",
++      "reference-library-01.log": "3c38edb0c3d25a6792a08f53d24f9c2a70eef53a17b8d4323c299ed473fbf87d"
++    },
++    "preview-heavy-01": {
++      "preview-heavy-01.json": "b43ff0e828eded384cbd8811630ff43096fa7733cbf490b936ccc65c09153a27",
++      "preview-heavy-01.log": "e4062355c81f47b05dfe9f47fd659ba5104b4204d717b99875bd0337ac881976"
++    },
++    "source-contract-07": {
++      "source-contract-07.json": "5c48f9b1c74b851601dc1cf9c0e493cd136ecf4b233dedcadd6b4dc4f6575276",
++      "source-contract-07.log": "a83190c8c6e611d904e4259359de1623f04794b0a8d6fa1bbb2a4af6eaaa8c50"
++    },
++    "preview-biped-01": {
++      "preview-biped-01.json": "0b907afa552c7967fdcf4d08832869699d0a66a2eb15155dc18f5a41dddf7ab7",
++      "preview-biped-01.log": "0db6c6b26d38e490378b49a58f99d91e1b1149e901e069e9a175e7b8e1359626"
++    },
++    "consumer-02": {
++      "consumer-02.json": "35759d65039becd0e91b894359611a17f0c8f0306eb3b7557f0620ee7cc43d04",
++      "consumer-02.log": "96d7f107612edeee5dd476ee9c79d3f7b062d2f058f19a96059f74d4172a2ee0"
++    },
++    "consumer-03": {
++      "consumer-03.json": "f8562ee6c137bdc7c953eb02a2d95ddf8628a978498639ea23f907bd9e9b3a13",
++      "consumer-03.log": "803d60474b664714c4c6fe3aeeedd8b9a8248a9680fcd9264381436d9ae363c5"
++    },
++    "author-flyer-02": {
++      "author-flyer-02.json": "d5924cc6c2bc6177ad03a689dbc85aeb7a342ab148a1f4a2f17336e5a7c1881c",
++      "author-flyer-02.log": "e5841e7adcae7e2d3323672b817b433da909e875bd53b5ce104b6c6707c8152d"
++    },
++    "export-creatures-01": {
++      "export-creatures-01.json": "c1c78c7e735b174764225b2a86d54f7fa674b7d5389efa35f63502166f00cdd5",
++      "export-creatures-01.log": "722a2812dc60181e29eff24d4714d33d57cd70e426dbb66c320b5d0723172f5b"
++    },
++    "author-small-02": {
++      "author-small-02.json": "77415592a7913a947d897fa1612699f131c011d6f9ee1622cfd57aff8e674d8e",
++      "author-small-02.log": "a217f60ea2f1cfdc7322a2014efd54fcd6f0f5bb7a9727d6db8623f47a674ee8"
++    },
++    "source-contract-06": {
++      "source-contract-06.json": "964f5523d0bafaa8f500168472ecf2330ec8f71166f5149b87f7f46f371ac9f2",
++      "source-contract-06.log": "78caafc62a1b8c85b67561e0185c2bad54003d6877d1856019482046230490c1"
++    },
++    "author-heavy-04": {
++      "author-heavy-04.json": "3610a23f540ee8217c2c00ce87a2f52f8bf74fa149e66c96144e8ef1506042e8",
++      "author-heavy-04.log": "040521f0d07bc8aab0698af911da697bee687792c1460b2274b81507a02cd94b"
++    },
++    "validate-sources-creatures": {
++      "validate-sources-creatures.json": "e3db47751ffbbdf9fdf2f7f563fb105f1423df7cf382c3e565edc29f746c6324",
++      "validate-sources-creatures.log": "293e33690a6e623aedd47072b9d0cde5c8b63558a9db9347400d6f9793f73c73"
++    },
++    "preview-overseer-02": {
++      "preview-overseer-02.json": "955dc1f3f84d08871e75abf848a6b12c67ba215cfda4d58cbb41228b35d5e695",
++      "preview-overseer-02.log": "ea1468d100dea892dcb27cec8d0163a73bace5c31d16d2de2ea53f92455fc69b"
++    },
++    "preview-drone-01": {
++      "preview-drone-01.json": "f388217bcb3ed855d89ca55ae2079bf6e065618e0248a08bd3083f5a7558d373",
++      "preview-drone-01.log": "982604ff65652d3595e6c9920f470548eb02713ec6cba86052fa6d4cf5a55c73"
++    },
++    "validate-heavy-source-01": {
++      "validate-heavy-source-01.json": "bb2de959b593dc743d41a100169c4556e6ee4c3705f5a988e293a12275a36d20",
++      "validate-heavy-source-01.log": "b3c3b7f715b06192531623b9cca06ecc562cefacf19aa49ffa74ea6dc2eb3249"
++    },
++    "source-contract-05": {
++      "source-contract-05.json": "54d4a9961c58fbaf45f83ae70dbb697b46a41c91dc311391893a19e504aff571",
++      "source-contract-05.log": "7b0b7a150af827661c2ecc328d0b36fb154823cce73a4ddf53244cfd66d0a506"
++    },
++    "save-lods-01": {
++      "save-lods-01.json": "8b33608d25862433d478492b032893211e6c0a83e2e84dac23d77f144ace626e",
++      "save-lods-01.log": "1f3d43e56daa0c6ab5a79e344729f7ac2672901247d47efb20a9e972fd418ab8"
++    },
++    "preview-heavy-03": {
++      "preview-heavy-03.json": "54fc676fe694f8cc6c2340022aed6aa572aaba12c84079b64a1c7db42e988c75",
++      "preview-heavy-03.log": "915764eb15c59540dcf803efc22acacb11e6c6b0d5c54a9db6c4207286fe4937"
++    },
++    "validate-sources-constructs": {
++      "validate-sources-constructs.json": "536d375d4068a1e1ed8efa352a884a82a49eb4ed01f2689c521b7ec440dab583",
++      "validate-sources-constructs.log": "ddc9cbb308317f8b42c452e7004d3b657ef68b098140408adb8534156c3b2325"
++    },
++    "preview-overseer-01": {
++      "preview-overseer-01.json": "42e60cd46ea02230606facf10e38d5e01fd24b92b677d7ec9c185bb5ea8aefb6",
++      "preview-overseer-01.log": "cb213493b85674062dd5cefc618da16b500a8ab5d42f45e7c65cfbf8ebff29ff"
++    },
++    "validate-glbs-creatures-02": {
++      "validate-glbs-creatures-02.json": "5650e0cc7ead96210a1600c468e27226b8c697e524a89b7b8d736ed87ac6a731",
++      "validate-glbs-creatures-02.log": "215b62c8c91cb991e70aa62a4b37a284d3629b1f6b1d3e277ccb2e87ea3c1372"
++    },
++    "author-flyer-01": {
++      "author-flyer-01.json": "f6924708a631a5cba2333f0d929f2f2d3264598a23ce4091acf825d202511266",
++      "author-flyer-01.log": "b28b18e4e68cc7bebf04edb2fc176e4931383fc50dea1f6f770aa950d026c700"
++    },
++    "author-small-01": {
++      "author-small-01.json": "75a676147d143459a7434e92fdd7b857765f861280e2b7b21e8176a1d836d0da",
++      "author-small-01.log": "3e5bc58a97cdffdd1cf32fe331e288c47905002e788930fef5502358bcfb8e25"
++    },
++    "export-creatures-02": {
++      "export-creatures-02.json": "c2c005a80323a18f56b34fd94f83694c20a8640dd5e55f17cc4a26be61435f8a",
++      "export-creatures-02.log": "fb1ed3ac8edd411d4f64ccfdb51145cb79d2668cc5c13afcb6c238ac62d5007f"
++    },
++    "export-creatures-03": {
++      "export-creatures-03.json": "7d4607ae3bea43139f43153647f4c46b82b867fc81095c20b3bdfbc5786cab47",
++      "export-creatures-03.log": "457c931f27b51ff141df579f8a9092e9e65eaa195ee338a3109476c919787579"
++    },
++    "validate-sources-creatures-02": {
++      "validate-sources-creatures-02.json": "3bc04a4ffeb3a1f26df1381545e1e71592408f78ed171693e27ce77bfcd7f8e9",
++      "validate-sources-creatures-02.log": "ae72d38402a8dfb7bf8461fbe0ab8093729480756fb18eee59c5cda7573138dd"
++    },
++    "source-contract-08": {
++      "source-contract-08.json": "7019c785a1b95886b0a7829c62c8a3d1372b1ce6920665c3ba36c648564e1726",
++      "source-contract-08.log": "c3f638ccfa6f57a134834aa1a6ce680251156d07e5848e8505d01e04024575e0"
++    },
++    "consumer-01": {
++      "consumer-01.json": "aed5b4cf110bcafb752dfbd3b4a029a8d13cc1069c8757e6ea6018c8ff5e4d24",
++      "consumer-01.log": "b008e6d90e37123dc9f6421bcf5028dd07a07ed63ebfcd212dfc3a9ea135563b"
++    },
++    "snap-lod-attributes-01": {
++      "snap-lod-attributes-01.json": "4431e43804c87c9e7135324ae537dee00898889af6067c9245e9be4a36309b80",
++      "snap-lod-attributes-01.log": "c1e2f0f0fff3810c42f9a5ccf233460d73117441572358cb023d0896ddab99ab"
++    },
++    "preview-heavy-02": {
++      "preview-heavy-02.json": "b1d152b47880c07ad50abd232f8f33a65b21465742ebb7b7cd674ff2b1dd7f5d",
++      "preview-heavy-02.log": "4169e002fdf3652cc5bc29d89dd89789231f6f88e2d55e78c7df38d460564dc1"
++    },
++    "source-contract-04": {
++      "source-contract-04.json": "ac25fd842dc01aadc121f618f1e6e751bfe7b3923f6fc42c1e0e0f07014a8b34",
++      "source-contract-04.log": "aa5fe408f2d3e9446aa3ea3d5659ac71b35b730967771eb4c2568539be431888"
++    },
++    "consumer-06": {
++      "consumer-06.json": "4148f2000af840c30dc439d68bc3eda5dc1f5a60cc56b242136154f4c23ad44e",
++      "consumer-06.log": "7b860d1508a0ed93e59e318d8e559e0948c7fcac42c152cc59f2c80b6cdcc493"
++    },
++    "author-overseer-01": {
++      "author-overseer-01.json": "5140a8a064e582efbef61362b04eb8cead8a699fc1b407e5a5e44c7f42fa51e1",
++      "author-overseer-01.log": "b0243dae7b642c8625244355594b899d3a2d3a49173110764e794a86bc8f08ba"
++    },
++    "author-biped-01": {
++      "author-biped-01.json": "402715554b5f8d42033f174737d44869213ea18e0822f3ebb4abebff0497a154",
++      "author-biped-01.log": "1c0348c0c32a02e4cecbf7771abeb2dc2b2314554b6eae24f9adae5104225950"
++    },
++    "source-contract-03": {
++      "source-contract-03.json": "e85f9f998be7660cd338c98a7fcd85a3f93906cba9865eb9c25c43bcd61413f4",
++      "source-contract-03.log": "5f3a3217050d99da74a08af263005d1e354bcff6e8882fb35b5682fbd709ca6a"
++    },
++    "validate-sources-constructs-02": {
++      "validate-sources-constructs-02.json": "ffc15d57458c1389bf0f747c9b44ba56c488ecd7a7dc5ac969cd90b417e63da0",
++      "validate-sources-constructs-02.log": "b82da81f13475b1558a4d50fe36fa7cea7c7dcfac6ecaa7c1bd88221da0bd156"
++    },
++    "author-heavy-01": {
++      "author-heavy-01.json": "4ff79d19f36a72d951b27bb89e3997add6ed701fb50c065e2cf3008c171e415f",
++      "author-heavy-01.log": "8293973d62fceb57461728a5e4a3317ec8bf6d2dd100c744e42c4dee6a48e200"
++    },
++    "staged-diff-check-02": {
++      "staged-diff-check-02.json": "ecc235d5c7d2b1f0f79d8e844bd5967b7b4a485503ebb3dfa6d14b46a19e3ec1",
++      "staged-diff-check-02.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
++    },
++    "portable-paths-01": {
++      "portable-paths-01.json": "95e20d07214eb951793fb72c2b171f11f8a7f4fc15ef19723bc6a9fca5c3e1d6",
++      "portable-paths-01.log": "ecffe14e6cc95788f3933ee7b8ce357ad084ee9db8849b15d95fb5b56e84d3de"
++    },
++    "probe-lods-01": {
++      "probe-lods-01.json": "07b0f9b4230edbaf6989c756acf5c3f04e5fa1523802ddf886daff9d90db0226",
++      "probe-lods-01.log": "ee72a069c0af29bab8b1c064877fbeee4651ed2da4fa73829db1fc6791737839"
++    },
++    "validate-biped-source-01": {
++      "validate-biped-source-01.json": "2c487ee6a4d7a69110ee0d757c542c91abbdc680efb8c97973185fa28737f72d",
++      "validate-biped-source-01.log": "64243842f0f892724cbd20898fdc1e8e2dfcb8dfbde4e79fb92ad320fec60406"
++    },
++    "source-contract-02": {
++      "source-contract-02.json": "c21638d2a198bf5ad4ea4698cb9f5c52b78dd7d38ff3e03cacda54e2d1ab08f8",
++      "source-contract-02.log": "fddbb3a458cc130cdc3bec870cb7f1117f509fe0b3e4603ce61917c2e252c9f0"
++    },
++    "author-drone-01": {
++      "author-drone-01.json": "fc7f9d4872846359e14ae84bf066f3d19af840f794d3dcc611d515a9911706e2",
++      "author-drone-01.log": "31b24423deaf0234aac7e85e46c6d25a97f995c4d5a58ba5eb729166b713f08b"
++    },
++    "author-grazer-01": {
++      "author-grazer-01.json": "901866030b68f8d129592d717cffd0dd4322f42a6c8f8ec5d696bc9aea70696a",
++      "author-grazer-01.log": "7682735a8921f845519ff396d5b700d75180f8976a5e8760b620543766bdb1ce"
++    },
++    "validate-glbs-creatures": {
++      "validate-glbs-creatures.json": "db30f0a711a9fddc9733712ff7a48504f849ef77b1cd8a3391bd8cb13df46d37",
++      "validate-glbs-creatures.log": "a33ff8e411b6dea09f808c8a431af8df9a103019e0c5e6510eb1c66a3ddd43ed"
++    },
++    "preview-flyer-02": {
++      "preview-flyer-02.json": "d0dcbd6ae07ce41e2b49a881af48b2584897625ee6cf2a40b4ae457d8272af81",
++      "preview-flyer-02.log": "df7147592c4e86ac49122c5830654248fbc04881c8365c18a49213bce45e7789"
++    },
++    "preview-grazer-01": {
++      "preview-grazer-01.json": "636f0668bafbbb3dc717f821d9f2602d36455a5aa7697b7767bf0fcf07fb68ef",
++      "preview-grazer-01.log": "4c5934cbf8ffb95f8c976293f1076f073eeabd06c529a4765f08d9686d9b4d1e"
++    },
++    "preview-small-02": {
++      "preview-small-02.json": "ffe6f3724cf4d1da7bcfeaaf5dc1e6efbe2e29b806ca5364b4564cb4fdb35e14",
++      "preview-small-02.log": "3186342e40ca388a11d663dc4ac4ae4719320ce5c8d274f60647815a0f70678a"
++    },
++    "consumer-07": {
++      "consumer-07.json": "deed9294bd3c28607c69106ede653b469506803881cb5825bdabe3bbd8b9e01d",
++      "consumer-07.log": "1c55f007f5d25e4fc016c3c65524e4d1ecda8a7dcb55bef42463ff25a4accb95"
++    }
++  }
++}
+diff --git a/packages/tools/blender/e08t08/lifecycle_driver.py b/packages/tools/blender/e08t08/lifecycle_driver.py
+new file mode 100644
+index 000000000..d83b0eb9e
+--- /dev/null
++++ b/packages/tools/blender/e08t08/lifecycle_driver.py
+@@ -0,0 +1,133 @@
++"""Fault/barrier instrumentation for the real supervisor, in copied fixtures only."""
++import errno
++import json
++import os
++from pathlib import Path
++import runpy
++import signal
++import subprocess
++import sys
++import time
++sys.dont_write_bytecode = True
++
++script = Path(sys.argv[1])
++folder = Path(sys.argv[2])
++mode = sys.argv[3]
++base = sys.argv[4] == 'base'
++command = sys.argv[5:]
++sys.path.insert(0, str(script.parent))
++
++
++def barrier(name):
++    (folder / name).touch()
++    until = time.monotonic() + 7
++    while not (folder / (name + '-release')).exists():
++        if time.monotonic() > until:
++            raise TimeoutError('test barrier deadline: ' + name)
++        time.sleep(.02)
++
++
++if mode == 'finalize_publication':
++    import finalize
++    original_final_write = finalize.write_json
++    def final_write(path, *args, **kwargs):
++        if path.name == 'PUBLISHED.json':
++            barrier('publishing')
++        return original_final_write(path, *args, **kwargs)
++    finalize.write_json = final_write
++    finalize.main()
++    sys.exit(0)
++
++if base:
++    # Inject at the real OS/persistence boundaries; execute byte-identical base.
++    original_ps = subprocess.check_output
++    original_write = Path.write_text
++    def ps(*args, **kwargs):
++        if args[0][:2] == ['ps', '-axo'] and (folder / 'inject').exists():
++            raise OSError(errno.EIO, 'injected process observation failure')
++        return original_ps(*args, **kwargs)
++    def write(path, *args, **kwargs):
++        if path == script.parent / 'reports' / 'work.json':
++            if mode in ('receipt_failure', 'publication_failure'):
++                raise OSError(errno.EIO, 'injected terminal receipt persistence failure')
++            if mode.startswith('publication_'):
++                barrier('publishing')
++        return original_write(path, *args, **kwargs)
++    if mode in ('exception', 'observation_failure', 'uncertain_cleanup'):
++        subprocess.check_output = ps
++    Path.write_text = write
++    sys.argv = [str(script), 'work', *command]
++    runpy.run_path(str(script), run_name='__main__')
++else:
++    import stage
++    import stage_ownership
++    import stage_processes
++    original_progress = stage.progress
++    original_snapshot = stage_processes.snapshot
++    original_publish = stage.publish_terminal
++    original_write = stage.write_json
++    original_settle = stage.settle
++    original_journal_write = stage_ownership.write_json
++    original_sync = stage_ownership.sync_directory
++    def obstruct(path):
++        path.mkdir()
++        (path / 'obstruction.txt').write_text('Exclusive fixture: reject real atomic publication.\n')
++    def progress(directory, owned):
++        original_progress(directory, owned)
++        if mode == 'exception' and (folder / 'inject').exists():
++            raise RuntimeError('injected exception after ownership acquisition')
++        if mode == 'waiter_loss' and (folder / 'inject').exists():
++            os.kill(owned.child.pid, signal.SIGKILL)
++            os.waitpid(owned.child.pid, 0)  # Real competing reap, not a fake handle.
++    def snapshot():
++        if mode == 'observation_failure' and (folder / 'inject').exists():
++            raise OSError(errno.EIO, 'injected process observation failure')
++        return original_snapshot()
++    def publish(directory, record, cancellation):
++        if mode == 'publication_before':
++            barrier('publishing')
++        return original_publish(directory, record, cancellation)
++    def write(path, value, **kwargs):
++        if path == stage.REPORTS / 'work.json':
++            if mode == 'receipt_failure':
++                obstruct(path)
++            if mode in ('publication_during', 'publication_failure'):
++                barrier('publishing')
++        return original_write(path, value, **kwargs)
++    def settle(*args):
++        if mode in ('seal_failure', 'publication_failure'):
++            obstruct(args[0] / 'settled.json')
++        result = original_settle(*args)
++        if mode == 'publication_after':
++            barrier('publishing')
++        return result
++    def journal_write(path, *args, **kwargs):
++        if mode == 'admission_failure' and path.name == 'admitted.json':
++            obstruct(path)
++        return original_journal_write(path, *args, **kwargs)
++    def sync(path):
++        if mode == 'seal_sync_failure' and (path / 'settled.json').is_file():
++            # Real syscall failure after the link is visible. No synthetic receipt.
++            os.fsync(-1)
++        return original_sync(path)
++    if mode == 'uncertain_cleanup':
++        def refuse_signal(*args):
++            raise PermissionError(errno.EPERM, 'injected termination refusal')
++        stage_processes.OwnedProcesses.signal_all = refuse_signal
++    if mode == 'watch_failure':
++        def fail_watch(child):
++            (folder / 'watch-child.json').write_text(json.dumps({'pid': child.pid}))
++            until = time.monotonic() + 3
++            while not (folder / 'command-ran').exists():
++                if time.monotonic() > until: raise TimeoutError('child startup')
++                time.sleep(.02)
++            raise RuntimeError('injected watch acquisition failure after Popen')
++        stage.OwnedProcesses = fail_watch
++    stage.progress = progress
++    stage_processes.snapshot = snapshot
++    stage.publish_terminal = publish
++    stage.write_json = write
++    stage.settle = settle
++    stage_ownership.write_json = journal_write
++    stage_ownership.sync_directory = sync
++    sys.exit(stage.main(['work', *command]))
+diff --git a/packages/tools/blender/e08t08/lifecycle_worker.py b/packages/tools/blender/e08t08/lifecycle_worker.py
+new file mode 100644
+index 000000000..75da44cc1
+--- /dev/null
++++ b/packages/tools/blender/e08t08/lifecycle_worker.py
+@@ -0,0 +1,25 @@
++"""Harmless finite process fixture; no art, network, or dependency imports."""
++import json
++import os
++from pathlib import Path
++import signal
++import subprocess
++import sys
++import time
++
++folder = Path(sys.argv[1])
++role = sys.argv[2]
++if role == 'leaf':
++    signal.signal(signal.SIGTERM, lambda *_: (folder / 'leaf-term').touch())
++    (folder / 'leaf.json').write_text(json.dumps(dict(pid=os.getpid(), pgid=os.getpgrp())))
++    deadline = time.monotonic() + 20
++    while time.monotonic() < deadline:
++        time.sleep(.03)
++else:
++    leaf = subprocess.Popen([sys.executable, __file__, str(folder), 'leaf'], start_new_session=True)
++    (folder / 'worker.json').write_text(json.dumps(dict(pid=os.getpid(), leaf=leaf.pid)))
++    deadline = time.monotonic() + 20
++    while time.monotonic() < deadline:
++        if (folder / 'leader-exit').exists():
++            sys.exit(0)
++        time.sleep(.03)
+diff --git a/packages/tools/blender/e08t08/stage.py b/packages/tools/blender/e08t08/stage.py
+index a88984a45..fec38265a 100644
+--- a/packages/tools/blender/e08t08/stage.py
++++ b/packages/tools/blender/e08t08/stage.py
+@@ -1,101 +1,259 @@
+-"""One bounded CPU lane; preserve output and prove terminal/reap state."""
+-import fcntl
++"""One bounded CPU lane, retained until ownership and terminal publication settle."""
+ import hashlib
+ import json
+ import os
+ from pathlib import Path
++import re
+ import signal
+ import subprocess
+ import sys
+ import time
++import traceback
++sys.dont_write_bytecode = True
++
++from stage_ownership import admit, lane_lock, settle, write_json
++from stage_processes import OwnedProcesses
+ 
+ HERE = Path(__file__).resolve().parent
+ ROOT = HERE.parents[3]
+ REPORTS = HERE / 'reports'
+ GIB = 1024 ** 3
++POLL = .1
++TERM_GRACE = 2
++KILL_GRACE = 2
++CANCEL_SIGNALS = {signal.SIGTERM, signal.SIGINT}
++
+ 
+ def free():
+     s = os.statvfs(ROOT)
+     return s.f_bavail * s.f_frsize
+ 
++
+ def payload():
+     paths = [HERE, ROOT / 'assets/blend/creatures', ROOT / 'assets/blend/constructs',
+              ROOT / 'packages/client/public/models/creatures', ROOT / 'packages/client/public/models/constructs',
+              ROOT / 'assets/renders/creatures/e08t08', ROOT / 'assets/renders/constructs/e08t08']
+     return sum(p.stat().st_size for path in paths for p in path.rglob('*') if p.is_file() and not p.is_symlink())
+ 
+-def sources():
++
++def hashes(folder, extension):
+     return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+-            for family in ('creatures', 'constructs') for p in (ROOT / 'assets/blend' / family).glob('*.blend')}
++            for family in ('creatures', 'constructs') for p in (ROOT / folder / family).glob('*.' + extension)}
++
++
++def sources():
++    return hashes('assets/blend', 'blend')
++
+ 
+ def exports():
+-    return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+-            for family in ('creatures', 'constructs') for p in (ROOT / 'packages/client/public/models' / family).glob('*.glb')}
+-
+-def group(pgid, known=None):
+-    rows = subprocess.check_output(['ps', '-axo', 'pid=,ppid=,pgid=,rss=,comm='], text=True)
+-    all_rows = []
+-    for line in rows.splitlines():
+-        a = line.split(None, 4)
+-        if len(a) == 5:
+-            all_rows.append(dict(pid=int(a[0]), ppid=int(a[1]), pgid=int(a[2]), rss=int(a[3]) * 1024, command=a[4]))
+-    ids={pgid}
+-    # pnpm starts its script in another process group. Follow parentage as well
+-    # as the initial group, and retain observed children if they are reparented.
+-    for p in all_rows:
+-        if p['pgid']==pgid or (known or {}).get(p['pid'])==p['command']: ids.add(p['pid'])
+-    while True:
+-        added={p['pid'] for p in all_rows if p['ppid'] in ids}-ids
+-        if not added: break
+-        ids.update(added)
+-    return [p for p in all_rows if p['pid'] in ids]
+-
+-name, *cmd = sys.argv[1:]
+-assert cmd and '/' not in name
+-REPORTS.mkdir(exist_ok=True)
+-with (REPORTS / 'lane.lock').open('a') as lock:
+-    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+-    record = dict(stage=name, cwd=str(ROOT), command=cmd, beforeFree=free(), beforePayload=payload(),
+-                  beforeSources=sources(), beforeExports=exports(), start=time.time(), samples=[], limitSeconds=2700)
+-    assert record['beforeFree'] >= 12 * GIB, record['beforeFree']
+-    assert record['beforePayload'] < 6 * GIB
+-    env = dict(os.environ, BLENDER=str(HERE / 'bin/blender'), KTX=str(HERE / 'bin/ktx'),
+-               ART_KTX_JOBS='1', ART_RAW='1', PYTHONUNBUFFERED='1', PYTHONDONTWRITEBYTECODE='1',
+-               OMP_NUM_THREADS='2', OPENBLAS_NUM_THREADS='2', MKL_NUM_THREADS='2',
+-               VECLIB_MAXIMUM_THREADS='2', NUMEXPR_NUM_THREADS='2', BLIS_NUM_THREADS='2')
+-    with (REPORTS / f'{name}.log').open('x') as log:
+-        child = subprocess.Popen(cmd, cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT,
+-                                 start_new_session=True)
+-        record['pid'] = child.pid
+-        known={}
+-        reason = None
+-        while child.poll() is None:
+-            owned = group(child.pid,known)
+-            known.update({p['pid']:p['command'] for p in owned})
+-            sample = dict(time=time.time(), rss=sum(p['rss'] for p in owned), free=free(), processes=owned)
+-            record['samples'].append(sample)
+-            if sample['rss'] > 8 * GIB: reason = 'aggregate RSS exceeded 8 GiB'
+-            if sample['free'] < 12 * GIB: reason = 'free capacity fell below 12 GiB'
+-            if sample['time'] - record['start'] > 2700: reason = '45 minute wall bound'
+-            if len(record['samples']) % 10 == 0 and payload() > 6 * GIB: reason = '6 GiB payload bound'
+-            if reason:
+-                os.killpg(child.pid, signal.SIGTERM)
+-                for p in owned:
+-                    try: os.kill(p['pid'],signal.SIGTERM)
+-                    except ProcessLookupError: pass
+-                try: child.wait(timeout=10)
+-                except subprocess.TimeoutExpired:
+-                    os.killpg(child.pid, signal.SIGKILL)
+-                    for p in group(child.pid,known):
+-                        try: os.kill(p['pid'],signal.SIGKILL)
+-                        except ProcessLookupError: pass
+-                break
+-            time.sleep(.5)
+-        record['exit'] = child.wait()
+-    record.update(end=time.time(), afterFree=free(), afterPayload=payload(), afterSources=sources(), afterExports=exports(),
+-                  remainingProcesses=group(child.pid,known), stopReason=reason, sampling='process group and descendant closure')
+-    record['maxRSS'] = max((s['rss'] for s in record['samples']), default=0)
+-    (REPORTS / f'{name}.json').write_text(json.dumps(record, indent=2) + '\n')
+-    print(json.dumps({k:v for k,v in record.items() if k not in ('samples', 'beforeSources', 'afterSources', 'beforeExports', 'afterExports')}))
+-    print('\n'.join((REPORTS / f'{name}.log').read_text(errors='replace').splitlines()[-20 if record['exit'] else -3:]))
+-    sys.exit(record['exit'] or (1 if reason or record['remainingProcesses'] else 0))
++    return hashes('packages/client/public/models', 'glb')
++
++
++class Cancellation:
++    def __init__(self):
++        self.signals = []
++        self.committed = False
++
++    def receive(self, signum, _frame):
++        # Never unwind Popen, drain, or a persistence operation asynchronously.
++        if not self.committed:
++            self.signals.append(signum)
++
++
++def progress(directory, owned):
++    write_json(directory / 'owner.json', owned.evidence(), replace=True)
++
++
++def drain(owned, record):
++    """Bounded cleanup, independent of resource sampling or result hashing."""
++    deadline = time.monotonic() + TERM_GRACE + KILL_GRACE
++    kill_at = time.monotonic() + TERM_GRACE
++    verified = not record['observationUncertain']
++    while time.monotonic() < deadline:
++        try:
++            owned.observe()
++        except BaseException as error:
++            verified = False
++            record['errors'].append('cleanup observation: ' + repr(error))
++        try:
++            if owned.all_exited():
++                # Observed group/descendants are gone; only now reap the leader.
++                record['exit'] = owned.child.wait(timeout=.2)
++                record['directChildReaped'] = True
++                record['remainingProcesses'] = []
++                return verified
++        except BaseException as error:
++            verified = False
++            record['errors'].append('cleanup ownership: ' + repr(error))
++        try:
++            owned.signal_all(signal.SIGKILL if time.monotonic() >= kill_at else signal.SIGTERM)
++        except BaseException as error:
++            verified = False
++            record['errors'].append('cleanup signal: ' + repr(error))
++        time.sleep(POLL)
++    # Keep the ledger charged even if an OS/process observation cannot settle.
++    try:
++        if not owned.waiter_lost:
++            record['exit'] = owned.child.wait(timeout=.2)
++            record['directChildReaped'] = True
++    except subprocess.TimeoutExpired:
++        pass
++    record['remainingProcesses'] = owned.last
++    return False
++
++
++def publish_terminal(directory, record, cancellation):
++    """Cleanup is already terminal. Completion linearizes at this masked decision.
++
++    Signals observed before this decision cancel. Signals during the short local
++    persistence transaction are deferred; a successfully sealed completion wins.
++    A crash or write/fsync failure leaves the durable admission unresolved.
++    """
++    previous = signal.pthread_sigmask(signal.SIG_BLOCK, CANCEL_SIGNALS)
++    try:
++        pending = signal.sigpending() & CANCEL_SIGNALS
++        record['cancelSignals'] = sorted(set(cancellation.signals) | {int(s) for s in pending})
++        if record['cleanup'] != 'verified':
++            record['outcome'] = 'uncertain'
++        elif record['cancelSignals']:
++            record['outcome'] = 'cancelled'
++        elif record['exit'] != 0 or record['errors'] or record['stopReason']:
++            record['outcome'] = 'failed'
++        else:
++            record['outcome'] = 'success'
++        receipt = REPORTS / (record['stage'] + '.json')
++        write_json(receipt, record)
++        if record['cleanup'] == 'verified':
++            settle(directory, receipt, record['runId'])
++            cancellation.committed = True
++        return record['outcome'] == 'success'
++    finally:
++        signal.pthread_sigmask(signal.SIG_SETMASK, previous)
++
++
++def run(name, cmd, cancellation):
++    with lane_lock(REPORTS):
++        before_free, before_payload = free(), payload()
++        if before_free < 12 * GIB or before_payload >= 6 * GIB:
++            raise RuntimeError('resource admission refused before dispatch')
++        directory, admission = admit(REPORTS, name, cmd)
++        record = dict(**admission, cwd=str(ROOT), beforeFree=before_free, beforePayload=before_payload,
++                      start=time.time(), samples=[], limitSeconds=2700, errors=[], cancelSignals=[],
++                      stopReason=None, exit=None, directChildReaped=False, cleanup='unknown',
++                      remainingProcesses=[], observationUncertain=False,
++                      sampling='process group and instance-watched descendant closure')
++        child = None
++        owned = None
++        dispatch_attempted = False
++        result = False
++        try:
++            record.update(beforeSources=sources(), beforeExports=exports())
++            env = dict(os.environ, BLENDER=str(HERE / 'bin/blender'), KTX=str(HERE / 'bin/ktx'),
++                       ART_KTX_JOBS='1', ART_RAW='1', PYTHONUNBUFFERED='1', PYTHONDONTWRITEBYTECODE='1',
++                       OMP_NUM_THREADS='2', OPENBLAS_NUM_THREADS='2', MKL_NUM_THREADS='2',
++                       VECLIB_MAXIMUM_THREADS='2', NUMEXPR_NUM_THREADS='2', BLIS_NUM_THREADS='2')
++            with (REPORTS / f'{name}.log').open('x') as log:
++                if not cancellation.signals:
++                    # The durable admission exists before this potentially ambiguous call.
++                    dispatch_attempted = True
++                    child = subprocess.Popen(cmd, cwd=ROOT, env=env, stdout=log,
++                                             stderr=subprocess.STDOUT, start_new_session=True)
++                    record['pid'] = child.pid
++                    owned = OwnedProcesses(child)
++                    progress(directory, owned)
++                    while not cancellation.signals:
++                        try:
++                            rows = owned.observe()
++                        except BaseException:
++                            record['observationUncertain'] = True
++                            raise
++                        progress(directory, owned)
++                        sample = dict(time=time.time(), rss=sum(p['rss'] for p in rows),
++                                      free=free(), processes=rows)
++                        record['samples'].append(sample)
++                        if sample['rss'] > 8 * GIB: record['stopReason'] = 'aggregate RSS exceeded 8 GiB'
++                        if sample['free'] < 12 * GIB: record['stopReason'] = 'free capacity fell below 12 GiB'
++                        if sample['time'] - record['start'] > 2700: record['stopReason'] = '45 minute wall bound'
++                        if len(record['samples']) % 50 == 0 and payload() > 6 * GIB:
++                            record['stopReason'] = '6 GiB payload bound'
++                        if owned.leader_exited() and not owned.all_exited():
++                            record['stopReason'] = 'leader exited with live descendants'
++                        if record['stopReason'] or owned.leader_exited():
++                            break
++                        time.sleep(POLL)
++        except BaseException as error:
++            record['errors'].append(repr(error))
++            traceback.print_exc()
++        finally:
++            try:
++                if owned is not None:
++                    if drain(owned, record):
++                        record['cleanup'] = 'verified'
++                    record['ownership'] = owned.evidence()
++                elif child is not None:
++                    # Popen returned a real handle, even if watcher setup failed.
++                    # Preserve and drain that child; unknown descendants keep admission closed.
++                    record['observationUncertain'] = True
++                    try:
++                        os.killpg(child.pid, signal.SIGKILL)
++                    except ProcessLookupError:
++                        pass
++                    except OSError as error:
++                        record['errors'].append('direct-child termination: ' + repr(error))
++                    record['exit'] = child.wait(timeout=KILL_GRACE)
++                    record['directChildReaped'] = True
++                elif not dispatch_attempted:
++                    record['cleanup'] = 'verified'
++                    record['directChildReaped'] = True  # Proven no child dispatched.
++            except BaseException as error:
++                record['cleanup'] = 'unknown'
++                record['errors'].append('cleanup exception: ' + repr(error))
++            finally:
++                if owned is not None:
++                    try:
++                        owned.close()
++                    except BaseException as error:
++                        record['errors'].append('process watch close: ' + repr(error))
++            # Independent finally publication still runs if cleanup/observation failed.
++            record.update(end=time.time(), maxRSS=max((s['rss'] for s in record['samples']), default=0))
++            for key, get in [('afterFree', free), ('afterPayload', payload),
++                             ('afterSources', sources), ('afterExports', exports)]:
++                try:
++                    record[key] = get()
++                except BaseException as error:
++                    record['errors'].append(key + ': ' + repr(error))
++            try:
++                result = publish_terminal(directory, record, cancellation)
++            except BaseException as error:
++                record['outcome'] = 'publication-failed'
++                record['cancelSignals'] = sorted(set(cancellation.signals))
++                record['errors'].append('terminal publication failed: ' + repr(error))
++                # Never clear/reconstruct admission when terminal persistence is uncertain.
++                try:
++                    write_json(directory / 'publication-failure.json', record)
++                except BaseException:
++                    traceback.print_exc()
++                print(json.dumps(record), file=sys.stderr)
++        print(json.dumps({k: record.get(k) for k in (
++            'stage', 'runId', 'outcome', 'exit', 'cleanup', 'errors', 'cancelSignals', 'maxRSS')}))
++        return 0 if result else 1
++
++
++def main(argv=None):
++    args = sys.argv[1:] if argv is None else argv
++    if len(args) < 2 or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*', args[0]):
++        raise ValueError('usage: stage.py <unique-stage-name> <command...>')
++    cancellation = Cancellation()
++    # This is a process entry point. Retain handlers through interpreter exit so
++    # a deferred signal cannot turn a sealed completion into a late -SIGTERM.
++    for sig in CANCEL_SIGNALS:
++        signal.signal(sig, cancellation.receive)
++    try:
++        return run(args[0], args[1:], cancellation)
++    except BaseException:
++        traceback.print_exc()
++        return 1
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+diff --git a/packages/tools/blender/e08t08/stage_lifecycle_test.py b/packages/tools/blender/e08t08/stage_lifecycle_test.py
+new file mode 100644
+index 000000000..622d191a5
+--- /dev/null
++++ b/packages/tools/blender/e08t08/stage_lifecycle_test.py
+@@ -0,0 +1,284 @@
++"""Serial actual-process regression matrix. Creates exclusive, preserved fixtures.
++
++Only finite Python workers (at most a leader and one sleeping detached leaf).
++The full finalize.py caller runs on copies of historical receipts and read-only
++asset symlinks. No art execution or dependency import/install is performed.
++"""
++import argparse
++import hashlib
++import json
++import os
++from pathlib import Path
++import shutil
++import signal
++import subprocess
++import sys
++import time
++sys.dont_write_bytecode = True
++
++HERE = Path(__file__).resolve().parent
++ROOT = HERE.parents[3]
++BASE = 'f9294a466d6223f695f102dc1a13ed526f155e67'
++ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', OMP_NUM_THREADS='1',
++           OPENBLAS_NUM_THREADS='1', VECLIB_MAXIMUM_THREADS='1')
++
++
++def save(path, value):
++    with path.open('x') as out:
++        json.dump(value, out, indent=2)
++        out.write('\n')
++
++
++def wait_for(predicate, seconds=7):
++    end = time.monotonic() + seconds
++    while time.monotonic() < end:
++        result = predicate()
++        if result:
++            return result
++        time.sleep(.02)
++    raise TimeoutError('fixture barrier did not settle')
++
++
++def process(pid):
++    p = subprocess.run(['ps', '-p', str(pid), '-o', 'pid=,ppid=,pgid=,stat=,args='],
++                       capture_output=True, text=True, timeout=2)
++    return p.stdout.strip()
++
++
++def fixture(parent, name, base):
++    folder = parent / name
++    folder.mkdir()
++    root = folder / 'root'
++    task = root / 'packages/tools/blender/e08t08'
++    (task / 'reports').mkdir(parents=True)
++    for name in ['stage.py', 'finalize.py', 'stage_ownership.py', 'stage_processes.py', 'legacy-stages.json']:
++        if base and name in ('stage.py', 'finalize.py'):
++            data = subprocess.check_output(['git', 'show', BASE + ':packages/tools/blender/e08t08/' + name], cwd=ROOT)
++            (task / name).write_bytes(data)
++        else:
++            shutil.copyfile(HERE / name, task / name)
++    legacy = json.loads((HERE / 'legacy-stages.json').read_text())['stages']
++    for files in legacy.values():
++        for name, digest in files.items():
++            src = HERE / 'reports' / name
++            assert hashlib.sha256(src.read_bytes()).hexdigest() == digest
++            shutil.copyfile(src, task / 'reports' / name)
++    save(folder / 'tool-pins.json', {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
++                                  for p in task.iterdir() if p.is_file()})
++    return folder, root, task
++
++
++def call(folder, label, command, cwd=None):
++    start = time.time()
++    with (folder / (label + '.log')).open('x') as output:
++        p = subprocess.run(command, cwd=cwd, env=ENV, stdout=output, stderr=subprocess.STDOUT, timeout=15)
++    result = dict(command=command, cwd=str(cwd or ROOT), start=start, end=time.time(), exit=p.returncode)
++    save(folder / (label + '.receipt.json'), result)
++    return p.returncode
++
++
++def seed_finalizer(root, task):
++    if not (root / 'assets').exists():
++        (root / 'assets').symlink_to(ROOT / 'assets', target_is_directory=True)
++        (root / 'packages/client/public').mkdir(parents=True)
++        (root / 'packages/client/public/models').symlink_to(ROOT / 'packages/client/public/models', target_is_directory=True)
++        (root / 'pnpm-lock.yaml').symlink_to(ROOT / 'pnpm-lock.yaml')
++        for path in ['node_modules', 'packages/client/node_modules', 'packages/tools/node_modules']:
++            (root / path).symlink_to(ROOT / path, target_is_directory=True)
++        for name in ['source-contract.json', 'consumer-contract.json', 'codec.jsonl']:
++            shutil.copyfile(HERE / 'reports' / name, task / 'reports' / name)
++        shutil.copytree(HERE / 'reports/validate-final', task / 'reports/validate-final')
++
++
++def finalize_fixture(folder, root, task, label):
++    seed_finalizer(root, task)
++    return call(folder, label, [sys.executable, str(task / 'finalize.py')], root)
++
++
++def finalizer_cancellation(parent, mode):
++    folder, root, task = fixture(parent, mode, False)
++    result = dict(mode=mode, assertions={}, workerPIDs=[], start=time.time())
++    child = None
++    try:
++        assert call(folder, 'successful-stage', [sys.executable, str(task / 'stage.py'), 'work', sys.executable, '-c', 'pass'], root) == 0
++        seed_finalizer(root, task)
++        command = [sys.executable, str(HERE / 'lifecycle_driver.py'), str(task / 'finalize.py'),
++                   str(folder), 'finalize_publication', 'candidate']
++        result['command'] = command
++        with (folder / 'cancelled-finalizer.log').open('x') as log:
++            child = subprocess.Popen(command, cwd=root, env=ENV, stdout=log, stderr=subprocess.STDOUT)
++            wait_for(lambda: (folder / 'publishing').exists())
++            child.send_signal(signal.SIGINT if mode.endswith('sigint') else signal.SIGTERM)
++            result['exit'] = child.wait(timeout=3)
++        outputs = task / 'reports/finalized'
++        partials = {str(p.relative_to(outputs)): hashlib.sha256(p.read_bytes()).hexdigest()
++                    for p in outputs.glob('*/*') if p.is_file()}
++        result['partialFiles'] = partials
++        result['assertions']['interrupted actual finalizer cannot publish'] = result['exit'] != 0 and bool(partials) and not list(outputs.glob('*/PUBLISHED.json'))
++        result['retryExit'] = finalize_fixture(folder, root, task, 'finalizer-retry')
++        result['assertions']['retry publishes a new generation'] = result['retryExit'] == 0 and len(list(outputs.glob('*/PUBLISHED.json'))) == 1
++        result['assertions']['partial evidence preserved'] = all(hashlib.sha256((outputs/p).read_bytes()).hexdigest() == h for p,h in partials.items())
++    except BaseException as error:
++        result['harnessError'] = repr(error)
++        result['assertions']['harness completed'] = False
++    finally:
++        if child and child.poll() is None:
++            child.kill(); child.wait(timeout=3)
++        result.update(end=time.time(), cleanupRemaining=[], passed=all(result['assertions'].values()))
++        save(folder / 'result.json', result)
++    print(json.dumps({k:result[k] for k in ('mode','passed','assertions')}), flush=True)
++    return result
++
++
++def exercise(parent, mode, base):
++    if mode.startswith('finalizer_'):
++        return finalizer_cancellation(parent, mode)
++    folder, root, task = fixture(parent, mode, base)
++    busy = mode in ('sigterm', 'sigint', 'exception', 'observation_failure', 'leader_loss',
++                    'leader_zero', 'supervisor_loss', 'uncertain_cleanup', 'waiter_loss')
++    unknown = mode in ('observation_failure', 'uncertain_cleanup', 'supervisor_loss',
++                      'receipt_failure', 'seal_failure', 'seal_sync_failure', 'publication_failure', 'admission_failure', 'watch_failure', 'waiter_loss')
++    finite = f"from pathlib import Path; Path({str(folder / 'command-ran')!r}).touch(); "
++    finite += 'raise SystemExit(7)' if mode == 'failed' else 'import time; time.sleep(10)' if mode == 'watch_failure' else 'print("finite success")'
++    cmd = ([sys.executable, str(HERE / 'lifecycle_worker.py'), str(folder), 'leader'] if busy else
++           [sys.executable, '-c', finite])
++    command = [sys.executable, str(HERE / 'lifecycle_driver.py'), str(task / 'stage.py'),
++               str(folder), mode, 'base' if base else 'candidate', *cmd]
++    result = dict(mode=mode, base=base, command=command, start=time.time(), assertions={}, workerPIDs=[])
++    wrapper = None
++    def check(name, ok):
++        result['assertions'][name] = bool(ok)
++    try:
++        with (folder / 'supervisor.log').open('x') as log:
++            wrapper = subprocess.Popen(command, cwd=root, env=ENV, stdout=log, stderr=subprocess.STDOUT)
++            result['supervisorPID'] = wrapper.pid
++            if busy:
++                wait_for(lambda: (folder / 'leaf.json').exists())
++                worker = json.loads((folder / 'worker.json').read_text())
++                result['workerPIDs'] = [worker['pid'], worker['leaf']]
++                if not base:
++                    owner = task / 'reports/runs/work/owner.json'
++                    def observed():
++                        if not owner.exists(): return False
++                        return any(w['pid'] == worker['leaf'] for w in json.loads(owner.read_text())['knownDescendants'])
++                    wait_for(observed)
++                else:
++                    # Exact old stage samples every .5 seconds; allow it one observation
++                    # before forcing leader loss. The regression still uses real PIDs.
++                    time.sleep(.6)
++                result['beforeAction'] = [process(pid) for pid in result['workerPIDs']]
++                if mode == 'leader_loss':
++                    os.kill(worker['pid'], signal.SIGKILL)
++                elif mode == 'leader_zero':
++                    (folder / 'leader-exit').touch()
++                elif mode in ('exception', 'observation_failure', 'waiter_loss') or (base and mode == 'uncertain_cleanup'):
++                    (folder / 'inject').touch()
++                else:
++                    wrapper.send_signal(signal.SIGINT if mode == 'sigint' else
++                                        signal.SIGKILL if mode == 'supervisor_loss' else signal.SIGTERM)
++                if not base and mode not in ('supervisor_loss', 'uncertain_cleanup'):
++                    wait_for(lambda: (folder / 'leaf-term').exists())
++                else:
++                    time.sleep(.1)
++                result['leafDuringRetry'] = process(worker['leaf'])
++                retry = [sys.executable, str(task / 'stage.py'), 'overlap', sys.executable, '-c', 'pass']
++                result['retryWhileOwned'] = call(folder, 'retry-while-owned', retry, root)
++                check('retry rejected while descendant alive', result['retryWhileOwned'] != 0 and bool(result['leafDuringRetry']))
++                if not base:
++                    early = finalize_fixture(folder, root, task, 'finalize-active')
++                    check('actual finalizer rejects active/uncertain ownership', early != 0)
++            if mode.startswith('publication_'):
++                wait_for(lambda: (folder / 'publishing').exists())
++                wrapper.send_signal(signal.SIGTERM)
++                retry = [sys.executable, str(task / 'stage.py'), 'during_publication', sys.executable, '-c', 'pass']
++                result['retryDuringPublication'] = call(folder, 'retry-publication', retry, root)
++                check('publication retains admission', result['retryDuringPublication'] != 0)
++                (folder / 'publishing-release').touch()
++            result['supervisorExit'] = wrapper.wait(timeout=9)
++        if mode == 'watch_failure' and (folder / 'watch-child.json').exists():
++            result['workerPIDs'] = [json.loads((folder / 'watch-child.json').read_text())['pid']]
++            check('Popen handle survives watcher exception', not process(result['workerPIDs'][0]))
++        if mode == 'admission_failure':
++            check('no dispatch before durable admission', not (folder / 'command-ran').exists())
++        result['workersAfterSupervisorExit'] = [process(pid) for pid in result['workerPIDs']]
++        receipt = task / 'reports/work.json'
++        result['terminal'] = json.loads(receipt.read_text()) if receipt.is_file() else None
++        check('terminal or durable unfinished admission exists', receipt.is_file() or (task / 'reports/runs/work').exists())
++        outcome = result['terminal'].get('outcome') if result['terminal'] else None
++        success = mode in ('valid', 'publication_during', 'publication_after')
++        check('supervisor outcome', result['supervisorExit'] == 0 if success else result['supervisorExit'] != 0)
++        if result['terminal']:
++            if mode in ('seal_failure', 'seal_sync_failure', 'publication_failure'):
++                failure = task / 'reports/runs/work/publication-failure.json'
++                check('unsealed proposal cannot count as completion',
++                      (not (task / 'reports/runs/work/settled.json').is_file()
++                       or bool(list((task / 'reports/runs/work').glob('settled.json.*.pending'))))
++                      and failure.exists() and json.loads(failure.read_text())['outcome'] == 'publication-failed')
++            else:
++                check('explicit outcome', outcome == ('success' if success else
++                      'uncertain' if mode in ('observation_failure', 'uncertain_cleanup', 'watch_failure', 'waiter_loss') else
++                      'cancelled' if mode in ('sigterm', 'sigint', 'publication_before') else 'failed'))
++        if not unknown:
++            check('cleanup terminal', bool(result['terminal']) and result['terminal'].get('cleanup') == 'verified')
++            check('direct child reaped', bool(result['terminal']) and result['terminal'].get('directChildReaped') is True)
++            check('no surviving fixture worker', all(not process(pid) for pid in result['workerPIDs']))
++        if mode == 'waiter_loss':
++            check('known descendants drained despite lost direct waiter', all(not process(pid) for pid in result['workerPIDs']))
++            check('lost waiter does not synthesize exit zero', result['terminal']['exit'] is None and not result['terminal']['directChildReaped'])
++        result['finalizeExit'] = finalize_fixture(folder, root, task, 'finalize-terminal')
++        check('actual finalizer outcome', result['finalizeExit'] == 0 if success else result['finalizeExit'] != 0)
++        published = list((task / 'reports/finalized').glob('*/PUBLISHED.json'))
++        check('no failed/incomplete promotion', bool(published) if success else not published and not (task / 'C2-report.txt').exists())
++        retry = [sys.executable, str(task / 'stage.py'), 'retry', sys.executable, '-c', 'pass']
++        result['retryAfterExit'] = call(folder, 'retry-after-exit', retry, root)
++        result['workersDuringRetryAfterExit'] = [process(pid) for pid in result['workerPIDs']]
++        check('admission after settlement only', result['retryAfterExit'] != 0 if unknown else result['retryAfterExit'] == 0)
++        if not base and not success and result['retryAfterExit'] == 0:
++            check('successful retry does not erase failed admission',
++                  finalize_fixture(folder, root, task, 'finalize-after-retry') != 0)
++    except BaseException as error:
++        result['harnessError'] = repr(error)
++        check('harness completed', False)
++    finally:
++        if wrapper and wrapper.poll() is None:
++            wrapper.kill()
++            wrapper.wait(timeout=3)
++        # Failure cleanup is outside the system under test and never manufactures
++        # its settlement record. Identity includes this exclusive fixture path.
++        for pid in result['workerPIDs']:
++            row = process(pid)
++            if row and str(folder) in row:
++                try: os.kill(pid, signal.SIGKILL)
++                except ProcessLookupError: pass
++        wait_for(lambda: all(not process(pid) for pid in result['workerPIDs']), 4)
++        result['cleanupRemaining'] = [process(pid) for pid in result['workerPIDs']]
++        if not base and unknown:
++            retry = [sys.executable, str(task / 'stage.py'), 'after_manual_cleanup', sys.executable, '-c', 'pass']
++            check('uncertainty survives manual fixture cleanup', call(folder, 'retry-after-manual-cleanup', retry, root) != 0)
++            check('finalizer still rejects unresolved ownership', finalize_fixture(folder, root, task, 'finalize-after-manual-cleanup') != 0)
++        result['end'] = time.time()
++        result['passed'] = all(result['assertions'].values())
++        save(folder / 'result.json', result)
++    print(json.dumps({k: result[k] for k in ('mode', 'passed', 'assertions')}), flush=True)
++    return result
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--evidence', type=Path, required=True)
++    parser.add_argument('--base', action='store_true')
++    parser.add_argument('--cases', default='valid,sigterm,sigint,exception,observation_failure,leader_loss,leader_zero,waiter_loss,uncertain_cleanup,supervisor_loss,failed,receipt_failure,seal_failure,seal_sync_failure,admission_failure,watch_failure,publication_before,publication_during,publication_after,publication_failure,finalizer_sigterm,finalizer_sigint')
++    args = parser.parse_args()
++    args.evidence.mkdir(parents=True, exist_ok=False)
++    inputs = args.evidence / 'inputs'
++    inputs.mkdir()
++    for name in ['stage_lifecycle_test.py', 'lifecycle_driver.py', 'lifecycle_worker.py']:
++        shutil.copyfile(HERE / name, inputs / name)
++    results = [exercise(args.evidence.resolve(), case, args.base) for case in args.cases.split(',')]
++    save(args.evidence / 'results.json', dict(base=args.base, cases=len(results), passed=sum(r['passed'] for r in results),
++        failures=[r['mode'] for r in results if not r['passed']], allFixtureWorkersExited=all(not any(r['cleanupRemaining']) for r in results)))
++    return 0 if all(r['passed'] for r in results) else 1
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+diff --git a/packages/tools/blender/e08t08/stage_ownership.py b/packages/tools/blender/e08t08/stage_ownership.py
+new file mode 100644
+index 000000000..d46881ed1
+--- /dev/null
++++ b/packages/tools/blender/e08t08/stage_ownership.py
+@@ -0,0 +1,127 @@
++"""Durable admission/settlement for this task's one local process lane."""
++import contextlib
++import fcntl
++import hashlib
++import json
++import os
++from pathlib import Path
++import uuid
++
++
++def digest(path):
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++
++def sync_directory(path):
++    fd = os.open(path, os.O_RDONLY)
++    try:
++        os.fsync(fd)
++    finally:
++        os.close(fd)
++
++
++def write_json(path, value, replace=False):
++    """Persist bytes before publishing the name; never replace another run."""
++    temp = path.with_name(path.name + '.' + uuid.uuid4().hex + '.pending')
++    with temp.open('x') as f:
++        json.dump(value, f, indent=2)
++        f.write('\n')
++        f.flush()
++        os.fsync(f.fileno())
++    if replace:
++        os.replace(temp, path)
++        sync_directory(path.parent)
++    else:
++        os.link(temp, path)
++        # A visible seal is insufficient if its directory sync failed. Retain
++        # this durable pending name until all publication operations succeed.
++        sync_directory(path.parent)
++        temp.unlink()
++        # No fallible operation follows removal. A crash may resurrect the
++        # pending name; that conservatively closes admission for human review.
++
++
++def read(path):
++    return json.loads(path.read_text())
++
++
++@contextlib.contextmanager
++def lane_lock(reports):
++    reports.mkdir(parents=True, exist_ok=True)
++    with (reports / 'lane.lock').open('a') as lock:
++        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        yield
++
++
++def settled_runs(reports, *, promotion=False):
++    """Missing/corrupt/partially published ownership never means an empty lane.
++
++    Legacy receipts are frozen inputs, not new lifecycle proof. New failures may
++    release admission after proved cleanup, but may never pass finalization.
++    """
++    if list(reports.glob('*.pending')):
++        raise RuntimeError('terminal publication remains uncertain')
++    legacy = read(Path(__file__).with_name('legacy-stages.json'))['stages']
++    for files in legacy.values():
++        for name, expected in files.items():
++            if digest(reports / name) != expected:
++                raise RuntimeError('historical evidence changed: ' + name)
++    registered = {}
++    for directory in sorted((reports / 'runs').glob('*')):
++        if not directory.is_dir():
++            raise RuntimeError('unknown ownership entry: ' + str(directory))
++        if list(directory.glob('*.pending')) or (directory / 'publication-failure.json').exists():
++            raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
++        try:
++            admitted = read(directory / 'admitted.json')
++            stage = admitted['stage']
++            if stage != directory.name or admitted['schema'] != 2:
++                raise ValueError('admission identity')
++            receipt = reports / (stage + '.json')
++            terminal = read(receipt)
++            seal = read(directory / 'settled.json')
++            if (terminal['runId'] != admitted['runId'] or terminal['stage'] != stage
++                    or any(terminal.get(key) != value for key, value in admitted.items())
++                    or terminal['schema'] != 2 or seal['runId'] != admitted['runId']
++                    or seal['admissionSHA256'] != digest(directory / 'admitted.json')
++                    or seal['terminalSHA256'] != digest(receipt)
++                    or terminal['cleanup'] != 'verified' or terminal['remainingProcesses']
++                    or not terminal['directChildReaped']):
++                raise ValueError('unsettled or mismatched terminal evidence')
++            if promotion and (terminal['outcome'] != 'success' or terminal['exit'] != 0
++                              or terminal['errors'] or terminal['cancelSignals'] or terminal['stopReason']):
++                raise ValueError('failed/cancelled run cannot promote')
++            registered[stage] = terminal
++        except (OSError, ValueError, KeyError, TypeError) as error:
++            raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
++    for log in reports.glob('*.log'):
++        if log.stem not in legacy and log.stem not in registered:
++            raise RuntimeError('unregistered or unfinished stage log: ' + log.name)
++    for path in reports.glob('*.json'):
++        value = read(path)
++        if isinstance(value, dict) and 'stage' in value and 'command' in value:
++            if path.stem not in legacy and path.stem not in registered:
++                raise RuntimeError('unregistered terminal record: ' + path.name)
++    return registered
++
++
++def admit(reports, name, command):
++    settled_runs(reports)
++    if (reports / (name + '.log')).exists() or (reports / (name + '.json')).exists():
++        raise FileExistsError('stage name already used: ' + name)
++    runs = reports / 'runs'
++    runs.mkdir(exist_ok=True)
++    sync_directory(reports)
++    directory = runs / name
++    directory.mkdir()  # Even a crash before admitted.json leaves admission closed.
++    sync_directory(runs)
++    admission = dict(schema=2, stage=name, runId=uuid.uuid4().hex,
++                     supervisorPID=os.getpid(), command=command)
++    write_json(directory / 'admitted.json', admission)
++    return directory, admission
++
++
++def settle(directory, receipt, run_id):
++    write_json(directory / 'settled.json', dict(
++        runId=run_id, admissionSHA256=digest(directory / 'admitted.json'),
++        terminalSHA256=digest(receipt)))
+diff --git a/packages/tools/blender/e08t08/stage_processes.py b/packages/tools/blender/e08t08/stage_processes.py
+new file mode 100644
+index 000000000..8438d054b
+--- /dev/null
++++ b/packages/tools/blender/e08t08/stage_processes.py
+@@ -0,0 +1,180 @@
++"""macOS process ownership: unreaped direct child and watched descendants.
++
++No PID/command-name adoption after restart. An abandoned admission stays closed.
++"""
++import ctypes
++import errno
++import os
++import select
++import signal
++import subprocess
++
++
++class BSDInfo(ctypes.Structure):
++    # sys/proc_info.h, PROC_PIDTBSDINFO. The start pair survives exec and separates
++    # PID reuse; kqueue watches the process instance, not a later reused PID.
++    _fields_ = [(name, ctypes.c_uint32) for name in (
++        'flags', 'status', 'xstatus', 'pid', 'ppid', 'uid', 'gid', 'ruid',
++        'rgid', 'svuid', 'svgid', 'reserved')]
++    _fields_ += [('comm', ctypes.c_char * 16), ('name', ctypes.c_char * 32)]
++    _fields_ += [(name, ctypes.c_uint32) for name in (
++        'nfiles', 'pgid', 'jobc', 'tdev', 'tpgid', 'nice')]
++    _fields_ += [('start_sec', ctypes.c_uint64), ('start_usec', ctypes.c_uint64)]
++
++
++LIBPROC = ctypes.CDLL('/usr/lib/libproc.dylib', use_errno=True)
++LIBPROC.proc_pidinfo.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_uint64, ctypes.c_void_p, ctypes.c_int]
++LIBPROC.proc_pidinfo.restype = ctypes.c_int
++
++
++def identity(pid):
++    info = BSDInfo()
++    count = LIBPROC.proc_pidinfo(pid, 3, 0, ctypes.byref(info), ctypes.sizeof(info))
++    if count == 0 and ctypes.get_errno() in (errno.ESRCH, errno.ENOENT):
++        return None
++    if count != ctypes.sizeof(info) or info.pid != pid:
++        raise OSError(ctypes.get_errno(), 'cannot identify owned process', pid)
++    return (int(info.start_sec), int(info.start_usec))
++
++
++def snapshot():
++    result = subprocess.run(['ps', '-axo', 'pid=,ppid=,pgid=,rss=,comm='],
++                            capture_output=True, text=True, check=True, timeout=2)
++    rows = []
++    for line in result.stdout.splitlines():
++        a = line.split(None, 4)
++        if len(a) != 5:
++            raise RuntimeError('incomplete process observation')
++        rows.append(dict(pid=int(a[0]), ppid=int(a[1]), pgid=int(a[2]),
++                         rss=int(a[3]) * 1024, command=a[4]))
++    return rows
++
++
++class ProcessWatch:
++    def __init__(self, pid):
++        self.pid = pid
++        self.birth = identity(pid)
++        self.queue = select.kqueue()
++        self.ended = self.birth is None
++        try:
++            if not self.ended:
++                self.queue.control([select.kevent(pid, filter=select.KQ_FILTER_PROC,
++                    flags=select.KQ_EV_ADD | select.KQ_EV_ONESHOT,
++                    fflags=select.KQ_NOTE_EXIT)], 0, 0)
++                if identity(pid) != self.birth:
++                    raise RuntimeError('process changed while acquiring watch')
++        except ProcessLookupError:
++            self.ended = True
++        except BaseException:
++            self.queue.close()
++            raise
++
++    def exited(self):
++        if not self.ended:
++            for event in self.queue.control([], 1, 0):
++                if (event.ident != self.pid or event.filter != select.KQ_FILTER_PROC
++                        or event.flags & select.KQ_EV_ERROR or not event.fflags & select.KQ_NOTE_EXIT):
++                    raise RuntimeError('unexpected process-watch event; exit is unproved')
++                self.ended = True
++        return self.ended
++
++    def send(self, sig):
++        if self.exited():
++            return
++        if identity(self.pid) != self.birth:
++            raise RuntimeError('owned process identity changed; refusing signal')
++        try:
++            os.kill(self.pid, sig)
++        except ProcessLookupError:
++            self.ended = True
++
++    def evidence(self):
++        return dict(pid=self.pid, birth=self.birth, exitObserved=self.exited())
++
++
++class OwnedProcesses:
++    def __init__(self, child):
++        self.child = child  # Retain the actual Popen through every error path.
++        self.birth = identity(child.pid)
++        self.waiter_lost = False
++        self.watches = {}
++        self.retired = []
++        self.last = []
++
++    def leader_exited(self):
++        # WNOWAIT retains the actual child and reserves its PID/process-group
++        # identity until every known descendant is terminal. poll() would reap.
++        try:
++            return os.waitid(os.P_PID, self.child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None
++        except ChildProcessError:
++            self.waiter_lost = True
++            raise
++
++    def observe(self):
++        self.leader_exited()  # Prove the group anchor is still our unreaped child.
++        rows = snapshot()
++        ids = {self.child.pid}
++        ids.update(pid for pid, watch in self.watches.items() if not watch.exited())
++        ids.update(p['pid'] for p in rows if p['pgid'] == self.child.pid)
++        while True:
++            added = {p['pid'] for p in rows if p['ppid'] in ids} - ids
++            if not added:
++                break
++            ids.update(added)
++        owned = [p for p in rows if p['pid'] in ids]
++        for row in owned:
++            pid = row['pid']
++            if pid in self.watches and self.watches[pid].exited():
++                watch = self.watches[pid]
++                if identity(pid) not in (None, watch.birth):
++                    self.retired.append(watch.evidence())
++                    watch.queue.close()
++                    del self.watches[pid]
++            if pid != self.child.pid and pid not in self.watches:
++                self.watches[pid] = ProcessWatch(pid)
++        self.last = owned
++        return owned
++
++    def signal_all(self, sig):
++        # The direct child is deliberately not reaped, even after leader exit.
++        # Its reserved PID anchors this group. Detached known children also have
++        # individual instance watches, so group termination alone is insufficient.
++        errors = []
++        try:
++            # Darwin clears BSD start fields on a zombie. waitid(WNOWAIT), not
++            # those cleared fields, proves our still-unreaped direct child.
++            leader_done = self.leader_exited()
++            if not leader_done and identity(self.child.pid) != self.birth:
++                raise RuntimeError('direct-child ownership lost; refusing group signal')
++            grouped = any(row['pgid'] == self.child.pid and row['pid'] != self.child.pid
++                          and not self.watches[row['pid']].exited() for row in self.last)
++            try:
++                if not leader_done or grouped:
++                    os.killpg(self.child.pid, sig)
++            except ProcessLookupError:
++                pass
++            except PermissionError:
++                # Darwin returns EPERM for a group containing only our zombie
++                # leader. Its waitable exit plus no live group watch settles it.
++                if grouped or not self.leader_exited():
++                    raise
++        except Exception as error:
++            errors.append(repr(error))
++        for watch in self.watches.values():
++            try:
++                watch.send(sig)
++            except Exception as error:
++                errors.append(repr(error))
++        if errors:
++            raise RuntimeError('; '.join(errors))
++
++    def all_exited(self):
++        return self.leader_exited() and all(w.exited() for w in self.watches.values())
++
++    def evidence(self):
++        return dict(directChild=dict(pid=self.child.pid, birth=self.birth, waiterLost=self.waiter_lost),
++                    knownDescendants=self.retired + [w.evidence() for w in self.watches.values()])
++
++    def close(self):
++        for watch in self.watches.values():
++            watch.queue.close()

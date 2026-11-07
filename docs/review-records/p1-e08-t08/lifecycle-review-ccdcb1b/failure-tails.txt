@@ -1,0 +1,1542 @@
+COMMAND RECEIPT: current-22/admission_failure/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/admission_failure/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/admission_failure/retry-after-exit.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/admission_failure/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/admission_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/exception/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/exception/finalize-after-retry.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/exception/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/exception/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/exception/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/failed/finalize-after-retry.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/failed/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/failed/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/leader_loss/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/leader_loss/finalize-after-retry.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/leader_loss/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/leader_loss/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/leader_zero/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/leader_zero/finalize-after-retry.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/leader_zero/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/leader_zero/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/leader_zero/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/observation_failure/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/observation_failure/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/observation_failure/finalize-terminal.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/observation_failure/retry-after-exit.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/observation_failure/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/observation_failure/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/observation_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/publication_after/finalize-terminal.receipt.json
+EXIT: 1
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/finalize.py", line 175, in main
+    assemble(registered)
+    ~~~~~~~~^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/finalize.py", line 81, in assemble
+    manifest=dict(task='P1.E08.T08',scope='CPU source/export unit only',base=BASE,branch=git('branch','--show-current'),
+                                                                                         ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/finalize.py", line 18, in git
+    def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).strip()
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'branch', '--show-current']' returned non-zero exit status 128.
+
+COMMAND RECEIPT: current-22/publication_after/retry-publication.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_after/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/publication_before/finalize-after-retry.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/publication_before/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/publication_before/retry-publication.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_before/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/publication_during/finalize-terminal.receipt.json
+EXIT: 1
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/finalize.py", line 175, in main
+    assemble(registered)
+    ~~~~~~~~^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/finalize.py", line 81, in assemble
+    manifest=dict(task='P1.E08.T08',scope='CPU source/export unit only',base=BASE,branch=git('branch','--show-current'),
+                                                                                         ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/finalize.py", line 18, in git
+    def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).strip()
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'branch', '--show-current']' returned non-zero exit status 128.
+
+COMMAND RECEIPT: current-22/publication_during/retry-publication.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_during/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/publication_failure/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/publication_failure/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/publication_failure/retry-after-exit.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/publication_failure/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/publication_failure/retry-publication.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/receipt_failure/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 63, in settled_runs
+    raise RuntimeError('terminal publication remains uncertain')
+RuntimeError: terminal publication remains uncertain
+
+COMMAND RECEIPT: current-22/receipt_failure/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 63, in settled_runs
+    raise RuntimeError('terminal publication remains uncertain')
+RuntimeError: terminal publication remains uncertain
+
+COMMAND RECEIPT: current-22/receipt_failure/retry-after-exit.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 63, in settled_runs
+    raise RuntimeError('terminal publication remains uncertain')
+RuntimeError: terminal publication remains uncertain
+
+COMMAND RECEIPT: current-22/receipt_failure/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 63, in settled_runs
+    raise RuntimeError('terminal publication remains uncertain')
+RuntimeError: terminal publication remains uncertain
+
+COMMAND RECEIPT: current-22/seal_failure/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/seal_failure/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/seal_failure/retry-after-exit.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/seal_failure/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/seal_sync_failure/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/seal_sync_failure/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/seal_sync_failure/retry-after-exit.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/seal_sync_failure/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/seal_sync_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work
+
+COMMAND RECEIPT: current-22/sigint/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/sigint/finalize-after-retry.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/sigint/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/sigint/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/sigterm/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/sigterm/finalize-after-retry.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/sigterm/finalize-terminal.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: current-22/sigterm/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/sigterm/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/supervisor_loss/finalize-active.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+COMMAND RECEIPT: current-22/supervisor_loss/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+COMMAND RECEIPT: current-22/supervisor_loss/finalize-terminal.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+COMMAND RECEIPT: current-22/supervisor_loss/retry-after-exit.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+COMMAND RECEIPT: current-22/supervisor_loss/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+COMMAND RECEIPT: current-22/supervisor_loss/retry-while-owned.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/supervisor_loss/root/packages/tools/blender/e08t08/reports/work.json'
+
+COMMAND RECEIPT: current-22/uncertain_cleanup/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/uncertain_cleanup/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/uncertain_cleanup/finalize-terminal.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/uncertain_cleanup/retry-after-exit.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/uncertain_cleanup/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/uncertain_cleanup/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/uncertain_cleanup/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/valid/finalize-terminal.receipt.json
+EXIT: 1
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/valid/root/packages/tools/blender/e08t08/finalize.py", line 175, in main
+    assemble(registered)
+    ~~~~~~~~^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/valid/root/packages/tools/blender/e08t08/finalize.py", line 81, in assemble
+    manifest=dict(task='P1.E08.T08',scope='CPU source/export unit only',base=BASE,branch=git('branch','--show-current'),
+                                                                                         ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/valid/root/packages/tools/blender/e08t08/finalize.py", line 18, in git
+    def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).strip()
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'branch', '--show-current']' returned non-zero exit status 128.
+
+COMMAND RECEIPT: current-22/waiter_loss/finalize-active.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py", line 173, in main
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/waiter_loss/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/waiter_loss/finalize-terminal.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/waiter_loss/retry-after-exit.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/waiter_loss/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/waiter_loss/retry-while-owned.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/waiter_loss/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-22/watch_failure/finalize-after-manual-cleanup.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/watch_failure/finalize-terminal.receipt.json
+EXIT: 1
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/watch_failure/retry-after-exit.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-22/watch_failure/retry-after-manual-cleanup.receipt.json
+EXIT: 1
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-22/watch_failure/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+COMMAND RECEIPT: current-finalizer-5/publication_after/retry-publication.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_after/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: current-finalizer-5/publication_during/retry-publication.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/stage.py", line 135, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/current-finalizer-5/publication_during/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable
+
+COMMAND RECEIPT: late-same-group-fork/finalize.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote
+
+COMMAND RECEIPT: matrix-current.receipt.json
+EXIT: 1
+{"mode": "sigint", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "successful retry does not erase failed admission": true}}
+{"mode": "exception", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "successful retry does not erase failed admission": true}}
+{"mode": "observation_failure", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "leader_loss", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "successful retry does not erase failed admission": true}}
+{"mode": "leader_zero", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "successful retry does not erase failed admission": true}}
+{"mode": "waiter_loss", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "known descendants drained despite lost direct waiter": true, "lost waiter does not synthesize exit zero": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "uncertain_cleanup", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "supervisor_loss", "passed": true, "assertions": {"retry rejected while descendant alive": true, "actual finalizer rejects active/uncertain ownership": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "failed", "passed": true, "assertions": {"terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "successful retry does not erase failed admission": true}}
+{"mode": "receipt_failure", "passed": true, "assertions": {"terminal or durable unfinished admission exists": true, "supervisor outcome": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "seal_failure", "passed": true, "assertions": {"terminal or durable unfinished admission exists": true, "supervisor outcome": true, "unsealed proposal cannot count as completion": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "seal_sync_failure", "passed": true, "assertions": {"terminal or durable unfinished admission exists": true, "supervisor outcome": true, "unsealed proposal cannot count as completion": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "admission_failure", "passed": true, "assertions": {"no dispatch before durable admission": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "watch_failure", "passed": true, "assertions": {"Popen handle survives watcher exception": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "publication_before", "passed": true, "assertions": {"publication retains admission": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "successful retry does not erase failed admission": true}}
+{"mode": "publication_during", "passed": false, "assertions": {"publication retains admission": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": false, "no failed/incomplete promotion": false, "admission after settlement only": true}}
+{"mode": "publication_after", "passed": false, "assertions": {"publication retains admission": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "explicit outcome": true, "cleanup terminal": true, "direct child reaped": true, "no surviving fixture worker": true, "actual finalizer outcome": false, "no failed/incomplete promotion": false, "admission after settlement only": true}}
+{"mode": "publication_failure", "passed": true, "assertions": {"publication retains admission": true, "terminal or durable unfinished admission exists": true, "supervisor outcome": true, "unsealed proposal cannot count as completion": true, "actual finalizer outcome": true, "no failed/incomplete promotion": true, "admission after settlement only": true, "uncertainty survives manual fixture cleanup": true, "finalizer still rejects unresolved ownership": true}}
+{"mode": "finalizer_sigterm", "passed": false, "assertions": {"harness completed": false}}
+{"mode": "finalizer_sigint", "passed": false, "assertions": {"harness completed": false}}
+
+COMMAND RECEIPT: preservation-before.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py", line 40, in <module>
+    if __name__=='__main__':run()
+                            ~~~^^
+  File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py", line 23, in run
+    else:pins.update({a['path']:a['sha256'] for a in pngs})
+                      ~^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+COMMAND RECEIPT: terminal-integrity/finalize-corrupt.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage_ownership.py", line 90, in settled_runs
+    raise ValueError('unsettled or mismatched terminal evidence')
+ValueError: unsettled or mismatched terminal evidence
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: unsettled or mismatched terminal evidence
+
+COMMAND RECEIPT: terminal-integrity/retry-corrupt.receipt.json
+EXIT: 1
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage_ownership.py", line 90, in settled_runs
+    raise ValueError('unsettled or mismatched terminal evidence')
+ValueError: unsettled or mismatched terminal evidence
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage.py", line 252, in main
+    return run(args[0], args[1:], cancellation)
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage.py", line 139, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/terminal-integrity/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: unsettled or mismatched terminal evidence

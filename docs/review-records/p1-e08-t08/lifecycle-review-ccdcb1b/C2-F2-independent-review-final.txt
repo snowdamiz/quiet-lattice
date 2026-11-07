@@ -1,0 +1,84 @@
+VERDICT: REVISE (independent SOURCE/CPU C.2/C.4; F2 only; no native, visual, F1, or whole-task acceptance)
+TASK: P1.E08.T08 (art) Creatures at the new bar — F2 producer ownership revision only
+STATUS: F2 PARTIAL. Bounded F2 PASS is not claimed. F1 exact-float COLOR_0 remains OPEN on the separate shared-exporter owner and was not retested or regenerated here.
+SUMMARY: The revision fixes the original supervisor-SIGTERM ownership loss: durable admission survives supervisor death, known descendants drain, cancelled/uncertain/corrupt runs cannot promote through the actual finalize.py caller, and truthful terminal evidence is required for settlement. An independent same-process-group race remains: a child forked after the final ps snapshot but before leader exit can still be alive when stage.py seals cleanup=verified and admits a retry. Finalization correctly refused the cancelled run, so publication promotion is safer than lane release. No candidate, dependency, original report, asset, PNG history, plan, or Git history was changed.
+
+PINNED REVIEW SCOPE
+Candidate: /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13 (read-only)
+Branch: task/P1-E08-T08-creatures
+HEAD: ccdcb1b6079c4f6d6a64506e889f4a6e170464ba
+Tree: 6cd252ce39721ba4355942ab967fe8148d562bc0
+Base: f9294a466d6223f695f102dc1a13ed526f155e67
+Base tree: 5cea052761a4c037d28c2d09bd7d731885f09fda
+Author revision package: packages/tools/blender/e08t08/revisions/f2-20261107-r1/C2-F2-revision.txt + preservation-final.json
+Prior independent report: /tmp/space-e08t08-independent-c2-iimrHP/C2-independent-review-final.txt
+Prior report SHA256: e0f017545582804d4dc1624529388ec63ef4dc83bf5ec2d5f75ebbdd355ce3b5
+Scratch: /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium
+Python: /opt/homebrew/opt/python@3.14/bin/python3.14 (3.14.8)
+Guidance: IMPLEMENTATION_PLAN 0.9.5 / Appendix C.2 and C.4; source-only scope overrides heavy checks. No nested agents. No Blender/codec/native/browser/GPU/asset decoding.
+
+SOURCE SHA256 (candidate HEAD)
+stage.py: 835a3e69776d2528ad9781a0bae2b48cb77604267ab92a45417308c966bbce3b
+stage_processes.py: 30ecebeaccaeb7dbac05fb7a06c0cb2a99bfa43cc77bee183ec014d491864433
+stage_ownership.py: 7998d848c23a4200e1aa6f82e9c4aa502bcde50e9b8278151e60c5b21b8eed25
+finalize.py: 027e8c39d53bc8baed2ce082d1a4e6048a9d928a596ddb5b94de85b2be8fa0ad
+stage_lifecycle_test.py: 47239fde3a7036f45e00fb6f58e1fce10d03c92e61234f3b8e87b4f8c209cea6
+lifecycle_driver.py: 6aeedc3d5f7a2a2f2e9f1d37f115c1a3cafa28dc05dbda3392304b6f19e7813c
+lifecycle_worker.py: 8654e31e3adb0bfb8a4f0d9b007558f7873b5a2a2a8299285f340a396aa75925
+diff.txt SHA256: 9b5e117516bd48e8321844ea3fb749d01f08fa381a106f2fb27e5e328f441b5e
+scope.txt SHA256: fc5d875718b5c9cc5fddde85e74ceb927c805d2622dae49e27cfb3b6d3fab26f
+
+PRIOR FINDING DISPOSITION
+F1 [OPEN, out of scope for this F2 review]: normalized UINT16 COLOR_0 vs required Float32. Not re-exported, not re-decoded, not waived.
+F2 original [PARTIAL / remaining OPEN race]: exact-base RED still reproduces supervisor -15, live unreaped child, missing terminal receipt, and second-stage admission (original-red/stage-interrupt-result.json). Current HEAD fixes that class for known/watched descendants and durable unfinished admission, and the serial 22-case actual-process/finalizer matrix qualifies under corrected GIT_DIR. Remaining defect: late same-group fork after final snapshot.
+
+FINDINGS
+
+F2-R2 [P2, SOURCE/TOOLING BLOCKER, NEW under current HEAD]
+Do not seal cleanup=verified or release admission from a stale process-group snapshot that can miss a same-group child created after the last observe() and before leader exit.
+Locations: packages/tools/blender/e08t08/stage.py:67-84 (drain returns verified and clears remainingProcesses when owned.all_exited()); packages/tools/blender/e08t08/stage_processes.py:113-136 and 171-172 (observe uses one ps snapshot; all_exited trusts leader_exited plus previously installed watches only); packages/tools/blender/e08t08/stage.py:190-191 (finally sets cleanup=verified from that drain result); packages/tools/blender/e08t08/stage_ownership.py:56-90 (settled admission for later stages keys off cleanup=verified / empty remainingProcesses).
+Rule: README one-lane ownership; durable cleanup before admission release; known descendants must stay charged until terminal. Author OUTOFSCOPE already disclaims unknown daemons, but this reproduction uses an ordinary same-pgid Popen child of the actual unreaped leader with no setsid/daemonize.
+Reachability: production stage.py drains through OwnedProcesses.observe → ps snapshot → all_exited. A workload that forks another same-group child after the supervisor's last snapshot, then exits, leaves that child alive with PPID 1 and the leader's pgid. Drain treats the group as empty, seals cleanup=verified with remainingProcesses=[] and knownDescendants=[], and a concurrent retry stage admits while the leaf still runs. Actual finalize.py still refuses the cancelled terminal (promotion safer than lane release). Ordinary Blender/codec workers that spawn helpers into the reserved process group are inside this production path; the fixture used only inert Python under the real stage.py/finalize.py callers.
+Fresh reproduction: independent_driver.py wraps the real stage.drain/stage_processes.snapshot boundary only to realize the scheduling gap (returns the actual OS snapshot unchanged after the leaf exists and the leader has exited). Result late-same-group-fork/result.json: supervisorExit 1; leaf 96605 alive after supervisor and after retryExit 0; terminal.cleanup=verified; terminal.remainingProcesses=[]; terminal.outcome=cancelled; finalizerExit 1; defectReproduced true. Reviewer SIGKILL'd the uniquely identified leaf and verified exit. Tool pins matched HEAD for stage.py/stage_processes.py/stage_ownership.py/finalize.py/legacy-stages.json.
+Concrete remedy: before sealing verified cleanup or releasing admission, re-observe after leader exit with a fresh snapshot (and/or hold the unreaped leader until a post-exit empty-group proof); treat any same-pgid live process discovered after a prior empty observation as ownership uncertainty; keep retries closed while observationUncertain or while a post-exit group scan is nonempty. Add an actual-process control that forks a same-group child after the final pre-exit observe and asserts retry denial. Do not weaken finalize rejection of cancelled runs.
+
+FIXED relative to original F2 (evidence retained; not a full F2 PASS)
+- Durable admission before Popen; supervisor_loss keeps retries/finalizer closed.
+- SIGTERM/SIGINT/exception/leader_loss/leader_zero/waiter_loss/uncertain_cleanup/receipt/seal/admission/watch/publication controls in the qualified 22-case matrix.
+- Actual finalize.py refuses cancelled/uncertain/failed/corrupt terminals; old exact-base finalizer omitted interrupted receipt (terminal-integrity: oldFinalizerExit 0, oldOmittedInterruptedReceipt true; corruptRetryExit 1, corruptFinalizerExit 1).
+- Ordinary successful release and truthful settlement hashing exercised in current-finalizer-5/valid under GIT_DIR=/Users/andreyyurlov/Documents/dev/space/.git/worktrees/t3-9af55c13.
+
+VERIFY / EXACT COMMANDS AND EXITS
+Complete receipts under /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/*.receipt.json and command-index.json. Key runs:
+1. preservation-before-v2: exit 0; 14 assets, 79 PNGs, 60 review originals, dependency metadata 17259/46/14 unchanged.
+2. pins/scope/diff/diff-check git receipts: exit 0; HEAD/tree/base match pins above.
+3. original-red (exact base stage.py SHA256 65f142c9dda0c6fd89fe5bbd8479690745c12c96aed8dc001f96ed746b2e97cb): exit 0; wrapper -15; child alive; second stage 0; reviewer cleaned child.
+4. matrix-current (stage_lifecycle_test.py --evidence current-22): exit 1; 17/22 passed; 5 finalizer cases failed because finalize assemble required the worktree absolute git dir when cwd lacked .git. Not credited as GREEN.
+5. matrix-finalizer-corrected (same tools, GIT_DIR set, evidence current-finalizer-5): exit 0; 5/5 including valid/publication_during/publication_after/finalizer_sigterm/finalizer_sigint. Combined with the 17 non-finalizer passes => 22/22 qualified under verification-summary.json.
+6. independent-race (late same-group fork against real stage.py): exit 0; defectReproduced true.
+7. independent-finalizer-controls: exit 0; authentic vs mutated terminal hashes diverge; corrupt retry/finalizer denied.
+8. preservation-after: exit 0; before.json == after.json for head/tree/status/taskHashes/pins/dependencyMetadata/reviewOriginals.
+9. static-checks: exit 0; AST parse of seven tooling files; git diff --check base..HEAD 0; /bin/sh -n bin/blender 0.
+10. Final fixture PID audit: 46 tracked fixture PIDs absent; no remaining owned scratch workers.
+
+PRESERVATION AND CLEANUP
+- Candidate status clean before and after. No source edit, install, pnpm, cache write, dependency change, grant, native/browser/GPU/Blender/codec, asset regeneration, push, PR, merge, or screenshot cleanup.
+- All 14 source/export assets and 79 PNGs hash-pinned via before/after audit against prior independent after.json / preservation pins.
+- Scratch only: /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium; sampled max RSS observations: matrix-finalizer-corrected 123813888 bytes; independent-race 67813376; original-red 47988736. At most two workload workers. Scratch ~236960 KiB. No Lark/host process signalled except uniquely identified fixture children after defect proof.
+- Process cleanup proof retained in verification-summary.json, late-same-group-fork/result.json cleanupRemaining empty after reviewer kill, original-red cleanupRemainingChild empty.
+
+EXPLICIT NON-CLAIMS
+Bounded F2 PASS is NOT claimed. This is NOT an F1 format PASS, NOT a full-task PASS, NOT a native/visual PASS, and NOT production-loader acceptance. The late same-group race keeps F2 PARTIAL / REVISE.
+
+OUT OF SCOPE FOUND
+F1 shared-exporter COLOR_0 Float32; native Review/turntables/perf/blind rubric; arbitrary daemon containment beyond observed same-group/instance-watched descendants.
+
+ARTIFACTS
+/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/C2-F2-independent-review-final.txt (this file)
+/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/SHA256SUMS-final
+/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/verification-summary.json, command-index.json, failure-tails.txt, execution-environment.json
+/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/before.json, after.json, provenance.json, static-result.json, pins.txt, scope.txt, diff.txt
+/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/original-red/, current-22/, current-finalizer-5/, late-same-group-fork/, terminal-integrity/
+All *.receipt.json / *.log retained; no failed run discarded.
+
+FILES CHANGED: none in the candidate worktree, dependencies, original reports, shared assets, or history. New review artifacts exist only in the exclusive scratch directory above.
