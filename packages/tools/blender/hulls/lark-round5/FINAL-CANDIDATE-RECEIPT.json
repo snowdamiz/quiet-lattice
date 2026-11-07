@@ -1,9 +1,9 @@
 {
-  "status": "SOURCE_AND_EXPORT_VALIDATED_INSTALLED_VISUAL_QUALIFICATION_PENDING",
+  "status": "BACKING_SOURCE_EDITED_EXPORT_STALE_FRAME_PROOF_PENDING",
   "base_commit": "cd7e764a0fa8f8ced39ffe98cc42f65a5932c43a",
   "source": {
     "path": "assets/blend/hulls/lark.blend",
-    "sha256": "aabde4a8048f9c791a27b192080f182b97f5407a85676de592e5b9092e58411a"
+    "sha256": "2930843029aa4b4398adccacc003831bf298a0ddabfb539e1fc834397f2f863e"
   },
   "rejected_export": {
     "path": "packages/tools/blender/hulls/lark-round5/export-evidence/final-candidate-revise-export/hulls__lark.glb.rejected.glb",
@@ -14,7 +14,7 @@
     "installed": true,
     "path": "packages/client/public/models/hulls/lark.glb",
     "sha256": "6f3a0774a8539435779985afdaca4322a2bea9a798fa51ad4a88f2ba27c88b55",
-    "status": "VALIDATED"
+    "status": "STALE_RELATIVE_TO_EDITED_SOURCE"
   },
   "source_validation": {
     "checks": {
@@ -4020,5 +4020,41 @@
     "packages/tools/blender/hulls/lark-round5/seam-decoded.json": "17f642934706cbedfd0bf7abfdf3814cd14a39f8fad6cec5bdbd2d85f26db949",
     "packages/tools/blender/hulls/lark-round5/candidate-source-validation.json": "b6248a5e936d60635118a98eddf86f1e4decfd466bee58af59b249ce25ebacf7",
     "packages/tools/blender/hulls/lark-round5/export-evidence/seam-final2-revise-export/hulls__lark.glb.json": "ad9bd6e35e6bc9ef1730c83dd6f5e4630361a3134fe7197d501ff08b2f38c0a4"
+  },
+  "frame_knownfix": {
+    "receipt": "frame-knownfix.json",
+    "removed_faces": {
+      "Body_husk": 16,
+      "Body_husk.001": 0,
+      "Body_husk.002": 0,
+      "Body_husk.003": 0
+    },
+    "lod_triangles": {
+      "lark": [
+        108746,
+        73947,
+        59940,
+        4388
+      ],
+      "lark_damaged": [
+        113554,
+        79329,
+        65758,
+        4557
+      ],
+      "lark_husked": [
+        110379,
+        77956,
+        66049,
+        4760
+      ]
+    },
+    "limits": [
+      "No recognized frame hit qualification",
+      "No final overview consumed",
+      "Stock source/export and decoded density not rerun",
+      "Canonical GLB retained; no candidate installation",
+      "Runtime performance, production body, flicker and blind review remain parent gates"
+    ]
   }
 }
