@@ -1,0 +1,332 @@
+{
+  "task": "P1.E14.T16",
+  "status": "REGRESSION_PREP_LIGHT_PASS_HEAVY_PENDING",
+  "head": "e11acd393201115e5fa682325fc19a463c0d539a",
+  "tree": "3ffe09045b4d0673b7921018fb7f8a435a79b941",
+  "scratch": "/tmp/space-e14t16-regression-prep-eWnW3P",
+  "light_summary": {
+    "exits": {
+      "resolver": 0,
+      "consumer-syntax": 0,
+      "deps-syntax": 0,
+      "launcher-syntax": 0
+    },
+    "parity_all": true,
+    "sealed_ok": true,
+    "dependency_mutation": {
+      "task_node_modules_unchanged": true,
+      "deps_node_modules_unchanged": true,
+      "locks_unchanged": true,
+      "worktree_still_clean": true
+    }
+  },
+  "reuse_by_hash": {
+    "cpu_packer_format_tests": {
+      "count": 15,
+      "source": "packages/tools/blender/exact_mask/source-evidence.json final-cpu + native-attempt2.json",
+      "exit": 0,
+      "rerun": false,
+      "reason": "no source change since sealed C2/C4 at e11acd393; reuse by hash"
+    },
+    "existing_export_target_tests": {
+      "count": 16,
+      "source": "native-attempt2.json cpu_regressions",
+      "exit": 0,
+      "rerun": false,
+      "reason": "reuse by hash; no new defect"
+    },
+    "tiny_boundary": {
+      "receipt": "packages/tools/blender/exact_mask/native-attempt2.json",
+      "tested_head": "2156fe66bb596f5604a26e4eea9fc88ed0a712c8",
+      "exit": 0,
+      "rerun": false,
+      "reason": "reuse by hash; evidence-only e11acd393 does not change executable bytes"
+    },
+    "independent_c2_c4": {
+      "path": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/C2-C4-independent-review.txt",
+      "sha256": "0aa23d8a7e083acd42cf7df2aa2ab09b0bad7f9f5d5c767f32c12b008eaf4829",
+      "matches_expected": true
+    }
+  },
+  "proposed_serial_native_unit": {
+    "name": "e14t16-serial-node-consumer-meshopt-unit",
+    "authorization": "REQUIRES_PARENT_ALLOCATION after Lark releases heavy CPU; independent guardian before dispatch",
+    "pinned": {
+      "source_head": "e11acd393201115e5fa682325fc19a463c0d539a",
+      "source_tree": "3ffe09045b4d0673b7921018fb7f8a435a79b941",
+      "executable_parity_base": "2156fe66bb596f5604a26e4eea9fc88ed0a712c8",
+      "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "deps": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab",
+      "vitest_cli": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+      "pnpm_lock_sha256": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+      "node_path": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/client/node_modules:/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules:/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules",
+      "resolved_modules": {
+        "three": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/client/node_modules/three",
+        "meshoptimizer": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules/meshoptimizer",
+        "gltf_transform_core": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules/@gltf-transform/core",
+        "vitest": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest"
+      }
+    },
+    "commands_serial": [
+      {
+        "step": 1,
+        "label": "modelLibrary-6",
+        "cmd": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+          "run",
+          "--root",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+          "--pool",
+          "threads",
+          "--maxWorkers",
+          "1",
+          "--minWorkers",
+          "1",
+          "--no-file-parallelism",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/client/src/gameplay/modelLibrary.test.js"
+        ],
+        "bounds": {
+          "wall_s": 30,
+          "rss_mib": 256,
+          "scratch_growth_mib": 16
+        }
+      },
+      {
+        "step": 2,
+        "label": "meshopt-4",
+        "cmd": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+          "run",
+          "--root",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+          "--pool",
+          "threads",
+          "--maxWorkers",
+          "1",
+          "--minWorkers",
+          "1",
+          "--no-file-parallelism",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/src/art/meshopt.test.ts"
+        ],
+        "bounds": {
+          "wall_s": 30,
+          "rss_mib": 256,
+          "scratch_growth_mib": 32
+        },
+        "note": "includes compressGeometry encode; only after codec admission"
+      }
+    ],
+    "aggregate_bounds": {
+      "wall_seconds": 90,
+      "peak_rss_mib": 256,
+      "scratch_mib": 64,
+      "workers": 1,
+      "disk_growth_mib_excluding_logs": 64
+    },
+    "guardian": {
+      "required": true,
+      "before_dispatch": [
+        "verify Lark heavy lane free or explicit parent codec grant",
+        "fresh exclusive scratch empty",
+        "snapshot deps/node_modules and lock hashes",
+        "confirm no Blender/toktx concurrent"
+      ],
+      "terminal_evidence": [
+        "exit codes",
+        "stdout/stderr retained",
+        "before/after dependency snapshot",
+        "RSS/wall samples",
+        "scratch inode high-water",
+        "kernel child reap"
+      ],
+      "on_failure": "STOP; retain attempt1; no autonomous retry; parent new admission"
+    },
+    "not_in_this_unit": [
+      "blender selftest",
+      "material_mask_selftest",
+      "turntable_selftest",
+      "tiny boundary rerun",
+      "production asset reexport"
+    ],
+    "follow_on_blender_units": [
+      {
+        "id": "material-mask-selftest",
+        "after": "node unit pass",
+        "needs": "Blender -t2 + T05 flora read-only + exclusive report-dir"
+      },
+      {
+        "id": "blender-selftest",
+        "after": "material-mask or parallel only with separate CPU grant",
+        "needs": "Blender+KTX2+meshopt+--keep TMPDIR routing"
+      },
+      {
+        "id": "turntable-selftest",
+        "after": "selftest",
+        "needs": "Blender render lane"
+      }
+    ],
+    "env": {
+      "TMPDIR": "<exclusive-scratch>/job-tmp",
+      "NODE_PATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/client/node_modules:/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules:/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules",
+      "NODE_DISABLE_COMPILE_CACHE": "1",
+      "UV_THREADPOOL_SIZE": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "VITEST_MAX_THREADS": "1"
+    },
+    "launcher_notes": [
+      "Do not create node_modules in the task worktree; resolve via NODE_PATH from pinned DEPS only.",
+      "No pnpm install/cache writes. Snapshot DEPS and lock hashes before/after.",
+      "Step1 modelLibrary decodes three committed GLBs (8700 bytes) via MeshoptDecoder; no KTX/toktx.",
+      "Step2 meshopt.test.ts invokes compressGeometry encode; requires codec admission under parent serial lane.",
+      "Independent guardian must confirm Lark heavy CPU free or explicit parent grant before dispatch.",
+      "On any failure: STOP attempt1, no autonomous retry."
+    ]
+  },
+  "suite_ids": [
+    {
+      "id": "exact-mask-cpu-packer-format",
+      "class": "light-cpu",
+      "status": "PASSED_REUSE_BY_HASH"
+    },
+    {
+      "id": "exact-mask-resolver",
+      "class": "light-cpu",
+      "status": "RE_RAN_PASS"
+    },
+    {
+      "id": "exact-mask-tiny-boundary",
+      "class": "native-boundary",
+      "status": "PASSED_REUSE_BY_HASH"
+    },
+    {
+      "id": "meshopt.test.ts",
+      "class": "node-codec",
+      "status": "PENDING_PARENT_ALLOCATION"
+    },
+    {
+      "id": "modelLibrary.test.js",
+      "class": "node-consumer-decode",
+      "status": "PENDING_PARENT_ALLOCATION"
+    },
+    {
+      "id": "blender-selftest",
+      "class": "blender-pipeline",
+      "status": "PENDING_PARENT_ALLOCATION"
+    },
+    {
+      "id": "material-mask-selftest",
+      "class": "blender-validation",
+      "status": "PENDING_PARENT_ALLOCATION"
+    },
+    {
+      "id": "turntable-selftest",
+      "class": "blender-render",
+      "status": "PENDING_PARENT_ALLOCATION"
+    }
+  ],
+  "fixture_bytes_modelLibrary": {
+    "modelLibrary": [
+      {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/client/src/gameplay/fixtures/creature.glb",
+        "bytes": 3864,
+        "sha256": "0dc2e92daa3bb0a272773f05029a45c6e67e787c4912c9c564279d92c1abae41"
+      },
+      {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/client/src/gameplay/fixtures/flora.glb",
+        "bytes": 2604,
+        "sha256": "e77ea888535039a1bad0c1fe58b0c59bcc6d10f909cccf1e9c5d44cf6087b8e1"
+      },
+      {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/client/src/gameplay/fixtures/hull.glb",
+        "bytes": 2232,
+        "sha256": "4cd8e15cd138fe4e2f1ebc383dfcd00840ef4cffb5480671ead4d70c357b2192"
+      }
+    ],
+    "modelLibrary_unused_here": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/client/src/gameplay/fixtures/textured.glb",
+      "bytes": 4076,
+      "sha256": "25e3f2e7dd0b5e3dc4a0f13b38224a3698c87bd531d9d40b11dd6485066d07d7"
+    }
+  },
+  "flora_material_mask_inputs_t05": [
+    {
+      "kind": "foliage",
+      "blend_exists": true,
+      "glb_exists": true,
+      "blend": {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/blend/flora/non_tree_foliage.blend",
+        "bytes": 2556236,
+        "sha256": "5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456"
+      },
+      "glb": {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/client/public/models/flora/non_tree_foliage.glb",
+        "bytes": 1080436,
+        "sha256": "925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d"
+      }
+    },
+    {
+      "kind": "resources",
+      "blend_exists": true,
+      "glb_exists": true,
+      "blend": {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/blend/flora/non_tree_resources.blend",
+        "bytes": 6937736,
+        "sha256": "03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9"
+      },
+      "glb": {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/client/public/models/flora/non_tree_resources.glb",
+        "bytes": 2119312,
+        "sha256": "7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725"
+      }
+    },
+    {
+      "kind": "stone",
+      "blend_exists": true,
+      "glb_exists": true,
+      "blend": {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/blend/flora/non_tree_stone.blend",
+        "bytes": 4951361,
+        "sha256": "436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15"
+      },
+      "glb": {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/client/public/models/flora/non_tree_stone.glb",
+        "bytes": 1772936,
+        "sha256": "a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9"
+      }
+    }
+  ],
+  "ktx_tool": {
+    "version": "4.4.2",
+    "env_override": "KTX",
+    "default_cache_path_under_repo": "node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+    "note": "Blender selftest/turntable need an existing pinned ktx binary via KTX= or a pre-fetched cache in DEPS/repo without new downloads during the slot."
+  },
+  "resource_request": {
+    "now": "NONE \u2014 light CPU complete; awaiting parent serial allocation",
+    "next_unit": "e14t16-serial-node-consumer-meshopt-unit",
+    "needs": [
+      "Lark heavy-CPU release or explicit parent codec grant",
+      "independent guardian/supervisor",
+      "exclusive scratch <=256MiB for node unit (aggregate bound)",
+      "serial workers=1"
+    ],
+    "not_requested_yet": [
+      "Blender -t2 selftest",
+      "material_mask_selftest",
+      "turntable_selftest",
+      "creature asset regen"
+    ]
+  },
+  "light_command_seconds": {
+    "resolver": 0.2378,
+    "consumer-syntax": 0.0224,
+    "deps-syntax": 0.0232,
+    "launcher-syntax": 0.0029
+  },
+  "scratch_bytes_after_light": 23093
+}

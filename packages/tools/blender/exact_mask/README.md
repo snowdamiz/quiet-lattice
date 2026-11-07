@@ -132,3 +132,25 @@ Read-only header audit at the source checkpoint:
 
 No candidate, asset, historical receipt, material-validation rule from 515ba1f,
 manifest, plan, or parent checkout is modified by this patch.
+
+## Remaining pipeline regressions
+
+Sealed SOURCE/CPU C2/C4 at `e11acd393` / tree `3ffe09045`. Tiny boundary and the
+15/16 CPU suites are reused by hash (`native-attempt2.json`). Light non-codec
+rechecks are recorded in `regression-prep.json`.
+
+One proposed serial native unit (parent admission required; Lark owns heavy CPU):
+
+1. `modelLibrary.test.js` (6) against the three committed fixtures (8,700 bytes)
+2. `meshopt.test.ts` (4) including `compressGeometry` encode
+
+Pinned Node `v26.12.1`, DEPS `t3-909360ab`, vitest from that checkout via
+`NODE_PATH` (client+tools+root). No task `node_modules`, installs or cache
+writes. Independent guardian before dispatch; stop on first failure.
+
+Follow-on Blender units (separate grants): `material_mask_selftest.py` with T05
+flora read-only inputs and exclusive `--report-dir`; `selftest.py` and
+`turntable_selftest.py` with `-t 2`, exclusive `TMPDIR`, `--keep`, and an
+existing `KTX` binary (no downloads). Production creature re-export remains
+owner-owned after integration.
+
