@@ -1,0 +1,9 @@
+00:00.897  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/assets/blend/hulls/lark.blend"
+/tmp/lark-grok-6445c7ec/measure_blend.py:249: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  if mat.use_nodes and mat.node_tree:
+/tmp/lark-grok-6445c7ec/measure_blend.py:273: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  "use_nodes": bool(mat.use_nodes),
+BLEND_MEASURE {'roles': 23, 'median_of_medians': 2438.4896981607917, 'min_median': 590.6459274927377, 'min_key': 'lark_husked_LOD0/Body_husk/Accent', 'max_median': 20459.628424054976, 'max_key': 'lark_damaged_LOD0/CockpitMechanism_dmgMesh/Dark', 'target_px_per_m': 512, 'pass': True, 'gate_roles': ['Hull', 'Accent', 'Trim', 'Dark'], 'outside_roles': 17, 'outside_min_median': 21.42830904841018, 'outside_min_key': 'lark_husked_LOD0/Body_husk/NavRed'} images 17 force_fit_props 0
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
