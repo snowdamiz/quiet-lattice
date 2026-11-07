@@ -178,8 +178,9 @@ class CallerControls(unittest.TestCase):
             grant.write_text('{"authorizationId":"cpu-only"}')
             spec = {'grant': str(grant.resolve()), 'authorizationId': 'cpu-only'}
             ready = {'runtimeEnabled': True, 'root': temp, 'git': '/usr/bin/git'}
+            ready_path = Path(temp) / 'ready.json'; ready_path.write_text(json.dumps(ready))
             for changed in ({'grant': str(grant) + '.wrong'}, {'authorizationId': 'wrong'}):
-                with self.subTest(changed=changed), patch.object(caller, 'grant_gate', return_value={**spec, **changed}), patch.object(caller.subprocess, 'check_output', return_value='head'), patch.object(caller, 'verify_bindings', side_effect=AssertionError('verification reached')), patch.object(caller, 'persist', side_effect=AssertionError('allocation reached')):
+                with self.subTest(changed=changed), patch.object(caller, 'READY', ready_path), patch.object(caller, 'grant_gate', return_value=caller.GrantAdmission({**spec, **changed}, ())), patch.object(caller.subprocess, 'check_output', return_value='head'), patch.object(caller, 'verify_bindings', side_effect=AssertionError('verification reached')), patch.object(caller, 'persist', side_effect=AssertionError('allocation reached')):
                     with self.assertRaisesRegex(caller.Refused, 'Grant attempt identity changed'):
                         caller.consume(ready, 'cpu-only', str(grant))
 
@@ -229,7 +230,7 @@ runpy.run_path(sys.argv[0], run_name='__main__')
                      'readinessSha256': 'frozen', 'authorizedHead': 'head', 'unit': 'first', 'nativeReservesAccepted': True,
                      'callerReview': {'verdict': 'PASS', 'path': str(review), 'sha256': caller.sha(review)},
                      'previousUnitsAccepted': [], 'expiresUtc': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).isoformat()}
-            self.assertEqual(caller.grant_gate(ready, 'first', grant, 'frozen', 'head', 'cpu-test'), {'screen': 'first'})
+            self.assertEqual(caller.grant_gate(ready, 'first', grant, 'frozen', 'head', 'cpu-test').spec, {'screen': 'first'})
             for key, bad in (('purpose', 'other'), ('oneUse', False), ('authorizationId', 'other'), ('readinessSha256', 'drift'), ('authorizedHead', 'drift'), ('unit', 'second'), ('nativeReservesAccepted', False), ('previousUnitsAccepted', ['second']), ('expiresUtc', '2000-01-01T00:00:00+00:00'), ('callerReview', {})):
                 with self.subTest(key=key), self.assertRaises((caller.Refused, KeyError)):
                     caller.grant_gate(ready, 'first', {**grant, key: bad}, 'frozen', 'head', 'cpu-test')
@@ -874,7 +875,115 @@ class BoundaryControls(unittest.TestCase):
                                   result=returned[0], exitcode=exitcode, at_interrupt=at_interrupt, next_ready=next_ready, grant=grant, spec=spec)
 
     def gate(self, case, grant):
-        return caller.grant_gate(case.next_ready, 'second', grant, 'CPU_SHA', 'CPU_HEAD', 'CPU')
+        return caller.grant_gate(case.next_ready, 'second', grant, 'CPU_SHA', 'CPU_HEAD', 'CPU').spec
+
+    def next_consumption(self, case):
+        with patch.object(caller, 'READY', case.ready_path), patch.dict(os.environ, {'FAUNA_CAPTURE_GRANT': case.next_spec['authorizationId']}), patch.object(caller, 'verify_bindings', return_value={'scope': 'INERT_CPU_FIXTURE'}):
+            return caller.consume(case.ready, case.second_unit, case.next_spec['grant'])
+
+    def test_actual_admission_uses_one_authenticated_snapshot_for_result_and_consumption(self):
+        for key in ('result', 'consumption'):
+            with self.subTest(key=key), self.boundary(clean=True, real_git=True) as case:
+                self.assertEqual(case.exitcode, 0)
+                first = case.ready['unitOrder'][0]
+                reference = case.next_grant['previousUnitReceipts'][first][key]
+                path = Path(reference['path']); success = path.read_bytes(); failed = json.loads(success)
+                if key == 'result': failed.update(checksPassed=False, primaryFailure={'type': 'Refused', 'message': 'AUTHENTICATED_FAILURE'})
+                else: failed['authorizationId'] = 'AUTHENTICATED_WRONG_TRANSACTION'
+                failed_bytes = json.dumps(failed).encode(); path.write_bytes(failed_bytes)
+                reference['sha256'] = caller.sha(path); Path(case.next_spec['grant']).write_text(json.dumps(case.next_grant))
+                original_open, original_read = Path.open, caller.read_json
+                reads, schedule = [], []
+                class Swapping:
+                    def __init__(self, stream): self.stream = stream
+                    def __enter__(self): self.stream.__enter__(); return self
+                    def __exit__(self, *a): return self.stream.__exit__(*a)
+                    def __getattr__(self, name): return getattr(self.stream, name)
+                    def read(self, n=-1):
+                        data = self.stream.read(n); reads.append((n, len(data)))
+                        if not schedule:
+                            path.write_bytes(success); schedule.append('replace-after-real-read')
+                        return data
+                def opened(p, *a, **kw):
+                    stream = original_open(p, *a, **kw)
+                    return Swapping(stream) if p == path and a and a[0] == 'rb' else stream
+                def restore(p, *a, **kw):
+                    value = original_read(p, *a, **kw)
+                    if Path(p) == path: path.write_bytes(failed_bytes); schedule.append('restore-after-real-parse')
+                    return value
+                with patch.object(Path, 'open', opened), patch.object(caller, 'read_json', side_effect=restore), self.assertRaises(caller.Refused):
+                    self.next_consumption(case)
+                self.assertEqual(reads, [(2 * 1024 * 1024 + 1, len(failed_bytes))])
+                self.assertEqual(schedule, ['replace-after-real-read', 'restore-after-real-parse'])
+                self.assertEqual(path.read_bytes(), failed_bytes)
+                for field in ('output', 'evidence', 'consumption'): self.assertFalse(Path(case.next_spec[field]).exists())
+                self.assertEqual(case.calls.count('inert-start'), 1)
+
+    def test_actual_admission_metadata_caps_growth_encoding_hashes_and_unknown_fields(self):
+        for key in ('grant', 'result', 'consumption'):
+            for fault in ('exact-cap', 'oversized', 'growth', 'bad-utf8', 'bad-json', 'wrong-hash', 'unknown-fields', 'symlink', 'directory', 'after-snapshot-growth'):
+                if key == 'grant' and fault == 'wrong-hash': continue  # Root grant has no external receipt reference.
+                if key != 'grant' and fault == 'after-snapshot-growth': continue
+                with self.subTest(key=key, fault=fault), self.boundary(clean=True, real_git=True) as case:
+                    first = case.ready['unitOrder'][0]
+                    reference = None if key == 'grant' else case.next_grant['previousUnitReceipts'][first][key]
+                    path = Path(case.next_spec['grant'] if reference is None else reference['path'])
+                    maximum = 16384 if key == 'grant' else 2 * 1024 * 1024
+                    raw = path.read_bytes(); value = json.loads(raw)
+                    if fault == 'exact-cap': raw += b' ' * (maximum - len(raw))
+                    if fault == 'oversized': raw += b' ' * (8 * 1024 * 1024)
+                    if fault == 'bad-utf8': raw = b'{"bad":"\xff"}'
+                    if fault == 'bad-json': raw = b'{'
+                    if fault == 'unknown-fields':
+                        value['futureMetadata'] = {'unknown': [7, '\u2603', {'keep': True}]}; raw = json.dumps(value).encode()
+                        if key == 'consumption':
+                            rp = Path(case.next_grant['previousUnitReceipts'][first]['result']['path'])
+                            result = json.loads(rp.read_bytes()); result['admission'] = value; rp.write_text(json.dumps(result))
+                            case.next_grant['previousUnitReceipts'][first]['result']['sha256'] = caller.sha(rp)
+                    path.write_bytes(raw)
+                    if reference is not None:
+                        if fault != 'wrong-hash': reference['sha256'] = caller.sha(path)
+                        else: reference['sha256'] = '0' * 64
+                        Path(case.next_spec['grant']).write_text(json.dumps(case.next_grant))
+                    if fault in ('symlink', 'directory'):
+                        saved = case.base / 'saved-metadata'; path.rename(saved)
+                        if fault == 'symlink': path.symlink_to(saved)
+                        else: path.mkdir()
+                    original_open, original_snapshot = Path.open, caller.read_json_snapshot
+                    reads, snapshots = [], []
+                    class Measured:
+                        def __init__(self, stream): self.stream = stream
+                        def __enter__(self): self.stream.__enter__(); return self
+                        def __exit__(self, *a): return self.stream.__exit__(*a)
+                        def __getattr__(self, name): return getattr(self.stream, name)
+                        def read(self, n=-1):
+                            if fault == 'growth' and not reads:
+                                with original_open(path, 'ab') as writer: writer.write(b' ' * (maximum + 9))
+                            data = self.stream.read(n); reads.append((n, len(data))); return data
+                    def opened(p, *a, **kw):
+                        stream = original_open(p, *a, **kw)
+                        return Measured(stream) if p == path and a and a[0] == 'rb' else stream
+                    def observe(p, *a, **kw):
+                        snapshot = original_snapshot(p, *a, **kw)
+                        if Path(p) == path:
+                            snapshots.append(snapshot)
+                            if fault == 'after-snapshot-growth':
+                                with original_open(path, 'ab') as writer: writer.write(b' ' * (8 * 1024 * 1024))
+                        return snapshot
+                    with patch.object(Path, 'open', opened), patch.object(caller, 'read_json_snapshot', side_effect=observe):
+                        if fault in ('exact-cap', 'unknown-fields', 'after-snapshot-growth'):
+                            _, record = self.next_consumption(case)
+                            if key == 'grant': self.assertEqual(record['grantSha256'], snapshots[0][1])
+                        else:
+                            with self.assertRaises((caller.Refused, ValueError)): self.next_consumption(case)
+                            for field in ('output', 'evidence', 'consumption'): self.assertFalse(Path(case.next_spec[field]).exists())
+                    if fault in ('oversized', 'symlink', 'directory'): self.assertEqual(reads, [])
+                    else:
+                        self.assertEqual(len(reads), 1)
+                        self.assertEqual(reads[0], (maximum + 1, maximum + 1 if fault == 'growth' else len(raw)))
+                    if fault == 'unknown-fields': self.assertEqual(snapshots[0][0]['futureMetadata'], value['futureMetadata'])
+                    if fault == 'after-snapshot-growth': self.assertNotEqual(record['grantSha256'], caller.sha(path))
+                    self.assertEqual(case.calls.count('inert-start'), 1)
 
     def test_real_git_successor_admission_allows_only_exact_predecessor_artifacts(self):
         for mutation in ('none', 'unrelated', 'quoted-untracked', 'tracked-edit', 'staged-edit', 'modified-artifact',

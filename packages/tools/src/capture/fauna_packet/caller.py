@@ -21,6 +21,7 @@ import stat
 import subprocess
 import time
 from types import SimpleNamespace
+from typing import NamedTuple
 
 sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
@@ -33,6 +34,11 @@ CACHE_SNAPSHOT_SECONDS = 30
 
 class Refused(RuntimeError):
     pass
+
+
+class GrantAdmission(NamedTuple):
+    spec: dict
+    predecessor_outputs: tuple
 
 
 def require(condition, message):
@@ -53,14 +59,26 @@ def sha(path):
     return h.hexdigest()
 
 
-def read_json(path, maximum=2 * 1024 * 1024, expected_sha256=None):
+def read_json_snapshot(path, maximum=2 * 1024 * 1024, expected_sha256=None):
     p = Path(path)
-    require(p.is_file() and not p.is_symlink() and p.stat().st_size <= maximum, 'Unsafe/oversized JSON: ' + str(p))
+    try:
+        before = p.lstat()
+    except OSError as error:
+        raise Refused('Unsafe/missing JSON: ' + str(p)) from error
+    require(stat.S_ISREG(before.st_mode) and before.st_size <= maximum, 'Unsafe/oversized JSON: ' + str(p))
     with p.open('rb') as stream:
+        opened = os.fstat(stream.fileno())
+        require(stat.S_ISREG(opened.st_mode) and opened.st_size <= maximum
+                and (opened.st_dev, opened.st_ino) == (before.st_dev, before.st_ino), 'JSON changed before read: ' + str(p))
         data = stream.read(maximum + 1)
     require(len(data) <= maximum, 'JSON grew beyond cap: ' + str(p))
-    require(expected_sha256 is None or hashlib.sha256(data).hexdigest() == expected_sha256, 'JSON reference drifted: ' + str(p))
-    return json.loads(data)
+    digest = hashlib.sha256(data).hexdigest()
+    require(expected_sha256 is None or digest == expected_sha256, 'JSON reference drifted: ' + str(p))
+    return json.loads(data), digest
+
+
+def read_json(path, maximum=2 * 1024 * 1024, expected_sha256=None):
+    return read_json_snapshot(path, maximum, expected_sha256)[0]
 
 
 def persist(path, value):
@@ -283,6 +301,7 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
     require(grant.get('previousUnitsAccepted') == ready['unitOrder'][:ready['unitOrder'].index(unit)], 'Units must be admitted sequentially; no retry or continuation after failure')
     completions = grant.get('previousUnitReceipts', {})
     require(set(completions) == set(grant['previousUnitsAccepted']), 'Parent-observed caller completion receipts required for every predecessor')
+    predecessor_outputs = []
     for previous in grant['previousUnitsAccepted']:
         prior = ready['units'][previous]
         completion = completions[previous]
@@ -292,12 +311,11 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
                 'Parent did not observe a successful predecessor caller exit')
         for key, path in (('result', result_path), ('consumption', consumption_path)):
             reference = completion.get(key, {})
-            require(reference.get('path') == str(path) and path.is_file() and not path.is_symlink()
-                    and reference.get('sha256') == sha(path), 'Predecessor receipt missing/drifted: ' + key)
+            require(reference.get('path') == str(path) and isinstance(reference.get('sha256'), str), 'Predecessor receipt reference missing: ' + key)
         failed_path = result_path.parent / 'failed-result.json'
         require(not failed_path.exists() and not failed_path.is_symlink(), 'Predecessor has failed publication evidence')
-        prior_result = read_json(result_path)
-        consumed = read_json(consumption_path)
+        prior_result = read_json(result_path, expected_sha256=completion['result']['sha256'])
+        consumed = read_json(consumption_path, expected_sha256=completion['consumption']['sha256'])
         require(consumed['unit'] == previous and consumed['head'] == current_head
                 and consumed['readinessSha256'] == readiness_sha and consumed['spec'] == prior
                 and consumed['authorizationId'] == prior['authorizationId'], 'Predecessor transaction binding changed')
@@ -306,9 +324,10 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
                 and prior_result.get('publication') == {'status': 'AWAITING_CALLER_COMPLETION', 'completeReceipt': None}
                 and prior_result.get('primaryFailure') is None and prior_result.get('cleanupFailures') == []
                 and prior_result.get('persistenceFailures') == [], 'Predecessor result is failed/indeterminate')
+        predecessor_outputs.append((prior, prior_result['raw'].get('outputManifest')))
     expiry = datetime.datetime.fromisoformat(grant['expiresUtc'])
     require(expiry.tzinfo is not None and expiry > datetime.datetime.now(datetime.timezone.utc), 'Grant expired')
-    return ready['units'][unit]
+    return GrantAdmission(ready['units'][unit], tuple(predecessor_outputs))
 
 
 def verified_output_paths(ready, spec, manifest):
@@ -344,13 +363,10 @@ def verified_output_paths(ready, spec, manifest):
     return {os.fsencode(str((output / name).relative_to(root))) for name in expected}
 
 
-def verify_worktree(ready, grant):
+def verify_worktree(ready, predecessor_outputs):
     allowed = set()
-    for previous in grant['previousUnitsAccepted']:
-        prior = ready['units'][previous]
-        result = read_json(Path(prior['evidence']) / 'result.json',
-                           expected_sha256=grant['previousUnitReceipts'][previous]['result']['sha256'])
-        allowed.update(verified_output_paths(ready, prior, result['raw'].get('outputManifest')))
+    for prior, manifest in predecessor_outputs:
+        allowed.update(verified_output_paths(ready, prior, manifest))
     status = subprocess.check_output([ready['git'], 'status', '--porcelain=v1', '-z', '--untracked-files=all', '--ignore-submodules=none'],
                                      cwd=ready['root'], timeout=5)
     require(all(row[:3] == b'?? ' and row[3:] in allowed for row in status.split(b'\0') if row),
@@ -361,17 +377,20 @@ def consume(ready, unit, grant_path):
     optimization_guard()
     # The disabled candidate is rejected before reading a grant or importing any ownership helper.
     require(ready['runtimeEnabled'] is True, 'Readiness is disabled; no helper import/allocation permitted')
-    grant = read_json(grant_path, 16384)
+    frozen, readiness_sha = read_json_snapshot(READY)
+    require(frozen == ready, 'Readiness changed before admission')
+    grant, grant_sha = read_json_snapshot(grant_path, 16384)
     head = subprocess.check_output([ready['git'], 'rev-parse', 'HEAD'], cwd=ready['root'], text=True, timeout=5).strip()
-    spec = grant_gate(ready, unit, grant, sha(READY), head, os.environ.get('FAUNA_CAPTURE_GRANT'))
+    admission = grant_gate(ready, unit, grant, readiness_sha, head, os.environ.get('FAUNA_CAPTURE_GRANT'))
+    spec = admission.spec
     require(str(Path(grant_path).resolve()) == spec['grant'] and grant['authorizationId'] == spec['authorizationId'], 'Grant attempt identity changed')
-    verify_worktree(ready, grant)
+    verify_worktree(ready, admission.predecessor_outputs)
     verify_bindings(ready, unit)
     for key in ('output', 'evidence', 'consumption'):
         p = Path(spec[key])
         require(p.is_absolute() and p.resolve() == p and not p.exists() and not p.is_symlink(), 'Fresh identity already used: ' + str(p))
-    record = {'authorizationId': grant['authorizationId'], 'unit': unit, 'head': head, 'readinessSha256': sha(READY),
-              'grantSha256': sha(grant_path), 'spec': spec, 'utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    record = {'authorizationId': grant['authorizationId'], 'unit': unit, 'head': head, 'readinessSha256': readiness_sha,
+              'grantSha256': grant_sha, 'spec': spec, 'utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
     persist(spec['consumption'], record)  # O_EXCL remains consumed even if a later allocation fails.
     Path(spec['evidence']).mkdir(mode=0o700)
     Path(spec['output']).mkdir(mode=0o700)
