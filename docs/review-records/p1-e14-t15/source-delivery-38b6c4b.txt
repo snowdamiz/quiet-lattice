@@ -1,0 +1,151 @@
+TASK: P1.E14.T15 Capture resource ownership and failure preservation
+STATUS: DONE (assigned SOURCE unit only; independent review and native adoption qualification remain pending with parent)
+
+SUMMARY:
+startVite now closes the exact created server when listen fails. Both exported capture entry points retain Vite before glArgs/launch, capture their work outcome explicitly, and attempt browser close followed by Vite stop even when either rejects. Single failures are rethrown unchanged. Multiple failures preserve every original value by identity in standard AggregateError.errors and retain the first as cause. captureUi establishes accumulated page errors before shared cleanup. Successful work and output contracts remain unchanged. No caller signature changes or general capture framework were introduced.
+
+PROVENANCE:
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+Branch: task/P1-E14-T15-capture-lifecycle
+Base: 7af58d4d3122a00fc6afde63f8b2480c3c6eda7b
+Base tree: 35d426da86f29a76f9146072f56d1635d526a450
+Head: 38b6c4b58db43146df20cd760808d1461d7a667b
+Head tree: b8ba53c6acdf6eb604b9c046a8165f1985634be8
+Parent of head equals the exact requested base. Final tracked/untracked Git status is clean.
+Patch SHA256: 9e097486791fdaabc3bcd6fd55899805d4e55788e9824f2353e4b82a7743537b
+Files and SHA256: see provenance.json. The commit contains exactly the following two files.
+
+FILES CHANGED:
+- packages/tools/src/capture/capture.ts — acquisition ownership, independent cleanup attempts, original failure preservation, UI page-error placement.
+- packages/tools/src/capture/capture.lifecycle.test.ts — 100 actual-exported-boundary lifecycle and successful-protocol cases.
+
+VERIFY:
+- Direct Node executable: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node; observed v22.23.3.
+- Existing Vitest executable: node_modules/vitest/vitest.mjs; observed 5.0.5 (darwin-arm64, Node v22.23.3).
+- Actual baseline RED: red-boundary.json/.log; 68 failed, 32 passed across 100 cases, exit 1. Baseline production capture.ts is retained as base-capture.ts; test bytes are identical between RED and committed GREEN (red-test.ts and red-sources.json).
+- Defects reproduced: listen failures did not call created-server close; glArgs/launch failures did not stop Vite; browser-close failures skipped Vite; navigation or collected page errors were replaced by cleanup failures; multiple failures were not retained. Tests include raw '', null, undefined, false, 0, frozen non-Error objects with byte/ownership facts, and frozen Error objects.
+- GREEN on unchanged test bytes: green-boundary.json/.log; 100 passed, exit 0.
+- Final regression run: regressions.json/.log; 145 passed in six files, exit 0. Includes capture lifecycle, capture classes, smoke GL/target/harness-import rules, and art target selection. maxWorkers=2, file parallelism disabled; six workers reported are sequential per-file isolated workers, not six simultaneous workers.
+- Final tools typecheck: typecheck-final.json/.log, exit 0.
+- Final scoped ESLint: lint-final.json/.log, exit 0.
+- Final scoped Prettier check: format-final.json/.log, exit 0.
+- git diff --check and staged git diff --check: exit 0. Exact scoped commit created successfully.
+- unchanged-work.json records byte-identical Review work body, UI work loop and clip/CLI suffix against baseline; regression asserts Review lights/LODs/wireframes/overlay/far100+200/paired perf/stats/names/order and real title-screen two-aspect/216-frame clip work/order.
+- Initial harness command used config relative to both root and config path, yielding ERR_LOAD_URL before any test. Corrected --config to vitest.config.ts relative to --root packages/tools; retained red.json/.log, never counted as product RED.
+- Initial ESLint rejected cause precedence inside a nested catch (preserve-caught-error). Aggregation now happens after the inner catch, retaining the original listen failure as cause. Retained lint.json/.log; final lint passes without disabling the rule.
+- Exact commands, exit codes, and last 20 lines of every failed run follow in commands-and-results.txt and are appended below.
+
+TEST BOUNDARY / DEPENDENCY STATE:
+The real capture.ts exports, class rules, screen definitions, filesystem output writes, Review evaluation callbacks and title-screen/clip callbacks execute. Only Vite and Playwright modules are mocked. Controlled window/document state backs the Playwright evaluate port; canvas encoding/screenshots return inert bytes. Date.now is controlled to avoid real clip pacing waits. The original freePort implementation briefly binds/closes an ephemeral loopback socket. No actual Vite server, Chromium, GPU, StationJob, service database, real screenshot or native image generation was run. Temporary output fixtures are owned and removed by each test.
+The checkout initially had no node_modules. Fresh local directories contain links to existing pinned dependencies, with @astra/shared pointing to this checkout. dependency-links.json records them. Direct executables were used throughout; no pnpm, install, dependency repair or package-manager implicit-install path ran. Both result and filesystem module caches were disabled, fsModuleCachePath points to this task's /tmp directory, and runner config loading avoids bundled config output. All link creation is confined to this checkout; no writes through linked dependency targets were requested. No before/after byte inventory of the concurrently used external dependency tree is claimed.
+
+DECISIONS:
+- How to distinguish a falsy rejection from successful work? -> CaptureOutcome discriminated union (kind success/failure), with unknown error data. Failure detection never depends on error truthiness.
+- How to represent multiple failures without losing object identity or adding caller requirements? -> Existing standard AggregateError; errors ordered [work failure if any, browser cleanup if any, Vite cleanup if any], and cause is errors[0]. If cleanup is the only failure it is thrown unchanged; if both cleanup operations fail after success, the first cleanup is cause. All entries, including undefined, are retained by identity. No error message/properties/facts are normalized, serialized, cloned, or mutated.
+- Where to establish UI logged-error failure? -> Immediately after its existing work loop, inside try before cleanup. This changes failure preservation only; successful frame/render/output work stays in its prior order.
+- Small shared helper? -> One private finishCapture function within capture.ts, strictly limited to these two resources and their existing cleanup order.
+
+DOWNSTREAM ADOPTION REQUIREMENTS:
+Parent obtains a fresh independent source review of this exact commit and owns plan/decision/progress updates. Adopt the reviewed commit into each caller before native qualification; frozen candidate/helper/source bytes and prior reports were not changed. Regenerate caller source/allowlist/hash bindings against the adopted bytes before any new actual run. Existing evidence continues to name its original source.
+Callers may continue using the same signatures and awaiting/rejecting as before. For complete multi-failure receipts they must inspect AggregateError.errors and cause rather than serializing only .message; preserving raw values in this source unit does not redesign packet error serialization. Consumers must distinguish rejection from truthiness (undefined/null/false/empty string remain valid rejection values). Native actual capture/smoke and visual qualification are parent work after fresh review/adoption, not established by these controlled source tests.
+
+OUT OF SCOPE FOUND:
+No new task proposed. Existing capturepacket caller/error-serialization adoption and T13 trace paths remain owned by their respective tasks; no renderer, Review scene, screens, StationJob/helper, assets, sourcefreeze, capturepacket, or orchestration docs were edited. No independent/self-review, whole-plan completion, push, PR, merge, main update, real screenshot cleanup, or cloud launch was performed.
+
+ARTIFACTS:
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/REPORT.txt (this C.2 report)
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/provenance.json
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/change.patch
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/commands-and-results.txt
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/red-sources.json
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/base-capture.ts
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/red-test.ts
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/unchanged-work.json
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/dependency-links.json
+/tmp/p1-e14-t15-capture-lifecycle-aDSoP9/prior-report-sha256.json
+All per-command .json/.log files remain alongside this report.
+Both supplied prior reports were only read; their SHA256s still match prior-report-sha256.json.
+
+EXACT VERIFICATION COMMANDS AND FAILURE TAILS:
+
+COMMAND red: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run --config packages/tools/vitest.config.ts --root packages/tools --maxWorkers 2 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/cache --configLoader runner src/capture/capture.lifecycle.test.ts
+RESULT: exit 1; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/red.log
+Last 20 lines:
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: Failed to load url /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf/packages/tools/packages/tools/vitest.config.ts (resolved id: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf/packages/tools/packages/tools/vitest.config.ts). Does the file exist?
+    at loadAndTransform (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/chunks/node.js:20144:31) {
+  code: 'ERR_LOAD_URL',
+  runnerError: Error: RunnerError
+      at reviveInvokeError (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/module-runner.js:557:64)
+      at Object.invoke (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/module-runner.js:630:11)
+      at async ModuleRunner.getModuleInformation (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/module-runner.js:1221:7)
+      at async ModuleRunner.import (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/module-runner.js:1142:23)
+      at async runnerImport (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/chunks/node.js:37333:18)
+      at async runnerImportConfigFile (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/chunks/node.js:38097:35)
+      at async loadConfigFromFile (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/chunks/node.js:38066:42)
+      at async resolveConfig (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite/dist/node/chunks/node.js:37668:22)
+      at async resolveConfig (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/dist/chunks/index.1TqnEahn.js:9269:25)
+      at async createVitest (file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/dist/chunks/cli-api.De07GUeT.js:13392:17)
+}
+
+
+
+
+COMMAND red-boundary: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run --config vitest.config.ts --root packages/tools --maxWorkers 2 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/cache --configLoader runner src/capture/capture.lifecycle.test.ts
+RESULT: exit 1; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/red-boundary.log
+Last 20 lines:
+
+ FAIL  src/capture/capture.lifecycle.test.ts > Review capture ownership > retains page errors together with both cleanup failures
+ FAIL  src/capture/capture.lifecycle.test.ts > UI capture ownership > retains page errors together with both cleanup failures
+AssertionError: expected Error: browser close { facts: { …(2) } } to be an instance of AggregateError
+ ❯ src/capture/capture.lifecycle.test.ts:291:19
+    289|     stop.mockRejectedValueOnce(viteFailure);
+    290|     const error = await rejected(run());
+    291|     expect(error).toBeInstanceOf(AggregateError);
+       |                   ^
+    292|     if (!(error instanceof AggregateError)) throw new Error('missing A…
+    293|     expect(error.cause).toBeInstanceOf(Error);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/68]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  68 failed | 32 passed (100)
+   Start at  02:28:31
+   Duration  764ms (transform 52%, tests 24%, import 24%)
+
+
+COMMAND green-boundary: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run --config vitest.config.ts --root packages/tools --maxWorkers 2 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/cache --configLoader runner src/capture/capture.lifecycle.test.ts
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/green-boundary.log
+
+COMMAND typecheck: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/tools
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/typecheck.log
+
+COMMAND lint: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/eslint/bin/eslint.js packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+RESULT: exit 1; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/lint.log
+Last 20 lines:
+
+/Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf/packages/tools/src/capture/capture.ts
+  66:98  error  The symptom error is being thrown with an incorrect `cause`  preserve-caught-error
+
+✖ 1 problem (1 error, 0 warnings)
+
+
+COMMAND format: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/format.log
+
+COMMAND lint-final: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/eslint/bin/eslint.js packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/lint-final.log
+
+COMMAND regressions: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run --config vitest.config.ts --root packages/tools --maxWorkers 2 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/cache --configLoader runner src/capture src/smoke/gl.test.ts src/smoke/targets.test.ts src/smoke/harness-imports.test.ts src/art/targets.test.ts
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/regressions.log
+
+COMMAND typecheck-final: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/tools
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/typecheck-final.log
+
+COMMAND format-final: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/format-final.log
+
+COMMAND diff-check: git diff --check
+RESULT: exit 0; full log /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/diff-check.log

@@ -1,0 +1,201 @@
+# P1.E08.T08 author brief (CPU source unit)
+
+Art task. Eligible as a fresh source unit. Stock `export_creatures.py` and `export_constructs.py` already call `artlib.export.main`, and `#review:<family>/<file>` already loads `/models/<family>/<file>.glb` one variant at a time. Gameplay adoption is P1.E14.T07, which waits until this task is `[x]` and then deletes `buildQuadruped` / `buildFlyer`. This unit does not edit loaders, and it does not run capture or a blind grade. Do not start until the parent admits a fresh CPU budget (one Blender, t2, math2, codec1). This brief does not admit one.
+
+Pinned plan line (unchanged from `ef9f1acd6` through live parent `8b5f1e642`; the commits between them are plan notes on other tasks):
+
+`- [ ] **P1.E08.T08 (art) Creatures at the new bar** · deps: E14.T02 · done: the five body plans rebuilt (two variants each) with attack poses, hand-weighted limbs; predator variants; outpost drone; Overseer. · verify: validate; review scene. → [R]`
+
+Deps: P1.E14.T02 is `[x]`. No branch, blend, or glb for this task exists. `assets/blend/creatures/` and `assets/blend/constructs/` are `.gitkeep` only, including across all refs. `packages/client/public/models/creatures.glb` is the legacy generator file and stays. Author from the parent, in a new worktree. Do not base it on the fauna, companion, flora, props, city, or hull checkouts.
+
+## What this unit ships
+
+Seven source files, seven compressed glbs, stock validation of each source and each export. Hand-authored geometry. `generate_3d` and library imports are blockout only. Export may decimate missing LODs; it must not generate the LOD0 mesh.
+
+Species role is not a mesh. Docile, skittish, territorial, ambusher, and apex are temperaments in `packages/shared/src/data/mobs.ts`. The colour-region mask is how a species is recoloured. Do not author one mesh per temperament or per planet palette.
+
+Predator variants are a hunting silhouette, not a recolour. The predator temperament uses exactly three plans (`TEMPERAMENTS` / DESIGN 12.2): biped role `stalker`, quad_small role `pack`, flyer role `diver`. quad_heavy and quad_grazer have no predator row; their hostile role is territorial, and the apex is Pack Alpha (bosses family, P1.E08.T07). DESIGN 19.3's "predators per plan" sits in the same creatures row as stone-touched overlays and horrors, which are P2.E31.T01. This task does not author those, and it does not author a predator mesh for the two plans no predator temperament selects.
+
+| File stem | Family | Asset root | Variants |
+|---|---|---|---|
+| `quad_heavy` | creatures | `quad_heavy` | `quad_heavy_0`, `quad_heavy_0_charge`, `quad_heavy_0_stomp`, `quad_heavy_1`, `quad_heavy_1_charge`, `quad_heavy_1_stomp` |
+| `quad_grazer` | creatures | `quad_grazer` | `quad_grazer_0`, `quad_grazer_0_kick`, `quad_grazer_1`, `quad_grazer_1_kick` |
+| `quad_small` | creatures | `quad_small` | `quad_small_0`, `quad_small_0_bite_swarm`, `quad_small_1`, `quad_small_1_bite_swarm`, `quad_small_predator`, `quad_small_predator_bite_swarm` |
+| `biped` | creatures | `biped` | `biped_0`, `biped_0_leap`, `biped_0_claw_combo`, `biped_1`, `biped_1_leap`, `biped_1_claw_combo`, `biped_predator`, `biped_predator_leap`, `biped_predator_claw_combo` |
+| `flyer` | creatures | `flyer` | `flyer_0`, `flyer_0_dive`, `flyer_0_screech`, `flyer_1`, `flyer_1_dive`, `flyer_1_screech`, `flyer_predator`, `flyer_predator_dive`, `flyer_predator_screech` |
+| `outpost_drone` | constructs | `outpost_drone` | `outpost_drone` |
+| `outpost_overseer` | constructs | `outpost_overseer` | `outpost_overseer`, `outpost_overseer_dome`, `outpost_overseer_core` |
+
+Thirty-four creature variants, one drone, three Overseer phase reads. Attack ids are the body-plan rows in `BODY_PLANS`: charge, stomp, kick, bite_swarm, leap, claw_combo, dive, screech. One posed mesh per id. The bite swarm's 3–5 animals and the claw combo's 3 hits are gameplay counts, not extra meshes. The leap's 12 m close is movement, not a mesh 12 m long.
+
+The ten unsuffixed-attack names (`quad_heavy_0`, `quad_heavy_1`, `quad_grazer_0`, `quad_grazer_1`, `quad_small_0`, `quad_small_1`, `biped_0`, `biped_1`, `flyer_0`, `flyer_1`) are the rebuilt herd pair. They match `blender/build_creatures.py`'s ten functions. The `*_predator` and `*_attack` names are new.
+
+Variant ids must be the asset name or `<asset>_<suffix>` (`artlib/checks.py`). One `.blend` per stem. The stock exporter writes one glb per stem: `packages/client/public/models/<family>/<stem>.glb`. That path sits beside the legacy file `packages/client/public/models/creatures.glb` (a file named `creatures.glb`, a directory named `creatures`). Do not delete or overwrite the legacy file.
+
+## Readable sources
+
+`assets/blend/creatures/<stem>.blend`
+
+`assets/blend/constructs/outpost_drone.blend`, `outpost_overseer.blend`
+
+Layout (`artlib/scene.py`, art bible 8):
+
+- Metric, scale 1.0. One Blender unit is one metre. +Z up. Apply transforms.
+- Walkers: origin between the feet, every sole on z = 0, facing −Y. Flyers and the two constructs: origin at the centre of mass. The drone hovers; its origin is the hover centre, not a buried foot.
+- Top-level `REF`, hidden from export: `REF_Grid` (1 m, 20×20 m) and `REF_Biped` (1.85 m, feet at the origin).
+- One top-level collection named the asset. Inside it, `<variant>_LOD0` through `<variant>_LOD3`.
+- `COL_*` for one variant lives in that variant's collection, beside the LODs, not inside LOD0. A collider inside LOD0 is copied onto the generated LODs.
+- Object names must not be the asset name, the variant id, or `<variant>_LOD<n>`.
+- Collections starting with `_` are ignored. Link `assets/blend/_library.blend`. Do not edit it.
+
+LOD0 is hand-authored. LOD3 is under 5% of that variant's LOD0. If a lower LOD collection is absent, stock export decimates at 1.0, 0.3, 0.1, 0.035. Decimation clears shape keys on the copies (`artlib/lods.py`). Do not use a shape key as the only copy of an attack pose: `export_morph=True` writes morphs, and the review scene never sets `morphTargetInfluences`, so a pose that exists only as a shape key is not a capture.
+
+## Creature rig contract (do not change it)
+
+The creatures family requires these point attributes on every render mesh (`families.json`): `_limb` FLOAT, `_pivot` FLOAT_VECTOR, `_glow` FLOAT. It also requires a colour-region mask. `geometry.quantize` is false for this family only: `_pivot` and the mask stay exact floats. Constructs do not carry these attributes, and their geometry is quantized. Do not put `_pivot` on a construct.
+
+Limb ids, the same list in `Fauna.js` and `build_creatures.py`:
+
+| Id | Part |
+|---|---|
+| 0 | body |
+| 1 | front-left leg, or the biped's −X leg |
+| 2 | front-right leg, or the biped's +X leg |
+| 3 | hind-left leg |
+| 4 | hind-right leg |
+| 5 | tail |
+| 6 | head and neck |
+| 7 | −X wing, or a biped arm (DESIGN: crowd arms use the unused wing channels) |
+| 8 | +X wing, or the other biped arm |
+
+`_limb` is an integer stored as a float. `Fauna.js` does `Math.round` and the shader does `int(aLimb + 0.5)`. A fractional weight in `_limb` is destroyed by that consumer. Do not add a weight attribute, a skin modifier, or an armature. The creatures family does not ask for an armature; the bosses family does, and this task does not use it.
+
+Hand-weighting is loop placement inside those integer ids. The walker shader bends a leg at half the hip height and blends that bend across vertices between 0.38 and 0.62 of the hip height, then levels the foot between 0.10 and 0.24 (`Fauna.js` `creatureMaterial`; the generator's `KNEE` is 0.5 and its ankle fraction is 0.13). Put the knee loop on that half-height band and the ankle loop in the foot band, with the leg a near-vertical column under its hip pivot, so the existing bend does not shear a rigid capsule. `_pivot` is the joint in Blender object space, Z-up, not converted to Y-up. On a posed variant, `_pivot` is that pose's joint, and the vertex ids stay the same ids as the rest variant.
+
+`_glow` is 0 or 1 on small tips (eye catch, lure, horn tip). It is not a stone-touched hide. Glyph light `#D8F6FF` / `#7FD8FF` is the monolith network. These meshes do not use it, and they do not grow the dark crystal clusters the calibration called out on `quad_heavy_0`.
+
+Colour mask, POINT domain, the active colour attribute, and the first colour attribute, render index 0: R primary, G secondary, B accent, weights summing to 1 (the check fails under 95%), A occlusion. Eyes use a dark pupil in A. The review and the turntable replace a creature's material with the dun game look (`packages/shared/src/art/looks.ts`: `#8A6B4F`, `#D8C6A0`, `#2F2622`, roughness 0.65, metalness 0.05, albedo cap 0.75, ao floor 0.05) wherever a colour attribute exists. Painted maps still have to pass the PBR profile, and the grader's stock images show the mask fill. Put the readable regions in the mesh and the mask. Do not delete the mask to force the baked maps on screen.
+
+## Scale, class, materials
+
+Creature class (`families.json`): LOD0 15,000–40,000 triangles, longest side 0.2–80 m inclusive, 4 LODs, 2048 maps, 128 MB per variant. The art-bible bands are not what the size check measures. The check is the longest side of LOD0 render meshes. Author to the band and stay inside 0.2–80:
+
+| Plan | Band (art bible 1) | Rest pose |
+|---|---|---|
+| `quad_small` | shoulder 0.4–1.2 m | herd pair plus the pack predator |
+| `quad_grazer` | shoulder 1.2–2.4 m | grinding jaw, wide-set prey eyes; no ball-tipped antennae |
+| `quad_heavy` | shoulder 2.5–5 m | armoured brow and horn bosses; two herd silhouettes, no predator mesh |
+| `biped` | 1.6–2.6 m tall | two herd silhouettes in that band; `biped_predator` pitched forward, counterweight tail, long clawed forelimbs, a jaw that opens |
+| `flyer` | span 1–6 m, wings along ±X | two herd silhouettes; `flyer_predator` swept raptor wings and talons, not a flat moth |
+
+The demo's uniform 1.40 m quads are the calibration failure. Do not match them.
+
+PBR maps for the class: base colour, roughness, metallic, normal, occlusion, and an emissive map when the material emits. Share one 2k set across the variants of a file. A uniform map fails. Shipped export is KTX2 plus meshopt. Do not pass `--no-compress` into `packages/client/public/models`.
+
+Attack poses, each a full variant at the same body size as its rest sibling:
+
+- charge: forequarters extended, hind legs driving
+- stomp: a forefoot raised or driven down
+- kick: one hind leg extended
+- bite_swarm: head forward, jaws open, one animal
+- leap: forelimbs reaching, hind legs extended, body not translated by the 12 m gameplay close
+- claw_combo: one forelimb extended
+- dive: wings swept, talons forward
+- screech: head raised, mouth open
+
+`COL_*` one box per variant, under 512 triangles (over 512 warns). The creatures family does not require it. The review overlay draws it. The current fauna pick is a sphere and does not read `COL_*`; T07 is the adoption. No `Interact`. No `Door*` (any `Door*` in the file must be at least 2.4×1.4 m). No `Socket_*`, `HP_*`, `Mount`, or `Spin`.
+
+## Constructs
+
+Constructs family, class creature, same 15,000–40,000 / 0.2–80 m / 4 LODs / 2k / 128 MB. No limb attributes, no colour mask, no required markers. `gameLook` returns null, so review shows the authored PBR. `classRules` promote only `*warden*` and `sentinel_ship*` to hero. The names below stay creature class. Do not rename the Overseer onto `warden`.
+
+**`outpost_drone`.** Compact security drone (art bible 2.4: lapped shell, lattice frame, crystal window; paint deep blue `#22406A`, station white `#F4F4F0`, signal orange `#F28C28`). Hover body and one pulse laser. Longest side about 1.5–3 m, derived so it reads beside the 1.85 m biped and stays clearly under the 24 m Overseer. The bible has no separate drone band. `COL_Body`. `Muzzle_pulse` empty at the laser. A `Blink` empty, if used, needs a child lens mesh. A `Light_*` empty, if used, needs `color`, `intensity`, and `distance`. A material named `Lamp` on this family is PBR, not the sites signal profile. Do not name it `Nav*` or `GlyphLight`.
+
+**`outpost_overseer`.** The pad-sized drone (DESIGN 13: "a drone the size of the landing pad", 24 m). Longest side about 24 m, inside the 80 m class cap. Three variants, same massing, so review can show the phase reads T06 will drive:
+
+- `outpost_overseer`: pad lasers, core closed
+- `outpost_overseer_dome`: shield dome up (`Glass` is the glass profile: constant colour and roughness, no map set)
+- `outpost_overseer_core`: vents open, core exposed, dome down
+
+`COL_*` per variant. `Muzzle_laser` on the laser housings. Same Compact paint. 15,000–40,000 triangles on a 24 m machine is the class ceiling; spend them on the dome rib, housings, vents, and core.
+
+Out of this task: monolith sentinel, Wardens, sentinel ship (P2.E31.T02), Pack Alpha, Herd Mother, stone-touched overlays, the five horrors, ring grazer, belt lurker, depth leviathan.
+
+## Review consumer (later capture, not this unit)
+
+`parseSpec` loads `/models/<family>/<file>.glb` for `#review:<family>/<file>[:<asset>[/<variant>]]`. A file with several variants is captured one variant per folder. `#review:creatures` is the legacy `creatures.glb`. The new files are `#review:creatures/<stem>` and `#review:constructs/<stem>`.
+
+When a capture is separately admitted:
+
+`pnpm capture -- --review <family>/<stem>`
+
+`pnpm turntable -- <file.glb> [out_dir] --family`
+
+PASS is every rubric score at least 4 and a mean of at least 4.5. The review scene does not run the fauna vertex shader, so it does not play a gait. It shows each rest mesh and each attack pose as authored, plus LOD2, wireframe, collider overlay, the 100 m view, and the paired perf readout. Gait and attack-phase playback are P1.E08.T02.
+
+## Stock commands for this CPU unit
+
+```
+pnpm art:export -- creatures --only quad_heavy,quad_grazer,quad_small,biped,flyer --report-dir packages/tools/blender/e08t08/reports
+pnpm art:export -- constructs --only outpost_drone,outpost_overseer --report-dir packages/tools/blender/e08t08/reports
+pnpm art:validate -- assets/blend/creatures/quad_heavy.blend assets/blend/creatures/quad_grazer.blend assets/blend/creatures/quad_small.blend assets/blend/creatures/biped.blend assets/blend/creatures/flyer.blend
+pnpm art:validate -- assets/blend/constructs/outpost_drone.blend assets/blend/constructs/outpost_overseer.blend
+pnpm art:validate -- packages/client/public/models/creatures/quad_heavy.glb packages/client/public/models/creatures/quad_grazer.glb packages/client/public/models/creatures/quad_small.glb packages/client/public/models/creatures/biped.glb packages/client/public/models/creatures/flyer.glb
+pnpm art:validate -- packages/client/public/models/constructs/outpost_drone.glb packages/client/public/models/constructs/outpost_overseer.glb
+```
+
+`pnpm art:export -- creatures` without `--only` exports every `assets/blend/creatures/*.blend` in that worktree. On a parent-based worktree that set is these five files. `--report-dir` keeps JSON out of the shared gitignored `packages/tools/blender/reports` directory.
+
+Task-local helpers, if any, live only in `packages/tools/blender/e08t08/`. They may invoke `export_creatures.py` and `export_constructs.py`. They may not fork the exporter.
+
+## Paths this unit does not write
+
+- `packages/client/public/models/creatures.glb`, `blender/build_creatures.py`, `packages/client/src/gameplay/Fauna.js`, `packages/client/src/gameplay/modelLibrary.js`, `packages/client/src/Game.js`, `packages/server/src/fauna/**`, `packages/server/src/abilities/**`.
+- `assets/blend/characters/**` and the shared humanoid rig. `assets/blend/_library.blend`.
+- `assets/blend/props/**`, `assets/blend/sites/**`, `assets/blend/cities/**`, `assets/blend/hulls/**`, `assets/blend/flora/**`, `assets/blend/stations/**`, and their `public/models` twins. The props checkout is `task/P1-E14-T08-props`. Fauna runtime is `task/P1-E08-T09-current-base` and `t3/P1-E07-T07-T09-live-qa`. Companion server work is `task/P1-E07-T07`.
+- `packages/tools/blender/artlib/**`, `families.json`, `export_*.py`, `validate.py`, `packages/client/src/dev/review.js`, `packages/tools/src/capture/**`.
+- `assets/blend/bosses/**`. Pack Alpha is not this task.
+
+`libraryVariants('creatures', prefix)` on the legacy file returns mesh names that start with `<prefix>_` and end in `_` plus digits. These new glbs are not that file. When T07 adopts them, the herd keys are the ten rest variant ids above; `*_predator` and `*_charge` (and the other attack suffixes) must not be added to the herd pick. This unit does not make that edit.
+
+## Schema facts the author has to satisfy
+
+These do not need a `families.json` edit.
+
+1. Body plans and the two machines are different families. Creature attributes and the colour mask are required on creatures and forbidden in spirit on constructs: a construct is quantized, so a `_pivot` there would not stay exact. The Overseer at 24 m and the drone at about 1.5–3 m both fit 0.2–80 m. Naming the Overseer `*warden*` would move it to hero (60,000–150,000 triangles, 4k maps). Do not.
+2. The creature triangle floor is 15,000 per variant, including every attack pose and the drone. A smooth body or a subdivided box fails the floor or the placeholder rubric. The Overseer ceiling is 40,000 on a 24 m machine.
+3. The validator's size test will not catch a 1.4 m heavy quadruped. The art-bible shoulder, height, and span bands will, at grade time. Hit the band.
+4. Fractional `_limb` values are not weights. The consumer rounds them. Hand-weighting is the knee and ankle loops described above. No armature, no extra attribute.
+5. Attack poses are variant meshes. A shape key is exported and then dropped from generated LODs, and the review scene shows the rest pose only. One posed variant per attack id is the copy the capture actually opens.
+6. The creatures review image is the dun mask fill, not the baked PBR. Maps are still required, non-uniform, and at most 2048. The mask stays.
+7. `COL_*` over 512 triangles warns. Keep colliders as boxes, one per variant, outside LOD0.
+8. `Light_*` without `color`, `intensity`, and `distance` fails when the empty exists. `Blink` without a child mesh fails. Any `Door*` must be at least 2.4×1.4 m; these files have none.
+9. Size is LOD0 render meshes only, inclusive (`lo <= val <= hi`). A wingtip or a laser past the band fails the grade even when it is inside 80 m.
+
+## Later adoption (out of scope)
+
+T07 removes `buildQuadruped`, `buildFlyer`, and the other generators, and a missing library asset throws. The keys are:
+
+- `/models/creatures/quad_heavy.glb`, `quad_grazer.glb`, `quad_small.glb`, `biped.glb`, `flyer.glb`, with the variant ids in the table.
+- `/models/constructs/outpost_drone.glb`, `outpost_overseer.glb`.
+- The legacy `creatures.glb` and `Game.js`'s `loadLibrary('creatures', '/models/creatures.glb')` stay until that task. `Fauna.js` still scales a loaded herd mesh onto the procedural height; correcting that scale is a loader change, not this unit.
+
+No capture, no grade, no loader edit, and no merge in this unit.
+
+## Appendix C.1 (hand to the CPU author only after capacity is admitted)
+
+```
+You are implementing one task of docs/IMPLEMENTATION_PLAN.md in the worktree at <path> on branch <assigned branch>.
+Verify your working directory and branch before editing; run all commands in that worktree.
+
+TASK (verbatim):
+- [ ] **P1.E08.T08 (art) Creatures at the new bar** · deps: E14.T02 · done: the five body plans rebuilt (two variants each) with attack poses, hand-weighted limbs; predator variants; outpost drone; Overseer. · verify: validate; review scene. → [R]
+
+SPEC: read these sections of docs/DESIGN.md before anything else: 12.2, 12.5, 13 (Outpost Overseer row), 19.1, 19.2, 19.3, 19.4.
+Also docs/art-bible.md sections 1, 2.4, 3.4, 4, 8, and the inventory in /tmp/space-p1-e08-t08-author-brief.md. That inventory is the file list. Do not add species, temperaments, stone-touched overlays, horrors, or Pack Alpha.
+
+RULES: docs/IMPLEMENTATION_PLAN.md section 0.3 and 0.4. Read them.
+FILES: the seven blends and seven glbs named in the inventory. Helpers only under packages/tools/blender/e08t08/, calling export_creatures.py and export_constructs.py. Do not edit files outside that list. The forbidden list in the inventory is closed. Do not edit Fauna.js, modelLibrary.js, Game.js, the shared rig, families.json, artlib, or creatures.glb.
+VERIFY: run the export and validate commands in the inventory from the repo root in your worktree. All must pass. Do not run pnpm capture or pnpm turntable. Those are a later grant.
+Report in the format of Appendix C.2. Commit to your branch with message "P1.E08.T08: Creatures at the new bar". Do not edit docs/IMPLEMENTATION_PLAN.md, PROGRESS.md or DECISIONS.md.
+```

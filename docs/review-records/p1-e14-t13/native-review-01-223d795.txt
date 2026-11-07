@@ -1,0 +1,154 @@
+TASK: Independent SOURCE/CPU review — P1.E14.T13 concrete native observer controller.
+
+STATUS: **REVISE — eight reproduced P2 findings.** Review completed; no implementation or native qualification performed.
+
+SUMMARY: The accepted decision rules, old protocol bodies and standard Review bodies remain unchanged, the R3 category/PID advisories are fixed, the actual StageReceipts schema is compatible, and the supplied CPU checks pass. The new concrete unit still fails its ancestor-safe admission, bounded evidence, complete inventory, and first-error preservation contracts. These findings concern this new caller/freezer, not a reversal of the earlier protocol-only R3 PASS.
+
+PROVENANCE:
+
+- Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8`; branch `codex/task/P1-E14-T13-trace-observer`.
+- HEAD `223d795ee34d66521837694ece2d6990d3d5bc90`; tree `407a5a20b9490f8a8075bc12586e93aa1b3e3891`.
+- Accepted base `02e981096574ca7e486958023075d0e52c45062f`; tree `6ab14d7ee5f702a45ae479f58837033320a14b89`.
+- Recovery `732a502a7ce5da3acdf1de147671b326bf3d499a`: all four helper bytes equal the specified `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9` blobs and current checkout. Helpers were not edited.
+- Actual frozen readiness: `/private/tmp/p1-e14-t13-native-source.577yaoka/frozen-223d795ee/readiness.json`, SHA256 `d197d95d2e4bd3db63ebe657e138705fb503b4b25456b8037c4432830c1953d6`; `runtimeAuthorized:false`.
+- Read the complete worker report, NEXT_LAUNCH JSON/shell, recorded commands, freeze metadata, source hashes and protected proof, plan 0.3/0.9.5/T13, original continuation assessment, previous R3 report, and the four requested cross-lane reports. Reviewed the complete new adapter, worker, controller, metadata/freezer/discovery and tests, plus the relevant retained helper bodies and standard openReview call path.
+- One separately briefed source-only child audited freezer/metadata/bootstrap closure. Its four findings were inspected, its exact filesystem/copy probes replayed under directly captured Python exits, and two terminal-ledger findings additionally reproduced through the actual controller. Child evidence: `/private/tmp/t13-freeze-independent.QqYP55IR`. Provider/model/options inherited: codex, gpt-6-astra, xhigh/default.
+
+FINDINGS:
+
+F1 — P2 — Full-path opens still follow ancestor symlinks.
+
+Locations: `packages/tools/src/capture/trace_observer_packet/metadata.py:46,171`; `evidence.ts:24`; ledger root handling at `metadata.py:144`. These readers serve readiness, grant, consumption, result, binary and artifact/cache verification.
+
+Actual Python snapshot/file_hash/ledger accepted both preexisting and deterministically raced ancestor links. The probe renamed a parent above the leaf/root and inserted a real directory symlink immediately before the actual open. Payload reads occurred while that ancestor was a link; the same original leaf inode and hash remained available, so all later leaf comparisons passed. The independent Node readSnapshot case similarly admitted an ancestor swapped in its beforeOpen hook. This is the explicitly prohibited ancestor traversal, not a forged digest or a claim that the real frozen paths were changed.
+
+Correction: acquire every ancestor through held no-follow directory descriptors, then enumerate/open descendants relative to those descriptors; include destination parents. Preserve same-snapshot hashes, owner/identity reconciliation and bounded reads. A leaf O_NOFOLLOW or another full-path resolve/lstat is insufficient.
+
+Evidence: `subreview-replay/results.json` six ancestor cases; `dispatcher-results.json` metadata-ancestor-symlink. Both reproducer processes exit 0 because the defect assertions succeed.
+
+F2 — P2 — Terminal ledgers charge one file state but hash another, accepting aggregate growth.
+
+Locations: `metadata.py:150-161`; consumers `launch.py:85,249-250`.
+
+ledger records size/stamp from its lstat, then file_hash performs a separate lstat and accepts that later identity without reconciling it with the charged row. Two four-byte files expanded to eight bytes immediately before their real hash reads cause ledger(cap=8) to read sixteen payload bytes and successfully report eight. Both live=False and live=True reproduce. This is accepted stale accounting, not merely refusal after extra I/O.
+
+The whole-controller reproduction uses actual run_owned, actual StageReceipts, retained StationJob constructor/wait/drain/archive and terminal-audit bodies with inert OS ownership/launch ports. Its two four-byte frozen files grow at the actual hashing boundary; a fixture-only eight-byte frozen ceiling remains reported as satisfied, and run_owned returns `candidate:true`, `physicalSettlement:DRAINED_ARCHIVED_AUDITED`, with actual file sizes totaling sixteen. All receipts still have accepted:false; no actual native success is claimed.
+
+Correction: pass the inventoried stamp/size into the descriptor reader and refuse a mismatch before payload I/O. Share a remaining aggregate allowance across all content reads, and reconcile the completed inventory before returning it. Keep any partial ledger explicitly incomplete.
+
+Evidence: `subreview-replay/results.json` ledger-grow-False/True; `controller-ledger-results.json` ledger-growth; `controller-ledgers.py`. Direct exits 0.
+
+F3 — P2 — Freezer content copying is not bounded by its admission and can block on a late FIFO.
+
+Locations: `freeze.py:122,129`; eager source/dependency hashing at `freeze.py:77-82,98-101`.
+
+The actual make_freeze body is exercised on tiny real scratch files, substituting only Git responses and fixture ceilings. An admitted eight-byte source expanded immediately before shutil.copyfile is copied as sixteen bytes; only the subsequent destination hash refuses. A regular source replaced by a real FIFO immediately before shutil's real open blocks with no candidate timer. The reviewer-only 100ms SIGALRM is the sole cutoff; its traceback ends at make_freeze -> shutil.copyfile -> open. Neither case produces readiness or any prospective runtime path. Separately, dependency_rows with a sixteen-byte aggregate ceiling hashes all seventeen bytes before rejecting.
+
+Correction: first admit aggregate source/dependency sizes and counts, then hash/copy from the admitted regular-file descriptors using nonblocking/no-follow acquisition, shared byte allowances and a finite copy deadline. Verify the destination through the same boundary and retain partial copies. Existing post-copy hash checks must remain, but do not substitute for bounded copying.
+
+Evidence: `subreview-replay/copy-results.json`, including blocked stack; `subreview-replay/results.json` dependency-prelimit. Actual direct Python exits 0; the FIFO alarm is a demonstrated block, not a product timeout or pass.
+
+F4 — P2 — Unreadable directories disappear from successful terminal inventories.
+
+Locations: `metadata.py:147,163`; terminal consumers `launch.py:249-250`.
+
+os.walk uses its default error suppression. A real mode-000 directory containing sixteen bytes makes direct scandir raise PermissionError, yet ledger(cap=8) returns successfully with zero content bytes and only the directory entry. Restoring mode0700 causes the same ledger to refuse its ceiling.
+
+This also reproduces through the whole controller: after the observation phase, the fixture creates an unreadable frozen subtree containing sixteen bytes beside the existing four-byte source. The actual terminal ledger reports only four bytes under the fixture eight-byte ceiling, and run_owned returns candidate:true. The known unreadable contents are omitted from the claimed ledger. The fixture mode is restored afterward; no repository permissions changed.
+
+Correction: make enumeration errors fatal, using onerror or descriptor-based enumeration; preserve the partial records and original enumeration error. Do not return a complete terminal ledger or candidate after an inaccessible subtree.
+
+Evidence: `subreview-replay/results.json` ledger-unreadable; `controller-ledger-results.json` ledger-unreadable. Direct exits 0.
+
+F5 — P2 — Bootstrap output is lost before persistence, including successful-registration uncertainty.
+
+Location: `launch.py:187,230-237`; immutable helper crossing `round4_job_boundary.py:216-221`.
+
+The concrete controller calls unmodified job.start without observing the helper's producer result. The actual start body obtains CompletedProcess, writes bootstrap.json, then checks returncode and sets registered. With inert launchctl returning exit17 or exit0 plus distinct stdout/stderr/NUL/unknown fields, an injected bootstrap receipt-write failure erases all those producer facts. The complete returned result and every candidate JSON retain SECONDARY_BOOTSTRAP_RECEIPT_WRITE but neither output sentinel. For exit0, partialAllocation.registered remains false and the controller does not attempt bootout. The result conservatively stays UNPROVED; this is lost outcome/ownership evidence, not false release or an observed real launch leak.
+
+Related terminal audit control returns a failing actual helper command observation through an inert port: the controller records the assertion, without the print command's raw stdout/stderr. The unit currently does not observe these immutable helper producer boundaries.
+
+Correction: record actual helper command returns and exceptions in the task-local controller before helper receipt writes/assertions can discard them. Retain reversible raw stdout/stderr, exit and unknown fields; preserve success/registration uncertainty and separate persistence failures. Do not retry bootstrap or edit the shared helper.
+
+Evidence: `controller-v2.py`, `controller-results.json` bootstrap17-write/bootstrap0-write/terminal-audit, with separate oracle outcomes and exact intercepted native-port argv. Direct exit0; no launchctl command executed.
+
+F6 — P2 — The first observer error is normalized or replaced before the controller retains it.
+
+Locations: `launch.py:133-163,192-202`; serialization `metadata.py:17-21`; retained helper `round4_job_boundary.py:286-303`.
+
+Actual StageReceipts.observe is invoked through actual StationJob.wait. The actual current_commands helper reaches subprocess.run for its bounded owned-PID ps command; that inert command port raises a real TimeoutExpired carrying partial non-UTF8 stdout/stderr and a nested unknown byte field. The observer/helper reduce it to type/message. Normal wait returns observer_failed and the controller promotes generic Capture did not exit normally. When the following boundary.json save also fails, SECONDARY_WAIT_RECEIPT_WRITE becomes primary. Python context retains the earlier type/message in that case, but the original partial outputs and unknown field are absent from all returned/durable JSON in both cases.
+
+Correction: capture the first callback exception and complete bounded raw attributes before rethrowing into unchanged StationJob.wait. Promote that saved cause ahead of post-wait normalization/receipt reads; retain persistence/drain errors separately. Extend failure serialization to preserve these fields reversibly and retain BaseException/deadline semantics.
+
+Evidence: `observer-port.py`, `observer-port-results.json` observer-raw/observer-save and their returned.json files; direct exit0. The earlier controller-v2 controls inject at the executable-observation port; this additional check reaches the actual subprocess producer and establishes concrete timeout reachability. All physical settlement remains unproved in these failed cases. This is the requested observer-primary hypothesis reproduced at the actual consumer, not inferred from another lane.
+
+F7 — P2 — The worker loses navigation-error facts and close failure replaces its thrown primary.
+
+Locations: `worker.ts:232-246`, close path `worker.ts:95-104`.
+
+Two controls execute actual nativeMain -> actual unchanged capture.openReview, with inert Playwright/Vite external ports and real scratch evidence writes. The real openReview calls page.goto, which throws PRIMARY_GOTO with raw stdout/stderr and a nested unknown field. The worker only writes String(error) and SnapshotFailure-specific facts, so the raw producer fields disappear even when cleanup succeeds. With browser.close also rejecting, all three owned close operations are attempted, but the finally throws the cleanup error instead of the original navigation error. The durable worker-failure message still contains PRIMARY_GOTO; it is specifically the raw fields and thrown-primary ordering that fail, not total loss of the navigation message.
+
+Correction: keep the first error and serialize its bounded raw/cause fields before cleanup. Collect close/persistence errors as secondary and throw the original or an aggregate whose cause is the original after all owned stops are attempted. Preserve the existing standard openReview body.
+
+Evidence: `worker.test.ts`, `worker-{false,true}/observed.json`, `independent-worker.stdout/stderr`. The required raw-preservation assertions both fail: Vitest exit1, two tests failed. The recorded close=true thrown value is `Error: ["Error: SECONDARY_BROWSER_CLOSE"]`, sameObject:false. No browser or server starts.
+
+F8 — P2 — A terminal ledger failure bypasses final result publication and stderr fallback.
+
+Locations: `launch.py:248-258,275-279`.
+
+The ledger calls and retain(result.json) share one try. If either ledger fails, the catch only modifies the in-memory result; it never attempts publication. main prints only when evidence.undurable is nonempty, but no result was put into Evidence in this path, so it need not be undurable.
+
+The actual full-controller fixture creates a real FIFO output after the observation phase. Physical drain/archive/audit complete, then the output ledger correctly refuses the FIFO. run_owned returns candidate:false with the new ledger error, but neither primary nor fallback has result.json and evidence.undurable is empty. Thus the normal main path returns1 while discarding this final error and physical terminal facts. This is failure evidence loss, not false OS success; the FIFO itself did not block.
+
+Correction: collect terminal inventory failures independently, then always attempt a bounded terminal result publication. If result publication cannot be proven, emit its actual retained snapshot through the terminal fallback regardless of whether a prior Evidence.put was reached. Preserve earlier primary and all terminal failures separately.
+
+Evidence: `terminal-ledger.py`, `terminal-ledger-results.json`, `controller-v3-terminal-ledger/returned.json`; direct exit0. Source trace of main establishes the missing emission condition. Final ledger entry additionally observes getitimer=(0,0): these post-drain reads are outside both phase timers. Restore a finite after-evidence envelope when correcting this path; no separate slow-filesystem failure is claimed here.
+
+PRIOR FINDING DISPOSITIONS:
+
+- R3 R1-1 empty cancellation/rejection messages: FIXED/PRESERVED; the 64-case dispatcher replay rejects all supplied empty reasons at the actual phases.
+- R3 R1-2 contradictory counter/status/history shapes, R1-3 preparation history parity, R2 N1 sparse/inherited preparation and temporal arrays: FIXED/PRESERVED; redirected 64-case replay has unexpected:[] and focused tests pass. No old validator/protocol body changed.
+- R3 R1-4 additive range+5 threshold and R2 N2 mixed signs: FIXED/PRESERVED. Existing tests and prior replay preserve strict threshold, mixed-sign precedence, zero and long-empty-fence handling. trace-observer-report.ts is byte-identical to the accepted base.
+- R3 R1-5 returned host facts and late reply cutoff: FIXED/PRESERVED; prior replay and actual-adapter tests retain detached evidence and stop later work. These are JS-port semantics, not physical process proof.
+- R3 sparse-category/PID advisories: FIXED IN THIS NEW UNIT. Eleven fresh malformed category/PID cases all reject before any probe call, including sparse arrays, empty/missing categories, duplicates and invalid PID domain. Existing 12 advisory cases also pass in the 519. The standalone inherited-object case tests Array.isArray refusal, not an inherited index in a real Array; supplied dense-own-index tests provide that separate coverage.
+- T02 cacheancestor: REPRODUCED as F1. Bootstrapoutput: REPRODUCED as F5. FinalFIFOhash: NOT RECURRENT in snapshot/file_hash: real leaf FIFO replacement refuses before payload reads. A distinct freezer copy FIFO remains F3.
+- T03 StageReceipts schema: REFUTED HERE. The full positive controller exercises actual observe/require_browser with five process records, required browser/GPU/renderer/utility roles, current identity kernel request/release, then retained drain/archive/TMP/terminal bodies. It returns a provisional candidate with accepted:false. This covers the concrete schema interaction missed by the supplied observer replacement.
+- T03 observer-primary and navigation-primary: REPRODUCED as F6/F7, with the important navigation-message retention distinction above. Growing-cache/pre-limit class: REPRODUCED as F2/F3. PNG pose/time/container cases: NOT APPLICABLE; this protocol performs zero PNG work and has no decoder admission. No codec claim was tested.
+- T09 artifact/cache opens: leaf nonblocking checks are present; ancestor, aggregate accounting and incomplete terminal enumeration remain F1/F2/F4. Metadata same-buffer hash/parse and spent consumption controls pass. No successor exists here; accepted:false and the explicit parent OS-exit requirement remain intact.
+- Symbiotic cleanup ownership: constructor-request-write failure retains exact scratch/target and refuses release in the actual constructor probe. Node cleanup attempts browser, browser server and Vite stops despite one rejection. First-error preservation remains F6/F7; old fixture combat/retirement assertions are outside this unit.
+- Archive integrity: supplied real-copy corruption control refuses before source removal. Actual controller positive executes retained archive/TMP/terminal bodies. This does not repair unanchored or unbounded copy routes above, and does not qualify actual native ownership.
+- Source-freeze bootstrap closure: NO SUBSTANTIATED OMISSION. Actual verify_freeze passes; five copied bootstrap GLBs contain no external buffer/image URIs, both Basis files and all 102 audio references exist. No hidden fallback, source/dependency edit or resource hydration was used. No browser startup was run, so actual loading remains unqualified.
+
+VERIFY:
+
+Exact argv/cwd/environment/exit/duration are in `commands.jsonl` and readable `commands.md`; stdout/stderr are retained separately. Commands use direct Node22.23.3 and pinned Python3.14.8. No pnpm/npx/install launcher or linked-node_modules mutation. Tests are sequential at the command level, with maxWorkers<=2 and no file parallelism; the independent worker test uses one worker.
+
+- Focused supplied suite: 519 tests, 16 files, exit0.
+- Supplied Python controls: 16 groups, exit0, including real harmless Python child identity/exit and bounded signal tests. Two supplied methods use disposable Git fixture commits; no task/parent checkout commit or history edit occurred.
+- Prior dispatcher replay: 64 cases, unexpected:[], exit0; only output path redirected from the already corrected positive category fixture. Original artifacts remain unchanged.
+- Fresh dispatcher admission: eleven rejection cases plus the Node ancestor reproduction, exit0.
+- Actual-controller v2: seven cases, exit0; positive schema/drain/archive and constructor controls plus reproduced bootstrap/observer/terminal failures.
+- Actual StageReceipts -> current_commands -> subprocess timeout/receipt-failure controls: two cases, exit0, with the real helper bodies and only the command port inert.
+- Additional actual-controller terminal-ledger cases: one rejected-FIFO/missing-result and two incorrectly accepted ledger cases, each driver exit0.
+- Actual-worker/openReview controls: two required assertions FAIL, exit1, substantiating F7.
+- Filesystem/ledger and freezer-copy probes: exact child script bytes replayed in fresh parent scratch; direct exits0. Tiny in-memory fixture ceilings and synthetic Git/OS ports do not alter any source, real binding or flag.
+- Tools/client no-emit non-incremental typechecks and scoped ESLint: all exit0. No broad suite/build or formatter rerun claimed.
+- Protected algorithm reconstruction, 19 changed-file hashes, ten protected comparisons, four helper source/recovery comparisons: pass.
+- Actual frozen verification: 508 source/resource records, 13,222 dependency records, 544 binary records; exit0. Source bytes 47,456,032 and regular dependency bytes 243,636,268 match supplied metadata.
+- Disabled frozen Python launcher exits2 before grant/native work; frozen worker --run exits1; old --proposal exits0 and --run exits1. NEXT_LAUNCH shell syntax and diff checks exit0; launcher script was not executed.
+
+The initial controller harness exits1 because its boundary.coalition port was not replaced along with the StageReceipts coalition port. It therefore queried an inert fixture PID and received None. `controller.py` and its first logs remain; `controller-v2.py` corrects only that fixture port and uses fresh case paths. This is an exposed harness defect, not a product finding. All subsequent independent negative results retain their original assertions/logs.
+
+PRESERVATION:
+
+`before.json` and `after.json` match exactly: branch/HEAD/tree, clean staged/unstaged/untracked status, index flags, all 4,045 tracked working-file fingerprints, 15,203 dependency filesystem entries, 15,780 frozen-bundle entries, disabled readiness, and all five prospective path states. Fingerprints include regular-file SHA256, mode, size, inode/device and mtime, plus symlink targets. No comparison excludes test-created dependency caches: caches were directed into this review root. All five prospective real enabled-readiness/output/fallback/consumption/grant paths remain absent.
+
+New evidence is in this fresh review root and the named child root. Supplied helper controls allocate a few fresh `/private/tmp/sbr-*` private namespaces; only fixture-owned temporary resources are touched. No screenshot or historical evidence cleanup, source edit, branch switch, task commit, push, PR, comment, queue submission or merge. No actual browser/GPU/native StationJob/launchctl/Blender/render/application Vite server/service/DB/media/native codec/hydration operation. The standard playbook runtime rules are superseded by this explicit source-only brief.
+
+DECISIONS AND LIMITS:
+
+REVISE is based on reproduced correctness failures in the explicitly requested contract, not style or a speculative redesign. No new client authority, replacement demo, product interpretation or measured performance regression is asserted under plan0.9.5. Shared helpers must remain immutable; corrections belong at the new caller/reader boundaries.
+
+Physical kernel drain is distinct from dispatcher JS settlement and from a disk candidate flag. The positive CPU controller uses inert native ports and therefore establishes only code-path behavior. Actual device/native process inheritance, load reservation, 16.67ms standard-scene performance, cloud03, broad CI and whole-T13 acceptance remain unqualified. Cloud03 remains FAILED, accepted:false. No runtime authorization, live grant or merge recommendation follows.
+
+ARTIFACTS: this report, `commands.md`, `commands.jsonl`, `verification.json`, `protected-algorithm-proof.json`, `before.json`, `after.json`, all named probe sources/results/stdout/stderr, `subreview-replay/`, and `artifact-hashes.json`. Child source/closure report is retained at `/private/tmp/t13-freeze-independent.QqYP55IR/review.json`.

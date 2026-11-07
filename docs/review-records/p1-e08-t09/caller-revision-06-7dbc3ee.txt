@@ -1,0 +1,98 @@
+TASK: P1.E08.T09 — R6 shared-boundary revision, Appendix C.2
+STATUS: DONE for the authorized SOURCE/CPU revision. Independent R7, native capture and independent visual gates remain pending; whole T09 is not complete.
+SUMMARY: One guarded descriptor reader now covers caller-controlled JSON, caller-review text, artifact hashing and owned-cache source/copy verification. It opens every ancestor and leaf without following symlinks, validates actual type/dev/inode/size before content, keeps the supplied pathname, and preserves primary errors plus separate close facts. Cache planning admits all types, entry counts and aggregate bytes before hashing or copying. Source/copy revalidation stays within the admitted per-root shape and byte totals. Post-run cache evidence is bounded, and snapshot failure/interruption skips that later inventory while retaining partial facts/copies. The fresh six-unit readiness remains DISABLED.
+
+Candidate and provenance:
+- HEAD `7dbc3eeb832dbfcfdc92ada434913f75edd9aa75`
+- TREE `d7f022e45d87e752c8b07389e7b3b68a561c7ed5`
+- Review base `372bd7367f8d817e7b78043bfbc1be459c00ded7` / tree `54069a676f327dc48e73d2a077b98395eb53d6c8`
+- Branch `task/P1-E08-T09-current-base`; worktree `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`.
+- Commits: `7a4b22016674f7f82f36da59629230dfbe9c41af` (shared descriptor/cache admission), then `7dbc3eeb832dbfcfdc92ada434913f75edd9aa75` (verification restricted to admitted cache entries). The first commit and its disabled readiness were retained, not amended.
+- Binary delta `/private/tmp/p1-e08-t09-r7-q8zef7b2/372bd-to-candidate.patch`, SHA256 `fcc70697b840a43b25cb3b84593941e76e74428b537a14bbba7f84aaff1cf7ad`.
+- Task/thread and resumed ordinal-9 run are recorded in `/private/tmp/p1-e08-t09-r7-q8zef7b2/task-handle.json`.
+- Git status including untracked files is clean after the final commit.
+
+FILES CHANGED:
+- `packages/tools/src/capture/fauna_packet/caller.py`: controlled descriptor traversal/reader; bounded tree planning and artifact validation; cache snapshot/revalidation and after-evidence limits; owned-cache threshold inventory. Immutable tool/dependency SHA routes stay separate.
+- `packages/tools/src/capture/fauna_packet/controls.py`: preserve prior metadata/transaction/publication/raw-fact controls, adapt hooks to directory-relative real opens, and add artifact/ancestor/cache verification controls. Existing aggregate-overflow expectations become stricter: reject before any source payload or copy. Later copy failures still preserve written bytes and ownership.
+- `packages/tools/src/capture/fauna_packet/freeze.py`: one-line use of the same guarded cache-size admission instead of the old cache walker. This necessary narrow addition was reported before editing.
+- `packages/tools/src/capture/fauna_packet/readiness.json`: unused fresh identities and current bindings only; runtime:false, order/counts/budgets unchanged.
+
+VERIFY:
+Exact argv/cwd/environment/exits/logs, including last20 lines for every recorded nonzero invocation, are in `/private/tmp/p1-e08-t09-r7-q8zef7b2/COMMANDS.md` and `commands.json`. Earlier failed invocations were retained and are described below. No native job or browser is substituted for the real filesystem boundary proof.
+
+RED before source edits, exact372bd source copied from Git:
+- Unchanged reviewer `artifact-boundaries.py`, `artifact-main.py`, `artifact-process.py` all reproduce the R6 behavior: the raced FIFO blocks until the reviewer-only250ms alarm, while a same-byte leaf symlink crosses admission and actual successor main/process returns/exits0. Every case begins with real first-caller OSexit0 and exact predecessor receipt references. Static unsafe entries refuse. Top-level commands exit0 because BAD behavior is asserted. Logs `artifact-red.log`, `artifact-main-red.log`, `artifact-process-red.log`; complete results/traces/fixtures under `red/`.
+- Unchanged `cache-boundaries.py` reproduces all four cases. The67,108,865-byte source is hashed in both snapshot and after phases before refusal; aggregate4097-byte input copies2048 bytes after eager hashing; the actual snapshot deadline works; cache-after FIFO requires a reviewer alarm with no caller timer. Writes remain bounded. `cache-red.log`, `red/cache-boundaries-results.json` retain full machine facts, timers and partial copies. Exit0 means reproduced defect.
+- `PREMISE.md` was written before edits: pathname inventory followed by a bounded read was assumed sufficient. These actual cases disprove that shared assumption across artifacts and caches.
+
+GREEN on the final source:
+- Seven actual successor-process filesystem cases, each after real first OSexit0: static symlink, raced FIFO, leaf symlink, same-byte regular replacement, parent symlink, different regular parent, and parent replacement before directory open. Actual second OS exits are `[2,2,1,2,2,2,1]`: Refused maps to2, no-follow OSError to1, matching the CLI failure boundary. None allocates successor output/evidence/consumption or dispatches helpers/decoder; predecessor receipt hashes stay unchanged. No harness alarm. `candidate-artifact.log`, `green/artifact-process-green-results.json`.
+-23 actual cache-main cases after real first OSexit0: actual64MiB+1 pre-cap refusal with zero payload/copy bytes; aggregate overflow with zero reads/copies; exact4096-byte boundary success; snapshot/after FIFO, symlink, regular and ancestor races; after-growth overflow; real after deadline; KeyboardInterrupt; after-close and receipt failures; capture-primary plus interruption/all-sink combinations. No later decoder after failure. `candidate-cache.log`, `green/cache-main-green-results.json`. Exact-boundary source reads are12288 bytes in snapshot (initial hash, copy, source recheck),4096 after; destination verification reads another4096 under its separately admitted plan. Copied bytes remain4096.
+- Python stock: **40/40 PASS**, pinned Python3.10/Pillow, including the three actual software image decoder/full-inspector tests explicitly allowed in this brief. `candidate-stock.log`. These CPU synthetic images are not captures or visual grading evidence.
+- Node stock: **7/7 PASS**, pinned Node26.12.1, plus both original actual entry primary/write-failure cases. `stock-node.log`, `r1-node-catch.log`, `r1-node-final.log`.
+- Genuine six-process sequence: six observed OSexits0, unchanged scratch HEAD `534d8222d64bdb9e99ea7ce8a218a5acc57dbda5`, counts82+82+82+82+220+220=768, predecessor receipts unchanged, no inter-unit commit. `candidate-sequence.log`, `green/six-sequence-results.json`. Files are explicitly synthetic text, not images.
+- All26 static admission/worktree mutations refuse before allocation/dispatch (`candidate-mutations.log`). All29 metadata cases /242 retained snapshots PASS (`candidate-metadata.log`). The14 R5 schedules also PASS without an alarm (`candidate-metadata-green.log`): unsafe leaf replacements refuse, authenticated failure/success swaps refuse, completed snapshots retain original facts/digest.
+- All eight actual publication-process outcomes,38 real helper SIGALRM/KeyboardInterrupt boundaries and seven reference mutations PASS (`candidate-prior-boundaries.log`). Six raw producer/all-sink cases and exact receipt cap after close-error PASS (`candidate-prior-facts.log`). Original R1 full-inspector adverse fixtures and raw/receipt failures PASS (`candidate-r1-python.log`). No prior finding was reopened or gate relaxed.
+- New committed controls also verify metadata ancestor aliases/replacements, descriptor cleanup, combined primary read/cancel/deadline plus input/output close failures, retained1MiB partial copies,257 empty-entry refusal before content, post-cache growth allowance distinct from pre-copy cap, and source/copy revalidation before extra payload hashing.
+- Actual checkout disabled-entry controls: all six execute attempts exit2 before grant read/helper import/subprocess/allocation (`candidate-disabled.log`). No actual proposed grant is issued.
+- Compile without bytecode emission, ESLint, format, `pnpm gate:removed` (10 enforced,15 waiting baseline), and Git diff checks PASS. Exact commands/logs are listed in COMMANDS.md.
+- Committed-head `caller.py --check`: exit0; CPU_BINDINGS_ONLY, runtimeEnabled:false, allSixQualified:false, no task-local cache owner. Observed free bytes `40,722,841,600`. It uses the existing read-only binding/configuration probes (including launchctl getenv), not a launchctl job. This is time-local CPU readiness, not native admission after GPU release.
+
+Retained development failures and their corrections:
+- `focused-initial` exit1: recording the return value of old inert snapshot mocks introduced a MagicMock into result JSON. Removed that unnecessary success-return recording; actual snapshot failures retain their complete cacheObservation. Original failure log is retained.
+- `focused-corrected` exit1: a late leaf pathname recheck prevented the old authenticated-snapshot replacement control from reaching its existing parse/restore observation. Kept leaf identity/type/size validation before content and ancestor validation through completion, while preserving the established completed-byte snapshot semantics. No authenticated semantics are reread from the pathname.
+- `cache-main-green` exit1: the all-sink test injection initially failed the controller receipt before its intended capture failure. The corrected test activates sink failures only at the intended after-cache phase; initial script/results/logs remain in `green/cache-main-green-initial*`.
+- `copied-shape-red` exit1 on the retained7a4 implementation: an added copied entry was hashed before final shape mismatch. The new control was run before the follow-up fix. Verification now admits exact per-root names, sizes, directories and byte totals before content; the corrected cache suite passes. Source revalidation is also bounded and retains the earlier cache-change detection behavior. `copied-shape-green.log` and the40-test suite cover both. No historical commit/readiness/grant was rewritten.
+
+DECISIONS:
+- One shared reader rather than another pathname patch: controlled_path pins no-follow directory descriptors and opens children relative to them, then bounded_read supplies complete bytes/digest/copy from one regular descriptor. Actual dev/inode/type/observed size are checked before payload. Directory substitutions at parent-open and leaf-open boundaries fail. Path.absolute preserves the supplied route; no resolve-to-an-old-target shortcut is used. Later mutation after a completed leaf snapshot is not claimed preventable.
+- JSON retains the existing maximum+1 buffer and same-buffer digest/parse, including unknown fields and malformed input refusal. Binary reads stream in at most1MiB chunks with complete-size/EOF-growth checks. The stream borrows the fd; the owner closes all opened descriptors on every exit. The compatibility metadata_close_failures field now carries separate close facts for every controlled read. Primary errors survive combined read/close failures; any standalone close failure prevents success.
+- Cache source planning is global across both declared roots. All entry types, names/sizes, aggregate bytes and finite entry/evidence limits are admitted before initial hashing/copying. Hash/copy/source-recheck/destination-recheck each use guarded descriptors. Verification plans use the admitted per-root byte total and exact shape, so extra or altered entries are rejected before their content is hashed. Existing partial copies/source are retained on error.
+- Cache-after work is skipped after snapshot failure or interruption; skipped is explicit, not a claim of a complete empty inventory. Otherwise its whole inventory/receipt phase is under the existing30-second cache-operation deadline and finite content/entry allowance. It never launches a decoder after refusal. Small final failure publication/fallback behavior remains available even when all disk/stream sinks fail.
+
+Cache caps and rationale:
+- Pre-run copied bytes remain64MiB. Four content passes (source hash, copy read, source verification, destination verification) each admit at most that global source total, plus bounded per-file EOF probes; no image or cache write budget grows. All snapshot work remains within30seconds.
+- Post-run read allowance is the frozen initial cache bytes plus the existing256MiB generated-cache-growth reserve, not the64MiB copy cap. For this freeze:8,099,840 +268,435,456 =276,535,296 bytes. Its own30-second deadline also applies on capture failure when snapshot succeeded.
+- New restrictive ceiling:256 aggregate cache entries, including directories and zero-byte files, and1024 encoded bytes per planned entry/copy fact. The current inventory is38 entries (37 files +1 directory) /8,099,840 file bytes across .vite and empty .vite-temp; `cache-inventory-before.json` records it. This allows over6x current entry count while bounding traversal and failure evidence. Three compact groups of at most256x1024 bytes (plan, file hashes, copy facts) fit within three quarters of the existing1MiB per-receipt allowance before framing; unchanged serialization caps independently enforce actual framed receipts/unknown facts. This is not a promise that arbitrary future unknown data always fits a durable sink. Structured all-sink failure remains honest.
+- Controlled metadata remains64MiB total (Node32/Python32),1MiB per Python receipt; cache copy64MiB; capture/cleanup/decoder600/60/45seconds; native/disk reserves unchanged. No quota inflation or all-six-fit claim.
+
+Preservation:
+- `12,575` protected files and all four immutable helper pins unchanged. Product/client/server/shared/smoke/capture definitions/public/assets/package/lock scopes match accepted d688579ad except the already recovered helpers. Entry/inspector/screen definitions and animation lane unchanged.
+- `21,665` regular R6 evidence files match the before-work hash inventory, including original reports/commands/producers/results and old failed reviewer controls. Prior worker/review histories remain untouched.
+- All440 historical artifact identities remain unchanged; no historical image hydration/regrading. Retained branch stillbb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9. No spent identity was reset or reused.
+- Exact red12-file packet/helper source matches372bd Git blobs. Final green12-file copies match the candidate. `source-provenance.json`, `script-provenance.json`, `verified.json`, binary delta and command records provide hashes/routes.
+- All120 unique prospective output/evidence/grant/consumption paths across the final,7a4,372bd,eb856,e636 disabled snapshots remain absent. Saved readiness-372bd.json and readiness-7a4.json preserve the prior identities.
+
+Fresh disabled readiness:
+- SHA256 `8cb8c952de28e5a347d347a042bf4fb19605e2d31991ab410ecab5da1ed0f328`.
+- Python launcher `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14`, SHA256 `e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a`.
+- Actual self-observed app executable `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python`, SHA256 `b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22`. The CPU self-probe exited/reaped; no native capture job ran.
+- Decoder `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10` with immutable Pillow site `/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages`.
+
+Unchanged six-unit runtime order and per-unit bytes:
+
+| Order | Unit | Files/images | Output cap | Admission |
+|---|---|---:|---:|---:|
+|1|fauna-hit-turn-day-16x9|82/81|1,358,970,880|8,925,528,064|
+|2|fauna-hit-turn-day-21x9|82/81|1,358,970,880|8,925,528,064|
+|3|fauna-hit-turn-night-16x9|82/81|1,358,970,880|8,925,528,064|
+|4|fauna-hit-turn-night-21x9|82/81|1,358,970,880|8,925,528,064|
+|5|fauna-combat|220/219|3,674,226,688|15,871,295,488|
+|6|fauna-combat-night|220/219|3,674,226,688|15,871,295,488|
+
+Total768 files /762 images:60 stills,696 frames,6 sheets,6 readouts. Corrections each8 stills+72 frames+sheet+readout; broad units each14+204+sheet+readout. Image cap16MiB/readout16KiB. Admission ledger remains output + future LFS + future main hydration + controlled metadata/cache copy + unchanged native working/archive/filesystem/safety reserves. One unit at a time needs fresh admission after GPU release.
+
+Fresh proposed output paths, all absent:
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-f8d585519754442583e59c24faecef09`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-7b1234c22c6e4c2085a8325265ab6514`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-db7cb5d3c7d842f3b3e5f9b702bbd51a`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-f40ecca421284f8fa32fbd0f07cc1f76`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-322b0b6e4d384c0099267eaf43f30f3b`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-7cc727b85b8d4492bdff09586b179098`
+
+Full output/evidence/grant/consumption paths and budgets are in committed readiness and verified.json. Full --check invocation is in COMMANDS.md. No enable or native execute command was run.
+
+OUT OF SCOPE FOUND: None beyond the reported narrow freeze inventory change and cache-verification refinement within this boundary. IndependentR7, native ownership/capture outcomes and independent visual/animation grading remain pending. Parent product-source and focused live-QA PASS are not recertified here. No new supervisor, native job, GPU/browser/StationJob launch, service/DB operation, screenshot cleanup, old-branch/main/history rewrite, orchestration-document edit, push, PR or merge.
+
+ARTIFACTS: `/private/tmp/p1-e08-t09-r7-q8zef7b2/REPORT.md`, COMMANDS.md, commands.json, task-handle.json, PREMISE.md, red/ and green/ actual filesystem/process/timer results and retained fixtures, verified.json, source-provenance.json, script-provenance.json, cache-inventory-before.json, saved disabled readiness files,372bd-to-candidate.patch. These are SOURCE/CPU evidence, not visual acceptance.

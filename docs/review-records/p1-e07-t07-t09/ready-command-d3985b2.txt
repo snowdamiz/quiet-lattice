@@ -1,0 +1,15 @@
+BOUND FINAL PIN: d3985b2e3c52e3f9b28771b0b4dea143be20d9b1 / 4b6db1cab2ba0016c8dcff0b20cdfb07638e8f63
+
+TECHNICAL GATES: parent supplies independent R2 PASS for this exact HEAD and explicit GPU slot assignment. These are not currently satisfied. No new user confirmation is being requested.
+
+Use the existing future/parent-ticket.awaiting-gates.json after entering actual sourceReviewVerdict=PASS, sourceReviewReceipt, sourceReviewHead=d3985b2e3c52e3f9b28771b0b4dea143be20d9b1, explicitSlotAssigned=true, and the exact parent slotAssignment. Preserve its final HEAD/tree. Do not invent these values.
+
+PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/bin/python3 /private/tmp/space-symbiotic-harness-prep-0ygrikp4/execute-once.py --ticket /private/tmp/space-symbiotic-harness-prep-0ygrikp4/future/parent-ticket.awaiting-gates.json
+
+This single entry stages a new canonical0700 root/new random claim, freshly checks source/toolchain/dependencies/disk/services/ownership, claims Redis8 and the fresh SQL namespace once, runs the exact installed Playwright CLI once under450s+20s supervisor, and attempts only owned cleanup while preserving every error. No automatic test retry.
+
+Actual game-test command, once admitted:
+cd /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/node_modules/@playwright/test/cli.js test --config packages/tools/src/smoke/symbiotic.config.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=420000 --trace=off --reporter=list,json --output '/private/tmp/<NEW_EXCLUSIVE_QA_ROOT>/results'
+
+Complete environment: future/environment-template.json (only fresh output/claim substitutions remain). Exact preparation environment already exercised: final-preparation-env.json.

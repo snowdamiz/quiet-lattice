@@ -1,0 +1,61 @@
+P1.E07.T07 / P1.E08.T09 — CORRECTED HARNESS PREPARATION
+READY FOR GATED LIVE ADMISSION. NO LIVE TEST RUN. GPU REMAINS RELEASED.
+
+Bound source
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+HEAD: d3985b2e3c52e3f9b28771b0b4dea143be20d9b1
+Tree: 4b6db1cab2ba0016c8dcff0b20cdfb07638e8f63
+Source: d8f3f41caba90e5d5250dca033af907d28bef605
+Source tree: 3192e439a08b853a4345cfae88724ba16a841fd6
+The complete R1 Appendix-C.2, manifest and future-qa were read and retained. All six named source hashes match its manifest. All tracked source bytes were hashed before/after R1-bound harmless qualification; the worktree is clean, with unchanged final HEAD/tree/source. Earlier during this preparation the author was changing the three fixture files, as expected; those concurrent source edits were never edited by this task. Final binding supersedes the older preparation pin. The independent R2 review is pending; no PASS is inferred from source delivery or CPU results.
+
+Corrections and proof
+1. Canonical roots: all generated output/context/guard/TMP/cache paths use /private/tmp via realpath. The child guard compares exact canonical environment values rather than a /tmp substring. New preparation root is exclusive0700. Future execution creates another fresh exclusive0700 root and new claim, never reuses the failed fixture.
+2. Frozen package manager: copied the existing pnpm12.15.0 distribution (including its existing native binary) into tools/corepack/v1/pnpm/12.15.0. All451 shipped file hashes equal the original. COREPACK_HOME explicitly points to this copy while XDG/TMP/compiler caches stay private. Both pinned Node v22.23.3 and cached pnpm12.15.0 actually ran under the isolated, network-denied preparation environment. No package installation/update occurred.
+3. Final runtime command: adopts the new R1 future-qa's direct installed Playwright CLI through the absolute pinned Node, so the game-test launch does not invoke pnpm/Corepack at all. Actual installed CLI --version returned Version1.64.1 under the final isolated environment, with bootstrap guard active. No test discovery, test body, game server, browser or GPU launch was used for this qualification.
+4. Implicit installs: preparation uses macOS sandbox denial of all network and all writes outside this private root; the copied tool distribution is write-protected too. A symlink into that frozen area was actually refused by the OS while its target stayed unchanged. The actual installed workspace pnpm exec boundary ran a harmless Node stand-in. A disposable project with a matching frozen package-manager lock but a deliberately unavailable application dependency also ran the stand-in with verifyDepsBeforeRun=false, no node_modules creation, unchanged project files and no install/download log. CLI flags and read-only barriers are retained; the final game launcher removes the package-manager execution path entirely.
+5. Process ownership: native identities use libproc birth seconds+microseconds plus kernel argv, pid/ppid/pgid/uid. Node processes and child spawns register identities before application entry. The supervisor follows known parentage and recorded identities across process groups, rechecks exact birth/argv before signalling, and never kills by broad name or PID alone. A source-compatible narrow ps adapter uses kernel inventory because macOS disallows launching the setuid /bin/ps inside this sandbox; the actual hang-guard argument shape (-Ao pid=,ppid=) passed a harmless control.
+6. Child/worker boundaries: altered guard/routes/cache environment is rejected before spawn; inherited child and worker guards were observed. Prep mode refuses TCP/listen/TLS/UDP/fetch and prohibits game/browser/art children. Live mode requires the final-pin PASS/slot ticket and fresh admission before actual SQL/Redis probe imports.
+7. Cache routing: actual installed Playwright compiler transformed harmless TypeScript into private PWTEST_CACHE_DIR. Node compile/TMP paths remained private. Vite API stand-ins verified cacheDir under the private root and native loading of the unchanged JS config; validation/close failures retain both errors. The actual Vite server/browser cache and Metal lifecycle remain unexercised until the authorized live run.
+
+Qualification results (do not add repeated checks as unique tests)
+- Final R1-bound guard/cache controls:14/14 PASS, standalone Node exit0, no services/browser.
+- Detached ownership: root/child/grandchild in three distinct process groups; root exit0; ignoring-TERM descendants received identity-verified KILL and all were absent after bounded drain.
+- Deadline: an independently bounded stand-in exceeded a1.5s outer deadline; TERM then KILL drained it, actual exit-9, no remaining identity. This is an intentional timeout control, not a failed product test.
+- Wrong-birth signal control: exit3 refusal before any signal; original process remained alive.
+- Final Node/version, installed Playwright/version, harmless child/worker, and source ps-adapter:PASS.
+- Actual execute-once entry with awaiting-gates ticket: refused before staging/service/claim. Admission/launch/cleanup preparation-context negative controls also refused.
+- Final preserved failure packet, original and copied toolchain, and12,422 frozen installed dependency files:unchanged. No source/docs/assets/tests/assertions/commits were modified by this task.
+
+Preserved preparation failures and corrections
+All stdout/result receipts remain under qualification/; no failed preparation attempt was erased.
+- Initial guarded pnpm version exited1 because identity capture attempted setuid /bin/ps under the OS sandbox. Corrected capture to libproc/sysctl; final version checks passed.
+- pnpm config get returned undefined for environment and CLI values. Its help identifies this as configuration-file access; those reads are not claimed as effective-settings proof. Actual installed-workspace and missing-application-dependency exec controls provide the behavioral proof instead.
+- The first disposable missing-dependency fixture had no package-manager lock and stopped with ERR_PNPM_FROZEN_LOCKFILE_WITH_OUTDATED_LOCKFILE before stand-in execution. Its initial success expectation was incorrect. A separate control with the retained matching package-manager lock passed without installation; the refused control remains intact.
+- The first candidate live sandbox profile used an unsupported literal IP address syntax. The parser requires localhost; corrected profile compiled with /usr/bin/true. No socket or browser was opened. Browser compatibility of this profile is not claimed.
+- An initial integrity comparison incorrectly excluded shipped dist/node_modules/.pnpm-workspace-state-v1.json from the pnpm copy. Diagnostic:0 changed/added files, one excluded path. The distribution comparer now includes every shipped file and matches all451; dependency-cache exclusions apply only to the installed-workspace inventory.
+These preparation iterations are separate from the preserved c115e93 game launch. That single COULD NOT RUN attempt was never retried or modified.
+
+Exact ready entry
+PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/bin/python3 /private/tmp/space-symbiotic-harness-prep-0ygrikp4/execute-once.py --ticket /private/tmp/space-symbiotic-harness-prep-0ygrikp4/future/parent-ticket.awaiting-gates.json
+The referenced ticket already binds the final HEAD/tree/source but intentionally retains sourceReviewVerdict=PENDING, sourceReviewReceipt=null, explicitSlotAssigned=false and slotAssignment=null. After the actual independent source PASS and explicit parent GPU assignment arrive, record those facts and run the entry. This is technical gating, not another user approval question. execute-once stages, admits, runs once and attempts owned cleanup; every primary/cleanup failure remains in outer-outcome.json. No automatic test retry.
+
+Exact underlying command (dynamic output only)
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/node_modules/@playwright/test/cli.js test --config packages/tools/src/smoke/symbiotic.config.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=420000 --trace=off --reporter=list,json --output '/private/tmp/<NEW_EXCLUSIVE_QA_ROOT>/results'
+Full environment:future/environment-template.json; final exercised preparation env:final-preparation-env.json. Only the new claim/output paths and live route fields are deferred. Node guard path, pinned tools, isolation controls and command arguments are fixed. Actual private route probes cannot be claimed verified under a future claim before that claim exists; they are mandatory at runtime before application entry.
+
+Fresh admission and cleanup prepared, not executed
+admission.py verifies exact bound clean source, frozen dependencies/toolchain, fresh disk headroom (at least2GiB for output), exact expected PG/Redis container IDs, running/healthy state and loopback53055->5432 /53058->6379. It explicitly probes RedisDB8, requires no application clients and DBSIZE0, and proves the proposed SQL namespace absent. It atomically sets the exact qa:owner:<claim> marker only in an empty DB8, then creates only astra_symbiotic_smoke_<claim>. Journal and complete-admission receipts separate partial failures. All actual identities/health/disk figures must be sampled at invocation; no old disk/service state is reused.
+The live bootstrap installs SQL StartupMessage database/user and Redis wire selectedDB8 guards before driver imports, then verifies actual SQL current_database/current_user/server_port and Redis CLIENT INFO/marker. Default SQL/Redis sockets, Redis0/7 and dangerous commands are refused. Prep wire tests used local buffers only and are not live identity proof.
+The outer run preserves450s +20s owned-drain limits, one worker/retries0/repeat1/maxfailure1/global420s, trace/video off. Runtime drain and cleanup require exact process/registry absence, no private application clients, correct marker and fresh namespace. Only SQL-owned shard keys observed at guarded Redis writes are eligible for deletion; marker and complete keyset are rechecked atomically before explicit DEL. Only the fresh SQL namespace is dropped, no FORCE/FLUSH/shared restart/unknown-key deletion. Fresh disposable profile/cache/temp content is inventoried before removal; reports and pixels stay. Cleanup uncertainty retains ownership and reports a hold.
+
+Remaining gates and honest limits
+- Independent R2 source PASS for d3985b2e3c52e3f9b28771b0b4dea143be20d9b1.
+- Explicit parent GPU slot assignment. GPU remains released now.
+- Fresh disk/service/no-client/emptyDB8/namespace admission at run time, then fresh atomic claim.
+- Actual live application/worker routes, Vite/browser cache behavior, native browser ownership/listeners/profile teardown and gameplay assertions. Preparation proof cannot substitute for these observations. Native processes are constrained by the OS sandbox but do not inherit JavaScript socket hooks. Sampling/registry tracking is not a kernel event audit.
+- The real test must supply1 executed test, zero skips, actual OS exit,8 possible stage PNGs, JSON and server log. This preparation produced0 test launches,0 browser launches,0 service connections/claims and0 screenshots. There is no blind visual grade or FPS claim. Source review and subsequent independent pixel inspection remain separate acceptance gates.
+
+Artifacts
+READY-COMMAND.txt; SUMMARY.json; r1-binding.json/r1-qualified.json; r1-source-before.json/r1-source-after.json; toolchain-before.json; frozen-dependencies.json; final-preparation-env.json; future/command-template.json and environment-template.json; all qualification/* stdout/result/control receipts; routes.jsonl/process-registry; retained originals and R1 handoff. SHA256SUMS covers the retained packet. Screenshot cleanup remains STOPPED. No push/PR/merge/queue action occurred.
