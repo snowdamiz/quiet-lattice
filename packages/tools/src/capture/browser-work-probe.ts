@@ -16,6 +16,8 @@ import { validateControl, validatePreparation } from './browser-work-report.ts';
 import { cloudModeForId, validateCloudMarch } from './cloud-march-report.ts';
 import { cloudMarchPageCall, cancelCloudMarchPage } from './cloud-march-page.ts';
 import type { BrowserDiagnosticProtocol } from './browser-work-trace.ts';
+import { ObserverError, runTraceObserver, type ObserverOptions, type ObserverPacket } from './browser-work-trace.ts';
+import { observerProtocol, type ObserverArm, type ObserverWork } from './trace-observer-report.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 export const frozenThalune = Object.freeze({
@@ -591,4 +593,49 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       process.off('SIGINT', stop);
       process.off('SIGTERM', stop);
     });
+}
+
+/** Same accepted Review operation in both arms. Off emits no performance marks. */
+export async function observerProbePageCall(input: { action: 'prepare' | 'run'; workClass: ObserverWork; id: string; arm: ObserverArm }) {
+  const markers: { name: string; monotonicMs: number }[] = [];
+  let failure: string | null = null,
+    value: unknown;
+  const startName = `${input.id}-start`;
+  const startMs = input.arm === 'on' ? performance.mark(startName).startTime : performance.now();
+  markers.push({ name: startName, monotonicMs: startMs });
+  try {
+    value = await window.review.nativeWorkClassProbe(input.action, input.workClass);
+  } catch (error) {
+    failure = String(error);
+    value = window.review.lastNativeWorkClassProbe;
+  } finally {
+    const endName = `${input.id}-end`;
+    const endMs = input.arm === 'on' ? performance.mark(endName).startTime : performance.now();
+    markers.push({ name: endName, monotonicMs: endMs });
+  }
+  // The later owned page adapter must attach its collected page errors.
+  return { value, failure, markers };
+}
+
+/** Pure dispatcher/report boundary. Runtime acquisition remains outside this source-only unit. */
+export function dispatchBrowserDiagnostic(options: ObserverOptions & { retainReport(packet: ObserverPacket): void }): Promise<ObserverPacket>;
+export function dispatchBrowserDiagnostic(options: Parameters<typeof runBrowserWorkTrace>[0]): ReturnType<typeof runBrowserWorkTrace>;
+export async function dispatchBrowserDiagnostic(
+  options: (ObserverOptions & { retainReport(packet: ObserverPacket): void }) | Parameters<typeof runBrowserWorkTrace>[0],
+) {
+  if (options.protocol !== observerProtocol) return runBrowserWorkTrace(options);
+  try {
+    const packet = await runTraceObserver(options);
+    options.retainReport(packet);
+    return packet;
+  } catch (error) {
+    if (error instanceof ObserverError) {
+      try {
+        options.retainReport(error.evidence);
+      } catch (persistence) {
+        error.evidence.cleanupErrors.push(`Report persistence: ${String(persistence)}`);
+      }
+    }
+    throw error;
+  }
 }

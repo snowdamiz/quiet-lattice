@@ -1,4 +1,20 @@
+import { createHash } from 'node:crypto';
 import { bounded } from './native-trace.ts';
+import { nativeWorkClassOuterDeadlineMs, nativeWorkClassCancellationDrainMs } from './native-work-class-budget.ts';
+import {
+  observerBounds,
+  observerPlan,
+  observerProtocol,
+  parseObserverPins,
+  validateObserverHost,
+  validateObserverPreparation,
+  validateObserverControl,
+  summarizeObserver,
+  type ObserverArm,
+  type ObserverWork,
+  type ObserverCounts,
+  type ObserverPins,
+} from './trace-observer-report.ts';
 
 export const workClasses = ['drained-empty', 'fence-only', 'frame-only', 'frame-plus-PNG'] as const;
 export type WorkClass = (typeof workClasses)[number];
@@ -692,4 +708,472 @@ export async function runBrowserWorkTrace(options: {
   }
   if (log.status !== 'observed') throw new BrowserWorkError(log);
   return log;
+}
+
+export interface ObserverClock {
+  now(): number;
+  bound<T>(task: Promise<T>, ms: number, label: string, signal?: AbortSignal): Promise<T>;
+}
+export const observerClock: ObserverClock = { now: () => performance.now(), bound: bounded };
+export interface ObserverTraceReceipt {
+  kind: 'trace-on';
+  sha256: string | null;
+  startRequested: boolean;
+  endRequested: boolean;
+  categories: unknown;
+  terminals: unknown[];
+  usage: unknown[];
+  markers: Marker[];
+  markerCoverage: ReturnType<typeof markerCoverage> | null;
+  bytes: number;
+  reads: number;
+  events: number;
+  eof: boolean;
+  closedStreams: string[];
+}
+export interface ObserverStep {
+  index: number;
+  arm: ObserverArm;
+  pair: number | null;
+  workClass: ObserverWork;
+  phases: { name: string; startMs: number; endMs: number; outcome: 'returned' | 'failed' }[];
+  before: unknown;
+  after: unknown;
+  prepare: unknown;
+  run: unknown;
+  counts: ObserverCounts | null;
+  receipt: ObserverTraceReceipt | { kind: 'trace-off'; sessions: 0; tracingCalls: 0; tracingActive: false; pageMarks: 0 };
+}
+export interface ObserverPacket {
+  kind: 'T13_TRACE_OBSERVER_V1';
+  protocol: typeof observerProtocol;
+  diagnosticOnly: true;
+  status: 'pending' | 'failed' | 'observed';
+  failure: string | null;
+  cleanupErrors: string[];
+  pins: ObserverPins;
+  startedMs: number;
+  finishedMs: number | null;
+  steps: ObserverStep[];
+  totals: {
+    preparations: number;
+    warmUpFrames: number;
+    frames: number;
+    dependentPasses: number;
+    preflightFences: number;
+    controlFences: number;
+    png: number;
+    queries: number;
+    segments: number;
+    bytes: number;
+    reads: number;
+    events: number;
+  };
+  summary: ReturnType<typeof summarizeObserver> | null;
+  applicability: { gpuTimerDisjoint: 'not-applicable-queries-absent'; gpuTime: 'not-measured'; missingControls: number; budgetQualified: false };
+}
+export class ObserverError extends Error {
+  constructor(readonly evidence: ObserverPacket) {
+    super(evidence.failure ?? 'Observer diagnostic failed');
+  }
+}
+export interface ObserverOptions {
+  protocol: typeof observerProtocol;
+  prefix: string;
+  rendererPids: readonly number[];
+  pins: unknown;
+  trace: TracePort;
+  probe: { call(action: 'prepare' | 'run', workClass: ObserverWork, id: string, arm: ObserverArm): Promise<unknown>; cancel(): Promise<void> };
+  observe(): Promise<unknown>;
+  sink: { retainStep(index: number, action: 'prepare' | 'run', raw: unknown): void; appendTrace(index: number, bytes: Buffer): void };
+  clock?: ObserverClock;
+  signal?: AbortSignal;
+}
+/** Fixed reference experiment only. Ports own cancellation/drain; no process, browser or resource is constructed here. */
+export async function runTraceObserver(options: ObserverOptions): Promise<ObserverPacket> {
+  if (
+    options.protocol !== observerProtocol ||
+    !/^bwt-[a-f0-9]{32}$/.test(options.prefix) ||
+    !options.rendererPids.length ||
+    !options.rendererPids.every((pid) => Number.isSafeInteger(pid) && pid > 1)
+  )
+    throw new Error('Invalid fixed observer protocol/identity');
+  const pins = parseObserverPins(options.pins),
+    clock = options.clock ?? observerClock;
+  const packet: ObserverPacket = {
+    kind: 'T13_TRACE_OBSERVER_V1',
+    protocol: observerProtocol,
+    diagnosticOnly: true,
+    status: 'pending',
+    failure: null,
+    cleanupErrors: [],
+    pins,
+    startedMs: clock.now(),
+    finishedMs: null,
+    steps: [],
+    totals: {
+      preparations: 0,
+      warmUpFrames: 0,
+      frames: 0,
+      dependentPasses: 0,
+      preflightFences: 0,
+      controlFences: 0,
+      png: 0,
+      queries: 0,
+      segments: 0,
+      bytes: 0,
+      reads: 0,
+      events: 0,
+    },
+    summary: null,
+    applicability: { gpuTimerDisjoint: 'not-applicable-queries-absent', gpuTime: 'not-measured', missingControls: 12, budgetQualified: false },
+  };
+  const cancellation = new AbortController(),
+    signal = options.signal ? AbortSignal.any([options.signal, cancellation.signal]) : cancellation.signal;
+  const fail = (error: unknown) => {
+    packet.failure ??= String(error);
+    cancellation.abort(error);
+  };
+  const captureEnd = packet.startedMs + nativeWorkClassOuterDeadlineMs;
+  let drainEnd = Infinity;
+  const pending = new Set<Promise<unknown>>();
+  let pageOrigin: number | null = null,
+    lastPageMarkMs = -1;
+  const owned = async <T>(op: () => Promise<T>, ms: number, name: string, step: ObserverStep, cleanup = false): Promise<T> => {
+    if (!cleanup) signal.throwIfAborted();
+    const startMs = clock.now(),
+      remaining = (cleanup ? drainEnd : captureEnd) - startMs;
+    if (remaining <= 0) throw new Error(`${name}: total ${cleanup ? 'drain' : 'capture'} deadline exceeded`);
+    const phase: ObserverStep['phases'][number] = { name, startMs, endMs: startMs, outcome: 'failed' };
+    step.phases.push(phase);
+    const task = Promise.resolve().then(() => {
+      if (!cleanup) signal.throwIfAborted();
+      return op();
+    });
+    pending.add(task);
+    void task.then(
+      () => pending.delete(task),
+      () => pending.delete(task),
+    );
+    try {
+      const result = await clock.bound(task, Math.min(ms, remaining), name, cleanup ? undefined : signal);
+      if (!cleanup) signal.throwIfAborted();
+      phase.outcome = 'returned';
+      return result;
+    } finally {
+      phase.endMs = clock.now();
+    }
+  };
+  const cleanup = async (op: () => Promise<unknown>, name: string, step: ObserverStep) => {
+    try {
+      await owned(op, 10000, name, step, true);
+    } catch (error) {
+      packet.cleanupErrors.push(`${name}: ${String(error)}`);
+      fail(error);
+    }
+  };
+  try {
+    for (const [index, plan] of observerPlan.entries()) {
+      signal.throwIfAborted();
+      const receipt: ObserverStep['receipt'] =
+        plan.arm === 'off'
+          ? { kind: 'trace-off', sessions: 0, tracingCalls: 0, tracingActive: false, pageMarks: 0 }
+          : {
+              kind: 'trace-on',
+              sha256: null,
+              startRequested: false,
+              endRequested: false,
+              categories: null,
+              terminals: [],
+              usage: [],
+              markers: [],
+              markerCoverage: null,
+              bytes: 0,
+              reads: 0,
+              events: 0,
+              eof: false,
+              closedStreams: [],
+            };
+      const step: ObserverStep = { index, ...plan, phases: [], before: null, after: null, prepare: null, run: null, counts: null, receipt };
+      packet.steps.push(step);
+      const streams = new Set<string>(),
+        closeAttempted = new Set<string>();
+      let resolveTerminal: () => void = () => {},
+        terminalSeen = false;
+      const terminalTask = new Promise<void>((resolve) => {
+        resolveTerminal = resolve;
+      });
+      const complete = (raw: unknown) => {
+        if (receipt.kind !== 'trace-on') return;
+        if (isRecord(raw) && typeof raw.stream === 'string' && raw.stream.length > 0 && raw.stream.length <= 1024) streams.add(raw.stream);
+        if (receipt.terminals.length < 8) receipt.terminals.push(raw);
+        try {
+          const value = terminal(raw);
+          if (terminalSeen || !receipt.endRequested || value.dataLossOccurred || !value.stream) throw new Error('Duplicate/early/lost/missing terminal trace');
+        } catch (error) {
+          fail(error);
+        }
+        terminalSeen = true;
+        resolveTerminal();
+      };
+      const usage = (raw: unknown) => {
+        if (receipt.kind !== 'trace-on') return;
+        if (receipt.usage.length >= 256) {
+          fail(new Error('Trace usage observation overflow'));
+          return;
+        }
+        receipt.usage.push(raw);
+        const full = isRecord(raw) ? (raw.percentFull ?? raw.value) : null;
+        if (typeof full !== 'number' || !Number.isFinite(full) || full < 0 || full >= 0.9) fail(new Error('Trace buffer loss/usage threshold'));
+        if (
+          isRecord(raw) &&
+          raw.eventCount !== undefined &&
+          (typeof raw.eventCount !== 'number' ||
+            !Number.isSafeInteger(raw.eventCount) ||
+            raw.eventCount < 0 ||
+            raw.eventCount + packet.totals.events > traceLimits.events)
+        )
+          fail(new Error('Malformed/overflowing trace event count'));
+      };
+      const lost = () => fail(new Error('Observer trace transport lost'));
+      let listening = false;
+      try {
+        step.before = await owned(options.observe, 5000, 'host-before', step);
+        validateObserverHost(step.before, pins);
+        if (receipt.kind === 'trace-on') {
+          options.trace.on('Tracing.tracingComplete', complete);
+          options.trace.on('Tracing.bufferUsage', usage);
+          options.trace.on('close', lost);
+          listening = true;
+          receipt.categories = await owned(() => options.trace.send({ method: 'Tracing.getCategories' }), 5000, 'categories', step);
+          if (
+            !isRecord(receipt.categories) ||
+            !Array.isArray(receipt.categories.categories) ||
+            !receipt.categories.categories.every((v) => typeof v === 'string') ||
+            Buffer.byteLength(JSON.stringify(receipt.categories)) > categoryReplyBytes
+          )
+            throw new Error('Malformed category receipt');
+          if (++packet.totals.segments > observerBounds.segments) throw new Error('Trace segment overflow');
+          receipt.startRequested = true;
+          await owned(
+            () =>
+              options.trace.send({
+                method: 'Tracing.start',
+                params: {
+                  tracingBackend: 'chrome',
+                  transferMode: 'ReturnAsStream',
+                  streamFormat: 'json',
+                  streamCompression: 'none',
+                  bufferUsageReportingInterval: 5000,
+                  traceConfig: {
+                    recordMode: 'recordUntilFull',
+                    traceBufferSizeInKb: traceLimits.bufferKiB,
+                    enableSystrace: false,
+                    enableSampling: false,
+                    includedCategories: [...browserTraceCategories],
+                    excludedCategories: ['*screenshot*', '*memory*', '*system*'],
+                  },
+                },
+              }),
+            5000,
+            'trace-start',
+            step,
+          );
+        }
+        for (const action of ['prepare', 'run'] as const) {
+          const id = `${options.prefix}-s${String(index).padStart(2, '0')}-${action}`;
+          const raw = await owned(
+            async () => {
+              const value = await options.probe.call(action, plan.workClass, id, plan.arm);
+              // Preserve late/cancelled replies before schema checks, as in the retained protocol.
+              step[action] = value;
+              options.sink.retainStep(index, action, value);
+              return value;
+            },
+            action === 'prepare' ? 90000 : 10000,
+            action,
+            step,
+          );
+          const result = reply(raw, id);
+          if (result.markers[0].monotonicMs < 0 || result.markers[0].monotonicMs < lastPageMarkMs) throw new Error('Reversed page phase clock');
+          lastPageMarkMs = result.markers[1].monotonicMs;
+          if (receipt.kind === 'trace-on') receipt.markers.push(...result.markers);
+          if (result.failure) throw new Error(result.failure);
+          if (!isRecord(raw) || !Array.isArray(raw.pageErrors) || raw.pageErrors.length) throw new Error('Page errors missing or present');
+          if (action === 'prepare') {
+            if (
+              !isRecord(result.value) ||
+              result.value.startedAt !== null ||
+              result.value.finishedAt !== null ||
+              !Array.isArray(result.value.samples) ||
+              result.value.samples.length
+            )
+              throw new Error('Preparation contains missing/previous control records');
+            const counts = validateObserverPreparation(result.value, plan.workClass, pins);
+            if (counts.preflightSettledMs < result.markers[0].monotonicMs || counts.preflightSettledMs > result.markers[1].monotonicMs)
+              throw new Error('Preparation outside page markers');
+            pageOrigin ??= counts.timeOriginMs;
+            if (pageOrigin !== counts.timeOriginMs) throw new Error('Page clock origin changed');
+            packet.totals.preparations++;
+            packet.totals.warmUpFrames += counts.warmUpFrames;
+            packet.totals.dependentPasses += counts.dependentPasses;
+            packet.totals.preflightFences += counts.completions;
+          } else {
+            const prepared = reply(step.prepare, `${options.prefix}-s${String(index).padStart(2, '0')}-prepare`).value;
+            step.counts = validateObserverControl(result.value, prepared, plan.workClass, pins);
+            if (step.counts.controlStartedMs < result.markers[0].monotonicMs || step.counts.controlFinishedMs > result.markers[1].monotonicMs)
+              throw new Error('Control outside page markers');
+            const previousControl = packet.steps[index - 1]?.counts;
+            if (previousControl && step.counts.temporalBefore !== previousControl.temporalAfter + step.counts.preparation.warmUpFrames)
+              throw new Error('History progression between preparations changed');
+            const reference = packet.steps.find((previous) => previous.index < index && previous.workClass === 'frame-only' && previous.counts)?.counts;
+            if (plan.workClass === 'frame-only' && reference && (step.counts.calls !== reference.calls || step.counts.triangles !== reference.triangles))
+              throw new Error('Reference work changed between controls');
+            packet.totals.frames += step.counts.frames;
+            packet.totals.controlFences += step.counts.syncs;
+            packet.applicability.missingControls--;
+          }
+        }
+      } catch (error) {
+        fail(error);
+      }
+      {
+        drainEnd = Math.min(captureEnd + nativeWorkClassCancellationDrainMs, clock.now() + nativeWorkClassCancellationDrainMs);
+        if (signal.aborted) {
+          fail(signal.reason);
+          await cleanup(() => options.probe.cancel(), 'probe-cancel', step);
+        }
+        if (receipt.kind === 'trace-on') {
+          if (receipt.startRequested && !terminalSeen) {
+            receipt.endRequested = true;
+            await cleanup(
+              async () => {
+                await options.trace.send({ method: 'Tracing.end' });
+                await terminalTask;
+              },
+              'trace-end',
+              step,
+            );
+          }
+          try {
+            if (receipt.startRequested && !terminalSeen) throw new Error('Missing terminal trace');
+            if (receipt.startRequested && streams.size !== 1) throw new Error('Missing/ambiguous trace stream');
+            if (streams.size === 1) {
+              const stream = [...streams][0],
+                chunks: Buffer[] = [],
+                readEnd = Math.min(clock.now() + 60000, drainEnd);
+              while (!receipt.eof) {
+                if (packet.totals.reads >= traceLimits.reads || clock.now() >= readEnd) throw new Error('Aggregate trace read/deadline overflow');
+                packet.totals.reads++;
+                receipt.reads++;
+                const part = chunk(
+                  await owned(
+                    () => options.trace.send({ method: 'IO.read', params: { handle: stream, size: traceLimits.chunkBytes } }),
+                    Math.min(5000, readEnd - clock.now()),
+                    'trace-read',
+                    step,
+                    true,
+                  ),
+                );
+                if (packet.totals.bytes + part.bytes.length > traceLimits.streamBytes) throw new Error('Aggregate trace byte overflow');
+                packet.totals.bytes += part.bytes.length;
+                receipt.bytes += part.bytes.length;
+                options.sink.appendTrace(index, part.bytes);
+                chunks.push(part.bytes);
+                receipt.eof = part.eof;
+              }
+              const bytes = Buffer.concat(chunks);
+              receipt.sha256 = createHash('sha256').update(bytes).digest('hex');
+              const parsed: unknown = JSON.parse(bytes.toString('utf8'));
+              if (!isRecord(parsed) || !Array.isArray(parsed.traceEvents)) throw new Error('Malformed trace events');
+              receipt.events = parsed.traceEvents.length;
+              packet.totals.events += receipt.events;
+              if (packet.totals.events > traceLimits.events) throw new Error('Aggregate trace event overflow');
+              receipt.markerCoverage = markerCoverage(bytes, receipt.markers, options.rendererPids);
+              if (receipt.markers.length !== 4 || receipt.markerCoverage.status !== 'observed') throw new Error('Missing/ambiguous segment markers');
+            }
+          } catch (error) {
+            fail(error);
+          } finally {
+            for (const stream of streams)
+              await cleanup(
+                async () => {
+                  closeAttempted.add(stream);
+                  await options.trace.send({ method: 'IO.close', params: { handle: stream } });
+                  receipt.closedStreams.push(stream);
+                },
+                'stream-close',
+                step,
+              );
+          }
+        }
+        if (packet.failure || pending.size) {
+          if (receipt.kind === 'trace-on') await cleanup(() => options.trace.disconnect(), 'transport-drain', step);
+          await cleanup(() => options.probe.cancel(), 'probe-drain', step);
+          const tasks = [...pending];
+          await cleanup(() => Promise.allSettled(tasks), 'callbacks-drain', step);
+        }
+        if (receipt.kind === 'trace-on' && listening) {
+          // Retain/close even a terminal delivered while the owned transport drains.
+          for (const stream of streams) {
+            if (closeAttempted.has(stream)) continue;
+            await cleanup(
+              async () => {
+                closeAttempted.add(stream);
+                await options.trace.send({ method: 'IO.close', params: { handle: stream } });
+                receipt.closedStreams.push(stream);
+              },
+              'late-stream-close',
+              step,
+            );
+          }
+          options.trace.off('Tracing.tracingComplete', complete);
+          options.trace.off('Tracing.bufferUsage', usage);
+          options.trace.off('close', lost);
+        }
+      }
+      if (packet.failure) break;
+      step.after = await owned(options.observe, 5000, 'host-after', step);
+      validateObserverHost(step.after, pins);
+      signal.throwIfAborted();
+    }
+    signal.throwIfAborted();
+    if (!packet.failure) {
+      for (const key of [
+        'preparations',
+        'warmUpFrames',
+        'frames',
+        'dependentPasses',
+        'preflightFences',
+        'controlFences',
+        'png',
+        'queries',
+        'segments',
+      ] as const) {
+        const expected = observerBounds[key],
+          count = packet.totals[key];
+        if (key === 'warmUpFrames' ? count > expected : count !== expected) throw new Error(`Observer work bound mismatch: ${key}`);
+      }
+      packet.summary = summarizeObserver(
+        packet.steps.map((step) => {
+          if (!step.counts) throw new Error('Missing control');
+          return { arm: step.arm, pair: step.pair, counts: step.counts };
+        }),
+      );
+    }
+  } catch (error) {
+    fail(error);
+  } finally {
+    const last = packet.steps.at(-1);
+    if (last && pending.size) {
+      drainEnd = Math.min(captureEnd + nativeWorkClassCancellationDrainMs, clock.now() + nativeWorkClassCancellationDrainMs);
+      await cleanup(() => options.probe.cancel(), 'final-probe-drain', last);
+      const tasks = [...pending];
+      await cleanup(() => Promise.allSettled(tasks), 'final-callbacks-drain', last);
+    }
+    packet.finishedMs = clock.now();
+    packet.status = packet.failure || packet.cleanupErrors.length ? 'failed' : 'observed';
+  }
+  if (packet.status !== 'observed') throw new ObserverError(packet);
+  return packet;
 }
