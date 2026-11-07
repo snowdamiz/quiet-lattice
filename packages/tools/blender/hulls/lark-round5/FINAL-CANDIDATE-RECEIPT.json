@@ -1,9 +1,10 @@
 {
-  "status": "BACKING_SOURCE_EDITED_EXPORT_STALE_FRAME_PROOF_PENDING",
+  "status": "VALIDATED_SOURCE_AND_EXPORT_CANDIDATE_PARENT_REVIEW_REQUIRED",
   "base_commit": "cd7e764a0fa8f8ced39ffe98cc42f65a5932c43a",
   "source": {
     "path": "assets/blend/hulls/lark.blend",
-    "sha256": "2930843029aa4b4398adccacc003831bf298a0ddabfb539e1fc834397f2f863e"
+    "bytes": 48962870,
+    "sha256": "d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba"
   },
   "rejected_export": {
     "path": "packages/tools/blender/hulls/lark-round5/export-evidence/final-candidate-revise-export/hulls__lark.glb.rejected.glb",
@@ -11,10 +12,11 @@
     "bytes": 19792116
   },
   "canonical_export": {
-    "installed": true,
     "path": "packages/client/public/models/hulls/lark.glb",
-    "sha256": "6f3a0774a8539435779985afdaca4322a2bea9a798fa51ad4a88f2ba27c88b55",
-    "status": "STALE_RELATIVE_TO_EDITED_SOURCE"
+    "bytes": 19791628,
+    "sha256": "7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78",
+    "installed": true,
+    "status": "VALIDATED_MATCHING_SOURCE"
   },
   "source_validation": {
     "checks": {
@@ -39,8 +41,10 @@
     "warn": 1
   },
   "validation_paths": [
-    "packages/tools/blender/hulls/lark-round5/candidate-source-validation.json",
-    "packages/tools/blender/hulls/lark-round5/export-evidence/seam-final2-revise-export/hulls__lark.glb.json"
+    "candidate-source-validation.json",
+    "integration-final-revise-density.json",
+    "export-evidence/integration-final-revise-export/hulls__lark.glb.json",
+    "export-evidence/integration-decoded.json"
   ],
   "source_density": {
     "roles": 23,
@@ -363,14 +367,14 @@
       },
       {
         "key": "lark_husked_LOD0/Body_husk/Dark",
-        "triangles": 29921,
-        "edges": 79915,
-        "world_area_m2": 382.8468139480885,
-        "uv_area": 1022.6609588598213,
-        "area_px_per_m": 6694.424804042639,
-        "median_px_per_m": 8347.552227856839,
-        "p10_px_per_m": 1025.2569452744701,
-        "p90_px_per_m": 31719.425801976147,
+        "triangles": 29889,
+        "edges": 79819,
+        "world_area_m2": 381.12265226449864,
+        "uv_area": 1022.2995896588337,
+        "area_px_per_m": 6708.364625430346,
+        "median_px_per_m": 8357.916968650055,
+        "p10_px_per_m": 1025.4383035702797,
+        "p90_px_per_m": 31720.581683452783,
         "uv_min": [
           0.00024414435034714275,
           0.025146868085755704
@@ -496,119 +500,26 @@
       }
     ]
   },
-  "lods": [
-    {
-      "asset": "lark",
-      "variants": [
-        {
-          "id": "lark_damaged",
-          "class": "hero",
-          "classFrom": "family default",
-          "lods": [
-            0,
-            1,
-            2,
-            3
-          ],
-          "lodTris": {
-            "0": 113554,
-            "1": 79329,
-            "2": 65755,
-            "3": 3907
-          },
-          "implicitLods": false,
-          "dims": [
-            13.522,
-            12.379,
-            4.49
-          ],
-          "materials": [
-            "NavWhite",
-            "Hull",
-            "Dark",
-            "Accent",
-            "Trim",
-            "EngineGlow",
-            "NavRed",
-            "NavGreen",
-            "Glass"
-          ],
-          "gpuTextureMB": 128.0
-        },
-        {
-          "id": "lark_husked",
-          "class": "hero",
-          "classFrom": "family default",
-          "lods": [
-            0,
-            1,
-            2,
-            3
-          ],
-          "lodTris": {
-            "0": 110411,
-            "1": 77956,
-            "2": 66046,
-            "3": 3484
-          },
-          "implicitLods": false,
-          "dims": [
-            13.522,
-            12.432,
-            4.286
-          ],
-          "materials": [
-            "Hull",
-            "Dark",
-            "Accent",
-            "Trim",
-            "EngineGlow",
-            "NavRed",
-            "NavGreen",
-            "NavWhite",
-            "HollowSeam",
-            "Glass"
-          ],
-          "gpuTextureMB": 128.0
-        },
-        {
-          "id": "lark",
-          "class": "hero",
-          "classFrom": "family default",
-          "lods": [
-            0,
-            1,
-            2,
-            3
-          ],
-          "lodTris": {
-            "0": 108746,
-            "1": 73947,
-            "2": 59938,
-            "3": 4015
-          },
-          "implicitLods": false,
-          "dims": [
-            13.522,
-            12.379,
-            4.286
-          ],
-          "materials": [
-            "NavWhite",
-            "Hull",
-            "Dark",
-            "Accent",
-            "Trim",
-            "EngineGlow",
-            "NavRed",
-            "NavGreen",
-            "Glass"
-          ],
-          "gpuTextureMB": 64.0
-        }
-      ]
-    }
-  ],
+  "lods": {
+    "lark": [
+      108746,
+      73947,
+      59940,
+      4388
+    ],
+    "lark_damaged": [
+      113554,
+      79329,
+      65758,
+      4557
+    ],
+    "lark_husked": [
+      110379,
+      77952,
+      66041,
+      4760
+    ]
+  },
   "markers": [
     {
       "name": "BAY_1",
@@ -3762,19 +3673,20 @@
   },
   "livery_mapping_primitives": 15,
   "source_changes_this_unit": [
-    "Saved HollowSeam emissive atlas connection at strength 0.5 and mapped seam/glyph UVs to existing teal band; packed atlas pixels unchanged."
+    "No blend edits; exported committed backing repair: LOD0 16 faces previously removed, LOD1/2 two each removed; LOD3 preserved after ray check."
   ],
   "pending": [
-    "Whole-shell 15\u201330% UNQUALIFIED; dorsal subset only 19.64%",
-    "Final wear appearance unqualified",
-    "Glyph closeup inspected; full-husk glyph readability unqualified",
-    "Parent runtime, performance, production body/colliders, flicker and blind round 5 remain"
+    "Whole-shell 15\u201330% exposure unqualified; dorsal subset is not whole-shell proof",
+    "Final wear, glyph readability and frame visibility require independent grade",
+    "Parent independent source review before runtime captures",
+    "Runtime performance, production body/colliders, flicker, blind round 5 remain open"
   ],
   "preview_ledger": {
-    "conservative_used": 45,
+    "conservative_before": 46,
+    "conservative_used": 47,
     "limit": 48,
     "new": 1,
-    "bytes": 13612025,
+    "bytes": 14625751,
     "files": [
       {
         "path": "packages/tools/blender/hulls/lark-round5/previews/cockpit-finish-cockpit.png",
@@ -3835,6 +3747,11 @@
         "path": "packages/tools/blender/hulls/lark-round5/previews/installed-material-LOD2.png",
         "bytes": 371398,
         "sha256": "41e63b3a88e350afcd8a49a731afea349abef7f89b45dd5819147cb013b57df2"
+      },
+      {
+        "path": "packages/tools/blender/hulls/lark-round5/previews/integration-final-overview.png",
+        "bytes": 343840,
+        "sha256": "bc33449b92a9a5c81dc1dc4259c887facdea0a49dc63f214f8f33a659fa41a39"
       },
       {
         "path": "packages/tools/blender/hulls/lark-round5/previews/matched-LOD0.png",
@@ -3932,6 +3849,16 @@
         "sha256": "96b51b6d9c297251f4ca16aef06fef42362538047d5db31e238b4578bafa7b54"
       },
       {
+        "path": "packages/tools/blender/hulls/lark-round5/previews/seam-final-closeup.png",
+        "bytes": 326155,
+        "sha256": "43a5a48964afed886fd8a1dfbdd5836071aa2f199a4455b26dd0ea75f06e3429"
+      },
+      {
+        "path": "packages/tools/blender/hulls/lark-round5/previews/semantic-overview.png",
+        "bytes": 343731,
+        "sha256": "8f271680902e255d6a45e4022aae8b9e8aaa22737ead277e21e7fbdcc0f44d58"
+      },
+      {
         "path": "packages/tools/blender/hulls/lark-round5/previews/wear-unit-cockpit.png",
         "bytes": 454213,
         "sha256": "7ad2cf934f18731ce33628cc776e81b0f122258634c52ba4450d2f0a2e88e66b"
@@ -3955,56 +3882,38 @@
         "path": "packages/tools/blender/hulls/lark-round5/previews/wear2-shell.png",
         "bytes": 446498,
         "sha256": "e6cb5a0e0b7c5968751d680813911ebcc02982c23c6867a7f4b4db0923894f75"
-      },
-      {
-        "path": "packages/tools/blender/hulls/lark-round5/previews/seam-final-closeup.png",
-        "bytes": 326155,
-        "sha256": "43a5a48964afed886fd8a1dfbdd5836071aa2f199a4455b26dd0ea75f06e3429"
       }
     ],
-    "inspection_this_unit": [
-      "Exact final CPU closeup: pale restrained teal broken glyph strokes visible on dark support, partly occluded by foreground rib. No overall visual PASS or final wear qualification."
-    ],
-    "prior_inspection_receipts": [
-      "glyph-receipt.json",
-      "wear2-receipt.json",
-      "husk-unit-receipt.json",
-      "cockpit-unit-receipt.json"
-    ]
+    "inspection_this_unit": "Final matching CPU overview: openings and thin internal ribs visible; broad dark surfaces remain. Backing repair is a source candidate, not whole visual PASS or frame-exposure grade."
   },
-  "resource": [
-    {
+  "resource": {
+    "integration-source-resource.json": {
       "exit": 0,
-      "peak_rss": 4091379712,
-      "seconds": 5.134364374971483
+      "peak_rss": 2217213952,
+      "seconds": 8.22467504098313
     },
-    {
+    "integration-export-resource.json": {
       "exit": 0,
-      "peak_rss": 5025923072,
-      "seconds": 222.88148216699483
+      "peak_rss": 5048991744,
+      "seconds": 227.1653606669861
     },
-    {
+    "integration-preview-resource.json": {
       "exit": 0,
-      "peak_rss": 2219409408,
-      "seconds": 7.185429625038523
-    },
-    {
-      "exit": 0,
-      "peak_rss": 1053671424,
-      "seconds": 5.133506375015713
+      "peak_rss": 1040629760,
+      "seconds": 2.056838583026547
     }
-  ],
+  },
   "cleanup": {
     "deleted": [
-      "packages/tools/blender/hulls/lark-round5/seam-scratch"
+      "packages/tools/blender/hulls/lark-round5/integration-scratch"
     ],
-    "bytes": 147285977,
-    "inherited_work_preserved": true,
-    "free_bytes_after": 127361462272
+    "bytes": 68772516,
+    "scope": "only this integration scratch",
+    "free_bytes_after": 123631644672
   },
   "next_capture_inventory": [
-    "3 conservative preview slots remain; no further capture authorized in this unit",
-    "Parent runtime/performance/production body/flicker/blind round 5"
+    "Parent independent source review required before any runtime capture",
+    "1 conservative CPU preview slot remains; none requested here"
   ],
   "manifest_identity": "Receipt excludes its own hash and final containing commit/tree to avoid circular identity; final commit/tree reported to parent.",
   "extensions": [
@@ -4016,20 +3925,22 @@
     "KHR_texture_basisu"
   ],
   "evidence_hashes": {
-    "packages/tools/blender/hulls/lark-round5/seam-authoring.json": "aab32d166a7e9fd6ea7a48f289a54a08d9ce37e3ea86ab0ea2d134337b17365e",
-    "packages/tools/blender/hulls/lark-round5/seam-decoded.json": "17f642934706cbedfd0bf7abfdf3814cd14a39f8fad6cec5bdbd2d85f26db949",
-    "packages/tools/blender/hulls/lark-round5/candidate-source-validation.json": "b6248a5e936d60635118a98eddf86f1e4decfd466bee58af59b249ce25ebacf7",
-    "packages/tools/blender/hulls/lark-round5/export-evidence/seam-final2-revise-export/hulls__lark.glb.json": "ad9bd6e35e6bc9ef1730c83dd6f5e4630361a3134fe7197d501ff08b2f38c0a4"
+    "packages/tools/blender/hulls/lark-round5/candidate-source-validation.json": "4569934540fff1d6058aa78ec7ba19475c71999e78a88b6463934d0730e7e3c5",
+    "packages/tools/blender/hulls/lark-round5/integration-final-revise-density.json": "c464275fe3006e0465889c6fc3d9511421e4c650544e45aea43f66d0f21050b8",
+    "packages/tools/blender/hulls/lark-round5/export-evidence/integration-final-revise-export/hulls__lark.glb.json": "d873052781901490ab17838676fc1849a08bf1d4d88e162478ba027202cecf1e",
+    "packages/tools/blender/hulls/lark-round5/export-evidence/integration-decoded.json": "020b72efc128a7dbea669d6e2565854f56a88fbf714a1cc71ddbb5a8ffbe60ea",
+    "packages/tools/blender/hulls/lark-round5/frame-propagation-applied.json": "dd79c3694fd07772cf2a7bbf5c81a38c218eb56dfe36088cbbdf96e36e1fb223",
+    "packages/tools/blender/hulls/lark-round5/integration-source-resource.json": "f8bd97986943ef067012f4ed80705b497ab1d26527141ebf22d31d3db230be8c",
+    "packages/tools/blender/hulls/lark-round5/integration-export-resource.json": "aaef980b80efaa2637538c102cbf30380f8f79e9d477c70005418c3d13903a74",
+    "packages/tools/blender/hulls/lark-round5/integration-preview-resource.json": "de886f88e955dca32dd362c6f140c857acf0e27e4574c5a15b395dc911730d04",
+    "packages/tools/blender/hulls/lark-round5/previews/integration-final-overview.png": "bc33449b92a9a5c81dc1dc4259c887facdea0a49dc63f214f8f33a659fa41a39"
   },
   "frame_knownfix": {
-    "receipt": "frame-knownfix.json",
-    "removed_faces": {
-      "Body_husk": 16,
-      "Body_husk.001": 0,
-      "Body_husk.002": 0,
-      "Body_husk.003": 0
-    },
-    "lod_triangles": {
+    "historical_receipts": [
+      "frame-knownfix.json",
+      "frame-propagation-applied.json"
+    ],
+    "current_lods": {
       "lark": [
         108746,
         73947,
@@ -4044,17 +3955,19 @@
       ],
       "lark_husked": [
         110379,
-        77956,
-        66049,
+        77952,
+        66041,
         4760
       ]
     },
-    "limits": [
-      "No recognized frame hit qualification",
-      "No final overview consumed",
-      "Stock source/export and decoded density not rerun",
-      "Canonical GLB retained; no candidate installation",
-      "Runtime performance, production body, flicker and blind review remain parent gates"
-    ]
+    "qualification": "CPU source candidate only; no blind/runtime grade"
+  },
+  "source_commit_anchor": "1331891dcaba3e8438c6a62b2b698a1d054c0e79",
+  "atlas_contract": {
+    "layout_pixels": 4096,
+    "uv_layer": "UVMap",
+    "single_uv": true,
+    "force_fit_scale": 1.0,
+    "density_metric": "minimum of 23 LOD0 material-role edge medians, not every edge"
   }
 }

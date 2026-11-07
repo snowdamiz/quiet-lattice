@@ -1,15 +1,7 @@
-# Lark component round5 source checkpoint
+# Lark final integration candidate
 
-Task: P1.E12.T02(art)Lark,Swift,Kestrel,Mule · deps:E14.T02 · done:four hulls with gear,canopy,cockpit interior,hardpoint mounts,damage state,husked variant,three liveries each;Lark rebuilds today's ship at new bar · verify:validate;review.
+Canonical GLB regenerated from committed source anchor 1331891dcaba3e8438c6a62b2b698a1d054c0e79. Stock source and export checks pass 5/5; independent UVMap and normalized decoded meshopt density exceed 512 px/m by minimum material-role median. See FINAL-CANDIDATE-RECEIPT.json for current hashes, LOD counts, markers, resources and evidence.
 
-Scope: Lark only. Recovery is pinned separately in recovery.json. Round4 metadata and full-verdict SHA are in round4-metadata.json. No global review/progress/plan files edited. No GPU, browser, native capture, push, PR or merge.
+One final matching CPU overview inspected (47/48 conservative ledger). Openings and thin ribs are visible, but frame visibility remains a source candidate, not a grade. No whole visual PASS. Whole-shell exposure, wear/glyph appearance, runtime performance, production body/colliders, flicker and blind round 5 remain open. Parent independent source review must precede runtime captures.
 
-Source edits: retain the 48-triangle LOD0 glazing in all lower LODs (previously 14/9/0–1 triangles); smooth glazing face shading; persist interpolated LOD0 shell corner normals onto LOD1/2, removing the previous live transfer modifier on those bodies. UV coordinates and shell geometry are unchanged. These edits address identified source defects, not a claim that the full visual findings are resolved.
-
-The author source had no saved body custom normals. A live transfer modifier existed, so absence of saved normals alone does not prove the runtime breakup's root cause. The previous modifier's evaluated/exported behavior still needs investigation. Canopy frame fit and continuous geometry remain unproven.
-
-Remaining work: actual canopy gap correction if confirmed; rectangular wear repaint; demonstrable 15–30% husk exposed frame plus restrained seam/glyph/rust hierarchy; cockpit display/control and seat joinery; posed scale/boarding references and clearance verification. capture-inventory.json lists the parent-owned runtime evidence. evidence_inventory.py inventories source positions and matrices; it is not a collision or ergonomic test. Performance qualification stays parent-owned.
-
-Independent source review must precede runtime captures. This checkpoint is not a complete round5 candidate and does not invoke fifth-grade merge disposition.
-
-CPU inspection: original closed_side plus r5-closed-canopy and r5-weld-closed-canopy were viewed. Welding reduced each glass mesh from 144 to 48 vertices, but conspicuous triangular highlights and frame gaps remain in the preview. No glazing visual fix is claimed. The static LOD2 breakup root cause is likewise not established by this checkpoint.
+Historical receipts, including FINAL-RECEIPT.json and historical-* files, describe earlier source/export states and are not current qualification. No push, PR, merge, runtime capture or service work performed.

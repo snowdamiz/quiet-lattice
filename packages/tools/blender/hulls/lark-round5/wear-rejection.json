@@ -1,0 +1,19 @@
+{
+  "status": "REJECTED_NOT_COMPLETE",
+  "source_restored_sha256": "a6faff06882f772bfbb605462a9f4b1d29291e4919d4d5ac91f0598d5f55fcc2",
+  "rejected_candidate_sha256": "483373b7dfcf95c03c28f39bea0eab86f2009023a9b013aa82a9ece1ca96b2fa",
+  "candidate_path": "packages/tools/blender/hulls/lark-round5/scratch/wear-rejected.blend",
+  "structural_checks": "Candidate passed stock 5/5; 63 non-cockpit meshes preserved including UV and corner normals; density minimum 590.6459217270778; four decreasing LODs and LOD3 below 5%. These checks did not establish visual correctness.",
+  "visual_findings": [
+    "Display graphics leak across cockpit rails, ladder and other hull surfaces in wear-unit-cockpit.png and wear-unit-wear.png. Shared/repeated UV sampling is the likely cause; exact overlap audit remains outstanding.",
+    "Hardpoint close-up retains broad rectangular patches.",
+    "Seat welt is too subtle in the close-up to establish completed joinery finish."
+  ],
+  "new_views": 2,
+  "retained_preview_count": 29,
+  "retained_preview_bytes": 10902709,
+  "cleanup": [],
+  "commit": "none: requested finished unit not achieved",
+  "husk": "No whole-shell qualification; parent-specified 19.64% defined dorsal-area sampled clearance remains parent-owned. No inherited husk receipt rewritten.",
+  "remaining": "Needs revised atlas/material addressing or geometry-based display authoring, targeted wear correction, and renewed visual verification. One of this unit\u2019s three permitted new views remains."
+}
