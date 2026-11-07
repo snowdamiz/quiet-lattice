@@ -1,0 +1,523 @@
+{
+  "TASK": "P1.E10.T05",
+  "STATUS": "BLOCKED",
+  "statusReason": "Full source/export implementation is ready; independent code review, full blind visual grade, engine review and runtime/performance gates belong to parent and remain pending.",
+  "BASE": "634c51d2378748c6a514af2a792ee4500b912643",
+  "branch": "task/P1-E10-T05-thalune-sarelun",
+  "SUMMARY": "38 shell-ribbed Thalune/Sarelun assets; seven editable blends, 152 saved LODs, seven KTX2/meshopt GLBs, 1.85m refs, fitted collision and interaction/light markers, shared packed PBR trim sheets.",
+  "inventory": {
+    "low": 4,
+    "mid": 4,
+    "tall": 4,
+    "plaza": 1,
+    "market_hall": 1,
+    "skill_house": 1,
+    "compact_office": 1,
+    "listening_house": 1,
+    "shipyard": 1,
+    "salvage_yard": 1,
+    "tide_hall": 1,
+    "wall": 3,
+    "gate": 2,
+    "bridge": 2,
+    "landing_pad": 2,
+    "lamp": 2,
+    "prop": 6,
+    "anchor": 1
+  },
+  "sourceFiles": [
+    "assets/blend/cities/thalune_anchor.blend",
+    "assets/blend/cities/thalune_civic.blend",
+    "assets/blend/cities/thalune_low.blend",
+    "assets/blend/cities/thalune_mid.blend",
+    "assets/blend/cities/thalune_props.blend",
+    "assets/blend/cities/thalune_tall.blend",
+    "assets/blend/cities/thalune_waterfront.blend"
+  ],
+  "exportFiles": [
+    "packages/client/public/models/cities/thalune_anchor.glb",
+    "packages/client/public/models/cities/thalune_civic.glb",
+    "packages/client/public/models/cities/thalune_low.glb",
+    "packages/client/public/models/cities/thalune_mid.glb",
+    "packages/client/public/models/cities/thalune_props.glb",
+    "packages/client/public/models/cities/thalune_tall.glb",
+    "packages/client/public/models/cities/thalune_waterfront.glb"
+  ],
+  "assetManifest": "assets/blend/cities/thalune/manifest.json",
+  "assetManifestSha256": "9ef5d4a980b6ba8e7837a9bbe67207ea9e11b486b00ac779910a1159f9cf2a3d",
+  "VERIFY": {
+    "stockSourceFilesPassed": 7,
+    "stockExportFilesPassed": 7,
+    "stockExportSucceeded": 7,
+    "savedLODs": 152,
+    "sourceAuditChecks": 1371,
+    "exportAuditChecks": 1371,
+    "negativeMutationsRejected": 5,
+    "compressionUnitTestsPassed": 12,
+    "static": [
+      "Python compileall exit 0",
+      "git diff --check exit 0",
+      "git diff --cached --check exit 0"
+    ],
+    "stockReports": [
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_anchor.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 1
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_anchor.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 1
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_civic.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 8
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_civic.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 8
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_low.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_low.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_mid.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_mid.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_props.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 6
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_props.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 6
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_tall.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_tall.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_waterfront.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 11
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_waterfront.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 11
+      }
+    ],
+    "commandLedger": "assets/blend/cities/thalune/receipts/command-ledger.json",
+    "runtimeSmoke": "NOT RUN: no GPU/browser/native capture/server/DB authorized"
+  },
+  "budgets": {
+    "LOD0Triangles": {
+      "building": [
+        35888,
+        57832
+      ],
+      "kit": [
+        4752,
+        14434
+      ],
+      "prop": [
+        3024,
+        9488
+      ],
+      "hero": [
+        79587,
+        79587
+      ]
+    },
+    "LOD3MaxRatio": 0.03499696831893285,
+    "gpuTextureMiBPerVariant": {
+      "hero": 64,
+      "building": 16,
+      "kit": 16,
+      "prop": 4
+    },
+    "textureSizes": {
+      "hero": 4096,
+      "building": 2048,
+      "kit": 2048,
+      "prop": 1024
+    }
+  },
+  "resourceUse": {
+    "peakProcessTreeRssKiB": 2543472,
+    "blenderThreads": 2,
+    "blenderProcessesInOwnLane": 1,
+    "ktxThreads": 2,
+    "ktxJobs": 1,
+    "backend": "CPU",
+    "deadlinesEnforced": true,
+    "timedOutCommands": 0,
+    "canonicalPreviewBytes": 10773992,
+    "ownLaneProcessesRemaining": []
+  },
+  "DECISIONS": [
+    "38-piece kit: 12 residences, 8 civic/yard assets, 11 waterfront pieces, 6 props and one anchor.",
+    "Plaza is a 48m central module for the 95-140m-radius planner plaza; surrounding district paving belongs to E10.T01.",
+    "Specific Sarelun shoal anchor description takes precedence over general capital anatomy: anchor is independently placeable, without a permanent bridge.",
+    "Preserve authored metre-scale bases and service openings. Select planner slots by circular footprint; do not stretch the whole asset to the planner height.",
+    "Use flat thalune_* family filenames to preserve existing discovery, source inference and exporter contracts. Exporter and shared art library are unchanged.",
+    "Saved LODs and painted trim atlases are authoritative. Authoring scripts are explicit studio operations and are never imported by export.",
+    "Atlas wear uses placed seam, tide, salt and contact masks; AO is painted into trim joins, not represented as an asset geometry bake."
+  ],
+  "OUT OF SCOPE FOUND": [
+    "E10.T01: current renderer selects three variants and generic cylinder colliders; it must select all four variants and named COL_/Interact/Light_ nodes.",
+    "E10.T01: planner class thresholds 34/95m differ from art bands 6-14/20-60/170-340m; city plain is dry and has no shoal/canal placement.",
+    "Independent code review and blind grading are pending with parent; compact CPU sheets are authoring evidence only."
+  ],
+  "ARTIFACTS": {
+    "previews": "assets/blend/cities/thalune/receipts/preview-index.json",
+    "futureGpuPacket": "assets/blend/cities/thalune/receipts/final-capture-inventory.json",
+    "sourceAudit": "assets/blend/cities/thalune/receipts/final-source-audit.json",
+    "exportAudit": "assets/blend/cities/thalune/receipts/final-export-audit.json"
+  },
+  "sharedFilesUnchanged": {
+    "librarySha256": "33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c",
+    "exportCitiesMatchesBase": true
+  },
+  "HEAD": "5208f10ce367d3fb179fe19458ab263423ef5432",
+  "TREE": "0b00cb2bbc67bd7bddf4c8373507334490a2b949",
+  "FILES CHANGED": [
+    "assets/blend/cities/thalune/authoring/audit.py",
+    "assets/blend/cities/thalune/authoring/author_kit.py",
+    "assets/blend/cities/thalune/authoring/fit_bridge_rails.py",
+    "assets/blend/cities/thalune/authoring/ktx_cpu.py",
+    "assets/blend/cities/thalune/authoring/preview.py",
+    "assets/blend/cities/thalune/authoring/run_lane.py",
+    "assets/blend/cities/thalune/authoring/studio.py",
+    "assets/blend/cities/thalune/authoring/test_negative_validation.py",
+    "assets/blend/cities/thalune/manifest.json",
+    "assets/blend/cities/thalune/receipts/APPENDIX-C2.json",
+    "assets/blend/cities/thalune/receipts/SHA256SUMS",
+    "assets/blend/cities/thalune/receipts/audit-source-r1-process.json",
+    "assets/blend/cities/thalune/receipts/audit-source-r1-process.txt",
+    "assets/blend/cities/thalune/receipts/audit-source-r1.json",
+    "assets/blend/cities/thalune/receipts/audit-source-r2-process.json",
+    "assets/blend/cities/thalune/receipts/audit-source-r2-process.txt",
+    "assets/blend/cities/thalune/receipts/audit-source-r2.json",
+    "assets/blend/cities/thalune/receipts/audit-source-r3-process.json",
+    "assets/blend/cities/thalune/receipts/author-anchor-final.json",
+    "assets/blend/cities/thalune/receipts/author-anchor-r2.json",
+    "assets/blend/cities/thalune/receipts/author-anchor-r3-process.json",
+    "assets/blend/cities/thalune/receipts/author-anchor-r4-process.json",
+    "assets/blend/cities/thalune/receipts/author-civic-final.json",
+    "assets/blend/cities/thalune/receipts/author-civic-r2.json",
+    "assets/blend/cities/thalune/receipts/author-civic-r3.json",
+    "assets/blend/cities/thalune/receipts/author-low-final.json",
+    "assets/blend/cities/thalune/receipts/author-low-r1.json",
+    "assets/blend/cities/thalune/receipts/author-low-r2.json",
+    "assets/blend/cities/thalune/receipts/author-mid-final.json",
+    "assets/blend/cities/thalune/receipts/author-mid-r1.json",
+    "assets/blend/cities/thalune/receipts/author-mid-r3.json",
+    "assets/blend/cities/thalune/receipts/author-props-final.json",
+    "assets/blend/cities/thalune/receipts/author-props-r4-process.json",
+    "assets/blend/cities/thalune/receipts/author-props-r6-process.json",
+    "assets/blend/cities/thalune/receipts/author-tall-final.json",
+    "assets/blend/cities/thalune/receipts/author-waterfront-final.json",
+    "assets/blend/cities/thalune/receipts/bridge-rail-amendment.json",
+    "assets/blend/cities/thalune/receipts/bridge-ray-diagnostic.json",
+    "assets/blend/cities/thalune/receipts/bridge-ray-diagnostic.txt",
+    "assets/blend/cities/thalune/receipts/command-ledger.json",
+    "assets/blend/cities/thalune/receipts/compression-unit-tests.json",
+    "assets/blend/cities/thalune/receipts/compression-unit-tests.txt",
+    "assets/blend/cities/thalune/receipts/contract-path-relocation.json",
+    "assets/blend/cities/thalune/receipts/export-audit-process.json",
+    "assets/blend/cities/thalune/receipts/export-audit-r4-process.json",
+    "assets/blend/cities/thalune/receipts/export-audit-r5-process.json",
+    "assets/blend/cities/thalune/receipts/export-audit-r5-process.txt",
+    "assets/blend/cities/thalune/receipts/export-final-process.json",
+    "assets/blend/cities/thalune/receipts/export-props-r6-process.json",
+    "assets/blend/cities/thalune/receipts/export-qualified-process.json",
+    "assets/blend/cities/thalune/receipts/export-qualified-process.txt",
+    "assets/blend/cities/thalune/receipts/export-qualified-r7-process.json",
+    "assets/blend/cities/thalune/receipts/export-r4-process.json",
+    "assets/blend/cities/thalune/receipts/export-r5-process.json",
+    "assets/blend/cities/thalune/receipts/export-waterfront-r7-process.json",
+    "assets/blend/cities/thalune/receipts/exporter-unit-tests-process.json",
+    "assets/blend/cities/thalune/receipts/final-capture-inventory.json",
+    "assets/blend/cities/thalune/receipts/final-export-audit-process.json",
+    "assets/blend/cities/thalune/receipts/final-export-audit-process.txt",
+    "assets/blend/cities/thalune/receipts/final-export-audit.json",
+    "assets/blend/cities/thalune/receipts/final-negative-validation-process.json",
+    "assets/blend/cities/thalune/receipts/final-negative-validation-process.txt",
+    "assets/blend/cities/thalune/receipts/final-source-audit-process.json",
+    "assets/blend/cities/thalune/receipts/final-source-audit-process.txt",
+    "assets/blend/cities/thalune/receipts/final-source-audit.json",
+    "assets/blend/cities/thalune/receipts/final-static-checks.json",
+    "assets/blend/cities/thalune/receipts/fit-bridge-rails-process.json",
+    "assets/blend/cities/thalune/receipts/fit-continuous-bridge-process.json",
+    "assets/blend/cities/thalune/receipts/negative-validation-process.json",
+    "assets/blend/cities/thalune/receipts/negative-validation.json",
+    "assets/blend/cities/thalune/receipts/preview-anchor-final-process.json",
+    "assets/blend/cities/thalune/receipts/preview-anchor-r4-process.json",
+    "assets/blend/cities/thalune/receipts/preview-civic-final-process.json",
+    "assets/blend/cities/thalune/receipts/preview-index.json",
+    "assets/blend/cities/thalune/receipts/preview-low-final-process.json",
+    "assets/blend/cities/thalune/receipts/preview-low-r1.json",
+    "assets/blend/cities/thalune/receipts/preview-mid-final-process.json",
+    "assets/blend/cities/thalune/receipts/preview-props-final-process.json",
+    "assets/blend/cities/thalune/receipts/preview-props-r4-process.json",
+    "assets/blend/cities/thalune/receipts/preview-props-r7-process.json",
+    "assets/blend/cities/thalune/receipts/preview-tall-final-process.json",
+    "assets/blend/cities/thalune/receipts/preview-waterfront-final-process.json",
+    "assets/blend/cities/thalune/receipts/source-final-process.json",
+    "assets/blend/cities/thalune/receipts/source-final-r4-process.json",
+    "assets/blend/cities/thalune/receipts/source-final-r5-process.json",
+    "assets/blend/cities/thalune/receipts/source-qualified-process.json",
+    "assets/blend/cities/thalune/receipts/source-qualified-r7-process.json",
+    "assets/blend/cities/thalune/receipts/stock-export-process.json",
+    "assets/blend/cities/thalune/receipts/stock-export-process.txt",
+    "assets/blend/cities/thalune/receipts/stock-export-validation-process.json",
+    "assets/blend/cities/thalune/receipts/stock-export-validation-process.txt",
+    "assets/blend/cities/thalune/receipts/stock-source-validation-process.json",
+    "assets/blend/cities/thalune/receipts/stock-source-validation-process.txt",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_anchor.blend.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_anchor.glb.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_civic.blend.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_civic.glb.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_low.blend.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_low.glb.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_mid.blend.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_mid.glb.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_props.blend.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_props.glb.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_tall.blend.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_tall.glb.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_waterfront.blend.json",
+    "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_waterfront.glb.json",
+    "assets/blend/cities/thalune/receipts/thalune_anchor-authored.json",
+    "assets/blend/cities/thalune/receipts/thalune_civic-authored.json",
+    "assets/blend/cities/thalune/receipts/thalune_low-authored.json",
+    "assets/blend/cities/thalune/receipts/thalune_mid-authored.json",
+    "assets/blend/cities/thalune/receipts/thalune_props-authored.json",
+    "assets/blend/cities/thalune/receipts/thalune_tall-authored.json",
+    "assets/blend/cities/thalune/receipts/thalune_waterfront-authored.json",
+    "assets/blend/cities/thalune/receipts/validate-low-r1.json",
+    "assets/blend/cities/thalune_anchor.blend",
+    "assets/blend/cities/thalune_civic.blend",
+    "assets/blend/cities/thalune_low.blend",
+    "assets/blend/cities/thalune_mid.blend",
+    "assets/blend/cities/thalune_props.blend",
+    "assets/blend/cities/thalune_tall.blend",
+    "assets/blend/cities/thalune_waterfront.blend",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.png",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/civic.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/civic.png",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.png",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/mid.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/mid.png",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.png",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/tall.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/tall.png",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/waterfront.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/waterfront.png",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r2/props.json",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r2/props.png",
+    "packages/client/public/models/cities/thalune_anchor.glb",
+    "packages/client/public/models/cities/thalune_civic.glb",
+    "packages/client/public/models/cities/thalune_low.glb",
+    "packages/client/public/models/cities/thalune_mid.glb",
+    "packages/client/public/models/cities/thalune_props.glb",
+    "packages/client/public/models/cities/thalune_tall.glb",
+    "packages/client/public/models/cities/thalune_waterfront.glb"
+  ],
+  "workingTree": "CLEAN",
+  "LFS_POINTERS_VERIFIED": [
+    {
+      "path": "assets/blend/cities/thalune_anchor.blend",
+      "sha256": "7739c6429bcc93d7b9f8738002a3e6cd6431d65c9d19d32dd99e24f3fda5198a",
+      "bytes": 6248687
+    },
+    {
+      "path": "assets/blend/cities/thalune_civic.blend",
+      "sha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
+      "bytes": 11511035
+    },
+    {
+      "path": "assets/blend/cities/thalune_low.blend",
+      "sha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4",
+      "bytes": 5483915
+    },
+    {
+      "path": "assets/blend/cities/thalune_mid.blend",
+      "sha256": "75ff96492eeb1c28f264f4ea6be3691dd54325440bc728c1b099957f747316f9",
+      "bytes": 9604391
+    },
+    {
+      "path": "assets/blend/cities/thalune_props.blend",
+      "sha256": "d77c30529b57bab97ab1767376f3f54e961bb373cc370db02bf2e23d30d9e36e",
+      "bytes": 1955372
+    },
+    {
+      "path": "assets/blend/cities/thalune_tall.blend",
+      "sha256": "078b638c81cea87fdcc287dd6b9c1aab1ec8b287ac551de06e45d9fa56502768",
+      "bytes": 9629474
+    },
+    {
+      "path": "assets/blend/cities/thalune_waterfront.blend",
+      "sha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
+      "bytes": 4612447
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.json",
+      "sha256": "e3371b1bc013d36e3757ce4f8c251da3fb5b73af9ca353915cfc6e2f85080c1c",
+      "bytes": 418
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.png",
+      "sha256": "489e0345dcd715773988f1451aef3f295022f530943b4f184102110309564a94",
+      "bytes": 269835
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/civic.json",
+      "sha256": "3fe3fb16fed4f3ff1ff2dd80b8c515ba1194ee94a29145077c5ff53a6ca39b49",
+      "bytes": 2722
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/civic.png",
+      "sha256": "1d631c0739d0b1bb675296c977c145caead191aa3a95696b717d2d51cb2bb2bc",
+      "bytes": 2469519
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.json",
+      "sha256": "cdbfbe7521354bfd6335d5abacc0e565a75373bf332e6c5692f32ce3cec6ec75",
+      "bytes": 739
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.png",
+      "sha256": "cc65d30481f79c898a426b66619a9827a8811e0fae60d14a9727146d940f7cc3",
+      "bytes": 1693904
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/mid.json",
+      "sha256": "6db2cfe038556a72fe51e88c606b194d9e7fb628dcdf1895d82f5706f0fde45a",
+      "bytes": 1678
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/mid.png",
+      "sha256": "9d9e6e8b2f9a33940345e24200a57078651bc68a71334d43586e9cf8161cb536",
+      "bytes": 1100773
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.json",
+      "sha256": "af25018de1ef3de79f4b0a8c5b52e1c3c0d92bab19262802c97ae7eb738e6ee3",
+      "bytes": 1017
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.png",
+      "sha256": "426e872a73830b5431b6a51d10530588c28c2de976d5694d8ba2ebf5cb236994",
+      "bytes": 1418329
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/tall.json",
+      "sha256": "2affcb2f6b2abbd44b44a54a720a90d237c2ceee37c7b3552313c5b00fdda5d8",
+      "bytes": 1696
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/tall.png",
+      "sha256": "da94af3b76126b295ef131280bd0e5748ac32904399170139a57f3464b3fdf87",
+      "bytes": 876860
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/waterfront.json",
+      "sha256": "c871c6bb5e1d1a4090c466a49ae63b47c0087eaa3f64f543f38b4851b690baf2",
+      "bytes": 4232
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/waterfront.png",
+      "sha256": "f22a25358b1ee0b5c217d0105464e103f6a2a4dc34ddb5ad858f00bdac0e2f20",
+      "bytes": 2945604
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r2/props.json",
+      "sha256": "456f5ecde2e0243f9ce5fa46cb3ec19a5237166fdd6b0f7aeb3fdff6c7f72d91",
+      "bytes": 1017
+    },
+    {
+      "path": "assets/renders/cities/thalune/P1-E10-T05-cpu-r2/props.png",
+      "sha256": "137fb24b21f278b26a306627fc6f7d19f141a424e35a907a75d4bda6b7212a63",
+      "bytes": 1417497
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_anchor.glb",
+      "sha256": "71ad323fde521208e0cb9096b49a275e2c2d2f30f8ad572a8f72f5c557a3b7c3",
+      "bytes": 1187080
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_civic.glb",
+      "sha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "bytes": 4678940
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_low.glb",
+      "sha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "bytes": 1879748
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_mid.glb",
+      "sha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "bytes": 4743768
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_props.glb",
+      "sha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "bytes": 682916
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_tall.glb",
+      "sha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "bytes": 4633980
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_waterfront.glb",
+      "sha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "bytes": 2058884
+    }
+  ],
+  "MANIFEST_SHA256": "9ef5d4a980b6ba8e7837a9bbe67207ea9e11b486b00ac779910a1159f9cf2a3d"
+}

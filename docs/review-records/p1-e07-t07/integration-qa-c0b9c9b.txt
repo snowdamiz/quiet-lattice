@@ -1,0 +1,59 @@
+P1.E07.T07 — full serial server integration qualification
+
+VERDICT: PASS. 38/38 integration files; 217 passed tests. Full-suite exit 0; outer timeout triggered: False. Supervisor wall time 348.606 s.
+
+Exact checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d
+Branch: task/P1-E07-T07
+HEAD: c0b9c9ba966302b3e7b960129e1c8307e35b7667
+Tree: 1a41525cc9f0c635b5400679449421b9dfff1051
+Before/after status: CLEAN, including untracked files. HEAD, tree, branch, config, dependency manifest/entrypoint hashes, resolved dependency inventory, and toolchain matched exactly after cleanup (590 hashed files). No source, documentation, branch, commit, installation, push, PR, merge, GPU, browser, full smoke, art capture or shared-cache/LFS cleanup action was taken.
+
+Fresh command (working directory above):
+```sh
+pnpm exec vitest run --config vitest.int.config.ts --maxWorkers=2 --no-file-parallelism --passWithNoTests=false --reporter=default --reporter=json --outputFile=/tmp/space-symbiotic_qa_20261107_045650_e5808ead/integration.json
+```
+The existing vitest.int.config.ts include globs cover packages/*/src/**/*.int.test.ts and packages/*/test/**/*.int.test.ts. Expected inventory and reporter inventory match all 38 files, including the new Symbiotic file and src/cutscenes/cutscenes.int.test.ts. No path/name selector or zero-test pass. fileParallelism:false is retained and reinforced by --no-file-parallelism; maxWorkers=2. Reporter file execution intervals have no overlaps. Normal repository test/hook timeouts were unchanged; finite outer timeout was 900 seconds, with an owned-process watchdog covering pnpm's separate Vitest process group.
+
+Toolchain: macOS-27.0.1-arm64-arm-64bit-Mach-O; node v22.23.3 at /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node; pnpm 12.15.0; installed Vitest 5.0.5. Shell default Node 26 was not used for this fresh run. No runtime fallback or installation occurred.
+
+Process environment (set before any test/config imports or migrations):
+```text
+DATABASE_URL=postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_qa_20261107_045650_e5808ead
+REDIS_URL=redis://127.0.0.1:53058/8
+NODE_OPTIONS=--import /tmp/space-symbiotic_qa_20261107_045650_e5808ead/route-guard.mjs
+PGAPPNAME=symbiotic_qa_20261107_045650_e5808ead (guard appends process PID/thread ID)
+NODE_ENV=test
+LOG_LEVEL=silent
+HOST=127.0.0.1
+PORT=0
+PATH begins /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin
+```
+execution-env.json retains the exact PATH and names of inherited application/database variables cleared for the run. The historical worker fixture.env was not sourced; its old database remains irrelevant to this run.
+
+Private fixture proof:
+- Existing PostgreSQL container space-t16-pg-20261106, ID 66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb, postgres:16. Host 127.0.0.1:53055 maps to container 5432. Created only astra_symbiotic_qa_20261107_045650_e5808ead, owned by astra. Every pre-import probe returned this current_database(), current_user=astra and inet_server_port()=5432.
+- Existing Redis container space-t16-redis-20261106, ID d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4, redis:7. Host 127.0.0.1:53058 maps to 6379. DB8 had DBSIZE=0 and no existing application clients; an atomic empty-keyset check installed unique marker qa:owner:symbiotic_qa_20261107_045650_e5808ead. Each startup probe checked CLIENT INFO db=8 and that marker.
+- The inspected harness calls runMigrations(parseConfig(process.env).DATABASE_URL) before startServer config overrides. Preflight imported the real config after installing the guard and verified effective URLs. The actual defaults 55432/56379 were exercised against the guard and rejected before socket connection; DB0/7 were not selected for application work. The guard also rejects Redis SELECT to other DBs and any test FLUSHDB/FLUSHALL.
+- 59 verified pre-import records across 43 processes; 38 real Vitest fork entries; 14 actual fauna/planner.worker.ts starts. Every process/thread used Node 22.23.3 and the private routes. Planner workers inherited the guard and routes; their source opens no database clients, so their SQL/Redis connections here are explicitly startup instrumentation probes.
+- 468 actual runtime database socket connects observed separately from startup probes. Live observer retained 211 SQL session samples and 90 Redis client samples, all with this task's application/client name and DB route. Unexpected default-port attempts: 0.
+- Instrumentation lives only under this /tmp report directory. It asserts routes, records clients/keys, and performs startup probes; no repository source or test selection was changed.
+
+Retained worker evidence (reused, not rerun):
+- Implementation be2d4704b8d5ba837a2da28ac106cdfaf81b38c9/tree d441cf0b8063559f43b10d545c1d493353e45fe7: 213 unit files, 2,740 tests; full workspace typechecks; scoped ESLint and Prettier on 19 TypeScript files. Worker toolchain was Node 26.12.1/pnpm 12.15.0; this evidence is not a fresh Node 22 unit/static result.
+- Independently proved the final delta contains only docs/DESIGN.md and packages/shared/src/data/skills/symbiotic.ts, each with exactly one deletion of ` (today: only docked)` and all other bytes unchanged. Prior focused literal DESIGN/shared contract and format passes cover those final description edits.
+- Verified all reused artifact hashes against the worker SHA256SUMS and copied retained evidence. exact-delta-proof.json, exact-delta.patch and retained-hash-verification.json record this boundary. No redundant unit/static rerun.
+
+Failure evidence:
+None: no failed files, failed assertions, skipped assertions, or unhandled errors reported.
+
+integration.log and integration.json preserve the complete fresh result; integration-tail.txt preserves its final 100 lines. No failure was excused as baseline and no source fix or focused retry was performed.
+
+Cleanup:
+- Tracked 38 owned processes across groups [39661, 39665, 39679]; residual processes terminated: []; owned processes left: 0. No unknown process was signalled.
+- Owned SQL sessions before drop: 0. Dropped only astra_symbiotic_qa_20261107_045650_e5808ead; confirmed absent afterward. No forced database termination was needed.
+- Verified 36 Redis keys against the unique marker, owned SQL shard IDs, and observed test writes. Atomically rechecked the entire keyset and deleted only those explicit keys with DEL (no FLUSHDB/FLUSHALL). Final DB8 DBSIZE=0; marker absent; no owned Redis clients remained.
+- Both supplied containers remain running and healthy; neither was stopped or recreated. cleanup-commands.json and cleanup.json retain exact operations and evidence.
+
+Remaining parent-owned gates: independent read-only code review; full smoke; drawn-companion and picking proof after T09 integration; parent integration/acceptance. This result qualifies the full local server integration suite only, not visuals, CI, release, production, merge, or whole-task acceptance.
+
+Evidence index: before-snapshot.json / after-snapshot.json; execution.json / execution-env.json / result.json; expected-files.json / verification.json; claim.json; preflight.log; route-guard.mjs / process-routes.jsonl / live-routes.jsonl; owned-process-identities.json / process-watch-result.json; owned-shards.json / owned-redis-keys.json; cleanup.json / cleanup-commands.json; retained/; SHA256SUMS.

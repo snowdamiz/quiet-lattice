@@ -1,0 +1,291 @@
+{
+  "verdict": "REVISE",
+  "scope": "Fresh independent source review; full 37-file base delta and additive 6-file new implementation examined separately.",
+  "head": "07a3220bb5c46114006322a45503b9dcb79affce",
+  "tree": "9bf4e042307c06cadf5aa590f9963016e15cfaf6",
+  "base": "2f54def2aa82ef92fcd46e6654f9a375e1437d11",
+  "recovery": "293a87dff4abf7b4e7a6ac3ce65eae5c6d539ea5",
+  "finalStatus": "",
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "P1",
+      "file": "packages/tools/src/capture/browser-work-trace.ts",
+      "lines": [
+        833,
+        834,
+        1135,
+        1141,
+        1175
+      ],
+      "title": "Empty-string failures become observed packets",
+      "reproduction": "false-complete.mts: pre-abort-empty, prepare-reject-empty, cancel-off-arm-empty, deadline-empty-error all resolve and persist observed. Pre-abort-empty has zero steps and all-zero totals; summary null.",
+      "cause": "fail stores String(error), but termination/status use string truthiness instead of failure !== null or a discriminated outcome.",
+      "required": "Track failure independently of message truthiness and require full completion invariants for observed."
+    },
+    {
+      "id": "R2",
+      "severity": "P2",
+      "file": "packages/tools/src/capture/trace-observer-report.ts",
+      "lines": [
+        171,
+        172,
+        256,
+        257,
+        267,
+        274
+      ],
+      "title": "Malformed or contradictory raw observations are accepted as complete",
+      "reproduction": "contract-regressions.mts: fence-draw increments first fence-only countersAfter.calls 650 -> 651; poll-wait-failed changes raw final poll value to 37149 (WAIT_FAILED) but preserves condition-satisfied label; malformed-history sets historySizes={}. Each completes all 12 controls and reports observer-cost-issue.",
+      "cause": "Fence-only counters are checked for nonnegative integers but not equality; poll numeric value is not reconciled with status; temporal fields are only checked for presence.",
+      "required": "Validate raw enum/status correspondence, no-work counter equality, and temporal value shapes before issuing the next control."
+    },
+    {
+      "id": "R3",
+      "severity": "P2",
+      "file": "packages/tools/src/capture/browser-work-trace.ts",
+      "lines": [
+        1026,
+        1027
+      ],
+      "title": "Cross-preparation history-index resets pass",
+      "reproduction": "contract-regressions.mts history-reset starts from parity-corrected CPU fixtures, sets step 3 histIdx before=0/after=1 even though step 2 ended at 1 and the intervening 90 warm-up frames require before=1. frameIdx remains correct. All 12 controls complete observed.",
+      "cause": "Cross-control comparison preserves frameIdx only; the report validator checks histIdx only within a single control. AtmospherePass toggles histIdx once per frame without resetting it during warm-up.",
+      "required": "Preserve and validate histIdx parity across warm-up/control boundaries; positive fixtures should obey the same invariant."
+    },
+    {
+      "id": "R4",
+      "severity": "P2",
+      "file": "packages/tools/src/capture/trace-observer-report.ts",
+      "lines": [
+        313,
+        318,
+        319,
+        320
+      ],
+      "title": "Gap threshold uses max(range,5), not the requested range + 5 ms",
+      "reproduction": "Five pairs on=[36,37,38,39,40], off=[30,31,32,33,34], empty fences 8 ms. Every difference is 6 ms; both ranges are 4 ms; both arms stable. Actual decision observer-cost-issue, while the requested additive threshold is 9 ms and should remain inconclusive.",
+      "interpretation": "This finding reads the user brief both arm ranges + 5 ms literally as an additive tolerance. The worker report describes separate comparisons (max), so the two definitions need reconciliation.",
+      "required": "Implement the requested additive threshold, including both signs and boundary fixtures, or explicitly resolve the definition discrepancy before acceptance."
+    },
+    {
+      "id": "R5",
+      "severity": "P2",
+      "file": "packages/tools/src/capture/browser-work-trace.ts",
+      "lines": [
+        859,
+        860,
+        941,
+        1136
+      ],
+      "title": "Cancellation drops a host observation that already returned",
+      "reproduction": "contract-regressions.mts retain-returned-host-on-abort: the second observe() obtains a valid raw host/load/pin record, aborts with Error, then returns the record. The dispatcher correctly fails, but the retained step.after stays null.",
+      "cause": "Host assignment happens outside owned(); its post-await abort check throws first. Probe prepare/run deliberately retain inside the awaited operation, but observe does not.",
+      "required": "Retain host before/after replies inside the owned operation before cancellation/deadline assertions, including late replies."
+    }
+  ],
+  "providedTests": {
+    "tests": 283,
+    "files": 15,
+    "maxWorkers": 2,
+    "exit": 0
+  },
+  "sourceBindings": [
+    {
+      "path": "packages/client/src/dev/dependent-output.js",
+      "sha256": "96107d34a95f02b5aa596303943c1c66e97d307f71fa247f9631401ca03032bf",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/client/src/dev/dependent-output.test.js",
+      "sha256": "abf42bd3cccae7b11f7562bf9ea12d64153166af1057ee79d98c9ccf1d35e106",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/client/src/dev/gpu-completion.js",
+      "sha256": "9a37496be513d5cf6fe263ab6f127a4a5b29e9e2f48c0482992b4cfdef85f852",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/client/src/dev/gpu-completion.test.js",
+      "sha256": "b0a48f24850fc25655cc3afe3ef759c39ae9dc8368f5052621de2cd173364429",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/client/src/dev/native-work-class-probe.js",
+      "sha256": "b7845f43884f21bce25aaea163dc0f2573880c8a45eb9893188ccc3960c94ba4",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/client/src/dev/native-work-class-probe.test.js",
+      "sha256": "5b38c8bc8d527536d7e165f0d5e697f46d959d0dc940a2de22391de235c9de95",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/client/src/dev/review.js",
+      "sha256": "c76bb8d590d822340567381bf2460f36cc23bb9788b242532558ea96fbcd19fc",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/client/test/timer-renderer.js",
+      "sha256": "19c2b0a7bca749e5772c1d6bda663b68f463bae0f7274205731a526136fa3b2e",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/benchmark-runs.ts",
+      "sha256": "501b7c086f06415decd35b4b5c3fcb1b4ba0dac7b4fb95b548ed7219f38f4cb2",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-checkpoint.test.ts",
+      "sha256": "155e734b47030a7b49f3f24e625b7daf701a87e04ce7984e27d81b8afafe9592",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-context.test.ts",
+      "sha256": "b27f35ae5f6bd787e28ec11e921f0c58f295eccc895d59496c62cf6feb433987",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-launch.test.ts",
+      "sha256": "315b0254b2738071d2449b1b5f3a039b5a7b2d61c2422cb40be9a21342a6f8c1",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-probe.ts",
+      "sha256": "43c9b75c2cf30f54bb62c639060ccc1eb639f6ac31d373a25c6ea327ea68f08e",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-protocol.test.ts",
+      "sha256": "4adf3bee4416d0c0ec4b8c234791d5290659b7f773a7d0e61eaa9f4efd90acc1",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-report.test.ts",
+      "sha256": "b2b4f0858c5f5cf6e182ea55400d4e5c2adff15f5092b674b3f9879295e0bd4a",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-report.ts",
+      "sha256": "141e6c2a17f0e1bd264dfb9e23e7f14ba57eeeaba8d360a10e4d76b3043414eb",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-serialization.test.ts",
+      "sha256": "4741f694788deb132aad6e49693f8daddad6cd73f844c4b4e3ff609f2e275f00",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-trace.test.ts",
+      "sha256": "ca96915bdfe9c1ef2af1091a3f833715c52c7470eeac36f3950aa4288de25853",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-trace.ts",
+      "sha256": "a63c8be0ae9d96507a215e6b6392d32ce06f148e30f88c061f4f4b30202f64db",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/capture.ts",
+      "sha256": "b249dd78151757635bd1100cf8faca5572dfb45bdeff0361c9d40f9fbaebd634",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-capture.ts",
+      "sha256": "ab1d87ea7b2ae71e820465fc93da3062b66c20028767829f4cc4836ccf29fe4b",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-page.ts",
+      "sha256": "06806e2458dd22f19a7b30efccdbf04df8519d4d646933b69543a3979ddf14b8",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-report.ts",
+      "sha256": "9245871df3a043e30fc886aeb6183a9401337a32728201c6c40b7ec4c303b3c1",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-serialization.test.ts",
+      "sha256": "75b15095a9df505f8f915d95fb4d8ab1603939fadc5110ea398926f77ddb4364",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-trace.test.ts",
+      "sha256": "c05ca6de9c09a4d1d6ac5af3ddf4ae8ad8ebfe2c41cd3df265aaa6338fb12c81",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/evidence/trace-observer-source/recovery.json",
+      "sha256": "971e9905f7bbbb1a9ac01cde302b83029eb9d8d0fcffed4c5e7a60f75cbcda0d",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/native-pass-probe.ts",
+      "sha256": "25cc79dbc7af54e91c19532188aaa2e6c5f8a4e09b3add14f525c7d9a02bf968",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/native-recorder-observer.ts",
+      "sha256": "2a61864e3cd2a03e8397879b836f62531f1c66db5cce2074bb77ffb791700e16",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/native-trace.ts",
+      "sha256": "63a7479c513178b59261e1d3389ec9f7c742a18e9379d5d041b9a293fed729cf",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/native-vite-child.ts",
+      "sha256": "e2b57f663679a91e1992ddcbd45a1c38d9647111577f943705063ae04de5150d",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/native-vite.ts",
+      "sha256": "3472a02000fb515a256f70a855e7fdc11112c6635d42f3d9146b1158d9253dfa",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/native-work-class-budget.ts",
+      "sha256": "69a3462dd91e62f72c5cfa7674bc3a59c7d0e7aca0c6dce378c179c357613e77",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/timer-boundaries.ts",
+      "sha256": "3e8143ce8f1ec3b10d54cad9636e909861c3f15acfd44153c07659cc35cfe8c0",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer-entry.test.ts",
+      "sha256": "8a68352f96a37c5f5f433d09992e9268c543f5581c448a4a986e2e65785a62f2",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer-report.ts",
+      "sha256": "a89f69251c96a754270b28abce2514750116729d27ae8821dfd523bdd71c8b6e",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer.test.ts",
+      "sha256": "32027ab5e7c2dcc6312e96d1279444fb27e6fc4318c689a91499303124b55c80",
+      "matchesWorkerBinding": true
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer.ts",
+      "sha256": "041c9325ff18d33f6ff499e7a4edfd98760a35786994cabfe2f7c4b5c7a6c526",
+      "matchesWorkerBinding": true
+    }
+  ],
+  "provenance": "All recovery manifest hashes and exact-file recoveries match 7fb34e4/1479d0e/907439e. Recovered Review methods match individually; removing only recovered import/methods reconstructs base Review exactly. Existing trace/probe algorithms byte-identical after new imports/appendices removed.",
+  "consumerCheck": "Actual openReview exercised with CPU-only fake browser/page ports in default and pinned-asset mode; no browser constructed. startVite default root preserved by source inspection; no service started.",
+  "limits": [
+    "No source fixes, commits, fetch/hydration, nested agents, GPU/browser/native/Blender/render/capture/services/DB execution.",
+    "No runtime, performance, GPU attribution, visual acceptance, or 16.67ms qualification.",
+    "Historical cloud03 remains FAILED/accepted:false; no old packet or grant changed.",
+    "Disabled entry and installed tsx serializer pass; no current caller runs the new protocol. Ownership, current bindings/pins/load/capacity, new grant, native verification and process controller remain pending.",
+    "Non-settling async port probe remains failed with callbacks-drain errors, but a late prepare reply mutates the in-memory evidence after the stored failure snapshot. This is recorded as a port settlement/process-controller limit, not a successful terminal/closure claim.",
+    "R4 depends on the additive reading of the explicit current brief; the max-based worker prose and implementation are mutually consistent but differ from that reading."
+  ],
+  "commandsFile": "/tmp/p1-e14-t13-review-v9pt79u2/commands.json"
+}

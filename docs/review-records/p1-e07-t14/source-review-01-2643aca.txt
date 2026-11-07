@@ -1,0 +1,104 @@
+# P1.E07.T14 R1 source/CPU asset review
+
+VERDICT: PASS
+
+Scope of this verdict: source and CPU asset review only. It is not a visual acceptance, not a playback acceptance, and not a merge. No 0.9.5 mandatory REVISE condition is met. No blocking finding.
+
+Worker evidence status remains BLOCKED on parent code review and the blind GPU visual grade. That boundary is correct. Absence of these interpretations from DECISIONS.md is not settled approval. The parent records them before acceptance. This review does not treat that absence as a worker REVISE: workers do not edit DECISIONS.md, and the task brief assigns the log to the parent.
+
+## Identity
+
+- Checkout: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`
+- Branch: `task/P1-E07-T14-effects`
+- HEAD: `2643aca9d8b85a45498d85eb637d20260ebf06d1`
+- Tree: `6038b7d94b0208f3173d2449df5d7578fb4c2aa0`
+- Base: `634c51d2378748c6a514af2a792ee4500b912643` (merge-base confirmed)
+- Subject: `P1.E07.T14: author Tier I-II ability and Recall effect collection`
+- Working tree clean. Diff vs base: 64 files, +13773 lines.
+
+## Actual scope
+
+In the diff:
+
+- 6 editable blends: `assets/blend/effects/{gravitic,thermal,resonance,symbiotic,void,recall}.blend`
+- `assets/blend/effects/manifest.json`
+- 6 compressed GLBs: `packages/client/public/models/effects/*.glb`
+- 12 public PNGs: 6 particle sheets + 6 filaments under `packages/client/public/particles/effects/`
+- 9 effects tools: `packages/tools/blender/effects/{audit,author,catalog,ktx_cpu,package_evidence,preview,refine_textures,revise_spore,run}.py`
+- Evidence under `assets/blend/effects/evidence/` including validation (12 JSON), previews (9 PNG + inventory), `report.json`, `audit.json`, `hashes.json`, `source-before-export.json`, `spore-initial-fail.json`, `commands.json`, `command-tails.json`, `gpu-inventory.json`
+
+Not in the diff: `families.json`, `packages/tools/blender/artlib/`, `packages/tools/blender/export_effects.py`, `packages/client/src/core/Engine.js`, skill data, `packages/shared/src/art/glyphs.ts`, gameplay, shared exporter, shared library blend. `export_effects.py` still only calls `artlib.export.main("effects")`. `artlib/export.py` line 10: the `.blend` is never saved. Export does not import `author.py`.
+
+Counts that this review recomputed:
+
+- 29 beat meshes + 6 particle carriers + 24 glyphs = 59 assets
+- 63 Tier I–II skill nodes in the manifest
+- GLB scene roots: gravitic 6, thermal 5, resonance 7, symbiotic 6, void 8, recall 27
+- Triangles per asset 12–4578, class `effect`, one LOD, one primitive, one material
+- Six 1024² RGBA 4×4 sheets = 96 frames
+- `symbiotic_spore` shipped at 4578. Retained `spore-initial-fail.json` is a source validation FAIL at 5292 (`LOD0 has 5,292 triangles, over the effect budget 12-5,000`). `command-tails.json` records `REVISED SPORE 4578`, then `export effects: 6 of 6`, then `12 of 12 file(s) passed validation`.
+
+## What was checked, and the repro
+
+Independent of `catalog.py` / `audit.py` imports. Design rows were hardcoded from DESIGN 9.2–9.8. Glyph strokes were parsed from `glyphs.ts` `SIGNS`. Skill ids were parsed from the seven branch TS files.
+
+Coverage. The first nine Tier I–II ids in each branch file match the design table order and kinds, including all nine Pilot and all nine Exo-suit nodes. Pairwise manifest disposition problems: 0. Own meshes for the 27 visible beats plus `void.blink_strike`. Reuse: `pull_many` → `gravitic_pull`, `chain` → `thermal_lance`, `echo` → `resonance_pulse`, `big_game` → `symbiotic_bond`. Pilot, Exo-suit, and the other listed passives (`mass_sense`, `focused_lasers`, `ablative_plating`, `long_ear`, `choir`, `symbiont_hull`, `edge_sense`, and the remaining stat nodes) are `existing_feedback` with no assets. Manifest node count 63, asset count 59, roles beat 29 / particle 6 / glyph 24. No asset outside 12–5000 tris. A review-script counter reported 10 rows per file and "missing" `ace,corona,nullsong,second_skin,singularity,symbiosis,unremembered`. Those are the capstones (`tier: 'capstone'`), appended as unparsed extras because the review regex required a numeric tier. `catalog.nodes()` uses `tier: ([12]),` and does not include them. They are not a coverage miss.
+
+Glyphs. Manifest stroke lists equal `glyphs.ts` `SIGNS` for all 24 letters, divider strokes `[]`, letter order `a b d e f g h i j k l m n o p r s t u v w y z ·` (no c/q/x). Read-only Blender measurement of the saved `recall.blend` (barycentric samples at t=0.25/0.5/0.75 of the `glyphs.ts` strokes, not the manifest copy) returned `glyphBad` 0 on all 24. Rotations are `(0,0,0)` and locations are the origin. Lattice N0 is +Z in Blender. Letter `i` is the vertical spoke S0: maxAbsX 0.040, z −0.040..0.540. Letter `l` is the opposite spoke S3: z −0.540..0.040. Letter `a` reaches maxAbsX 0.473 toward +X (N1) and does not cross the left nodes. Letter `o` extent z 1.080 including caps. Divider is a 0.080 m centre dot. These are not rotated letterforms. Stroke half-width 0.04 matches the 0.08 m ribbon. GLB extras on `recall_glyph_i_Surface` record `glyph_strokes: S0`, `glyph_diameter: 1`, `glyph_stroke_width: 0.08`.
+
+Alpha sheets. All six `*_particles.png` files are 1024×1024, 8-bit RGBA. Full-image RGB outside the branch endpoints: 0. 14 px gutters have zero alpha. Frame fills sit between about 0.04 and 0.24, under 0.7. Mean absolute alpha gaps, in bytes (audit float floor 0.003 ≈ 0.765 bytes): gravitic row 11.02 / decay 1.89; thermal 5.48 / 4.34; resonance 15.51 / 4.60; symbiotic 4.18 / 1.16; void 1.14 / 1.03; recall 3.03 / 0.91. All six are above the floor. Filaments are 1024², `rgbOutside` 0, alpha std 21.36, alpha 188–250. Particle-carrier UVs measure [0.016, 0.234], inside the bottom-left 256 px tile after the 14 px gutter. Carriers are 12 triangles, longest side 1.000 m.
+
+Saved mesh versus manifest. Factory-startup Blender, one process, `-t 2`, opened the six blends only. For all 59 meshes, `triDelta` 0 and `boundDelta` 0 against `boundsBlender`. No modifiers, no actions, no animated objects. REF_Biped 266 verts, REF_Grid 441 verts, REF collection `hide_render` true. Scene custom props: task `P1.E07.T14`, `source_of_truth` "Editable sculpted meshes; export must not call author.py". Mesh counts 6/5/7/6/8/27. Bounds are per mesh. They are not the file union (particle longest side 1.000 m against `gravitic_inertial_brake` 2.224 m and `gravitic_well` 2.018 m; divider 0.080 m against dissolve/flash about 1.95–2.02 m). Objects sit at the origin in one library file, so a scene AABB would be the union and would be the wrong asset bound.
+
+GLB contract, pure JSON plus index counts (meshopt vertex decode was not completed; see commands). All six files require exactly `EXT_meshopt_compression`, `KHR_mesh_quantization`, `KHR_texture_basisu`. Zero animations. One primitive per mesh. Materials are `alphaMode: BLEND`, `doubleSided: true`, with base color and emissive textures. POSITION accessors are componentType 5122 (SHORT), normalized. Accessor min/max are quantized integer ranges, not metres. Mesh-bearing nodes have uniform scale, no rotation, and no matrix. Scene root names equal the mesh asset ids (59/59). Index count / 3 equals the same-named blend triangle count for all 59 meshes. Problems from that walk: 0. Node layout is `<asset>` / `<asset>_LOD0` / `<asset>_Surface`. The asset root itself carries no TRS; the surface child does. Example: `gravitic_pull_Surface` scale 0.50076 → 1.002 m, matching the blend longest side; `gravitic_slam_Surface` scale 0.77402 → 1.548 m; `gravitic_well_Surface` scale 1.00879 → 2.018 m; particle scale 0.5 → 1.000 m; `recall_glyph_i_Surface` translation `[0, 0.25, 0]`, scale 0.29 → 0.580 m, matching blend glyph `i` after glTF yup (Blender +Z becomes glTF +Y). All 12 KTX2 images are 1024×1024, `levelCount` 11, `supercompressionScheme` 1 (BasisLZ). `Engine.js` `gltfLoader()` (lines 203–205) sets `MeshoptDecoder` always and `KTX2Loader` after `initTextureLoaders`. No new loader hook in this diff. Named-root selection is the load contract.
+
+Provenance. SHA-256 of all 54 paths in `evidence/hashes.json` matches the current bytes (0 mismatches). `source-before-export.json` contains the same six blend digests as the files on disk (gravitic `d3855d5d6d41726c…`, thermal `6759ffc7cf1cc448…`, resonance `530dd29a82eb90dd…`, symbiotic `42e33e2449f49920…`, void `47c36a6dd7d18139…`, recall `19ed201b201b175a…`). Blends are compressed binaries of 531–978 KB, not LFS pointers. Final `void.glb` size 162284 matches the post-revise export tail (the earlier failed export wrote 161020 and is not what is shipped). `revise_spore.py` rebuilds only `symbiotic_spore` from `author.shape` and saves the blend before export. `refine_textures.py` rewrites packed images and saves. Export itself does not save the blend and does not generate meshes.
+
+Retained audit, not re-executed. `evidence/audit.json` status PASS, 118 asset checks (59 assets × blend and glb), 6 negative controls: missing canonical node, particle budget overflow, missing source/export member, UV outside atlas, disconnected material alpha, extra physical glyph stroke. All 12 validation JSON summaries: naming, triangles, lods, materials, scale PASS, fail 0, warn 0. Shipped symbiotic blend and GLB both record spore LOD0 4578.
+
+Particle and Recall caps in the manifest are an integration contract: per cast 64 / scene 512, draw calls 4 / 64, `enforcement` "integration requirement, not a runtime performance claim". Recall proposed timing glyph 0–0.45, dissolve 0.3–0.95, flash 0.95–1.07, example word `r e k a l l`, 24 glyphs. No GLB animations. Those caps are not runtime-enforced. That is outside this task.
+
+## ADVISORY (does not block)
+
+1. `packages/tools/blender/effects/audit.py:23-32` and `:173`. `check_manifest` requires the manifest node list to equal `catalog.nodes()` and the asset ids to equal `BEATS` ∪ carriers ∪ `signs()`. `glyph_check` then covers `row['strokes']` from the manifest, which `author.py` wrote from the same `signs()`. The audit does not assert `row['strokes'] == glyphs.ts` as a separate equality. An independent parse found exact stroke equality, and the saved meshes cover those canonical strokes (`glyphBad` 0), so the mirror did not hide a miss. `png_palette_check` at `audit.py:64-67` tests only the first PNG pixel. A full-image walk found zero RGB samples outside the endpoints.
+
+2. `packages/tools/blender/effects/catalog.py:26-62` placement strings say "unit radius" or "unit length" for several meshes whose saved bounds are only metre-scale. Measured longest side / relevant span on the saved blend: slam 1.548 (radius about 0.77), spore 1.583 with z 0.438, rift y 1.619, drain y 0.844, call y 1.391, inertial_brake 2.224. Close to the claim: pull and lance and tractor y about 1.00, well 2.018, pulse 1.943, eclipse 2.024, flare y 1.009, veil and phase z about 1.85–1.86, flash 2.019. `boundsBlender` matches the vertices (`boundDelta` 0). Playback scales them. The prose is approximate. `radiusXZ` in the geometry dump is the AABB-corner distance, not the mesh radius.
+
+3. `recall.glb` scene root order is name order, so `recall_glyph_divider` sits between `recall_glyph_d` and `recall_glyph_e`. `SIGNS` puts `·` last. The load contract is the named root, not child index.
+
+4. Void sheet row separation is 1.14 alpha bytes (about 0.0045 float) and thermal row fills are all about 0.238 with a pattern gap of 5.48 bytes. Both clear the 0.003 distinctness floor. The visual grade should look at those two sheets. Void `emissiveFactor` is 0.8 on `LIB_FX_Void` and `LIB_FX_Void_Particle`; other branches are 1.0. That matches authored emission strength.
+
+## Interpretations for the parent to record before acceptance
+
+These are already in the worker report. They are not in DECISIONS.md yet. They are not contradictions of a written branch-color table. DESIGN and the art bible do not assign these effect endpoints.
+
+- Palettes: Gravitic Ixari `#7A4FD0` / `#B9A6FF`; Thermal Free Reaches `#8E2F23` / `#FF6A3D`; Resonance Chorus indigo/gold `#2B2A5C` / `#E8C66A` (glyph-light cyan `#D8F6FF` / `#7FD8FF` stays on Recall); Symbiotic Ulgani `#D9962B` / `#C7F06A`; Void Free Reaches `#3A3D42` / `#D8B23A`; Recall monolith white-cyan. Thermal and Void share the Free Reaches row and use different columns. Pilot Compact `#22406A` / `#FFFFFF` and Exo-suit Ulgani `#F2EAD3` / `#59F2C1` are catalog-only because those branches ship no new meshes.
+- Augment reuse versus `blink_strike` owning a mesh, because the augment adds a damage beat on top of Phase.
+- Body-height envelopes around 1.85–2.2 m, with placement strings that say integration scales the rest.
+- Particle budget and Recall timing, including `c→k` in `r e k a l l`, as an integration contract. No client loader change: named roots through the existing `gltfLoader`.
+
+## Missing gates
+
+- Blind GPU visual grade of the 59 assets and 32 motion records. Parent-owned. CPU composites under `assets/blend/effects/evidence/previews/` are not that grade. `assets/renders/` turntables are not in this diff.
+- In-engine `#review` captures, three-light, wireframe, and LOD lineup. Effect class `lods` is 1, so LOD2 does not apply.
+- Ability playback, Recall playback, body-dissolve masking, and batching. Integration tasks. No gameplay or timing acceptance from this review.
+- Runtime enforcement of 64 particles / 4 draws per cast and 512 / 64 global. Manifest-only.
+- Parent entry in DECISIONS.md for the interpretations above.
+- This review did not re-run export, validate, or audit. It read the retained JSON and recomputed coverage, PNG atlases, blend bounds, glyph coverage, hashes, and GLB structure on the current tree.
+
+## Commands
+
+Review checkout for every command below: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`.
+
+- `git rev-parse HEAD`, `git rev-parse 'HEAD^{tree}'`, `git merge-base HEAD 634c51d2378748c6a514af2a792ee4500b912643`, `git status --porcelain`, `git diff --stat` and `--name-only` against the base. Clean tree, 64 files.
+- `python3 /tmp/p1e07-t14-r1-cpu.py` → `/tmp/p1e07-t14-r1-cpu.json`. Does not import catalog, audit, or author. One false KTX field: it stored faceCount from header offset 36 as "levels". Correct `levelCount` is offset 40 and is 11. One false union note: `recall_glyph_divider` quantized min/max is ±32767 on every axis. Discard both as findings.
+- Blender factory-startup, one process, `-t 2`, `-P /tmp/p1e07-t14-r1-geom.py`. First run exited 1 in under a second: `bpy.ops.import_scene.gltf` on `gravitic.glb` reported `Extension KHR_texture_basisu is not available on this addon version`. Factory-startup has no BasisU transcoder. The project importer transcodes KTX2 to PNG before import (`artlib/core.py`). That failure is not a client load failure. Second run opened the six blends only and exited 0. Output `/tmp/p1e07-t14-r1-geom.json`: triDelta 0, boundDelta 0, glyphBad 0.
+- Pure Python GLB walk on all six files: 59/59 triangle counts match the blend, uniform mesh-node scale, no mesh-node rotation, one primitive, the three required extensions, zero animations. KTX2 header walk on all 12 images: 1024², levelCount 11, supercompression 1.
+- SHA-256 of the 54 `hashes.json` paths: 0 mismatches. All 12 validation summaries: fail 0, warn 0. Spore in the shipped symbiotic blend and GLB validation: LOD0 4578.
+- Not used: `node /tmp/p1e07-t14-r1-glb.mjs` failed immediately with `ERR_MODULE_NOT_FOUND` for `@gltf-transform/core` (ESM cannot resolve that import from `/tmp`). Meshopt world-position decode was not completed. Blend coverage plus matching index counts and uniform scale is the export-fidelity evidence used here.
+- Not run: export, validate, audit, typecheck, tests, GPU, browser, bake, server, fresh LFS hydration, a second concurrent Blender. No source edits and no commits.
+
+## Method notes that are not findings
+
+- Direct factory-startup glTF import of these GLBs fails closed on `KHR_texture_basisu`. Client load is `GLTFLoader` + `MeshoptDecoder` + `KTX2Loader`.
+- `boundsEqualUnion` and the first script's "every node has a transform" notes were reads of quantized accessor min/max and of the quantizer's scale/translation on the surface node. World size is normalized position × uniform node scale, plus translation.

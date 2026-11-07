@@ -1,0 +1,223 @@
+TASK: P1.E08.T09 — R2 caller revision for independent R3 review
+STATUS: BLOCKED for whole T09 (independent caller review/capture/visual gates pending). The requested CPU-only R2 revision is committed and ready.
+
+SUMMARY
+Candidate: 5821809fddb241273a49d37edc2da435eee2d589
+Tree: f2769ba7b774a150a9dd41f1bb4645f1a13b75da
+Parent/reviewed base: df87bf9d81a7eff4aeddbff20a8231a0718a1a88
+Branch: task/P1-E08-T09-current-base
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+Product baseline: d688579adf31c2a8ee9836495ba6b32708b99ccd
+Report/evidence: /private/tmp/p1-e08-t09-r3-lv82r69w
+Patch SHA256: 5d7614e66c2a0ecf4e304c8d64d517ab309ce2ab611209575b7e45449b8642e6
+Readiness SHA256: 349f52544e931a5109c3c887033a252b48ce492470241b8f441a7245ff3277da
+Runtime remains DISABLED. No browser, GPU, native job, real grant, services, push, PR or main edits. Scratch fixtures have no native dispatch and no active timer remains.
+
+FILES CHANGED (only four packet files)
+- caller.py: preserve abort propagation, structured exception facts/allocation ownership, reserve attempted metadata bytes, and separate provisional file bytes from parent-observed completion authority.
+- controls.py: five new boundary tests using actual caller.main/run_unit/grant_gate/persist and exact unchanged helper bodies, with inert native boundaries and scratch allocations.
+- README.md: exact completion-reference contract and evidence/abort semantics.
+- readiness.json: refreshed disabled binding, actual Python self-identity, cache observation and fresh never-used attempt paths.
+entry.mjs, controls.mjs, inspect.py and freeze.py are unchanged in this revision. No captureUi/screens definitions, helper, product/smoke/assets or orchestration documents changed.
+
+DECISIONS — premise first
+Applied /Users/andreyyurlov/.agents/skills/principle-attack-the-premise/SKILL.md before editing. PREMISE.md was written before reproduction or fixes. The tested premise was that generic catch-and-serialize wrappers transparently preserve control-flow signals, partial exception facts and acceptance-publication authority. The reviewer’s real20ms SIGALRM, after-close-write, TimeoutExpired and retained-allocation repros falsified it on byte-identical df87.82b6 unwound the same deadline. RED logs and source copies are retained.
+
+Structural choice: treat three contracts separately, rather than adding unqualified catches. Control-flow signals unwind the phase; observation errors retain arguments/attributes and reversible byte data; file publication is provisional until the parent observes actual caller completion. The next explicit grant reuses result/consumption receipt references and supplies that independent observation. There is no new launcher, supervisor, service or runtime framework.
+
+R2-A — corrected, local GREEN
+Ordinary receipt and observed-release writes record DeadlineExpired/KeyboardInterrupt in memory and rethrow. The exact helper guard unwinds; observed_release restores its scoped instrumentation and skips remaining observation writes during signal unwinding. No later release/probe/decoder dispatch occurs after the interrupted boundary. Original capture failure remains primary. Controls exercise real SIGALRM (not nullcontext) and KeyboardInterrupt at returned-drain, initial/kernel archive observations, archive-result, terminal kernel observation and terminal-result writes:12 boundary cases. Both Python3.10 and the actual pinned3.14 launcher pass. Already-completed release actions are not claimed undone; only subsequent dispatch is stopped. Scratch ownership is retained when release has not completed.
+
+R2-B — corrected, local GREEN
+Disk result.json is always nonauthorizing:accepted:false, publication AWAITING_CALLER_COMPLETION. checksPassed:true describes checks, not publication. In-memory acceptance/CLI exit0 occurs only after final persist returns normally. Failed writes keep all partial/complete files and spent transaction evidence; failed-result and stderr fallbacks are still attempted. Metadata capacity is reserved before attempting the write, so an error after bytes/close cannot omit those bytes from accounting.
+
+The next parent grant must have previousUnitReceipts[name] = {callerExitCode:0,result:{path,sha256},consumption:{path,sha256}} for every predecessor in order (empty object for first unit). This is the parent’s observation of the completed CLI, never a value inferred from disk. The gate checks exit type/value, exact frozen paths/digests, no failed-result, matching consumption/admission/head/readiness/unit/authorization/spec, provisional format, completed checks and no failure lists. Legacy accepted:true is refused. Only a truthful parent observation of the actual successful caller exit can complete this contract; an authorized parent fabricating exit0 is outside the trust boundary, just as fabricating the review verdict is. A writer cannot prove its own return from a file it was trying to write: after-effect failures and all-sink failures make that circular. No final-marker-only claim is made.
+
+Actual writer/gate controls cover full bytes before write error, actual close then error, completed persist then error, a scratch rename-away/back publication fault, and close failure with every fallback sink failing. Production persist does not rename; the rename case tests externally completed publication effects without adding a production rename path. All return failure and refuse the next synthetic grant. A successful actual caller case is admitted only with its observed exit and matching references, so the gate is not merely always-refusing. Reference drift, false/bad exit, stale accepted:true and failed-result evidence are refused. A close error at the exact32MiB remaining-budget boundary still charges bytes and refuses the next write before file creation.
+
+R2-C — corrected, local GREEN
+failure preserves type/message, args and instance attributes, including unknown nested fields; TimeoutExpired includes output/stdout/stderr aliases. Byte values use lossless base64 and a bounded text preview (tests include NUL/non-UTF8). Actual archive/terminal helper bodies raise real TimeoutExpired with partial output and unknown attributes. Facts survive ordinary receipt/final writes and every disk/stream sink failing. Primary capture failure, cleanup error and persistence failures remain separate.
+The actual unchanged allocation helper is also run in scratch: admission proof fails after a nonempty owned allocation exists; rollback cannot remove it. The exception's exact path/dev/inode/UID/released:false/cleanup_failure and unknown byte field remain in primary attributes, raw.privateTmpAllocation and the explicit RetainedAllocation cleanup entry. No job starts; the caller neither guesses ownership nor deletes the retained allocation. Tests compare the returned ownership facts with the producer exception and actual inode. Complete small structured results remain JSON-encodable and below1MiB even when no complete receipt/stream can persist; status is UNABLE_TO_PERSIST_COMPLETE_RESULT, completeReceipt:null.
+
+VERIFY
+All22 previous Python controls plus5 new boundary tests pass (27/27). All7 Node controls pass. The reviewer’s11 adverse scenarios pass after rerunning their identical injections on current source; only expected-result assertions and scratch output bindings changed. Original R1 Node catch/final-write, Python primary/terminal and full broad-inspector mutations remain GREEN; raw archive-assertion coverage remains in stock controls. The original R2 review tree and its1231 files are unchanged. The new test harness initially had two wrong assertions about helper stamp shape (list vs dict); that failed log is retained and the assertions now use the actual producer contract. A generated-readiness formatting check initially failed and was corrected; neither is reported as a product regression.
+
+Exact commands/exits follow. All commands run from the bound worktree unless the absolute script path declares scratch. commands.json is the machine-readable ledger.
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-lv82r69w/adversarial.py`
+  Exit 0. RED: reviewer defects reproduced on byte-identical df87; exit 0 is reproduction, not PASS. Log: `red-adversarial.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-lv82r69w/deadline-prior.py`
+  Exit 0. 82b6 comparison: actual deadline unwound and allocations retained. Log: `red-deadline-prior.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-lv82r69w/scratch/packages/tools/src/capture/fauna_packet/controls-r3.py BoundaryControls`
+  Exit 1. RED: 4 new tests, 6 failures / 18 errors on old contract. Log: `new-controls-red-df87.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-lv82r69w/scratch/packages/tools/src/capture/fauna_packet/controls-r3-final.py BoundaryControls.test_after_close_failure_still_reserves_the_actual_metadata_bytes`
+  Exit 1. RED: old writer failed to reserve bytes left by close failure. Log: `metadata-after-close-red.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B packages/tools/src/capture/fauna_packet/controls.py BoundaryControls`
+  Exit 1. Harness setup error: two allocation assertions used stamp as dict; corrected to actual helper list index 1; retained log. Log: `boundary-first.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B packages/tools/src/capture/fauna_packet/controls.py BoundaryControls`
+  Exit 0. 4 boundary tests after fixture correction. Log: `boundary-green.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B -c 'import sys,runpy;sys.path.insert(0,"/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages");runpy.run_path("packages/tools/src/capture/fauna_packet/controls.py",run_name="__main__")'`
+  Exit 0. 26 tests before added metadata reservation control. Log: `python-controls.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B -c 'import sys,runpy;sys.path.insert(0,"/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages");runpy.run_path("packages/tools/src/capture/fauna_packet/controls.py",run_name="__main__")'`
+  Exit 0. 27/27: original22 plus5 boundary tests; fixture commits only in fresh temporary repo. Log: `python-controls-final.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/controls.py BoundaryControls`
+  Exit 0. 5/5 boundary tests under actual pinned caller Python. Log: `boundary-python314.log`
+
+- `node --test packages/tools/src/capture/fauna_packet/controls.mjs`
+  Exit 0. 7/7 actual Node controls, refreshed disabled readiness. Log: `node-controls-final.log`
+
+- `node /private/tmp/p1-e08-t09-r3-lv82r69w/green/node-green.mjs catch-write`
+  Exit 0. Original R1 actual Node entry injection, primary retained. Log: `r1-node-catch-green.log`
+
+- `node /private/tmp/p1-e08-t09-r3-lv82r69w/green/node-green.mjs final-write`
+  Exit 0. Original R1 actual Node entry injection, primary retained. Log: `r1-node-final-green.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-lv82r69w/green/python-green.py`
+  Exit 0. R1 caller/terminal/full219-image inspector, 4 adverse journals, metadata cap and Python binding removal controls. Log: `r1-python-green.log`
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-lv82r69w/green/adversarial-green.py`
+  Exit 0. All11 reviewer scenarios GREEN; identical injections, assertions now require corrected behavior. Log: `reviewer-adversarial-green.log`
+
+- `pnpm exec eslint packages/tools/src/capture/fauna_packet/entry.mjs packages/tools/src/capture/fauna_packet/controls.mjs`
+  Exit 0. PASS. Log: `eslint.log`
+
+- `pnpm gate:removed`
+  Exit 0. PASS:10 enforced,15 waiting on replacement tasks. Log: `removed.log`
+
+- `pnpm exec prettier --check packages/tools/src/capture/fauna_packet/entry.mjs packages/tools/src/capture/fauna_packet/controls.mjs packages/tools/src/capture/fauna_packet/README.md packages/tools/src/capture/fauna_packet/readiness.json`
+  Exit 1. Freshly frozen JSON needed Prettier; corrected, no semantic change. Log: `format.log`
+
+- `pnpm exec prettier --check packages/tools/src/capture/fauna_packet/entry.mjs packages/tools/src/capture/fauna_packet/controls.mjs packages/tools/src/capture/fauna_packet/README.md packages/tools/src/capture/fauna_packet/readiness.json`
+  Exit 0. PASS after pnpm exec prettier --write readiness.json. Log: `format-green.log`
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/freeze.py`
+  Exit 0. CPU-only freeze after preserving/unlinking current readiness; fresh identities; no job/browser launch. Log: `freeze.log`
+
+- `python3 -I -B -c 'import json,os,subprocess; p="packages/tools/src/capture/fauna_packet/"; r=json.load(open(p+"readiness.json")); subprocess.run([r["python"],"-I","-B",p+"caller.py","--check"],cwd=r["root"],env={**os.environ,"PATH":r["path"]},check=True)'`
+  Exit 0. PASS at committed head:CPU_BINDINGS_ONLY, runtime false. Log: `check-final.log`
+
+- `python3 -I -B /private/tmp/p1-e08-t09-r3-lv82r69w/verify-scope.py`
+  Exit 0. PASS:protected bytes/review evidence/helper pins/identities/budgets. Log: `scope-final.log`
+
+- `git diff --check df87bf9d81a7eff4aeddbff20a8231a0718a1a88 HEAD`
+  Exit 0. PASS. Log: `diff-check.log`
+
+PROVENANCE / PROTECTED BYTES
+scope.json records hashes of 12575 tracked files across client/server/shared/smoke/capture definitions/assets and package/lock files. Git comparison against d688579ad has only the four separately recovered helpers in those scopes; each helper is byte-identical to recovery6245e5ff and its accepted SHA256. Runtime/product/smoke/assets remain unchanged from d688. Candidate source hashes and exact binary patch hash are in candidate.json and revision.patch. Current branch is clean at the candidate commit.
+The retained task branch remains bb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9. All440 historical artifact Git/LFS identities remain bound unchanged to02248e6fc; no historical file was hydrated/replaced or regraded. review-hashes.json verifies all1231 original R2 review files remain unchanged. Original retained readiness and failure/spent evidence were not modified. The previous disabled readiness was copied to readiness-df87.json before generating this fresh one. All48 previous/current candidate output/evidence/grant/consumption paths remain absent. Prior historical failure is still failure.
+
+The refreshed self probe binds launcher /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14
+SHA256 e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a
+and the actual self-observed executable /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python
+SHA256 b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22.
+The CPU self-process was reaped; nativeCaptureStarted:false. Decoder remains /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 with site /Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages. Node26.12.1/pnpm12.15.0 are unchanged.
+
+INVENTORY / ADMISSION — runtime still DISABLED
+Exact fresh output/evidence/grant/consumption paths and complete ledger are in inventory.json and committed readiness.json. Order/counts/caps are unchanged:
+
+|Order|Screen|Files/images|Output cap bytes|One-unit admission bytes|
+|---|---|---|---|---|
+|1|fauna-hit-turn-day-16x9|82/81|1,358,970,880|8,925,528,064|
+|2|fauna-hit-turn-day-21x9|82/81|1,358,970,880|8,925,528,064|
+|3|fauna-hit-turn-night-16x9|82/81|1,358,970,880|8,925,528,064|
+|4|fauna-hit-turn-night-21x9|82/81|1,358,970,880|8,925,528,064|
+|5|fauna-combat|220/219|3,674,226,688|15,871,295,488|
+|6|fauna-combat-night|220/219|3,674,226,688|15,871,295,488|
+
+Total768 files/762 images:60 stills,696 frames,6 sheets,6 readouts. Correction81images×16MiB+16KiB=1,358,970,880; broad219images×16MiB+16KiB=3,674,226,688. Each admission counts three copies of its output cap plus the unchanged metadata/cache/native/archive/safety ledger. Metadata64MiB (32MiB Node+32MiB Python), cache-copy64MiB/30s, capture600s/cleanup60s/decoder45s remain unchanged. Every unit needs fresh individual admission; no all-six-fit inference. Native reserves are observed thresholds, not OS quotas.
+Fresh --check at committed head observed 88,887,779,328 free bytes, with no task-local cache/Vite owners. Frozen task-local cache inventory is 8,099,840 bytes. These are time-local CPU observations, not runtime admission. GPU remains parent/T10-owned; recheck GPU release, cache ownership and disk for each future unit.
+
+OUT OF SCOPE / REMAINING GATES
+Independent R3 caller review, explicit enabled-readiness/one-unit grant after GPU release, six sequential fresh runtime captures, capture acceptance, independent animation/visual grading, and whole-task closure remain pending. Parent reported focused live QA terminal PASS; this revision does not rerun or recertify it. No online wrapper/service changes. Product source review remains the parent's d688 PASS. Failed historical captures stay failed. No merge authorization or queue action.
+
+Full check invocation:
+```sh
+cd /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+python3 -I -B -c 'import json,os,subprocess; p="packages/tools/src/capture/fauna_packet/"; r=json.load(open(p+"readiness.json")); subprocess.run([r["python"],"-I","-B",p+"caller.py","--check"],cwd=r["root"],env={**os.environ,"PATH":r["path"]},check=True)'
+```
+
+ARTIFACTS
+REPORT.md; PREMISE.md; commands.json; candidate.json; revision.patch; scope.json; review-hashes.json; inventory.json; readiness-df87.json; original reviewer scripts/scratch source and RED logs; green/ with current-source copies and adapted assertions; final CPU logs. These are fresh evidence paths. Existing review/history evidence is immutable. Scratch-only failed allocation bytes are retained in the reviewer repro evidence; no native processes/sessions/timers were created by them.
+
+FAILED-INVOCATION TAILS (last20 lines; reproduction/harness/format failures are not hidden)
+
+new-controls-red-df87.log
+```text
+======================================================================
+FAIL: test_failed_publication_never_authorizes_successor_at_actual_writer_and_gate (__main__.BoundaryControls) (fault='after-close', all_sinks=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/p1-e08-t09-r3-lv82r69w/scratch/packages/tools/src/capture/fauna_packet/controls-r3.py", line 832, in test_failed_publication_never_authorizes_successor_at_actual_writer_and_gate
+    with self.assertRaises(caller.Refused): self.gate(case, case.grant)
+AssertionError: Refused not raised
+
+======================================================================
+FAIL: test_successor_requires_parent_completion_and_exact_transaction_references (__main__.BoundaryControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/p1-e08-t09-r3-lv82r69w/scratch/packages/tools/src/capture/fauna_packet/controls-r3.py", line 846, in test_successor_requires_parent_completion_and_exact_transaction_references
+    self.assertFalse(caller.read_json(case.evidence / 'result.json')['accepted'])
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.597s
+
+FAILED (failures=6, errors=18)
+```
+
+metadata-after-close-red.log
+```text
+test_after_close_failure_still_reserves_the_actual_metadata_bytes (__main__.BoundaryControls) ... FAIL
+
+======================================================================
+FAIL: test_after_close_failure_still_reserves_the_actual_metadata_bytes (__main__.BoundaryControls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/p1-e08-t09-r3-lv82r69w/scratch/packages/tools/src/capture/fauna_packet/controls-r3-final.py", line 688, in test_after_close_failure_still_reserves_the_actual_metadata_bytes
+    self.assertEqual(caller._receipt_bytes, 32 * 1024 * 1024)
+AssertionError: 33554400 != 33554432
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
+```
+
+boundary-first.log
+```text
+======================================================================
+ERROR: test_exception_bytes_unknown_fields_and_allocation_ownership_survive_all_sinks (__main__.BoundaryControls) (phase='allocation', all_sinks=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py", line 870, in test_exception_bytes_unknown_fields_and_allocation_ownership_survive_all_sinks
+    self.assertEqual(Path(allocation['path']).stat().st_ino, allocation['identity_at_allocation']['stamp']['inode'])
+TypeError: list indices must be integers or slices, not str
+
+======================================================================
+ERROR: test_exception_bytes_unknown_fields_and_allocation_ownership_survive_all_sinks (__main__.BoundaryControls) (phase='allocation', all_sinks=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py", line 870, in test_exception_bytes_unknown_fields_and_allocation_ownership_survive_all_sinks
+    self.assertEqual(Path(allocation['path']).stat().st_ino, allocation['identity_at_allocation']['stamp']['inode'])
+TypeError: list indices must be integers or slices, not str
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.644s
+
+FAILED (errors=2)
+```
+
+format.log
+```text
+Checking formatting...
+[warn] packages/tools/src/capture/fauna_packet/readiness.json
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+```

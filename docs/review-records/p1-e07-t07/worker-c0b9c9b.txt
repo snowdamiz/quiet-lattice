@@ -1,0 +1,547 @@
+FOLLOW-UP REPORT NOTE — Repair Drones copy synchronization
+
+Final review pin: c0b9c9ba966302b3e7b960129e1c8307e35b7667
+Final tree: 1a41525cc9f0c635b5400679449421b9dfff1051
+Follow-up base: be2d4704b8d5ba837a2da28ac106cdfaf81b38c9
+Branch: task/P1-E07-T07; worktree CLEAN.
+
+Removed exactly ` (today: only docked)` from the matched Repair Drones strings in docs/DESIGN.md and packages/shared/src/data/skills/symbiotic.ts. Both now read `Hull regenerates 1/s in flight`. The delta is exactly two one-line description edits; an exact before/after byte comparison proves every other byte in both files unchanged and no other repository file changed. Costs, cooldowns, runtime behavior/tuning, the 20-second flight effect at 1 hull/s, and separate 20 hull/s docked repair remain unchanged. No orchestration document edits.
+
+Focused validation:
+- `pnpm exec vitest run packages/shared/test/data.test.ts -t 'every node matches its row in DESIGN' --maxWorkers=2`: PASS, one selected shared-spec text contract test; 72 unrelated tests skipped. Log: followup-contract.log.
+- `pnpm exec prettier --check packages/shared/src/data/skills/symbiotic.ts`: PASS. Log: followup-format.log.
+- `git diff --check`: PASS. Exact delta proof: followup-delta-proof.log; committed diff: followup-copy.patch.
+
+This closes and supersedes the original report's stale-copy follow-up item. The earlier 2,740-unit/71-integration evidence was collected at be2d4704; those full suites were not rerun for this copy-only follow-up. No DB, GPU, full smoke or new services were started. Parent fresh review and remaining full integration/visual acceptance still apply to the final pin above.
+
+Original implementation report follows unchanged as historical evidence.
+
+---
+
+TASK: P1.E07.T07 — Symbiotic I–II
+
+STATUS: DONE for the delegated server implementation and authorized CPU/DB verification. Whole P1.E07.T07 acceptance remains PENDING parent renderer integration, drawn companion/picking proof, and fresh independent review. This is not a visual or merge acceptance report.
+
+SUMMARY: Implemented the shipped Symbiotic ability book and real server effects for all nine nodes. Bond retains one analysed creature, follows the owner, strikes through combat/threat and credits owner XP; Call moves an actual herd and applies swept contact damage. Regrow and Spore alter real health, Repair Drones alters real hull, and Symbiont Hull has an authoritative regeneration tick. Second Lung and Thick Hide reuse the existing authoritative meter consumers, and Big Game uses the existing codex predicate. Lifecycle generations prevent departure/recovery/reconnect from reviving old actions. Player-owned companions are protected from player damage and ability control. No Tier III implementation, client renderer changes, or orchestration document edits.
+
+PROVENANCE:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d
+- Branch: task/P1-E07-T07
+- Base: 634c51d2378748c6a514af2a792ee4500b912643
+- Base tree: 079eec371fa8605596700a7c80142ac9cbb95fa0
+- Head: be2d4704b8d5ba837a2da28ac106cdfaf81b38c9
+- Head/tested tree: d441cf0b8063559f43b10d545c1d493353e45fe7
+- Commit: P1.E07.T07: Implement Symbiotic I-II server effects
+- Working tree: CLEAN, including untracked files. Final verification ran on this exact tree before commit; no source changes followed.
+- Platform/toolchain: {
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "node": "v26.12.1",
+  "pnpm": "12.15.0"
+}
+- Read TypeScript skill and prerequisite type-system discipline; source/plan/design/architecture inspection preceded production edits. No Potato mode. The disjoint fixture research child was read-only and did not review the final implementation.
+
+FILES CHANGED (20):
+- docs/ARCHITECTURE.md
+- packages/server/src/abilities/book.ts
+- packages/server/src/abilities/service.test.ts
+- packages/server/src/abilities/service.ts
+- packages/server/src/abilities/symbiotic.test.ts
+- packages/server/src/abilities/symbiotic.ts
+- packages/server/src/combat/zone.ts
+- packages/server/src/fauna/ai.ts
+- packages/server/src/fauna/sim.ts
+- packages/server/src/fauna/symbiotic.ts
+- packages/server/src/gateway/ws.ts
+- packages/server/src/meters/suit.test.ts
+- packages/server/src/phases/manager.ts
+- packages/server/src/zones/manager.ts
+- packages/server/src/zones/zone.ts
+- packages/server/test/pilot.ts
+- packages/server/test/symbiotic.int.test.ts
+- packages/shared/src/abilities/index.ts
+- packages/shared/src/abilities/symbiotic.ts
+- packages/shared/src/ships/stats.ts
+
+Ownership notes: phases/manager.ts is the minimal synchronous presence hook needed to catch phase departure-and-return between ticks. zones/manager.ts initializes the clock and frame transforms together before first placement. test/pilot.ts adds optional snapshot acknowledgement cadence (default unchanged); the new stepped-clock suite uses every 20th snapshot, avoiding real gateway flood limits. Existing ability tests now assert that old casts stay retired after departure. No clientGame/Fauna/HUD/remote/screens, Multitool/viewmodel/city/den/effects files, ground/sites fixtures, gatewayPersistence.test.ts, plan, PROGRESS, DECISIONS or VISUAL-REVIEW edits.
+
+VERIFY:
+All test jobs used at most two workers. Integration files were serialized by vitest.int.config.ts (fileParallelism:false). Nonzero test discovery was confirmed. The production gateway suite uses real auth/character creation, WebSockets, movement authority, the default ability book, codex/skills/meter services, fauna, combat, snapshots and Postgres/Redis. Manual-clock steps are 50 ms; ping/pong barriers and snapshot acknowledgements prove actual message handling. Effect replies alone are not assertions of success.
+
+1. Full units, exact final source: PASS — 213 files, 2,740 tests, 51.20 s.
+   Command: source /tmp/space-symbiotic-t07/fixture.env; pnpm exec vitest run --maxWorkers=2
+   Log: units-approved.log (the filename denotes a local test run, not independent review approval).
+   New Symbiotic service tests: 38; meter suite adds two Thick Hide tests, with its existing Second Lung test also passing.
+2. Serial integration regression set, exact final source: PASS — 11 files, 71 tests, 59.07 s. The new shipped-book Symbiotic suite contains 21 tests.
+   Exact command:
+```sh
+source /tmp/space-symbiotic-t07/fixture.env
+NODE_OPTIONS='--import /tmp/space-symbiotic-t07/route-guard.mjs' pnpm exec vitest run --config vitest.int.config.ts packages/server/test/symbiotic.int.test.ts packages/server/test/abilities.int.test.ts packages/server/test/thermal.int.test.ts packages/server/test/resonance.int.test.ts packages/server/test/analysis.int.test.ts packages/server/test/skills.int.test.ts packages/server/test/skillEligibility.int.test.ts packages/server/test/shipHazards.int.test.ts packages/server/test/suit.int.test.ts packages/server/test/phases.int.test.ts packages/server/test/combat.int.test.ts --maxWorkers=2
+```
+   Log: integration-approved.log. Covers all nine nodes plus ally/phase/world/zone/death/disconnect/reconnect/replacement and cross-player control boundaries. Neighbor suites are abilities, Thermal, Resonance, analysis, skills, eligibility, ship hazards, suit, phases and combat.
+3. Full workspace types: PASS — shared, client, server and tools.
+   Command: pnpm typecheck
+   Log: typecheck-final.log.
+4. Scoped ESLint: PASS — all 19 changed TypeScript files.
+   Command: pnpm exec eslint <each path in changed-ts.txt, passed as a separate argument>
+   Log: lint-final.log; changed-ts.txt is the exact argument list. No lint rules disabled.
+5. Scoped Prettier: PASS — all 19 changed TypeScript files.
+   Command: pnpm exec prettier --check <each path in changed-ts.txt, passed as a separate argument>
+   Log: format-final.log. The repo ignores Markdown formatting; ARCHITECTURE was reviewed as text.
+6. Whitespace/provenance: PASS — git diff --cached --check; git write-tree equals tested-tree.txt; commit tree equals that same hash; git status --porcelain=v1 is empty.
+
+PER-NODE BEHAVIOR PROOF:
+| Node | Unit/service proof | Real gateway integration proof |
+| --- | --- | --- |
+| Bond | Analysis gate, physical follow, target HP loss, single replacement, taunt, dismissal, no damage/control of owned companions | Real analyze then cast, accepted movement, decoded owner snapshot, combat HP loss/events, owner combat flag and XP on companion kill; invalid/valid replacement and lifecycle cases |
+| Second Lung | Existing real MeterService test consumes 30% less life support | Before/after purchase under identical authoritative exposure: drain ×0.7 |
+| Repair Drones | Charge, 1 hull/s, 20 s duration, max cap, landing/takeoff cannot revive old repair | Accepted flight, 15 Charge, cooldown refusal and actual hull +20 over 22 s |
+| Regrow | Exactly 40/6 s, cap, self/party, down/hidden/aboard refusal, caster/recipient lifecycle | Self/party healing separated from native suit recovery, stranger refusal and no late healing after departure/death/reconnect |
+| Spore | Poison HP loss, ally healing, stationary radius and expiry | Actual -40 enemy HP/+40 healing over 10 s, party and hidden-phase boundaries |
+| Call | Real herd displacement/aim crossing, one contact hit per target, hidden target and stale-phase cancellation | Real herd passes aim point; contacted target loses 12 HP |
+| Thick Hide | Actual hazard drain ×0.7; stacks with Hazard Weave ×0.6 | Before/after purchase on generated frozen world: drain ×0.7 |
+| Symbiont Hull | Capacity retune preserves fraction, baseline 5/s, modified 7.5/s, 6 s delay, hit reset/cap; parked ship also regenerates | Authoritative maximum ×1.25, pool increases at 7.5/s, delay resets on hit and caps at max |
+| Big Game | Analysed heavy/flyer gates, real follow, native level unchanged, refund dismisses ineligible companion | Both heavy quadruped and flyer refused before purchase, accepted after real analysis/purchase |
+
+RED/GREEN AND FAILURE ACCOUNTING:
+- red-unit.log: five behavior failures against the initial production implementation (four unregistered effects and missing authoritative shield regeneration). green-third.log: those five pass. This was real Zone/CastService/MeterService/Codex behavior, not a helper-only or flag test.
+- integration-second/third.log: real Bond could follow but target health remained 198.4. Player/creature collision left it outside the old point-distance attack threshold. Strikes now use the shared target hit sphere; later gateway evidence contains actual 22.32 damage strikes and owner XP. The attack phase alone was not counted as success.
+- red-companion-control.log: Pulse changed an owned companion's stunUntil to 1002.1. The common ability control boundary now requires the same harm permission as damage. green-companion-control.log passes 120 tests; final two-player gateway coverage also passes.
+- green-first.log/typecheck-first.log: incorrect progress fixture constructor; corrected to the real CharacterProgress service.
+- green-second.log: a due-time floating-point comparison delayed repair ticks. The common timer due check has a 1e-9-second tolerance; exact elapsed integration and endpoint clamps remain authoritative.
+- unit-expanded.log: fixture used heavy_quad instead of the real quad_heavy body-plan identifier; corrected.
+- integration-first.log/typecheck-full-first.log: fixture incorrectly expected a skills.result field and selected a nonexistent species/world combination; corrected protocol error checks and discriminant narrowing.
+- integration-second.log also recorded an invalid admin frame name ('space' rather than 'inertial') and insufficient Bond reach for natural flyer cruise altitude; corrected fixture frame and selected the documented 60 m reach below.
+- integration-fourth.log: stepped snapshots caused acknowledgement floods. Optional ackEvery in the existing test Pilot avoids the flood; production gateway limits were not relaxed.
+- integration-lifecycle.log: direct foot teleport lacked a valid parked ship, so reconnect correctly fell back to docked mode. Fixture now lands/disembarks through movement authority before testing reconnect.
+- integration-landed.log: added setup time carried 0.15 native suit recovery into healing assertions. Fixture explicitly settles the meter interval before damage/measurement.
+- units-full-first.log: immediate despawn cleanup mutated herd arrays during iteration; cleanup iterates copies. Old tests expected casts to revive after a frame round-trip; they now assert retirement while retaining positive damage proof before departure. Fresh-zone time zero caused shield catch-up and stale hit timing; clock initialization and combat's latest-step clock fix it.
+- integration-regressions.log: initializing time without initial frame transforms produced six day/night suit failures. Zone construction now initializes both together. integration-suit-fixed.log passes all 36 tests in suit+Symbiotic, followed by the final complete 71-test integration pass.
+- units-final.log: attempted Repair Drones description update violated exact DESIGN/table text correspondence. Restored the original spec text; implementation duration is recorded in shared tuning and ARCHITECTURE. Final full units pass.
+- Development failure logs are retained in full. Their last 20 lines appear below; intermediate logs named 'green' or 'final' are not acceptance evidence unless explicitly marked PASS above.
+
+DECISIONS (question → choice → reason):
+- Unspecified effect cadence → 0.25 s callbacks with elapsed-time integration and a final clamp → matches existing ability timer style, yields exact 40/6 s and 20 hull totals without extending lifetime. Timer due tolerance 1e-9 s only addresses floating-point scheduling.
+- Bond range → 60 m configured reach, with existing cast slack/hit spheres → natural flyers cruise 25–55 m above ground; 30 m made Big Game unusable for some real flyers. This is also an existing fauna sensing distance.
+- Companion behavior → one native creature, following to 4 m; defend hostile/threatening wild fauna within 20 m of owner, return when beyond a 40 m leash → bounded local defense with a wider return margin, using existing movement/collision rules. No teleport-to-owner substitute.
+- Flyers → 3 m extra follow tolerance, desired altitude 1 m above terrain; directed vertical approach uses existing dive descent multiplier (5 m/s ×3 =15 m/s) → accounts for hovering/body clearance and lets an actual flying companion join ground fights. Call reuses the same directed-flight altitude.
+- Companion attacks → species' first body-plan attack at its retained native herd level, existing 1 s AI attack clock, existing reach and 1.5 strike tolerance plus canonical target sphere → reuses combat data and natural fauna level scaling, never owner-level scaling. Damage/threat/events/kill credit are the existing combat path. Successful companion hits use existing 4 s threat-table taunt.
+- Replacement/lifetime → authoritative analysis/eligibility/target/phase validation before spending or replacing; one successful target replaces the old actor, preserving target health/species/level → no invalid replacement dismisses a valid companion. Companion death, owner death (including immediate suit recovery), disconnect, mode/world/zone/phase departure or loss of required Bond/Big Game eligibility dismisses it. No persistence/resurrection on reconnect.
+- Existing no-PvP policy → no companion attacks on players/companions; no player damage or control against owned companions; safe-zone/phase/frame gates remain live → no new indirect PvP route. Ordinary fauna damage to players remains E08.T02; wild retaliation against a companion is enabled now.
+- Repair Drones duration → 20 s for its existing 15 Charge /20 s cooldown → simplest bounded active matching its cooldown; 1 hull/s while mode is ship, so landing/pulse/boarding transitions cancel and cannot restart it. Max hull caps it. Dock repair remains 20 hull/s.
+- Regrow reach/ally meaning → configured 30 m initial cast range and existing sight rule; omitted target=self, otherwise a visible current party player on foot and up → uses existing party authority. Subsequent ticks retain lifecycle/party/phase checks but do not re-test the initial cast range. Heal is 40 over 6 s, max capped; native suit regeneration remains additive. Companions are protected owned actors, not an extra creature-healing API.
+- Spore magnitude → 4 poison damage/s and 4 healing/s in the specified stationary 8 m/10 s cloud → total 40, matching Regrow's existing total over a longer duration. Existing valid wild-creature targets are enemies; self/current visible party players are healable allies. No player or owned-companion damage. Terrain sight, phases, frames and node resistance handling use existing paths. No additional lingering poison duration beyond the cloud.
+- Call point → aim direction ×30 m; nearest eligible unowned herd within 40 m; 6 s travel → protocol supplies an aim vector, not a ground-point payload; fixed reach and existing terrain steering are the smallest complete consumer. Already-controlled herds and companions are excluded.
+- Call damage → 12 flat ability damage, swept 2 m contact radius plus canonical target sphere, one hit per target for the entire herd/cast → 12 is the existing grazer kick magnitude; swept contact prevents tunneling and single-hit accounting avoids unbounded herd-size damage. Damage runs through CastContext.damage, including current modifiers/resistances/authority. Stuns still prevent movement/contact.
+- Shield baseline → 5 points/s after 6 s without a positive ship hit, capped at max → explicit parent decision. Symbiont Hull multiplies maximum by1.25 and rate by1.5 (7.5/s). All alive equipped ship pools regenerate, including the parked ship on foot; suit damage does not reset the ship timer. Downed players receive no regen. Hazards run before regeneration and reset its delay. Transfer preserves hit time without catch-up. Capacity retunes preserve fractions.
+- Second Lung/Thick Hide → retain existing ×0.7 modifier consumers → their real depletion behavior already existed; duplicating consumers would double-apply effects. Thick Hide stacks multiplicatively with Hazard Weave.
+- Stale effects → session epoch + entity/presence/life generations, latched retirement, recipient generations for healing, synchronous phase notification → catches departure/return or recovery between ticks. Generic old cast contexts also retire; cooldowns remain server-run memory through reconnect. No attempt to revive paused Gravitic implementation.
+- Costs/cooldowns → unchanged shared skill data: Bond30 Heat/60 s; Drones15 Charge/20 s; Regrow20 Heat/10 s; Spore25 Heat/15 s; Call30 Heat/45 s. No Tier III riding, splitting, two-companion cap or owner-level scaling.
+
+FIXTURE ROUTING AND CLEANUP:
+- Designated Postgres container: space-t16-pg-20261106, host127.0.0.1:53055 →5432, userastra. Created only astra_symbiotic_20261107_041605_f65e085d. No existing astra database used.
+- Designated Redis container: space-t16-redis-20261106, host127.0.0.1:53058 →6379. DB8 verified empty immediately before claiming; owner marker protected the reservation. No DB0/7/default port use.
+- URLs were process-level before Vitest imports and migration. startTestServer migrates process.env before config overrides; this was independently checked. New suite also checks actual SQL current_database/current_user/server port. Live SQL and Redis CLIENT LIST evidence identifies real server connections.
+- Pre-import route guard recorded 69 records, 55 distinct processes and 14 actual planner-worker thread entries; every record names the owned PG route and RedisDB8. Worker source opens no SQL/Redis client; real worker startup/inherited routes were observed, not inferred from a warm ground helper. process-routes.jsonl and route-guard.mjs retain this proof.
+- Cleanup result:
+```text
+Postgres host route 127.0.0.1:53055 -> astra_symbiotic_20261107_041605_f65e085d|astra|5432
+Redis host 127.0.0.1:53058; verified CLIENT INFO db=8 and owner marker; 47 keys, all matched this fresh database shards or owner marker.
+Before cleanup: owned Postgres sessions=0. No forced termination needed.
+DROP DATABASE
+Owned database absent after drop.
+Flushed only verified task-owned Redis DB8. Final DBSIZE=0; marker removed.
+space-t16-pg-20261106: running, healthy
+space-t16-redis-20261106: running, healthy
+```
+
+OUT OF SCOPE FOUND / ACTUAL REMAINING GATES:
+- Whole T07 drawn-companion and picking proof after the parent integrates T09; no browser/GPU/full smoke was run because no slot was assigned. Source snapshots and server movement/damage are not visual acceptance.
+- Parent's fresh independent code review, integration/cherry-pick and recorded numeric decisions remain. No own final reviewer was spawned. No CI, hosted, release or production claim.
+- The existing DESIGN/shared Repair Drones text still includes the historical '(today: only docked)' baseline aside. Updating that copy must keep DESIGN and shared table synchronized; its literal contract was preserved here. Runtime flight repair is implemented and verified.
+- E08.T02 owns general wild attacks on players; this patch only enables the required companion fights and retaliation. Future Gravitic work may conflict in shared ability registration, CastContext/CastService and lifecycle handling; paused branch057099dd3 was neither revived nor copied.
+- No push, PR, main mutation, enqueue or merge. Parent owns orchestration documents and final acceptance.
+
+ARTIFACTS:
+- Appendix-C.2-report.md: this full report.
+- patch.diff: exact committed base-to-head patch; changed-files.txt and tested-tree.txt.
+- units-approved.log, integration-approved.log, typecheck-final.log, lint-final.log, format-final.log: final evidence.
+- red-unit.log, red-companion-control.log and all development failure logs: retained red evidence.
+- fixture-route.log, live-db-routes.log, process-routes.jsonl, route-guard.mjs, owned-redis-keys.txt, cleanup.log: fixture and worker routing/cleanup.
+- fixture.env: historical isolated endpoint configuration (database has now been removed).
+- environment.json and SHA256SUMS: toolchain and artifact integrity.
+- No renders/captures exist for this server-only delegated scope.
+
+FAILURE LOG TAILS (last 20 lines of every retained failed development run):
+
+green-first.log
+```text
+
+ FAIL  |@astra/server| src/abilities/symbiotic.test.ts > Symbiotic production effects > Symbiont Hull increases max shield and regenerates 7.5/s after six seconds unhit
+TypeError: characterProgress is not a function
+ ❯ rig src/abilities/symbiotic.test.ts:24:46
+     22|   const state: SkillState = { ...emptySkillState(), unlocked: nodes, b…
+     23|   const skills = { get: () => state, owned: () => state.bought, shipSl…
+     24|   const codex = new CodexService({ progress: characterProgress(), skil…
+       |                                              ^
+     25|   codex.open(viewer.characterId);
+     26|   const meters = new MeterService({ skills, ships: { get: () => DEFAUL…
+ ❯ src/abilities/symbiotic.test.ts:94:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  23:11:57
+   Duration  473ms (transform 52%, import 39%, tests 8%, worker 1%)
+
+```
+
+green-second.log
+```text
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/server| src/abilities/symbiotic.test.ts > Symbiotic production effects > Repair Drones consumes Charge and repairs the authoritative hull in flight
+AssertionError: expected 71.79999999999836 to be close to 72, received difference is 0.2000000000016371, but expected 0.00005
+ ❯ src/abilities/symbiotic.test.ts:91:29
+     89|     expect(r.cast('repair_drones').result).toBe('cast');
+     90|     r.pass(2);
+     91|     expect(r.health().hull).toBeCloseTo(h.hull - 28, 4);
+       |                             ^
+     92|   });
+     93|   it('Symbiont Hull increases max shield and regenerates 7.5/s after s…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  23:12:03
+   Duration  323ms (import 49%, transform 30%, tests 20%, worker 1%)
+
+```
+
+integration-first.log
+```text
+
+ ❯ own packages/server/test/symbiotic.int.test.ts:74:24
+     72|       const m = await p.sock.next('skills');
+     73|       if (m.seq !== seq) continue;
+     74|       expect(m.result).toBe('ok');
+       |                        ^
+     75|       break;
+     76|     }
+ ❯ pilot packages/server/test/symbiotic.int.test.ts:106:3
+ ❯ world packages/server/test/symbiotic.int.test.ts:110:13
+ ❯ packages/server/test/symbiotic.int.test.ts:240:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed (10)
+   Start at  23:18:32
+   Duration  1.90s (transform 39%, tests 30%, import 30%)
+
+```
+
+integration-fourth.log
+```text
+ FAIL  packages/server/test/symbiotic.int.test.ts > Symbiotic nodes through the production gateway > Bond requires a real analysis, follows accepted movement, replicates its owner and deals credited strikes
+Error: no pong within 5000 ms; got [{"t":"world","season":1,"seasonStart":26799657.877,"seasonEnd":31708800,"opening":{"from":null,"edgeShiftLy":0,"dark":[]},"count":500,"edgeX":3100000,"tiers":[0,0,2,4,3,2,1,4,4,3,2,3,4,3,1,1,2,3,2,4,3,1,2,4,3,1,4,4,2,2,3,1,3,3,3,5,4,2,5,4,3,4,5,4,5,4,3,4,2,2,4,4,5,3,3,3,3,5,1,0,1,4,4,3,3,3,1,3,3,4],"dark":[],"serverTime":26799657.877},{"t":"inventory","seq":0,"inventory":{"stackMax":9999,"units":2500,"suit":[{"item":"warp_cell","count":1},null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"pods":[[null,null,null,null,null,null,null,null]]}},{"t":"meters","meters":{"heat":0,"heatMax":100,"overheated":false,"charge":100,"chargeMax":100,"lifeSupport":100,"hazard":100,"at":26799657.877}},{"t":"recipes","known":["warp_cell","pulse_fuel_cell","oxygen_cartridge","sodium_cartridge","flak_ammo"]},{"t":"reputation","reputation":{"factions":[{"faction":"compact","rep":0,"rank":null},{"faction":"reaches","rep":0,"rank":null},{"faction":"chorus","rep":0,"rank":null},{"faction":"sarelun","rep":0,"rank":null},{"faction":"quavel","rep":0,"rank":null},{"faction":"belost","rep":0,"rank":null}],"titles":[]}},{"t":"awards","awards":[]},{"t":"party","party":null},{"t":"event","event":{"kind":"quest","questId":"first_jobs","step":0,"status":"accepted"}},{"t":"event","event":{"kind":"quest","questId":"first_jobs","step":0,"status":"step"}},{"t":"quests","seq":0,"quests":{"active":{"first_jobs":{"step":"land","counters":{},"seen":{},"started":26799657.877,"since":26799657.877}},"done":{},"flags":[],"offered":[]}},{"t":"event","event":{"kind":"quest","questId":"first_jobs","step":1,"status":"step"}},{"t":"quests","seq":0,"quests":{"active":{"first_jobs":{"step":"gather","counters":{},"seen":{},"started":26799657.877,"since":26799657.977}},"done":{},"flags":[],"offered":[]}},{"t":"meters","meters":{"heat":0,"heatMax":100,"overheated":false,"charge":100,"chargeMax":100,"lifeSupport":100,"hazard":100,"at":26799657.977}},{"t":"meters","meters":{"heat":30,"heatMax":100,"overheated":false,"charge":100,"chargeMax":100,"lifeSupport":100,"hazard":100,"at":26799657.977}},{"t":"event","event":{"kind":"cast","caster":1,"node":"bond","phase":"cast","at":26799657.977,"frame":"2981198913:1","aim":[0,0,-1],"target":35}},{"t":"abilities","cooldowns":[{"node":"bond","readyAt":26799717.977}],"on":[]},{"t":"event","event":{"kind":"combat","source":35,"target":36,"amount":22.32,"damageType":"attack","ability":"leap","killed":false,"hp":0.8875000000000001}},{"t":"event","event":{"kind":"combat","source":35,"target":36,"amount":22.32,"damageType":"attack","ability":"leap","killed":false,"hp":0.775}},{"t":"event","event":{"kind":"combat","source":35,"target":36,"amount":22.32,"damageType":"attack","ability":"leap","killed":false,"hp":0.6625000000000001}},{"t":"event","event":{"kind":"combat","source":35,"target":36,"amount":22.32,"damageType":"attack","ability":"leap","killed":false,"hp":0.5500000000000002}},{"t":"event","event":{"kind":"combat","source":35,"target":36,"amount":22.32,"damageType":"attack","ability":"leap","killed":false,"hp":0.43750000000000017}},{"t":"refused","code":"invalid","reason":"Too many messages."}]
+ ❯ TestSocket.next packages/server/test/helpers.ts:140:15
+    138|       const left = deadline - Date.now();
+    139|       if (left <= 0 || this.ws.readyState === WebSocket.CLOSED) {
+    140|         throw new Error(`no ${t} within ${timeoutMs} ms; got ${JSON.st…
+       |               ^
+    141|       }
+    142|       await new Promise<void>((resolve) => {
+ ❯ handled packages/server/test/symbiotic.int.test.ts:47:17
+ ❯ packages/server/test/symbiotic.int.test.ts:147:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:20:57
+   Duration  1.65s (tests 54%, import 31%, transform 15%)
+
+```
+
+integration-landed.log
+```text
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  packages/server/test/symbiotic.int.test.ts > Symbiotic nodes through the production gateway > Spore poisons nearby fauna, heals the caster and stops at ten seconds
+AssertionError: expected 85.29999999888241 to be close to 85.15, received difference is 0.14999999888240723, but expected 0.000005
+ ❯ packages/server/test/symbiotic.int.test.ts:207:29
+    205|     advance(10.1, true);
+    206|     expect(w.zone.combat.creatureHealth(target)!.hp).toBeCloseTo(hp - …
+    207|     expect(w.health().suit).toBeCloseTo(30 + 40 + 10.1 * 1.5, 5);
+       |                             ^
+    208|     const ended = w.zone.combat.creatureHealth(target)!.hp;
+    209|     advance(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 18 passed (20)
+   Start at  23:24:15
+   Duration  2.07s (tests 65%, import 23%, transform 12%)
+
+```
+
+integration-lifecycle.log
+```text
++   "reason": "mode",
+    "result": "refused",
+  }
+
+ ❯ packages/server/test/symbiotic.int.test.ts:335:57
+    333|     await back.sock.next('abilities');
+    334|     const other = w.spawn(5);
+    335|     expect(await cast(back, 'bond', { target: other })).toMatchObject(…
+       |                                                         ^
+    336|     w.zone.combat.applyDamage(null, back.entityId, { base: 50, kind: '…
+    337|     const hp = w.zone.combat.playerHealth(back.entityId)!.suit;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 19 passed (20)
+   Start at  23:23:13
+   Duration  1.79s (tests 66%, import 24%, transform 10%)
+
+```
+
+integration-regressions.log
+```text
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  packages/server/test/suit.int.test.ts > refills at the line spend the server’s inventory > takes a crafted cartridge before raw units, and Cartridge Recycler adds its 20 to both
+AssertionError: expected 97.96 to be close to 99.4, received difference is 1.440000000000012, but expected 0.0005
+ ❯ packages/server/test/suit.int.test.ts:274:29
+    272|     expect(w.held('sodium_cartridge')).toBe(0);
+    273|     expect(w.held('sodium')).toBe(50);
+    274|     expect(w.view().hazard).toBeCloseTo(Math.min(100, 25 + 80) - 0.6, …
+       |                             ^
+    275|     w.s.close();
+    276|     await rig.stop();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed | 9 passed (10)
+      Tests  6 failed | 62 passed (68)
+   Start at  23:33:17
+   Duration  51.32s (tests 92%, import 7%, transform 1%)
+
+```
+
+integration-second.log
+```text
+-   "result": "cast",
++   "result": "refused",
+  }
+
+ ❯ packages/server/test/symbiotic.int.test.ts:254:49
+    252|     } else expect(refused).toMatchObject({ result: 'refused', reason: …
+    253|     await own(w.p, ['big_game']);
+    254|     expect(await cast(w.p, 'bond', { target })).toMatchObject({ result…
+       |                                                 ^
+    255|     expect(w.zone.entity(target)?.fields.owner).toBe(w.p.entityId);
+    256|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 6 passed (10)
+   Start at  23:19:24
+   Duration  5.20s (tests 44%, import 30%, transform 26%)
+
+```
+
+integration-third.log
+```text
+
+ ❯ packages/server/test/symbiotic.int.test.ts (10 tests | 1 failed) 1152ms
+   ❯ Symbiotic nodes through the production gateway (10)
+     × Bond requires a real analysis, follows accepted movement, replicates its owner and deals credited strikes 176ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/server/test/symbiotic.int.test.ts > Symbiotic nodes through the production gateway > Bond requires a real analysis, follows accepted movement, replicates its owner and deals credited strikes
+AssertionError: {"companion":{"id":35,"body":1,"herd":9,"species":{"index":2,"name":"Ambling Mozen Walker","kind":"biped","bodyPlan":"biped","temperament":"docile","role":null,"tier":0,"size":2.106776056904346,"herd":{"min":2,"max":5},"walk":3.193242257552195,"run":13.06326378089534,"colors":{"base":14596739,"belly":16180424,"legs":11637607,"accent":2980422,"horn":15261904,"glow":false,"glowEyes":false},"shape":626541169,"spawn":"herd"},"state":"rush","pos":[-3508.042910698295,113137.3074182666,-4966.194982195667],"target":36,"attack":null,"stunUntil":0,"calmUntil":null},"enemy":{"id":36,"body":1,"herd":10,"species":{"index":4,"name":"Tusked Phephe Beast","kind":"quad","bodyPlan":"quad_heavy","temperament":"territorial","role":null,"tier":1,"size":3.584542964072898,"herd":{"min":2,"max":4},"walk":3.029262284455841,"run":13.253022494494303,"colors":{"base":15247225,"belly":16376007,"legs":12158047,"accent":14704703,"horn":15261904,"glow":true,"glowEyes":true},"shape":2906234218,"spawn":"herd"},"state":"attack","pos":[-3507.8374491109207,113137.65926989964,-4963.542089010077],"target":1,"attack":0.05000000074505806,"stunUntil":0,"calmUntil":null},"owner":{"id":1,"fields":{"kind":"player","frame":"2981198913:1","pos":[-3507.8359130722347,113137.5656157875,-4964.5401539056065],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","name":"Tes Hafvenoiipld","people":"thalune","level":29,"hp":1,"heat":0.28},"cls":"walker","party":null,"presence":1,"location":{"frame":"2981198913:1","mode":"foot"},"world":[-3438386.1932849516,7459.345844376949,8106615.378153829],"fixedCls":null,"unvalidated":false,"input":{"seq":2,"time":26799623.514,"buttons":0},"wire":{"id":1,"kind":"player","frame":"2981198913:1","pos":[-3507.8359130722347,113137.5656157875,-4964.5401539056065],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","name":"Tes Hafvenoiipld","people":"thalune","level":29,"hp":1,"heat":0.28},"changed":{},"diffFrom":[{"id":1,"kind":"player","frame":"2981198913:1","pos":[-3507.8359130722347,113137.5656157875,-4964.5401539056065],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","name":"Tes Hafvenoiipld","people":"thalune","level":29,"hp":1,"heat":0}],"diffs":[{"delta":{"id":1,"heat":0.28},"sent":{"id":1,"kind":"player","frame":"2981198913:1","pos":[-3507.8359130722347,113137.5656157875,-4964.5401539056065],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","name":"Tes Hafvenoiipld","people":"thalune","level":29,"hp":1,"heat":0.28}}],"diffTick":68}}: expected 198.4 to be less than 198.4
+ ❯ packages/server/test/symbiotic.int.test.ts:145:236
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:20:21
+   Duration  2.35s (tests 51%, import 34%, transform 15%)
+
+```
+
+red-companion-control.log
+```text
+
+- 0
++ 1002.0999999999999
+
+ ❯ src/abilities/symbiotic.test.ts:246:77
+    244|     expect(r.cast('bond', { target: id }).result).toBe('cast');
+    245|     expect(r.cast('pulse').result).toBe('cast');
+    246|     expect(r.w.zone.fauna!.creatures().find((c) => c.id === id)?.stunU…
+       |                                                                             ^
+    247|   });
+    248|   it('companion strikes taunt on the existing threat table and never h…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 37 skipped (38)
+   Start at  23:43:29
+   Duration  433ms (import 48%, transform 40%, tests 11%, worker 1%)
+
+```
+
+red-unit.log
+```text
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  |@astra/server| src/abilities/symbiotic.test.ts > Symbiotic production effects > Symbiont Hull increases max shield and regenerates 7.5/s after six seconds unhit
+AssertionError: expected 95 to be close to 102.5, received difference is 7.5, but expected 0.00005
+ ❯ src/abilities/symbiotic.test.ts:97:31
+     95|     r.w.zone.combat.applyDamage(null, r.w.player, { base: 30, kind: 'h…
+     96|     r.pass(7);
+     97|     expect(r.health().shield).toBeCloseTo(h.shield - 22.5, 4);
+       |                               ^
+     98|   });
+     99| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  23:06:50
+   Duration  1.69s (transform 76%, import 19%, tests 5%)
+
+```
+
+typecheck-first.log
+```text
+$ tsc -p .
+src/abilities/symbiotic.test.ts(22,36): error TS2739: Type '{ get: () => undefined; set(): void; }' is missing the following properties from type 'CharacterProgress': held, delete
+[ELIFECYCLE] Command failed with exit code 2.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in /Users/andreyyurlov/.t3/worktrees/space/t3-
+  │ f65e085d/packages/server
+
+```
+
+typecheck-full-first.log
+```text
+packages/server typecheck$ tsc -p .
+packages/tools typecheck: Done
+packages/client typecheck: Done
+packages/server typecheck: test/symbiotic.int.test.ts(74,16): error TS2339: Property 'result' does not exist on type '{ t: "skills"; seq: number; skills: { state: { granted: number; unlocked: string[]; bought: string[]; fragments: { gravitic: { earned: number; spent: number; }; thermal: { earned: number; spent: number; }; resonance: { ...; }; symbiotic: { ...; }; void: { ...; }; }; slots: { ...; }; }; level: number; shipSlots: numb...'.
+packages/server typecheck: test/symbiotic.int.test.ts(113,80): error TS2345: Argument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'Pick<PlanetParams, "type" | "flora" | "lifeless" | "seed">'.
+packages/server typecheck:   Type 'GasParams' is missing the following properties from type 'Pick<PlanetParams, "type" | "flora" | "lifeless" | "seed">': flora, lifeless
+packages/server typecheck: test/symbiotic.int.test.ts(114,22): error TS2345: Argument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'PlanetParams'.
+packages/server typecheck:   Type 'GasParams' is missing the following properties from type 'PlanetParams': isMoon, continentBias, continentFreq, seaDepth, and 24 more.
+packages/server typecheck: test/symbiotic.int.test.ts(122,32): error TS2345: Argument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'Pick<PlanetParams, "type" | "flora" | "lifeless" | "seed">'.
+packages/server typecheck:   Type 'GasParams' is missing the following properties from type 'Pick<PlanetParams, "type" | "flora" | "lifeless" | "seed">': flora, lifeless
+packages/server typecheck: test/symbiotic.int.test.ts(210,24): error TS2345: Argument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'PlanetParams'.
+packages/server typecheck:   Type 'GasParams' is missing the following properties from type 'PlanetParams': isMoon, continentBias, continentFreq, seaDepth, and 24 more.
+packages/server typecheck: Failed
+[ELIFECYCLE] Command failed with exit code 2.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in /Users/andreyyurlov/.t3/worktrees/space/t3-
+  │ f65e085d/packages/server
+
+[ELIFECYCLE] Command failed with exit code 1.
+```
+
+unit-expanded.log
+```text
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/server| src/abilities/symbiotic.test.ts > Symbiotic target, timing and lifecycle boundaries > Big Game alone expands Bond to an analysed heavy_quad
+AssertionError: expected undefined to be defined
+ ❯ src/abilities/symbiotic.test.ts:139:21
+    137|     const r = rig(['bond']);
+    138|     const species = r.w.species.find((s) => s.bodyPlan === plan)!;
+    139|     expect(species).toBeDefined();
+       |                     ^
+    140|     const id = r.spawn(4, species);
+    141|     r.w.zone.fauna!.stun(id, 10);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 86 passed (87)
+   Start at  23:15:35
+   Duration  639ms (import 35%, transform 35%, tests 29%, worker 1%)
+
+```
+
+units-final.log
+```text
+
+ ❯ test/data.test.ts:555:80
+    553|     for (const [heading, branch] of sections) {
+    554|       const rows = designTable(heading);
+    555|       expect(rows.map(([name, tier, type, text]) => [name, tier, type,…
+       |                                                                                ^
+    556|         branchOf(branch as (typeof BRANCHES)[number]).map((n) => [n.na…
+    557|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 212 passed (213)
+      Tests  1 failed | 2737 passed (2738)
+   Start at  23:37:06
+   Duration  44.24s (tests 71%, import 27%, transform 2%, worker 1%)
+
+    Isolate  213 workers spawned · ~57ms startup each (spawn + environment, per file)
+             at least ~5.99s faster with isolate: false — reuses workers across files instead of one per file
+
+```
+
+units-full-first.log
+```text
+
+ ❯ src/zones/manager.test.ts:418:58
+    416|     expect(first.zone.entity(first.entityId)).toBeUndefined();
+    417|     expect(next.zone.combat.profileOf(next.entityId)).toMatchObject({ …
+    418|     expect(next.zone.combat.playerHealth(next.entityId)).toEqual(healt…
+       |                                                          ^
+    419|     expect(zones.input(viewer, input)).toBe('stale');
+    420|     advance(50);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/11]⎯
+
+
+ Test Files  5 failed | 208 passed (213)
+      Tests  11 failed | 2718 passed (2729)
+   Start at  23:24:37
+   Duration  51.90s (tests 68%, import 26%, transform 5%, worker 1%)
+
+    Isolate  213 workers spawned · ~61ms startup each (spawn + environment, per file)
+             at least ~6.45s faster with isolate: false — reuses workers across files instead of one per file
+
+```

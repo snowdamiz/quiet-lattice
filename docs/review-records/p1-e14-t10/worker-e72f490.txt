@@ -1,0 +1,340 @@
+TASK: P1.E14.T10
+STATUS: DONE (implementation and authorized CPU evidence). Task-level visual acceptance, fresh independent review, GPU qualification, and merged smoke remain PENDING; this is not a plan [x] or merge claim.
+SUMMARY: Authored seven distinct editable den sources and compressed PBR GLBs: two burrows, two nests, two roosts and one apex lair. Each has living-world dressing, fitted COL boxes, origin Interact_Spawn and Spawn empties, metric references, and four exported LODs. The existing structures startup slot now loads the complete den library; Planet copies ground.dens and Structures streams deterministic variants at the existing planner anchors, preserves authored materials, selects native distance LODs and applies its existing collision route. DENS_DRAWN was enabled only after seven real validated exports existed. No new spawner or client loot interaction was introduced.
+
+PROVENANCE:
+  worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1
+  branch: task/P1-E14-T10-dens
+  base: 634c51d2378748c6a514af2a792ee4500b912643
+  head: e72f49005d4597a06aea1389aedeab99248ae6f5
+  tree: ae7d621577089426309ccd561892fa06ac2db813
+  asset manifest SHA256: d9f16b6b6ba18667c5f53f44d0086bc1a9e16e1eb8d55985916d61537fc4609f
+  preview manifest SHA256: 8117f9251d57664ce7ceac9d23f901100ed0de7a09d2735f07f29ea24a0d5364
+  git status --short: empty; one task commit directly above the pinned base; no push, PR, main/orchestration edits or merge.
+  All fourteen committed Git LFS OIDs were checked against the validated working source/export SHA256 values.
+  No broad LFS fetch. Existing local _library.blend was available; only the existing local KTX tool cache was linked into node_modules/.cache.
+
+FILES CHANGED:
+  assets/blend/sites/den_apex_lair_0.blend
+  assets/blend/sites/den_burrow_0.blend
+  assets/blend/sites/den_burrow_1.blend
+  assets/blend/sites/den_nest_0.blend
+  assets/blend/sites/den_nest_1.blend
+  assets/blend/sites/den_roost_0.blend
+  assets/blend/sites/den_roost_1.blend
+  assets/renders/P1-E14-T10-cpu-r3/materials/den_apex_lair_0.png
+  assets/renders/P1-E14-T10-cpu-r3/materials/den_burrow_0.png
+  assets/renders/P1-E14-T10-cpu-r3/materials/den_burrow_1.png
+  assets/renders/P1-E14-T10-cpu-r3/materials/den_nest_0.png
+  assets/renders/P1-E14-T10-cpu-r3/materials/den_nest_1.png
+  assets/renders/P1-E14-T10-cpu-r3/materials/den_roost_0.png
+  assets/renders/P1-E14-T10-cpu-r3/materials/den_roost_1.png
+  assets/renders/P1-E14-T10-cpu-r3/scale/den_apex_lair_0.png
+  assets/renders/P1-E14-T10-cpu-r3/scale/den_burrow_0.png
+  assets/renders/P1-E14-T10-cpu-r3/scale/den_burrow_1.png
+  assets/renders/P1-E14-T10-cpu-r3/scale/den_nest_0.png
+  assets/renders/P1-E14-T10-cpu-r3/scale/den_nest_1.png
+  assets/renders/P1-E14-T10-cpu-r3/scale/den_roost_0.png
+  assets/renders/P1-E14-T10-cpu-r3/scale/den_roost_1.png
+  assets/renders/P1-E14-T10-cpu-r3/turntables/den_apex_lair_0.png
+  assets/renders/P1-E14-T10-cpu-r3/turntables/den_burrow_0.png
+  assets/renders/P1-E14-T10-cpu-r3/turntables/den_burrow_1.png
+  assets/renders/P1-E14-T10-cpu-r3/turntables/den_nest_0.png
+  assets/renders/P1-E14-T10-cpu-r3/turntables/den_nest_1.png
+  assets/renders/P1-E14-T10-cpu-r3/turntables/den_roost_0.png
+  assets/renders/P1-E14-T10-cpu-r3/turntables/den_roost_1.png
+  assets/renders/P1-E14-T10-cpu-r4/materials/den_nest_0.png
+  assets/renders/P1-E14-T10-cpu-r4/materials/den_nest_1.png
+  assets/renders/P1-E14-T10-cpu-r4/materials/den_roost_0.png
+  assets/renders/P1-E14-T10-cpu-r4/materials/den_roost_1.png
+  assets/renders/P1-E14-T10-cpu-r4/scale/den_nest_0.png
+  assets/renders/P1-E14-T10-cpu-r4/scale/den_nest_1.png
+  assets/renders/P1-E14-T10-cpu-r4/scale/den_roost_0.png
+  assets/renders/P1-E14-T10-cpu-r4/scale/den_roost_1.png
+  assets/renders/P1-E14-T10-cpu-r4/turntables/den_nest_0.png
+  assets/renders/P1-E14-T10-cpu-r4/turntables/den_nest_1.png
+  assets/renders/P1-E14-T10-cpu-r4/turntables/den_roost_0.png
+  assets/renders/P1-E14-T10-cpu-r4/turntables/den_roost_1.png
+  assets/renders/P1-E14-T10-cpu-r5/scale/den_nest_1.png
+  packages/client/public/models/sites/den_apex_lair_0.glb
+  packages/client/public/models/sites/den_burrow_0.glb
+  packages/client/public/models/sites/den_burrow_1.glb
+  packages/client/public/models/sites/den_nest_0.glb
+  packages/client/public/models/sites/den_nest_1.glb
+  packages/client/public/models/sites/den_roost_0.glb
+  packages/client/public/models/sites/den_roost_1.glb
+  packages/client/src/gameplay/Structures.dens.test.js
+  packages/client/src/gameplay/Structures.js
+  packages/client/src/gameplay/modelLibrary.js
+  packages/client/src/universe/Planet.js
+  packages/shared/src/world/ground.ts
+  packages/shared/test/dens.species.test.ts
+  packages/shared/test/fixtures/resource-nodes-424242.json
+  packages/shared/test/resourceNodes.test.ts
+  packages/tools/blender/dens/author.py
+  packages/tools/blender/dens/bake_sources.py
+  packages/tools/blender/dens/manifest.json
+  packages/tools/blender/dens/manifest.py
+  packages/tools/blender/dens/preview.py
+  packages/tools/blender/dens/previews.json
+  packages/tools/blender/dens/rebake_weave.py
+  packages/tools/blender/dens/refine.py
+  packages/tools/blender/dens/refine_nest_lods.py
+  packages/tools/blender/dens/refine_weave.py
+  packages/tools/blender/dens/run.py
+  packages/tools/blender/dens/validate.py
+  packages/tools/blender/dens/validation/export-contracts-final.json
+  packages/tools/blender/dens/validation/export-topology.json
+  packages/tools/blender/dens/validation/fixture-changes.json
+  packages/tools/blender/dens/validation/sites__den_apex_lair_0.blend.json
+  packages/tools/blender/dens/validation/sites__den_apex_lair_0.glb.json
+  packages/tools/blender/dens/validation/sites__den_burrow_0.blend.json
+  packages/tools/blender/dens/validation/sites__den_burrow_0.glb.json
+  packages/tools/blender/dens/validation/sites__den_burrow_1.blend.json
+  packages/tools/blender/dens/validation/sites__den_burrow_1.glb.json
+  packages/tools/blender/dens/validation/sites__den_nest_0.blend.json
+  packages/tools/blender/dens/validation/sites__den_nest_0.glb.json
+  packages/tools/blender/dens/validation/sites__den_nest_1.blend.json
+  packages/tools/blender/dens/validation/sites__den_nest_1.glb.json
+  packages/tools/blender/dens/validation/sites__den_roost_0.blend.json
+  packages/tools/blender/dens/validation/sites__den_roost_0.glb.json
+  packages/tools/blender/dens/validation/sites__den_roost_1.blend.json
+  packages/tools/blender/dens/validation/sites__den_roost_1.glb.json
+  packages/tools/blender/dens/validation/source-contracts-final.json
+
+VERIFY:
+  Environment: macOS; Blender 5.2.3 LTS e13b728c6880; CPU only. Every Blender invocation used dens/run.py: -b -t 2 --factory-startup --python-exit-code 1, OMP_NUM_THREADS=2, OPENBLAS_NUM_THREADS=2, ART_KTX_JOBS=1; finite subprocess deadlines and owned process-group cleanup. One Blender process at a time. Cycles CPU, 16 samples for bake/preview. No GPU/browser/Vite/capture/server/DB run.
+  pnpm install --offline --frozen-lockfile -> PASS (existing local dependencies).
+  Initial author/refine/bake commands (each through run.py) -> PASS after the recorded corrections below: author.py, refine.py, bake_sources.py, refine_nest_lods.py, refine_weave.py, rebake_weave.py, then refine_nest_lods.py on the repaired nest. These are authoring/revision history, never exporter inputs or runtime fallback. Saved sources are canonical; author.py refuses to overwrite them.
+  python3 packages/tools/blender/dens/run.py --seconds 900 --log /tmp/P1-E14-T10-evidence/export-weave-r4.log -- -P packages/tools/blender/export_sites.py -- --only den_nest_0,den_nest_1,den_roost_0,den_roost_1 --report-dir /tmp/P1-E14-T10-evidence/export-weave-r4 -> PASS 4/4 revised sources and exports.
+  Unchanged burrows and lair use successful export-r2 reports; all six retained source/export byte hashes were rechecked. Final reports are retained under packages/tools/blender/dens/validation: 14/14 family reports PASS, zero family-validation failures or warnings. No changes to export_sites.py, artlib, families.json or _library.blend.
+  python3 packages/tools/blender/dens/run.py --seconds 600 --log /tmp/P1-E14-T10-evidence/contracts-export-final.log -- -P packages/tools/blender/dens/validate.py -- --report /tmp/P1-E14-T10-evidence/export-contracts-final.json packages/client/public/models/sites/den_burrow_0.glb packages/client/public/models/sites/den_burrow_1.glb packages/client/public/models/sites/den_nest_0.glb packages/client/public/models/sites/den_nest_1.glb packages/client/public/models/sites/den_roost_0.glb packages/client/public/models/sites/den_roost_1.glb packages/client/public/models/sites/den_apex_lair_0.glb -> PASS 7/7. Family naming, class/LOD/PBR/scale, planner radial bounds, origin empties, fitted boxes and clear 0.76 m x 1.85 m standing approach. Source pass additionally checks local editable meshes/UVs/part groups, retained Wear paint source, metric units and packed atlas images.
+  python3 packages/tools/blender/dens/run.py --seconds 600 --log /tmp/P1-E14-T10-evidence/contracts-source-final.log -- -P packages/tools/blender/dens/validate.py -- --report /tmp/P1-E14-T10-evidence/source-contracts-final.json assets/blend/sites/den_burrow_0.blend assets/blend/sites/den_burrow_1.blend assets/blend/sites/den_nest_0.blend assets/blend/sites/den_nest_1.blend assets/blend/sites/den_roost_0.blend assets/blend/sites/den_roost_1.blend assets/blend/sites/den_apex_lair_0.blend -> PASS 7/7. Family naming, class/LOD/PBR/scale, planner radial bounds, origin empties, fitted boxes and clear 0.76 m x 1.85 m standing approach. Source pass additionally checks local editable meshes/UVs/part groups, retained Wear paint source, metric units and packed atlas images.
+  python3 packages/tools/blender/dens/run.py --seconds 300 --log /tmp/P1-E14-T10-evidence/topology.log -- -P /tmp/P1-E14-T10-evidence/check_export_topology.py -> PASS, all 28 exported LOD meshes required no Mesh.validate repair. Raw exporter warnings about intermediate reduced meshes were investigated against the actual compressed outputs. Report sealed to export SHA256 in validation/export-topology.json. Wireframe shading/LOD-pop acceptance still needs engine review.
+  python3 packages/tools/blender/dens/manifest.py --reports packages/tools/blender/dens/validation --contracts packages/tools/blender/dens/validation/export-contracts-final.json --source-contracts packages/tools/blender/dens/validation/source-contracts-final.json -> PASS; both source and export hashes checked against the successful geometry reports.
+  pnpm exec vitest run packages/client/src/gameplay/Structures.dens.test.js packages/client/src/gameplay/modelLibrary.test.js packages/client/src/gameplay/resonanceFx.test.js packages/shared/src/world/sites.test.ts packages/shared/test/dens.species.test.ts packages/shared/test/resourceNodes.test.ts packages/shared/test/resourceNodes.golden.test.ts packages/shared/test/world.golden.test.ts packages/shared/test/dens.golden.test.ts packages/shared/test/fauna.golden.test.ts --maxWorkers=1 -> PASS 10 files / 220 tests, final 15.34 s. Log: focused-tests-final.log.
+  Client boundary tests parse the real meshopt GLBs with the real GLTFLoader and call loadLibrary, Planet, Structures.build/update, native THREE.LOD, collision, discovery and unload/rebuild routes. Only texture slots are removed from an in-memory CPU parsing copy; original GLB KTX/PBR/compression/hash contracts are separately asserted. This does not qualify actual browser KTX2 GPU transcoding/upload.
+  pnpm typecheck -> PASS all shared/client/tools/server packages. Log: typecheck-final.log.
+  pnpm exec eslint packages/client/src/gameplay/Structures.js packages/client/src/gameplay/modelLibrary.js packages/client/src/gameplay/Structures.dens.test.js packages/client/src/universe/Planet.js packages/shared/src/world/ground.ts packages/shared/test/dens.species.test.ts packages/shared/test/resourceNodes.test.ts -> PASS. Log: lint-final.log.
+  pnpm exec prettier --check packages/shared/src/world/ground.ts packages/shared/test/dens.species.test.ts packages/shared/test/resourceNodes.test.ts packages/shared/test/fixtures/resource-nodes-424242.json -> PASS. Existing repo policy ignores demo JS and blender files. Log: format-final.log.
+  python3 -m py_compile packages/tools/blender/dens/*.py -> PASS.
+  git diff --cached --check before commit -> PASS; clean worktree after commit.
+  Fixture regeneration was performed ONCE from the real planner: pnpm exec tsx -e "import('./packages/shared/test/resource-nodes-fixture.ts').then((m) => process.stdout.write(JSON.stringify(m.buildResourceNodeFixture())))" > packages/shared/test/fixtures/resource-nodes-424242.json; then Prettier. No expectation weakening. Exact before/after values are in validation/fixture-changes.json.
+  GPU/engine three-light captures, full merged test/smoke and final reviewers -> COULD NOT RUN in this lane: parent has not assigned the required slot/review stage. No tests are being represented as those gates.
+
+GOLDEN DIFF EXPLANATION:
+  Only 28 near-site ground entries (seven living archetypes x tiers 2-5) change; their resource counts and node digest respond to the real newly levelled den pads. Tier 0-1, all sampled-cell records, layer data, world metadata and lifeless worlds are unchanged. No dens/species/fauna/world golden rewrite was needed.
+  Ground totals: lush 3302->3297; alien 3263->3261; desert 1765->1763; frozen 2085->2078; volcanic 3401->3397. Storm tier 2 3371->3366, tiers 3-5 3603->3598. Toxic tier 2 3421->3414, tiers 3-5 3421->3413. All node hashes changed in exactly those records; complete per-resource deltas retained.
+
+DECISIONS:
+  Footprint diameter or radius? -> 4/6/5/10 m are planner radii -> verified against DEN_FOOTPRINT, LAIR_FOOTPRINT and planner pad/collision use, not interpreted as diameters.
+  Apex type? -> role=apex selects the sole apex asset before kind=nest -> preserves the existing shared Den schema and server anchor ownership.
+  Spawn placement? -> both Interact_Spawn and Spawn are origin empties; approach remains open -> existing server den directions/terrain anchors stay authoritative. The raised roost nest is visual dressing, not a new elevated server spawn.
+  Loader slot? -> extend packages/client/src/gameplay/modelLibrary.js, reported before editing -> the existing structures startup promise is the only necessary registry extension. All seven roots must contain required LODs and markers before the den library publishes. Missing models reject; no fallback geometry.
+  Appearance? -> root-vault and slipped-shale burrows, crescent wicker and reed-canopy nests, snag and stone-fan roosts, fossil-rib apex lair -> distinct authored geometry rather than recoloured variants. Natural earth/bark/slate/moss/bone palette, organic material derived locally from LIB_Chitin, positional Wear paint retained in _PaintSource; shared library unchanged.
+  Atlas export? -> bake into saved sources while retaining editable paint meshes -> prevents ACTIVE vertex colour from multiplying the baked colour twice without changing shared export behavior. Exporter only reads sources and builds missing reductions, never regenerates their authored geometry.
+  LODs? -> native THREE.LOD at 0/80/220/650 m; explicit saved reductions for the reed-canopy nest -> original cap/leaf topology exceeded the strict <5% LOD3 budget. Small bedding/fronds are omitted only in that distant LOD, retaining canopy/stems/weave silhouette.
+  Colliders? -> per-part COL boxes fitted to the existing AABB route -> preserve reachable central approaches and avoid a single bounding cube that seals entrances. CPU visual BVH and actual client capsule checks cover this; live walker testing remains pending.
+  Interaction? -> dens use existing discovery/streaming/marker paths but are excluded from site loot-terminal interactions -> no invented client reward or duplicate server spawner.
+  Inspection revisions? -> repaired circular strand frames after actual GLB close-ups showed pinching, rebaked/reexported four assets; corrected the source-preview explicit-LOD filtering and made r5 nest scale view -> old packets were preserved and new paths used. No final independent visual PASS claimed.
+
+OUT OF SCOPE FOUND:
+  /tmp/space-next-batch-45c172a10.md section 3 pointers were audited against current files: existing server denSites/planDenHerd, ground gating, planner footprints, sites-family requirements and Planet/Structures route confirmed. Server fauna/combat remains with the Symbiotic worker. No new cross-task defect requiring an unauthorized file edit was found.
+  Shared Blender exporter emits transient reduced-mesh validity and texture-sampler warnings; all final exported LOD meshes validate without repair and actual exported map requirements pass. No shared-core workaround was made.
+  Independent source review/blind visual grade and all engine/performance/merged qualification remain parent-owned future gates.
+
+ARTIFACTS:
+  Asset manifest: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/manifest.json
+  Selected preview inventory: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/previews.json
+  Validation reports: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/validation
+  Logs, original failures and report: /tmp/P1-E14-T10-evidence
+  Selected current views: 21 PNGs = seven actual-GLB eight-angle turntable sheets, seven actual-GLB material close-ups, seven saved-source LOD0 scale views. Use the selected paths in previews.json, not all historical images.
+  Initial packet total: 48 PNGs / 49739283 bytes (<512 MiB). 34 current/historical PNGs / 39901179 bytes are committed; 14 earlier previews remain only in owned /tmp evidence. No frame sequences. Only this lane's den .blend1 backups were deleted.
+  All current selected previews inspected. Older r3 nest/roost views show the pre-repair strands; r3/r4 nest_1 source scale views also showed explicit LOD overlap. These are marked superseded; r5/scale/den_nest_1.png is current.
+  Remaining GPU inventory: seven assets x three lighting cases (lush noon, exotic night, open space) x LOD0/LOD2 = 42 captures; seven wireframe views; native LOD transition checks at 80/220/650 m; real walker/collider and server-anchor alignment; terrain pad/dressing inspection; actual KTX2 loading/transcoding; review-scene 60 fps/performance inventory. Parent must assign and bound/split these capture packets. Then fresh code review, blind visual grade, merge-stage full checks and merged smoke. Nothing here authorizes those runs or merging.
+
+EXACT ASSET HASHES AND MEASUREMENTS:
+  den_burrow_0: planner radius 4 m; actual radial bound 3.461282 m; 4 colliders; LOD triangles {'0': 21802, '1': 6524, '2': 2174, '3': 828}; texture residency 16.0 MiB class estimate.
+    source SHA256 2115cc6449893c865a9e09896f58f38dce091b993314ddac89c5786a36430429 (7164893 bytes)
+    export SHA256 ae4a6d78d9de08b965f75697a3c9a79b9c25d780db81304bf1b254290d1227e5 (1633468 bytes)
+  den_burrow_1: planner radius 4 m; actual radial bound 3.390691 m; 4 colliders; LOD triangles {'0': 20537, '1': 6144, '2': 2048, '3': 911}; texture residency 16.0 MiB class estimate.
+    source SHA256 8b3d111d95d1c76c1ccff0dc9a9463b46a3bf7fd0ba2d8660bee8feadada6128 (7592756 bytes)
+    export SHA256 328527ac9e34611c4b1fbdba6e407ddda67fde3c04ade356aa533b804d3025e6 (1752364 bytes)
+  den_nest_0: planner radius 6 m; actual radial bound 4.931915 m; 11 colliders; LOD triangles {'0': 29315, '1': 8770, '2': 2918, '3': 1046}; texture residency 16.0 MiB class estimate.
+    source SHA256 e703d2fb2d73ba9bb1cb905af909da4682eda81e7ff9128c256b9a7a40015b7d (11826286 bytes)
+    export SHA256 f5d5e7f3161afc6812a02f35c977ac11492e670ba37addf447a7afada6f44961 (1488068 bytes)
+  den_nest_1: planner radius 6 m; actual radial bound 4.332383 m; 12 colliders; LOD triangles {'0': 28822, '1': 8609, '2': 2866, '3': 517}; texture residency 16.0 MiB class estimate.
+    source SHA256 001f57e2d088f733de58f396e7a5329bcf13c4dbbd4d9e96cef0e42c7c9cae9e (12391153 bytes)
+    export SHA256 6f64b0366bb7090ba5fd61049073d78b8144002af408bdee98c847a938655853 (1508936 bytes)
+  den_roost_0: planner radius 5 m; actual radial bound 3.951569 m; 5 colliders; LOD triangles {'0': 24438, '1': 7322, '2': 2440, '3': 838}; texture residency 16.0 MiB class estimate.
+    source SHA256 ba6e873f2949ff73d81c1e83290148ca4ce7c2a7aa041bfd0ad931fbb6365422 (12381368 bytes)
+    export SHA256 c22e48de84a5dd4a117a27a9fb0b8030e4255c2cf4f16b5ff06f387714f38f87 (1591532 bytes)
+  den_roost_1: planner radius 5 m; actual radial bound 4.139235 m; 4 colliders; LOD triangles {'0': 21709, '1': 6507, '2': 2169, '3': 745}; texture residency 16.0 MiB class estimate.
+    source SHA256 8c5d458673588fe53d1faa66a95be5a625c7eeda2338414f917d55024abeec2b (13390388 bytes)
+    export SHA256 326bfc32c11df30ea21697a4f2e0bd8f3b767f9150063544159a0d0b849b45f6 (1628104 bytes)
+  den_apex_lair_0: planner radius 10 m; actual radial bound 8.362531 m; 8 colliders; LOD triangles {'0': 37663, '1': 11269, '2': 3755, '3': 1693}; texture residency 16.0 MiB class estimate.
+    source SHA256 e6327a10685bd806dce8a1f5193dff0b361933e1d41493a5a7449cb8c84f587e (7648552 bytes)
+    export SHA256 80be56098b05c255dc5a7985ddcd3903aec92ac6100995cf2544b2bbad3d5c26 (1693616 bytes)
+
+HISTORICAL FAILURE TAILS (resolved, preserved verbatim):
+
+  client-red.log: Initial required export absence: test failed ENOENT before authoring/export.
+  Last 20 lines:
+    
+     FAIL  |@astra/client| src/gameplay/Structures.dens.test.js [ packages/client/src/gameplay/Structures.dens.test.js ]
+    Error: ENOENT: no such file or directory, open '/Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/client/public/models/sites/den_burrow_0.glb'
+     ❯ parseAsset src/gameplay/Structures.dens.test.js:21:16
+         19|
+         20| async function parseAsset(id) {
+         21|   const data = readFileSync(new URL(`../../public/models/sites/${id}.g…
+           |                ^
+         22|   const jsonLength = data.readUInt32LE(12);
+         23|   const js = JSON.parse(data.subarray(20, 20 + jsonLength).toString());
+     ❯ src/gameplay/Structures.dens.test.js:43:46
+    
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+    
+    
+     Test Files  1 failed (1)
+          Tests  5 skipped (5)
+       Start at  23:16:17
+       Duration  226ms (transform 70%, import 27%, tests 2%, worker 1%)
+    
+
+  client-preflag.log: Real GLB integration passed; draw flag/Planet assertions remained red before enabled integration.
+  Last 20 lines:
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+    
+     FAIL  |@astra/client| src/gameplay/Structures.dens.test.js > seven authored den exports > Planet copies the actual planned dens and pads at the system tier
+    AssertionError: expected 0 to be greater than 0
+     ❯ src/gameplay/Structures.dens.test.js:208:27
+        206|     const pool = { registerPlanet: vi.fn() };
+        207|     const p = new Planet({ name: 'Drawn', params, tier: 3, radius: par…
+        208|     expect(p.dens.length).toBeGreaterThan(0); expect(p.dens).toBe(p.gr…
+           |                           ^
+        209|     expect(p.params.pads).toBe(p.ground.pads);
+        210|     expect(pool.registerPlanet).toHaveBeenCalledWith(p.id, params);
+    
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+    
+    
+     Test Files  1 failed (1)
+          Tests  2 failed | 5 passed (7)
+       Start at  23:22:55
+       Duration  319ms (tests 64%, import 18%, transform 17%, worker 1%)
+    
+
+  flag-golden-red.log: Old no-den/shared golden expectations failed after enabling real dens, before the one planner regeneration.
+  Last 20 lines:
+              "cobalt": 0.00018,
+              "copper": 0.00018,
+              "oxygen": 0.0009,
+    
+     ❯ test/resourceNodes.golden.test.ts:89:28
+         87|     it('layers, node counts and the nodes themselves at every tier', (…
+         88|       const w = nodeWorlds().find((x) => x.type === entry.type)!;
+         89|       expect(nodeEntry(w)).toEqual(entry);
+           |                            ^
+         90|     });
+         91|   });
+    
+    ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+    
+    
+     Test Files  1 failed | 1 passed (2)
+          Tests  7 failed | 17 passed (24)
+       Start at  23:24:14
+       Duration  5.42s (tests 96%, transform 3%, import 2%)
+    
+
+  export-r1.log: Initial atlas export failed the required base-colour map contract; corrected by task-local packed source baking without shared edits.
+  Last 20 lines:
+    23:17:50 | INFO: Starting glTF 2.0 export
+    23:17:50 | INFO: Extracting primitive: COL_BackShale
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | INFO: Extracting primitive: COL_LeftShale
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | INFO: Extracting primitive: COL_RightShale
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | INFO: Extracting primitive: COL_RoofShale
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | INFO: Extracting primitive: SlippedShale0
+    23:17:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | INFO: Extracting primitive: SlippedShale0.001
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | INFO: Extracting primitive: SlippedShale0.002
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | WARNING: Mesh SlippedShale0.003 is not valid, and may be exported wrongly
+    23:17:50 | INFO: Extracting primitive: SlippedShale0.003
+    23:17:50 | INFO: Primitives created: 1
+    23:17:50 | INFO: Finished glTF 2.0 export in 0.12577486038208008 s
+
+  export-r2.log: Six exports passed; nest_1 LOD3 exceeded <5%, prompting explicit saved reductions.
+  Last 20 lines:
+      den_roost_1 / den_roost_1 [building]  tris LOD0 21,709, LOD1 6,507, LOD2 2,169, LOD3 745  size 6.91 x 4.57 x 7.43 m
+      PASS  naming
+            ok    den_roost_1.glb: 1 variant(s) in 1 asset(s) follow the sites rules
+      PASS  triangle budget
+            ok    den_roost_1: LOD0 21,709 triangles within the building budget 8,000-60,000 (families.json)
+            ok    geometry: meshopt-compressed: 0.3 MB of streams
+      PASS  LODs
+            ok    den_roost_1: 21,709 > 6,507 > 2,169 > 745 triangles; LOD3 3.4% of LOD0
+      PASS  materials
+            ok    Den_den_roost_1_Organic: pbr: base colour, roughness, normal, AO
+            ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 1.4 MB
+            ok    den_roost_1: textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB
+      PASS  scale references
+            ok    source: assets/blend/sites/den_roost_1.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+            ok    den_roost_1: longest side 7.43 m within 1-250 m
+    RESULT: PASS (5 of 5 checks passed)
+      report: /tmp/P1-E14-T10-evidence/export-r2/sites__den_roost_1.glb.json
+      wrote packages/client/public/models/sites/den_roost_1.glb (1,662,940 bytes)
+    
+    export sites: 6 of 7 source(s) exported
+
+  export-nest-r3.log: First explicit nest reduction still exceeded <5%; omitted distant small closed leaf shells and preserved major silhouette.
+  Last 20 lines:
+    
+    validate assets/blend/sites/den_nest_1.blend  (family sites, source .blend)
+      den_nest_1 / den_nest_1 [building]  tris LOD0 28,828, LOD1 8,609, LOD2 2,869, LOD3 1,593  size 8.07 x 6.71 x 5.67 m
+      PASS  naming
+            ok    den_nest_1.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+      PASS  triangle budget
+            ok    den_nest_1: LOD0 28,828 triangles within the building budget 8,000-60,000 (families.json)
+      FAIL  LODs  (1 failed, 0 warnings)
+            fail  den_nest_1: LOD3 is 5.5% of LOD0 (1,593 of 28,828); must be under 5% (DESIGN 19.2)
+      PASS  materials
+            ok    Den_den_nest_1_Organic: pbr: base colour, roughness, normal, AO
+      PASS  scale references
+            ok    REF_Grid: grid spacing 1.000 m
+            ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+            ok    den_nest_1: longest side 8.07 m within 1-250 m
+    RESULT: FAIL (4 of 5 checks passed)
+      report: /tmp/P1-E14-T10-evidence/export-nest-r3/sites__den_nest_1.blend.json
+      den_nest_1.blend failed validation: nothing written
+    
+    export sites: 0 of 1 source(s) exported
+
+  contracts-export.log: Task geometry validator falsely ray-hit beyond the anchor due to quantized local scale; fixed BVHs to world metres. Final all-seven check passes.
+  Last 20 lines:
+    23:22:54 | INFO: Blender create Mesh node COL_Buttress3
+    23:22:54 | INFO: Blender create Mesh node COL_HighRib0
+    23:22:54 | INFO: Blender create Mesh node COL_HighRib1
+    23:22:54 | INFO: Blender create Mesh node COL_HighRib2
+    23:22:54 | INFO: Blender create Mesh node COL_HighRib3
+    23:22:54 | INFO: Blender create Mesh node LairButtress0
+    23:22:54 | INFO: Blender create Mesh node LairButtress0
+    23:22:54 | INFO: Blender create Mesh node LairButtress0
+    23:22:54 | INFO: Blender create Mesh node LairButtress0
+    23:22:54 | INFO: glTF import finished in 0.07s
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/validate.py", line 64, in <module>
+        assert hit[0] is None, (file,'visual blocks approach',x,z,tuple(hit[0]))
+               ^^^^^^^^^^^^^^
+    AssertionError: ('packages/client/public/models/sites/den_apex_lair_0.glb', 'visual blocks approach', -0.38, 1.05, (-0.056714072823524475, 0.4935342073440552, -0.31570327281951904))
+    
+    Error: script failed, file: 'packages/tools/blender/dens/validate.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    
+    Blender quit

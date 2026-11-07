@@ -1,0 +1,50 @@
+VERDICT: PASS — P1.E14.T10 SOURCE REVIEW ONLY
+No blocking source finding. One nonblocking P3 source-topology advisory below.
+No prior findings were supplied. No merge or whole-task acceptance is implied.
+
+PROVENANCE
+Reviewed checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1
+Branch: task/P1-E14-T10-dens
+HEAD: e72f49005d4597a06aea1389aedeab99248ae6f5
+HEAD tree: ae7d621577089426309ccd561892fa06ac2db813
+Base/merge-base: 634c51d2378748c6a514af2a792ee4500b912643
+Base tree: 079eec371fa8605596700a7c80142ac9cbb95fa0
+Initial and final git status --porcelain=v1: empty.
+All 86 changed checkout files were compared against pinned Git blobs; all 48 LFS payloads matched their committed SHA-256 and size. The entire diff is retained in full.diff. No deletes. All seven blends and seven GLBs were hydrated before review; no LFS fetch/hydration occurred.
+Read task/global rules/0.9.5/0.10, DESIGN 12.2/19.2/19.3/19.4, art bible, all changed source/test/authoring scripts, manifest, preview inventory, all receipt records, and relevant consumer code. Plan, progress, decisions, shared material library and families.json unchanged. No other active worker's source was modified.
+
+ADVISORY — P3 — CLEAN DUPLICATE FACES FROM THE SAVED NEST LOD2
+Location: packages/tools/blender/dens/refine_nest_lods.py:41-44; actual retained asset assets/blend/sites/den_nest_1.blend, object den_nest_1_SculptLOD2.
+The saved explicit triangulated LOD2 contains three duplicate faces. Blender 5.2.3 LTS Mesh.validate(verbose=True, clean_customdata=False) on an in-memory COPY returns True and reports face 1563 duplicating 1562, 2849 duplicating 1561, and 2855 duplicating 2852. Source has 2,869 triangles; shipped LOD2 has 2,866 and passes mesh validity. Cleanup belongs in the saved editable source after triangulation (and add a read-only per-LOD validity check), so the source does not depend on export/import removing duplicates. This is nonblocking because the exact current export is valid; no shipped defect was reproduced.
+Executed repro (cwd is reviewed checkout):
+  PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/P1-E14-T10-source-review-e72f490 python3 packages/tools/blender/dens/run.py --seconds 300 --log /tmp/P1-E14-T10-source-review-e72f490/blender-validation.log -- -P /tmp/P1-E14-T10-source-review-e72f490/validate-assets.py
+Result: exit 1 at the source duplicate-face assertion. Original failure retained, not relabelled PASS.
+The v2 review harness records source validity without stopping, while retaining hard assertions for shipped export validity, to finish checking the rest. It does not modify any asset or production validator.
+
+FRESH VERIFICATION
+1. python3 /tmp/P1-E14-T10-source-review-e72f490/check-bytes.py
+   PASS twice, including after all execution. byte-audit.json records all file hashes and protected Git identities. Manifest source/export SHA-256 and sizes match actual bytes; contract and topology receipt hashes agree. Selected preview hashes and manifest binding agree.
+
+2. pnpm exec vitest run --configLoader runner --no-cache --maxWorkers 2 packages/client/src/gameplay/Structures.dens.test.js packages/client/src/gameplay/modelLibrary.test.js packages/client/src/gameplay/Flora.test.js packages/client/src/gameplay/resonanceFx.test.js packages/shared/test/dens.species.test.ts packages/shared/test/dens.golden.test.ts packages/shared/test/resourceNodes.test.ts packages/shared/test/resourceNodes.golden.test.ts packages/shared/test/resourceNodeRefs.test.ts packages/tools/src/fixtures/dens-golden.test.ts packages/server/src/fauna/terrain.test.ts
+   PASS: 11 files, 124 tests, 17.23 seconds. focused-tests.log. These are pure CPU tests; no server process or DB was started. Not a claim to have rerun the worker's entire reported 220-test set or typecheck/lint/format commands.
+
+3. PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/P1-E14-T10-source-review-e72f490 python3 packages/tools/blender/dens/run.py --seconds 300 --log /tmp/P1-E14-T10-source-review-e72f490/blender-validation-v2.log -- -P /tmp/P1-E14-T10-source-review-e72f490/validate-assets-v2.py
+   PASS: seven sources and seven actual compressed exports pass unchanged family validation and den contracts. 28/28 shipped LOD meshes valid; all finite, UV-bearing and free of a duplicate Wear/COLOR_0 multiplier. All LOD0 counts meet building budget; descending four LODs and LOD3 below 5%. KTX2/BasisU maps, UASTC normal/ETC1S colour and packed ORM, full mip chains, colour/data spaces, required meshopt/quantization extensions and texture budgets pass. Each export's retained measurement is 16 MB under the validator's compressed texture accounting; this is not live GPU-memory measurement.
+   All seven LOD0 source/export vertex sets match bidirectionally within 0.000959 m after decompression. Saved sources retain local editable geometry, part vertex groups, UVs, packed maps, hidden editable Wear paint backup, metric units, grid and biped refs. Spawn and Interact_Spawn at origin; radial geometry within planner footprints 4/6/5/10 m; transformed collider boxes and source/export approach checks pass. 48 colliders total. Family asset summaries exactly match all 14 stored reports. Contract records exactly match after absolute-path normalization. geometry-audit.json, contracts.json, *.validation.json, receipt-comparison.txt.
+   Two sequential factory-background validation processes total, never overlapping, each -t 2, 300-second deadline, no render/bake/save. The first stopped on the source advisory; the second completed the remaining audit. Both owned processes exited.
+
+4. pnpm exec tsx /tmp/P1-E14-T10-source-review-e72f490/consumer-check.mjs
+   PASS: actual Planet + shared planner + pure server planWorld + Structures, with real meshopt GLTFLoader decoding and file-backed loadAsync transport. Original texture slots omitted only in transient CPU GLB copies; no GPU decoding claim.
+   Loaded all seven exact den paths plus existing structures.glb through loadLibrary. Existing flora and creature fixture identities and recoloured arrays unchanged; existing outpost roots still registered. The loader extension is confined to the structures startup slot and publishes the complete den group only after all den promises validate. Existing tests reproduce missing-file and missing-marker rejection; no den procedural fallback.
+   349 actual tier-3 planned dens: lush seed31 radius22000 (105), alien seed57 radius20000 (109), frozen seed5 radius24000 (135). Client/server den plans and pad arrays match exactly. Spawn placement matches sampled ground, arbitrary den yaw, tilted spinning planet, and floating origin. Max sampled-height error <9e-12 m; per-LOD local matrix error <8e-12. Every decoded vertex remains inside its chosen footprint after LOD reparenting. Mesh geometry/material ownership remains shared with cached roots. Real collidePlayer moves penetrations on all 349 cases. No reward interaction. Unbuild removes instances, preserves cache identities; focused tests additionally prove all variants, 0/80/220/650 m LOD switching, discovery, approach/unload/rebuild/reset and no shared geometry disposal.
+   consumer-check.json and consumer-check.log.
+
+5. Golden regeneration checks passed in the focused suite. Independent base/head structural comparison finds exactly 28 changed ground records: seven living archetypes at tiers 2-5. Their complete before/after values equal fixture-changes.json. All sampled-cell counts/digests/layers, lifeless-world fixture entries, tier0/1 fixture entries and non-ground metadata remain identical. This unchanged statement is about the fixture's samples, not a global assertion that tier-1 den pads cannot change terrain elsewhere.
+
+6. Preview inventory: 21 selected CPU images + 13 retained historical committed images + 14 retained earlier /tmp images = 48 total lane images, 49,739,283 bytes. All selected images bind current source/export hashes. Earlier rejected nest GLB and FAIL receipt remain in /tmp/P1-E14-T10-evidence/export-r2; old LOD3 1569/28822 versus current 517/28822. No images were generated in this review. CPU previews were inventoried and byte-verified, not visually graded.
+
+7. git diff --check BASE HEAD: PASS. git merge-base BASE HEAD equals BASE. Repeated final byte audit and status confirm reviewed checkout unchanged.
+
+CLEANUP AND LIMITS
+Only new review evidence under /tmp/P1-E14-T10-source-review-e72f490 is retained. Temporary texture-decoding directories were automatically removed by the existing loader. No child agents, Git edits/commits, fetching/hydration, GPU/browser/render/bake, server/DB, smoke, CI, queue or merge actions. All owned test/Blender processes finished. The checkout remains on the pinned head and clean.
+This is source/CPU consumer evidence, not runtime traversal or a blind visual grade. Whole-task acceptance still requires standard three-light LOD0/LOD2, wireframe, overlays, far view, turntable/material coverage, real-world drawing/traversal and actual texture loading, blind visual grade, smoke and merged checks. T13 performance qualification remains pending and was not used as a blocker or inferred from these tests.

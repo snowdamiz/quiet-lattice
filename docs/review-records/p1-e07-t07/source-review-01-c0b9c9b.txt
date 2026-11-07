@@ -1,0 +1,99 @@
+VERDICT: REVISE — P1.E07.T07 Symbiotic I–II, independent source review R1
+
+Previous reviewer findings: NONE (first independent round). Four new P2 findings below. No source fixes were made.
+
+Pins and scope
+
+- Read-only checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d
+- Branch: task/P1-E07-T07
+- Final HEAD: c0b9c9ba966302b3e7b960129e1c8307e35b7667
+- Final tree: 1a41525cc9f0c635b5400679449421b9dfff1051
+- Implementation: be2d4704b8d5ba837a2da28ac106cdfaf81b38c9
+- Implementation tree: d441cf0b8063559f43b10d545c1d493353e45fe7
+- Base: 634c51d2378748c6a514af2a792ee4500b912643
+- Base tree: 079eec371fa8605596700a7c80142ac9cbb95fa0
+- Implementation parent is exactly base; final parent is exactly implementation. Base ancestor check exit 0.
+- Initial and final porcelain status empty, including untracked files. No branch switch, source edit, commit, or merge.
+- /tmp/space-symbiotic-t07/patch.diff is byte-identical to git diff BASE IMPLEMENTATION; SHA-256 4921ae928354af5682a43ed9c6d730bb5573fd7a178781d6f5fbd4f430758cf2.
+- Final delta is exactly the two Repair Drones description replacements in DESIGN and shared skill data. No runtime change since implementation.
+- Review covered all 22 final changed files, production and tests, plus adjacent action consumers. Read the supplied Appendix-C.2 and follow-up reports, plan 0.3/0.9.5/T07/T16, DESIGN 9.5/12.1 and Phase 1 combat policy, and relevant ARCHITECTURE sections. Applied TypeScript and its type-system-discipline prerequisite, plus read-only review guidance.
+- Current independent run: Darwin arm64, Node v22.23.3, pnpm 12.15.0. Worker report says its earlier runs used Node v26.12.1; those are separate evidence.
+
+F1 — P2: A sleeping destination replays shield-regeneration time
+
+Location: packages/server/src/combat/zone.ts:291 (new transfer clock assignment), :508-514 (new regeneration integration); packages/server/src/zones/manager.ts:209-230 (only newly created zones receive the current clock).
+
+ZoneManager.open wakes a retained sleeping zone without advancing its old zone.time. transfer then replaces the incoming pool's regeneration cursor with that old time. The next step integrates an interval already credited in the source. A new player damaged before the first wake tick also records the old time as hitAt and can skip the six-second delay entirely.
+
+Concrete reproduction: real ZoneManager with its default 30-second sleep policy, injected monotonic/world time, an empty deep:0 opened at t=1000 and slept at t=1031; a player takes 50 shield damage in sys:0, regenerates normally for seven seconds, submits accepted movement across the 6e9 boundary, and transfers using ZoneManager.follow into the sleeping deep:0. Shield immediately before/after transfer is 55. The next 0.05-second tick raises it to 60.25: +5.25 instead of +0.25. A second case joins the sleeping zone at t=1031, takes a fresh 40-point hit, and is back at full 100 shield at t=1031.05 instead of remaining at 60.
+
+Evidence: shield-review.test.ts, shield-sleep.log; both assertions fail on the real manager/movement/zone/combat path. No timer, network, DB or service startup. Fix direction: use the actual handoff/join clock and preserve monotonic elapsed accounting; waking a retained zone must initialize its clock/frame state consistently before damage or placement. Do not rewind the regeneration cursor to the destination's last tick.
+
+F2 — P2: Retiring a cast callback strands the burn status and suppresses a valid new Sear
+
+Location: packages/server/src/abilities/service.ts:419-422. Existing consumers: abilities/thermal.ts:20-35; abilities/statuses.ts:39-47.
+
+The new after wrapper discards the timer when live() becomes false. That prevents ignite's timer from executing its status.remove cleanup. Statuses.apply assumes that a retained status still has its timer and returns false while its one-second end grace is held. Consequently a fresh Sear just after its eight-second cooldown extends the orphan status but creates no new damage loop.
+
+Concrete reproduction: cast shipped Sear on a real creature; its first half-second tick removes 2.5 HP. Enter and leave an event phase using the real PhaseManager, then wait until the original eight-second cooldown ends. Cast Sear again on the same target and advance one second. Both casts report cast, total heat paid is 40, the new readyAt is 1016, but total damage remains 2.5 HP. This fails the actual health assertion, not an attack/state-only assertion. Repeated on-cooldown casts can continue extending the orphan.
+
+Evidence: thermal-review.test.ts, reproductions.log. Fix direction: context retirement needs generation-safe status/timer cleanup, or an explicit effect cancellation path. A fresh application must not reuse a status whose producer was retired. Do not restore late damage merely to let cleanup run.
+
+F3 — P2: A retired Lance still reports on and consumes the next activation as off
+
+Location: packages/server/src/abilities/service.ts:419-422 and :330-343; mismatched toggle authority at :588-605.
+
+The context now retires permanently on presence/life changes, but holds/settle/state do not consult that retired context. Thus a phase departure/return stops the shipped Lance callback forever while its toggle remains registered and replicated as active. The next legitimate cast hits the old-toggle branch and returns ended rather than starting a new beam.
+
+Concrete reproduction: shipped Lance removes 3 HP in its first 0.25 seconds. Enter/leave an event phase, then fire for another 0.5 seconds: damage remains 3, abilities.on is still ["lance"], and the next activation returns result="ended". The target and caster remain alive, in range, on foot and with Lance owned/slotted. This is an existing action consumer regression from the generic context change.
+
+Evidence: thermal-review.test.ts, reproductions.log. Fix direction: include the same context generation validity in toggle settling, call the effect's end exactly once, remove the toggle, and notify clients when the generation retires. Keep retirement and replicated toggle authority consistent.
+
+F4 — P2: Refund/rebuy between ticks preserves old Bond and Regrow work
+
+Location: packages/server/src/abilities/service.ts:342 and :303-305; Bond eligibility closure at :448. Gateway subscription at gateway/ws.ts:411 already calls skillsChanged synchronously.
+
+The live latch only observes current bought state when a timer/AI callback next runs. skillsChanged settles toggles only; neither the non-toggle contexts nor the companion are invalidated at ownership loss. Refund and repurchase before that callback therefore conceal the invalid interval and preserve the old action, contrary to the stated dismissal/no-resurrection contract. Big Game's codex eligibility closure similarly has no generation for a lost-and-restored requirement.
+
+Concrete reproduction through actual SkillService, InventoryService, CodexService, CastService, MeterService, Zone and fauna, with the normal skills.subscribe -> casts.skillsChanged wiring: cast Bond, respec Bond, buy it again before a fauna tick. Both skill operations succeed, the refund charges 500 units (2500 -> 2000), but companion owner remains 2 after the tick. With Regrow, cast at 40 suit HP, successfully refund and rebuy Regrow before its first timer, then run 6.1 seconds: the old cast heals to 80 even though the refund also removed Regrow from the bar. No fresh cast was made.
+
+Evidence: real-skills-review.test.ts, real-skills.log; two failed assertions. Initial mutable-skill-reader probes in symbiotic-review.test.ts/reproductions.log are retained, but the finding relies on the later real service reproduction. The fixture supplies trainerAtHand=true, the intentional trainer authority seam; this proves the public respec/consumer contract, not an independently exercised live trainer UI. Production's default trainer hook is currently false. Fix direction: observe and latch loss of each effect's required ownership/eligibility in the synchronous skill notification; retire the affected context/companion without waiting for the next timer. Unrelated skill changes should not cancel valid work.
+
+Coverage and interpretation
+
+All nine requested nodes have production consumers. Bond/Call use actual fauna and ZoneCombat; companion identity/health/level are retained rather than recreated or owner-scaled. Companion strike credit maps through the owner, while damage uses the creature's native level. Regrow/Spore affect suit health; Repair Drones affects the real hull. Second Lung and Thick Hide reuse the existing meter modifiers. Symbiont Hull consumes capacity and regeneration modifiers; Big Game uses the analysed codex body-plan gate.
+
+The new common control boundary requires harmable as well as resistance, covering shipped Pulse/Harmonic stun/calm; player-owned targets are rejected for cast damage/control and player weapon damage. The previously reported Pulse RED and companion health-loss regression have passing focused tests at this pin. Frame/mode/phase generations, session epochs and life generations cover the supplied departure/return, reconnect and immediate suit-recovery cases. Companion despawn removes its AI membership, and replacement validates the new target before dismissing the old one. The explicit exceptions are F1-F4 above.
+
+The 547-test run includes the new 38-test Symbiotic service suite and adjacent ability, meter, combat, fauna, phase and zone suites. It exercises actual health loss, follow, taunt, native level retention, refusal/resource/cooldown behavior, healing caps, stationary Spore, Call contact, lifecycle cancellation and the reported ordinary fresh-zone/frame changes. It does not cover the new independent counterexamples above.
+
+The worker's five initial missing-effect/regen RED cases, collision-reach HP-stuck case, and Pulse-control RED are historical worker findings, not prior independent R1 findings. Their focused final tests pass here; that does not independently requalify the worker's DB/integration or visual evidence. Copy synchronization is verified and no longer an open item.
+
+Reviewed the entire DECISIONS block. Accepted parent tuning was treated as selected policy, including shield 5/s after 6 seconds, 1.25 capacity/1.5 regeneration, 20-second flight drones separate from 20/s dock repair, Bond ranges/attack cadence, Regrow party/range/lifetime, stationary Spore and single-contact Call. No additional concrete numeric spec conflict was found. Parent recording those decisions remains a parent acceptance obligation; lack of that copy in the worker branch is not a new finding here. T16 is a live eligibility prerequisite, not proof of future Void passives/effects. No Tier III riding/copying/owner scaling, restored Gravitic branch or general fauna-player combat is claimed.
+
+Command and exit ledger
+
+All commands ran from /Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d unless the command names an absolute report path. Logs are in this report's directory. Vitest concurrency was explicitly capped at two workers; jobs ran sequentially. --no-cache avoided test cache writes.
+
+1. git status --short; git rev-parse HEAD HEAD^{tree}; git branch --show-current; git rev-parse be2d4704b8d5ba837a2da28ac106cdfaf81b38c9^{tree}: exit 0. Clean and exact pins above.
+2. git diff --check 634c51d2378748c6a514af2a792ee4500b912643 HEAD: exit 0.
+3. Python read-only provenance check using git rev-parse, git merge-base --is-ancestor BASE HEAD, and byte comparison of git diff BASE IMPLEMENTATION against patch.diff: exit 0; exact match. Retained source-pins.txt and reviewed.patch.
+4. pnpm exec vitest run packages/server/src/abilities packages/server/src/fauna packages/server/src/combat packages/server/src/zones packages/server/src/phases packages/server/src/meters packages/shared/src/ships packages/shared/test/data.test.ts --maxWorkers=2 --no-cache
+   Exit 0; PASS, 32 files / 547 tests, 17.00 seconds. cpu-regressions.log.
+5. pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r1-c0b9c9ba/vitest.config.ts --maxWorkers=2 --no-cache
+   Exit 1; four behavior assertions failed in two files (Lance, Sear, initial Bond/Regrow reader probes), 712 ms. reproductions.log. The temporary config was subsequently renamed to vitest.config.mts to remove an ESM/CJS configuration warning; its test settings are identical. To repeat only the authoritative Thermal pair with the current config:
+   pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r1-c0b9c9ba/vitest.config.mts thermal-review.test.ts --maxWorkers=2 --no-cache
+6. pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r1-c0b9c9ba/vitest.config.mts real-skills-review.test.ts --maxWorkers=2 --no-cache
+   Exit 1; two real-service behavior assertions failed, 393 ms. real-skills.log.
+7. pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r1-c0b9c9ba/vitest.config.mts shield-review.test.ts --maxWorkers=2 --no-cache
+   Exit 1; two real-manager/combat behavior assertions failed, 395 ms. shield-sleep.log.
+8. uname -sm; node --version; pnpm --version: exit 0; toolchain above.
+9. Final independent Python exact-HEAD/tree/branch/clean-status assertions: exit 0; final-audit.json.
+
+The four findings have six authoritative failing behavior cases (two Thermal, two real skill-service, two sleeping-zone shield), plus two retained preliminary reader probes. These are expected-red review reproductions, not a green qualification. No fix/green claim is made.
+
+Limits
+
+SOURCE correctness: REVISE. Full integration/DB QA: NOT RUN here, assigned separately to the exclusive-fixture QA owner. No DB client, service, GPU, browser, capture, full smoke, cloud, CI, push, PR comment, queue command or merge was started. Full workspace typecheck/lint/format and the worker's complete 2740-unit/71-integration suite are worker-reported, not independently rerun here. The focused run and reproductions above are the independent execution evidence.
+
+Client Game/Fauna/HUD/Multitool are unchanged by this diff. Drawn companion/picking proof still requires the merged E08.T09 renderer and remains a separate pending visual gate. This source report does not accept the whole task/phase, visual output, integration run, or merge readiness.

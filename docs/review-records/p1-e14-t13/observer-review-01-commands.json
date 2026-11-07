@@ -1,0 +1,107 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/tools/src/capture/browser-work-",
+      "packages/tools/src/capture/cloud-march-",
+      "packages/tools/src/capture/trace-observer",
+      "packages/client/src/dev/native-work-class-probe.test.js",
+      "packages/client/src/dev/dependent-output.test.js",
+      "packages/client/src/dev/gpu-completion.test.js",
+      "packages/client/src/dev/review.test.js",
+      "--maxWorkers=2",
+      "--no-cache",
+      "--fsModuleCachePath",
+      "/tmp/p1-e14-t13-review-v9pt79u2/vitest-cache",
+      "--configLoader",
+      "runner"
+    ],
+    "exit": 0,
+    "seconds": 5.968985080718994
+  },
+  {
+    "name": "tools-typecheck",
+    "command": [
+      "pnpm",
+      "exec",
+      "tsc",
+      "-p",
+      "packages/tools",
+      "--noEmit",
+      "--incremental",
+      "false"
+    ],
+    "exit": 0,
+    "seconds": 2.4335029125213623
+  },
+  {
+    "name": "client-typecheck",
+    "command": [
+      "pnpm",
+      "exec",
+      "tsc",
+      "-p",
+      "packages/client",
+      "--noEmit",
+      "--incremental",
+      "false"
+    ],
+    "exit": 0,
+    "seconds": 2.168489933013916
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "2f54def2aa82ef92fcd46e6654f9a375e1437d11",
+      "07a3220bb5c46114006322a45503b9dcb79affce"
+    ],
+    "exit": 0,
+    "seconds": 0.015652179718017578
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "/tmp/p1-e14-t13-review-v9pt79u2/adverse.mts"
+    ],
+    "exit": 0,
+    "description": "Diagnostic sweep; reproduces invalid observed packets and retains raw results"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "/tmp/p1-e14-t13-review-v9pt79u2/false-complete.mts"
+    ],
+    "exit": 1,
+    "description": "Four rejected/cancelled cases incorrectly resolve observed; assertion fails"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "/tmp/p1-e14-t13-review-v9pt79u2/capture-consumers.mts"
+    ],
+    "exit": 0,
+    "description": "Actual openReview with CPU page ports, default and pinned asset paths"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "tsx",
+      "/tmp/p1-e14-t13-review-v9pt79u2/contract-regressions.mts"
+    ],
+    "exit": 1,
+    "description": "Six new contract assertions fail against exact production dispatcher"
+  }
+]

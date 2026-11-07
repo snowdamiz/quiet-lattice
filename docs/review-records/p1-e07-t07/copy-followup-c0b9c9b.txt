@@ -1,0 +1,20 @@
+FOLLOW-UP REPORT NOTE — Repair Drones copy synchronization
+
+Final review pin: c0b9c9ba966302b3e7b960129e1c8307e35b7667
+Final tree: 1a41525cc9f0c635b5400679449421b9dfff1051
+Follow-up base: be2d4704b8d5ba837a2da28ac106cdfaf81b38c9
+Branch: task/P1-E07-T07; worktree CLEAN.
+
+Removed exactly ` (today: only docked)` from the matched Repair Drones strings in docs/DESIGN.md and packages/shared/src/data/skills/symbiotic.ts. Both now read `Hull regenerates 1/s in flight`. The delta is exactly two one-line description edits; an exact before/after byte comparison proves every other byte in both files unchanged and no other repository file changed. Costs, cooldowns, runtime behavior/tuning, the 20-second flight effect at 1 hull/s, and separate 20 hull/s docked repair remain unchanged. No orchestration document edits.
+
+Focused validation:
+- `pnpm exec vitest run packages/shared/test/data.test.ts -t 'every node matches its row in DESIGN' --maxWorkers=2`: PASS, one selected shared-spec text contract test; 72 unrelated tests skipped. Log: followup-contract.log.
+- `pnpm exec prettier --check packages/shared/src/data/skills/symbiotic.ts`: PASS. Log: followup-format.log.
+- `git diff --check`: PASS. Exact delta proof: followup-delta-proof.log; committed diff: followup-copy.patch.
+
+This closes and supersedes the original report's stale-copy follow-up item. The earlier 2,740-unit/71-integration evidence was collected at be2d4704; those full suites were not rerun for this copy-only follow-up. No DB, GPU, full smoke or new services were started. Parent fresh review and remaining full integration/visual acceptance still apply to the final pin above.
+
+Original implementation report follows unchanged as historical evidence.
+
+---
+

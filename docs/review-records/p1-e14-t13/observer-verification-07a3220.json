@@ -1,0 +1,427 @@
+{
+  "task": "P1.E14.T13 source-only trace-observer continuation",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8",
+  "branch": "codex/task/P1-E14-T13-trace-observer",
+  "base": "2f54def2aa82ef92fcd46e6654f9a375e1437d11",
+  "recovery": "293a87dff4abf7b4e7a6ac3ce65eae5c6d539ea5",
+  "head": "07a3220bb5c46114006322a45503b9dcb79affce",
+  "tree": "9bf4e042307c06cadf5aa590f9963016e15cfaf6",
+  "retainedHead": "7fb34e4eeeb320cb591982d524a80abe1842dfc8",
+  "reviewedCheckpoint": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+  "retainedImplementation": "907439e9c5984f756a42eb32d0a69631885a84b7",
+  "cleanStatus": "",
+  "checks": [
+    {
+      "name": "focused-tests",
+      "argv": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "packages/tools/src/capture/browser-work-",
+        "packages/tools/src/capture/cloud-march-",
+        "packages/tools/src/capture/trace-observer",
+        "packages/client/src/dev/native-work-class-probe.test.js",
+        "packages/client/src/dev/dependent-output.test.js",
+        "packages/client/src/dev/gpu-completion.test.js",
+        "packages/client/src/dev/review.test.js",
+        "--maxWorkers=2"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-07T04:47:23.346228+00:00",
+      "finishedAt": "2026-11-07T04:47:28.666184+00:00",
+      "log": "/tmp/p1-e14-t13-trace-observer.19zmpb7v/focused-tests.log"
+    },
+    {
+      "name": "tools-typecheck",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@astra/tools",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-07T04:47:28.666267+00:00",
+      "finishedAt": "2026-11-07T04:47:31.085032+00:00",
+      "log": "/tmp/p1-e14-t13-trace-observer.19zmpb7v/tools-typecheck.log"
+    },
+    {
+      "name": "client-typecheck",
+      "argv": [
+        "pnpm",
+        "--filter",
+        "@astra/client",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-07T04:47:31.085126+00:00",
+      "finishedAt": "2026-11-07T04:47:33.402830+00:00",
+      "log": "/tmp/p1-e14-t13-trace-observer.19zmpb7v/client-typecheck.log"
+    },
+    {
+      "name": "scoped-lint",
+      "argv": [
+        "pnpm",
+        "exec",
+        "eslint",
+        "packages/client/src/dev/dependent-output.js",
+        "packages/client/src/dev/dependent-output.test.js",
+        "packages/client/src/dev/gpu-completion.js",
+        "packages/client/src/dev/gpu-completion.test.js",
+        "packages/client/src/dev/native-work-class-probe.js",
+        "packages/client/src/dev/native-work-class-probe.test.js",
+        "packages/client/src/dev/review.js",
+        "packages/client/test/timer-renderer.js",
+        "packages/tools/src/capture/benchmark-runs.ts",
+        "packages/tools/src/capture/browser-work-checkpoint.test.ts",
+        "packages/tools/src/capture/browser-work-context.test.ts",
+        "packages/tools/src/capture/browser-work-launch.test.ts",
+        "packages/tools/src/capture/browser-work-probe.ts",
+        "packages/tools/src/capture/browser-work-protocol.test.ts",
+        "packages/tools/src/capture/browser-work-report.test.ts",
+        "packages/tools/src/capture/browser-work-report.ts",
+        "packages/tools/src/capture/browser-work-serialization.test.ts",
+        "packages/tools/src/capture/browser-work-trace.test.ts",
+        "packages/tools/src/capture/browser-work-trace.ts",
+        "packages/tools/src/capture/capture.ts",
+        "packages/tools/src/capture/cloud-march-capture.ts",
+        "packages/tools/src/capture/cloud-march-page.ts",
+        "packages/tools/src/capture/cloud-march-report.ts",
+        "packages/tools/src/capture/cloud-march-serialization.test.ts",
+        "packages/tools/src/capture/cloud-march-trace.test.ts",
+        "packages/tools/src/capture/native-pass-probe.ts",
+        "packages/tools/src/capture/native-recorder-observer.ts",
+        "packages/tools/src/capture/native-trace.ts",
+        "packages/tools/src/capture/native-vite-child.ts",
+        "packages/tools/src/capture/native-vite.ts",
+        "packages/tools/src/capture/native-work-class-budget.ts",
+        "packages/tools/src/capture/timer-boundaries.ts",
+        "packages/tools/src/capture/trace-observer-entry.test.ts",
+        "packages/tools/src/capture/trace-observer-report.ts",
+        "packages/tools/src/capture/trace-observer.test.ts",
+        "packages/tools/src/capture/trace-observer.ts"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-07T04:47:33.403005+00:00",
+      "finishedAt": "2026-11-07T04:47:34.365638+00:00",
+      "log": "/tmp/p1-e14-t13-trace-observer.19zmpb7v/scoped-lint.log"
+    },
+    {
+      "name": "scoped-format",
+      "argv": [
+        "pnpm",
+        "exec",
+        "prettier",
+        "--check",
+        "packages/client/src/dev/dependent-output.js",
+        "packages/client/src/dev/dependent-output.test.js",
+        "packages/client/src/dev/gpu-completion.js",
+        "packages/client/src/dev/gpu-completion.test.js",
+        "packages/client/src/dev/native-work-class-probe.js",
+        "packages/client/src/dev/native-work-class-probe.test.js",
+        "packages/client/src/dev/review.js",
+        "packages/client/test/timer-renderer.js",
+        "packages/tools/src/capture/benchmark-runs.ts",
+        "packages/tools/src/capture/browser-work-checkpoint.test.ts",
+        "packages/tools/src/capture/browser-work-context.test.ts",
+        "packages/tools/src/capture/browser-work-launch.test.ts",
+        "packages/tools/src/capture/browser-work-probe.ts",
+        "packages/tools/src/capture/browser-work-protocol.test.ts",
+        "packages/tools/src/capture/browser-work-report.test.ts",
+        "packages/tools/src/capture/browser-work-report.ts",
+        "packages/tools/src/capture/browser-work-serialization.test.ts",
+        "packages/tools/src/capture/browser-work-trace.test.ts",
+        "packages/tools/src/capture/browser-work-trace.ts",
+        "packages/tools/src/capture/capture.ts",
+        "packages/tools/src/capture/cloud-march-capture.ts",
+        "packages/tools/src/capture/cloud-march-page.ts",
+        "packages/tools/src/capture/cloud-march-report.ts",
+        "packages/tools/src/capture/cloud-march-serialization.test.ts",
+        "packages/tools/src/capture/cloud-march-trace.test.ts",
+        "packages/tools/src/capture/native-pass-probe.ts",
+        "packages/tools/src/capture/native-recorder-observer.ts",
+        "packages/tools/src/capture/native-trace.ts",
+        "packages/tools/src/capture/native-vite-child.ts",
+        "packages/tools/src/capture/native-vite.ts",
+        "packages/tools/src/capture/native-work-class-budget.ts",
+        "packages/tools/src/capture/timer-boundaries.ts",
+        "packages/tools/src/capture/trace-observer-entry.test.ts",
+        "packages/tools/src/capture/trace-observer-report.ts",
+        "packages/tools/src/capture/trace-observer.test.ts",
+        "packages/tools/src/capture/trace-observer.ts"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-07T04:47:34.365747+00:00",
+      "finishedAt": "2026-11-07T04:47:34.927295+00:00",
+      "log": "/tmp/p1-e14-t13-trace-observer.19zmpb7v/scoped-format.log"
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "2f54def2aa82ef92fcd46e6654f9a375e1437d11",
+        "07a3220bb5c46114006322a45503b9dcb79affce"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-07T04:47:34.927401+00:00",
+      "finishedAt": "2026-11-07T04:47:34.942401+00:00",
+      "log": "/tmp/p1-e14-t13-trace-observer.19zmpb7v/diff-check.log"
+    },
+    {
+      "name": "disabled-proposal",
+      "argv": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/tools/src/capture/trace-observer.ts",
+        "--proposal"
+      ],
+      "exitCode": 0,
+      "startedAt": "2026-11-07T04:47:34.942522+00:00",
+      "finishedAt": "2026-11-07T04:47:35.130618+00:00",
+      "log": "/tmp/p1-e14-t13-trace-observer.19zmpb7v/disabled-proposal.log"
+    }
+  ],
+  "unchanged": {
+    "oldTraceAlgorithmsByteIdentical": true,
+    "oldCaptureAndPageAlgorithmsByteIdentical": true,
+    "perfUnchanged": true,
+    "warmUpUnchanged": true,
+    "productionRendererUnchanged": true,
+    "retainedHead": "7fb34e4eeeb320cb591982d524a80abe1842dfc8",
+    "parentDocsUnchanged": true
+  },
+  "files": [
+    {
+      "path": "packages/client/src/dev/dependent-output.js",
+      "blob": "6c60d6a26941374065fb453b9fb6562934c3fd6b",
+      "sha256": "96107d34a95f02b5aa596303943c1c66e97d307f71fa247f9631401ca03032bf",
+      "bytes": 5380
+    },
+    {
+      "path": "packages/client/src/dev/dependent-output.test.js",
+      "blob": "8c6e12c6f7b451a22b27d509ea6e020769f3fc76",
+      "sha256": "abf42bd3cccae7b11f7562bf9ea12d64153166af1057ee79d98c9ccf1d35e106",
+      "bytes": 2687
+    },
+    {
+      "path": "packages/client/src/dev/gpu-completion.js",
+      "blob": "2cac32c261141c0304ac7f98d2937e5fee0d8170",
+      "sha256": "9a37496be513d5cf6fe263ab6f127a4a5b29e9e2f48c0482992b4cfdef85f852",
+      "bytes": 2123
+    },
+    {
+      "path": "packages/client/src/dev/gpu-completion.test.js",
+      "blob": "8849f3d050965b86ef0f49a0555545b2f6d8a8dd",
+      "sha256": "b0a48f24850fc25655cc3afe3ef759c39ae9dc8368f5052621de2cd173364429",
+      "bytes": 2588
+    },
+    {
+      "path": "packages/client/src/dev/native-work-class-probe.js",
+      "blob": "8f46eee997b3d9ff3c46a4684ab35f268b90e24f",
+      "sha256": "b7845f43884f21bce25aaea163dc0f2573880c8a45eb9893188ccc3960c94ba4",
+      "bytes": 10274
+    },
+    {
+      "path": "packages/client/src/dev/native-work-class-probe.test.js",
+      "blob": "fe492861b924e4bf8ca964d0a5ffc59fe9304759",
+      "sha256": "5b38c8bc8d527536d7e165f0d5e697f46d959d0dc940a2de22391de235c9de95",
+      "bytes": 13665
+    },
+    {
+      "path": "packages/client/src/dev/review.js",
+      "blob": "cd187448919761e9c7f4e9aeb064ca20f4d7c040",
+      "sha256": "c76bb8d590d822340567381bf2460f36cc23bb9788b242532558ea96fbcd19fc",
+      "bytes": 62957
+    },
+    {
+      "path": "packages/client/test/timer-renderer.js",
+      "blob": "47a3bdcf062081170c6988d15acad2055f3ca610",
+      "sha256": "19c2b0a7bca749e5772c1d6bda663b68f463bae0f7274205731a526136fa3b2e",
+      "bytes": 2223
+    },
+    {
+      "path": "packages/tools/src/capture/benchmark-runs.ts",
+      "blob": "75f4660613e7e58fb2d32456d93cd619fde6e625",
+      "sha256": "501b7c086f06415decd35b4b5c3fcb1b4ba0dac7b4fb95b548ed7219f38f4cb2",
+      "bytes": 1895
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-checkpoint.test.ts",
+      "blob": "20e43beee342f7c6dad463138b8c55b2b6b49d13",
+      "sha256": "155e734b47030a7b49f3f24e625b7daf701a87e04ce7984e27d81b8afafe9592",
+      "bytes": 2854
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-context.test.ts",
+      "blob": "f82ec41bcae282497f619d7ecf98cd0b4b6fd1fc",
+      "sha256": "b27f35ae5f6bd787e28ec11e921f0c58f295eccc895d59496c62cf6feb433987",
+      "bytes": 5233
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-launch.test.ts",
+      "blob": "2b0695cd93ee9b239efa32e892bcde5c0799eba0",
+      "sha256": "315b0254b2738071d2449b1b5f3a039b5a7b2d61c2422cb40be9a21342a6f8c1",
+      "bytes": 3356
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-probe.ts",
+      "blob": "c2196b23f4648daa6ddf81eeb97b9cb1c379c08f",
+      "sha256": "43c9b75c2cf30f54bb62c639060ccc1eb639f6ac31d373a25c6ea327ea68f08e",
+      "bytes": 29205
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-protocol.test.ts",
+      "blob": "96c7a016a69a5029462afa2ee4065b586657aaa9",
+      "sha256": "4adf3bee4416d0c0ec4b8c234791d5290659b7f773a7d0e61eaa9f4efd90acc1",
+      "bytes": 10948
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-report.test.ts",
+      "blob": "2938ddb967f883707ce63984af4f88bf268e66d9",
+      "sha256": "b2b4f0858c5f5cf6e182ea55400d4e5c2adff15f5092b674b3f9879295e0bd4a",
+      "bytes": 8336
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-report.ts",
+      "blob": "f2cb00a8f6ef118602e09fd8ab3f00ec80ad4335",
+      "sha256": "141e6c2a17f0e1bd264dfb9e23e7f14ba57eeeaba8d360a10e4d76b3043414eb",
+      "bytes": 5766
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-serialization.test.ts",
+      "blob": "264b249cec9b61dafdfca7f1b50ce35304b3e27a",
+      "sha256": "4741f694788deb132aad6e49693f8daddad6cd73f844c4b4e3ff609f2e275f00",
+      "bytes": 1845
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-trace.test.ts",
+      "blob": "9869f8da3f947f56b0777c674a3daa30725ae780",
+      "sha256": "ca96915bdfe9c1ef2af1091a3f833715c52c7470eeac36f3950aa4288de25853",
+      "bytes": 25513
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-trace.ts",
+      "blob": "965a8978dc2aa075ccdff7f349ed44fb6da47838",
+      "sha256": "a63c8be0ae9d96507a215e6b6392d32ce06f148e30f88c061f4f4b30202f64db",
+      "bytes": 49351
+    },
+    {
+      "path": "packages/tools/src/capture/capture.ts",
+      "blob": "1872eb4bffb7c87150c77055a4896f43ce611bab",
+      "sha256": "b249dd78151757635bd1100cf8faca5572dfb45bdeff0361c9d40f9fbaebd634",
+      "bytes": 21534
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-capture.ts",
+      "blob": "0a3440412bfd129166da6e448f29a04ccf4abca0",
+      "sha256": "ab1d87ea7b2ae71e820465fc93da3062b66c20028767829f4cc4836ccf29fe4b",
+      "bytes": 1014
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-page.ts",
+      "blob": "20f9d544ea69fbf34b84738cba5a384c1ec1299a",
+      "sha256": "06806e2458dd22f19a7b30efccdbf04df8519d4d646933b69543a3979ddf14b8",
+      "bytes": 1335
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-report.ts",
+      "blob": "cb7e9dad1c4342889103c5a6d8d05297b9e7b902",
+      "sha256": "9245871df3a043e30fc886aeb6183a9401337a32728201c6c40b7ec4c303b3c1",
+      "bytes": 6881
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-serialization.test.ts",
+      "blob": "f6e469139ff489071a0d8c5db0c6eeec87a20a8d",
+      "sha256": "75b15095a9df505f8f915d95fb4d8ab1603939fadc5110ea398926f77ddb4364",
+      "bytes": 1859
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-trace.test.ts",
+      "blob": "37dc8da7c537a94d68167a08d11bf9cabfb2b1cc",
+      "sha256": "c05ca6de9c09a4d1d6ac5af3ddf4ae8ad8ebfe2c41cd3df265aaa6338fb12c81",
+      "bytes": 4875
+    },
+    {
+      "path": "packages/tools/src/capture/evidence/trace-observer-source/recovery.json",
+      "blob": "3ffc52eedc4462c4876c35ae4a22dfc1c37d3428",
+      "sha256": "971e9905f7bbbb1a9ac01cde302b83029eb9d8d0fcffed4c5e7a60f75cbcda0d",
+      "bytes": 11589
+    },
+    {
+      "path": "packages/tools/src/capture/native-pass-probe.ts",
+      "blob": "b9a5f096392bb958c4744bab3af2b345f3aefeb0",
+      "sha256": "25cc79dbc7af54e91c19532188aaa2e6c5f8a4e09b3add14f525c7d9a02bf968",
+      "bytes": 22770
+    },
+    {
+      "path": "packages/tools/src/capture/native-recorder-observer.ts",
+      "blob": "ac355bcdc168a6202be75345f573453bddd95910",
+      "sha256": "2a61864e3cd2a03e8397879b836f62531f1c66db5cce2074bb77ffb791700e16",
+      "bytes": 5777
+    },
+    {
+      "path": "packages/tools/src/capture/native-trace.ts",
+      "blob": "1545773d324b01baca2ac6b234cac50a64adff74",
+      "sha256": "63a7479c513178b59261e1d3389ec9f7c742a18e9379d5d041b9a293fed729cf",
+      "bytes": 19170
+    },
+    {
+      "path": "packages/tools/src/capture/native-vite-child.ts",
+      "blob": "e5ad9a0523e8de469f5d80f6257e2b74874d0c89",
+      "sha256": "e2b57f663679a91e1992ddcbd45a1c38d9647111577f943705063ae04de5150d",
+      "bytes": 621
+    },
+    {
+      "path": "packages/tools/src/capture/native-vite.ts",
+      "blob": "6b978b5d2121d12e4e111601f914248ccdc8ba45",
+      "sha256": "3472a02000fb515a256f70a855e7fdc11112c6635d42f3d9146b1158d9253dfa",
+      "bytes": 2211
+    },
+    {
+      "path": "packages/tools/src/capture/native-work-class-budget.ts",
+      "blob": "eee965e67c77435eb1371611294a283795e2b4e1",
+      "sha256": "69a3462dd91e62f72c5cfa7674bc3a59c7d0e7aca0c6dce378c179c357613e77",
+      "bytes": 2317
+    },
+    {
+      "path": "packages/tools/src/capture/timer-boundaries.ts",
+      "blob": "c24ac912fb90f558bb01d167af466e34d342eb3b",
+      "sha256": "3e8143ce8f1ec3b10d54cad9636e909861c3f15acfd44153c07659cc35cfe8c0",
+      "bytes": 9119
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer-entry.test.ts",
+      "blob": "a95b4ca882648dbccd5f408a2fc98fe89dfd2b95",
+      "sha256": "8a68352f96a37c5f5f433d09992e9268c543f5581c448a4a986e2e65785a62f2",
+      "bytes": 2483
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer-report.ts",
+      "blob": "00b9aedff856494aad0bed04199f237193c522ff",
+      "sha256": "a89f69251c96a754270b28abce2514750116729d27ae8821dfd523bdd71c8b6e",
+      "bytes": 16415
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer.test.ts",
+      "blob": "f64578ec79c1929fd0d84afb1bb894f45c723e0a",
+      "sha256": "32027ab5e7c2dcc6312e96d1279444fb27e6fc4318c689a91499303124b55c80",
+      "bytes": 27603
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer.ts",
+      "blob": "8fe1108856162d70f43e52b1fe87628081cd0d38",
+      "sha256": "041c9325ff18d33f6ff499e7a4edfd98760a35786994cabfe2f7c4b5c7a6c526",
+      "bytes": 1929
+    }
+  ],
+  "runtimeExecuted": false,
+  "runtimeAuthorized": false,
+  "historicalCloud03": {
+    "status": "FAILED",
+    "accepted": false
+  },
+  "budgetQualified": false
+}
