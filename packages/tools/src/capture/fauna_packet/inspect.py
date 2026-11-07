@@ -33,15 +33,40 @@ def finite(values, count):
     return values
 
 
+def position_oracle(receipt):
+    audit = receipt.get('positionAudit')
+    check(isinstance(audit, dict) and audit.get('scope') == 'FAUNA_UPDATE_INPUTS', 'Missing actual flyer draw-boundary evidence')
+    calls = audit.get('calls')
+    check(isinstance(calls, list) and len(calls) == 44, 'Incomplete flyer draw-boundary sequence')
+    first = calls[0]
+    check(type(first.get('incarnation')) is int and first['incarnation'] > 0 and audit.get('incarnation') == first['incarnation'], 'Invalid flyer draw identity')
+    for i, call in enumerate(calls):
+        check(number(call.get('time')) and call.get('afterTime') == call['time']
+              and call.get('incarnation') == first['incarnation'], 'Flyer draw time/identity changed')
+        check(abs(call['time'] - first['time'] - i / 60) < 1e-9, 'Missing/reordered flyer draw call')
+        for value in (call.get('before'), call.get('after')):
+            check(isinstance(value, dict) and value.get('sameRecord') is True and value.get('sameFrame') is True, 'Flyer draw record/frame changed')
+            for key in ('position', 'posePosition', 'world', 'bufferedPosition'):
+                finite(value.get(key), 3)
+            source = value.get('authoritative')
+            check(isinstance(source, dict) and isinstance(source.get('frame'), str) and source['frame']
+                  and source.get('mode') == 'dead', 'Missing authoritative dead flyer snapshot')
+            finite(source.get('pos'), 3)
+            check(source == first['before']['authoritative'], 'Authoritative corpse position/frame changed')
+        check(call['before'] == call['after'], 'Fauna draw mutated its position inputs')
+    check(calls[-1]['time'] == audit.get('gameTime') and abs((calls[-1]['time'] - first['time']) * 1000 - receipt['fallAgeMs']) < 0.001,
+          'Flyer draw evidence is not current at the sampled fall age')
+    check(finite(receipt['sourcePosition'], 3) == first['after']['position']
+          and finite(receipt['sourcePositionAfter'], 3) == calls[-1]['after']['position'], 'Flyer fixture positions do not match actual draw boundaries')
+
+
 def flyer_oracle(receipt, viewport):
     check(receipt['offlineReplay'] is True and receipt['target'] == 606 and receipt['speciesKind'] == 'flyer', 'Wrong flyer/replay identity')
     check(receipt['beforeMode'] != 'dead' and receipt['mode'] == 'dead' and receipt['viewport'] == viewport, 'Flyer death/viewport absent')
     m = finite(receipt['instanceMatrix'], 16)
     camera = finite(receipt['cameraWorld'], 3)
     up = finite(receipt['worldUp'], 3)
-    source = finite(receipt['sourcePosition'], 3)
-    after = finite(receipt['sourcePositionAfter'], 3)
-    check(max(abs(a - b) for a, b in zip(source, after)) < 1e-9, 'Authoritative local position changed')
+    position_oracle(receipt)
     point = [m[12 + i] + camera[i] + up[i] * receipt['size'] * 0.5 for i in range(3)]
     published = finite(receipt['publishedAnchor'], 3)
     check(max(abs(a - b) for a, b in zip(point, published)) < 0.001, 'Published point differs from actual instance')
@@ -60,6 +85,15 @@ def flyer_oracle(receipt, viewport):
     check(max(abs(number['left'] - sx), abs(number['top'] - sy)) < 0.05, 'Gold number differs from actual displayed point')
     check(number['sameRecord'] is True and number['value'] == '26' and number['fontSize'] == '26px' and number['color'] == 'var(--accent-hi)', 'Gold killing-blow treatment/identity lost')
     check(abs(number['ageMs'] - 700) < 0.1 and 690 <= receipt['fallAgeMs'] < 750, 'Flyer/live-number sample is not near 700 ms')
+
+
+def flyer_sample_oracle(raw, viewport):
+    flyer_oracle(raw['flyer'], viewport)
+    audit = raw['flyer']['positionAudit']
+    check(audit['gameTime'] == raw['gameTime'] and raw['target']['id'] == 606
+          and raw['target']['incarnation'] == audit['incarnation'] and len(raw['numbers']) == 1
+          and raw['numbers'][0]['target'] == 606 and raw['numbers'][0]['incarnation'] == audit['incarnation'],
+          'Flyer draw evidence is not bound to the captured target/time')
 
 
 def turn_oracle(observations, trace):
@@ -295,7 +329,7 @@ def inspect(ready, unit):
         check(raw['viewport'] == raw['canvas'] == viewport and row['before']['gameTime'] == raw['gameTime'] and row['before']['clipTime'] == raw['clipTime'], 'Actual viewport/time changed during screenshot')
         check(all(n['sameRecord'] is True and isinstance(n['incarnation'], int) for n in raw['numbers']), 'HUD number changed incarnation')
         if '-kill' in name and not broad:
-            flyer_oracle(raw['flyer'], viewport)
+            flyer_sample_oracle(raw, viewport)
             events = [x for x in raw['events'] if x['phase'] == 'kill' and x['event']['kind'] == 'combat']
             consumed = [x for take in raw['takes'] if take['phase'] == 'kill' for x in take['returned']['dealt']]
             check(len(events) == len(consumed) == 1 and events[0]['event']['target'] == consumed[0]['target'] == 606 and events[0]['event']['killed'] is True and consumed[0]['killed'] is True, 'Actual flyer CombatFeed event/consumption absent')

@@ -532,6 +532,14 @@ class CacheSnapshotControls(unittest.TestCase):
             self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
 
 
+def synthetic_flyer_positions(position):
+    value = {key: position[:] for key in ('position', 'posePosition', 'world', 'bufferedPosition')}
+    value.update(authoritative={'frame': '7:0', 'pos': position[:], 'mode': 'dead'}, sameRecord=True, sameFrame=True)
+    return {'scope': 'FAUNA_UPDATE_INPUTS', 'gameTime': 43 / 60, 'incarnation': 2,
+            'calls': [{'time': i / 60, 'afterTime': i / 60, 'incarnation': 2,
+                       'before': copy.deepcopy(value), 'after': copy.deepcopy(value)} for i in range(44)]}
+
+
 def synthetic_turn():
     script = [(0, 17), (4, 23), (8, 9), (30, 17), (30, 23), (30, 9), (54, 11)]
     frames, observations = [], []
@@ -633,7 +641,8 @@ class InspectorControls(unittest.TestCase):
                    'sourcePosition': [0, 20, -10], 'sourcePositionAfter': [0, 20, -10], 'instanceMatrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1, -10, 1],
                    'cameraWorld': [0, 0, 0], 'worldUp': [0, 1, 0], 'size': 2, 'publishedAnchor': [0, 0, -10], 'cameraInverseQuaternion': [0, 0, 0, 1],
                    'projectionMatrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, -1, 0, 0, -0.2, 0],
-                   'number': {'left': 960, 'top': 540, 'sameRecord': True, 'value': '26', 'fontSize': '26px', 'color': 'var(--accent-hi)', 'ageMs': 700}, 'fallAgeMs': 716.6}
+                   'number': {'left': 960, 'top': 540, 'sameRecord': True, 'value': '26', 'fontSize': '26px', 'color': 'var(--accent-hi)', 'ageMs': 700}, 'fallAgeMs': 43 * 1000 / 60,
+                   'positionAudit': synthetic_flyer_positions([0, 20, -10])}
         inspector.flyer_oracle(receipt, [1920, 1080])
         for field, value in (('publishedAnchor', [0, 20, -10]), ('sourcePositionAfter', [0, 0, -10]), ('fallAgeMs', 0)):
             with self.subTest(field=field), self.assertRaises(ValueError):
@@ -770,7 +779,9 @@ class InspectorControls(unittest.TestCase):
                                         'sourcePosition': [0, 20, -10], 'sourcePositionAfter': [0, 20, -10], 'instanceMatrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1, -10, 1],
                                         'cameraWorld': [0, 0, 0], 'worldUp': [0, 1, 0], 'size': 2, 'publishedAnchor': [0, 0, -10], 'cameraInverseQuaternion': [0, 0, 0, 1],
                                         'projectionMatrix': [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, -1, 0, 0, -0.2, 0],
-                                        'number': {'left': width / 2, 'top': 540, 'sameRecord': True, 'value': '26', 'fontSize': '26px', 'color': 'var(--accent-hi)', 'ageMs': 700}, 'fallAgeMs': 716.6}
+                                        'number': {'left': width / 2, 'top': 540, 'sameRecord': True, 'value': '26', 'fontSize': '26px', 'color': 'var(--accent-hi)', 'ageMs': 700}, 'fallAgeMs': 43 * 1000 / 60,
+                                        'positionAudit': synthetic_flyer_positions([0, 20, -10])}
+                        raw['gameTime'] = raw['flyer']['positionAudit']['gameTime']
                         event = {'target': 606, 'amount': 26, 'killed': True}
                         raw['events'] = [{'phase': 'kill', 'event': {**event, 'kind': 'combat'}}]
                         raw['takes'] = [{'phase': 'kill', 'returned': {'dealt': [event]}}]

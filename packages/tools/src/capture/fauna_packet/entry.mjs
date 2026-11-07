@@ -64,11 +64,11 @@ export function describe(error) {
   };
 }
 
-function installAudit(kind) {
+export function installAudit(kind) {
   const w = window,
     g = w.game,
     feed = w.__feed;
-  const audit = (w.__faunaPacketAudit = { kind, phase: 'base', events: [], takes: [], identities: new WeakMap(), next: 0 });
+  const audit = (w.__faunaPacketAudit = { kind, phase: 'base', events: [], takes: [], positions: [], identities: new WeakMap(), next: 0 });
   audit.identity = (r) => {
     if (!r) return null;
     if (!audit.identities.has(r)) audit.identities.set(r, ++audit.next);
@@ -102,17 +102,44 @@ function installAudit(kind) {
     if (audit.takes.length > 32) throw Error('Unexpected extra fauna combat-feed consumption');
     return returned;
   };
+  const update = g.fauna.update;
+  if (kind === 'correction') {
+    g.fauna.update = function (list, dt) {
+      const r = g.remotes.get(606);
+      if (audit.phase !== 'kill' || r?.pose.mode !== 'dead') return update.call(this, list, dt);
+      if (audit.positions.length >= 64) throw Error('Unexpected extra flyer draw calls');
+      const frame = r.frame;
+      const read = () => {
+        const snapshot = g.remotes.offline.entities.get(r.id);
+        return {
+          position: r.pos.toArray(),
+          posePosition: r.pose.pos.toArray(),
+          world: r.world.toArray(),
+          bufferedPosition: r.buf.newest.pos.toArray(),
+          authoritative: { frame: snapshot.frame, pos: snapshot.pos.slice(), mode: snapshot.mode },
+          sameRecord: g.remotes.get(r.id) === r,
+          sameFrame: r.frame === frame,
+        };
+      };
+      const call = { time: g.time, incarnation: audit.identity(r), before: read() };
+      audit.positions.push(call);
+      const returned = update.call(this, list, dt);
+      call.after = read();
+      call.afterTime = g.time;
+      return returned;
+    };
+  }
   return {
     'HUD.hitNumber': g.hud.hitNumber.toString(),
     'HUD.hitAnchor': g.hud.hitAnchor.toString(),
-    'Fauna.update': g.fauna.update.toString(),
+    'Fauna.update': update.toString(),
     'Fauna.hitAnchor': g.fauna.hitAnchor.toString(),
     'CombatFeed.event': event.toString(),
     'CombatFeed.take': take.toString(),
   };
 }
 
-function samplePage() {
+export function samplePage() {
   const w = window,
     g = w.game,
     a = w.__faunaPacketAudit;
@@ -141,7 +168,10 @@ function samplePage() {
       .map((x) => ({ value: x.el.textContent, target: x.target.id, incarnation: a.identity(x.target), sameRecord: g.remotes.get(x.target.id) === x.target })),
     events: a.events,
     takes: a.takes,
-    flyer: a.phase === 'kill' ? w.__flyerKill : null,
+    flyer:
+      a.phase === 'kill' && a.kind === 'correction'
+        ? { ...w.__flyerKill, positionAudit: { scope: 'FAUNA_UPDATE_INPUTS', gameTime: g.time, incarnation: a.identity(r), calls: a.positions } }
+        : null,
   };
 }
 
