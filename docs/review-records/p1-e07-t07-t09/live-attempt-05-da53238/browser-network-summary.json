@@ -1,0 +1,54 @@
+{
+  "events": 71,
+  "violations": [],
+  "requestFailures": [
+    {
+      "utc": "2026-11-07T10:33:44.931Z",
+      "pid": 99609,
+      "kind": "requestfailed",
+      "contextId": 2,
+      "requestId": 9,
+      "url": "http://127.0.0.1:61448/audio/music/music_planet_2.ogg",
+      "method": "GET",
+      "resourceType": "media",
+      "frameUrl": "http://127.0.0.1:61448/?dev=bonde95b0047f5#foot",
+      "redirectedFrom": null,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    },
+    {
+      "utc": "2026-11-07T10:33:50.102Z",
+      "pid": 99609,
+      "kind": "requestfailed",
+      "contextId": 3,
+      "requestId": 9,
+      "url": "http://127.0.0.1:61448/audio/music/music_planet_1.ogg",
+      "method": "GET",
+      "resourceType": "media",
+      "frameUrl": "http://127.0.0.1:61448/?dev=bond8b52839ce9#foot",
+      "redirectedFrom": null,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    },
+    {
+      "utc": "2026-11-07T10:34:10.544Z",
+      "pid": 99609,
+      "kind": "requestfailed",
+      "contextId": 3,
+      "requestId": 10,
+      "url": "http://127.0.0.1:61448/?dev=bond8b52839ce9",
+      "method": "GET",
+      "resourceType": "document",
+      "frameUrl": "http://127.0.0.1:61448/?dev=bond8b52839ce9#foot",
+      "redirectedFrom": null,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    }
+  ]
+}

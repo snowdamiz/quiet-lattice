@@ -1,0 +1,23 @@
+{
+  "findings": [
+    {
+      "id": "C2-MTL-1",
+      "location": "packages/tools/src/capture/effects_packet/freeze.py:53",
+      "message": "Exact same-headless-route VM member MTLCompilerService is absent from current process/file bindings; actual effects StageReceipts refuses the retained member. Narrow protected/signed configuration correction and new pin review required before the parent issues a grant.",
+      "secondaryLocation": "packages/tools/src/capture/effects_packet/readiness.json:2873",
+      "severity": "P2"
+    }
+  ],
+  "grantIssued": false,
+  "liveCacheSourceCpuVerdict": "PASS",
+  "nativeAcceptance": false,
+  "passReceiptIssued": false,
+  "readinessSha256": "8cc52e23293773f38253414e74ba136719d017154cee7d7742c66a1f7851782d",
+  "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+  "source": {
+    "clean": true,
+    "head": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
+    "tree": "bf40490eea5ea19a61e885420642f480e41e9e79"
+  },
+  "verdict": "REVISE"
+}

@@ -1,0 +1,72 @@
+TASK: P1.E07.T07 / P1.E08.T09 R6 one-shot harness review binding
+STATUS: PREPARED — actual SOURCE_CPU PASS bound; parent GPU assignment missing
+
+FINAL PIN
+HEAD da5323833471eb3af68e77ffa78fc59598fe2a6d
+TREE b48263afd56522f432a042de367e4410120644e1
+SOURCE 313371af2fb25ecd9d821ef9f2c330b2da4afc13
+SOURCE TREE 0c989c39ef81a9f60e27c4eee9527c7d4049c06c
+Worktree /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521; clean; all 4376 tracked hashes unchanged.
+
+ACTUAL REVIEW
+/private/tmp/symbiotic-r6-source-cpu-PPFHAV/Appendix-C.2.txt
+SHA256 62dd71f2f9b46dcaf0c81a8608af65503c18ca3a24a7ac84169a748cd3dced45
+Machine receipt /private/tmp/symbiotic-r6-source-cpu-PPFHAV/final-receipt.json
+SHA256 e7e9f5bca9fca5e4bf97da014abc835f34d1cc500c80ded83c45bb1551a748a0
+All 81 review seal entries verified. Full report read; scope SOURCE_CPU, PASS,
+no blocking findings, exact four pins. Machine receipt expressly has launchAuthorization=false,
+nativeAcceptance=UNPROVED, nativeCorrectedRun=NOT_RUN and priorNativeResult=FAIL.
+118 fresh current-source CPU cases and one old-route diagnostic are reviewer evidence;
+none were rerun here. This is not live task acceptance, a visual grade or a benchmark.
+
+PRESERVED PREPARATION / MECHANICAL CHANGES
+Previous sealed pending root /private/tmp/space-symbiotic-harness-da532383-4ujg7ge4 remains unchanged, including all 70 sealed entries and its seal.
+New exclusive0700 root /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5. runtime-parity.json and mechanical-binding.diff contain every change.
+19 of23 manifest entries remain byte-identical. execute-once.py unchanged:
+57ae699f87fe4484af63c36860dcb71cd6f125d030a3f9d75c8daaef31e296f6
+settings.json binds the verified report and new root. prepare.sb and bin/ps change only the absolute
+root. harness.py changes only SOURCE/CPU ONLY to SOURCE[/_]CPU ONLY in the exact PASS-header
+pattern so the actual sealed SOURCE_CPU spelling is accepted. It does not bypass receipt hash,
+final pin, review round, explicit parent assignment, timestamp, unique ticket or fresh admission.
+No product, fixture, route, cache, process, cleanup, assertion or capture code changed.
+
+QUALIFICATION
+Pure real-report hash/pin/header checks pass; REVISE header is rejected. Actual one-shot entry
+with the unassigned ready template exits1, as required: new explicit parent GPU assignment missing.
+Eight-second outer bound; observed exit; network denied; no allocation. Raw stdout/stderr retained.
+No fabricated PASS report, assigned ticket, claim or successful-gate receipt was created.
+No broad test rerun, Node/Playwright/browser/native/server/DB or network preflight executed.
+Prior guard/cache/process qualification reused by identical code hashes; only receipt grammar was
+qualified now. Node22.23.3 and installed Playwright1.64.1 remain pinned by unchanged toolchain and
+dependency inventories; no pnpm/install/network dependency operation. Font and observer behavior
+remain unchanged, with actual retained font-byte evidence referenced from the prior preparation.
+
+PARENT HANDOFF
+Ready review template: /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/future/parent-ticket.ready-r6.json
+Required assigned schema: /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/future/ticket.schema.json
+ticketId, assignedAt, slotAssignment, explicitSlotAssigned are all null; parent fills them only
+with the actual fresh assignment and exclusively creates parent-ticket.assigned-r6.json.
+The claim field remains a documented placeholder; the existing stage generates its unique claim.
+Future runtime root /private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e remains absent. Assigned ticket,
+used-tickets and claim-journal paths remain absent. Existing pending-prep command is superseded
+by this revision, not modified in place. Run only the new command once after parent assignment:
+PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/bin/python3 /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/execute-once.py --ticket /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/future/parent-ticket.assigned-r6.json
+
+BUDGETS / ROUTES / LIMITS
+Exactly dedicated symbiotic.config.ts unit, worker1/retry0/repeat1/maxfailure1/global420s,
+outer450s+20s owned drain; two1280x720 clients; <=8 actualPNG+1gameplayJSON+serverlog;
+no trace/video/rawframes. DNS10s+5s drain and exact public-font acquisition70s+5s drain remain
+future gated phases. Standard font bytes and unfiltered console/request errors are preserved.
+Fresh resource admission is still required at dispatch; old disk or service observations are not
+current admission. SQL127.0.0.1:53055 fresh astra_symbiotic_smoke_<claim>, Redis53058/8 unique
+atomic marker; exact container IDs and StartupMessage/selectedDB/process route guards unchanged.
+No defaults/Redis0/7/FLUSH/shared restart. Drain and owned-listener absence before DB drop and
+atomic explicit owned-key cleanup remain unchanged. Source-after/free-byte/browser binary hash
+and process/profile/listener/cleanup evidence remain required on the real run.
+
+PRESERVATION
+All 13 prior packet inventories verified unchanged; pending preparation and actual
+R6 review seals also unchanged. No screenshot cleanup, source/docs writes, commits, PR, push,
+merge, native launch, service query/claim or DNS/font preflight. Last actual live run remains FAIL.
+GPU-free status was supplied by parent; this preparation does not reserve or assign GPU.
+Changed-binding hashes are in changed-binding-sha256.json; whole new packet seal is SHA256SUMS.

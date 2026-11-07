@@ -1,0 +1,62 @@
+--- /private/tmp/space-symbiotic-harness-da532383-4ujg7ge4/harness.py
++++ /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/harness.py
+@@ -30,7 +30,7 @@
+  receipt=Path(ticket.get('sourceReviewReceipt','')).resolve()
+  if not receipt.is_file() or sha(receipt)!=ticket.get('sourceReviewReceiptSha256'):raise ValueError('actual final review receipt hash mismatch')
+  text=receipt.read_text()
+- if ticket['head'] not in text or ticket['tree'] not in text or not re.search(r'(?m)^(?:VERDICT:\s*PASS\b|STATUS: DONE — SOURCE PASS$|STATUS: DONE — PASS \(SOURCE/CPU ONLY\)$)',text):raise ValueError('actual sealed review must state SOURCE PASS and exact final HEAD/tree')
++ if ticket['head'] not in text or ticket['tree'] not in text or not re.search(r'(?m)^(?:VERDICT:\s*PASS\b|STATUS: DONE — SOURCE PASS$|STATUS: DONE — PASS \(SOURCE[/_]CPU ONLY\)$)',text):raise ValueError('actual sealed review must state SOURCE PASS and exact final HEAD/tree')
+  if not ticket.get('claim'):raise ValueError('new claim placeholder required; actual claim generated at fresh staging')
+  return ticket
+ 
+--- /private/tmp/space-symbiotic-harness-da532383-4ujg7ge4/prepare.sb
++++ /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/prepare.sb
+@@ -2,5 +2,5 @@
+ (allow default)
+ (deny network*)
+ (deny file-write*)
+-(allow file-write* (subpath "/private/tmp/space-symbiotic-harness-da532383-4ujg7ge4") (literal "/dev/null"))
+-(deny file-write* (subpath "/private/tmp/space-symbiotic-harness-da532383-4ujg7ge4/tools"))
++(allow file-write* (subpath "/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5") (literal "/dev/null"))
++(deny file-write* (subpath "/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/tools"))
+--- /private/tmp/space-symbiotic-harness-da532383-4ujg7ge4/settings.json
++++ /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/settings.json
+@@ -1,6 +1,6 @@
+ {
+   "kind": "preparation",
+-  "out": "/private/tmp/space-symbiotic-harness-da532383-4ujg7ge4",
++  "out": "/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5",
+   "sourceRoot": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+   "corepackEntry": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/lib/node_modules/corepack/dist/pnpm.js",
+@@ -15,7 +15,7 @@
+   "parentSlotAssignment": null,
+   "claim": null,
+   "gpuReleased": true,
+-  "sourceReviewState": "PENDING_ACTUAL_R6_REVIEW",
++  "sourceReviewState": "SOURCE_CPU_PASS",
+   "playwrightVersion": "1.64.1",
+   "intermediateSourcePin": {
+     "head": "63b61308ed6a64fdc35994fdfaf782bbb79752a2",
+@@ -25,7 +25,10 @@
+   },
+   "launchBindingState": "BOUND_FINAL",
+   "requiredReviewRound": "R6",
+-  "sourceReviewReceipt": null,
++  "sourceReviewReceipt": {
++    "path": "/private/tmp/symbiotic-r6-source-cpu-PPFHAV/Appendix-C.2.txt",
++    "sha256": "62dd71f2f9b46dcaf0c81a8608af65503c18ca3a24a7ac84169a748cd3dced45"
++  },
+   "prospectiveOutputRoot": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e",
+   "previousSourcePin": {
+     "head": "2b74135bbd5ce91f550821c347798a3a5dacd014",
+--- /private/tmp/space-symbiotic-harness-da532383-4ujg7ge4/bin/ps
++++ /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/bin/ps
+@@ -1,6 +1,6 @@
+ #!/opt/homebrew/bin/python3
+ import sys
+-sys.path.insert(0,'/private/tmp/space-symbiotic-harness-da532383-4ujg7ge4')
++sys.path.insert(0,'/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5')
+ from identity import snapshot
+ if sys.argv[1:] != ["-Ao","pid=,ppid="]: raise SystemExit("QA ps adapter only supports the source hang-guard inventory")
+ for p in snapshot().values(): print(p["pid"],p["ppid"])

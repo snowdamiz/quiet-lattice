@@ -1,0 +1,122 @@
+{
+  "status": "DONE_SOURCE_CPU_CORRECTION_ONLY",
+  "task": "P1.E08.T09",
+  "base": "c396817029dd3756834cf5cbc660250a5331392d",
+  "head": "042474fa3a5712d0e6654aea7d4dc1f80294b0e5",
+  "tree": "94f208e08ed969d66d1d952276cc2c5f416ab9fb",
+  "clean": true,
+  "readinessSha256": "da65e2960a4a2f33160b82e42466f80a55a02e82f542874a2f08ea456aa6ba81",
+  "runtimeEnabled": true,
+  "changedFiles": [
+    "packages/tools/src/capture/fauna_packet/README.md",
+    "packages/tools/src/capture/fauna_packet/caller.py",
+    "packages/tools/src/capture/fauna_packet/file_io.py",
+    "packages/tools/src/capture/fauna_packet/freeze.py",
+    "packages/tools/src/capture/fauna_packet/live_cache_controls.py",
+    "packages/tools/src/capture/fauna_packet/metal_controls.py",
+    "packages/tools/src/capture/fauna_packet/readiness.json"
+  ],
+  "report": "/private/tmp/p1-e08-t09-live-cache-fix-pvt58_0f/APPENDIX-C2.md",
+  "reportSha256": "ac5bf9f4e8234673365e4a02d2591861d5f659d04aee9ec1f31c198aecc5d974",
+  "commandsSha256": "74d04f68ceff40e773082a8d5525bebd3d7d6c37b1687dea76a1ca95cff7bf30",
+  "protectedGitTrees": {
+    "packages/client/src": "f382979e0212d588a18114766f70aa76ca508b18",
+    "packages/client/public": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1",
+    "packages/server/src": "70658ed539dc19ab2e4e95f30fae6f4c68419701",
+    "packages/shared/src": "bb16dd47c8488db856332320698778e6b98b5dca",
+    "packages/tools/src/smoke": "8f289f0d66fd6dde7e25fcacfe27dc33ae27dca9",
+    "assets/blend/stations/_authoring": "2f21d0bd030351179cab7da591f95e2c9c2f7e66"
+  },
+  "helperHashes": {
+    "round4_capture_children.py": "e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07",
+    "round4_job_boundary.py": "3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c",
+    "run_round4_browser_proof.py": "f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab",
+    "run_round4_remaining8.py": "4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8"
+  },
+  "sharedSourceHashes": {
+    "packages/tools/src/capture/capture.lifecycle.test.ts": "ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18",
+    "packages/tools/src/capture/capture.ts": "42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d"
+  },
+  "sourceHashes": {
+    "caller.py": "2550edbce439ba1c5373a4adc698e4a3b3247f98063948a768160d1992a8cb50",
+    "controls.py": "309f92a5a8ad8bb91d01a774194a9468f33ffa9416944c091e6839a6fc869ab9",
+    "live_cache_controls.py": "b636f282dfec9f144ca8d9acbfc325337d5d21294a7529788429a79a3b1da370",
+    "entry.mjs": "b5cb17674f73af7a97ff78640e7006274f2c1ebcb63e294215f649770cd07807",
+    "controls.mjs": "fbcdf36ffb35709cb2c8d981550d711a3d0f9efd28219954cf7aa5ab9dc88c18",
+    "README.md": "7be90b7fefdadd457c86c0f98d4eee4058b147e5274fe17fdb3d7d0f816e6296",
+    "capture_controls.mjs": "b826d97bd9f62715af72d4cce9723a45b4300628ed81b42017ae43d8e93aee57",
+    "inspect.py": "bdbc10f49b204f1ae178c1e0116c2fdbe3c3f70af5d51ab1453c5c13e8461b47",
+    "readiness.json": "da65e2960a4a2f33160b82e42466f80a55a02e82f542874a2f08ea456aa6ba81",
+    "freeze.py": "2599a70fc944a6009c61a4da4ff41ce5c619ac5d7f72d23062ee5e73bcd5c4cd",
+    "file_io.py": "feaa259295308f30597625ff286803d3d88840c60b86bdc7f1ef325e68d7448d",
+    "metal_controls.py": "4717ffcf5556c2f140667a2d74edb8010990e331fe12a0b75339bbaae5f058ab"
+  },
+  "protectedEvidenceCount": 512,
+  "vmProvenance": {
+    "/private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus/review-thalune/job/boundary.json": {
+      "sha256": "e64e38b2ab1b78352ba1bade79e45bbc2ef9d3cbcba548ec318c272a81a578c8",
+      "bytes": 5252
+    },
+    "/private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus/review-thalune/job/observed_execution.json": {
+      "sha256": "b6b4c0a4f1df8fd470de49f8c3effcfdfe0ef6e5240979563fdc5a9696d7f802",
+      "bytes": 6937
+    },
+    "/private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus/review-thalune/job/capture_stdout.txt": {
+      "sha256": "b34b86382fd87ef647d92dc99fd5c1aa474b0fa1e482197e34da385371de56d3",
+      "bytes": 4206
+    },
+    "/private/tmp/space-vm-parent-unit1-r5-kghan_6a/exit.json": {
+      "sha256": "5225ef8e9e096532eb6b174bfc4a3734f35ce15fd7db491261ff30c45cc33b5c",
+      "bytes": 108
+    },
+    "/private/tmp/space-vm-parent-unit1-r5-kghan_6a/parent-release-observation.json": {
+      "sha256": "52fcf65617f8dae7df8b4a5745959eeedb0abc1819cd618d07850191417b663c",
+      "bytes": 2260
+    }
+  },
+  "newPathsAbsent": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-d9e1c82fa5534115bfe6bf99ef2aca0f",
+    "/private/tmp/fhp-d9e1c82fa5534115bfe6bf99ef2aca0f",
+    "/private/tmp/fhg-d9e1c82fa5534115bfe6bf99ef2aca0f.json",
+    "/private/tmp/fhc-d9e1c82fa5534115bfe6bf99ef2aca0f.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-45fd893bc9a245f6b4d770d93aaa7c6d",
+    "/private/tmp/fhp-45fd893bc9a245f6b4d770d93aaa7c6d",
+    "/private/tmp/fhg-45fd893bc9a245f6b4d770d93aaa7c6d.json",
+    "/private/tmp/fhc-45fd893bc9a245f6b4d770d93aaa7c6d.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-4ceeca06392045dcbf8b5ed7a19e9896",
+    "/private/tmp/fhp-4ceeca06392045dcbf8b5ed7a19e9896",
+    "/private/tmp/fhg-4ceeca06392045dcbf8b5ed7a19e9896.json",
+    "/private/tmp/fhc-4ceeca06392045dcbf8b5ed7a19e9896.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-c9bd755c984f42138319791777717236",
+    "/private/tmp/fhp-c9bd755c984f42138319791777717236",
+    "/private/tmp/fhg-c9bd755c984f42138319791777717236.json",
+    "/private/tmp/fhc-c9bd755c984f42138319791777717236.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-a0febca619714d29b6ab0e6268743b12",
+    "/private/tmp/fhp-a0febca619714d29b6ab0e6268743b12",
+    "/private/tmp/fhg-a0febca619714d29b6ab0e6268743b12.json",
+    "/private/tmp/fhc-a0febca619714d29b6ab0e6268743b12.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-d561d0f9527545aaa42ce7336f083eed",
+    "/private/tmp/fhp-d561d0f9527545aaa42ce7336f083eed",
+    "/private/tmp/fhg-d561d0f9527545aaa42ce7336f083eed.json",
+    "/private/tmp/fhc-d561d0f9527545aaa42ce7336f083eed.json"
+  ],
+  "spentPaths": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-b56b6ed1ba8f41f0aca38e15fa26518d",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-e194193234574f3ba4fdc997c9c4edd5",
+    "/private/tmp/fhc-b56b6ed1ba8f41f0aca38e15fa26518d.json",
+    "/private/tmp/fhc-e194193234574f3ba4fdc997c9c4edd5.json",
+    "/private/tmp/fhg-b56b6ed1ba8f41f0aca38e15fa26518d.json",
+    "/private/tmp/fhg-e194193234574f3ba4fdc997c9c4edd5.json",
+    "/private/tmp/fhp-b56b6ed1ba8f41f0aca38e15fa26518d",
+    "/private/tmp/fhp-e194193234574f3ba4fdc997c9c4edd5"
+  ],
+  "retiredAbsentCount": 280,
+  "noNativeLaunch": true,
+  "noRealGrant": true,
+  "remainingGates": [
+    "independent source review",
+    "parent-owned native capture acceptance",
+    "current-source visual grading",
+    "whole-task acceptance"
+  ]
+}

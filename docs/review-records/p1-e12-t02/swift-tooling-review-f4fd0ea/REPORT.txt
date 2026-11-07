@@ -1,0 +1,103 @@
+VERDICT: REVISE (two tooling corrections only)
+TASK: P1.E12.T02 / four hulls / bounded Swift R4 source unit; independent read-only SOURCE/CPU review
+STATUS: DONE (review completed; revised tooling still requires correction)
+SUMMARY: The original dispatch-before-watchdog gap and published-payload/exit-23 acceptance both reproduce at the base. The new implementation fixes those exact reproductions and its ordinary startup, cancellation, descendant cleanup, resource-limit and promotion gates work. Two real-runner counterexamples remain: process-table failure causes the independent supervisor to abandon a live producer before sending cleanup signals, and a failed terminal-receipt fsync leaves a readable success receipt that the promotion CLI accepts. Density is explicitly UNCORRECTED. No whole-Swift, whole-source, native, performance, or visual PASS is issued.
+
+PINNED SCOPE / C.2:
+  Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+  Branch: task/P1-E12-T02-swift-r4
+  HEAD: f4fd0ea574bb74fdaac6628556985a55046186f4
+  Tree: b8311ecebdd615be396562cc8c214d795c3294eb
+  Tooling base: 7415bfa5ec9f2115c6304cdfa70c36129702f593
+  Base tree: 140a35f31eacfa8ef1825646b20c5be3b7fbffba
+  Original art base: 73f51ba436e2a8c4e3828f60439c441db4f7ef38
+  Separate recovery retained: 82c3d50ff79a60b9dac38f0bdfbe421381c8dd73
+  Recovery tree: ea744377e186a0ee48bdf40b48e891b1d7db78a2
+  Canonical source: 42,959,316 bytes, SHA256 7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480
+  Canonical GLB: 24,721,524 bytes, SHA256 5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d
+  Prior independent report: /private/tmp/swift-r4-review-v69_mmzw/REPORT.txt
+  Prior report SHA256: 2a825605f69475ac6ead7380f70cda5ec27d7041a044a047e35133ed4297f9d6
+  Worker REPORT SHA256: 10319b936df78fbfeec595c22ad88dc79c61e05cae1876e9ba41a026b1fcb5c1
+  Worker inventory SHA256: 477847bcdfa0ecaa1a77b65d887e3775689ed3cab84db771a28581ac7b9bef46
+  Read docs/IMPLEMENTATION_PLAN.md 0.3, 0.9.5 and C.2/C.4; inspected DENSITY_PLAN.md as read-only context.
+  User's bounded tooling-only brief supersedes general smoke/build/art production instructions. No merge authority exercised.
+
+PRIOR FINDINGS / DISPOSITION:
+  1. Density: OPEN / REVISE, explicitly uncorrected. Previously measured source+decoded hull density 60.5238-79.6447 px/m vs nominal ~512. Current hashes match those measured bytes; no new decoding, Blender or visual measurement was performed. DENSITY_PLAN.md is a plan, not a correction or acceptance.
+  2. Unguarded dispatch interval: EXACT REPRO FIXED; lifecycle correction remains PARTIAL because R1 below still loses bounded ownership on observation failure. Old runner PID 91479 exited -9 at actual lane.py:68; producer/PGID 91482 remained alive with PPID 1 and no guardian. Reviewer terminated that private group and proved it empty. New before-handshake/before-dispatch/after-dispatch cases all end with empty groups and no success receipt from a dead runner.
+  3. Failed terminal-stage promotion: EXACT EXIT-23 REPRO FIXED; fail-closed receipt publication remains PARTIAL because R2 below is still accepted. Old producer PID 91545 actually exited 23, old guardian PID 91546 proved cleanup, old promote exited 0 and replaced the private destination. New promotion rejects real exit-23 output from each of stock/identity/audit/fit, but a failed final receipt commit can still be interpreted as successful.
+
+FINDINGS (P2, substantive; not style):
+
+R1. Make cleanup independent of successful process-table observation.
+  Location: packages/tools/blender/hulls/swift-round4/supervise.py:78 (also :29, :52, :76-92); lane.py:10 and :130-147.
+  Rule/contract: boundedSwiftR4sourceunit independent owner must terminate dispatched work on failure and preserve uncertainty; retaining a charged lock is not resource enforcement. Relevant to plan 0.3 resource/performance discipline and the explicitly requested cleanup/error-boundary review.
+  Reachability: processes() uses check_output(ps, timeout=5). A nonzero ps exit or TimeoutExpired is caught by the monitor's except, but finally calls members() again before os.killpg. A repeated observation failure escapes finally, so neither TERM nor KILL is attempted, child.wait is skipped, and no guardian receipt is written. The lane notices missing proof, returns 1, sets childGroupEmpty=false and retains its lock, but its supervisor has exited and the real producer remains alive with no owner enforcing wall/RSS limits.
+  Real-boundary evidence A: exact current lane/supervise copies; private PATH shim delegates preflight to /bin/ps, then makes the actual supervisor's ps command exit 31 after dispatch.json exists. Controller 95340 and supervisor 95343 exited; producer/PGID 95344 was observed alive, PPID 1. process.log contains CalledProcessError at supervise.py:52 and again at :78, before :81. The reviewer sent SIGKILL to the recorded private PGID and independently verified empty.
+  Real-boundary evidence B: private ps shim execs /bin/sleep 6 after dispatch. This causes actual subprocess.TimeoutExpired at the real five-second boundary; no monkeypatched process snapshot or fabricated Popen handle. Configured wall limit=1 s; controller 99373 returned 1 at 10.18 s, supervisor 99376 exited, and producer/PGID 99377 was still alive with PPID 1. Reviewer cleanup then killed only that owned group and verified empty.
+  Impact: transient/repeated process-observation errors can leave Blender/codec work running indefinitely if this path is later admitted; the resource lock does not constrain it. No heavy process was launched here.
+  Correction: keep the owned PGID/child handle usable even when enumeration fails; attempt bounded TERM/KILL independently of members(), catch and record observation/signal/wait errors separately, and publish an explicit non-success/unproven terminal result when cleanup cannot be proved. Do not let a second observation exception skip all cleanup. Test actual ps failure/timeout and surviving work before relaxing the hold.
+  Evidence: current-ps-failure/result.json, command.log, bin/ps, assets/renders/hulls/swift-round4-current/probe/process.log, receipt.json, cleanup.json; analogous current-ps-timeout/ paths.
+
+R2. Do not publish an eligible success receipt before its durable write succeeds.
+  Location: packages/tools/blender/hulls/swift-round4/lane.py:39-43 and :137-145; consumption at promote.py:30-65 and :73.
+  Rule/contract: successful terminal receipts must be a prerequisite for promotion, including receipt-write failures named explicitly in this review brief. A failed stage finalization must not leave a success artifact eligible for the real promotion CLI.
+  Reachability: durable_json opens the final receipt.json path, dumps the exit=0 document and flushes it, then fsyncs. An exception at the fsync leaves a complete, parseable success document at the final name. The lane exits nonzero and retains its lock, but promotion sees exit=0, reason=null, real successful guardian/dispatch records and matching pins, and accepts it.
+  Real-boundary evidence: four actual harmless publishers copy exact prior validated payloads into a fully private checkout. Audit producer 99166 exits 0 and supervisor 99165 exits 0 with an empty group. A Python trace injects OSError(EIO) at lane.py:43 in that lane's terminal receipt fsync after its real json.dump and flush. Actual lane PID 99162 exits 1, process traceback records EIO, and its lock remains. Unmodified promote.py then exits 0, replaces the private destination inode and writes promotion.json using that receipt's exit=0. No successful receipt or process handle was hand-authored.
+  Limit: this is injected fsync failure at the real caller boundary, not an induced disk fault. The producer itself succeeded; the failed operation is terminal evidence publication. A subsequent lane invocation remains blocked by the retained lock. The standalone promotion CLI (the same public route used by the original and worker boundary tests) does not consult that lock, so receipt eligibility still must fail closed; this report does not claim that lane lock admission succeeded.
+  Impact: finalization I/O failure can be misreported as a successful prerequisite by promotion, contrary to the correction's receipt/error contract. The exact exit-23 guard remains correct.
+  Correction: serialize and fsync success evidence privately, then publish its final name only after all required write steps succeed, preserving exclusive/no-overwrite semantics. Keep a failed/incomplete write as distinct failure evidence and never leave an eligible final success receipt after publication failure. Add a real runner -> promotion test at both flush/fsync failure boundaries.
+  Evidence: current-fsync-promotion/event.json, hook/sitecustomize.py, audit-fsync.log, result.json; assets/renders/hulls/swift-round4-current/audit-fsync/{launch,supervisor-launch,dispatch,guardian,receipt}.json; attempt/{command.log,promotion.json}.
+
+VERIFY / RED-GREEN:
+  The actual test files, process receipts and command outputs are authoritative. case-index.json records 31 boundary cases; command-exit-ledger.json records all 55 launched commands with observed exits; VERIFY.txt includes exact command/cwd/PID/exit records and the last 20 lines of every nonzero controller log plus supervisor error tails. Full logs remain alongside each case.
+  Driver commands (all exit 0, meaning expected assertions including counterexamples were observed):
+    /opt/homebrew/bin/python3 -B scripts/review.py old          -> old-run.log
+    /opt/homebrew/bin/python3 -B scripts/review.py lifecycle    -> lifecycle-run.log
+    /opt/homebrew/bin/python3 -B scripts/review.py faults       -> faults-run.log
+    /opt/homebrew/bin/python3 -B scripts/review.py promotion    -> promotion-run.log
+    /opt/homebrew/bin/python3 -B scripts/extra_faults.py fsync  -> fsync-run.log
+    /opt/homebrew/bin/python3 -B scripts/extra_faults.py timeout -> timeout-run.log
+    /opt/homebrew/bin/python3 -B scripts/final_checks.py       -> final-checks.json
+    /opt/homebrew/bin/python3 -B scripts/protection.py before / after -> protection-*.json
+  Paths above are relative to this report directory. scripts/review.py creates fresh exclusive fixture roots; rerun in a new evidence root, not over these retained fixtures.
+  RED: old dispatch gap and old failed-stage acceptance reproduced against byte-identical Git-base source.
+  GREEN: current runner SIGKILL before handshake, immediately before dispatch, immediately after dispatch; established runner death with a TERM-ignoring producer and descendant; cancellation of the same two-worker family; producer exit with a surviving TERM-ignoring descendant; actual wall and sampled RSS limit enforcement. Empty groups independently checked. The before-dispatch race may still launch a producer after controller loss; the established supervisor terminates it, which is the required ownership property.
+  GREEN, limited to fail-closed evidence: supervisor-launch/dispatch/guardian/terminal receipt path-write failures. Actual TERM/KILL permission-denial injection retains non-success/unproven state and the lock. Those denied-signal cases require reviewer cleanup; they are not automatic termination passes. All owned groups were actually emptied afterward.
+  GREEN: promotion rejects each of four actual exit-23 stages, an actually live publisher, cancelled publication, stale current source, an actual successful stage launched with stale source input, wrong stock GLB pin, wrong identity GLB pin and changed guardian bytes. Destination hashes/inodes are unchanged on every rejection. Four genuinely successful private stages allow actual promotion and destination replacement.
+  RED/current: ps nonzero/ps timeout (R1) and terminal receipt fsync failure accepted by promotion (R2).
+  Historical gate: unchanged original 70/71/66/67 chain passes the new validate() read-only; no canonical main()/promotion call. This does not erase either new finding.
+  Canonical lane hold: actual invocation exits 1 before stage/producer creation; no lock or stage directory created. HEAVY_HOLD.json remains unchanged.
+  git diff --check 7415bfa5ec9f2115c6304cdfa70c36129702f593 HEAD -> 0. All 36 task-local Python files ast.parse -> PASS, no bytecode writing.
+
+PROTECTION / OWNERSHIP:
+  Fresh exclusive evidence directory: /private/tmp/swift-r4-tooling-review-dlzla2iv (mkdtemp; no dependency symlinks, hard links or shared imports in fixtures).
+  Actual tool copies are byte-identical to the specified base/current source. Code pins verified again after execution for 20 private fixtures. All original helpers/worker evidence/prior reviewer evidence are unchanged.
+  Before/after: 955 protected files / 1,159,683,001 hashed bytes; zero SHA/size drift. 5,668 checkout filesystem metadata entries (including ignored paths and dependency symlink targets); zero metadata drift. Git status empty both times. Worker inventory's 313 entries independently hash-verified, zero mismatches.
+  All 34 PNGs + 2 interrupted EXRs remain byte-identical, 68,708,456 bytes. No image was viewed, copied, generated, cleaned up or deleted.
+  Canonical source/GLB unchanged; all original history and separate reviewer directory preserved. Shared dependencies were never imported into fixtures or traversed for writes.
+  At most two small harmless producer workers concurrently; all owned producers, descendants, supervisors and controllers are gone. Every Popen controller was waited; original and current orphan groups were killed only using recorded owned identities and independently checked empty. No owned temporary aliases remain. Private stale locks and failure artifacts remain as evidence; none was removed to fabricate a passing result.
+  Initial old-run harness cleanup was idempotent but its second cleanup overwrote the manual-action detail with an empty list. The RED event preserves the live owned PGID, the harness source records the exact SIGKILL action, and cleanup.json independently proves empty. The initial harness is archived as scripts/review-initial-old-run.py; later cleanup records append prior manual actions. No original error log was deleted or rewritten.
+  The RSS and first write-failure cases briefly overlapped, one harmless producer each; all other producers ran sequentially except the deliberate two-process families. Per-case result.json and full logs are authoritative; case-index.json was rebuilt from them to avoid relying on aggregate writer ordering.
+
+FILES CHANGED:
+  Repository: NONE. No branch switch, installs, dependency edits, pnpm, Blender, codec, bake, render, export, native/GPU/browser, services, full suite, screenshot cleanup, push, PR or merge.
+  Only fresh private evidence, harnesses and copy-isolated fixtures under this report directory were created. The sole external aliases were newly owned lane temporary aliases, removed only after cleanup proof.
+
+DECISIONS:
+  Scope -> test the two tooling corrections at actual source/process boundaries -> no whole-Swift acceptance or visual grade.
+  Failure injection -> real subprocesses and real CLI calls; trace only exact interruption/write/signal boundaries, PATH shims only the real observation subprocess -> no fake terminal receipts or helper-only substitute.
+  Failed outputs -> preserve all logs, receipts, locks and original evidence -> failure artifacts never relabelled as passing producer work.
+  Protection -> copy files into private fixtures and disable pycache; retain all original bytes and metadata -> no shared-dependency fixture writes.
+  Finding severity -> two P2 correctness failures, not advisory style. No extra implementation, next review round or merge was attempted in this child.
+
+OUT OF SCOPE FOUND / LIMITATIONS:
+  Density remains REVISE (60.5-79.6 px/m versus nominal ~512), and the heavy hold stays active. DENSITY_PLAN.md has not been executed.
+  Native three-light/LOD/wireframe/distance/overlay captures, actual cockpit/boarding/canopy/gear/hardpoint/livery behavior, temporal transitions and clearances, integrated full smoke, device-identified T13 whole-scene performance and fresh independent visual grading remain pending with the parent. No new heavy admission is authorized by this report.
+  Resource proof is for sampled RSS and bounded harmless stand-ins under macOS, not Blender/codec/native production. No natural disk failure was induced. No review claim is based on newly decoded or visually inspected asset data.
+
+ARTIFACTS:
+  REPORT.txt, VERIFY.txt, case-index.json, command-exit-ledger.json, commands.jsonl, exits.jsonl
+  context.json, final-checks.json, protection-before/after.json and their summary files
+  originals/ (report/inventory/context copies only; no image copies), scripts/, all old-*/current-* fixtures and full logs
+  inventory.json supplies all evidence hashes except itself; original worktree and original reviewer data remain in place.
