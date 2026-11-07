@@ -1,0 +1,89 @@
+{
+  "status": "SOURCE_CORRECTION_VALIDATED_FINAL_RENDER_UNVERIFIED",
+  "base_head": "60046fb68",
+  "before_sha256": "d642bf8ff3e7ea95f64a3b28f560a4951a4e04a09d497494147870d05a3c5b83",
+  "source_sha256": "ce23f092fcae26d83f7be5d280043beb9f7ef2f4967289fa23670686398a3bc6",
+  "root_cause": "Packed baseColor and ORM contain broad material-response regions unrelated to physical contacts. Actual UVMap sampling repeats those regions across surfaces. Zero cross-role overlap at covered texel centers; same-role shared UV painting must be intersection-safe. Base-color-only intermediate preview demonstrated remaining rectangular ORM response. Original map-generation provenance not established.",
+  "fix": "Raster actual LOD0 UV triangles into unchanged 4096 layout. Restore art-bible Hull/Accent/Trim/Dark palette and ORM per role. Contact wear is minimum across all texel users, using 12mm geometric sharp/boundary edges and extra lower salt roughness. No object-local graphics painting.",
+  "validation": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 136
+  },
+  "density": {
+    "roles": 23,
+    "median_of_medians": 2438.489710121064,
+    "min_median": 590.6459217270778,
+    "max_median": 20459.628420509038,
+    "target_px_per_m": 512,
+    "pass": true
+  },
+  "lod": {
+    "lark": [
+      108746,
+      73947,
+      59940,
+      4388
+    ],
+    "lark_damaged": [
+      113554,
+      79329,
+      65758,
+      4557
+    ],
+    "lark_husked": [
+      110403,
+      77948,
+      66049,
+      4760
+    ]
+  },
+  "preservation": {
+    "only_changed_images": [
+      "lark_4k_density_ORM",
+      "lark_4k_density_baseColor",
+      "lark_damaged_4k_density_ORM",
+      "lark_damaged_4k_density_baseColor"
+    ],
+    "objects_transforms_properties_uv_preserved": true
+  },
+  "inspected_images": [
+    "previews/wear-unit-wear.png",
+    "previews/wear2-atlas-before.png",
+    "previews/wear2-hardpoint.png",
+    "previews/wear2-shell.png"
+  ],
+  "image_limitation": "wear2 after views show base-color-only intermediate db841dcd; remaining rectangular material response led to final ORM correction. Two new after-view budget exhausted. Final ce23f092 source has no inspected render; no visual PASS claimed.",
+  "aborted_attempts": "Three unsaved Python raster attempts stopped for performance; no renders or source saves in those attempts. Replaced by serial tasklocal C raster.",
+  "resources": [
+    {
+      "exit": 0,
+      "peak_rss": 2242527232,
+      "seconds": 101.64809829200385
+    },
+    {
+      "exit": 0,
+      "peak_rss": 2529918976,
+      "seconds": 103.65995091700461
+    },
+    {
+      "exit": 0,
+      "peak_rss": 1168932864,
+      "seconds": 7.190587332996074
+    },
+    {
+      "exit": 0,
+      "peak_rss": 1993162752,
+      "seconds": 16.43795291602146
+    }
+  ],
+  "cleanup": [],
+  "exports": "none",
+  "parent_owned": "scale/collider/liveries/whole-husk measurement/final export and final visual qualification"
+}
