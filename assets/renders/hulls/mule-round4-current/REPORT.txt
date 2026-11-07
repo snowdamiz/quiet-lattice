@@ -1,0 +1,43 @@
+TASK: P1.E12.T02 — Mule ROUND4 CPU/source component
+
+STATUS: FAILED — authored source and CPU audit are retained, but the bounded export did not finish and LOD3 appearance remains unresolved. No source/export pair, task, visual or performance acceptance is claimed.
+
+SUMMARY: Recovered canonical R3 source/export in a separate commit, then authored localized contact wear, impact-origin canopy cracks, finished cockpit fascia/bezels/control legends, and rebuilt lower-LOD panels/structure. The saved editable blend is authoritative; export_saved.py invokes stock validation, baking, existing LOD consumption, KTX2 and meshopt without importing authoring code. A full oriented triangle identity checker is implemented and adversarially tested, but the R4 export never reached it.
+
+FILES CHANGED: assets/blend/hulls/mule.blend; packages/client/public/models/hulls/mule.glb (recovery commit only, unchanged R3 export); packages/tools/blender/hulls/mule-round4/; assets/renders/hulls/mule-round4-current/. No other hull, shared artlib/library/families/exporter, runtime Ship/Cockpit/Review, capture/orchestration, service or DB changes.
+
+VERIFY: commands-and-results.json records exact commands, exits, source/tool hashes, bounds, current free/RSS admission and peak observed group RSS for every retained attempt. failure-tails.txt retains the last 20 output lines of each failed attempt. Existing PASS artifacts were never overwritten by retries.
+
+VERIFY: audit-source-final-current-b proves exact LOD0 geometry/UV/normals/transforms/engine roles and unchanged livery values against the recovered R3 bytes. Every protected LOD1/2 face is compared as a complete oriented multiset including material role, position, UV, normal, connectivity and multiplicity; actual slot-reassignment, lost-face, normal and transform negative controls reject. Canonical LOD3 retains panel IDs and records vertex-to-source distances, but its CPU appearance is unresolved. A separate far candidate passed complete visible-R3-face/UV/role identity after numerical-sliver cleanup, yet failed CPU inspection and was not promoted; it remains under repair-far-d/scratch/. Every LOD has finite coordinates/UV/normals. New R4 meshes and all three repaired far bodies require zero nonunit normals within .001 length tolerance; short, long and nonfinite negative controls reject. Older unchanged objects retain only their explicit baseline allowances. Inherited LOD0 degenerate faces remain unchanged and are disclosed in the audit.
+
+VERIFY: export-c stock SOURCE validation PASS (5/5, zero warnings). Export attempt FAIL / child exit124 / wall limit after 5400.638 seconds, peak RSS 7,221,232 KiB (~6.89 GiB), owned leader reaped, remaining group empty. Base Hull, Dark and Nacre completed before the next material admissions at 32.23, 56.92 and 78.02 minutes respectively; wall limit arrived during base Accent. No exported GLB, export validation, or source-export identity report exists. New decoded texture budgets remain unmeasured. The source keeps hero LOD0 60–150k, 4 LODs and LOD3 under5%; no geometry reduction was made for whole-scene timing.
+
+VERIFY: Actual harmless-child SIGKILL controller regression settles in 9.439 seconds, waits for its owned direct child and observes adopted descendants absent without claiming waitpid for them. SIGTERM/repeated SIGINT/timeout/probe-failure/completed-child wall-image-output tests reject and settle. Exact receipt-boundary tests include serialized metadata and persisted bytes. Tooling review round 4 closed its P1/P2; its nonblocking changed-byte count issue was fixed and tested by invalidating the stale count. The final far follow-up also passed after requiring unit repaired normals and correcting the distance label. These are tooling reviews, not visual grades.
+
+VERIFY: preview-details-final is CPU Cycles, 16 samples, 1000x760, two threads, CPU denoising, and references the exact authored source SHA; it is not a decoded-GLB preview. All art previews listed as viewed in cpu-images-viewed.json were inspected. Two earlier unusable cockpit camera views and six blank lower-LOD views from a hidden-collection preview bug remain marked rejected. The corrected source preview explicitly enables authoring collections and isolates by object visibility. Three canonical LOD3 views and three alternative far-candidate views remain flagged as unresolved/rejected appearance. The candidate SHA542a35a7a429b4ff2e6d67fa2f4b53f253659bbedd3830acbd07e61fd2f94aa5 was NOT promoted; canonical source stays3851566ad7f54a0105f8296a8f9cca9b3f2519e5c7cf171f2bdbe9b3adcaf376. Fixture PNGs are not art evidence. Final GLB previews, standard engine captures and visual/performance qualification remain absent.
+
+DECISIONS: Broad wear versus actual use points -> author packed UV contact masks at rung treads, grips, joints/latches/collars and selected exposed edges -> preserve the passing cultural palette and avoid white streak networks. Canopy cells versus impacts -> two damaged and three husk impact origins with branched radial cracks and interrupted near-impact rings. Cockpit finish -> preserve modeled geometry and add display/control/bezel material distinctions and readable legends. LOD artifacts -> preserve entire overlapping shell and damage-edge components at LOD1/2, simplify only remaining structure with UV-aware normal transfer, remove lower-LOD slivers and use sharp normal bases; retain source LOD0 exactly. LOD1/2 triangle counts intentionally increase to recover surfaces, not to chase unattributed whole-scene GPU timing.
+
+DECISIONS: Controller loss -> isolated task-local supervisor owns workload and lock; sole-writer controller pipe EOF triggers bounded group teardown. A transient macOS probe error from a failed test remains preserved with explicit later group-absence hold resolution. export-b interruption killed its controller; the orphan group was terminated and verified absent by recovery, not falsely called waitpid-reaped. export-a/export-b/export-c were not accepted. After export-c reached its finite wall bound, no export retry or larger unbounded workload was launched. All partial bytes remain local under ignored scratch directories, indexed below.
+
+OUT OF SCOPE FOUND: T13 owns whole-scene performance attribution. Parent owns serial standard GPU/engine captures, all-three-livery runtime sheets, shared lineup and fresh blind visual grade. The retained R3 REVISE was the third grade, not a fifth-grade disposition. No GPU/Metal/native/browser capture, full smoke, push, PR or merge was run.
+
+ARTIFACTS: asset-identity.json; protected-inputs.json; protected-final.json; recovery-provenance.json; source audit; stock source validation and failed-export receipt; unexecuted final-export identity gate; controller-loss-test.json; runner-supervised-b-suite.json; runner-review-v2-suite.json; receipt-boundary-tests.json; tooling reviews; commands-and-results.json; failure-tails.txt; cpu-images-viewed.json; next-gpu-inventory.json; inventory.json. Receipt boundary tests also invalidate a stale byte count under an injected concurrent write while preserving the primary error. Original packet /tmp/hull-r3-packets/mule/INDEX.md was read in place (61 payloads verified); no reference images copied. Verbatim R3 notes at /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/review-records/p1-e12-t02/mule-visual-round3.txt remain unchanged.
+
+
+
+Current geometry:
+
+mule: [141922, 82073, 50042, 4773]; LOD3 3.363%
+
+mule_damaged: [148688, 88444, 56210, 4502]; LOD3 3.028%
+
+mule_husked: [138478, 84020, 55189, 4669]; LOD3 3.372%
+
+
+
+Exact canonical asset bytes:
+
+assets/blend/hulls/mule.blend {"sha256": "3851566ad7f54a0105f8296a8f9cca9b3f2519e5c7cf171f2bdbe9b3adcaf376", "bytes": 55841168}
+
+packages/client/public/models/hulls/mule.glb {"sha256": "677883bfb17813c8c7127cc41e8d766ba9ded18594fc7416f7a2d267e881eaef", "bytes": 95474276}

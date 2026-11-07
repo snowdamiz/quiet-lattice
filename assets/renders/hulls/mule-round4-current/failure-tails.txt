@@ -1,0 +1,304 @@
+analyze-r3
+00:00.277  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/analyze_mesh.py", line 33, in <module>
+    'min': mn, 'max': mx, 'materials': dict(Counter(me.materials[me.polygons[i].material_index].name for i in g['faces'])), 'first_face':g['faces'][0]})
+                                                                                                                                         ~~~~~~~~~~^^^
+IndexError: list index out of range
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/analyze_mesh.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+audit-source-a
+00:00.689  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.git/lfs/objects/3c/34/3c3437f2fbc6b6523113c5e45d9bb8f5b06cce33b3bcb3c57d4a391fdc035dd4"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py", line 30, in <module>
+    bpy.ops.wm.open_mainfile(filepath=str(baseline));before=reference()
+                                                            ~~~~~~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py", line 29, in reference
+    return {n:digest(bpy.data.objects[n]) for n in sorted(names)}
+              ~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py", line 23, in digest
+    h.update(np.array([d.uv[:] for d in me.uv_layers.active.data],dtype=np.float32).tobytes())
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'data'
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/audit_source.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+audit-source-b
+00:01.007  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.git/lfs/objects/3c/34/3c3437f2fbc6b6523113c5e45d9bb8f5b06cce33b3bcb3c57d4a391fdc035dd4"
+00:02.129  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/author-r4-c/scratch/candidate.blend"
+/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py:45: DeprecationWarning: Arrays of 2-dimensional vectors are deprecated. Use arrays of 3-dimensional vectors instead. (deprecated in NumPy 2.0)
+  a,b,c=uv[list(t.loops)];uvzero+=abs(np.cross(b-a,c-a))<1e-12
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py", line 41, in <module>
+    assert (np.linalg.norm(norm,axis=1)>.99).all()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+AssertionError
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/audit_source.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+audit-source-c
+TOPOLOGY Lens_NavStarboard_l1 tris 72 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY Lens_StrobeTop_l1 tris 72 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY CanopyGlass_l1 tris 576 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY CanopyFrame_l1 tris 680 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearFL_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearFR_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearRL_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearRR_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Panels_l1 tris 25284 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Structure_l1 tris 55719 nonunit 7 inherited 0 zero_area 444
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py", line 49, in <module>
+    assert nonunit<=baseline_nonunit.get(o.name,0),(o.name,nonunit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('R4_Structure_l1', 7)
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/audit_source.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+audit-source-d
+TOPOLOGY Lens_NavStarboard_l1 tris 72 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY Lens_StrobeTop_l1 tris 72 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY CanopyGlass_l1 tris 576 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY CanopyFrame_l1 tris 680 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearFL_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearFR_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearRL_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearRR_leg_l1 tris 738 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Panels_l1 tris 25284 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Structure_l1 tris 55279 nonunit 7 inherited 0 zero_area 5
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py", line 49, in <module>
+    assert nonunit<=baseline_nonunit.get(o.name,0),(o.name,nonunit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('R4_Structure_l1', 7)
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/audit_source.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+audit-source-e
+TOPOLOGY GearRR_leg_l2 tris 296 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Panels_l2 tris 25284 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Structure_l2 tris 22529 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY CanopyGlass_l3 tris 171 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearFL_leg_l3 tris 31 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearFR_leg_l3 tris 31 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearRL_leg_l3 tris 31 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY GearRR_leg_l3 tris 31 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Panels_l3 tris 2907 nonunit 0 inherited 0 zero_area 0
+TOPOLOGY R4_Structure_l3 tris 1571 nonunit 46 inherited 0 zero_area 0
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/audit_source.py", line 49, in <module>
+    assert nonunit<=baseline_nonunit.get(o.name,0),(o.name,nonunit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('R4_Structure_l3', 46)
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/audit_source.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+author-r4-a
+00:00.490  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+mule [141922, 113786, 99545, 11203]
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/revise.py", line 338, in <module>
+    assert 60000<=totals[0]<=150000 and all(a>b for a,b in zip(totals,totals[1:])) and totals[3]<totals[0]*.05, totals
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [141922, 113786, 99545, 11203]
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/revise.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+author-r4-b
+00:00.511  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+mule [141922, 85427, 53308, 8825]
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/revise.py", line 339, in <module>
+    assert 60000<=totals[0]<=150000 and all(a>b for a,b in zip(totals,totals[1:])) and totals[3]<totals[0]*.05, totals
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [141922, 85427, 53308, 8825]
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/revise.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+controller-loss-a
+{"leader": 34502, "grandchild": 34506}
+
+export-a
+00:00.418  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+
+export-b
+  PASS  triangle budget
+        ok    mule: LOD0 141,922 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    mule/mule_damaged: LOD0 148,688 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    mule/mule_husked: LOD0 138,478 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    mule: 141,922 > 82,073 > 50,042 > 4,773 triangles; LOD3 3.4% of LOD0
+        ok    mule/mule_damaged: 148,688 > 88,444 > 56,210 > 4,502 triangles; LOD3 3.0% of LOD0
+        ok    mule/mule_husked: 138,478 > 84,020 > 55,189 > 4,669 triangles; LOD3 3.4% of LOD0
+  PASS  materials
+        ok    NavGreen (LIB_NavGreen): signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    NavGreen (LIB_NavGreen.001): signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    NavRed (LIB_NavRed): signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    ... 26 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    mule: longest side 21.87 m within 6-80 m
+        ok    ... 2 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/renders/hulls/mule-round4-current/export-b/validation/hulls__mule.blend.json
+
+export-c
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+
+preview-source-final
+00:00.243  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+00:12.476  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_lod0.png'
+00:14.688  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_lod2.png'
+00:17.762  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_lod3.png'
+00:31.071  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_damaged_lod0.png'
+00:33.172  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_damaged_lod2.png'
+00:35.202  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_damaged_lod3.png'
+00:51.129  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_husked_lod0.png'
+00:53.329  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_husked_lod2.png'
+00:59.169  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final/mule_husked_lod3.png'
+
+preview-source-final-b
+00:00.416  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+00:13.535  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_lod0.png'
+00:26.858  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_lod2.png'
+00:35.326  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_lod3.png'
+00:48.038  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_damaged_lod0.png'
+01:00.873  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_damaged_lod2.png'
+01:13.022  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_damaged_lod3.png'
+01:31.547  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_husked_lod0.png'
+01:48.597  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_husked_lod2.png'
+01:58.916  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/mule_husked_lod3.png'
+03:02.174  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/cockpit_seated.png'
+03:43.837  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/renders/hulls/mule-round4-current/preview-source-final-b/cockpit_top.png'
+
+repair-far-a
+00:00.555  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/repair_far_lod.py", line 65, in <module>
+    assert all(n.vector.length>.99 for n in low.data.corner_normals)
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/repair_far_lod.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+repair-far-b
+00:00.544  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+FAR_NORMALS mule 27
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/repair_far_lod.py", line 65, in <module>
+    assert bad==0,(variant,bad)
+           ^^^^^^
+AssertionError: ('mule', 27)
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/repair_far_lod.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+repair-far-c
+00:00.567  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/assets/blend/hulls/mule.blend"
+FAR_NORMALS mule 0
+FAR_NORMALS mule_damaged 0
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc/packages/tools/blender/hulls/mule-round4/repair_far_lod.py", line 43, in <module>
+    assert len(low.material_slots)==len(high.material_slots)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+Error: script failed, file: 'packages/tools/blender/hulls/mule-round4/repair_far_lod.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+runner-repeated-sigint
+CHILD_READY
+
+runner-review-completed-images
+
+
+runner-review-completed-output
+
+
+runner-review-completed-wall
+
+
+runner-review-probe-failure
+CHILD_READY
+
+runner-review-v2-completed-images
+
+
+runner-review-v2-completed-output
+
+
+runner-review-v2-completed-wall
+
+
+runner-review-v2-probe-failure
+CHILD_READY
+
+runner-sigterm
+CHILD_READY
+
+runner-supervised-b-repeated-sigint
+CHILD_READY
+
+runner-supervised-b-sigterm
+CHILD_READY
+
+runner-supervised-b-timeout
+CHILD_READY
+
+runner-supervised-sigterm
+CHILD_READY
+
+runner-timeout
+CHILD_READY
