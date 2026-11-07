@@ -1,0 +1,27 @@
+**PASS — source review only.** No blocking findings in the full 24-file diff.
+
+Reviewed clean checkout `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`:
+
+- Base: `e1ed4752805ee92be561db81910ee1bc1a87b1d9`
+- HEAD: `d688579adf31c2a8ee9836495ba6b32708b99ccd`
+
+All prior findings independently re-evaluated:
+
+- **FIXED — offscreen numbers.** [HUD.js:724](/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/client/src/ui/HUD.js:724) requires a visible target anchor. Turning away expires existing numbers permanently; turning back does not resurrect them. Actual HUD/CombatFeed regressions passed at both aspect ratios.
+- **FIXED — airborne number over falling corpse.** [Fauna.js:545](/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/client/src/gameplay/Fauna.js:545) publishes the anchor after applying the displayed fall. Tests compare against the actual instance matrix and confirm replicated positions remain unchanged.
+- **FIXED — same-ID feedback transfer.** [HUD.js:726](/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/client/src/ui/HUD.js:726) checks original remote-record identity. Real RemoteEntities reset/replacement regressions passed with replacement and redraw occurring before the next HUD update.
+
+Current-parent preservation holds. Shared/server code, asset loading, movement/frame helpers, Universe implementation, and T16 authority remain unchanged. The port retains current `networkFrameOf` handling. [Universe.test.js:42](/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/client/src/universe/Universe.test.js:42) changes only the fauna fixture method; both ship/foot pad-reservation tests remain and pass.
+
+The runtime Fauna, HUD, ability-targeting, and replay files match the previously reviewed `2f36cdb2` versions; retained fixture additions were reviewed separately. Snapshot-driven spawning/removal, interpolation, frame handling, instance growth/disposal, picking, and analysis remain coherent. Client herd AI/spawning and local analysis progression are removed. No new authoritative client grants were found.
+
+Offline capture fixtures explicitly replay snapshots/events; they do not establish live-server correctness. `?dev#foot` uses the dev server, and [fauna-online.spec.ts:3](/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/smoke/fauna-online.spec.ts:3) uses the current hang-aware harness.
+
+Verification:
+
+- **282 tests passed across 19 focused files.**
+- **All package typechecks passed.**
+- **Removal gate passed**, plus direct evaluation of both T09 rules against actual source despite its `[R]` status.
+- Additional actual-Fauna CPU check passed: replaced meshes/geometries dispose; reset disposes remaining owned resources exactly once and invalidates anchors.
+
+**Remaining gates:** visual grading, GPU/performance evidence, and live two-client QA. No browser, capture, database, or full GPU suite was run. The earlier Python-binding failure provides no capture evidence. `gatewayPersistence` was not exercised. Checkout remains unchanged.
