@@ -1,0 +1,91 @@
+# PASS — P1.E08.T09 disabled caller SOURCE/CPU review R3
+
+Fresh independent review of the disabled capture caller only. All six prior findings are **FIXED** within this scope. No new substantiated blocking or advisory finding. Product commit d688579ad is separately reviewed PASS in the parent brief; this report does not repeat or extend that verdict.
+
+## Exact pins and scope
+
+- Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`
+- Branch: `task/P1-E08-T09-current-base`
+- HEAD: `5821809fddb241273a49d37edc2da435eee2d589`
+- Tree: `f2769ba7b774a150a9dd41f1bb4645f1a13b75da`
+- Prior HEAD: `df87bf9d81a7eff4aeddbff20a8231a0718a1a88`
+- Prior tree: `7cae8627f691eb56ffba6e717a1523eaec1b847b`
+- Product baseline: `d688579adf31c2a8ee9836495ba6b32708b99ccd`
+- Helper recovery: `6245e5ffb68f4bd4b1baf66a2cf4f4e3806e4482`
+- Revision patch SHA256: `5d7614e66c2a0ecf4e304c8d64d517ab309ce2ab611209575b7e45449b8642e6`
+- Disabled readiness SHA256: `349f52544e931a5109c3c887033a252b48ce492470241b8f441a7245ff3277da`
+- Evidence root: `/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y`
+
+Before and after: exact branch/HEAD/tree, empty Git status including untracked files, and byte-identical packet/helper scratch copies. The independently generated binary diff equals the worker's revision.patch. The R3 delta changes only README.md, caller.py, controls.py and readiness.json under `packages/tools/src/capture/fauna_packet`.
+
+Read plan 0.3, 0.9.5 and the T09 task, the prior R1/R2 reports, R3 REPORT/PREMISE and relevant reviewer scripts. Reviewed the revision and current writer, consumer, error normalization, release instrumentation, disabled admission, and inspector boundaries. Applied the read-only review procedure. No additional reviewer or worker was delegated.
+
+## Prior-finding disposition
+
+All caller paths below are relative to `packages/tools/src/capture/fauna_packet`.
+
+| Finding | Verdict | Current source and independent evidence |
+| --- | --- | --- |
+| R1-F1: Node receipt error replaces primary error | **FIXED** | `entry.mjs:342–378`. Replayed actual-main catch-write and final-write injections. Both retain PRIMARY_CAPTURE_SENTINEL, attempt entry-result.json, and retain separate persistence failures. Stock controls also cover combined reporting/cleanup failures. `node-catch-write-result.json`, `node-final-write-result.json`, `stock-node.log`. |
+| R1-F2: raw helper audit facts discarded | **FIXED** | `caller.py:100–168`, `:463–471`, `:487–500`. Actual unchanged archive/terminal bodies preserve returned observations and assertion predicates. The remaining exception/allocation gap is closed by R2-C below. `adversarial-results.json`, `retained-facts-results.json`, `python-focused-results.json`. |
+| R1-F3: contradictory timestamp/incomplete broad feed journal accepted | **FIXED** | `inspect.py:106–176`. The real full inspector rejects all four original mutations: future feed stamps, absent intermediate journals, wrong incoming event payload, and null game clocks. Its complete positive broad fixture decodes 219 images successfully. Additional cumulative-history/channel controls pass. `python-focused-results.json`, retained synthetic broad packet and adverse JSONL files, `stock-python.log`. |
+| R2-A: receipt catches swallow one-shot DeadlineExpired | **FIXED** | `caller.py:112–115`, `:120–122`, `:149–168`, `:427–430`, `:475–500`. The old defect reproduces on exact df87 source. Current actual main/run_unit and unchanged helper SIGALRM guard stop subsequent release/probe/decoder dispatch. Independent extension tests every one of the 19 cleanup receipt boundaries with a real shortened deadline and with KeyboardInterrupt: 38 cases, including clean capture and no preexisting primary failure. Calls at interruption equal final calls in every case. Scratch/private ownership remains where release has not already completed. `red/adversarial-results.json`, `independent-abort-results.json`. |
+| R2-B: failed final write leaves accepted receipt that admits successor | **FIXED** | `caller.py:270–305`, `:527–548`, `:563–565`. Disk results remain accepted:false and provisional. The parent-observed OS process exit plus exact result/consumption references are required. Eight process-level cases cover success, after-write, after-close, after-persist return, rename-away/back, close error with all fallback sinks failing, all sinks failing before final bytes, and an exception after run_unit returned but before main completed. Only success exits 0 and admits the successor. Seven independent reference/transaction/legacy/failure-marker mutations are refused. `independent-process-results.json`, `independent-gate-mutations.json`, child logs and retained result/consumption files. |
+| R2-C: error normalization loses partial bytes/unknown fields/allocation recovery | **FIXED** | `caller.py:73–97`, `:120–122`, `:153–154`, `:463–471`, `:499–500`. Actual helper bodies produce real TimeoutExpired exceptions and the real create_private_tmp failure attachment. All six normal/all-sinks cases retain exact NUL/non-UTF8 stdout/output/stderr and nested unknown byte/path fields. Retained allocation facts match the producer exception and actual path/dev/inode/UID; released remains false and no job starts. `retained-facts-results.json` and its retained scratch allocations. |
+
+## Publication and trust boundary
+
+The writer cannot prove its own successful return by writing another file. This revision makes that explicit: the disk result contains completed check facts but is never authorization. The next explicit parent grant must contain the exit code observed from the actual completed caller process, together with hashes and exact frozen paths for the result and consumption record. The consumer also checks transaction identity, head/readiness/spec/authorization, provisional format, successful checks, empty failure lists and absence of failed-result.json.
+
+The independent process harness used actual main/run_unit/persist/grant_gate with inert native boundaries. A parent test process waited for each isolated pinned-Python child and used subprocess.returncode in the next synthetic grant. It did not infer exit from the file or the in-memory acceptance field. The after-caller-return case leaves a valid provisional checksPassed:true result with no failed-result.json, yet its observed nonzero process exit refuses the successor. The success case is genuinely admitted by the gate, so refusal is not an always-failing fixture.
+
+This is an explicit trusted-parent contract, documented in README.md. An authorized parent inventing exit 0 instead of observing it is outside this boundary, as is inventing a PASS review. Native lifecycle, external mutation/security assumptions and real runtime success are not established by these CPU fixtures.
+
+## Evidence preservation, budgets, and disabled behavior
+
+- After-write/close/publication failures retain partial or complete provisional files and synthetic spent consumption records. All fallback sinks failing returns `UNABLE_TO_PERSIST_COMPLETE_RESULT` with completeReceipt:null; it does not claim durable complete proof. The CPU harness separately retains that returned record as test evidence.
+- Exact aggregate metadata boundary passes: a close error after complete bytes charges the full remaining 32 MiB allowance, and the next write is refused before file creation. Retained cap fixture and `retained-facts.log` record the check.
+- Both disabled entry routes refuse all six units before capture/helper import, runtime allocation or real grant consumption under test guards. No proposed path was created. All 48 R2/current output/evidence/grant/consumption identities remain absent.
+- Order is unchanged: day16:9, day21:9, night16:9, night21:9 correction units; fauna-combat; fauna-combat-night. Four units at 82 files/81 images plus two at 220 files/219 images gives **768 files/762 images**.
+- Correction admission: **8,925,528,064 bytes per unit**; broad: **15,871,295,488 bytes per unit**. Output caps remain 1,358,970,880 / 3,674,226,688 bytes. Three output allowances, metadata/cache/native/archive/safety reserves remain as declared. No all-six-fit claim.
+- Configured capture/cleanup/decoder durations remain **600/60/45 seconds**; cache snapshot remains 30 seconds. Tests shorten the same real cleanup signal guard to 20 ms, proving control flow rather than qualifying native duration behavior. All checked timers are cleared on return.
+- Fresh read-only `caller.py --check` exits 0, reports CPU_BINDINGS_ONLY/runtimeEnabled:false, no conflicting task-local Vite/cache owner, and 109,521,686,528 free bytes. That is a time-local observation, not runtime admission. Native observed thresholds remain distinct from OS quotas.
+
+## Unchanged product, helpers, and history
+
+Git object comparisons confirm client/server/shared/smoke, capture.ts/screens.ts, public, package.json and pnpm-lock.yaml unchanged from d688579ad. The only asset-tree additions relative to that product baseline are the four previously recovered helpers. Their current bytes equal recovery6245 and the exact frozen SHA256 pins:
+
+| Helper | SHA256 |
+| --- | --- |
+| round4_job_boundary.py | 3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c |
+| round4_capture_children.py | e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07 |
+| run_round4_browser_proof.py | f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab |
+| run_round4_remaining8.py | 4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8 |
+
+All 440 retained historical artifact pointers at 02248e6fc53bcaade146008f97bd83b6373af3d9 match manifest SHA256 and size using Git blob bytes only. No historical absolute artifact path was opened, image hydrated, historical failure regraded, or spent evidence changed. Prior reviewer scripts were copied to new scratch before replay. Source and prior report trees were not edited.
+
+## Commands and exits
+
+`commands.json` is the exact machine-readable ledger: argv, cwd, TMPDIR/PYTHONDONTWRITEBYTECODE overrides, exit, elapsed time and log. `COMMANDS.md` gives copyable commands. Each command below exited **0**; expected nonzero child caller exits are separately retained in `independent-process-results.json`.
+
+| Log | Result |
+| --- | --- |
+| stock-node.log | 7/7 tests PASS, test concurrency 1 |
+| stock-python.log | 27/27 tests PASS, including the permitted temporary-repository commit fixture entirely under isolated scratch |
+| r2-red.log | Old df87 defects reproduced; exit 0 means successful reproduction, not candidate PASS |
+| r2-green.log | All 11 original reviewer scenarios PASS on current source |
+| boundary-pinned-python.log | All 5 boundary tests PASS with actual pinned Python 3.14.8 |
+| r1-node-catch.log / r1-node-final.log | Both actual-main original Node injections PASS |
+| r1-python.log | Original primary/terminal/full-inspector injections and binding controls PASS |
+| independent-boundaries.log | 8 process cases, 38 abort cases, 7 gate mutations PASS |
+| retained-facts.log | 6 actual producer-fact cases and exact metadata cap PASS |
+| check-current.log | Pinned read-only caller --check PASS; full inner argv/cwd/PATH in check-actual-command.json |
+| final-verify.log | Exact pins, clean checkout, 12 unchanged source/helper copies, 48 absent identities, 440 legacy pointers and git diff --check PASS |
+
+All CPU test work ran locally on macOS with at most two test workers. The full Python suite uses the pinned Python3.10 decoder environment with its existing Pillow site; lifecycle extensions use the actual pinned Python3.14 caller. No test failure or harness correction was needed during this independent run. Stock temporary fixtures self-clean; the separate adversarial, process, abort, allocation and cap evidence is retained under this report root. Evidence file hashes are in evidence-manifest.json.
+
+## Boundary of this PASS
+
+PASS applies only to the disabled caller's source and exercised CPU behavior at the exact head above. No reviewed-checkout source/docs edits or commits, branch changes, hydration, GPU/browser/native capture, runtime grant, services/DB, push, PR or merge occurred. The supplied test's commits were confined to its new temporary Git repository. No native launch/unload commands were executed by the synthetic helper bodies; those boundaries were inert.
+
+Runtime remains disabled. Actual launch/capture ownership, the six fresh runtime captures, visual/animation grading, whole T09 completion, merged verification and merge acceptance remain separate parent-owned gates. This report supplies no launch or merge authorization.

@@ -1,0 +1,93 @@
+# Swift and Mule round-3 packet recovery
+
+Prior assessment: `/tmp/hull-r3-packets/prior-assessment.md`.
+
+Parent HEAD when the packets were built: `e397f3d8db6717aac59b068aa5941af5999b0c06`.
+Retained branch tip `task/P1-E12-T02` = `d584a1d386a1a5cd76911b314a7f9c5293aa23a3`.
+Content parent `75ea700462c17d63a69b570e2ca710c5eb1e055d`.
+Swift source `66221bae6da140a9dcee127490a817863c1ed069` (2026-10-31 23:49:26 -0400). Ancestor of content and of the tip.
+Mule source `414e207b4f66bac5c24a6b950299e64d55eee75d` (2026-11-01 01:58:50 -0400). Ancestor of content and of the tip.
+Lineup commit `91026d29bf109c5a7287c1abaf7c16ed0c702fd4` (2026-11-01 03:28:41 -0500). Changed only `assets/renders/hulls_lineup.png`, `assets/renders/swift_cockpit_open_top.png`, and `assets/renders/mule_cockpit_open_top.png`.
+Content commit message is the lineup caption edit of `assets/renders/hulls_lineup.txt` only.
+
+No fresh capture. No Blender, GPU, browser, native, network fetch, bulk checkout, or repo edit.
+
+## Prior visual rounds
+
+These counts stay in this parent report. They are not in the blind packets.
+
+| Round | Lark | Swift | Kestrel | Mule |
+|---|---|---|---|---|
+| 1 | REVISE 3.1 | REVISE 3.4 | REVISE 3.5 | REVISE 3.5 |
+| 2 | REVISE 4.1 | REVISE 3.4 | REVISE 3.8 | REVISE 3.8 |
+
+Round-2 pins named in `docs/VISUAL-REVIEW.md`: Lark, Mule, and Kestrel at `3413edb725f63c79b1927b69942146ec8c78d7fc`; Swift at `72d2df4b41c83138b6b51f218906e495fcabd4a0`. No round-3 verdict is in that file. Swift round-2 commit `72d2df4b41c83138b6b51f218906e495fcabd4a0`. Mule round-2 commit `3413edb725f63c79b1927b69942146ec8c78d7fc`.
+
+## What was verified
+
+Local LFS root `/Users/andreyyurlov/Documents/dev/space/.git/lfs/objects`. For every copied file, the payload sha256 and length equal the Git LFS pointer at `75ea700462c17d63a69b570e2ca710c5eb1e055d`, and the tip blob is the same pointer. Copies used `shutil.copyfile`. Source nlink and inode were unchanged. Destination nlink is 1 and the inode differs. No hardlink.
+
+Review files: 39 per hull. Each git blob equals that hull's round-3 source commit and differs from its round-2 commit. Those PNGs have no tEXt and no EXIF. Provenance is the git blob, not an embedded capture record.
+
+Other round-3-equal images and readouts (turntables, material sheets and captions, boarding, cockpit closed / open quarter / open side, hardpoints, livery PNG, both validate JSON files) also match the round-3 commit and differ from round 2.
+
+Exceptions, kept distinct:
+
+- `swift_liveries.txt` and `mule_liveries.txt` are byte-identical at round 2 and round 3. The livery PNGs are not.
+- Open-top PNGs match `91026d29bf109c5a7287c1abaf7c16ed0c702fd4`, not the source commits. Embedded Blender dates are 2026/11/01 02:56:57 (Swift) and 02:56:46 (Mule). The File chunk names the hull blend. That path was not hashed. Blend and GLB blobs were not changed by `91026d29bf109c5a7287c1abaf7c16ed0c702fd4` or by `75ea700462c17d63a69b570e2ca710c5eb1e055d`.
+- `hulls_lineup.png` matches `91026d29bf109c5a7287c1abaf7c16ed0c702fd4`. Embedded File is `<untitled>`, Date 2026/11/01 03:13:13, Cycles samples 64, 2400×1000. It does not name a blend. Lark and Kestrel appear in the caption. Their blends were not modified by that commit. The image is not a verified re-render binding for those two hulls.
+- `hulls_lineup.txt` matches `75ea700462c17d63a69b570e2ca710c5eb1e055d` and does not match `91026d29bf109c5a7287c1abaf7c16ed0c702fd4`.
+
+In-engine `perf.json` records `gl` = `metal` and `gpuTiming` = `EXT_disjoint_timer_query_webgl2 (GPU time of the frame)`. That is the stored record. Several rows have `reliable` false, and world-light `settle.underBudget` is false with `frameMs` above 16.67. Open-space rows record `underBudget` true. Mule base noon records `stable` false after 600 settle frames. Mule base night records unpaired `gpuMs` -0.453 beside paired `gpuMs` 0.126. Those values were not edited.
+
+Validate payloads:
+
+- Export GLB reports in `packages/tools/blender/reports/` at the tip are byte-identical to `assets/renders/validate/` (Swift sha256 `7d19910089ffd46f26d7c1c6f06e9a1d0db920d71faba0e0d656347633300d40`, Mule sha256 `b2cdea49684f6982cdacce6633598659a7e69b04deb2eaf3e276f3dffcb965cf`). Git stores one as an LFS pointer and the other as a loose blob. One copy is in each packet.
+- Blend reports at the tip differ from the in-tree reports only by `generatedAt` (Swift 2026-11-01T02:42:18Z vs 2026-11-01T08:28:48Z, Mule 2026-11-01T04:09:10Z vs 2026-11-01T08:28:47Z). Measured fields match. The packets include the in-tree reports. The later files were not copied.
+- Swift export status PASS, 0 warnings. Mule export status PASS, 1 warning: husked Trim emissive map uniform (std 0.0014 < 0.0039).
+- The validate JSON does not contain Gear, Canopy, CockpitInterior, HP, BAY, or COL names. Overlay labels in `perf.json` do, except `CockpitInterior`, which is also absent there. Cockpit stills are present.
+
+Excluded and not copied: UI `assets/renders/ui/inventory-pack-mule/` (bytes unchanged since round 2); tip-only `*.blend1` (swift blob 37028803 bytes, mule blob 48188935 bytes, plus lark and kestrel blend1); tip-only `packages/tools/blender/reports/hulls__swift.glb.rejected.glb` (git blob, 16987320 bytes, not an LFS pointer). No mule rejected GLB is in that tip tree. No cache attachments were copied.
+
+## Coverage, counts, bytes
+
+Required checklist is complete for both hulls: turntable, materials, three lights at LOD0 and LOD2, wireframe, far 100 m and 200 m, overlay, perf, cockpit closed and open, boarding, hardpoints (Swift `HP_S_1` and `HP_S_2`; Mule `HP_M_1` and `HP_S_1`), liveries, damage, husk, validate source and export, lineup image and caption.
+
+| Packet | Files copied | Payload bytes |
+|---|---:|---:|
+| Swift | 59 | 192025379 |
+| Mule | 59 | 189714566 |
+| Shared lineup (one copy) | 2 | 2528956 |
+| Total | 120 | 384268901 |
+
+Ceiling 536870912 bytes per hull and 1073741824 bytes total. Totals are under both. Shared bytes are counted once.
+
+Index SHA256:
+
+- `/tmp/hull-r3-packets/swift/INDEX.md` `5c2e85988bfa37e03a60ab91f3b5de815630680d8d3ef07cc9ba6a795f34fd66` (21481 bytes)
+- `/tmp/hull-r3-packets/mule/INDEX.md` `e8188d834610a7e2dbe5c57edc3baf03ee7180d2b53d6fa0cc03b717aaa79e56` (21646 bytes)
+
+## Pins
+
+- `assets/blend/hulls/mule.blend` sha256 `3c3437f2fbc6b6523113c5e45d9bb8f5b06cce33b3bcb3c57d4a391fdc035dd4` 48209383 bytes, nlink 1, equals round-3 commit, differs from round-2 commit, tip blob same.
+- `assets/blend/hulls/swift.blend` sha256 `dbf00e1c750a108faaa3e29402b0b3b9085d32b55e026e5316a6800afcefbba5` 37028381 bytes, nlink 1, equals round-3 commit, differs from round-2 commit, tip blob same.
+- `packages/client/public/models/hulls/mule.glb` sha256 `677883bfb17813c8c7127cc41e8d766ba9ded18594fc7416f7a2d267e881eaef` 95474276 bytes, nlink 1, equals round-3 commit, differs from round-2 commit, tip blob same.
+- `packages/client/public/models/hulls/swift.glb` sha256 `88cf76bb5c50d53c9b83e72875bbd0b114cc41fd1f28158b945c5d35c78943c6` 82176128 bytes, nlink 1, equals round-3 commit, differs from round-2 commit, tip blob same.
+
+## Can a fresh grader verdict?
+
+Yes. The required images and readouts are present, hash-verified, and labeled retained round 3. Qualifications are in each blind index: carried-forward livery captions, later open-top and lineup provenance, perf rows the files themselves mark unreliable or over the scene budget, husked overlays that omit Blink and Light labels, Swift overlays with no BAY count, and no `CockpitInterior` string in the overlay or the validate JSON. Those are flags, not missing files. This recovery did not score the hulls.
+
+## Gates kept separate
+
+- Source and export: blend and GLB hashes match the round-3 commits at content and at the tip. Validate reports are included as readouts. That is not a visual grade.
+- Code and native: not run. No caller, capture, or runtime check was executed.
+- Visual: the packets are ready for a fresh grader. No verdict was produced here.
+- Merge: `task/P1-E12-T02` is not merged by this work. Merge was not authorized. Trunk was not commented.
+
+## Commands
+
+Read-only git: `rev-parse`, `ls-tree -r -l`, `cat-file --batch`, `diff --name-status`, `show --stat`, `cat-file -t/-s/-p` on excluded tip blobs.
+Local SHA256 of `.git/lfs/objects` paths. PNG IHDR and text-chunk parse. JSON extract of perf and validate payloads.
+Copy: `shutil.copyfile` into `/tmp/hull-r3-packets/{swift,mule,shared}`, then SHA256 of each destination.
+Ledger: `/tmp/hull-r3-packets/parent/ledger.json`.

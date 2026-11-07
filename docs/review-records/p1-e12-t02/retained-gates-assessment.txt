@@ -1,0 +1,52 @@
+# Prior assessment — retained P1.E11.T01, P1.E12.T02, P1.E04.T06
+
+Saved before Swift/Mule round-3 packet recovery. Research-only. No repo edits.
+
+Parent HEAD moved during the original audit: started `f7f1347d1ba36b702000471d462dd7e9475dbb8d`, observed `28c5983acaa18442a3fa51d605f59548e4ee29a0`, ended that audit at `99e517e3f7d4b2db72f84193df1d4e00b08ef531`. This follow-up re-pins HEAD separately. Plan notes for the three retained tasks were unchanged through `99e517e3f` except an unrelated E05.T03 review sentence.
+
+## Pins
+
+- `task/P1-E11-T01` = `1031d5927ebd09184d21d480d618ea03b0809dfd` (cleanup). Content parent `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9`. Source `fb66d59536b28207a95715c642ea49edb58469f8`. Packet `f08475a1f8d408c475214904e18c6bfda2402685`.
+- Scrapyard blend LFS `dc6d1345a33ef9834702a33d1820bf541ad459f8380f6d8eb688eae4de8398b6` size 19376389. GLB `ffc406b39bdd2dc77a0db1a6358bbe0ce2bab9155e757ba32f36041be56905b8` size 9906592.
+- Waystation blend LFS `84fd86e0d68730e8a18edc061c965a6ef26aa99d35b0aae5d4098316a4327c68` size 11945110. GLB `aabf38551d7a5ea0e34e980bd496ef53943dae3de91fa5a37cd11824bd729e81` size 6225508.
+- Those four blobs are identical at fb66, packet, content parent, and cleanup tip. Local LFS objects matched pointer sizes.
+- `task/P1-E12-T02` = `d584a1d386a1a5cd76911b314a7f9c5293aa23a3` (cleanup). Content `75ea700462c17d63a69b570e2ca710c5eb1e055d`. Canonical blend/GLB blobs identical between them.
+- Swift source commit `66221bae6da140a9dcee127490a817863c1ed069`. Blend `dbf00e1c750a108faaa3e29402b0b3b9085d32b55e026e5316a6800afcefbba5` size 37028381. GLB `88cf76bb5c50d53c9b83e72875bbd0b114cc41fd1f28158b945c5d35c78943c6` size 82176128.
+- Mule source commit `414e207b4f66bac5c24a6b950299e64d55eee75d`. Blend `3c3437f2fbc6b6523113c5e45d9bb8f5b06cce33b3bcb3c57d4a391fdc035dd4` size 48209383. GLB `677883bfb17813c8c7127cc41e8d766ba9ded18594fc7416f7a2d267e881eaef` size 95474276.
+- Lark blend `6669a881185017e20d35ac923939fc7586ee4e0bd11c200b598ab6fbc026b3a0` size 28782221, GLB `d15f2ce47991e5a8a9436cf9cf15df8ea844990495d43d967c44019143dac772` size 13152688, last source `955d75c25`, same blob at graded `3413edb7`.
+- Kestrel blend `ea45999c7d204b5d04ee6bfa8789c69c8f0e25cb686f8efaeaa86d95301f51dc` size 32699293, GLB `3cd7a084ff4c78da6a1fae3030c3b2a517308bb5236763ec30ce6dd92ae7df5c` size 14700144, last source `82408e840`, same blob at graded `3413edb7`.
+- `codex/task/P1-E04-T06` = `f1766f0db294bbd325cfa43e4b1494adc2dd0baf`. Occlusion commit `e72ea15182ea02df5ebd7fba780cedad16c85d6b`. Merge-base with the then-parent `ba2c07316291e04c68755d0c601d1654002befb9`.
+- Fauna worker `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465` at `df87bf9d81a7eff4aeddbff20a8231a0718a1a88`. Product `d688579adf31c2a8ee9836495ba6b32708b99ccd`.
+- Git common dir `/Users/andreyyurlov/Documents/dev/space/.git`. LFS objects under `lfs/objects`.
+
+## Commands used (read-only)
+
+- `git rev-parse`, `git log -1`, `git merge-base --is-ancestor`, `git branch -a --contains`, `git diff --name-status`, `git diff --stat`, `git ls-tree`, `git cat-file -p` on pointers, `git show` on small JSON, `git worktree list`, `git status -sb` in other worktrees.
+- Local LFS presence via `os.path.getsize` on `.git/lfs/objects/aa/bb/<oid>`. No `git lfs fetch`, no checkout, no hydrate.
+- Hull validator summaries parsed from `d584a1d38:packages/tools/blender/reports/hulls__{lark,swift,kestrel,mule}.{blend,glb}.json`.
+- Livery texts read from local LFS objects for the 199–332 byte `*_liveries.txt` pointers at `75ea70046`.
+
+## Stations conclusion
+
+Source/export hashes match the documented fifth Scrapyard and fourth Waystation pins. Scrapyard fifth visual REVISE mean 3.5 is disposed to that component only: appearance E11.T06, traversal E11.T02, timing E14.T13. Waystation fourth REVISE mean 4.2; only performance is under 4. Fifth Waystation grade was left unspent. No sixth Scrapyard revision. Whole-task merge remains open. Next T01 unit is a hold. Cleanup commit is debris on top of identical canonical blobs.
+
+## Hulls conclusion
+
+Four hulls are not at one grade. Lark and Kestrel current bytes are the round-2 graded sources (REVISE 4.1 and 3.8). Swift `66221bae6` and Mule `414e207b4` are later ungraded round-3 sources. Preserved validator JSON: Swift export PASS 0 warnings; Mule export PASS 1 warning (uniform husked Trim emissive). File sizes Swift GLB 82176128, Mule GLB 95474276. Round-3 visual grade was not in `docs/VISUAL-REVIEW.md`. Recommended next implementation was Kestrel-only CPU revision after the flora Blender slot frees. Swift and Mule were waiting on an artifact-only grade of retained round-3 captures, not more modeling. This follow-up builds those packets.
+
+Prior visual rounds recorded in current `docs/VISUAL-REVIEW.md` (parent report only; do not copy scores into blind packets):
+
+| Round | Lark | Swift | Kestrel | Mule |
+|---|---|---|---|---|
+| 1 | REVISE 3.1 | REVISE 3.4 | REVISE 3.5 | REVISE 3.5 |
+| 2 | REVISE 4.1 | REVISE 3.4 | REVISE 3.8 | REVISE 3.8 |
+
+Round 2 grade pins named in that file: Lark, Mule, and Kestrel at `3413edb7`; Swift at `72d2df4b`. No round 3 verdict is in that file.
+
+## Markers conclusion
+
+`f1766f0` is a one-line HUD classList toggle, documented independent PASS after `e72ea151` occlusion PASS. Visual REVISE mean 3.86 remains (motion 3, performance 2). Fauna still has `classList.remove('out')` at the pilot-marker site and overlaps HUD, style, screens, RemoteEntities, RemoteShips, and replay. Next marker unit is a hold. No new capture.
+
+## Gates kept separate
+
+Source validation, runtime integration, visual grade, and merge are separate. None of these three branches are ancestors of the parent. No merge was authorized.

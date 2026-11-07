@@ -1,0 +1,160 @@
+# Mule — retained round 3 artifact packet
+
+Retained round 3. These files were recovered from the stored tree. This packet does not claim a new capture. The age of the files is not a failure by itself.
+
+This folder is the grader input for one hull: the artifact index, the images, the readouts, the objective expectations, and the qualification flags. Blend and GLB binaries are not included.
+
+## Objective expectations
+
+Task P1.E12.T02, this hull's part of the done line: gear, canopy, cockpit interior, hardpoint mounts, a damage state, a husked variant, and three liveries.
+
+DESIGN 10.2 roster row: Tier 1 hauler. Speed 480/200, boost 2.0, hull 180, shield 120, charge 80, cargo pods 4, signature 1.4, hardpoints 1S 1M, ability slots 2.
+Art bible length band: Mule 18–22 m. Reference biped: 1.85 m.
+Art bible Thalune language, matching the livery caption's first row: smooth and shell-ribbed. Livery colours named in the caption: Thalune pearl `#EDE6D6` / sea-green `#2E8F84` / shelf blue `#1F4E5F`; Compact station white `#F4F4F0` / deep blue `#22406A` / signal orange `#F28C28`; Working warm grey `#9A968C` / graphite `#3A3B3D` / safety yellow `#E3B341`.
+Expected marker names from the art bible and families.json hull rule: `Gear*`, `Canopy*`, `CockpitInterior*`, hardpoints `HP_S_*` and `HP_M_*` (this roster row is 1S 1M), bay empties `BAY_*`.
+Husk expectation: panel-loss geometry with `LIB_HuskPlate`, silhouette unchanged at LOD2.
+Hero budget expectation: LOD0 60,000–150,000 triangles, 4k textures, 4 LODs, LOD3 under 5% of LOD0, `gpuTextureMB` 512 for one hero variant after transcode.
+Review expectation: noon-lush, night-exotic, and open-space at LOD0 and LOD2; wireframe; far LOD2 from 100 m under noon and, for a hero, from 200 m; collider and marker overlay; paired perf readout; turntable; material close-up.
+
+Rubric criteria for a model: Design language, Silhouette and read, Proportion and scale, Materials, Surface detail, Topology and LODs, Consistency, Fitness for play, No placeholder tell, Performance.
+PASS requires every criterion at 4 or above and a mean of 4.5 or above.
+
+## Identity pins
+
+- Source commit `414e207b4f66bac5c24a6b950299e64d55eee75d`. Content tree `75ea700462c17d63a69b570e2ca710c5eb1e055d`. Cleanup tip `d584a1d386a1a5cd76911b314a7f9c5293aa23a3`. The blend and GLB git blobs match at those three commits.
+- Blend sha256 `3c3437f2fbc6b6523113c5e45d9bb8f5b06cce33b3bcb3c57d4a391fdc035dd4`, 48209383 bytes. Not copied into this packet.
+- GLB sha256 `677883bfb17813c8c7127cc41e8d766ba9ded18594fc7416f7a2d267e881eaef`, 95474276 bytes. Not copied into this packet.
+
+## Qualification flags
+
+- In-engine review PNGs (1920×1080) have no tEXt and no EXIF chunk. Their git blobs match the source commit and differ from the earlier commit of this hull. Identity is that git match.
+- The livery PNG matches the source commit. The livery text sidecar is byte-identical at the source commit and at an earlier commit. The text is a caption carried forward. The PNG is the livery image.
+- Cockpit open-top is a later still. Embedded Date `2026/11/01 02:56:46`, Cycles samples `24`, camera `cam`, 1600×1000. The File chunk names `assets/blend/hulls/mule.blend`. This recovery did not hash the path string inside the chunk. The still's git blob matches `91026d29bf109c5a7287c1abaf7c16ed0c702fd4` and does not match the source commit. That commit did not change the blend or the GLB.
+- Shared lineup image, one copy at `/tmp/hull-r3-packets/shared/hulls_lineup.png`, sha256 `e4c65dd6e6b57ba293e4d1f5057542210511e4190dedb729b3340c778bb956b5`, 2528677 bytes, 2400×1000. Embedded File `<untitled>`, Date `2026/11/01 03:13:13`, Cycles samples `64`. No blend path is embedded. Git blob matches `91026d29bf109c5a7287c1abaf7c16ed0c702fd4`, not this hull's source commit. Caption `/tmp/hull-r3-packets/shared/hulls_lineup.txt` is 279 bytes and was written in `75ea700462c17d63a69b570e2ca710c5eb1e055d`.
+- The lineup caption text is: left to right mule (19.0 m long, 21.9 m span, 6.0 m tall), kestrel (14.9 m long, 14.2 m span, 3.8 m tall), swift (11.5 m long, 10.0 m span, 3.9 m tall), lark (12.4 m long, 13.5 m span, 4.3 m tall); each with the 1.85 m REF biped. This packet is one hull. The other three hulls in that image are outside this packet.
+- `validate.py` reports included here are the copies stored under `assets/renders/validate/` with the retained tree. Naming, triangles, LODs, materials, and scale are the check ids. The stored JSON does not list `Gear`, `Canopy`, `CockpitInterior`, `HP_*`, `BAY_*`, or `COL_*` strings. Those names that were recorded are in the overlay block of `perf.json`.
+- `CockpitInterior` does not appear in the overlay label list or in the validate JSON. Cockpit stills are the cockpit images.
+- Performance figures below are copied from `perf.json`. They are not recomputed. `gl` and `gpuTiming` are quoted from those files.
+- Rows whose own record has `reliable` false, or whose scene `settle.underBudget` is false, are marked in the perf table. That flag is the record's flag.
+- Base overlay labels: BAY_1, BAY_2, BAY_3, BAY_4, HP_M_1, HP_S_1, Blink_NavPort, Blink_NavStarboard, Blink_StrobeTop, Canopy, GearFL, GearFR, GearRL, GearRR, Interact_Board, Light_Landing.
+- Husked overlay labels: BAY_1, BAY_2, BAY_3, BAY_4, HP_M_1, HP_S_1, Canopy_husk, GearFL_husk, GearFR_husk, GearRL_husk, GearRR_husk, Interact_Board_husk.
+- Mule overlay counts include BAY 4 on every variant. The husked overlay counts omit Blink and Light. Base and damaged include them.
+
+## Readout figures
+
+Dimensions are the `dims` arrays as stored. The reports do not name which axis is length.
+
+| Report | Variant | Status | LOD0 | LOD1 | LOD2 | LOD3 | LOD3/LOD0 | dims | gpuTextureMB |
+|---|---|---|---:|---:|---:|---:|---:|---|---:|
+| source blend | mule | PASS | 141922 | 53118 | 16912 | 6463 | 0.0455 | [21.872, 19.037, 5.993] |  |
+| source blend | mule_damaged | PASS | 148688 | 56916 | 18285 | 7226 | 0.0486 | [21.871, 19.037, 6.172] |  |
+| source blend | mule_husked | PASS | 138478 | 59720 | 16925 | 6539 | 0.0472 | [21.872, 19.037, 5.993] |  |
+| export glb | mule_damaged | PASS | 148688 | 56916 | 18285 | 7226 | 0.0486 | [21.871, 19.038, 6.173] | 293.3 |
+| export glb | mule_husked | PASS | 138478 | 59720 | 16925 | 6539 | 0.0472 | [21.872, 19.037, 5.993] | 352.0 |
+| export glb | mule | PASS | 141922 | 53118 | 16912 | 6463 | 0.0455 | [21.872, 19.037, 5.993] | 277.3 |
+
+- source report: tool `packages/tools/blender/validate.py`, blender `5.2.3 LTS`, generatedAt `2026-11-01T04:09:10Z`, status `PASS`, summary `{"checks": {"naming": "PASS", "triangles": "PASS", "lods": "PASS", "materials": "PASS", "scale": "PASS"}, "fail": 0, "warn": 0}`.
+- source report warn/fail findings: none.
+- export report: tool `packages/tools/blender/validate.py`, blender `5.2.3 LTS`, generatedAt `2026-11-01T05:37:34Z`, status `PASS`, summary `{"checks": {"naming": "PASS", "triangles": "PASS", "lods": "PASS", "materials": "PASS", "scale": "PASS"}, "fail": 0, "warn": 1}`.
+- Warning: check `materials`, subject `Trim`, message `emissive map mule_husked_Trim_emissive is uniform under the surface's UVs (std 0.0014 < 0.0039): paint or bake real detail`.
+
+Materials named on the export report:
+- mule_damaged: NavRed, NavGreen, NavWhite, Hull, Dark, Accent, MuleDmg_Nacre, Trim, Glass, EngineGlow
+- mule_husked: Hull, Dark, Accent, Trim, Glass, EngineGlow, NavRed, NavGreen, NavWhite
+- mule: NavRed, NavGreen, NavWhite, Hull, Dark, Mule_Nacre, Accent, Trim, Glass, EngineGlow
+
+Paired perf, LOD0, viewport 1920×1080. `budgetMs` is 16.67 in every row. `gpuTiming` is `EXT_disjoint_timer_query_webgl2 (GPU time of the frame)`. `gl` is `metal`. `errors` is an empty list. The file's `method` is `paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks`. The table is that paired median. Unpaired figures remain in the JSON. Base night records unpaired `gpuMs` -0.453 beside paired `gpuMs` 0.126. Base noon records unpaired `gpuMs` 1.791 beside paired `gpuMs` 0.396.
+
+| Variant | Case | cpuMs | gpuMs | calls | tris | reliable | pairs | gpuMsCi95 | settle.frameMs | underBudget | stable | settle.frames |
+|---|---|---:|---:|---:|---:|---|---:|---|---:|---|---|---:|
+| mule_damaged | noon-lush | 0.3 | 1.466 | 23 | 148688 | true | 240 | [1.259, 1.703] | 32.2 | false | true | 61 |
+| mule_damaged | night-exotic | 0.35 | 1.902 | 23 | 148688 | false | 720 | [1.592, 2.194] | 44.8 | false | true | 61 |
+| mule_damaged | open-space | 0.4 | 1.939 | 23 | 148688 | true | 120 | [1.773, 2.043] | 7.5 | true | true | 30 |
+| mule_husked | noon-lush | 0.25 | 1.544 | 22 | 138478 | true | 240 | [1.321, 1.752] | 30.4 | false | true | 61 |
+| mule_husked | night-exotic | 0.35 | 2.305 | 22 | 138478 | false | 720 | [1.393, 3.326] | 48 | false | true | 100 |
+| mule_husked | open-space | 0.5 | 1.628 | 22 | 138478 | true | 240 | [1.455, 1.889] | 11.9 | true | true | 30 |
+| mule | noon-lush | 0.2 | 0.396 | 23 | 141922 | false | 720 | [-0.079, 1.181] | 69.5 | false | false | 600 |
+| mule | night-exotic | 0.25 | 0.126 | 23 | 141922 | false | 720 | [-0.666, 0.704] | 112.1 | false | true | 112 |
+| mule | open-space | 0.65 | 1.592 | 23 | 141922 | true | 240 | [1.355, 1.72] | 9.3 | true | true | 86 |
+
+Capture texture stats from the same files (`textures.shown` / `textures.file`):
+- mule_damaged: triangles 148688, meshes 23, colliders 3, markers 11, textures `{"shown": {"count": 19, "compressed": 19, "mb": 194.7}, "file": {"count": 53, "compressed": 53, "mb": 600}}`.
+  Far: 100 m LOD2 shown 2 clear true; 200 m LOD2 shown 2 clear true.
+  Overlay counts `{"COL": 3, "Interact": 1, "HP": 2, "BAY": 4, "Light": 1, "Gear": 4, "Blink": 3, "Canopy": 1}`, offscreen 0.
+- mule_husked: triangles 138478, meshes 22, colliders 3, markers 11, textures `{"shown": {"count": 18, "compressed": 18, "mb": 221.3}, "file": {"count": 53, "compressed": 53, "mb": 600}}`.
+  Far: 100 m LOD2 shown 2 clear true; 200 m LOD2 shown 2 clear true.
+  Overlay counts `{"COL": 3, "Interact": 1, "HP": 2, "BAY": 4, "Gear": 4, "Canopy": 1}`, offscreen 0.
+- mule: triangles 141922, meshes 23, colliders 3, markers 11, textures `{"shown": {"count": 16, "compressed": 16, "mb": 184}, "file": {"count": 53, "compressed": 53, "mb": 600}}`.
+  Far: 100 m LOD2 shown 2 clear true; 200 m LOD2 shown 2 clear true.
+  Overlay counts `{"COL": 3, "Interact": 1, "HP": 2, "BAY": 4, "Light": 1, "Gear": 4, "Blink": 3, "Canopy": 1}`, offscreen 0.
+
+## Artifact index
+
+Copied payloads for this hull: 59 files, 189714566 bytes. Each payload sha256 equals its Git LFS oid and its pointer size. Shared lineup files are not counted in that byte total.
+
+| Path in this packet | Role | Variant | Bytes | SHA256 | Pixels |
+|---|---|---|---:|---|---|
+| `artifacts/mule_boarding_board.png` | boarding | base | 1766280 | `954f749e79922f80e4299998e6739e01d924e91453106a59d642a2ea3d723492` | 1600×1000 |
+| `artifacts/mule_cockpit_closed_side.png` | cockpit | base | 1770735 | `c975a9334a4a889f1c5d384e964c4c8a14679282a41588d8c39079a3aaea41fe` | 1600×1000 |
+| `artifacts/mule_cockpit_open_q.png` | cockpit | base | 1916099 | `0047a8a0962bef86f2f32b6a2c0154429d80dadefa18193800940a9218d6aaa5` | 1600×1000 |
+| `artifacts/mule_cockpit_open_side.png` | cockpit | base | 1787655 | `0a1738b9185bfb0c4e9b9185835a00fd5e590c873e3d82d81e67e5de94d12a30` | 1600×1000 |
+| `artifacts/mule_cockpit_open_top.png` | cockpit | base | 1983042 | `34e86e5b69d0930e0cc182df9f1f3df2d0e5d6a50c85235bb58d828fa768f365` | 1600×1000 |
+| `artifacts/mule_hardpoint_HP_M_1.png` | hardpoint | base | 1518583 | `0d97d7f203b220c893f385e507a96f5b02b259932ba8e0f595c1130e1d52b1e5` | 1400×900 |
+| `artifacts/mule_hardpoint_HP_S_1.png` | hardpoint | base | 1304647 | `914fffadd133c45fb24a81a5854d6660911882662f5ecefc8d2e1975311502f3` | 1400×900 |
+| `artifacts/mule_liveries.png` | livery sheet | base | 2989457 | `a7690fd60c7d1d1ec8e439ecc37a765b1675d1d01a2f53eafb8909ec207e6bc7` | 1600×1698 |
+| `artifacts/mule_liveries.txt` | livery caption | base | 201 | `c0937cff814250398f0450f19708e49755eb3903b1a92052067a5647dec1289f` |  |
+| `artifacts/mule_mule_materials.png` | material sheet | base | 2140293 | `bcfaf3744873fac4cfdea1ac9e4ece9417023fdc1833cafd6db7a793baf4478b` | 2880×720 |
+| `artifacts/mule_mule_materials.txt` | material caption | base | 606 | `289aa8fb7f36debc52df705b87bab78c129c8cbc6f1f21efb7c98b78bbd13159` |  |
+| `artifacts/mule_mule_mule_damaged_materials.png` | material sheet | damaged | 2257871 | `b50de1dcaccb6103985210ac48c975cda988a8412946718c7f8b39782ff064fd` | 2880×720 |
+| `artifacts/mule_mule_mule_damaged_materials.txt` | material caption | damaged | 638 | `aeb6922fd6a65869c08f5699a48734c9bda1a1dc3899949c3c4e1e59226d5b77` |  |
+| `artifacts/mule_mule_mule_damaged_turntable.png` | turntable | damaged | 4318312 | `0f5bcb2ac07aa099612b11706c055a6839b3733ad251f6d59e924e67f047b227` | 3200×1200 |
+| `artifacts/mule_mule_mule_husked_materials.png` | material sheet | husked | 2022539 | `bd2484fb63633bf4348cb7937a9fc2d1716228f1018b263c598d1e7cc44bb097` | 2880×720 |
+| `artifacts/mule_mule_mule_husked_materials.txt` | material caption | husked | 578 | `56cee93829a4ca220469439a85a0867958593196288ef3dc2e2f03b3494a1926` |  |
+| `artifacts/mule_mule_mule_husked_turntable.png` | turntable | husked | 4494821 | `85fe18fdca63501bf51c96815ea91a75465c465f4d3a8e044c150c58038a77e3` | 3200×1200 |
+| `artifacts/mule_mule_turntable.png` | turntable | base | 4270390 | `d8d8522ba68cfc0bfb7d4aa80fb019dc045aa21c7e95ecd2c078affbb634a267` | 3200×1200 |
+| `artifacts/review/hulls/mule/mule/far200_lod2.png` | far view | base | 3795964 | `9c84d25b463ab37c887b6fca31c65278d5d33532285c4547726c06e3c5e999c4` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/far_lod2.png` | far view | base | 4146955 | `c9cd8295c8c13c4e06a95d2a7f150b8ddb128476750e3a544502948d6ea946f8` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/far200_lod2.png` | far view | damaged | 3795845 | `9f3fef7f3c1fd52cb4a4a3be5bdcaa192bf52a054d730274c892ed2174dadd3b` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/far_lod2.png` | far view | damaged | 4143802 | `aa5280e9c74d2d331a45a1c5fe03043e1e8969be809ef43f5cac6f743c8ee472` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/night-exotic_lod0.png` | lighting case | damaged | 3434022 | `afdecc016d83303557ffdcbfacab14b131aa4e6de9173e14439f4ed431e78929` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/night-exotic_lod2.png` | lighting case | damaged | 3436169 | `13c90aae6f1c655a1a4229910e718a88550f90ef706cb8c1051ed51e856ce0cf` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/noon-lush_lod0.png` | lighting case | damaged | 4328137 | `e864e783a5b84530d772d1f70ae5f141fe1a5af6d01c296505954ade04cb6d30` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/noon-lush_lod2.png` | lighting case | damaged | 4335902 | `6da4fac5b07bdc98827380652b621759d4858ee2b18b208e6a797e748f80034d` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/open-space_lod0.png` | lighting case | damaged | 3044981 | `90dac98cb7f605be456fa01e6d6aaa87c4a00652827a67840f8d4a03af72acc4` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/open-space_lod2.png` | lighting case | damaged | 3056764 | `a1496751f098cd471d1a7698f213db37cea3cce7a1bc036dba7e2a38a00de669` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/overlay.png` | overlay | damaged | 4215482 | `d5756aca8f14e82b0aae3ae3947296a46db9b5d8ccc65d0abe0a09a6df132a10` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/perf.json` | perf readout | damaged | 10617 | `fcdf7d6391721367b1686c1bb50352422dd7dfa4d626c7aa7aa209e751b3a6ad` |  |
+| `artifacts/review/hulls/mule/mule/mule_damaged/sheet.png` | review contact sheet | damaged | 9112546 | `cce90d1916cf13dce808b0f35ac038516fa21b34658c655d2a811acd8170c21f` | 1920×3444 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/wireframe_lod0.png` | wireframe | damaged | 4395870 | `333003dc5a140b71561038e9a64054d64c52833c6874d8c8988694bd19912938` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_damaged/wireframe_lod2.png` | wireframe | damaged | 4374876 | `00b04f2be3ee03ef6348943c81347f3ae118651d1e5aae6712727601ed8fcf64` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/far200_lod2.png` | far view | husked | 3795687 | `58f36edb0efb51551575bb75cf39e9bd277684855891445cc35592408a33887d` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/far_lod2.png` | far view | husked | 4147363 | `410b514652c3d290d56d20d82d48b88648af0807d673f1f68e884fcf1949506e` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/night-exotic_lod0.png` | lighting case | husked | 3455321 | `17b338eae7d71d476991d2ff2290c7a5cdf3f424c4d235fc33f6fa456c6485a2` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/night-exotic_lod2.png` | lighting case | husked | 3444631 | `df84a24ec655e2cc4cc78ec1c929e09f2be9352658dbb66e79187ffcaf88c91d` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/noon-lush_lod0.png` | lighting case | husked | 4352965 | `7c20dc3820d2eeacbc133ef6ec00e17c07a7bc47da7626ecf85cffd507652fc2` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/noon-lush_lod2.png` | lighting case | husked | 4345854 | `9b21b6c6ccb501b26b42c48bce6cdcbaf70e3cbeb3efb3603e54e163c618d9d9` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/open-space_lod0.png` | lighting case | husked | 3090183 | `9d0e8f5a3641ca6726f47b719b3298c43907ef195949cea5b455b2185e9d5b79` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/open-space_lod2.png` | lighting case | husked | 3080724 | `5d910f76b95e558e5fda016b8f06859aa8d7885a76626130f741f9344c1ccc48` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/overlay.png` | overlay | husked | 4264205 | `a0a88c304d7e9322fe9b7568176b520aa6470bbcb1fa8f29a04b457291acefb5` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/perf.json` | perf readout | husked | 10200 | `dda1f9adedb7f92fa66bf7fc73d75ff2479eb33bc78741b1a4c15b3f0c452478` |  |
+| `artifacts/review/hulls/mule/mule/mule_husked/sheet.png` | review contact sheet | husked | 8959974 | `6d0edafa820954e58a9195ad969d60eb5fbe8fb3a9bf170468651dc40ec39974` | 1920×3444 |
+| `artifacts/review/hulls/mule/mule/mule_husked/wireframe_lod0.png` | wireframe | husked | 4407683 | `b282b85b8d88ec69eccfd4e87e4f621e626fc0e0dbd39b6594925fe225652c22` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/mule_husked/wireframe_lod2.png` | wireframe | husked | 4384449 | `6b359674bee698a36bb0531d39122717f7463541add1a5d92f18e95e27cbf72e` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/night-exotic_lod0.png` | lighting case | base | 3435089 | `a743a00cd7f9fb53bbaaf12bddad22d8f3cd2e960e1c2d8990faa06d7ee150d7` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/night-exotic_lod2.png` | lighting case | base | 3449166 | `59a3b22f849be8979875ceedb52d8ebba5ed793d20868cf56620692777f397d3` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/noon-lush_lod0.png` | lighting case | base | 4327012 | `1d0131142afecb8a8d9e10ba297a6f419ae90b197bbd04e4e29be26ec52a04ed` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/noon-lush_lod2.png` | lighting case | base | 4342441 | `4567c078f26d418c3f2a0526a8a0953c984818d369b71d33486ace8f1d61cbb6` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/open-space_lod0.png` | lighting case | base | 3033533 | `a6614baab2230ccb094345240bfea4bbccfcea248228634dd9af45b796e89e00` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/open-space_lod2.png` | lighting case | base | 3062095 | `02170b552c96e79589f39095ccf1c71b13b63b73c8044a48484d1dc0e510b779` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/overlay.png` | overlay | base | 4242374 | `36b855f84171dc7f91cc2eb9f775167a0fdbdbf741aecf69bf261eb167a00efe` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/perf.json` | perf readout | base | 10534 | `d9ce591c8c150d7727bc05b4d18860df23f01b79ac5789fb440bd1c11ca245a1` |  |
+| `artifacts/review/hulls/mule/mule/sheet.png` | review contact sheet | base | 9095832 | `6deb7552894a41225208bbc704119731cd5683963d81eff1e64eb72af8aa5d5e` | 1920×3444 |
+| `artifacts/review/hulls/mule/mule/wireframe_lod0.png` | wireframe | base | 4398874 | `041d239b4379f22bd8558386d8f736ce6e173f3c715c1ceb30543039e3ff2f1f` | 1920×1080 |
+| `artifacts/review/hulls/mule/mule/wireframe_lod2.png` | wireframe | base | 4383713 | `51243a6e44c369b778f414230aa79a77f76bc96d6f57b2646594221bdbb91107` | 1920×1080 |
+| `artifacts/validate/hulls__mule.blend.json` | validate.py report | base | 13125 | `8ea704b162871b70c1f16f29558729e19de01508b152f9ebc43c40fa95f7b13b` |  |
+| `artifacts/validate/hulls__mule.glb.json` | validate.py report | base | 10860 | `b2cdea49684f6982cdacce6633598659a7e69b04deb2eaf3e276f3dffcb965cf` |  |
+
+| `/tmp/hull-r3-packets/shared/hulls_lineup.png` | shared lineup image | shared | 2528677 | `e4c65dd6e6b57ba293e4d1f5057542210511e4190dedb729b3340c778bb956b5` | 2400×1000 |
+| `/tmp/hull-r3-packets/shared/hulls_lineup.txt` | shared lineup caption | shared | 279 | `0d754584a08d3facc80cd6bc49b27827117bc77de760d1c4fa7d80e34f509574` | |
+
+Required checklist for this hull: turntable and material sheet for base, damaged, and husked; three lighting cases at LOD0 and LOD2; wireframe at LOD0 and LOD2; far 100 m and 200 m LOD2; overlay; perf readout; cockpit closed, open quarter, open side, and open top; boarding; hardpoint stills present in the index; livery image; damage and husk review sets; validate source and export reports; shared lineup image and caption. All of those files are in this packet.

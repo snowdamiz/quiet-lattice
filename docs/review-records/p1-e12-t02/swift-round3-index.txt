@@ -1,0 +1,160 @@
+# Swift — retained round 3 artifact packet
+
+Retained round 3. These files were recovered from the stored tree. This packet does not claim a new capture. The age of the files is not a failure by itself.
+
+This folder is the grader input for one hull: the artifact index, the images, the readouts, the objective expectations, and the qualification flags. Blend and GLB binaries are not included.
+
+## Objective expectations
+
+Task P1.E12.T02, this hull's part of the done line: gear, canopy, cockpit interior, hardpoint mounts, a damage state, a husked variant, and three liveries.
+
+DESIGN 10.2 roster row: Tier 1 scout. Speed 780/300, boost 2.8, hull 70, shield 90, charge 120, cargo pods 1, signature 0.6, hardpoints 2S, ability slots 3.
+Art bible length band: Swift 10–12 m. Reference biped: 1.85 m.
+Art bible Ixari language, matching the livery caption's first row: faceted grown crystal with glowing seams. Livery colours named in the caption: Ixari slate `#3B4252` / violet `#7A4FD0` / crystal lilac `#B9A6FF`; Compact station white `#F4F4F0` / deep blue `#22406A` / signal orange `#F28C28`; Working warm grey `#9A968C` / graphite `#3A3B3D` / safety yellow `#E3B341`.
+Expected marker names from the art bible and families.json hull rule: `Gear*`, `Canopy*`, `CockpitInterior*`, hardpoints `HP_S_*` (this roster row is 2S).
+Husk expectation: panel-loss geometry with `LIB_HuskPlate`, silhouette unchanged at LOD2.
+Hero budget expectation: LOD0 60,000–150,000 triangles, 4k textures, 4 LODs, LOD3 under 5% of LOD0, `gpuTextureMB` 512 for one hero variant after transcode.
+Review expectation: noon-lush, night-exotic, and open-space at LOD0 and LOD2; wireframe; far LOD2 from 100 m under noon and, for a hero, from 200 m; collider and marker overlay; paired perf readout; turntable; material close-up.
+
+Rubric criteria for a model: Design language, Silhouette and read, Proportion and scale, Materials, Surface detail, Topology and LODs, Consistency, Fitness for play, No placeholder tell, Performance.
+PASS requires every criterion at 4 or above and a mean of 4.5 or above.
+
+## Identity pins
+
+- Source commit `66221bae6da140a9dcee127490a817863c1ed069`. Content tree `75ea700462c17d63a69b570e2ca710c5eb1e055d`. Cleanup tip `d584a1d386a1a5cd76911b314a7f9c5293aa23a3`. The blend and GLB git blobs match at those three commits.
+- Blend sha256 `dbf00e1c750a108faaa3e29402b0b3b9085d32b55e026e5316a6800afcefbba5`, 37028381 bytes. Not copied into this packet.
+- GLB sha256 `88cf76bb5c50d53c9b83e72875bbd0b114cc41fd1f28158b945c5d35c78943c6`, 82176128 bytes. Not copied into this packet.
+
+## Qualification flags
+
+- In-engine review PNGs (1920×1080) have no tEXt and no EXIF chunk. Their git blobs match the source commit and differ from the earlier commit of this hull. Identity is that git match.
+- The livery PNG matches the source commit. The livery text sidecar is byte-identical at the source commit and at an earlier commit. The text is a caption carried forward. The PNG is the livery image.
+- Cockpit open-top is a later still. Embedded Date `2026/11/01 02:56:57`, Cycles samples `24`, camera `cam`, 1600×1000. The File chunk names `assets/blend/hulls/swift.blend`. This recovery did not hash the path string inside the chunk. The still's git blob matches `91026d29bf109c5a7287c1abaf7c16ed0c702fd4` and does not match the source commit. That commit did not change the blend or the GLB.
+- Shared lineup image, one copy at `/tmp/hull-r3-packets/shared/hulls_lineup.png`, sha256 `e4c65dd6e6b57ba293e4d1f5057542210511e4190dedb729b3340c778bb956b5`, 2528677 bytes, 2400×1000. Embedded File `<untitled>`, Date `2026/11/01 03:13:13`, Cycles samples `64`. No blend path is embedded. Git blob matches `91026d29bf109c5a7287c1abaf7c16ed0c702fd4`, not this hull's source commit. Caption `/tmp/hull-r3-packets/shared/hulls_lineup.txt` is 279 bytes and was written in `75ea700462c17d63a69b570e2ca710c5eb1e055d`.
+- The lineup caption text is: left to right mule (19.0 m long, 21.9 m span, 6.0 m tall), kestrel (14.9 m long, 14.2 m span, 3.8 m tall), swift (11.5 m long, 10.0 m span, 3.9 m tall), lark (12.4 m long, 13.5 m span, 4.3 m tall); each with the 1.85 m REF biped. This packet is one hull. The other three hulls in that image are outside this packet.
+- `validate.py` reports included here are the copies stored under `assets/renders/validate/` with the retained tree. Naming, triangles, LODs, materials, and scale are the check ids. The stored JSON does not list `Gear`, `Canopy`, `CockpitInterior`, `HP_*`, `BAY_*`, or `COL_*` strings. Those names that were recorded are in the overlay block of `perf.json`.
+- `CockpitInterior` does not appear in the overlay label list or in the validate JSON. Cockpit stills are the cockpit images.
+- Performance figures below are copied from `perf.json`. They are not recomputed. `gl` and `gpuTiming` are quoted from those files.
+- Rows whose own record has `reliable` false, or whose scene `settle.underBudget` is false, are marked in the perf table. That flag is the record's flag.
+- Base overlay labels: HP_S_1, HP_S_2, Blink_NavPort, Blink_NavStarboard, Blink_StrobeTop, Canopy, GearFront, GearLeft, GearRight, Interact_Board, Light_Landing.
+- Husked overlay labels: HP_S_1, HP_S_2, Canopy_husk, GearFront_husk, GearLeft_husk, GearRight_husk, Interact_Board_husk.
+- Swift overlay counts have a COL, Interact, HP, Light, Gear, Blink, and Canopy entry on the base variant. The husked overlay counts omit Blink and Light. No BAY count is present on any Swift variant.
+
+## Readout figures
+
+Dimensions are the `dims` arrays as stored. The reports do not name which axis is length.
+
+| Report | Variant | Status | LOD0 | LOD1 | LOD2 | LOD3 | LOD3/LOD0 | dims | gpuTextureMB |
+|---|---|---|---:|---:|---:|---:|---:|---|---:|
+| source blend | swift | PASS | 68411 | 24778 | 13224 | 1950 | 0.0285 | [10.026, 11.521, 3.937] |  |
+| source blend | swift_damaged | PASS | 67947 | 26361 | 13129 | 1903 | 0.0280 | [10.026, 11.521, 3.937] |  |
+| source blend | swift_husked | PASS | 66365 | 25809 | 12813 | 1637 | 0.0247 | [10.026, 11.521, 3.937] |  |
+| export glb | swift_damaged | PASS | 67947 | 26361 | 13129 | 1903 | 0.0280 | [10.026, 11.521, 3.937] | 309.3 |
+| export glb | swift_husked | PASS | 66365 | 25809 | 12813 | 1637 | 0.0247 | [10.026, 11.521, 3.937] | 368.0 |
+| export glb | swift | PASS | 68411 | 24778 | 13224 | 1950 | 0.0285 | [10.026, 11.521, 3.937] | 298.7 |
+
+- source report: tool `packages/tools/blender/validate.py`, blender `5.2.3 LTS`, generatedAt `2026-11-01T02:42:18Z`, status `PASS`, summary `{"checks": {"naming": "PASS", "triangles": "PASS", "lods": "PASS", "materials": "PASS", "scale": "PASS"}, "fail": 0, "warn": 0}`.
+- source report warn/fail findings: none.
+- export report: tool `packages/tools/blender/validate.py`, blender `5.2.3 LTS`, generatedAt `2026-11-01T03:32:43Z`, status `PASS`, summary `{"checks": {"naming": "PASS", "triangles": "PASS", "lods": "PASS", "materials": "PASS", "scale": "PASS"}, "fail": 0, "warn": 0}`.
+- export report warn/fail findings: none.
+
+Materials named on the export report:
+- swift_damaged: NavRed, NavGreen, NavWhite, EngineGlow, Trim, Hull, SwiftDmg_Crystal, Dark, Accent, Glass
+- swift_husked: EngineGlow, Trim, Hull, SwiftHusk_Crystal, Dark, Accent, NavRed, NavGreen, NavWhite, Glass
+- swift: NavRed, NavGreen, NavWhite, EngineGlow, Trim, Hull, Swift_Crystal, Accent, Dark, Glass
+
+Paired perf, LOD0, viewport 1920×1080. `budgetMs` is 16.67 in every row. `gpuTiming` is `EXT_disjoint_timer_query_webgl2 (GPU time of the frame)`. `gl` is `metal`. `errors` is an empty list. The file's `method` is `paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks`. The table is that paired median. Unpaired figures remain in the JSON.
+
+| Variant | Case | cpuMs | gpuMs | calls | tris | reliable | pairs | gpuMsCi95 | settle.frameMs | underBudget | stable | settle.frames |
+|---|---|---:|---:|---:|---:|---|---:|---|---:|---|---|---:|
+| swift | noon-lush | 0.35 | 1.176 | 17 | 68411 | false | 720 | [0.897, 1.418] | 33.2 | false | true | 61 |
+| swift | night-exotic | 0.45 | 1.551 | 17 | 68411 | false | 720 | [1.29, 2.046] | 58.1 | false | true | 151 |
+| swift | open-space | 0.525 | 1.214 | 17 | 68411 | true | 120 | [1.123, 1.332] | 7.6 | true | true | 30 |
+| swift_damaged | noon-lush | 0.4 | 1.504 | 17 | 67947 | false | 720 | [1.185, 1.83] | 42.2 | false | true | 78 |
+| swift_damaged | night-exotic | 0.3 | 1.159 | 17 | 67947 | false | 720 | [0.84, 1.754] | 50.6 | false | true | 71 |
+| swift_damaged | open-space | 0.45 | 1.079 | 17 | 67947 | true | 240 | [0.938, 1.261] | 7.8 | true | true | 30 |
+| swift_husked | noon-lush | 0.3 | 1.113 | 17 | 66365 | true | 720 | [0.913, 1.41] | 43.1 | false | true | 80 |
+| swift_husked | night-exotic | 0.375 | 1.161 | 17 | 66365 | false | 720 | [0.611, 1.467] | 53 | false | true | 67 |
+| swift_husked | open-space | 0.35 | 0.939 | 17 | 66365 | true | 240 | [0.721, 1.16] | 7.7 | true | true | 154 |
+
+Capture texture stats from the same files (`textures.shown` / `textures.file`):
+- swift: triangles 68411, meshes 17, colliders 4, markers 7, textures `{"shown": {"count": 17, "compressed": 17, "mb": 194.7}, "file": {"count": 57, "compressed": 57, "mb": 629.3}}`.
+  Far: 100 m LOD2 shown 2 clear true; 200 m LOD2 shown 2 clear true.
+  Overlay counts `{"COL": 4, "Interact": 1, "HP": 2, "Light": 1, "Gear": 3, "Blink": 3, "Canopy": 1}`, offscreen 0.
+- swift_damaged: triangles 67947, meshes 17, colliders 4, markers 7, textures `{"shown": {"count": 19, "compressed": 19, "mb": 202.7}, "file": {"count": 57, "compressed": 57, "mb": 629.3}}`.
+  Far: 100 m LOD2 shown 2 clear true; 200 m LOD2 shown 2 clear true.
+  Overlay counts `{"COL": 4, "Interact": 1, "HP": 2, "Light": 1, "Gear": 3, "Blink": 3, "Canopy": 1}`, offscreen 0.
+- swift_husked: triangles 66365, meshes 17, colliders 4, markers 7, textures `{"shown": {"count": 21, "compressed": 21, "mb": 232}, "file": {"count": 57, "compressed": 57, "mb": 629.3}}`.
+  Far: 100 m LOD2 shown 2 clear true; 200 m LOD2 shown 2 clear true.
+  Overlay counts `{"COL": 4, "Interact": 1, "HP": 2, "Gear": 3, "Canopy": 1}`, offscreen 0.
+
+## Artifact index
+
+Copied payloads for this hull: 59 files, 192025379 bytes. Each payload sha256 equals its Git LFS oid and its pointer size. Shared lineup files are not counted in that byte total.
+
+| Path in this packet | Role | Variant | Bytes | SHA256 | Pixels |
+|---|---|---|---:|---|---|
+| `artifacts/review/hulls/swift/swift/far200_lod2.png` | far view | base | 4230575 | `243457c71d99d9465ef7b2881f0e04a1ce35329fe45a9d0986dbd92adee33869` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/far_lod2.png` | far view | base | 4404511 | `c2349b37c7c803446da3ba322b44b50bb24c8d790f9ccfb5645b3180423f745d` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/night-exotic_lod0.png` | lighting case | base | 3362651 | `07145359fbc3980ac9c2e83141be1a2420433eda51c82bf89c2cdbc381122bf8` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/night-exotic_lod2.png` | lighting case | base | 3363114 | `c5d003dbd7378d5d530d41151fcd19845b44184cafc9134ae380ed33d5a63652` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/noon-lush_lod0.png` | lighting case | base | 4389832 | `542ecb128e97fc0b6653ad157d44d5b6e71641d6e293bc29ec98d5aacb7cc27d` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/noon-lush_lod2.png` | lighting case | base | 4390773 | `c256d206a3b834e8dc9c649581b0d4b757b5b595ca8e6229cdfcbd4e77f88e8d` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/open-space_lod0.png` | lighting case | base | 2958621 | `74341081e01906a96b56ca5dd7ffa3f14df0d86783719d7a18d2377f7ba70b8c` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/open-space_lod2.png` | lighting case | base | 2956783 | `2bc2cff4b3e85c70735b204c5aca8426d58467a9f15a8fbc32e3c503544e8177` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/overlay.png` | overlay | base | 4329982 | `330f0a3c8a2295d35f4c96ea104ba7e524ae73bb761c533fed94c966415ae321` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/perf.json` | perf readout | base | 10399 | `c4c23b1513f667fc92cb30afc9a51185e716008493494387b3cf3ad60817b34e` |  |
+| `artifacts/review/hulls/swift/swift/sheet.png` | review contact sheet | base | 9726636 | `25c60d0c2f60342dd7682ee875d659b9c5e53ccbee29ddfa5d00c217dd42b980` | 1920×3444 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/far200_lod2.png` | far view | damaged | 4230895 | `95ae3426292860d31a737f7cdf6cb5f256620e41d8c9b1d5df92ad56dc1966ef` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/far_lod2.png` | far view | damaged | 4405177 | `a4077e1c71ad4f21cdfcb7dd64854488b2b7c7851b2275eb32d35e3de1d1187a` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/night-exotic_lod0.png` | lighting case | damaged | 3361843 | `e655f25c898737625e972818cf16bf7c8cc85f4193593ec36f2e7998c3bfa503` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/night-exotic_lod2.png` | lighting case | damaged | 3361376 | `072e816f3521853b6adc7e187a8d8cd84f846a4a28db93a841b3af4883a707e0` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/noon-lush_lod0.png` | lighting case | damaged | 4394775 | `85bf44c8d6cf65e857192781f4de4861d6d6c18647998c8d8cea657d25bc0751` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/noon-lush_lod2.png` | lighting case | damaged | 4394914 | `b2c8dd8c432850a50710a76ae7cb8028273c5fb1945a46f6c5e98c07bdc85b4e` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/open-space_lod0.png` | lighting case | damaged | 2965729 | `9a19ab9ef3f4f129acfb4fef2292e3f0e1f850b0e2a661b355a4f8d390b4abc0` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/open-space_lod2.png` | lighting case | damaged | 2963922 | `671ad16fa2e3df97db9c16200dadf1964600aebc668b632d391212a59907cbab` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/overlay.png` | overlay | damaged | 4301579 | `b5a0042cc996112bcf48da4d1bb4b8851ffd3d8e4cd8b22c72c7adaf3ef6fe56` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/perf.json` | perf readout | damaged | 10469 | `1a0bf3820a3b05b17289234b717b0c77d38ddc06ad7c0891838af68a16139d85` |  |
+| `artifacts/review/hulls/swift/swift/swift_damaged/sheet.png` | review contact sheet | damaged | 9719018 | `963c31f502e2e6c20b19fa45e572d37a188d8ab2281e49223a8ba114ad6bf643` | 1920×3444 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/wireframe_lod0.png` | wireframe | damaged | 4427362 | `95b844a5417427f8788294fa4f0be112d4715f42a8c43b1f6e08053774a3ce93` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_damaged/wireframe_lod2.png` | wireframe | damaged | 4411443 | `9ce53749c88aa98c76007ec2a79ebc02fe7e849b43b97e6bdc4da101819326e9` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/far200_lod2.png` | far view | husked | 4230962 | `0d958a0f557c6bf8318fd23001050473d2ee59f9d402c64c00f2c0443b6aae1c` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/far_lod2.png` | far view | husked | 4405211 | `745058875e2c6dcbb141bae1b4c99d69ee8c86de68f07f47301d27835bd40bc6` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/night-exotic_lod0.png` | lighting case | husked | 3380226 | `527d84ea39cad52c18af8b8a556ef24fedab57380242ffaca1f6a041bdb8e07d` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/night-exotic_lod2.png` | lighting case | husked | 3378448 | `ac0e3ea79056b5a4956eea405407d544681f199c3ca3499090ff87cbe32f1eda` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/noon-lush_lod0.png` | lighting case | husked | 4400484 | `047d05e585b8613e4b2777ab6df8cbd827199dd7de1eb2fd2f1b7631c75e4b5f` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/noon-lush_lod2.png` | lighting case | husked | 4398657 | `54de357c692f1b3195b1327c858a6a38e13b62b305c5f809367e5fe34bedcb96` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/open-space_lod0.png` | lighting case | husked | 2986237 | `f030d3d987c863d7eab66b22a9848726c2cf91db7b4d9e34d65d28037d3081b1` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/open-space_lod2.png` | lighting case | husked | 2984546 | `e33ab5944650c25a68cc40e2a52847f78e78f8a0c57adc15fae54515f2730b28` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/overlay.png` | overlay | husked | 4331334 | `2331291577f080196761d00ee5cef3e156a2e6a7f14472b444a84f02d17766eb` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/perf.json` | perf readout | husked | 10157 | `2508be04d9d999c7c33a27435cdb4767ef8b59b7b7d8e7607e6b7ed0b2b0fdc5` |  |
+| `artifacts/review/hulls/swift/swift/swift_husked/sheet.png` | review contact sheet | husked | 8913492 | `dd56f951189f3d4e5c4a2cef5d86516d0832d76811134cf0445dbf6168be8998` | 1920×3444 |
+| `artifacts/review/hulls/swift/swift/swift_husked/wireframe_lod0.png` | wireframe | husked | 4437342 | `c23c6bed8c7be89d3471c8fd2316588ce6be16722a047a94ba8e946ad606d528` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/swift_husked/wireframe_lod2.png` | wireframe | husked | 4422197 | `ccb9f2899442af17e0750dd073c1bf7e266f2f6239294f008f145c9a6871c40f` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/wireframe_lod0.png` | wireframe | base | 4423863 | `c2f08bc90355297853ebed524152b2a50b582e1dc297f257c1982aea10508fb9` | 1920×1080 |
+| `artifacts/review/hulls/swift/swift/wireframe_lod2.png` | wireframe | base | 4405795 | `596c3e6f2dc94bba1f5e5af7c1eaaa8e96b421a1c318e29e236c9bfab55d433a` | 1920×1080 |
+| `artifacts/swift_boarding_board.png` | boarding | base | 1652373 | `3fa51beb582a87c86591c828194b30a1353783ea0c69e4c70e82140f26e1d179` | 1600×1000 |
+| `artifacts/swift_cockpit_closed_side.png` | cockpit | base | 1793201 | `8b2f557b954b49999650322ba85b81147fd18c6bb9befd63fd6d3f14e216ed9f` | 1600×1000 |
+| `artifacts/swift_cockpit_open_q.png` | cockpit | base | 1865512 | `d0e4d7cb9c3f78b91012dd55b874f365837f65275a07a1eadcbb9ab5a7fc270f` | 1600×1000 |
+| `artifacts/swift_cockpit_open_side.png` | cockpit | base | 1810376 | `8411bef1c2267a24e7ad0515a10f72e8f17a3eb0900b1f176d680e75e9d624a5` | 1600×1000 |
+| `artifacts/swift_cockpit_open_top.png` | cockpit | base | 1825112 | `1ef171e0ac497a2f5ec81290bcb21832143b48545892fbcefad2de76859ab536` | 1600×1000 |
+| `artifacts/swift_hardpoint_HP_S_1.png` | hardpoint | base | 1371766 | `64427e3568886fad37b083e95a8b988ee7c8056a5a2277931fc0166d8e632105` | 1400×900 |
+| `artifacts/swift_hardpoint_HP_S_2.png` | hardpoint | base | 1338800 | `2a4b3580f34e0c2dd1af356f1c91d7fb9081eea762e102efa64938ed78781d7c` | 1400×900 |
+| `artifacts/swift_liveries.png` | livery sheet | base | 2845175 | `cc506e201e7b1a183018c62f746eb323e3e8af63eac76d052cbd5f94dda7540a` | 1600×1698 |
+| `artifacts/swift_liveries.txt` | livery caption | base | 199 | `5d554dad520997a4eec4202960684724cae94fe0cf2def2cd8b6e6c73aff9e89` |  |
+| `artifacts/swift_swift_materials.png` | material sheet | base | 2137060 | `04646cb987b0134aef29c8d31ddfad89c2ebd0994e6749440c9fb53c37c63513` | 2880×720 |
+| `artifacts/swift_swift_materials.txt` | material caption | base | 609 | `d747dccbac37e6249f0f7fbe566d9c088125c6e314ecc1540a255d56aaba4410` |  |
+| `artifacts/swift_swift_swift_damaged_materials.png` | material sheet | damaged | 2177540 | `f3621f949e5b9b8b62e988b5ad97b2c295bbf01a5eca70da88d55403cb7af0e9` | 2880×720 |
+| `artifacts/swift_swift_swift_damaged_materials.txt` | material caption | damaged | 641 | `eb73594d26600ecdaebe3b5ac1990aac04e90e036a74398581331101fd10f3e8` |  |
+| `artifacts/swift_swift_swift_damaged_turntable.png` | turntable | damaged | 4249050 | `5b7383b5141ddf60966e8809dfa6ff60f309cad6bdc9679802774ab220e2417d` | 3200×1200 |
+| `artifacts/swift_swift_swift_husked_materials.png` | material sheet | husked | 2292974 | `9aef45ce86c54289ebcbbd61eecbb036ff962ae9b9636d329389f621a71053ea` | 2880×720 |
+| `artifacts/swift_swift_swift_husked_materials.txt` | material caption | husked | 678 | `431a92837ea6f65a1b87157f695ea7f0a268887cc5a8025c14468930d2297ac2` |  |
+| `artifacts/swift_swift_swift_husked_turntable.png` | turntable | husked | 4231180 | `69d3495b3b6188e4bfd15da89b47dc0efba6204f56f42b55b2e0da9bb90e1bb9` | 3200×1200 |
+| `artifacts/swift_swift_turntable.png` | turntable | base | 4227530 | `d335a76fe4191305c7a2210e7e54ca4423f9041196c3d8ddf3d9558d315ad572` | 3200×1200 |
+| `artifacts/validate/hulls__swift.blend.json` | validate.py report | base | 13513 | `58aecd6da0a99efb648e03df8401182922d6877fb53dadb89110f33b021c1cba` |  |
+| `artifacts/validate/hulls__swift.glb.json` | validate.py report | base | 10760 | `7d19910089ffd46f26d7c1c6f06e9a1d0db920d71faba0e0d656347633300d40` |  |
+
+| `/tmp/hull-r3-packets/shared/hulls_lineup.png` | shared lineup image | shared | 2528677 | `e4c65dd6e6b57ba293e4d1f5057542210511e4190dedb729b3340c778bb956b5` | 2400×1000 |
+| `/tmp/hull-r3-packets/shared/hulls_lineup.txt` | shared lineup caption | shared | 279 | `0d754584a08d3facc80cd6bc49b27827117bc77de760d1c4fa7d80e34f509574` | |
+
+Required checklist for this hull: turntable and material sheet for base, damaged, and husked; three lighting cases at LOD0 and LOD2; wireframe at LOD0 and LOD2; far 100 m and 200 m LOD2; overlay; perf readout; cockpit closed, open quarter, open side, and open top; boarding; hardpoint stills present in the index; livery image; damage and husk review sets; validate source and export reports; shared lineup image and caption. All of those files are in this packet.

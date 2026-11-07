@@ -1,0 +1,118 @@
+TASK: P1.E14.T10 P3 saved nest LOD2 advisory correction
+STATUS: DONE for this correction and focused CPU verification. Parent verification of the correction, all capture/visual/GPU/merged gates remain pending. Full source-review PASS remains historical at e72f49005.
+SUMMARY: Removed exactly saved den_nest_1_SculptLOD2 faces 1563, 2849 and 2855 with Blender Mesh.validate(clean_customdata=False), retaining their other source content. Updated the task authoring step to clean post-triangulation duplicates before save and the task validator to reject any invalid source/export LOD using read-only copies. Existing GLB was not regenerated because all 2,866 cleaned source triangles match it one-to-one. Bound the new source hash to fresh family, den-contract, per-LOD and semantic-content receipts.
+
+PROVENANCE:
+  branch: task/P1-E14-T10-dens
+  worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1
+  correction base: e72f49005d4597a06aea1389aedeab99248ae6f5
+  base tree: ae7d621577089426309ccd561892fa06ac2db813
+  head: ea58f40198e0d8ad9871075acd42825247a98bc7
+  tree: 5862ff2bf3f78af46527fba22d1ee18746d1964e
+  original task base: 634c51d2378748c6a514af2a792ee4500b912643
+  worktree: clean; no push, PR, main or orchestration-document edits.
+
+EXACT DELTA:
+  Source LOD2 faces/triangles: 2869 -> 2866. Removed original face indices [1563, 2849, 2855] and their 9 corners (loops 8607 -> 8598). Vertices remain 1385; edges remain 4126. No vertex or edge removal.
+  Ordered face winding, remaining corner attributes/UVs, all vertex/edge attributes, part groups and weights match the original source with exactly those face/corner entries omitted.
+  All other 18 source mesh records are unchanged, including LOD0/1/3, paint source, colliders and references. Object transforms, markers, materials/node graphs, packed image bytes, collections, unit settings and custom properties match the original source.
+  Blender normally dropped the zero-user RetiredAtlas_den_nest_1 shader on save. Final save preserved it with use_extra_user=True only during serialization. After reload its users=0, fake=False, extra=False exactly match the original; no authored retention flag, binding or material edit remains.
+  Fresh source family measurements differ from the original report ONLY at LOD2 triangle count 2869 -> 2866. Main manifest changes only nest source SHA256 and byte size.
+  All seven GLBs, six other blend sources, all preview PNGs and the old preview manifest/reports remain byte-identical. 98 protected files were hashed before work and rechecked after commit.
+  prior source SHA256: 001f57e2d088f733de58f396e7a5329bcf13c4dbbd4d9e96cef0e42c7c9cae9e
+  current source SHA256: f2240caccd6c318c796d142f1272f90c29484ff53f02ba0fa06d3bd81f49e5d8
+  current source bytes: 12420819
+  unchanged nest GLB SHA256: 6f64b0366bb7090ba5fd61049073d78b8144002af408bdee98c847a938655853
+  current manifest SHA256: 256922f14776a2ba35cc8c67aceff7e14268d067630e404f2fd867adcae7e6f9
+  protected-file-set SHA256: 7ba18e79d479c50520ec8705f5c9b2307f29accdd917a8cb46e81b0a564f60c9
+  Full exact protected path/hash/size inventory: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/provenance.json
+
+FILES CHANGED:
+  assets/blend/sites/den_nest_1.blend
+  packages/tools/blender/dens/manifest.json
+  packages/tools/blender/dens/refine_nest_lods.py
+  packages/tools/blender/dens/validate.py
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/cleanup.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/export-contracts.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/provenance.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/retention.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/sites__den_nest_1.blend.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/sites__den_nest_1.glb.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/source-contracts.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/source-state-after.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/source-state-before.json
+  packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/validity.json
+
+VERIFY:
+  Read /tmp/P1-E14-T10-source-review-e72f490/review-report.txt and the retained native duplicate-face failure. Preserved all its artifacts. Original blend was read from its already-local committed LFS object with SHA256 verification; no fetch/hydration.
+  PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/P1-E14-T10-lod2-cleanup-e72f490 python3 packages/tools/blender/dens/run.py --seconds 180 --log /tmp/P1-E14-T10-lod2-cleanup-e72f490/preserve-and-verify.log -- -P /tmp/P1-E14-T10-lod2-cleanup-e72f490/preserve_and_verify.py -> PASS.
+  That final invocation read the exact original source, cleaned only the three faces, compared the full recorded semantic state, saved, reopened and compared again. It then ran the unchanged family validator plus the strengthened task den validator against the final source and unchanged export, writing fresh reports in the committed r4 directory.
+  Source and export each: four LOD Mesh.validate checks PASS; naming, class budgets, materials, scale, origin markers, collider fitting and clear approach contracts PASS. Saved source remains metric, editable, UV-bearing and packed; old Wear paint source retained.
+  LOD2 oriented triangle bijection: 2866/2866, no unmatched source or export triangles. Max corner position difference 0.000443972670 m; max UV distance 0.000098243508. This compares the actual existing quantized compressed export, not a regenerated facsimile. Exact float equality is not claimed across quantization.
+  Normal-angle comparison measured 1.122567737 degrees maximum; this is recorded, not relabelled as an in-engine shading/visual PASS. The source corner data other than the nine removed corners is preserved and the shipped GLB bytes are unchanged.
+  python3 -m py_compile packages/tools/blender/dens/refine_nest_lods.py packages/tools/blender/dens/validate.py -> PASS.
+  Exact source family-report structural comparison -> PASS: only LOD2 count differs.
+  Exact manifest structural comparison -> PASS: only current nest source SHA256/bytes differ.
+  git diff --cached --check before commit -> PASS; final git status --porcelain -> empty; committed nest LFS OID matches current validated payload.
+  Protected-file hash checks -> PASS 98/98 before manifest update and after commit.
+  No broad 220-test rerun; source/engine code behavior is unchanged apart from the authorized task-local authoring and validation safeguards.
+
+PROCESS ACCOUNTING AND RETAINED ATTEMPTS:
+  Four sequential bounded Blender invocations were used, each -t 2, max one process alive at a time; deadlines 300/300/300/180 seconds. This is four invocations, not a claim that one invocation sufficed. All exited. No GPU/browser/capture/render/bake/server/DB activity and no export regeneration.
+  Attempt 1 stopped before source mutation: a vertex-set helper selected face 2854 as the duplicate representative while native Blender reports 2852; the required removal face 2855 was the same. Original source hash unchanged. Initial assertion was stricter than the native duplicate classification.
+  Attempt 2: native cleanup removed exactly the required faces and matched existing GLB geometry. Save/reopen fingerprint assertion then failed because normal Blender saving dropped the unused historical shader. This intermediate source was not sealed as current PASS.
+  Attempt 3: read-only audit isolated the shader drop, confirmed all geometry/maps/markers unchanged otherwise, and completed focused source/export validity.
+  Attempt 4: final original-source read/clean/save retained that shader without persisting an extra/fake user; exact reopened semantic match and fresh validation PASS.
+  First three attempt records and logs are preserved under /tmp/P1-E14-T10-lod2-cleanup-e72f490/attempt-receipts and sibling *.log files. Historical reports were not overwritten or reclassified.
+
+DECISIONS:
+  Regenerate export? -> No -> cleaned source and actual shipped LOD2 have the same oriented surface/UV triangles within existing quantization; export passes validity and its hash is unchanged.
+  Preserve retired unused shader? -> Temporary extra-user reference during save, verified cleared on reload -> avoids an unrelated source material deletion while changing no authored binding or flag.
+  Old manifest/source receipts? -> Keep old reports and preview packet historical, update only current asset manifest source hash/bytes, add a fresh r4 provenance record -> never treat old source SHA as a current PASS.
+  Prevent recurrence? -> Mesh.validate after triangulation in refine_nest_lods.py; read-only validity assertions over every LOD in dens/validate.py -> saves cleaned geometry and fails validation if invalid source geometry returns.
+
+OUT OF SCOPE FOUND: No new engine/server task change. Complete capture, source correction review, blind visual grade, actual GPU/texture/performance and merged-smoke acceptance remain parent-owned pending gates.
+
+ARTIFACTS:
+  Current receipts: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4
+  Current cleanup receipt: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/cleanup.json
+  Current source and protected identities: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/packages/tools/blender/dens/validation/nest-lod2-cleanup-e72f490-r4/provenance.json
+  Old source, old manifests/reports and old preview identities remain available through Git at e72f49005. No new preview was generated; packages/tools/blender/dens/previews.json is explicitly the historical e72 packet, not a freshly rendered packet bound to the new source.
+  Complete local correction history: /tmp/P1-E14-T10-lod2-cleanup-e72f490
+
+FAILURE TAILS (historical, not current PASS):
+
+clean-and-verify.log
+00:00.822  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/assets/blend/sites/den_nest_1.blend"
+Traceback (most recent call last):
+  File "/tmp/P1-E14-T10-lod2-cleanup-e72f490/clean_and_verify.py", line 112, in <module>
+    assert len(mesh.polygons)==2869 and duplicate_faces(mesh)==DUPLICATES
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+Error: script failed, file: '/tmp/P1-E14-T10-lod2-cleanup-e72f490/clean_and_verify.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+
+clean-and-verify-r2.log
+00:02:21 | INFO: Blender create Mesh node DishWeave0
+00:02:21 | INFO: Blender create Mesh node DishWeave0
+00:02:21 | INFO: glTF import finished in 0.06s
+LOD2 BIJECTION {'status': 'PASS', 'orientedTriangleBijection': 2866, 'unmatchedSource': 0, 'unmatchedExport': 0, 'maxCornerDistanceM': 0.0004439726696334843, 'positionToleranceM': 0.002, 'maxUVDistance': 9.824350831096473e-05, 'uvTolerance': 0.001, 'maxCornerNormalAngleDegrees': 1.1225677369095122, 'normalComparison': 'measurement only; positions, winding and UVs are matched one-to-one within existing export quantization', 'mappingSha256': '13680e5b70b3fa3c9925c9c22043ee81561450162d3e12d0f7207421865d6120', 'sourceSurfaceSha256': 'fddc2821ae21a59aab5e0195bc847656a07e646b00ee82e302d2f2edccc73c1c', 'exportSurfaceSha256': 'c37fca19edaa159bba71a2c51c3623cbeb95c8040879b76d09d8315ae17fd7aa'}
+00:07.925  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/assets/blend/sites/den_nest_1.blend"
+00:10.238  geom.mesh        | ERROR Face 1563 is a duplicate of 1562
+00:10.238  geom.mesh        | ERROR Face 2849 is a duplicate of 1561
+00:10.238  geom.mesh        | ERROR Face 2855 is a duplicate of 2852
+00:12.378  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1/assets/blend/sites/den_nest_1.blend"
+Traceback (most recent call last):
+  File "/tmp/P1-E14-T10-lod2-cleanup-e72f490/clean_and_verify_r2.py", line 176, in <module>
+    assert after==expected,'Saved/reopened source differs from the exact three-face deletion'
+           ^^^^^^^^^^^^^^^
+AssertionError: Saved/reopened source differs from the exact three-face deletion
+Info: Saved as "den_nest_1.blend"
+
+Error: script failed, file: '/tmp/P1-E14-T10-lod2-cleanup-e72f490/clean_and_verify_r2.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

@@ -1,0 +1,183 @@
+# Exact executed commands
+
+All run-command.py invocations use the evidence directory as cwd and set TMPDIR to its tmp/ child plus PYTHONDONTWRITEBYTECODE=1. The ledger records the inner commands as executed.
+
+## boundary-pinned-python
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/boundary-pinned-python.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/scratch/packages/tools/src/capture/fauna_packet/controls.py BoundaryControls
+```
+
+## check-current
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/check-current.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 python3 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/check-current.py
+```
+
+## final-verify
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/final-verify.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 python3 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/final-verify.py
+```
+
+## independent-boundaries
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py
+```
+
+## r1-node-catch
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/r1-node-catch.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/node-green.mjs catch-write
+```
+
+## r1-node-final
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/r1-node-final.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/node-green.mjs final-write
+```
+
+## r1-python
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/r1-python.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/python-green.py
+```
+
+## r2-green
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/r2-green.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/adversarial-green.py
+```
+
+## r2-red
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/r2-red.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/red/adversarial.py
+```
+
+## retained-facts
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/retained-facts.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/retained-facts.py
+```
+
+## stock-node
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/stock-node.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --test --test-concurrency=1 /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/scratch/packages/tools/src/capture/fauna_packet/controls.mjs
+```
+
+## stock-python
+
+Exit: 0; log: /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/stock-python.log
+
+```sh
+cd /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y
+TMPDIR=/private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/tmp PYTHONDONTWRITEBYTECODE=1 /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/run-stock.py
+```
+
+## Pinned readiness check inner invocation
+
+The check-current wrapper additionally used the exact PATH in check-actual-command.json.
+
+```sh
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py --check
+```
+
+## Child process: success
+
+Observed exit: 0; successor admitted: True
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child success
+```
+
+## Child process: after-write
+
+Observed exit: 1; successor admitted: False
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child after-write
+```
+
+## Child process: after-close
+
+Observed exit: 1; successor admitted: False
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child after-close
+```
+
+## Child process: after-publication
+
+Observed exit: 1; successor admitted: False
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child after-publication
+```
+
+## Child process: after-rename
+
+Observed exit: 1; successor admitted: False
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child after-rename
+```
+
+## Child process: after-close-all-sinks
+
+Observed exit: 1; successor admitted: False
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child after-close-all-sinks
+```
+
+## Child process: all-sinks
+
+Observed exit: 1; successor admitted: False
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child all-sinks
+```
+
+## Child process: after-caller-return
+
+Observed exit: 1; successor admitted: False
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r3-independent-l9fn2t5y/independent-boundaries.py --child after-caller-return
+```
