@@ -1,0 +1,415 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/creatures/biped.blend",
+  "family": "creatures",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T10:50:46Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "biped",
+      "variants": [
+        {
+          "id": "biped_0",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 37060
+          },
+          "implicitLods": false,
+          "dims": [
+            1.003,
+            1.669,
+            1.899
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_0_leap",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 37920
+          },
+          "implicitLods": false,
+          "dims": [
+            1.249,
+            2.484,
+            1.899
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_0_claw_combo",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 37920
+          },
+          "implicitLods": false,
+          "dims": [
+            1.126,
+            2.484,
+            1.899
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_1",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 38304
+          },
+          "implicitLods": false,
+          "dims": [
+            1.595,
+            1.846,
+            2.463
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_1_leap",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 39164
+          },
+          "implicitLods": false,
+          "dims": [
+            1.947,
+            2.841,
+            2.463
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_1_claw_combo",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 39164
+          },
+          "implicitLods": false,
+          "dims": [
+            1.771,
+            2.841,
+            2.463
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_predator",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 38820
+          },
+          "implicitLods": false,
+          "dims": [
+            1.178,
+            2.819,
+            2.232
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_predator_leap",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 39680
+          },
+          "implicitLods": false,
+          "dims": [
+            1.456,
+            3.843,
+            2.232
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "biped_predator_claw_combo",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 39680
+          },
+          "implicitLods": false,
+          "dims": [
+            1.317,
+            3.843,
+            2.232
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "biped.blend",
+          "message": "9 variant(s) in 1 asset(s) follow the creatures rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "biped/biped_0",
+          "message": "LOD0 37,060 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_0_leap",
+          "message": "LOD0 37,920 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_0_claw_combo",
+          "message": "LOD0 37,920 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_1",
+          "message": "LOD0 38,304 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_1_leap",
+          "message": "LOD0 39,164 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_1_claw_combo",
+          "message": "LOD0 39,164 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_predator",
+          "message": "LOD0 38,820 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_predator_leap",
+          "message": "LOD0 39,680 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "biped/biped_predator_claw_combo",
+          "message": "LOD0 39,680 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "info",
+          "subject": "biped/biped_0",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_0_leap",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_0_claw_combo",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_1",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_1_leap",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_1_claw_combo",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_predator",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_predator_leap",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        },
+        {
+          "level": "info",
+          "subject": "biped/biped_predator_claw_combo",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "biped/biped_0",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_0_leap",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_0_claw_combo",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_1",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_1_leap",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_1_claw_combo",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_predator",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_predator_leap",
+          "message": "LOD1-LOD3 generated at export"
+        },
+        {
+          "subject": "biped/biped_predator_claw_combo",
+          "message": "LOD1-LOD3 generated at export"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "FaunaHide",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "biped/biped_0",
+          "message": "longest side 1.90 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_0_leap",
+          "message": "longest side 2.48 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_0_claw_combo",
+          "message": "longest side 2.48 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_1",
+          "message": "longest side 2.46 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_1_leap",
+          "message": "longest side 2.84 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_1_claw_combo",
+          "message": "longest side 2.84 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_predator",
+          "message": "longest side 2.82 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_predator_leap",
+          "message": "longest side 3.84 m within 0.2-80 m"
+        },
+        {
+          "subject": "biped/biped_predator_claw_combo",
+          "message": "longest side 3.84 m within 0.2-80 m"
+        }
+      ]
+    }
+  ]
+}

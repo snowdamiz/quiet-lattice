@@ -1,0 +1,343 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/creatures/quad_small.glb",
+  "family": "creatures",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T10:51:53Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "quad_small",
+      "variants": [
+        {
+          "id": "quad_small_0",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 31116,
+            "1": 9334,
+            "2": 3108,
+            "3": 1086
+          },
+          "implicitLods": false,
+          "dims": [
+            0.851,
+            2.509,
+            0.8
+          ],
+          "materials": [
+            "FaunaHide"
+          ],
+          "gpuTextureMB": 16.0
+        },
+        {
+          "id": "quad_small_0_bite_swarm",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 31976,
+            "1": 9592,
+            "2": 3194,
+            "3": 1116
+          },
+          "implicitLods": false,
+          "dims": [
+            0.851,
+            2.769,
+            0.728
+          ],
+          "materials": [
+            "FaunaHide"
+          ],
+          "gpuTextureMB": 16.0
+        },
+        {
+          "id": "quad_small_1",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 35672,
+            "1": 10700,
+            "2": 3566,
+            "3": 1246
+          },
+          "implicitLods": false,
+          "dims": [
+            1.062,
+            2.621,
+            1.281
+          ],
+          "materials": [
+            "FaunaHide"
+          ],
+          "gpuTextureMB": 16.0
+        },
+        {
+          "id": "quad_small_1_bite_swarm",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 36532,
+            "1": 10958,
+            "2": 3650,
+            "3": 1276
+          },
+          "implicitLods": false,
+          "dims": [
+            1.062,
+            2.881,
+            1.143
+          ],
+          "materials": [
+            "FaunaHide"
+          ],
+          "gpuTextureMB": 16.0
+        },
+        {
+          "id": "quad_small_predator",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 35724,
+            "1": 10716,
+            "2": 3570,
+            "3": 1248
+          },
+          "implicitLods": false,
+          "dims": [
+            0.851,
+            4.089,
+            0.982
+          ],
+          "materials": [
+            "FaunaHide"
+          ],
+          "gpuTextureMB": 16.0
+        },
+        {
+          "id": "quad_small_predator_bite_swarm",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 36584,
+            "1": 10974,
+            "2": 3656,
+            "3": 1276
+          },
+          "implicitLods": false,
+          "dims": [
+            0.851,
+            4.349,
+            0.981
+          ],
+          "materials": [
+            "FaunaHide"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "quad_small.glb",
+          "message": "6 variant(s) in 1 asset(s) follow the creatures rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "quad_small/quad_small_0",
+          "message": "LOD0 31,116 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "quad_small/quad_small_0_bite_swarm",
+          "message": "LOD0 31,976 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "quad_small/quad_small_1",
+          "message": "LOD0 35,672 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "quad_small/quad_small_1_bite_swarm",
+          "message": "LOD0 36,532 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "quad_small/quad_small_predator",
+          "message": "LOD0 35,724 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "quad_small/quad_small_predator_bite_swarm",
+          "message": "LOD0 36,584 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 4.0 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "quad_small/quad_small_0",
+          "message": "31,116 > 9,334 > 3,108 > 1,086 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "quad_small/quad_small_0_bite_swarm",
+          "message": "31,976 > 9,592 > 3,194 > 1,116 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "quad_small/quad_small_1",
+          "message": "35,672 > 10,700 > 3,566 > 1,246 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "quad_small/quad_small_1_bite_swarm",
+          "message": "36,532 > 10,958 > 3,650 > 1,276 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "quad_small/quad_small_predator",
+          "message": "35,724 > 10,716 > 3,570 > 1,248 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "quad_small/quad_small_predator_bite_swarm",
+          "message": "36,584 > 10,974 > 3,656 > 1,276 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "FaunaHide",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "textures",
+          "message": "3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB"
+        },
+        {
+          "subject": "quad_small/quad_small_0",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB"
+        },
+        {
+          "subject": "quad_small/quad_small_0_bite_swarm",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB"
+        },
+        {
+          "subject": "quad_small/quad_small_1",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB"
+        },
+        {
+          "subject": "quad_small/quad_small_1_bite_swarm",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB"
+        },
+        {
+          "subject": "quad_small/quad_small_predator",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB"
+        },
+        {
+          "subject": "quad_small/quad_small_predator_bite_swarm",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/creatures/quad_small.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "quad_small/quad_small_0",
+          "message": "longest side 2.51 m within 0.2-80 m"
+        },
+        {
+          "subject": "quad_small/quad_small_0_bite_swarm",
+          "message": "longest side 2.77 m within 0.2-80 m"
+        },
+        {
+          "subject": "quad_small/quad_small_1",
+          "message": "longest side 2.62 m within 0.2-80 m"
+        },
+        {
+          "subject": "quad_small/quad_small_1_bite_swarm",
+          "message": "longest side 2.88 m within 0.2-80 m"
+        },
+        {
+          "subject": "quad_small/quad_small_predator",
+          "message": "longest side 4.09 m within 0.2-80 m"
+        },
+        {
+          "subject": "quad_small/quad_small_predator_bite_swarm",
+          "message": "longest side 4.35 m within 0.2-80 m"
+        }
+      ]
+    }
+  ]
+}

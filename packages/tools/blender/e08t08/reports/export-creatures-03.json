@@ -1,0 +1,6963 @@
+{
+  "stage": "export-creatures-03",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "pnpm",
+    "art:export",
+    "--",
+    "creatures",
+    "--only",
+    "quad_heavy,quad_grazer,quad_small,biped,flyer",
+    "--report-dir",
+    "packages/tools/blender/e08t08/reports/export-final"
+  ],
+  "beforeFree": 37371916288,
+  "beforePayload": 356336057,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "bc486b2d4084e25e4d42ddb6b71ba51cbf42df7d6923db73d64108643081022e",
+    "assets/blend/creatures/quad_grazer.blend": "0600f84627e042e7a2e80c5a6ce7837bddb52cd6c6a0ee89134b3dbde8f2e619",
+    "assets/blend/creatures/quad_small.blend": "e265bee1b997cede003f58d89b8e7f9c9cffc540e8c1eaafab5b78f250b0966d",
+    "assets/blend/creatures/flyer.blend": "efa3752ff7bb7f19dd7e58474ca65d52ccb17a74f232fc60f52df10c9b087f84",
+    "assets/blend/creatures/quad_heavy.blend": "879d9ac53ed14da1005b179adc5617c4f7ba2873bb00828c0f644e0a2df00e6c",
+    "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+    "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+  },
+  "start": 1794049901.350163,
+  "samples": [
+    {
+      "time": 1794049901.39431,
+      "rss": 32768,
+      "free": 37371908096,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 32768,
+          "command": "node"
+        }
+      ]
+    },
+    {
+      "time": 1794049901.9449759,
+      "rss": 441991168,
+      "free": 37372076032,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 67420160,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 218202112,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049902.494608,
+      "rss": 871972864,
+      "free": 37371998208,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 67436544,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 648167424,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049903.0487869,
+      "rss": 1191149568,
+      "free": 37352312832,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 720896,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049903.595446,
+      "rss": 1368375296,
+      "free": 37352398848,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 177946624,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049904.141736,
+      "rss": 1368408064,
+      "free": 37351280640,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 177979392,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049904.693464,
+      "rss": 1368440832,
+      "free": 37351317504,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 178012160,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049905.244111,
+      "rss": 1368473600,
+      "free": 37351219200,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 178012160,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049905.791948,
+      "rss": 1368473600,
+      "free": 37351251968,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 178012160,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049906.335124,
+      "rss": 1372684288,
+      "free": 37351231488,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 182222848,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049906.885448,
+      "rss": 1372717056,
+      "free": 37351190528,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948355072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 182239232,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049907.43624,
+      "rss": 1373749248,
+      "free": 37351153664,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948338688,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91440,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91441,
+          "ppid": 91440,
+          "pgid": 91405,
+          "rss": 183287808,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049907.98673,
+      "rss": 1391640576,
+      "free": 37349736448,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948338688,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91487,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17268736,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91503,
+          "ppid": 91487,
+          "pgid": 91405,
+          "rss": 201129984,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049908.540101,
+      "rss": 1595375616,
+      "free": 37355745280,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948338688,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 91487,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17268736,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 91503,
+          "ppid": 91487,
+          "pgid": 91405,
+          "rss": 404865024,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049909.090973,
+      "rss": 1390739456,
+      "free": 37352349696,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948387840,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92726,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17432576,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92807,
+          "ppid": 92726,
+          "pgid": 91405,
+          "rss": 200015872,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049909.641014,
+      "rss": 1390739456,
+      "free": 37351497728,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948387840,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92726,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17432576,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92807,
+          "ppid": 92726,
+          "pgid": 91405,
+          "rss": 200015872,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049910.1843042,
+      "rss": 1426194432,
+      "free": 37351489536,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948387840,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92726,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17432576,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92807,
+          "ppid": 92726,
+          "pgid": 91405,
+          "rss": 235470848,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049910.733723,
+      "rss": 1512783872,
+      "free": 37351460864,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948387840,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92726,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17448960,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92807,
+          "ppid": 92726,
+          "pgid": 91405,
+          "rss": 322043904,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049911.279279,
+      "rss": 1543667712,
+      "free": 37351428096,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 948387840,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92726,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17465344,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92807,
+          "ppid": 92726,
+          "pgid": 91405,
+          "rss": 352911360,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049911.833102,
+      "rss": 1451769856,
+      "free": 37353594880,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 964542464,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92931,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 61849600,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 92932,
+          "ppid": 92931,
+          "pgid": 91405,
+          "rss": 200474624,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        }
+      ]
+    },
+    {
+      "time": 1794049912.382716,
+      "rss": 1225637888,
+      "free": 37364690944,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68534272,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 966230016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92935,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17137664,
+          "command": "(Python)"
+        },
+        {
+          "pid": 92943,
+          "ppid": 92935,
+          "pgid": 91405,
+          "rss": 0,
+          "command": "<defunct>"
+        },
+        {
+          "pid": 92945,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17367040,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    },
+    {
+      "time": 1794049912.93638,
+      "rss": 1198030848,
+      "free": 37357871104,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68616192,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 973045760,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049913.488052,
+      "rss": 1244741632,
+      "free": 37371969536,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68616192,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1019756544,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049914.033786,
+      "rss": 1245921280,
+      "free": 37371944960,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1020919808,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049914.5840251,
+      "rss": 1453506560,
+      "free": 37353160704,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033289728,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 177799168,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049915.134516,
+      "rss": 1453555712,
+      "free": 37353328640,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033289728,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 177848320,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049915.678099,
+      "rss": 1453588480,
+      "free": 37353295872,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033289728,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 177881088,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049916.229184,
+      "rss": 1453604864,
+      "free": 37353377792,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033289728,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17432576,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 177881088,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049916.7787678,
+      "rss": 1453621248,
+      "free": 37353373696,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033289728,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17448960,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 177881088,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049917.320116,
+      "rss": 1453621248,
+      "free": 37353357312,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033289728,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17448960,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 177881088,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049917.875613,
+      "rss": 1457881088,
+      "free": 37353295872,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033289728,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17481728,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 182108160,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049918.426313,
+      "rss": 1458896896,
+      "free": 37353279488,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 92976,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17481728,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 92977,
+          "ppid": 92976,
+          "pgid": 91405,
+          "rss": 183173120,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049918.977946,
+      "rss": 1475313664,
+      "free": 37352837120,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93027,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93029,
+          "ppid": 93027,
+          "pgid": 91405,
+          "rss": 199901184,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049919.528272,
+      "rss": 1655619584,
+      "free": 37352833024,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93027,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93029,
+          "ppid": 93027,
+          "pgid": 91405,
+          "rss": 380207104,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049920.085687,
+      "rss": 1475346432,
+      "free": 37352288256,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93037,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17154048,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93038,
+          "ppid": 93037,
+          "pgid": 91405,
+          "rss": 199950336,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049920.63677,
+      "rss": 1475428352,
+      "free": 37352284160,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93037,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17235968,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93038,
+          "ppid": 93037,
+          "pgid": 91405,
+          "rss": 199950336,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049921.184578,
+      "rss": 1510801408,
+      "free": 37352284160,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93037,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17235968,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93038,
+          "ppid": 93037,
+          "pgid": 91405,
+          "rss": 235323392,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049921.7344158,
+      "rss": 1519304704,
+      "free": 37352271872,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93037,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17235968,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93038,
+          "ppid": 93037,
+          "pgid": 91405,
+          "rss": 243826688,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049922.278371,
+      "rss": 1626767360,
+      "free": 37352271872,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1033240576,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93037,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17268736,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93038,
+          "ppid": 93037,
+          "pgid": 91405,
+          "rss": 351256576,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049922.8321369,
+      "rss": 1518141440,
+      "free": 37354442752,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 1046462464,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93062,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 61833216,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 93063,
+          "ppid": 93062,
+          "pgid": 91405,
+          "rss": 184844288,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        }
+      ]
+    },
+    {
+      "time": 1794049923.38192,
+      "rss": 852525056,
+      "free": 37364117504,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68632576,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 593018880,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93068,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17121280,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93072,
+          "ppid": 93068,
+          "pgid": 91405,
+          "rss": 0,
+          "command": "<defunct>"
+        },
+        {
+          "pid": 93074,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17383424,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    },
+    {
+      "time": 1794049923.9242601,
+      "rss": 835305472,
+      "free": 37357989888,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68861952,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 610074624,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049924.4807549,
+      "rss": 1014267904,
+      "free": 37369786368,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 68911104,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 788987904,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049925.0259998,
+      "rss": 1344110592,
+      "free": 37361160192,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923598848,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 177799168,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049925.577436,
+      "rss": 1344110592,
+      "free": 37361430528,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923598848,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 177799168,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049926.126278,
+      "rss": 1344176128,
+      "free": 37361401856,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923598848,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 177864704,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049926.677966,
+      "rss": 1344192512,
+      "free": 37361352704,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923598848,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 177864704,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049927.228704,
+      "rss": 1344208896,
+      "free": 37361426432,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923598848,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 177864704,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049927.778476,
+      "rss": 1344208896,
+      "free": 37360336896,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923598848,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 177864704,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049928.328174,
+      "rss": 1348419584,
+      "free": 37360312320,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923598848,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 182075392,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049928.8789718,
+      "rss": 1348386816,
+      "free": 37360300032,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 182091776,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049929.4211578,
+      "rss": 1166295040,
+      "free": 37360222208,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93091,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93092,
+          "ppid": 93091,
+          "pgid": 91405,
+          "rss": 0,
+          "command": "<defunct>"
+        }
+      ]
+    },
+    {
+      "time": 1794049929.9674408,
+      "rss": 1366360064,
+      "free": 37359861760,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93174,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93175,
+          "ppid": 93174,
+          "pgid": 91405,
+          "rss": 200065024,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049930.5107,
+      "rss": 1569685504,
+      "free": 37359861760,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93174,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93175,
+          "ppid": 93174,
+          "pgid": 91405,
+          "rss": 401702912,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        },
+        {
+          "pid": 93183,
+          "ppid": 93174,
+          "pgid": 91405,
+          "rss": 1687552,
+          "command": "(Python)"
+        }
+      ]
+    },
+    {
+      "time": 1794049931.0624409,
+      "rss": 1366228992,
+      "free": 37359325184,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93184,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93185,
+          "ppid": 93184,
+          "pgid": 91405,
+          "rss": 199983104,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049931.604297,
+      "rss": 1367916544,
+      "free": 37359308800,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93184,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93185,
+          "ppid": 93184,
+          "pgid": 91405,
+          "rss": 199983104,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        },
+        {
+          "pid": 93194,
+          "ppid": 93184,
+          "pgid": 91405,
+          "rss": 1687552,
+          "command": "(ps)"
+        }
+      ]
+    },
+    {
+      "time": 1794049932.151712,
+      "rss": 1402109952,
+      "free": 37359284224,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93184,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17170432,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93185,
+          "ppid": 93184,
+          "pgid": 91405,
+          "rss": 235864064,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049932.702271,
+      "rss": 1488846848,
+      "free": 37359456256,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93184,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93185,
+          "ppid": 93184,
+          "pgid": 91405,
+          "rss": 322584576,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049933.2532759,
+      "rss": 1521057792,
+      "free": 37359423488,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 923533312,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93184,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93185,
+          "ppid": 93184,
+          "pgid": 91405,
+          "rss": 354779136,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049933.798131,
+      "rss": 1185644544,
+      "free": 37365800960,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 930136064,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93223,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 15908864,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93224,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 14057472,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    },
+    {
+      "time": 1794049934.352134,
+      "rss": 1238597632,
+      "free": 37364482048,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69173248,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 930136064,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93224,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93229,
+          "ppid": 93224,
+          "pgid": 91405,
+          "rss": 48611328,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        },
+        {
+          "pid": 93231,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17121280,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    },
+    {
+      "time": 1794049934.898732,
+      "rss": 1163313152,
+      "free": 37364948992,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 937689088,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049935.450926,
+      "rss": 1167835136,
+      "free": 37367615488,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 942211072,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049935.995154,
+      "rss": 1376485376,
+      "free": 37355061248,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 177913856,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049936.5460072,
+      "rss": 1376518144,
+      "free": 37355094016,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 177946624,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049937.088727,
+      "rss": 1376550912,
+      "free": 37355077632,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 177979392,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049937.632114,
+      "rss": 1376567296,
+      "free": 37355057152,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17203200,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 177979392,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049938.1774862,
+      "rss": 1376583680,
+      "free": 37355032576,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 177979392,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049938.724714,
+      "rss": 1376583680,
+      "free": 37355077632,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 177979392,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049939.268047,
+      "rss": 1380827136,
+      "free": 37355053056,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17235968,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 182206464,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049939.818367,
+      "rss": 1381924864,
+      "free": 37355040768,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17285120,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 183255040,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049940.3718321,
+      "rss": 1198669824,
+      "free": 37354954752,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93237,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17285120,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93238,
+          "ppid": 93237,
+          "pgid": 91405,
+          "rss": 0,
+          "command": "<defunct>"
+        }
+      ]
+    },
+    {
+      "time": 1794049940.92012,
+      "rss": 1400389632,
+      "free": 37354594304,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93274,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93275,
+          "ppid": 93274,
+          "pgid": 91405,
+          "rss": 199933952,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        },
+        {
+          "pid": 93279,
+          "ppid": 93274,
+          "pgid": 91405,
+          "rss": 1654784,
+          "command": "(ps)"
+        }
+      ]
+    },
+    {
+      "time": 1794049941.470449,
+      "rss": 1604370432,
+      "free": 37354467328,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93274,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17481728,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93275,
+          "ppid": 93274,
+          "pgid": 91405,
+          "rss": 405504000,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049942.022605,
+      "rss": 1398784000,
+      "free": 37353975808,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93285,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93286,
+          "ppid": 93285,
+          "pgid": 91405,
+          "rss": 199983104,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049942.566392,
+      "rss": 1398784000,
+      "free": 37353971712,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93285,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93286,
+          "ppid": 93285,
+          "pgid": 91405,
+          "rss": 199983104,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049943.118578,
+      "rss": 1435975680,
+      "free": 37353963520,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93285,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93286,
+          "ppid": 93285,
+          "pgid": 91405,
+          "rss": 237174784,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049943.674006,
+      "rss": 1539375104,
+      "free": 37354041344,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93285,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17432576,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93286,
+          "ppid": 93285,
+          "pgid": 91405,
+          "rss": 340557824,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049944.2164538,
+      "rss": 1198882816,
+      "free": 37353852928,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 955760640,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93285,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17498112,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93286,
+          "ppid": 93285,
+          "pgid": 91405,
+          "rss": 0,
+          "command": "<defunct>"
+        }
+      ]
+    },
+    {
+      "time": 1794049944.766648,
+      "rss": 1277116416,
+      "free": 37363367936,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 962347008,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93328,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17399808,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93329,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17383424,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93330,
+          "ppid": 93328,
+          "pgid": 91405,
+          "rss": 54362112,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049945.319805,
+      "rss": 1188937728,
+      "free": 37357989888,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 963313664,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049945.864233,
+      "rss": 1189150720,
+      "free": 37376729088,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69255168,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 963526656,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049946.409963,
+      "rss": 1274970112,
+      "free": 37364285440,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 46596096,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049946.9517498,
+      "rss": 1406205952,
+      "free": 37364264960,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 177831936,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049947.502906,
+      "rss": 1406238720,
+      "free": 37364174848,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 177864704,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049948.053094,
+      "rss": 1406271488,
+      "free": 37364162560,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 177897472,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049948.6032698,
+      "rss": 1406304256,
+      "free": 37364097024,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 177897472,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049949.155164,
+      "rss": 1406304256,
+      "free": 37363888128,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 177897472,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049949.698484,
+      "rss": 1410514944,
+      "free": 37363884032,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 182108160,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049950.2492118,
+      "rss": 1410547712,
+      "free": 37363810304,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17235968,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 182124544,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049950.802003,
+      "rss": 1411858432,
+      "free": 37363695616,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93340,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17235968,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93341,
+          "ppid": 93340,
+          "pgid": 91405,
+          "rss": 183435264,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049951.346406,
+      "rss": 1428471808,
+      "free": 37363286016,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93376,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17465344,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93377,
+          "ppid": 93376,
+          "pgid": 91405,
+          "rss": 199819264,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049951.89854,
+      "rss": 1629978624,
+      "free": 37363470336,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93376,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17465344,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93377,
+          "ppid": 93376,
+          "pgid": 91405,
+          "rss": 400900096,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        },
+        {
+          "pid": 93396,
+          "ppid": 93376,
+          "pgid": 91405,
+          "rss": 425984,
+          "command": "(ps)"
+        }
+      ]
+    },
+    {
+      "time": 1794049952.44824,
+      "rss": 1428226048,
+      "free": 37362688000,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93397,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17154048,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93398,
+          "ppid": 93397,
+          "pgid": 91405,
+          "rss": 199884800,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049952.9967282,
+      "rss": 1428226048,
+      "free": 37362577408,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93397,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17154048,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93398,
+          "ppid": 93397,
+          "pgid": 91405,
+          "rss": 199884800,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049953.551662,
+      "rss": 1464057856,
+      "free": 37362552832,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93397,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17154048,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93398,
+          "ppid": 93397,
+          "pgid": 91405,
+          "rss": 235716608,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049954.0999649,
+      "rss": 1550761984,
+      "free": 37362315264,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93397,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17219584,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93398,
+          "ppid": 93397,
+          "pgid": 91405,
+          "rss": 322355200,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049954.651325,
+      "rss": 1582972928,
+      "free": 37362417664,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 985300992,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93397,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17235968,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93398,
+          "ppid": 93397,
+          "pgid": 91405,
+          "rss": 354549760,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049955.2019122,
+      "rss": 1260716032,
+      "free": 37371154432,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 991035392,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93456,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17416192,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93457,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17121280,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93462,
+          "ppid": 93456,
+          "pgid": 91405,
+          "rss": 9256960,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        }
+      ]
+    },
+    {
+      "time": 1794049955.7535539,
+      "rss": 1300168704,
+      "free": 37369434112,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69517312,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 991035392,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 93457,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17137664,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 93467,
+          "ppid": 93457,
+          "pgid": 91405,
+          "rss": 48922624,
+          "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        },
+        {
+          "pid": 93469,
+          "ppid": 91426,
+          "pgid": 91405,
+          "rss": 17186816,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    },
+    {
+      "time": 1794049956.3075042,
+      "rss": 1217773568,
+      "free": 37369860096,
+      "processes": [
+        {
+          "pid": 91402,
+          "ppid": 91398,
+          "pgid": 91402,
+          "rss": 64192512,
+          "command": "node"
+        },
+        {
+          "pid": 91404,
+          "ppid": 91402,
+          "pgid": 91402,
+          "rss": 25444352,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 91405,
+          "ppid": 91404,
+          "pgid": 91405,
+          "rss": 2473984,
+          "command": "sh"
+        },
+        {
+          "pid": 91416,
+          "ppid": 91404,
+          "pgid": 91416,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 91417,
+          "ppid": 91405,
+          "pgid": 91405,
+          "rss": 61816832,
+          "command": "node"
+        },
+        {
+          "pid": 91425,
+          "ppid": 91417,
+          "pgid": 91405,
+          "rss": 69582848,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 91426,
+          "ppid": 91425,
+          "pgid": 91405,
+          "rss": 991821824,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 91402,
+  "exit": 0,
+  "end": 1794049956.810705,
+  "afterFree": 37373026304,
+  "afterPayload": 356313395,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "bc486b2d4084e25e4d42ddb6b71ba51cbf42df7d6923db73d64108643081022e",
+    "assets/blend/creatures/quad_grazer.blend": "0600f84627e042e7a2e80c5a6ce7837bddb52cd6c6a0ee89134b3dbde8f2e619",
+    "assets/blend/creatures/quad_small.blend": "e265bee1b997cede003f58d89b8e7f9c9cffc540e8c1eaafab5b78f250b0966d",
+    "assets/blend/creatures/flyer.blend": "efa3752ff7bb7f19dd7e58474ca65d52ccb17a74f232fc60f52df10c9b087f84",
+    "assets/blend/creatures/quad_heavy.blend": "879d9ac53ed14da1005b179adc5617c4f7ba2873bb00828c0f644e0a2df00e6c",
+    "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+    "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "sampling": "process group and descendant closure",
+  "maxRSS": 1655619584
+}

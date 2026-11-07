@@ -1,0 +1,200 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/constructs/outpost_overseer.blend",
+  "family": "constructs",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T11:02:36Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "outpost_overseer",
+      "variants": [
+        {
+          "id": "outpost_overseer",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 29228,
+            "1": 8768,
+            "2": 2922,
+            "3": 980
+          },
+          "implicitLods": false,
+          "dims": [
+            24.095,
+            24.095,
+            3.244
+          ],
+          "materials": [
+            "CompactPaint"
+          ]
+        },
+        {
+          "id": "outpost_overseer_dome",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 39960,
+            "1": 11988,
+            "2": 3996,
+            "3": 1356
+          },
+          "implicitLods": false,
+          "dims": [
+            24.095,
+            24.095,
+            8.512
+          ],
+          "materials": [
+            "CompactPaint",
+            "Glass"
+          ]
+        },
+        {
+          "id": "outpost_overseer_core",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 31784,
+            "1": 9534,
+            "2": 3178,
+            "3": 1072
+          },
+          "implicitLods": false,
+          "dims": [
+            24.095,
+            24.095,
+            5.272
+          ],
+          "materials": [
+            "CompactPaint"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_overseer.blend",
+          "message": "3 variant(s) in 1 asset(s) follow the constructs rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_overseer",
+          "message": "LOD0 29,228 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "outpost_overseer/outpost_overseer_dome",
+          "message": "LOD0 39,960 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "outpost_overseer/outpost_overseer_core",
+          "message": "LOD0 31,784 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_overseer",
+          "message": "29,228 > 8,768 > 2,922 > 980 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "outpost_overseer/outpost_overseer_dome",
+          "message": "39,960 > 11,988 > 3,996 > 1,356 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "outpost_overseer/outpost_overseer_core",
+          "message": "31,784 > 9,534 > 3,178 > 1,072 triangles; LOD3 3.4% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "CompactPaint",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "outpost_overseer",
+          "message": "longest side 24.09 m within 0.2-80 m"
+        },
+        {
+          "subject": "outpost_overseer/outpost_overseer_dome",
+          "message": "longest side 24.09 m within 0.2-80 m"
+        },
+        {
+          "subject": "outpost_overseer/outpost_overseer_core",
+          "message": "longest side 24.09 m within 0.2-80 m"
+        }
+      ]
+    }
+  ]
+}

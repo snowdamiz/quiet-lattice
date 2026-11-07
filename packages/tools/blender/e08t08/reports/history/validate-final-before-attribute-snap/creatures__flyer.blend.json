@@ -1,0 +1,423 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/creatures/flyer.blend",
+  "family": "creatures",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T11:01:09Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "flyer",
+      "variants": [
+        {
+          "id": "flyer_0",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 32432,
+            "1": 9728,
+            "2": 3240,
+            "3": 1326
+          },
+          "implicitLods": false,
+          "dims": [
+            2.65,
+            1.797,
+            0.533
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_0_dive",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 32432,
+            "1": 9728,
+            "2": 3240,
+            "3": 1330
+          },
+          "implicitLods": false,
+          "dims": [
+            2.65,
+            1.797,
+            0.533
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_0_screech",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 33292,
+            "1": 9986,
+            "2": 3326,
+            "3": 1331
+          },
+          "implicitLods": false,
+          "dims": [
+            2.65,
+            1.797,
+            0.749
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_1",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 33676,
+            "1": 10100,
+            "2": 3364,
+            "3": 1333
+          },
+          "implicitLods": false,
+          "dims": [
+            3.65,
+            1.89,
+            0.712
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_1_dive",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 33676,
+            "1": 10100,
+            "2": 3364,
+            "3": 1331
+          },
+          "implicitLods": false,
+          "dims": [
+            3.65,
+            1.89,
+            0.712
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_1_screech",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 34536,
+            "1": 10360,
+            "2": 3450,
+            "3": 1330
+          },
+          "implicitLods": false,
+          "dims": [
+            3.65,
+            1.89,
+            1.009
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_predator",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 37292,
+            "1": 11186,
+            "2": 3726,
+            "3": 1349
+          },
+          "implicitLods": false,
+          "dims": [
+            4.9,
+            2.25,
+            1.027
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_predator_dive",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 37292,
+            "1": 11186,
+            "2": 3726,
+            "3": 1353
+          },
+          "implicitLods": false,
+          "dims": [
+            4.9,
+            2.642,
+            1.027
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        },
+        {
+          "id": "flyer_predator_screech",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 38152,
+            "1": 11444,
+            "2": 3812,
+            "3": 1365
+          },
+          "implicitLods": false,
+          "dims": [
+            4.9,
+            2.25,
+            1.425
+          ],
+          "materials": [
+            "FaunaHide"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "flyer.blend",
+          "message": "9 variant(s) in 1 asset(s) follow the creatures rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "flyer/flyer_0",
+          "message": "LOD0 32,432 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_0_dive",
+          "message": "LOD0 32,432 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_0_screech",
+          "message": "LOD0 33,292 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_1",
+          "message": "LOD0 33,676 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_1_dive",
+          "message": "LOD0 33,676 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_1_screech",
+          "message": "LOD0 34,536 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_predator",
+          "message": "LOD0 37,292 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_predator_dive",
+          "message": "LOD0 37,292 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "flyer/flyer_predator_screech",
+          "message": "LOD0 38,152 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "flyer/flyer_0",
+          "message": "32,432 > 9,728 > 3,240 > 1,326 triangles; LOD3 4.1% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_0_dive",
+          "message": "32,432 > 9,728 > 3,240 > 1,330 triangles; LOD3 4.1% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_0_screech",
+          "message": "33,292 > 9,986 > 3,326 > 1,331 triangles; LOD3 4.0% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_1",
+          "message": "33,676 > 10,100 > 3,364 > 1,333 triangles; LOD3 4.0% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_1_dive",
+          "message": "33,676 > 10,100 > 3,364 > 1,331 triangles; LOD3 4.0% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_1_screech",
+          "message": "34,536 > 10,360 > 3,450 > 1,330 triangles; LOD3 3.9% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_predator",
+          "message": "37,292 > 11,186 > 3,726 > 1,349 triangles; LOD3 3.6% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_predator_dive",
+          "message": "37,292 > 11,186 > 3,726 > 1,353 triangles; LOD3 3.6% of LOD0"
+        },
+        {
+          "subject": "flyer/flyer_predator_screech",
+          "message": "38,152 > 11,444 > 3,812 > 1,365 triangles; LOD3 3.6% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "FaunaHide",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "flyer/flyer_0",
+          "message": "longest side 2.65 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_0_dive",
+          "message": "longest side 2.65 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_0_screech",
+          "message": "longest side 2.65 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_1",
+          "message": "longest side 3.65 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_1_dive",
+          "message": "longest side 3.65 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_1_screech",
+          "message": "longest side 3.65 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_predator",
+          "message": "longest side 4.90 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_predator_dive",
+          "message": "longest side 4.90 m within 0.2-80 m"
+        },
+        {
+          "subject": "flyer/flyer_predator_screech",
+          "message": "longest side 4.90 m within 0.2-80 m"
+        }
+      ]
+    }
+  ]
+}

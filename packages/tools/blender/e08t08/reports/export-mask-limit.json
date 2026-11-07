@@ -1,0 +1,182 @@
+{
+  "status": "OPEN SPEC DISCREPANCY; not exact float mask export",
+  "owner": "Parent P1.E08.T08 decision / P1.E14.T12 export tooling",
+  "brief": "geometry.quantize=false is described as preserving the mask as exact floats",
+  "actual": "Pinned Blender 5.2.3 RGBA export selects BYTE_COLOR, converted to normalized UINT16. Stock meshopt preserves that stream. Sources remain POINT FLOAT_COLOR; _limb/_pivot/_glow remain exact Float32 values.",
+  "source": "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py:1323",
+  "rounding": "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_attributes.py:184",
+  "consumerBoundary": "FLOAT_COLOR source; pinned stock Blender writes normalized UINT16 COLOR_0, error <= 0.5/65535 plus float tolerance per channel; not exact float export",
+  "files": [
+    {
+      "file": "packages/client/public/models/creatures/quad_heavy.glb",
+      "sha256": "2a76d8d75d722167dbc8f7e654bd8b102e0d597943c82afab7d3c638719e0f04",
+      "formats": {
+        "COLOR_0": [
+          [
+            5123,
+            true,
+            "VEC4"
+          ]
+        ],
+        "_LIMB": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ],
+        "_PIVOT": [
+          [
+            5126,
+            false,
+            "VEC3"
+          ]
+        ],
+        "_GLOW": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ]
+      }
+    },
+    {
+      "file": "packages/client/public/models/creatures/quad_grazer.glb",
+      "sha256": "c4662bc612a5db3d0d7a296f3f34fce87387d0114ac1396d885c8895b9c0f026",
+      "formats": {
+        "COLOR_0": [
+          [
+            5123,
+            true,
+            "VEC4"
+          ]
+        ],
+        "_LIMB": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ],
+        "_PIVOT": [
+          [
+            5126,
+            false,
+            "VEC3"
+          ]
+        ],
+        "_GLOW": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ]
+      }
+    },
+    {
+      "file": "packages/client/public/models/creatures/quad_small.glb",
+      "sha256": "06a1a3442303b35ef65837b5e698674787f8ac47385c665c2fd15bb5cc619ffb",
+      "formats": {
+        "COLOR_0": [
+          [
+            5123,
+            true,
+            "VEC4"
+          ]
+        ],
+        "_LIMB": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ],
+        "_PIVOT": [
+          [
+            5126,
+            false,
+            "VEC3"
+          ]
+        ],
+        "_GLOW": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ]
+      }
+    },
+    {
+      "file": "packages/client/public/models/creatures/biped.glb",
+      "sha256": "7a6bd58cb7cad053c090660d15daf024911799a0d09b1186cb8e2070210525ad",
+      "formats": {
+        "COLOR_0": [
+          [
+            5123,
+            true,
+            "VEC4"
+          ]
+        ],
+        "_LIMB": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ],
+        "_PIVOT": [
+          [
+            5126,
+            false,
+            "VEC3"
+          ]
+        ],
+        "_GLOW": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ]
+      }
+    },
+    {
+      "file": "packages/client/public/models/creatures/flyer.glb",
+      "sha256": "41f8e4ba6091eefc01013ef1e9f98890eb72d9a7937368409b294390bdc73450",
+      "formats": {
+        "COLOR_0": [
+          [
+            5123,
+            true,
+            "VEC4"
+          ]
+        ],
+        "_LIMB": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ],
+        "_PIVOT": [
+          [
+            5126,
+            false,
+            "VEC3"
+          ]
+        ],
+        "_GLOW": [
+          [
+            5126,
+            false,
+            "SCALAR"
+          ]
+        ]
+      }
+    }
+  ],
+  "resolution": "No exporter/toolchain/runtime edits authorized here. Parent must resolve the specification or route an exporter correction; normalized-mask behavioral PASS is not an exact-float PASS."
+}

@@ -1,0 +1,35 @@
+#!/opt/homebrew/bin/python3
+"""Resource adapter only. Serializes stock encode/decode and limits encoder threads."""
+import fcntl
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+HERE = Path(__file__).resolve().parents[1]
+REAL = Path('/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx')
+args = sys.argv[1:]
+requested = list(args)
+if args and args[0] == 'create':
+    if '--threads' in args:
+        args[args.index('--threads') + 1] = '1'
+    else:
+        args += ['--threads', '1']
+with (HERE / 'reports/codec.lock').open('a') as lock:
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    start = time.time()
+    child = subprocess.Popen([str(REAL), *args])
+    thread_samples = []
+    while child.poll() is None:
+        p = subprocess.run(['ps', '-M', '-p', str(child.pid), '-o', 'pid=,pcpu='], capture_output=True, text=True)
+        rows = [line.split() for line in p.stdout.splitlines() if line.strip() and not line.startswith('USER')]
+        thread_samples.append(dict(time=time.time(), threads=len(rows), rows=rows))
+        time.sleep(.2)
+    code = child.wait()
+    with (HERE / 'reports/codec.jsonl').open('a') as log:
+        log.write(json.dumps(dict(wrapper=os.getpid(), pid=child.pid, start=start,
+                                  end=time.time(), requested=requested, actual=args, exit=code,
+                                  threadSamples=thread_samples)) + '\n')
+sys.exit(code)

@@ -1,0 +1,899 @@
+$ tsx packages/tools/src/art/cli.ts export -- creatures --only quad_heavy,quad_grazer,quad_small,biped,flyer --report-dir packages/tools/blender/e08t08/reports/export-final
+00:00.930  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/biped.blend"
+
+export assets/blend/creatures/biped.blend -> packages/client/public/models/creatures/biped.glb
+Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '//../_library.blend', parent '<direct>'
+
+validate assets/blend/creatures/biped.blend  (family creatures, source .blend)
+  biped / biped_0 [creature]  tris LOD0 37,060, LOD1 11,118, LOD2 3,704, LOD3 1,294  size 1.00 x 1.67 x 1.90 m
+  biped / biped_0_leap [creature]  tris LOD0 37,920, LOD1 11,376, LOD2 3,790, LOD3 1,324  size 1.25 x 2.48 x 1.90 m
+  biped / biped_0_claw_combo [creature]  tris LOD0 37,920, LOD1 11,376, LOD2 3,790, LOD3 1,324  size 1.13 x 2.48 x 1.90 m
+  biped / biped_1 [creature]  tris LOD0 38,304, LOD1 11,490, LOD2 3,828, LOD3 1,338  size 1.59 x 1.85 x 2.46 m
+  biped / biped_1_leap [creature]  tris LOD0 39,164, LOD1 11,748, LOD2 3,914, LOD3 1,368  size 1.95 x 2.84 x 2.46 m
+  biped / biped_1_claw_combo [creature]  tris LOD0 39,164, LOD1 11,748, LOD2 3,914, LOD3 1,368  size 1.77 x 2.84 x 2.46 m
+  biped / biped_predator [creature]  tris LOD0 38,820, LOD1 11,646, LOD2 3,880, LOD3 1,353  size 1.18 x 2.82 x 2.23 m
+  biped / biped_predator_leap [creature]  tris LOD0 39,680, LOD1 11,904, LOD2 3,966, LOD3 1,383  size 1.46 x 3.84 x 2.23 m
+  biped / biped_predator_claw_combo [creature]  tris LOD0 39,680, LOD1 11,904, LOD2 3,966, LOD3 1,383  size 1.32 x 3.84 x 2.23 m
+  PASS  naming
+        ok    biped.blend: 9 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    biped/biped_0: LOD0 37,060 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    biped/biped_0_leap: LOD0 37,920 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    biped/biped_0_claw_combo: LOD0 37,920 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 6 more
+  PASS  LODs
+        ok    biped/biped_0: 37,060 > 11,118 > 3,704 > 1,294 triangles; LOD3 3.5% of LOD0
+        ok    biped/biped_0_leap: 37,920 > 11,376 > 3,790 > 1,324 triangles; LOD3 3.5% of LOD0
+        ok    biped/biped_0_claw_combo: 37,920 > 11,376 > 3,790 > 1,324 triangles; LOD3 3.5% of LOD0
+        ok    ... 6 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    biped/biped_0: longest side 1.90 m within 0.2-80 m
+        ok    ... 8 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__biped.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+05:57:22 | INFO: Starting glTF 2.0 export
+05:57:22 | INFO: Extracting primitive: Anatomy_0_editable
+05:57:23 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_0_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_claw_combo_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_claw_combo_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_claw_combo_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_claw_combo_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_0_claw_combo_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_leap_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_leap_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_leap_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_0_leap_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_0_leap_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_claw_combo_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_claw_combo_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_claw_combo_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_claw_combo_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_1_claw_combo_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_leap_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_leap_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_leap_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_1_leap_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_1_leap_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_predator_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_claw_combo_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_claw_combo_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_claw_combo_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_claw_combo_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_predator_claw_combo_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_leap_editable
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_leap_detail1_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_leap_detail2_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: Anatomy_predator_leap_detail3_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Extracting primitive: COL_predator_leap_mesh
+05:57:23 | INFO: Primitives created: 1
+05:57:23 | INFO: Finished glTF 2.0 export in 0.6710200309753418 s
+
+  19.3 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 19.3 -> 18.4 MB of buffers
+  meshopt (high, float attributes): geometry 18.1 -> 6.6 MB; file 18.4 -> 6.9 MB
+05:57:40 | INFO: Data are loaded, start creating Blender stuff
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_editable
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_detail1_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_detail2_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_detail3_mesh
+05:57:40 | INFO: Blender create Mesh node COL_0_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_claw_combo_editable
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_claw_combo_detail1_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_claw_combo_detail2_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_claw_combo_detail3_mesh
+05:57:40 | INFO: Blender create Mesh node COL_0_claw_combo_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_leap_editable
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_leap_detail1_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_leap_detail2_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_0_leap_detail3_mesh
+05:57:40 | INFO: Blender create Mesh node COL_0_leap_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_editable
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_detail1_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_detail2_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_detail3_mesh
+05:57:40 | INFO: Blender create Mesh node COL_1_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_claw_combo_editable
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_claw_combo_detail1_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_claw_combo_detail2_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_claw_combo_detail3_mesh
+05:57:40 | INFO: Blender create Mesh node COL_1_claw_combo_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_leap_editable
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_leap_detail1_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_leap_detail2_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_1_leap_detail3_mesh
+05:57:40 | INFO: Blender create Mesh node COL_1_leap_mesh
+05:57:40 | INFO: Blender create Mesh node Anatomy_predator_editable
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_detail1_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_detail2_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_detail3_mesh
+05:57:41 | INFO: Blender create Mesh node COL_predator_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_claw_combo_editable
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_claw_combo_detail1_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_claw_combo_detail2_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_claw_combo_detail3_mesh
+05:57:41 | INFO: Blender create Mesh node COL_predator_claw_combo_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_leap_editable
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_leap_detail1_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_leap_detail2_mesh
+05:57:41 | INFO: Blender create Mesh node Anatomy_predator_leap_detail3_mesh
+05:57:41 | INFO: Blender create Mesh node COL_predator_leap_mesh
+05:57:41 | INFO: glTF import finished in 0.62s
+00:20.358  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/flyer.blend"
+
+validate packages/client/public/models/creatures/biped.glb  (family creatures, export .glb)
+  biped / biped_0 [creature]  tris LOD0 37,060, LOD1 11,118, LOD2 3,704, LOD3 1,294  size 1.00 x 1.67 x 1.90 m
+  biped / biped_0_claw_combo [creature]  tris LOD0 37,920, LOD1 11,376, LOD2 3,790, LOD3 1,324  size 1.13 x 2.48 x 1.90 m
+  biped / biped_0_leap [creature]  tris LOD0 37,920, LOD1 11,376, LOD2 3,790, LOD3 1,324  size 1.25 x 2.48 x 1.90 m
+  biped / biped_1 [creature]  tris LOD0 38,304, LOD1 11,490, LOD2 3,828, LOD3 1,338  size 1.59 x 1.85 x 2.46 m
+  biped / biped_1_claw_combo [creature]  tris LOD0 39,164, LOD1 11,748, LOD2 3,914, LOD3 1,368  size 1.77 x 2.84 x 2.46 m
+  biped / biped_1_leap [creature]  tris LOD0 39,164, LOD1 11,748, LOD2 3,914, LOD3 1,368  size 1.95 x 2.84 x 2.46 m
+  biped / biped_predator [creature]  tris LOD0 38,820, LOD1 11,646, LOD2 3,880, LOD3 1,353  size 1.18 x 2.82 x 2.23 m
+  biped / biped_predator_claw_combo [creature]  tris LOD0 39,680, LOD1 11,904, LOD2 3,966, LOD3 1,383  size 1.32 x 3.84 x 2.23 m
+  biped / biped_predator_leap [creature]  tris LOD0 39,680, LOD1 11,904, LOD2 3,966, LOD3 1,383  size 1.46 x 3.84 x 2.23 m
+  PASS  naming
+        ok    biped.glb: 9 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    biped/biped_0: LOD0 37,060 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    biped/biped_0_claw_combo: LOD0 37,920 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    biped/biped_0_leap: LOD0 37,920 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    biped/biped_0: 37,060 > 11,118 > 3,704 > 1,294 triangles; LOD3 3.5% of LOD0
+        ok    biped/biped_0_claw_combo: 37,920 > 11,376 > 3,790 > 1,324 triangles; LOD3 3.5% of LOD0
+        ok    biped/biped_0_leap: 37,920 > 11,376 > 3,790 > 1,324 triangles; LOD3 3.5% of LOD0
+        ok    ... 6 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB
+        ok    biped/biped_0: textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB
+        ok    ... 8 more
+  PASS  scale references
+        ok    source: assets/blend/creatures/biped.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    biped/biped_0: longest side 1.90 m within 0.2-80 m
+        ok    biped/biped_0_claw_combo: longest side 2.48 m within 0.2-80 m
+        ok    ... 7 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__biped.glb.json
+  wrote packages/client/public/models/creatures/biped.glb (6,896,116 bytes)
+
+export assets/blend/creatures/flyer.blend -> packages/client/public/models/creatures/flyer.glb
+Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '//../_library.blend', parent '<direct>'
+
+validate assets/blend/creatures/flyer.blend  (family creatures, source .blend)
+  flyer / flyer_0 [creature]  tris LOD0 32,432, LOD1 9,728, LOD2 3,240, LOD3 1,326  size 2.65 x 1.80 x 0.53 m
+  flyer / flyer_0_dive [creature]  tris LOD0 32,432, LOD1 9,728, LOD2 3,240, LOD3 1,330  size 2.65 x 1.80 x 0.53 m
+  flyer / flyer_0_screech [creature]  tris LOD0 33,292, LOD1 9,986, LOD2 3,326, LOD3 1,331  size 2.65 x 1.80 x 0.75 m
+  flyer / flyer_1 [creature]  tris LOD0 33,676, LOD1 10,100, LOD2 3,364, LOD3 1,333  size 3.65 x 1.89 x 0.71 m
+  flyer / flyer_1_dive [creature]  tris LOD0 33,676, LOD1 10,100, LOD2 3,364, LOD3 1,331  size 3.65 x 1.89 x 0.71 m
+  flyer / flyer_1_screech [creature]  tris LOD0 34,536, LOD1 10,360, LOD2 3,450, LOD3 1,330  size 3.65 x 1.89 x 1.01 m
+  flyer / flyer_predator [creature]  tris LOD0 37,292, LOD1 11,186, LOD2 3,726, LOD3 1,349  size 4.90 x 2.25 x 1.03 m
+  flyer / flyer_predator_dive [creature]  tris LOD0 37,292, LOD1 11,186, LOD2 3,726, LOD3 1,353  size 4.90 x 2.64 x 1.03 m
+  flyer / flyer_predator_screech [creature]  tris LOD0 38,152, LOD1 11,444, LOD2 3,812, LOD3 1,365  size 4.90 x 2.25 x 1.43 m
+  PASS  naming
+        ok    flyer.blend: 9 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    flyer/flyer_0: LOD0 32,432 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    flyer/flyer_0_dive: LOD0 32,432 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    flyer/flyer_0_screech: LOD0 33,292 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 6 more
+  PASS  LODs
+        ok    flyer/flyer_0: 32,432 > 9,728 > 3,240 > 1,326 triangles; LOD3 4.1% of LOD0
+        ok    flyer/flyer_0_dive: 32,432 > 9,728 > 3,240 > 1,330 triangles; LOD3 4.1% of LOD0
+        ok    flyer/flyer_0_screech: 33,292 > 9,986 > 3,326 > 1,331 triangles; LOD3 4.0% of LOD0
+        ok    ... 6 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    flyer/flyer_0: longest side 2.65 m within 0.2-80 m
+        ok    ... 8 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__flyer.blend.json
+05:57:42 | INFO: Starting glTF 2.0 export
+05:57:42 | INFO: Extracting primitive: COL_0_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_editable
+05:57:42 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_0_dive_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_dive_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_dive_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_dive_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_dive_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_0_screech_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_screech_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_screech_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_screech_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_0_screech_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_1_dive_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_dive_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_dive_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_dive_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_dive_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_1_screech_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_screech_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_screech_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_screech_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_1_screech_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_predator_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_predator_dive_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_dive_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_dive_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_dive_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_dive_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: COL_predator_screech_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_screech_editable
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_screech_detail1_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_screech_detail2_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Extracting primitive: Anatomy_predator_screech_detail3_mesh
+05:57:42 | INFO: Primitives created: 1
+05:57:42 | INFO: Finished glTF 2.0 export in 0.6637969017028809 s
+
+  17.4 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 17.3 -> 16.4 MB of buffers
+  meshopt (high, float attributes): geometry 16.1 -> 5.9 MB; file 16.4 -> 6.3 MB
+05:57:59 | INFO: Data are loaded, start creating Blender stuff
+05:57:59 | INFO: Blender create Mesh node COL_0_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_editable
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_detail1_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_detail2_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_detail3_mesh
+05:57:59 | INFO: Blender create Mesh node COL_0_dive_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_dive_editable
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_dive_detail1_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_dive_detail2_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_dive_detail3_mesh
+05:57:59 | INFO: Blender create Mesh node COL_0_screech_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_screech_editable
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_screech_detail1_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_screech_detail2_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_0_screech_detail3_mesh
+05:57:59 | INFO: Blender create Mesh node COL_1_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_editable
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_detail1_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_detail2_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_detail3_mesh
+05:57:59 | INFO: Blender create Mesh node COL_1_dive_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_dive_editable
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_dive_detail1_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_dive_detail2_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_dive_detail3_mesh
+05:57:59 | INFO: Blender create Mesh node COL_1_screech_mesh
+05:57:59 | INFO: Blender create Mesh node Anatomy_1_screech_editable
+05:58:00 | INFO: Blender create Mesh node Anatomy_1_screech_detail1_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_1_screech_detail2_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_1_screech_detail3_mesh
+05:58:00 | INFO: Blender create Mesh node COL_predator_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_editable
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_detail1_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_detail2_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_detail3_mesh
+05:58:00 | INFO: Blender create Mesh node COL_predator_dive_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_dive_editable
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_dive_detail1_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_dive_detail2_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_dive_detail3_mesh
+05:58:00 | INFO: Blender create Mesh node COL_predator_screech_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_screech_editable
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_screech_detail1_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_screech_detail2_mesh
+05:58:00 | INFO: Blender create Mesh node Anatomy_predator_screech_detail3_mesh
+05:58:00 | INFO: glTF import finished in 0.57s
+00:39.408  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/quad_grazer.blend"
+
+validate packages/client/public/models/creatures/flyer.glb  (family creatures, export .glb)
+  flyer / flyer_0 [creature]  tris LOD0 32,432, LOD1 9,728, LOD2 3,240, LOD3 1,326  size 2.65 x 1.80 x 0.53 m
+  flyer / flyer_0_dive [creature]  tris LOD0 32,432, LOD1 9,728, LOD2 3,240, LOD3 1,330  size 2.65 x 1.80 x 0.53 m
+  flyer / flyer_0_screech [creature]  tris LOD0 33,292, LOD1 9,986, LOD2 3,326, LOD3 1,331  size 2.65 x 1.80 x 0.75 m
+  flyer / flyer_1 [creature]  tris LOD0 33,676, LOD1 10,100, LOD2 3,364, LOD3 1,333  size 3.65 x 1.89 x 0.71 m
+  flyer / flyer_1_dive [creature]  tris LOD0 33,676, LOD1 10,100, LOD2 3,364, LOD3 1,331  size 3.65 x 1.89 x 0.71 m
+  flyer / flyer_1_screech [creature]  tris LOD0 34,536, LOD1 10,360, LOD2 3,450, LOD3 1,330  size 3.65 x 1.89 x 1.01 m
+  flyer / flyer_predator [creature]  tris LOD0 37,292, LOD1 11,186, LOD2 3,726, LOD3 1,349  size 4.90 x 2.25 x 1.03 m
+  flyer / flyer_predator_dive [creature]  tris LOD0 37,292, LOD1 11,186, LOD2 3,726, LOD3 1,353  size 4.90 x 2.64 x 1.03 m
+  flyer / flyer_predator_screech [creature]  tris LOD0 38,152, LOD1 11,444, LOD2 3,812, LOD3 1,365  size 4.90 x 2.25 x 1.43 m
+  PASS  naming
+        ok    flyer.glb: 9 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    flyer/flyer_0: LOD0 32,432 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    flyer/flyer_0_dive: LOD0 32,432 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    flyer/flyer_0_screech: LOD0 33,292 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    flyer/flyer_0: 32,432 > 9,728 > 3,240 > 1,326 triangles; LOD3 4.1% of LOD0
+        ok    flyer/flyer_0_dive: 32,432 > 9,728 > 3,240 > 1,330 triangles; LOD3 4.1% of LOD0
+        ok    flyer/flyer_0_screech: 33,292 > 9,986 > 3,326 > 1,331 triangles; LOD3 4.0% of LOD0
+        ok    ... 6 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB
+        ok    flyer/flyer_0: textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB
+        ok    ... 8 more
+  PASS  scale references
+        ok    source: assets/blend/creatures/flyer.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    flyer/flyer_0: longest side 2.65 m within 0.2-80 m
+        ok    flyer/flyer_0_dive: longest side 2.65 m within 0.2-80 m
+        ok    ... 7 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__flyer.glb.json
+  wrote packages/client/public/models/creatures/flyer.glb (6,259,696 bytes)
+
+export assets/blend/creatures/quad_grazer.blend -> packages/client/public/models/creatures/quad_grazer.glb
+Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '//../_library.blend', parent '<direct>'
+
+validate assets/blend/creatures/quad_grazer.blend  (family creatures, source .blend)
+  quad_grazer / quad_grazer_0 [creature]  tris LOD0 32,300, LOD1 9,690, LOD2 3,228, LOD3 1,128  size 1.32 x 5.16 x 2.67 m
+  quad_grazer / quad_grazer_0_kick [creature]  tris LOD0 32,300, LOD1 9,690, LOD2 3,228, LOD3 1,128  size 1.32 x 5.16 x 2.67 m
+  quad_grazer / quad_grazer_1 [creature]  tris LOD0 36,856, LOD1 11,056, LOD2 3,682, LOD3 1,286  size 1.58 x 4.86 x 2.88 m
+  quad_grazer / quad_grazer_1_kick [creature]  tris LOD0 36,856, LOD1 11,056, LOD2 3,682, LOD3 1,286  size 1.58 x 4.87 x 2.88 m
+  PASS  naming
+        ok    quad_grazer.blend: 4 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    quad_grazer/quad_grazer_0: LOD0 32,300 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_grazer/quad_grazer_0_kick: LOD0 32,300 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_grazer/quad_grazer_1: LOD0 36,856 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 1 more
+  PASS  LODs
+        ok    quad_grazer/quad_grazer_0: 32,300 > 9,690 > 3,228 > 1,128 triangles; LOD3 3.5% of LOD0
+        ok    quad_grazer/quad_grazer_0_kick: 32,300 > 9,690 > 3,228 > 1,128 triangles; LOD3 3.5% of LOD0
+        ok    quad_grazer/quad_grazer_1: 36,856 > 11,056 > 3,682 > 1,286 triangles; LOD3 3.5% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    quad_grazer/quad_grazer_0: longest side 5.16 m within 0.2-80 m
+        ok    ... 3 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__quad_grazer.blend.json
+05:58:01 | INFO: Starting glTF 2.0 export
+05:58:01 | INFO: Extracting primitive: COL_0_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_editable
+05:58:01 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_detail1_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_detail2_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_detail3_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: COL_0_kick_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_kick_editable
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_kick_detail1_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_kick_detail2_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_0_kick_detail3_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: COL_1_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_editable
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_detail1_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_detail2_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_detail3_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: COL_1_kick_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_kick_editable
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_kick_detail1_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_kick_detail2_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Extracting primitive: Anatomy_1_kick_detail3_mesh
+05:58:01 | INFO: Primitives created: 1
+05:58:01 | INFO: Finished glTF 2.0 export in 0.34126710891723633 s
+
+  8.0 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 7.9 -> 7.0 MB of buffers
+  meshopt (high, float attributes): geometry 6.8 -> 2.4 MB; file 7.0 -> 2.6 MB
+05:58:17 | INFO: Data are loaded, start creating Blender stuff
+05:58:17 | INFO: Blender create Mesh node COL_0_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_editable
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_detail1_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_detail2_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_detail3_mesh
+05:58:17 | INFO: Blender create Mesh node COL_0_kick_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_kick_editable
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_kick_detail1_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_kick_detail2_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_0_kick_detail3_mesh
+05:58:17 | INFO: Blender create Mesh node COL_1_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_editable
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_detail1_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_detail2_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_detail3_mesh
+05:58:17 | INFO: Blender create Mesh node COL_1_kick_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_kick_editable
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_kick_detail1_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_kick_detail2_mesh
+05:58:17 | INFO: Blender create Mesh node Anatomy_1_kick_detail3_mesh
+05:58:17 | INFO: glTF import finished in 0.24s
+00:56.676  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/quad_heavy.blend"
+
+validate packages/client/public/models/creatures/quad_grazer.glb  (family creatures, export .glb)
+  quad_grazer / quad_grazer_0 [creature]  tris LOD0 32,300, LOD1 9,690, LOD2 3,228, LOD3 1,128  size 1.32 x 5.16 x 2.67 m
+  quad_grazer / quad_grazer_0_kick [creature]  tris LOD0 32,300, LOD1 9,690, LOD2 3,228, LOD3 1,128  size 1.32 x 5.16 x 2.67 m
+  quad_grazer / quad_grazer_1 [creature]  tris LOD0 36,856, LOD1 11,056, LOD2 3,682, LOD3 1,286  size 1.58 x 4.86 x 2.88 m
+  quad_grazer / quad_grazer_1_kick [creature]  tris LOD0 36,856, LOD1 11,056, LOD2 3,682, LOD3 1,286  size 1.58 x 4.87 x 2.88 m
+  PASS  naming
+        ok    quad_grazer.glb: 4 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    quad_grazer/quad_grazer_0: LOD0 32,300 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_grazer/quad_grazer_0_kick: LOD0 32,300 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_grazer/quad_grazer_1: LOD0 36,856 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 2 more
+  PASS  LODs
+        ok    quad_grazer/quad_grazer_0: 32,300 > 9,690 > 3,228 > 1,128 triangles; LOD3 3.5% of LOD0
+        ok    quad_grazer/quad_grazer_0_kick: 32,300 > 9,690 > 3,228 > 1,128 triangles; LOD3 3.5% of LOD0
+        ok    quad_grazer/quad_grazer_1: 36,856 > 11,056 > 3,682 > 1,286 triangles; LOD3 3.5% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB
+        ok    quad_grazer/quad_grazer_0: textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB
+        ok    ... 3 more
+  PASS  scale references
+        ok    source: assets/blend/creatures/quad_grazer.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    quad_grazer/quad_grazer_0: longest side 5.16 m within 0.2-80 m
+        ok    quad_grazer/quad_grazer_0_kick: longest side 5.16 m within 0.2-80 m
+        ok    ... 2 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__quad_grazer.glb.json
+  wrote packages/client/public/models/creatures/quad_grazer.glb (2,639,964 bytes)
+
+export assets/blend/creatures/quad_heavy.blend -> packages/client/public/models/creatures/quad_heavy.glb
+Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '//../_library.blend', parent '<direct>'
+
+validate assets/blend/creatures/quad_heavy.blend  (family creatures, source .blend)
+  quad_heavy / quad_heavy_0 [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.17 x 9.29 x 4.06 m
+  quad_heavy / quad_heavy_0_charge [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.17 x 9.55 x 3.61 m
+  quad_heavy / quad_heavy_0_stomp [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.17 x 9.29 x 4.06 m
+  quad_heavy / quad_heavy_1 [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.81 x 8.17 x 5.11 m
+  quad_heavy / quad_heavy_1_charge [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.81 x 8.43 x 4.54 m
+  quad_heavy / quad_heavy_1_stomp [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.81 x 8.17 x 5.11 m
+  PASS  naming
+        ok    quad_heavy.blend: 6 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    quad_heavy/quad_heavy_0: LOD0 38,956 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_heavy/quad_heavy_0_charge: LOD0 38,956 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_heavy/quad_heavy_0_stomp: LOD0 38,956 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 3 more
+  PASS  LODs
+        ok    quad_heavy/quad_heavy_0: 38,956 > 11,686 > 3,892 > 1,360 triangles; LOD3 3.5% of LOD0
+        ok    quad_heavy/quad_heavy_0_charge: 38,956 > 11,686 > 3,892 > 1,360 triangles; LOD3 3.5% of LOD0
+        ok    quad_heavy/quad_heavy_0_stomp: 38,956 > 11,686 > 3,892 > 1,360 triangles; LOD3 3.5% of LOD0
+        ok    ... 3 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    quad_heavy/quad_heavy_0: longest side 9.29 m within 0.2-80 m
+        ok    ... 5 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__quad_heavy.blend.json
+05:58:18 | INFO: Starting glTF 2.0 export
+05:58:18 | INFO: Extracting primitive: COL_0_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_editable
+05:58:18 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_detail1_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_detail2_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_detail3_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: COL_0_charge_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_charge_editable
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_charge_detail1_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_charge_detail2_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_charge_detail3_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: COL_0_stomp_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_stomp_editable
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_stomp_detail1_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_stomp_detail2_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_0_stomp_detail3_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: COL_1_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_editable
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_detail1_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_detail2_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_detail3_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: COL_1_charge_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_charge_editable
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_charge_detail1_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_charge_detail2_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_charge_detail3_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: COL_1_stomp_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_stomp_editable
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_stomp_detail1_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_stomp_detail2_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Extracting primitive: Anatomy_1_stomp_detail3_mesh
+05:58:18 | INFO: Primitives created: 1
+05:58:18 | INFO: Finished glTF 2.0 export in 0.46375322341918945 s
+
+  12.2 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 12.1 -> 11.2 MB of buffers
+  meshopt (high, float attributes): geometry 11.0 -> 3.7 MB; file 11.3 -> 4.0 MB
+05:58:35 | INFO: Data are loaded, start creating Blender stuff
+05:58:35 | INFO: Blender create Mesh node COL_0_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_editable
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_detail1_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_detail2_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_detail3_mesh
+05:58:35 | INFO: Blender create Mesh node COL_0_charge_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_charge_editable
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_charge_detail1_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_charge_detail2_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_charge_detail3_mesh
+05:58:35 | INFO: Blender create Mesh node COL_0_stomp_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_stomp_editable
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_stomp_detail1_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_stomp_detail2_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_0_stomp_detail3_mesh
+05:58:35 | INFO: Blender create Mesh node COL_1_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_editable
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_detail1_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_detail2_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_detail3_mesh
+05:58:35 | INFO: Blender create Mesh node COL_1_charge_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_charge_editable
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_charge_detail1_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_charge_detail2_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_charge_detail3_mesh
+05:58:35 | INFO: Blender create Mesh node COL_1_stomp_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_stomp_editable
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_stomp_detail1_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_stomp_detail2_mesh
+05:58:35 | INFO: Blender create Mesh node Anatomy_1_stomp_detail3_mesh
+05:58:35 | INFO: glTF import finished in 0.40s
+01:14.493  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/quad_small.blend"
+
+validate packages/client/public/models/creatures/quad_heavy.glb  (family creatures, export .glb)
+  quad_heavy / quad_heavy_0 [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.17 x 9.29 x 4.06 m
+  quad_heavy / quad_heavy_0_charge [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.17 x 9.55 x 3.61 m
+  quad_heavy / quad_heavy_0_stomp [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.17 x 9.29 x 4.06 m
+  quad_heavy / quad_heavy_1 [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.81 x 8.17 x 5.11 m
+  quad_heavy / quad_heavy_1_charge [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.81 x 8.43 x 4.54 m
+  quad_heavy / quad_heavy_1_stomp [creature]  tris LOD0 38,956, LOD1 11,686, LOD2 3,892, LOD3 1,360  size 3.81 x 8.17 x 5.11 m
+  PASS  naming
+        ok    quad_heavy.glb: 6 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    quad_heavy/quad_heavy_0: LOD0 38,956 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_heavy/quad_heavy_0_charge: LOD0 38,956 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_heavy/quad_heavy_0_stomp: LOD0 38,956 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 4 more
+  PASS  LODs
+        ok    quad_heavy/quad_heavy_0: 38,956 > 11,686 > 3,892 > 1,360 triangles; LOD3 3.5% of LOD0
+        ok    quad_heavy/quad_heavy_0_charge: 38,956 > 11,686 > 3,892 > 1,360 triangles; LOD3 3.5% of LOD0
+        ok    quad_heavy/quad_heavy_0_stomp: 38,956 > 11,686 > 3,892 > 1,360 triangles; LOD3 3.5% of LOD0
+        ok    ... 3 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB
+        ok    quad_heavy/quad_heavy_0: textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB
+        ok    ... 5 more
+  PASS  scale references
+        ok    source: assets/blend/creatures/quad_heavy.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    quad_heavy/quad_heavy_0: longest side 9.29 m within 0.2-80 m
+        ok    quad_heavy/quad_heavy_0_charge: longest side 9.55 m within 0.2-80 m
+        ok    ... 4 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__quad_heavy.glb.json
+  wrote packages/client/public/models/creatures/quad_heavy.glb (4,015,320 bytes)
+
+export assets/blend/creatures/quad_small.blend -> packages/client/public/models/creatures/quad_small.glb
+Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '//../_library.blend', parent '<direct>'
+
+validate assets/blend/creatures/quad_small.blend  (family creatures, source .blend)
+  quad_small / quad_small_0 [creature]  tris LOD0 31,116, LOD1 9,334, LOD2 3,108, LOD3 1,086  size 0.85 x 2.51 x 0.80 m
+  quad_small / quad_small_0_bite_swarm [creature]  tris LOD0 31,976, LOD1 9,592, LOD2 3,194, LOD3 1,116  size 0.85 x 2.77 x 0.73 m
+  quad_small / quad_small_1 [creature]  tris LOD0 35,672, LOD1 10,700, LOD2 3,566, LOD3 1,246  size 1.06 x 2.62 x 1.28 m
+  quad_small / quad_small_1_bite_swarm [creature]  tris LOD0 36,532, LOD1 10,958, LOD2 3,650, LOD3 1,276  size 1.06 x 2.88 x 1.14 m
+  quad_small / quad_small_predator [creature]  tris LOD0 35,724, LOD1 10,716, LOD2 3,570, LOD3 1,248  size 0.85 x 4.09 x 0.98 m
+  quad_small / quad_small_predator_bite_swarm [creature]  tris LOD0 36,584, LOD1 10,974, LOD2 3,656, LOD3 1,276  size 0.85 x 4.35 x 0.98 m
+  PASS  naming
+        ok    quad_small.blend: 6 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    quad_small/quad_small_0: LOD0 31,116 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_small/quad_small_0_bite_swarm: LOD0 31,976 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_small/quad_small_1: LOD0 35,672 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 3 more
+  PASS  LODs
+        ok    quad_small/quad_small_0: 31,116 > 9,334 > 3,108 > 1,086 triangles; LOD3 3.5% of LOD0
+        ok    quad_small/quad_small_0_bite_swarm: 31,976 > 9,592 > 3,194 > 1,116 triangles; LOD3 3.5% of LOD0
+        ok    quad_small/quad_small_1: 35,672 > 10,700 > 3,566 > 1,246 triangles; LOD3 3.5% of LOD0
+        ok    ... 3 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    quad_small/quad_small_0: longest side 2.51 m within 0.2-80 m
+        ok    ... 5 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__quad_small.blend.json
+05:58:36 | INFO: Starting glTF 2.0 export
+05:58:36 | INFO: Extracting primitive: COL_0_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_editable
+05:58:36 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_detail1_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_detail2_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_detail3_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: COL_0_bite_swarm_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_bite_swarm_editable
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_bite_swarm_detail1_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_bite_swarm_detail2_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_0_bite_swarm_detail3_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: COL_1_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_editable
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_detail1_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_detail2_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_detail3_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: COL_1_bite_swarm_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_bite_swarm_editable
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_bite_swarm_detail1_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_bite_swarm_detail2_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_1_bite_swarm_detail3_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: COL_predator_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_editable
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_detail1_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_detail2_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_detail3_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: COL_predator_bite_swarm_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_bite_swarm_editable
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_bite_swarm_detail1_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_bite_swarm_detail2_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Extracting primitive: Anatomy_predator_bite_swarm_detail3_mesh
+05:58:36 | INFO: Primitives created: 1
+05:58:36 | INFO: Finished glTF 2.0 export in 0.42591309547424316 s
+
+  12.0 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 12.0 -> 11.0 MB of buffers
+  meshopt (high, float attributes): geometry 10.8 -> 4.0 MB; file 11.1 -> 4.3 MB
+05:58:52 | INFO: Data are loaded, start creating Blender stuff
+05:58:52 | INFO: Blender create Mesh node COL_0_mesh
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_editable
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_detail1_mesh
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_detail2_mesh
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_detail3_mesh
+05:58:52 | INFO: Blender create Mesh node COL_0_bite_swarm_mesh
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_bite_swarm_editable
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_bite_swarm_detail1_mesh
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_bite_swarm_detail2_mesh
+05:58:52 | INFO: Blender create Mesh node Anatomy_0_bite_swarm_detail3_mesh
+05:58:52 | INFO: Blender create Mesh node COL_1_mesh
+05:58:52 | INFO: Blender create Mesh node Anatomy_1_editable
+05:58:52 | INFO: Blender create Mesh node Anatomy_1_detail1_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_1_detail2_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_1_detail3_mesh
+05:58:53 | INFO: Blender create Mesh node COL_1_bite_swarm_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_1_bite_swarm_editable
+05:58:53 | INFO: Blender create Mesh node Anatomy_1_bite_swarm_detail1_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_1_bite_swarm_detail2_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_1_bite_swarm_detail3_mesh
+05:58:53 | INFO: Blender create Mesh node COL_predator_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_editable
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_detail1_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_detail2_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_detail3_mesh
+05:58:53 | INFO: Blender create Mesh node COL_predator_bite_swarm_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_bite_swarm_editable
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_bite_swarm_detail1_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_bite_swarm_detail2_mesh
+05:58:53 | INFO: Blender create Mesh node Anatomy_predator_bite_swarm_detail3_mesh
+05:58:53 | INFO: glTF import finished in 0.36s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/creatures/quad_small.glb  (family creatures, export .glb)
+  quad_small / quad_small_0 [creature]  tris LOD0 31,116, LOD1 9,334, LOD2 3,108, LOD3 1,086  size 0.85 x 2.51 x 0.80 m
+  quad_small / quad_small_0_bite_swarm [creature]  tris LOD0 31,976, LOD1 9,592, LOD2 3,194, LOD3 1,116  size 0.85 x 2.77 x 0.73 m
+  quad_small / quad_small_1 [creature]  tris LOD0 35,672, LOD1 10,700, LOD2 3,566, LOD3 1,246  size 1.06 x 2.62 x 1.28 m
+  quad_small / quad_small_1_bite_swarm [creature]  tris LOD0 36,532, LOD1 10,958, LOD2 3,650, LOD3 1,276  size 1.06 x 2.88 x 1.14 m
+  quad_small / quad_small_predator [creature]  tris LOD0 35,724, LOD1 10,716, LOD2 3,570, LOD3 1,248  size 0.85 x 4.09 x 0.98 m
+  quad_small / quad_small_predator_bite_swarm [creature]  tris LOD0 36,584, LOD1 10,974, LOD2 3,656, LOD3 1,276  size 0.85 x 4.35 x 0.98 m
+  PASS  naming
+        ok    quad_small.glb: 6 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    quad_small/quad_small_0: LOD0 31,116 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_small/quad_small_0_bite_swarm: LOD0 31,976 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_small/quad_small_1: LOD0 35,672 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 4 more
+  PASS  LODs
+        ok    quad_small/quad_small_0: 31,116 > 9,334 > 3,108 > 1,086 triangles; LOD3 3.5% of LOD0
+        ok    quad_small/quad_small_0_bite_swarm: 31,976 > 9,592 > 3,194 > 1,116 triangles; LOD3 3.5% of LOD0
+        ok    quad_small/quad_small_1: 35,672 > 10,700 > 3,566 > 1,246 triangles; LOD3 3.5% of LOD0
+        ok    ... 3 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB
+        ok    quad_small/quad_small_0: textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB
+        ok    ... 5 more
+  PASS  scale references
+        ok    source: assets/blend/creatures/quad_small.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    quad_small/quad_small_0: longest side 2.51 m within 0.2-80 m
+        ok    quad_small/quad_small_0_bite_swarm: longest side 2.77 m within 0.2-80 m
+        ok    ... 4 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/export-final/creatures__quad_small.glb.json
+  wrote packages/client/public/models/creatures/quad_small.glb (4,277,100 bytes)
+
+export creatures: 5 of 5 source(s) exported
