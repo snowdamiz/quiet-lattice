@@ -27,7 +27,8 @@ export function capture(review, host = {}) {
     viewport: read(() => ({ width: renderer.domElement.width, height: renderer.domElement.height, pixelRatio: renderer.getPixelRatio() })),
     composer: read(() => [composer.renderTarget1, composer.renderTarget2].map(t => ({ width: t.width, height: t.height, samples: t.samples, type: t.texture.type }))),
     passes: read(() => composer.passes.map(p => ({ name: p.constructor.name, enabled: p.enabled, needsSwap: p.needsSwap }))),
-    marchPlanet: read(() => engine.atmoPass?.marchPlanet),
+    marchPlanet: read(() => engine?.atmoPass?.marchPlanet()),
+    marchPlanetEvidence: { kind: 'current-selection', passExecution: 'unproven' },
     counters: read(() => renderer.info.render),
     shadows: read(() => ({ enabled: renderer.shadowMap.enabled, type: renderer.shadowMap.type })),
   };
@@ -68,49 +69,109 @@ export async function runMatrix({ review, interventions, host = {}, repetitions 
   if (!Number.isInteger(repetitions) || repetitions < 2) throw new Error('At least two alternating repetitions required');
   if (active.has(review)) throw new Error('Diagnostic matrix already active');
   active.add(review);
-  const rootVisible = review.root?.visible;
-  receipt.configuration = { host: copy(host), repetitions, perfOptions: copy(perfOptions) };
-  const measure = async (id, repetition, arm, intervention, saved) => {
-    const row = { id, repetition, arm, before: capture(review, host) };
-    receipt.runs.push(row);
-    if (intervention) {
-      row.controlBefore = copy(intervention.observe());
-      if (!intervention.matches(arm, saved, row.controlBefore)) throw new Error(`${id}: ineffective ${arm} intervention`);
-    }
-    try {
-      row.raw = copy(await review.perf(copy(perfOptions)));
-      row.timing = timingEvidence(row.raw);
-    } finally {
-      row.after = capture(review, host);
-      if (intervention) row.controlAfter = copy(intervention.observe());
-    }
-    if (intervention && (!equal(row.controlBefore, row.controlAfter) || !intervention.matches(arm, saved, row.controlAfter))) throw new Error(`${id}: control changed during measurement`);
-  };
   try {
-    for (let i = 0; i < repetitions; i++) await measure('baseline-reproduction', i, 'A');
-    for (const intervention of interventions) {
-      const saved = copy(intervention.save());
+    let root, rootVisible;
+    let context = { id: 'matrix', repetition: null, arm: null, phase: 'setup' };
+    const errors = [];
+    const failures = [];
+    const record = (error, phase = context.phase) => {
+      errors.push(error);
+      failures.push({ ...context, phase, error: String(error) });
+    };
+    const cleanup = async (phase, fn) => {
+      try { await fn(); } catch (error) { record(error, phase); }
+    };
+    const measure = async (id, repetition, arm, intervention, saved) => {
+      context = { id, repetition, arm, phase: 'capture-before' };
+      const row = { id, repetition, arm };
+      const firstFailure = failures.length;
+      let observedBefore = false, observedAfter = false;
       try {
-        for (let i = 0; i < repetitions; i++) {
-          for (const arm of i % 2 ? ['B', 'A'] : ['A', 'B']) {
-            await intervention.restore(saved);
-            await intervention.apply(arm, saved);
-            await measure(intervention.id, i, arm, intervention, saved);
+        receipt.runs.push(row);
+        row.before = capture(review, host);
+        if (intervention) {
+          context.phase = 'observe-before';
+          row.controlBefore = copy(intervention.observe());
+          observedBefore = true;
+          if (!intervention.matches(arm, saved, row.controlBefore)) throw new Error(`${id}: ineffective ${arm} intervention`);
+        }
+        context.phase = 'perf';
+        row.raw = copy(await review.perf(copy(perfOptions)));
+        context.phase = 'timing-evidence';
+        row.timing = timingEvidence(row.raw);
+      } catch (error) {
+        record(error);
+      } finally {
+        await cleanup('capture-after', () => { row.after = capture(review, host); });
+        if (intervention) {
+          await cleanup('observe-after', () => {
+            row.controlAfter = copy(intervention.observe());
+            observedAfter = true;
+          });
+          if (observedBefore && observedAfter) {
+            await cleanup('verify-control', () => {
+              if (!equal(row.controlBefore, row.controlAfter) || !intervention.matches(arm, saved, row.controlAfter)) throw new Error(`${id}: control changed during measurement`);
+            });
           }
         }
-      } finally {
-        await intervention.restore(saved);
-        if (!intervention.matches('A', saved, intervention.observe())) throw new Error(`${intervention.id}: restoration failed`);
+        row.failures = failures.slice(firstFailure);
+      }
+      return failures.length === firstFailure;
+    };
+    const execute = async () => {
+      root = review.root;
+      rootVisible = root?.visible;
+      receipt.configuration = { host: copy(host), repetitions, perfOptions: copy(perfOptions) };
+      for (let i = 0; i < repetitions; i++) {
+        if (!await measure('baseline-reproduction', i, 'A')) return;
+      }
+      for (const intervention of interventions) {
+        context = { id: intervention.id, repetition: null, arm: null, phase: 'save' };
+        const saved = copy(intervention.save());
+        try {
+          for (let i = 0; i < repetitions; i++) {
+            for (const arm of i % 2 ? ['B', 'A'] : ['A', 'B']) {
+              context = { id: intervention.id, repetition: i, arm, phase: 'restore-before-arm' };
+              await intervention.restore(saved);
+              context.phase = 'apply';
+              await intervention.apply(arm, saved);
+              if (!await measure(intervention.id, i, arm, intervention, saved)) return;
+            }
+          }
+        } catch (error) {
+          record(error);
+        } finally {
+          await cleanup('restore', () => intervention.restore(saved));
+          await cleanup('verify-restoration', () => {
+            if (!intervention.matches('A', saved, intervention.observe())) throw new Error(`${intervention.id}: restoration failed`);
+          });
+        }
+        if (failures.length) return;
+      }
+    };
+    try {
+      await execute();
+    } catch (error) {
+      record(error);
+    } finally {
+      if (root && rootVisible !== undefined) {
+        await cleanup('restore-root', () => { root.visible = rootVisible; });
+        await cleanup('verify-root-restoration', () => {
+          if (root.visible !== rootVisible) throw new Error('Root visibility restoration failed');
+        });
       }
     }
-  } catch (error) {
-    receipt.errors.push(String(error));
-    throw error;
+    const describe = f => `${f.id} repetition=${f.repetition} arm=${f.arm} phase=${f.phase}: ${f.error}`;
+    await cleanup('receipt-write', () => {
+      receipt.failures = failures;
+      receipt.errors.push(...failures.map(describe));
+    });
+    if (errors.length === 1) throw errors[0];
+    if (errors.length > 1) throw new AggregateError(errors, failures.map(describe).join('\n'));
+    return receipt;
   } finally {
-    try { if (review.root && rootVisible !== undefined) review.root.visible = rootVisible; }
-    finally { active.delete(review); }
+    active.delete(review);
   }
-  return receipt;
 }
 
 export const passTimerPlan = Object.freeze({
