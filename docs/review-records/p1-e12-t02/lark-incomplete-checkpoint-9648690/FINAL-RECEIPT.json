@@ -1,0 +1,724 @@
+{
+  "status": "INCOMPLETE",
+  "hashes": {
+    "blend_sha256": "9fea5ec91f66247d8c459e5c599771ea4002b111d277406b021a82164c995ee0",
+    "glb_sha256": "06cf7ca1b620d8f7b6fbf65969deba511c7c13cb5d00eb7712be7c19a72729a6",
+    "glb_bytes": 16512872,
+    "export_exit": 0
+  },
+  "source_validation": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 135
+  },
+  "export_validation": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "source_density": {
+    "roles": 21,
+    "median_of_medians": 2601.5225765128316,
+    "min_median": 590.6459217270778,
+    "max_median": 20459.628420509038,
+    "target_px_per_m": 512,
+    "pass": true
+  },
+  "decoded_glb_min_median": 590.6403370883208,
+  "lods": [
+    {
+      "asset": "lark",
+      "variants": [
+        {
+          "id": "lark_damaged",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 111862,
+            "1": 33581,
+            "2": 22299,
+            "3": 3307
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.379,
+            4.49
+          ],
+          "materials": [
+            "NavWhite",
+            "Hull",
+            "Dark",
+            "Accent",
+            "Trim",
+            "EngineGlow",
+            "NavRed",
+            "NavGreen",
+            "Glass"
+          ],
+          "gpuTextureMB": 128.0
+        },
+        {
+          "id": "lark_husked",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 112746,
+            "1": 33846,
+            "2": 21992,
+            "3": 3032
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.432,
+            4.286
+          ],
+          "materials": [
+            "Hull",
+            "Dark",
+            "Accent",
+            "Trim",
+            "EngineGlow",
+            "NavRed",
+            "NavGreen",
+            "NavWhite",
+            "Glass"
+          ],
+          "gpuTextureMB": 128.0
+        },
+        {
+          "id": "lark",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 107054,
+            "1": 32139,
+            "2": 21397,
+            "3": 3415
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.379,
+            4.286
+          ],
+          "materials": [
+            "NavWhite",
+            "Hull",
+            "Dark",
+            "Accent",
+            "Trim",
+            "EngineGlow",
+            "NavRed",
+            "NavGreen",
+            "Glass"
+          ],
+          "gpuTextureMB": 64.0
+        }
+      ]
+    }
+  ],
+  "markers": [
+    {
+      "name": "BAY_1",
+      "hasMesh": false,
+      "parent": "lark",
+      "translation": [
+        0,
+        -1.317500114440918,
+        -0.027864789590239525
+      ],
+      "worldTranslation": [
+        0,
+        -1.317500114440918,
+        -0.027864789590239525
+      ]
+    },
+    {
+      "name": "CanopyFrame_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        -1.1920928955078125e-06,
+        -0.17034360766410828,
+        -2.1943663954734802
+      ],
+      "worldTranslation": [
+        -1.1920928955078125e-06,
+        1.6339744627475739,
+        -1.0742728114128113
+      ]
+    },
+    {
+      "name": "CanopyGlass_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_dmg",
+      "hasMesh": false,
+      "parent": "lark_damaged_LOD0",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        9.238719940185547e-06,
+        -0.16810712218284607,
+        -2.1923857927322388
+      ],
+      "worldTranslation": [
+        9.238719940185547e-06,
+        1.636210948228836,
+        -1.0722922086715698
+      ]
+    },
+    {
+      "name": "CanopyGlass_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_dmg",
+      "hasMesh": false,
+      "parent": "lark_damaged_LOD1",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        4.100799560546875e-05,
+        -0.1672060191631317,
+        -2.194738507270813
+      ],
+      "worldTranslation": [
+        4.100799560546875e-05,
+        1.6371120512485504,
+        -1.074644923210144
+      ]
+    },
+    {
+      "name": "CanopyGlass_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_dmg",
+      "hasMesh": false,
+      "parent": "lark_damaged_LOD2",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        -1.3709068298339844e-05,
+        -0.17845472693443298,
+        -2.2121827006340027
+      ],
+      "worldTranslation": [
+        -1.3709068298339844e-05,
+        1.6258633434772491,
+        -1.0920891165733337
+      ]
+    },
+    {
+      "name": "CanopyGlass_dmg",
+      "hasMesh": true,
+      "parent": "Canopy_dmg",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_dmg",
+      "hasMesh": false,
+      "parent": "lark_damaged_LOD3",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        -1.1920928955078125e-06,
+        -0.17034360766410828,
+        -2.1943663954734802
+      ],
+      "worldTranslation": [
+        -1.1920928955078125e-06,
+        1.6339744627475739,
+        -1.0742728114128113
+      ]
+    },
+    {
+      "name": "CanopyGlass_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_husk",
+      "hasMesh": false,
+      "parent": "lark_husked_LOD0",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        9.238719940185547e-06,
+        -0.16810712218284607,
+        -2.1923857927322388
+      ],
+      "worldTranslation": [
+        9.238719940185547e-06,
+        1.636210948228836,
+        -1.0722922086715698
+      ]
+    },
+    {
+      "name": "CanopyGlass_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_husk",
+      "hasMesh": false,
+      "parent": "lark_husked_LOD1",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        4.100799560546875e-05,
+        -0.1672060191631317,
+        -2.194738507270813
+      ],
+      "worldTranslation": [
+        4.100799560546875e-05,
+        1.6371120512485504,
+        -1.074644923210144
+      ]
+    },
+    {
+      "name": "CanopyGlass_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_husk",
+      "hasMesh": false,
+      "parent": "lark_husked_LOD2",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        -0.04289215803146362,
+        -0.1738804280757904,
+        -2.2672961950302124
+      ],
+      "worldTranslation": [
+        -0.04289215803146362,
+        1.6304376423358917,
+        -1.1472026109695435
+      ]
+    },
+    {
+      "name": "CanopyGlass_husk",
+      "hasMesh": true,
+      "parent": "Canopy_husk",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy_husk",
+      "hasMesh": false,
+      "parent": "lark_husked_LOD3",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        -1.1920928955078125e-06,
+        -0.17034360766410828,
+        -2.1943663954734802
+      ],
+      "worldTranslation": [
+        -1.1920928955078125e-06,
+        1.6339744627475739,
+        -1.0742728114128113
+      ]
+    },
+    {
+      "name": "CanopyGlass",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy",
+      "hasMesh": false,
+      "parent": "lark_LOD0",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        9.238719940185547e-06,
+        -0.16810712218284607,
+        -2.1923857927322388
+      ],
+      "worldTranslation": [
+        9.238719940185547e-06,
+        1.636210948228836,
+        -1.0722922086715698
+      ]
+    },
+    {
+      "name": "CanopyGlass",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy",
+      "hasMesh": false,
+      "parent": "lark_LOD1",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        4.100799560546875e-05,
+        -0.1672060191631317,
+        -2.194738507270813
+      ],
+      "worldTranslation": [
+        4.100799560546875e-05,
+        1.6371120512485504,
+        -1.074644923210144
+      ]
+    },
+    {
+      "name": "CanopyGlass",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy",
+      "hasMesh": false,
+      "parent": "lark_LOD2",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    },
+    {
+      "name": "CanopyFrame",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        -1.3709068298339844e-05,
+        -0.17845472693443298,
+        -2.2121827006340027
+      ],
+      "worldTranslation": [
+        -1.3709068298339844e-05,
+        1.6258633434772491,
+        -1.0920891165733337
+      ]
+    },
+    {
+      "name": "CanopyGlass",
+      "hasMesh": true,
+      "parent": "Canopy",
+      "translation": [
+        0,
+        -0.16402888298034668,
+        -2.233427882194519
+      ],
+      "worldTranslation": [
+        0,
+        1.6402891874313354,
+        -1.11333429813385
+      ]
+    },
+    {
+      "name": "Canopy",
+      "hasMesh": false,
+      "parent": "lark_LOD3",
+      "translation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ],
+      "worldTranslation": [
+        0,
+        1.8043180704116821,
+        1.120093584060669
+      ]
+    }
+  ],
+  "inspected": [
+    "/private/tmp/lark-blind-input-8b6c360-la4haroc/stills/lark_cockpit_closed_side.png",
+    "previews/r5-closed-canopy.png",
+    "previews/r5-weld-closed-canopy.png"
+  ],
+  "runtime_gate": "not run; parent owns capture and performance qualification",
+  "unresolved": [
+    "LOD2 breakup first cause and visual resolution",
+    "glazing triangular highlights and frame gaps",
+    "wear patches",
+    "husk frame exposure and seam/glyph/rust readability",
+    "cockpit display/control and seat joinery",
+    "posed 1.85m seated/boarding clearance evidence",
+    "three-livery lineup and mounted-axis/articulation evidence"
+  ]
+}
