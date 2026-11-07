@@ -1,0 +1,455 @@
+{
+  "file": "stations/waystation",
+  "asset": "ws_tradedeck",
+  "variant": "ws_tradedeck",
+  "class": "kit",
+  "gl": "metal",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "stats": {
+    "file": "stations/waystation",
+    "asset": "ws_tradedeck",
+    "variant": "ws_tradedeck",
+    "lod": 0,
+    "shown": 0,
+    "lods": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "triangles": 3748,
+    "meshes": 6,
+    "materials": [
+      "WS_Metal",
+      "WS_Floor",
+      "WS_Shell",
+      "WS_Deck",
+      "WS_Decal"
+    ],
+    "size": [
+      129.26,
+      18.67,
+      33.77
+    ],
+    "colliders": 6,
+    "markers": 7,
+    "kinds": {
+      "COL": 6,
+      "Interact": 4,
+      "Light": 3
+    },
+    "textures": {
+      "shown": {
+        "count": 16,
+        "compressed": 16,
+        "mb": 58.7
+      },
+      "file": {
+        "count": 16,
+        "compressed": 16,
+        "mb": 58.7
+      }
+    }
+  },
+  "spots": {
+    "noon-lush": {
+      "relief": 17.66,
+      "offset": 165,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    },
+    "night-exotic": {
+      "relief": 69.9,
+      "offset": 261,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 182
+      }
+    },
+    "open-space": {
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    }
+  },
+  "perf": [
+    {
+      "case": "noon-lush",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 114,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 29.2,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 7.7,
+        "cpuMsP95": 8.8,
+        "gpuMsMedian": 19.956,
+        "gpuMsP95": 24.663,
+        "gpuSamples": 360,
+        "disjoint": 0,
+        "drawCalls": 609,
+        "triangles": 2817233
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 7.6,
+        "cpuMsP95": 8.7,
+        "gpuMsMedian": 19.849,
+        "gpuMsP95": 25.661,
+        "gpuSamples": 360,
+        "disjoint": 0,
+        "drawCalls": 602,
+        "triangles": 2813475
+      },
+      "asset": {
+        "cpuMs": 0.025,
+        "gpuMs": -0.005,
+        "drawCalls": 7,
+        "triangles": 3758,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 360,
+        "blocks": 180,
+        "gpuMsIqr": [
+          -0.79,
+          0.949
+        ],
+        "gpuMsCi95": [
+          -0.12,
+          0.244
+        ],
+        "cpuMsIqr": [
+          -0.35,
+          0.55
+        ],
+        "spreadMs": 1.739,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 0.107
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_tradedeck",
+        "variant": "ws_tradedeck",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 3748,
+        "meshes": 6,
+        "materials": [
+          "WS_Metal",
+          "WS_Floor",
+          "WS_Shell",
+          "WS_Deck",
+          "WS_Decal"
+        ],
+        "size": [
+          129.26,
+          18.67,
+          33.77
+        ],
+        "colliders": 6,
+        "markers": 7,
+        "kinds": {
+          "COL": 6,
+          "Interact": 4,
+          "Light": 3
+        },
+        "textures": {
+          "shown": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "night-exotic",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 103,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 35.3,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 12.3,
+        "cpuMsP95": 13.9,
+        "gpuMsMedian": 22.038,
+        "gpuMsP95": 25.087,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1158,
+        "triangles": 2981993
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 12.1,
+        "cpuMsP95": 13.4,
+        "gpuMsMedian": 21.81,
+        "gpuMsP95": 24.917,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1151,
+        "triangles": 2978235
+      },
+      "asset": {
+        "cpuMs": 0,
+        "gpuMs": -0.014,
+        "drawCalls": 7,
+        "triangles": 3758,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          -0.676,
+          0.63
+        ],
+        "gpuMsCi95": [
+          -0.233,
+          0.248
+        ],
+        "cpuMsIqr": [
+          -0.75,
+          0.65
+        ],
+        "spreadMs": 1.306,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 0.228
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_tradedeck",
+        "variant": "ws_tradedeck",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 3748,
+        "meshes": 6,
+        "materials": [
+          "WS_Metal",
+          "WS_Floor",
+          "WS_Shell",
+          "WS_Deck",
+          "WS_Decal"
+        ],
+        "size": [
+          129.26,
+          18.67,
+          33.77
+        ],
+        "colliders": 6,
+        "markers": 7,
+        "kinds": {
+          "COL": 6,
+          "Interact": 4,
+          "Light": 3
+        },
+        "textures": {
+          "shown": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "open-space",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 30,
+        "underBudget": true,
+        "stable": true,
+        "frameMs": 6.4,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 1.8,
+        "cpuMsP95": 2.7,
+        "gpuMsMedian": 5.592,
+        "gpuMsP95": 8.315,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 39,
+        "triangles": 52043
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 1.6,
+        "cpuMsP95": 2.3,
+        "gpuMsMedian": 5.351,
+        "gpuMsP95": 7.552,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48285
+      },
+      "asset": {
+        "cpuMs": 0.25,
+        "gpuMs": 0.347,
+        "drawCalls": 7,
+        "triangles": 3758,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          0.152,
+          0.624
+        ],
+        "gpuMsCi95": [
+          0.285,
+          0.446
+        ],
+        "cpuMsIqr": [
+          0.1,
+          0.413
+        ],
+        "spreadMs": 0.472,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 0.241
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_tradedeck",
+        "variant": "ws_tradedeck",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 3748,
+        "meshes": 6,
+        "materials": [
+          "WS_Metal",
+          "WS_Floor",
+          "WS_Shell",
+          "WS_Deck",
+          "WS_Decal"
+        ],
+        "size": [
+          129.26,
+          18.67,
+          33.77
+        ],
+        "colliders": 6,
+        "markers": 7,
+        "kinds": {
+          "COL": 6,
+          "Interact": 4,
+          "Light": 3
+        },
+        "textures": {
+          "shown": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    }
+  ],
+  "far": [
+    {
+      "range": 100,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 12665,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 4
+      }
+    }
+  ],
+  "overlay": {
+    "counts": {
+      "COL": 6,
+      "Interact": 4,
+      "Light": 3
+    },
+    "labelled": [
+      "Interact_Board",
+      "Interact_Outfitter",
+      "Interact_Quartermaster",
+      "Interact_Trade",
+      "Light_Deck_1",
+      "Light_Deck_2",
+      "Light_Deck_3"
+    ],
+    "offscreen": 0
+  },
+  "errors": []
+}

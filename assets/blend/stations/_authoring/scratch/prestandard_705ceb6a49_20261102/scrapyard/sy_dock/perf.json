@@ -1,0 +1,442 @@
+{
+  "file": "stations/scrapyard",
+  "asset": "sy_dock",
+  "variant": "sy_dock",
+  "class": "kit",
+  "gl": "metal",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "stats": {
+    "file": "stations/scrapyard",
+    "asset": "sy_dock",
+    "variant": "sy_dock",
+    "lod": 0,
+    "shown": 0,
+    "lods": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "triangles": 1184,
+    "meshes": 3,
+    "materials": [
+      "SY_Grate",
+      "SY_Scrap",
+      "NavReaches"
+    ],
+    "size": [
+      25.37,
+      16.6,
+      30.11
+    ],
+    "colliders": 3,
+    "markers": 2,
+    "kinds": {
+      "COL": 3,
+      "Interact": 1,
+      "BAY": 1
+    },
+    "textures": {
+      "shown": {
+        "count": 7,
+        "compressed": 7,
+        "mb": 24
+      },
+      "file": {
+        "count": 10,
+        "compressed": 10,
+        "mb": 34.7
+      }
+    }
+  },
+  "spots": {
+    "noon-lush": {
+      "relief": 3.6,
+      "offset": 195,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 99
+      }
+    },
+    "night-exotic": {
+      "relief": 9.25,
+      "offset": 217,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 214
+      }
+    },
+    "open-space": {
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    }
+  },
+  "perf": [
+    {
+      "case": "noon-lush",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 197,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 36.7,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 8.9,
+        "cpuMsP95": 10.6,
+        "gpuMsMedian": 31.682,
+        "gpuMsP95": 69.216,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 652,
+        "triangles": 3304396
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 8.9,
+        "cpuMsP95": 10.5,
+        "gpuMsMedian": 33.874,
+        "gpuMsP95": 67.816,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 649,
+        "triangles": 3303212
+      },
+      "asset": {
+        "cpuMs": 0.1,
+        "gpuMs": -0.271,
+        "drawCalls": 3,
+        "triangles": 1184,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -4.115,
+          2.635
+        ],
+        "gpuMsCi95": [
+          -0.792,
+          0.323
+        ],
+        "cpuMsIqr": [
+          -0.4,
+          0.6
+        ],
+        "spreadMs": 6.75,
+        "reliable": false,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0,
+          "gpuMs": -2.192
+        }
+      },
+      "stats": {
+        "file": "stations/scrapyard",
+        "asset": "sy_dock",
+        "variant": "sy_dock",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 1184,
+        "meshes": 3,
+        "materials": [
+          "SY_Grate",
+          "SY_Scrap",
+          "NavReaches"
+        ],
+        "size": [
+          25.37,
+          16.6,
+          30.11
+        ],
+        "colliders": 3,
+        "markers": 2,
+        "kinds": {
+          "COL": 3,
+          "Interact": 1,
+          "BAY": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 10,
+            "compressed": 10,
+            "mb": 34.7
+          }
+        }
+      }
+    },
+    {
+      "case": "night-exotic",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 141,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 51.3,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 14.6,
+        "cpuMsP95": 16.6,
+        "gpuMsMedian": 36.46,
+        "gpuMsP95": 70.149,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1286,
+        "triangles": 3645035
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 14.5,
+        "cpuMsP95": 16.5,
+        "gpuMsMedian": 36.186,
+        "gpuMsP95": 69.119,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1283,
+        "triangles": 3643851
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 0.382,
+        "drawCalls": 3,
+        "triangles": 1184,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -1.785,
+          2.6
+        ],
+        "gpuMsCi95": [
+          -0.107,
+          0.83
+        ],
+        "cpuMsIqr": [
+          -0.5,
+          0.7
+        ],
+        "spreadMs": 4.385,
+        "reliable": false,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 0.274
+        }
+      },
+      "stats": {
+        "file": "stations/scrapyard",
+        "asset": "sy_dock",
+        "variant": "sy_dock",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 1184,
+        "meshes": 3,
+        "materials": [
+          "SY_Grate",
+          "SY_Scrap",
+          "NavReaches"
+        ],
+        "size": [
+          25.37,
+          16.6,
+          30.11
+        ],
+        "colliders": 3,
+        "markers": 2,
+        "kinds": {
+          "COL": 3,
+          "Interact": 1,
+          "BAY": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 10,
+            "compressed": 10,
+            "mb": 34.7
+          }
+        }
+      }
+    },
+    {
+      "case": "open-space",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 30,
+        "underBudget": true,
+        "stable": true,
+        "frameMs": 6.2,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 1.6,
+        "cpuMsP95": 1.9,
+        "gpuMsMedian": 3.49,
+        "gpuMsP95": 7.514,
+        "gpuSamples": 240,
+        "disjoint": 0,
+        "drawCalls": 35,
+        "triangles": 49789
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 1.5,
+        "cpuMsP95": 1.8,
+        "gpuMsMedian": 3.273,
+        "gpuMsP95": 6.872,
+        "gpuSamples": 240,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48605
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 0.084,
+        "drawCalls": 3,
+        "triangles": 1184,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 240,
+        "blocks": 120,
+        "gpuMsIqr": [
+          -0.911,
+          0.989
+        ],
+        "gpuMsCi95": [
+          -0.067,
+          0.303
+        ],
+        "cpuMsIqr": [
+          0.05,
+          0.25
+        ],
+        "spreadMs": 1.9,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 0.217
+        }
+      },
+      "stats": {
+        "file": "stations/scrapyard",
+        "asset": "sy_dock",
+        "variant": "sy_dock",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 1184,
+        "meshes": 3,
+        "materials": [
+          "SY_Grate",
+          "SY_Scrap",
+          "NavReaches"
+        ],
+        "size": [
+          25.37,
+          16.6,
+          30.11
+        ],
+        "colliders": 3,
+        "markers": 2,
+        "kinds": {
+          "COL": 3,
+          "Interact": 1,
+          "BAY": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 10,
+            "compressed": 10,
+            "mb": 34.7
+          }
+        }
+      }
+    }
+  ],
+  "far": [
+    {
+      "range": 100,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 1698,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 29
+      }
+    }
+  ],
+  "overlay": {
+    "counts": {
+      "COL": 3,
+      "Interact": 1,
+      "BAY": 1
+    },
+    "labelled": [
+      "BAY_Dock",
+      "Interact_Hatch"
+    ],
+    "offscreen": 0
+  },
+  "errors": []
+}

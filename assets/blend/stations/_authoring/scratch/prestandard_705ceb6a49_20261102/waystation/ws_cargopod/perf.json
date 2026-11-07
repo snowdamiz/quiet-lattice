@@ -1,0 +1,425 @@
+{
+  "file": "stations/waystation",
+  "asset": "ws_cargopod",
+  "variant": "ws_cargopod",
+  "class": "kit",
+  "gl": "metal",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "stats": {
+    "file": "stations/waystation",
+    "asset": "ws_cargopod",
+    "variant": "ws_cargopod",
+    "lod": 0,
+    "shown": 0,
+    "lods": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "triangles": 880,
+    "meshes": 2,
+    "materials": [
+      "WS_Shell",
+      "WS_Metal"
+    ],
+    "size": [
+      3.45,
+      2.07,
+      2.14
+    ],
+    "colliders": 1,
+    "markers": 0,
+    "kinds": {
+      "COL": 1
+    },
+    "textures": {
+      "shown": {
+        "count": 7,
+        "compressed": 7,
+        "mb": 24
+      },
+      "file": {
+        "count": 16,
+        "compressed": 16,
+        "mb": 58.7
+      }
+    }
+  },
+  "spots": {
+    "noon-lush": {
+      "relief": 0.66,
+      "offset": 32,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 101
+      }
+    },
+    "night-exotic": {
+      "relief": 0.72,
+      "offset": 193,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 173
+      }
+    },
+    "open-space": {
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    }
+  },
+  "perf": [
+    {
+      "case": "noon-lush",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 190,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 39.1,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 8.5,
+        "cpuMsP95": 9.8,
+        "gpuMsMedian": 31.941,
+        "gpuMsP95": 55.016,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 653,
+        "triangles": 3680338
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 8.4,
+        "cpuMsP95": 9.8,
+        "gpuMsMedian": 31.608,
+        "gpuMsP95": 56.019,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 651,
+        "triangles": 3679458
+      },
+      "asset": {
+        "cpuMs": 0,
+        "gpuMs": 0.25,
+        "drawCalls": 2,
+        "triangles": 880,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -1.575,
+          2.01
+        ],
+        "gpuMsCi95": [
+          -0.045,
+          0.604
+        ],
+        "cpuMsIqr": [
+          -0.45,
+          0.45
+        ],
+        "spreadMs": 3.585,
+        "reliable": false,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 0.333
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_cargopod",
+        "variant": "ws_cargopod",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 880,
+        "meshes": 2,
+        "materials": [
+          "WS_Shell",
+          "WS_Metal"
+        ],
+        "size": [
+          3.45,
+          2.07,
+          2.14
+        ],
+        "colliders": 1,
+        "markers": 0,
+        "kinds": {
+          "COL": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "night-exotic",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 72,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 48.3,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 13.5,
+        "cpuMsP95": 15.5,
+        "gpuMsMedian": 42.565,
+        "gpuMsP95": 53.312,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1286,
+        "triangles": 3955755
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 13.5,
+        "cpuMsP95": 15.3,
+        "gpuMsMedian": 42.018,
+        "gpuMsP95": 53.334,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1284,
+        "triangles": 3954875
+      },
+      "asset": {
+        "cpuMs": 0.1,
+        "gpuMs": 0.456,
+        "drawCalls": 2,
+        "triangles": 880,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -1.741,
+          2.874
+        ],
+        "gpuMsCi95": [
+          -0.077,
+          0.783
+        ],
+        "cpuMsIqr": [
+          -0.463,
+          0.65
+        ],
+        "spreadMs": 4.614,
+        "reliable": false,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0,
+          "gpuMs": 0.547
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_cargopod",
+        "variant": "ws_cargopod",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 880,
+        "meshes": 2,
+        "materials": [
+          "WS_Shell",
+          "WS_Metal"
+        ],
+        "size": [
+          3.45,
+          2.07,
+          2.14
+        ],
+        "colliders": 1,
+        "markers": 0,
+        "kinds": {
+          "COL": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "open-space",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 30,
+        "underBudget": true,
+        "stable": true,
+        "frameMs": 7.7,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 1.8,
+        "cpuMsP95": 2.4,
+        "gpuMsMedian": 4.725,
+        "gpuMsP95": 8.521,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 34,
+        "triangles": 49485
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 1.7,
+        "cpuMsP95": 2.1,
+        "gpuMsMedian": 4.645,
+        "gpuMsP95": 7.666,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48605
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 0.511,
+        "drawCalls": 2,
+        "triangles": 880,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          0.23,
+          0.888
+        ],
+        "gpuMsCi95": [
+          0.308,
+          0.64
+        ],
+        "cpuMsIqr": [
+          0.037,
+          0.25
+        ],
+        "spreadMs": 0.658,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 0.08
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_cargopod",
+        "variant": "ws_cargopod",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 880,
+        "meshes": 2,
+        "materials": [
+          "WS_Shell",
+          "WS_Metal"
+        ],
+        "size": [
+          3.45,
+          2.07,
+          2.14
+        ],
+        "colliders": 1,
+        "markers": 0,
+        "kinds": {
+          "COL": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    }
+  ],
+  "far": [
+    {
+      "range": 100,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 258,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 45
+      }
+    }
+  ],
+  "overlay": {
+    "counts": {
+      "COL": 1
+    },
+    "labelled": [],
+    "offscreen": 0
+  },
+  "errors": []
+}

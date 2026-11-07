@@ -1,0 +1,140 @@
+00:00.599  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/waystation.blend"
+JOIN ws_hangar.Socket_BayDoor <- ws_baydoor.Socket_DoorMount  gap 0.0000 m (leaves shown 55% open)
+JOIN ws_hangar.Socket_TradeDeck <- ws_tradedeck.Socket_DeckMount  gap 0.0000 m
+PLACE ws_tradedeck.Socket_Fabricator <- ws_fabricator.Socket_Floor
+JOIN ws_hangar.Socket_Spine <- ws_spine.Socket_Aft  gap 0.0000 m
+JOIN ws_spine.Socket_Port <- ws_habitat.Socket_Base  gap 0.0000 m
+JOIN ws_spine.Socket_Starboard <- ws_habitat.Socket_Base  gap 0.0000 m
+JOIN ws_spine.Socket_Fore <- ws_ring.Socket_HubAft  gap 0.0000 m
+JOIN ws_ring.Socket_HubFore <- ws_spine.Socket_Aft  gap 0.0000 m
+JOIN ws_spine.Socket_Fore <- ws_habitat.Socket_Base  gap 0.0000 m
+JOIN ws_spine.Socket_Port <- ws_habitat.Socket_Base  gap 0.0000 m
+02:56:55 | INFO: Data are loaded, start creating Blender stuff
+02:56:55 | INFO: Blender create Mesh node COL_Body
+02:56:55 | INFO: Blender create Mesh node COL_NacelleL
+02:56:55 | INFO: Blender create Mesh node COL_NacelleR
+02:56:55 | INFO: Blender create Mesh node COL_WingL
+02:56:55 | INFO: Blender create Mesh node COL_WingR
+02:56:55 | INFO: Blender create Mesh node Lens_Strobes_dmg
+02:56:55 | INFO: Blender create Mesh node Body_dmg
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_dmg
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_dmg
+02:56:55 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg
+02:56:55 | INFO: Blender create Mesh node CockpitStick_grip_dmg
+02:56:55 | INFO: Blender create Mesh node CockpitThrottle_lever_dmg
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_dmg
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_dmg
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_dmg
+02:56:55 | INFO: Blender create Mesh node Lens_Strobes_dmg_l1
+02:56:55 | INFO: Blender create Mesh node Body_dmg_l1
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_dmg_l1
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_dmg_l1
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_dmg_l1
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_dmg_l1
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_dmg_l1
+02:56:55 | INFO: Blender create Mesh node Lens_Strobes_dmg_l2
+02:56:55 | INFO: Blender create Mesh node Body_dmg_l2
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_dmg_l2
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_dmg_l2
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_dmg_l2
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_dmg_l2
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_dmg_l2
+02:56:55 | INFO: Blender create Mesh node Body_dmg_l3
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_dmg_l3
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_dmg_l3
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_dmg_l3
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_dmg_l3
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_dmg_l3
+02:56:55 | INFO: Blender create Mesh node Body_husk
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_husk
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_husk
+02:56:55 | INFO: Blender create Mesh node CockpitInteriorMesh_husk
+02:56:55 | INFO: Blender create Mesh node CockpitStick_grip_husk
+02:56:55 | INFO: Blender create Mesh node CockpitThrottle_lever_husk
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_husk
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_husk
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_husk
+02:56:55 | INFO: Blender create Mesh node Body_husk_l1
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_husk_l1
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_husk_l1
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_husk_l1
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_husk_l1
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_husk_l1
+02:56:55 | INFO: Blender create Mesh node Body_husk_l2
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_husk_l2
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_husk_l2
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_husk_l2
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_husk_l2
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_husk_l2
+02:56:55 | INFO: Blender create Mesh node Body_husk_l3
+02:56:55 | INFO: Blender create Mesh node CanopyFrame_husk_l3
+02:56:55 | INFO: Blender create Mesh node CanopyGlass_husk_l3
+02:56:55 | INFO: Blender create Mesh node GearFront_leg_husk_l3
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg_husk_l3
+02:56:55 | INFO: Blender create Mesh node GearRight_leg_husk_l3
+02:56:55 | INFO: Blender create Mesh node Lens_Strobes
+02:56:55 | INFO: Blender create Mesh node Body
+02:56:55 | INFO: Blender create Mesh node CanopyFrame
+02:56:55 | INFO: Blender create Mesh node CanopyGlass
+02:56:55 | INFO: Blender create Mesh node CockpitInteriorMesh
+02:56:55 | INFO: Blender create Mesh node CockpitStick_grip
+02:56:55 | INFO: Blender create Mesh node CockpitThrottle_lever
+02:56:55 | INFO: Blender create Mesh node GearFront_leg
+02:56:55 | INFO: Blender create Mesh node GearLeft_leg
+02:56:55 | INFO: Blender create Mesh node GearRight_leg
+02:56:55 | INFO: Blender create Mesh node Lens_Strobes_l1
+02:56:55 | INFO: Blender create Mesh node Body_l1
+02:56:56 | INFO: Blender create Mesh node CanopyFrame_l1
+02:56:56 | INFO: Blender create Mesh node CanopyGlass_l1
+02:56:56 | INFO: Blender create Mesh node GearFront_leg_l1
+02:56:56 | INFO: Blender create Mesh node GearLeft_leg_l1
+02:56:56 | INFO: Blender create Mesh node GearRight_leg_l1
+02:56:56 | INFO: Blender create Mesh node Lens_Strobes_l2
+02:56:56 | INFO: Blender create Mesh node Body_l2
+02:56:56 | INFO: Blender create Mesh node CanopyFrame_l2
+02:56:56 | INFO: Blender create Mesh node CanopyGlass_l2
+02:56:56 | INFO: Blender create Mesh node GearFront_leg_l2
+02:56:56 | INFO: Blender create Mesh node GearLeft_leg_l2
+02:56:56 | INFO: Blender create Mesh node GearRight_leg_l2
+02:56:56 | INFO: Blender create Mesh node Body_l3
+02:56:56 | INFO: Blender create Mesh node CanopyFrame_l3
+02:56:56 | INFO: Blender create Mesh node CanopyGlass_l3
+02:56:56 | INFO: Blender create Mesh node GearFront_leg_l3
+02:56:56 | INFO: Blender create Mesh node GearLeft_leg_l3
+02:56:56 | INFO: Blender create Mesh node GearRight_leg_l3
+02:56:56 | INFO: glTF import finished in 0.72s
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/kitsheet.py:183: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w.use_nodes = True
+00:06.368  render           | Saved: '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_exterior.png'
+00:07.573  render           | Saved: '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_approach.png'
+16:14.519  render           | Saved: '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_hangar.png'
+16:23.995  render           | Saved: '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_fabricator.png'
+31:43.516  render           | Saved: '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_spine.png'
+31:43.835  render           | Saved: '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_scrapyard_mouth.png'
+31:44.520  render           | Saved: '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_scrapyard_cavity.png'
+JOIN sy_rock.Socket_Mouth <- sy_mouth.Socket_GateMount  gap 0.0000 m
+JOIN sy_rock.Socket_Dock_1 <- sy_dock.Socket_DockAnchor  gap 0.0000 m
+JOIN sy_rock.Socket_Dock_2 <- sy_dock.Socket_DockAnchor  gap 0.0000 m
+JOIN sy_rock.Socket_Dock_3 <- sy_dock.Socket_DockAnchor  gap 0.0000 m
+JOIN sy_rock.Socket_Deck_1 <- sy_deck.Socket_DeckAnchor  gap 0.0000 m
+JOIN sy_rock.Socket_Deck_2 <- sy_deck.Socket_DeckAnchor  gap 0.0000 m
+KITSHEET ['/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_exterior.png', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_approach.png', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_hangar.png', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_fabricator.png', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_spine.png', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_scrapyard_mouth.png', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring/scratch/kit_scrapyard_cavity.png']
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3748 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3695 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3732 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3700 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3735 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3740 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3735 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3731 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3741 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3699 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3735 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3737 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3742 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3692 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3742 / 2048)
+Error: Shadow buffer full, may result in missing shadows and lower performance. (3736 / 2048)
+
+Blender quit

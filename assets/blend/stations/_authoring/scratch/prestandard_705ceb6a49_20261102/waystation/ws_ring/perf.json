@@ -1,0 +1,437 @@
+{
+  "file": "stations/waystation",
+  "asset": "ws_ring",
+  "variant": "ws_ring",
+  "class": "building",
+  "gl": "metal",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "stats": {
+    "file": "stations/waystation",
+    "asset": "ws_ring",
+    "variant": "ws_ring",
+    "lod": 0,
+    "shown": 0,
+    "lods": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "triangles": 17240,
+    "meshes": 5,
+    "materials": [
+      "WS_Shell",
+      "WS_LitGlass",
+      "WS_Metal",
+      "NavWhite",
+      "NavRed"
+    ],
+    "size": [
+      173.2,
+      173.2,
+      27.63
+    ],
+    "colliders": 21,
+    "markers": 0,
+    "kinds": {
+      "COL": 21
+    },
+    "textures": {
+      "shown": {
+        "count": 7,
+        "compressed": 7,
+        "mb": 24
+      },
+      "file": {
+        "count": 16,
+        "compressed": 16,
+        "mb": 58.7
+      }
+    }
+  },
+  "spots": {
+    "noon-lush": {
+      "relief": 38.12,
+      "offset": 212,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 344
+      }
+    },
+    "night-exotic": {
+      "relief": 222.49,
+      "offset": 212,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 238
+      }
+    },
+    "open-space": {
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    }
+  },
+  "perf": [
+    {
+      "case": "noon-lush",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 600,
+        "underBudget": false,
+        "stable": false,
+        "frameMs": 30.8,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 8.4,
+        "cpuMsP95": 9.9,
+        "gpuMsMedian": 21.139,
+        "gpuMsP95": 40.614,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 510,
+        "triangles": 1456219
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 8.3,
+        "cpuMsP95": 9.8,
+        "gpuMsMedian": 20.38,
+        "gpuMsP95": 37.283,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 505,
+        "triangles": 1438979
+      },
+      "asset": {
+        "cpuMs": 0.1,
+        "gpuMs": 0.931,
+        "drawCalls": 5,
+        "triangles": 17240,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -0.97,
+          3
+        ],
+        "gpuMsCi95": [
+          0.589,
+          1.273
+        ],
+        "cpuMsIqr": [
+          -0.263,
+          0.55
+        ],
+        "spreadMs": 3.97,
+        "reliable": false,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 0.759
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_ring",
+        "variant": "ws_ring",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 17240,
+        "meshes": 5,
+        "materials": [
+          "WS_Shell",
+          "WS_LitGlass",
+          "WS_Metal",
+          "NavWhite",
+          "NavRed"
+        ],
+        "size": [
+          173.2,
+          173.2,
+          27.63
+        ],
+        "colliders": 21,
+        "markers": 0,
+        "kinds": {
+          "COL": 21
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "night-exotic",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 97,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 47.8,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 13.6,
+        "cpuMsP95": 16.3,
+        "gpuMsMedian": 30.531,
+        "gpuMsP95": 62.044,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1195,
+        "triangles": 1466668
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 13.5,
+        "cpuMsP95": 16.1,
+        "gpuMsMedian": 29.016,
+        "gpuMsP95": 60.471,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1190,
+        "triangles": 1449428
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 0.759,
+        "drawCalls": 5,
+        "triangles": 17240,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -1.44,
+          2.865
+        ],
+        "gpuMsCi95": [
+          0.305,
+          1.063
+        ],
+        "cpuMsIqr": [
+          -0.5,
+          0.8
+        ],
+        "spreadMs": 4.305,
+        "reliable": false,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 1.515
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_ring",
+        "variant": "ws_ring",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 17240,
+        "meshes": 5,
+        "materials": [
+          "WS_Shell",
+          "WS_LitGlass",
+          "WS_Metal",
+          "NavWhite",
+          "NavRed"
+        ],
+        "size": [
+          173.2,
+          173.2,
+          27.63
+        ],
+        "colliders": 21,
+        "markers": 0,
+        "kinds": {
+          "COL": 21
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "open-space",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 30,
+        "underBudget": true,
+        "stable": true,
+        "frameMs": 6.9,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 2.1,
+        "cpuMsP95": 2.5,
+        "gpuMsMedian": 4.035,
+        "gpuMsP95": 9.054,
+        "gpuSamples": 600,
+        "disjoint": 0,
+        "drawCalls": 37,
+        "triangles": 65205
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 1.8,
+        "cpuMsP95": 2.3,
+        "gpuMsMedian": 4.521,
+        "gpuMsP95": 8.692,
+        "gpuSamples": 600,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 47965
+      },
+      "asset": {
+        "cpuMs": 0.25,
+        "gpuMs": 0.116,
+        "drawCalls": 5,
+        "triangles": 17240,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 600,
+        "blocks": 300,
+        "gpuMsIqr": [
+          -1.054,
+          1.064
+        ],
+        "gpuMsCi95": [
+          -0.078,
+          0.329
+        ],
+        "cpuMsIqr": [
+          0.1,
+          0.4
+        ],
+        "spreadMs": 2.118,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.3,
+          "gpuMs": -0.486
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_ring",
+        "variant": "ws_ring",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 17240,
+        "meshes": 5,
+        "materials": [
+          "WS_Shell",
+          "WS_LitGlass",
+          "WS_Metal",
+          "NavWhite",
+          "NavRed"
+        ],
+        "size": [
+          173.2,
+          173.2,
+          27.63
+        ],
+        "colliders": 21,
+        "markers": 0,
+        "kinds": {
+          "COL": 21
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    }
+  ],
+  "far": [
+    {
+      "range": 100,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 44836,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 38
+      }
+    }
+  ],
+  "overlay": {
+    "counts": {
+      "COL": 21
+    },
+    "labelled": [],
+    "offscreen": 0
+  },
+  "errors": []
+}

@@ -1,0 +1,425 @@
+{
+  "file": "stations/waystation",
+  "asset": "ws_baydoor",
+  "variant": "ws_baydoor",
+  "class": "kit",
+  "gl": "metal",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "stats": {
+    "file": "stations/waystation",
+    "asset": "ws_baydoor",
+    "variant": "ws_baydoor",
+    "lod": 0,
+    "shown": 0,
+    "lods": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "triangles": 1400,
+    "meshes": 20,
+    "materials": [
+      "WS_Shell",
+      "WS_Metal"
+    ],
+    "size": [
+      130,
+      42.6,
+      3.62
+    ],
+    "colliders": 2,
+    "markers": 0,
+    "kinds": {
+      "COL": 2
+    },
+    "textures": {
+      "shown": {
+        "count": 7,
+        "compressed": 7,
+        "mb": 24
+      },
+      "file": {
+        "count": 16,
+        "compressed": 16,
+        "mb": 58.7
+      }
+    }
+  },
+  "spots": {
+    "noon-lush": {
+      "relief": 17.15,
+      "offset": 167,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    },
+    "night-exotic": {
+      "relief": 73.72,
+      "offset": 265,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 297
+      }
+    },
+    "open-space": {
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    }
+  },
+  "perf": [
+    {
+      "case": "noon-lush",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 254,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 33.3,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 7.2,
+        "cpuMsP95": 8.8,
+        "gpuMsMedian": 21.735,
+        "gpuMsP95": 37.578,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 586,
+        "triangles": 2262045
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 7,
+        "cpuMsP95": 8.8,
+        "gpuMsMedian": 21.494,
+        "gpuMsP95": 36.387,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 566,
+        "triangles": 2260645
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 0.515,
+        "drawCalls": 20,
+        "triangles": 1400,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -0.569,
+          1.869
+        ],
+        "gpuMsCi95": [
+          0.266,
+          0.727
+        ],
+        "cpuMsIqr": [
+          -0.362,
+          0.65
+        ],
+        "spreadMs": 2.438,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 0.241
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_baydoor",
+        "variant": "ws_baydoor",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 1400,
+        "meshes": 20,
+        "materials": [
+          "WS_Shell",
+          "WS_Metal"
+        ],
+        "size": [
+          130,
+          42.6,
+          3.62
+        ],
+        "colliders": 2,
+        "markers": 0,
+        "kinds": {
+          "COL": 2
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "night-exotic",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 188,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 42.2,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 13.4,
+        "cpuMsP95": 15.6,
+        "gpuMsMedian": 28.634,
+        "gpuMsP95": 100.033,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1156,
+        "triangles": 2625908
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 13.2,
+        "cpuMsP95": 15.5,
+        "gpuMsMedian": 27.379,
+        "gpuMsP95": 114.376,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 1136,
+        "triangles": 2624508
+      },
+      "asset": {
+        "cpuMs": 0.25,
+        "gpuMs": 0.486,
+        "drawCalls": 20,
+        "triangles": 1400,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -1.517,
+          3.136
+        ],
+        "gpuMsCi95": [
+          0.081,
+          0.851
+        ],
+        "cpuMsIqr": [
+          -0.35,
+          0.85
+        ],
+        "spreadMs": 4.652,
+        "reliable": false,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.255
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_baydoor",
+        "variant": "ws_baydoor",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 1400,
+        "meshes": 20,
+        "materials": [
+          "WS_Shell",
+          "WS_Metal"
+        ],
+        "size": [
+          130,
+          42.6,
+          3.62
+        ],
+        "colliders": 2,
+        "markers": 0,
+        "kinds": {
+          "COL": 2
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    },
+    {
+      "case": "open-space",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 30,
+        "underBudget": true,
+        "stable": true,
+        "frameMs": 7.4,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 1.8,
+        "cpuMsP95": 2.4,
+        "gpuMsMedian": 3.706,
+        "gpuMsP95": 6.762,
+        "gpuSamples": 240,
+        "disjoint": 0,
+        "drawCalls": 52,
+        "triangles": 49685
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 1.6,
+        "cpuMsP95": 2.1,
+        "gpuMsMedian": 3.502,
+        "gpuMsP95": 6.653,
+        "gpuSamples": 240,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48285
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 0.198,
+        "drawCalls": 20,
+        "triangles": 1400,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 240,
+        "blocks": 120,
+        "gpuMsIqr": [
+          -0.458,
+          0.743
+        ],
+        "gpuMsCi95": [
+          -0.061,
+          0.356
+        ],
+        "cpuMsIqr": [
+          0.1,
+          0.35
+        ],
+        "spreadMs": 1.201,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 0.204
+        }
+      },
+      "stats": {
+        "file": "stations/waystation",
+        "asset": "ws_baydoor",
+        "variant": "ws_baydoor",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 1400,
+        "meshes": 20,
+        "materials": [
+          "WS_Shell",
+          "WS_Metal"
+        ],
+        "size": [
+          130,
+          42.6,
+          3.62
+        ],
+        "colliders": 2,
+        "markers": 0,
+        "kinds": {
+          "COL": 2
+        },
+        "textures": {
+          "shown": {
+            "count": 7,
+            "compressed": 7,
+            "mb": 24
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 58.7
+          }
+        }
+      }
+    }
+  ],
+  "far": [
+    {
+      "range": 100,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 15214,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 4
+      }
+    }
+  ],
+  "overlay": {
+    "counts": {
+      "COL": 2
+    },
+    "labelled": [],
+    "offscreen": 0
+  },
+  "errors": []
+}

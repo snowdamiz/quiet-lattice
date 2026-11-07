@@ -1,0 +1,266 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/stations/scrapyard.blend",
+  "family": "stations",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-01T10:42:00Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "sy_rock",
+      "variants": [
+        {
+          "id": "sy_rock",
+          "class": "building",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 12312,
+            "1": 6136,
+            "2": 964,
+            "3": 348
+          },
+          "implicitLods": false,
+          "dims": [
+            156.056,
+            240.469,
+            150.31
+          ],
+          "materials": [
+            "SY_Rock",
+            "SY_Scrap",
+            "NavReaches"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "sy_mouth",
+      "variants": [
+        {
+          "id": "sy_mouth",
+          "class": "kit",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 1296,
+            "1": 720,
+            "2": 432,
+            "3": 48
+          },
+          "implicitLods": false,
+          "dims": [
+            60.424,
+            6.002,
+            60.424
+          ],
+          "materials": [
+            "SY_Scrap",
+            "NavReaches"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "sy_dock",
+      "variants": [
+        {
+          "id": "sy_dock",
+          "class": "kit",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 1184,
+            "1": 392,
+            "2": 104,
+            "3": 26
+          },
+          "implicitLods": false,
+          "dims": [
+            25.364,
+            30.107,
+            16.6
+          ],
+          "materials": [
+            "SY_Grate",
+            "SY_Scrap",
+            "NavReaches"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "sy_deck",
+      "variants": [
+        {
+          "id": "sy_deck",
+          "class": "kit",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 840,
+            "1": 524,
+            "2": 172,
+            "3": 22
+          },
+          "implicitLods": false,
+          "dims": [
+            30.12,
+            14.793,
+            11.063
+          ],
+          "materials": [
+            "SY_Grate",
+            "SY_Scrap"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "scrapyard.blend",
+          "message": "4 variant(s) in 4 asset(s) follow the stations rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "sy_rock",
+          "message": "LOD0 12,312 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "sy_mouth",
+          "message": "LOD0 1,296 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "sy_dock",
+          "message": "LOD0 1,184 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "sy_deck",
+          "message": "LOD0 840 triangles within the kit budget 500-15,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "sy_rock",
+          "message": "12,312 > 6,136 > 964 > 348 triangles; LOD3 2.8% of LOD0"
+        },
+        {
+          "subject": "sy_mouth",
+          "message": "1,296 > 720 > 432 > 48 triangles; LOD3 3.7% of LOD0"
+        },
+        {
+          "subject": "sy_dock",
+          "message": "1,184 > 392 > 104 > 26 triangles; LOD3 2.2% of LOD0"
+        },
+        {
+          "subject": "sy_deck",
+          "message": "840 > 524 > 172 > 22 triangles; LOD3 2.6% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "NavReaches",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "SY_Grate",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "SY_Rock",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "SY_Scrap",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "sy_rock",
+          "message": "longest side 240.47 m within 1-1500 m"
+        },
+        {
+          "subject": "sy_mouth",
+          "message": "longest side 60.42 m within 0.2-140 m"
+        },
+        {
+          "subject": "sy_dock",
+          "message": "longest side 30.11 m within 0.2-140 m"
+        },
+        {
+          "subject": "sy_deck",
+          "message": "longest side 30.12 m within 0.2-140 m"
+        }
+      ]
+    }
+  ]
+}
