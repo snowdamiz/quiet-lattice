@@ -1,0 +1,44 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts (3 tests | 3 failed) 18ms
+   × reconstructs nearest live blocker from retained rendered positions 11ms
+   × reconstructs nearest live blocker from retained wire positions 4ms
+   × intended center aim selects companion (RED) 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts > reconstructs nearest live blocker from retained rendered positions
+ FAIL  ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts > reconstructs nearest live blocker from retained wire positions
+TypeError: game.fauna.dispose is not a function
+ ❯ Object.dispose ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts:29:91
+     27|  game.frame=()=>{game.player.cameraState(game.cam,game.time);game.cam.…
+     28|  game.frame();vi.stubGlobal('window',{game});
+     29|  return {game,planet,page:{evaluate:async(fn:any,id:number)=>fn(id)},d…
+       |                                                                                           ^
+     30| }
+     31| const ray=(g:any)=>new THREE.Vector3(0,0,-1).applyQuaternion(g.cam.qua…
+ ❯ ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts:53:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts > intended center aim selects companion (RED)
+TypeError: game.fauna.dispose is not a function
+ ❯ Object.dispose ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts:29:91
+     27|  game.frame=()=>{game.player.cameraState(game.cam,game.time);game.cam.…
+     28|  game.frame();vi.stubGlobal('window',{game});
+     29|  return {game,planet,page:{evaluate:async(fn:any,id:number)=>fn(id)},d…
+       |                                                                                           ^
+     30| }
+     31| const ray=(g:any)=>new THREE.Vector3(0,0,-1).applyQuaternion(g.cam.qua…
+ ❯ ../../../../../../private/tmp/symbiotic-pick-fix-rgtwpahf/pick-boundary.test.ts:55:170
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  04:12:42
+   Duration  709ms (transform 50%, import 47%, tests 3%)
+
+JSON report written to /private/tmp/symbiotic-pick-fix-rgtwpahf/geometry-red.json

@@ -1,0 +1,94 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ |@astra/tools| src/smoke/symbiotic-private.test.ts (55 tests | 1 failed | 51 skipped) 141ms
+   ↓ Symbiotic smoke private routes (no connections) (8)
+     ↓ keeps the exact preclaimed namespace and Redis8
+     ↓ refuses missing, default or differently owned routes: {}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:55432/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521?host=elsewhere","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/7"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:56379/8"}
+   ↓ R1 online lifecycle (8)
+     ↓ passes borrowed routes to migration and never creates/drops them
+     ↓ preserves the primary setup failure when server termination fails
+     ↓ closes the created handle after listen fails and preserves listen error identity
+     ↓ retains listen failure plus both owned stop errors
+     ↓ attempts all owned cleanup after Vite close fails (synchronous=false)
+     ↓ attempts all owned cleanup after Vite close fails (synchronous=true)
+     ↓ cleans only its own scratch database after migration fails
+     ↓ retains both bounded close failures and attempts KILL after TERM timeout
+   ↓ R1 live lifecycle predicates (22)
+     ↓ accepts only the fresh identified live observer/enemy control
+     ↓ rejects corpse plus missing observer
+     ↓ rejects missing observer
+     ↓ rejects dead observer
+     ↓ rejects different observer identity
+     ↓ rejects different observer frame
+     ↓ rejects different observer kind
+     ↓ rejects dead enemy
+     ↓ rejects enemy corpse mode
+     ↓ rejects different enemy species
+     ↓ rejects different enemy frame
+     ↓ rejects different enemy kind
+     ↓ rejects stale snapshot
+     ↓ rejects disconnected observer
+     ↓ rejects owner retained
+     ↓ rejects companion snapshot retained
+     ↓ rejects companion remote retained
+     ↓ rejects companion instance retained
+     ↓ accepts a living target with actual source-attributed health loss
+     ↓ rejects health loss with no companion hit
+     ↓ rejects attack phase without health loss
+     ↓ rejects a corpse after a credited killing hit
+   ↓ live arena setup respects owned ship authority (6)
+     ↓ reproduces the live cross-system foot rejection at the real persistence pose check
+     ↓ moves owner across systems in a restorable ship pose
+     ↓ moves observer across systems in a restorable ship pose
+     ↓ lands owner with an owned ship that remains restorable after disembarking
+     ↓ lands observer with an owned ship that remains restorable after disembarking
+     ↓ does not hide a refused admin placement
+   ↓ real UI admission before fixture keyboard input (7)
+     ↓ resumes initially unlocked owner through the actual UI before F
+     ↓ resumes initially unlocked observer through the actual UI before F
+     ↓ still rejects a failed gesture without sending F
+     ↓ still rejects missing focus or a lock event without sending F
+     ↓ releases F and rejects if admitted input never reaches foot
+     ↓ reacquires owner input after observer F, sends S, and still rejects missing server movement
+     ↓ rejects failed owner reacquisition before sending S
+   ❯ companion picker sightline through real camera and instances (4)
+     ✓ reproduces the historical nearer enemy using rendered positions 73ms
+     ✓ places the observer with a clear companion sightline using rendered positions 23ms
+     ✓ reproduces the historical nearer enemy using wire positions 23ms
+     × places the observer with a clear companion sightline using wire positions 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > companion picker sightline through real camera and instances > places the observer with a clear companion sightline using wire positions
+AssertionError: {"eye":[90461.43119430197,8206.59594052843,-24245.015524390725],"ray":[-0.30883791777020486,-0.5867290386581239,-0.7485774347004309]}: expected 35 to be 34 // Object.is equality
+
+- Expected
++ Received
+
+- 34
++ 35
+
+ ❯ src/smoke/symbiotic-private.test.ts:832:141
+    830|       try {
+    831|         const dir = new three.Vector3(0, 0, -1).applyQuaternion(s.g.ca…
+    832|         expect(s.g.fauna.pick(s.g.cam.frame, s.g.cam.pos, dir, 70)?.id…
+       |                                                                                                                                             ^
+    833|         expect(s.g.remotes.list.map((r: { pos: { toArray(): number[] }…
+    834|         for (const r of s.g.remotes.list) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed | 51 skipped (55)
+   Start at  04:17:00
+   Duration  607ms (import 50%, tests 25%, transform 24%)
+
+JSON report written to /private/tmp/symbiotic-pick-fix-rgtwpahf/opposite-view-check.json

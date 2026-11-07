@@ -1,0 +1,4 @@
+packages/tools/src/smoke/symbiotic-private.test.ts(766,35): error TS2345: Argument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'PlanetParams'.
+  Type 'GasParams' is missing the following properties from type 'PlanetParams': isMoon, continentBias, continentFreq, seaDepth, and 24 more.
+packages/tools/src/smoke/symbiotic-private.test.ts(768,65): error TS2341: Property 'sampler' is private and only accessible within class 'Ground'.
+packages/tools/src/smoke/symbiotic-private.test.ts(769,92): error TS2341: Property 'sampler' is private and only accessible within class 'Ground'.

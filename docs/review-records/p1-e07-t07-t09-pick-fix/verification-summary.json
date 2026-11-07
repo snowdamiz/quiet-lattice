@@ -1,0 +1,45 @@
+{
+  "sourceHead": "ecfcbe0d7c5abddcfdfd5273f15c05e587d51ae0",
+  "sourceTree": "834fac62cf00cc2e8b7cbd9ab348bfd85b652700",
+  "baseHead": "9848d00486bd5e8fbaaf00cc7afc9a476fb7edcb",
+  "implementationCpu": "PASS",
+  "independentReview": "PENDING",
+  "nativeCorrectedRun": "NOT RUN",
+  "fresh": {
+    "tests": 96,
+    "files": 4,
+    "passed": 96,
+    "failed": 0,
+    "pending": 0,
+    "retained": 92,
+    "new": 4
+  },
+  "unchangedReused": 304,
+  "totalIdentities": 400,
+  "baseRed": {
+    "failed": 2,
+    "passed": 2,
+    "filtered": 51,
+    "exit": 1
+  },
+  "finalGreenNewCases": 4,
+  "diagnosticNegative": {
+    "failed": 1,
+    "passed": 2,
+    "exit": 1
+  },
+  "static": "types/lint/format/whitespace PASS",
+  "discovery": {
+    "tests": 1,
+    "files": 1,
+    "execution": false
+  },
+  "preservation": {
+    "patchPairs": 5,
+    "productPaths": 55,
+    "protectedObjects": 20,
+    "oldReportFiles": 190,
+    "priorPacketFiles": 3659
+  },
+  "conclusion": "Fixture center-ray occlusion; no product defect established. Existing picking/occlusion and all input/arrival/retirement assertions preserved."
+}
