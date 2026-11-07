@@ -1,0 +1,420 @@
+{
+  "at": "2026-11-07T09:50:42.436475+00:00",
+  "head": "2b74135bbd5ce91f550821c347798a3a5dacd014",
+  "osExit": {
+    "pid": 83034,
+    "startedAt": 1794044873.547335,
+    "finishedAt": 1794044948.085966,
+    "exit": 1
+  },
+  "testSupervisorExit": 1,
+  "testSupervisorWallSeconds": 49.642,
+  "timedOut": false,
+  "trackedPids": [
+    83034,
+    83230,
+    83281,
+    83282,
+    83519,
+    83689,
+    83697,
+    83710,
+    83733,
+    83746,
+    83755,
+    83930,
+    83931,
+    83932,
+    83933,
+    83938,
+    83948,
+    84773,
+    85115,
+    87089,
+    87118
+  ],
+  "ps": {
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "controllerRemaining": [],
+  "registeredRemaining": [],
+  "remainingUnknown": false,
+  "cleanup": {
+    "databaseAbsent": true,
+    "redis8Empty": true,
+    "deletedKeys": [
+      "qa:owner:20261107_094753_662e3b70",
+      "astra:shard:main:world"
+    ],
+    "noOwnedProcesses": true,
+    "listenersAbsentBeforeDrop": true,
+    "sourceAfterManifest": "source-after.json",
+    "noPrivateApplicationClients": true,
+    "profilesAndTempAbsent": true,
+    "containers": [
+      {
+        "id": "66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb",
+        "name": "space-t16-pg-20261106",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53055"
+            }
+          ]
+        }
+      },
+      {
+        "id": "d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4",
+        "name": "space-t16-redis-20261106",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53058"
+            }
+          ]
+        }
+      }
+    ],
+    "gpuReleased": true,
+    "archiveScreenshotsUntouched": true
+  },
+  "listenersAfterCleanup": {
+    "utc": "2026-11-07T09:49:08.057485+00:00",
+    "phase": "after exact namespace/key cleanup and owned temp removal",
+    "matchingOwnedIdentities": [],
+    "observedListeners": [
+      {
+        "utc": "2026-11-07T09:48:12.798Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50646
+        }
+      },
+      {
+        "utc": "2026-11-07T09:48:13.454Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50663
+        }
+      },
+      {
+        "utc": "2026-11-07T09:48:13.454Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50664
+        }
+      },
+      {
+        "utc": "2026-11-07T09:48:15.163Z",
+        "pid": 83733,
+        "ppid": 83281,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83733,
+          "ppid": 83281,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044893,
+            455307
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "--import",
+            "tsx",
+            "test/steppedServer.ts"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50663
+        }
+      },
+      {
+        "utc": "2026-11-07T09:48:15.164Z",
+        "pid": 83733,
+        "ppid": 83281,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83733,
+          "ppid": 83281,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044893,
+            455307
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "--import",
+            "tsx",
+            "test/steppedServer.ts"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50646
+        }
+      },
+      {
+        "utc": "2026-11-07T09:48:15.165Z",
+        "pid": 83733,
+        "ppid": 83281,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83733,
+          "ppid": 83281,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044893,
+            455307
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "--import",
+            "tsx",
+            "test/steppedServer.ts"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50664
+        }
+      },
+      {
+        "utc": "2026-11-07T09:48:15.398Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50698
+        }
+      },
+      {
+        "utc": "2026-11-07T09:48:15.416Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": null
+      },
+      {
+        "utc": "2026-11-07T09:48:15.416Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": null
+      },
+      {
+        "utc": "2026-11-07T09:48:15.416Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": null
+      },
+      {
+        "utc": "2026-11-07T09:48:15.422Z",
+        "pid": 83281,
+        "ppid": 83230,
+        "threadId": 0,
+        "kind": "owned-listener",
+        "identity": {
+          "pid": 83281,
+          "ppid": 83230,
+          "pgid": 83230,
+          "uid": 501,
+          "birth": [
+            1794044892,
+            273274
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        },
+        "address": {
+          "address": "127.0.0.1",
+          "family": "IPv4",
+          "port": 50698
+        }
+      }
+    ],
+    "tcpPorts": [
+      50646,
+      50663,
+      50664,
+      50698
+    ],
+    "unixPaths": [],
+    "producers": [
+      {
+        "args": [
+          "/usr/sbin/lsof",
+          "-nP",
+          "-Fpcn",
+          "-iTCP:50646",
+          "-iTCP:50663",
+          "-iTCP:50664",
+          "-iTCP:50698",
+          "-sTCP:LISTEN"
+        ],
+        "timeoutSeconds": 5,
+        "exit": 1,
+        "stdout": "",
+        "stderr": "",
+        "error": null
+      },
+      {
+        "args": [
+          "/usr/sbin/lsof",
+          "-nP",
+          "-Fpcn",
+          "-a",
+          "-p",
+          "83113,83114,83116,83117,83118,83119,83128,83129,83130,83131,83142,83143,83145,83146,83192,83193,83230,83281,83282,83519,83689,83697,83710,83733,83746,83755,83930,83931,83932,83933,83938,83948,84773,85115,87089,87118",
+          "-i"
+        ],
+        "timeoutSeconds": 5,
+        "exit": 1,
+        "stdout": "",
+        "stderr": "",
+        "error": null
+      }
+    ],
+    "processesReferencingTmp": []
+  },
+  "cleanupSha256": "1148e770a00a4f74a77e109172fe382bfeb0796966cecd835b43e16a0dafd8f9",
+  "resultSha256": "e86f36ee344cfde1ac2e29eff8485ad99f538afa6cc706e81f6b3f26dca7d38d",
+  "gpuReleased": true
+}

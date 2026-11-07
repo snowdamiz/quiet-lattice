@@ -1,0 +1,64 @@
+TASK: P1.E08.T09 — correction of actual first native unit’s Playwright import failure; Appendix C.2.
+STATUS: DONE for the bounded source correction. Original current-source native unit remains FAILED and SPENT. Whole T09/capture/visual acceptance remains incomplete; one fresh source review and parent-owned native execution are pending.
+
+SUMMARY: The frozen absolute Playwright route is CommonJS `@playwright/test/index.js`. Under actual pinned Node26.12.1 its dynamic-import namespace contains only default/module.exports; the entry incorrectly read namespace.chromium. Exact base actual entry reproduced the native TypeError without launching a browser. The one-line fix destructures the real CommonJS default. The default-consumer control now loads the actual installed CommonJS and public ESM modules, proves they share the same chromium object, and intercepts only that object’s native launch port. Eleven actual entry/default captureUi cases then pass, preserving prior primary/cleanup/raw/falsy/all-sink behavior. No product/shared/helper redesign. Fresh enabled readiness has24 wholly new absent paths, the same6units/768files/budgets and the same successor admission rules.
+
+PINS:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465; branch task/P1-E08-T09-current-base, clean after commit.
+- Starting parent:664f8d586b02d0eefc132fb844fc0742ef769db4, treeb88a1775a0c5e9fe85be86899a4b1ce9b8fc4505. No rebase/new branch/history rewrite.
+- Final HEAD: c396817029dd3756834cf5cbc660250a5331392d
+- Final tree: 11ad2ee21936f660eb604e09c7f6f867abfc0d86
+- Final readiness SHA256: 062001dfc378a747c96a8d80fef0e9de46e18cefe2851c86888ab3b63f8eb6d8
+- Source diff SHA256: 8a9d294a24b49452dbc4f8552002d6f2c4b4f72daa0e3fd3a2632e27dd08248a
+- Exact module route unchanged: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js; SHA256499da5dd8585212108a1443793de31ebc061ca7db02343f107955f261180cdfc; installed1.64.1.
+- Public ESM route: same package/index.mjs; SHA256ec8997c2e5cea26befc76e7bf990750e96babb16977673a9ff3b5c0575d01e48.
+
+FILES CHANGED:
+1. entry.mjs — one executable line: `const { default: playwright } = await import(...)` for the exact frozen CJS route. No fallback guessing and no changes to capture, ownership, counters, cleanup, receipts or caps.
+2. capture_controls.mjs — uses real installed Playwright CJS+ESM modules instead of fake Playwright export namespaces. Verifies actual shared chromium identity before wrapping its launch port; all child-process launch methods and network listen/connect are forbidden. Actual unchanged capture.ts/classes.ts bodies execute under Node’s CPU type stripping; unrelated canonical-source fixtures and Vite/free-port/browser navigation ports remain inert. This proves the actual import and consumer boundary, not live browser operation.
+3. controls.mjs — existing receipt-failure fixture’s inert Playwright default matches the actual contract. It supplements, and does not substitute for, the real-package boundary control.
+4. freeze.py — phase metadata no longer names completed R9; it states pending independent review plus a new one-unit parent grant. No binding algorithm/owned-process list/helper logic change.
+5. readiness.json — final source hashes, fresh CPU self probe and entirely unused six-unit identities. Both existing runtime flags remain true. No real grant is created.
+
+NATIVE FAILURE / PROVENANCE:
+Parent launch47953 completed OSexit1 at2026-11-07T09:26:37.556606Z. Parent records: /private/tmp/space-fauna-parent-unit1-heczqja8/{launch.json,os-exit.json,preflight.json,stdout.txt,stderr.txt}. Spent evidence: /private/tmp/fhp-b56b6ed1ba8f41f0aca38e15fa26518d. entry-result.json retains TypeError “Cannot read properties of undefined (reading 'launch')”, pages0/launched0/writes[]. Caller result retains capture exit1, drained:true,clean:true,kernel live0/coalition absent, profilesAbsent/tmpAbsent/terminalAudit:true. Native bootstrap ran before this JS failure (parent reports4 processes); zero browser counters never meant zero native bootstrap. No rerun, successor or retroactive PASS was created. The original grant, consumption, result, entry result, output directory, archives and parent logs remain untouched.
+
+Independent R9 PASS is historical source/CPU evidence at664f8d5, not current native acceptance. Author documents overwritten by the reviewer are not treated as their original bytes. Exact supplied originals remain under /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/p1-e08-t09-r9-z0u81p3v/independent-review/supplied-preparation; their original C2 hash matches its retained FINAL.json. The independent report at /private/tmp/fauna-r9-parent-retained-w3wts2gd/APPENDIX-C2.md still hashes a0f3bc485d46f7d2c5c6e2bff886a78795169f24dbd89d9783bd2e183aae43be. Neither originals nor independent report were overwritten. All new artifacts are in this exclusive directory.
+
+PREMISE / DECISIONS:
+- Assumed premise → pinned createRequire.resolve absolute route exposes the public ESM named exports → actual Node/package probe disproved it before entry edits. CJS index.js delegates module.exports through require; dynamic import exposes that object under default. Actual public ESM and CJS default chromium are strictly identical. PREMISE.md/red/probe.json preserve this evidence.
+- Minimal correction → consume the exact pinned CJS default once → preserves the browser object used by unchanged captureUi. No generic import compatibility adapter or mocked Playwright export shape is used to qualify this fix.
+- Actual first unit spent → retire every previous prospective identity and mint a new six-unit source freeze → do not reuse failed grants or silently continue the sequence.
+- Quiet window → only small serial controls/read-only binding checks, at most2workers → no broad suite, codec, browser, GPU, Blender, server, DB, install or screenshot cleanup.
+
+VERIFY (all actual argv/env/raw exits and failure tails in COMMANDS.md):
+- probe.mjs exit0 reproduces the old exact import expression TypeError using real installed modules, with forbidden launch/network ports and no calls to them. This is RED proof, not a success claim.
+- red-actual-entry and retained exact-base red-retained-actual-entry each exit1 as expected: actual old entry main reports the same TypeError, counters0 and no writes. Exact base entry bytes are checked against Git664f8d5; same real-module regression then exercises GREEN.
+- green-actual-entry exit0:11 actual entry/default captureUi cases pass through the real installed API object into the inert browser port. Original navigation/raw bytes/falsy failures plus both cleanup failures and all-sink handling survive. Control counters show1 inert launch request/1 inert page per case; actual native launches0. Synthetic scenarios are not screenshots or native evidence.
+- green-node-controls exit0:7 Node controls, including all6 enabled missing-consumption refusals before imports/writes/child launch.
+- focused-authority-controls exit0:3 selected Python tests, including18 actual CLI missing-argument/auth/file cases across six screens, disabled-before-admission refusal and five exact Apple-binding mutation refusals. No full Python/decoder suite.
+- Fresh freeze and actual caller --check exit0:442bindings, CPU_BINDINGS_ONLY,runtimeEnabled:true,allSixQualified:false, no task cache owners; observed free27,768,307,712B. Immutable dependency trees/product bindings/process allowlist/cache size8,099,840B unchanged. Freeze performed only the existing short CPU self process and read-only codesign/config/owner inspection, not native capture.
+- Focused ESLint/Prettier exit0. Removed-code gate run directly with pinned Node26 exit0 (10 enforced,15 pending rules); no tsx/esbuild child server. No-bytecode compile and git diff --check exit0.
+- Pre/post-commit preservation checks exit0: only these5tracked files differ;207 prior evidence fingerprints unchanged; four old spent paths still present;236 old unused paths and24 new paths absent. All442 bindings verify. Shared/product/helper/caller/inspector assets remain unchanged. No all-history scan/full suite was repeated during the quiet window; scope is recorded exactly.
+No unexpected failing correction run was hidden: the two nonzero entry runs are the intended exact-base RED cases, both retained with full receipts/logs. All GREEN commands pass. Existing native FAIL remains FAIL.
+
+ADDITIONAL T13 OBSERVATION (read-only, no source/binding change):
+Retained result /private/tmp/t13-observer-native-7b836b7a/result.json records owned member88620,birth[1794043965,192304],UID501,coalition[42335,42336], executable /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService. The actual unchanged fauna StageReceipts/current_commands bodies replayed those exact kernel/command producer facts on the ordinary fauna observation path and refused “Unbound owned executable”. Original member/coalition facts remain in the refused receipt. The service is absent from both fauna process/file bindings. This is a substantiated conditional refusal, not speculation about an arbitrary path.
+T13’s structured launch used full Google Chrome for Testing through BrowserServer; fauna pins ordinary chrome-headless-shell. Paths and bytes differ, as recorded in t13-observer-check-result.json. The supplied evidence therefore does not establish that the fauna native route spawned this service. No broad allowlist, substituted ownership assumptions or extra service binding was added. This conditional exposure and route distinction are returned for parent consideration; no new native run or review-round restart occurred. T13’s namespace-copy failure remains its author’s separate work; no cleanup or physical-settlement success was inferred from that failed packet. T13 source/parent record hashes are retained and unchanged.
+
+INVENTORY / REMAINING GATES:
+| Order | Unit | Files/images | Output cap B | Per-unit admission B |
+|---:|---|---:|---:|---:|
+| 1 | fauna-hit-turn-day-16x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 2 | fauna-hit-turn-day-21x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 3 | fauna-hit-turn-night-16x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 4 | fauna-hit-turn-night-21x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 5 | fauna-combat | 220/219 | 3,674,226,688 | 15,871,295,488 |
+| 6 | fauna-combat-night | 220/219 | 3,674,226,688 | 15,871,295,488 |
+
+Exactly60stills+696frames+6sheets+6readouts=768files/762images. All image/readout/cache/metadata caps,600s capture/60s cleanup/45s decoder/30s cache deadlines and reserves remain unchanged; no all-six-fit or hard native quota claim. Current enabled candidate still requires a fresh independent source PASS and explicit parent grant at its exact final HEAD/readiness. Parent must observe each actual caller OSexit0 and provide exact result/consumption hashes before any successor. On-disk accepted:false/AWAITING_CALLER_COMPLETION cannot authorize itself; old failed/spent transaction has no successor authority. No retry or executable grant is supplied here.
+Exact fresh paths, arguments and environment data are in prospective-inventory.json (data only). All24paths remain absent. Every current-source capture, real browser/Metal/XPC lifetime observation and independent visual grade is still pending. The original first current-source native unit remains failed; there are no new capture images.
+
+OUT OF SCOPE FOUND: T13’s concrete conditional SetStore refusal is described above; current-route spawning is unqualified. No product issue, T15 modification or helper redesign was introduced. Product/smoke/assets and historical evidence are unchanged. No main edits, push, PR, merge, service action or screenshot cleanup.
+
+ARTIFACTS: /private/tmp/p1-e08-t09-native-import-fix-ncq1tdni/APPENDIX-C2.md; COMMANDS.md/commands.json; PREMISE.md; source-diff.patch; inputs/ spent and retained-review copies; red/ exact-base entry and module probe; logs/ RED/GREEN; tmp/ retained inert fixtures; t13-observer-check-result.json; verified-c39681702.json; ready-check-result.json; freeze-observation.json; prospective-inventory.json; evidence-manifest.json; FINAL.json.

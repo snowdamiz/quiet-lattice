@@ -1,0 +1,82 @@
+--- proven-r4-harness/harness.py
++++ rebound-r5-harness/harness.py
+@@ -30,7 +30,7 @@
+  receipt=Path(ticket.get('sourceReviewReceipt','')).resolve()
+  if not receipt.is_file() or sha(receipt)!=ticket.get('sourceReviewReceiptSha256'):raise ValueError('actual final review receipt hash mismatch')
+  text=receipt.read_text()
+- if ticket['head'] not in text or ticket['tree'] not in text or not re.search(r'(?m)^(?:VERDICT:\s*PASS\b|STATUS: DONE — SOURCE PASS$)',text):raise ValueError('actual sealed review must state SOURCE PASS and exact final HEAD/tree')
++ if ticket['head'] not in text or ticket['tree'] not in text or not re.search(r'(?m)^(?:VERDICT:\s*PASS\b|STATUS: DONE — SOURCE PASS$|STATUS: DONE — PASS \(SOURCE/CPU ONLY\)$)',text):raise ValueError('actual sealed review must state SOURCE PASS and exact final HEAD/tree')
+  if not ticket.get('claim'):raise ValueError('new claim placeholder required; actual claim generated at fresh staging')
+  return ticket
+ 
+--- proven-r4-harness/settings.json
++++ rebound-r5-harness/settings.json
+@@ -1,21 +1,21 @@
+ {
+   "kind": "preparation",
+-  "out": "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8",
++  "out": "/private/tmp/space-symbiotic-harness-2b74135b-5rz2p0ol",
+   "sourceRoot": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+   "corepackEntry": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/lib/node_modules/corepack/dist/pnpm.js",
+   "corepackHome": "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/tools/corepack",
+   "pnpmNative": "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/tools/corepack/v1/pnpm/12.15.0/pnpm-native",
+   "finalSourcePin": {
+-    "head": "9848d00486bd5e8fbaaf00cc7afc9a476fb7edcb",
+-    "tree": "6c474cf3e7568a4b331340ad1cc37a3cc6860953",
+-    "sourceHead": "613bf7274eff4bfc35f8d85b2ccb3eb3c2e7be11",
+-    "sourceTree": "0d27b06cb5968fbb3bf7c6107bacc4146c122800"
++    "head": "2b74135bbd5ce91f550821c347798a3a5dacd014",
++    "tree": "fb3dfea41c0667caf44bd50cd60d98567a5ef1ee",
++    "sourceHead": "ecfcbe0d7c5abddcfdfd5273f15c05e587d51ae0",
++    "sourceTree": "834fac62cf00cc2e8b7cbd9ab348bfd85b652700"
+   },
+   "parentSlotAssignment": null,
+   "claim": null,
+   "gpuReleased": true,
+-  "sourceReviewState": "ACTUAL_R4_SOURCE_PASS",
++  "sourceReviewState": "ACTUAL_R5_SOURCE_CPU_PASS",
+   "playwrightVersion": "1.64.1",
+   "intermediateSourcePin": {
+     "head": "63b61308ed6a64fdc35994fdfaf782bbb79752a2",
+@@ -24,10 +24,16 @@
+     "sourceTree": "3aa653b912c9e1ccd4a812fee2492321d91c1ea0"
+   },
+   "launchBindingState": "BOUND_FINAL",
+-  "requiredReviewRound": "R4",
++  "requiredReviewRound": "R5",
+   "sourceReviewReceipt": {
+-    "path": "/private/tmp/symbiotic-r4-9848d00-eyve7rhp/Appendix-C.2.txt",
+-    "sha256": "514f3e1fd7f62728b62d8df8621442acd8b1d9a35ece9d93932e1cfff74dfac5"
++    "path": "/private/tmp/symbiotic-pick-r5-review-g763Fh/Appendix-C.2.txt",
++    "sha256": "e38febca6094d76b29963a6f96641859eb1a0020702fb23da573ace0bfde9df6"
+   },
+-  "prospectiveOutputRoot": "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced"
++  "prospectiveOutputRoot": "/private/tmp/space-symbiotic-live-2b74135b-6d4de7b8a319a86544a9",
++  "previousSourcePin": {
++    "head": "9848d00486bd5e8fbaaf00cc7afc9a476fb7edcb",
++    "tree": "6c474cf3e7568a4b331340ad1cc37a3cc6860953",
++    "sourceHead": "613bf7274eff4bfc35f8d85b2ccb3eb3c2e7be11",
++    "sourceTree": "0d27b06cb5968fbb3bf7c6107bacc4146c122800"
++  }
+ }
+--- proven-r4-harness/prepare.sb
++++ rebound-r5-harness/prepare.sb
+@@ -2,5 +2,5 @@
+ (allow default)
+ (deny network*)
+ (deny file-write*)
+-(allow file-write* (subpath "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8") (literal "/dev/null"))
+-(deny file-write* (subpath "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/tools"))
++(allow file-write* (subpath "/private/tmp/space-symbiotic-harness-2b74135b-5rz2p0ol") (literal "/dev/null"))
++(deny file-write* (subpath "/private/tmp/space-symbiotic-harness-2b74135b-5rz2p0ol/tools"))
+--- proven-r4-harness/bin/ps
++++ rebound-r5-harness/bin/ps
+@@ -1,6 +1,6 @@
+ #!/opt/homebrew/bin/python3
+ import sys
+-sys.path.insert(0,'/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8')
++sys.path.insert(0,'/private/tmp/space-symbiotic-harness-2b74135b-5rz2p0ol')
+ from identity import snapshot
+ if sys.argv[1:] != ["-Ao","pid=,ppid="]: raise SystemExit("QA ps adapter only supports the source hang-guard inventory")
+ for p in snapshot().values(): print(p["pid"],p["ppid"])

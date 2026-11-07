@@ -1,0 +1,111 @@
+{
+  "status": "PASS_CLEAN_NATIVE189_ONLY_CONFIGURATION",
+  "head": "654658363a0347b1f50a40f868c32140b90881db",
+  "tree": "de2bacc2cec04a2dbb6dc9ef06a2499f82aac5f6",
+  "base": "b6ad8528c7fe504817078fcfe0f253caac45020d",
+  "baseTree": "3a8f15923b5314dd894012f98d5728bb99a9a69d",
+  "branch": "codex/task/P1-E05-T02-thalune-reel-candidate",
+  "clean": true,
+  "sourceAdmission": "PASS_ACTUAL_BOUND_SOURCE_AND_CLEAN_GIT_HEAD",
+  "runtimeAuthorization": false,
+  "nativeFixtureAuthorization": true,
+  "prospectiveAbsent": [
+    {
+      "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406-grant.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406-consumed.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406-cancel.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/private/tmp/t02-vite-t3-11167406-exclusive",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/private/tmp/t02-native189-r04-review-copy",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/private/tmp/t02-native189-r04-archive-copy",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/private/tmp/t02-native189-r04-handoff-copy",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/future-attempt",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json",
+      "exists": false,
+      "symlink": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/consumed-attempt.json",
+      "exists": false,
+      "symlink": false
+    }
+  ],
+  "cpuControls": 22,
+  "actualCLIGates": 5,
+  "actualCLIExpectedExits": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "postcommitCheckExit": 0,
+  "nativeJobs": 0,
+  "grantsCreated": 0,
+  "prior525ControlsRerun": false,
+  "protectedPriorManifestRows": 1151,
+  "currentSnapshotProtectedEntries": 29651,
+  "historicalFullSnapshot": "FAILED_THREE_PNPM_TASK_STATE_DEVIATIONS_RETAINED",
+  "combinedReserveBytes": 22066626560,
+  "sampledAggregateOwnedRSSBytes": 8589934592,
+  "sourceDataBindings": 2354,
+  "softwareBindings": 12,
+  "artifactCounts": {
+    "manifest": 1190,
+    "audit": 1117,
+    "index": 42
+  },
+  "remainingGate": "Parent mechanical review, then fresh one-use native-only grant/run after T13 quiet window under existing authorization; fresh resource admission required",
+  "paths": {
+    "report": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-09/REPORT.md",
+    "launch": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-09/LAUNCH.md",
+    "command": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-09/command.json",
+    "schema": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-09/grant.schema.json",
+    "inertExample": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-09/grant.example.json"
+  },
+  "hashes": {
+    "readiness": "daa896c0281cfe5d3c539eb5627f352df68ad52e4b7ca2637183c5105b37a040",
+    "candidateIndex": "79eb11a88c72e815ea66b1c57eb582a6e9ed8e840a5515607cd182c65f0649d4",
+    "plan": "3854b1996c49640e77b65950c429f6e017730b90206fbf0c58ae46f3d1656f21",
+    "runtimeBindings": "728f5c138f7fd0a374d49e6074fdd4f82256c07c8feb2511538699aa20884199",
+    "audit": "f1d8749c2520635df9862a1406fe05ce01ce32bee0da33e0017cd44358878064",
+    "manifest": "9b1bb3a029ed0b7af3f7c33404969d8040d5c8dd3e36e48041f9a95c51b73fad",
+    "report": "a7fc445dac4bdf1185a991c913595161bf0b4d25752a77df779397a5104f54c2"
+  }
+}

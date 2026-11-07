@@ -1,0 +1,88 @@
+# Appendix C.2 — T13 failed-shot correction, source only
+
+Corrected the task-local bounded copy semantics and added one exact signed executable binding. This is implementation/CPU evidence for the parent's fresh independent review. No new native attempt, grant, enablement, performance result, or review grade is claimed.
+
+## Exact pins and scope
+
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8; branch codex/task/P1-E14-T13-trace-observer.
+- Failed-shot/source base: 66ce38ec5ca03d86289fb63b116d6ca53b163032; tree eb48565cf1e159d3249f7f688b2ca83f37c973cd.
+- New clean HEAD: 7c134b6aa29f2abedba347d91aed28323fd93006; tree 6a739c3d3c546a27dc87bf3af22f943c5164a8e9.
+- Exactly three tracked files changed: metadata.py, controller_controls.py, local-binding.json under packages/tools/src/capture/trace_observer_packet/. 114 insertions,12 deletions. correction.patch SHA256 e2987f920066da63abb0c54c604ab105b6129808b9a3ecc9293d8675cda1d561; changed-source-hashes.json records both base and head SHA256 for every changed file. No recovery needed.
+- launch.py, worker/adapter/evidence, discovery/freezer, all four retained helper blobs, shared T15 capture lifecycle/openReview API, protocol/report decision algorithms, Review, renderer/Engine/Atmosphere, assets and orchestration documents remain byte-identical. drift-audit/protected-groups.json records 504 selected files outside this task packet and their exact base/current hashes, all equal. Full Git diff scope provides the exhaustive tracked-change boundary; broader historical asset payloads were not hydrated/read.
+
+## Actual failed attempt: preserve the failure
+
+Parent evidence is /private/tmp/space-t13-parent-native-lim2ud6m. Source66ce38e actually launched browser PID88585, launcherPID88082, OS exit1 after16.259867 seconds; stdout0 bytes, stderr15997903 bytes. No timing packet was produced. Original /private/tmp/t13-observer-native-7b836b7a/result.json SHA256 aee820eb5bfc48ad76f3f592fbbde0e9c7c037e8fadc623f0ed1cf13bac2fd44; browser-launch.json SHA256 040e1cb8afefc847d360eb4f93b0ff899242d383eef854564222ed6f4f955ca7.
+
+Read actual stored fields: accepted:false, candidate:false, captureExit:-15, physicalSettlement:UNPROVED, terminalPublication:{durable:false,provisional:true}. lifecycle.drained:true, clean:false, capture/caffeinate exits both-15, terminal kernel coalition_absent:true/live0. Primary is exact SetStore Unbound owned executable; secondary is Temporary namespace copy differs. Native producer fact journal complete:true,14 raw command returns. Bootout exit3 (“No such process”) was followed by launchctl print exit113; helper profile receipt all_absent:true. These raw commands/failures and all unknown fields remain in the original plus detached audit artifacts, not converted to a passing result.
+
+Parent's separate observation at09:34:21.892877Z recorded all24 known PIDs absent, registration absent, no profiles/namespace handles, GPU released. This does not rewrite the stored physicalSettlement. The retained terminal_audit still requires lifecycle.clean; a failed-work fixture can remain UNPROVED even after archival succeeds. No terminal acceptance rule was relaxed.
+
+The original result is18553980 bytes, above normal16MiB metadata admission. The first offline read refused that cap. Full audit used an explicitly32MiB bounded anchored snapshot authenticated to the supplied SHA; production caps were NOT widened. This is an offline failed-packet inspection, not runtime acceptance or a successor receipt.
+
+originals-before.json and originals-after-verification.json prove unchanged file bytes, hashes/stamps/inventories for original output129 records/46011671 bytes, fallback0, consumed grant1/751 bytes, parent packet8/16199872 bytes, retained namespace87/982277 bytes, original enabled readiness and grant. Old frozen bundle including generated caches was also rehashed unchanged after this unit. All prior paths, spent identities, failure/fallback data and /private/tmp/sbr-_notzfdy remain preserved. No cleanup was performed on them.
+
+## Ownership and exact SetStore binding
+
+Actual observed record: PID88620, PPID1, UID501, birth[1794043965,192304], coalition[42335,42336]. The controlled rootPID88108 has coalition42335. Actual ps command line names the exact executable. The unchanged StageReceipts body obtained current identity, checked UID/birth and coalition before executable resolution, then rechecked birth/coalition before publishing admitted:false. The classification is supported by this recorded kernel membership, not inferred from PPID/name. Generic role remains owned-launch-helper. No claim covers external XPC processes or all ever-lived processes.
+
+Exact executable:
+`/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService`
+
+Canonical regular220272-byte file, UID0, mode0755, no group/other write and not writable by current UID501. SHA256 6ed9e684540cdeeece3efb21da956596371dc2f823413c9964f20a105fef32d9. Descriptor-admitted device/inode/UID/mode/size/mtime/ctime and SHA were stable before/after read-only signature inspection. codesign SHA remains d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e.
+
+Actual signature display exit0: identifier com.apple.SetStoreUpdateService, platform26, CDHash729180c1ef8d8657ace973e55f3853923d942d20, designated requirement `identifier "com.apple.SetStoreUpdateService" and anchor apple`. Exact strict requirement verification exit0. An initial guessed CascadeSets-qualified identifier was wrong and verification exited3; its script/log/raw commands remain as negative evidence and were not used in the binding. Correct verification was based on the observed identifier. Commands each have5s timeout and overall20s I/O deadline; outputs checked <=64KiB. No service executable was launched.
+
+local-binding.json retains the existing546 binary rows in order and adds exactly this one row; appleSetStoreBinding contains current signature/identity provenance. Fresh attempt identities replace spent7b836b7a paths with5ba6b515 paths. All runtimeAuthorized flags remainfalse. Existing launch verifier rechecks exact hashes; the observer still checks exact current process UID/birth/cohort/executable. No wildcard allowance or helper modification.
+
+## Copy premise, RED and correction
+
+The premise was that the task-local bounded copy preserved everything the retained preserve_private_tmp verifier compared, after StationJob.archive. Actual namespace-comparison.json disproves it: the sole source/archive difference is tsx-501 directory0755 versus archive0700. All87 entries and regular file bytes/hashes match; this is not a count discrepancy or a second writer.
+
+Intended unchanged ordering is: physically drain -> backup controller scratch -> StationJob.archive (bootout/absence, scratch preservation/removal, profile preservation/removal) -> preserve remaining private TMP -> terminal audit. The real native cache is outside the removed profile/scratch. Task-local copy_tree created every directory0700 and verified only files; retained _tmp_tree also compares directories/modes. Its assertion stopped before rmtree, preserving the failed namespace and complete-but-mode-different archive.
+
+Two exact-base RED controls used actual run_owned, StageReceipts, wait/drain/archive/preserve/audit helper bodies with inert process/kernel/launch ports:
+1. Baseline binding + current-cohort SetStore fixture: desired positive assertion exit1, primary exact unbound executable. red-missing/assessment.json and returned.json retain facts.
+2. Proposed exact binding isolates copy bug on unchanged base source; read-only admitted clone of authentic87-entry/982277-byte retained native namespace, cap200 records/2MiB. Actual archive ordering yields Temporary namespace copy differs, candidate:false/UNPROVED; desired positive assertion exit1. red-native-cache retains original fixture and partial archive. No original namespace was passed to deletion code.
+
+Correction preserves full permission bits for files and directories, populates under private writable modes, then sets admitted directory modes deepest-first through held descriptors and reopens/checks exact identities. It compares complete file/directory kind, path, mode, bytes/hash records plus root mode, and rechecks unchanged source inventory. Existing aggregate/read/count/deadline bounds and fail-closed behavior remain. Directory setting or verification failure leaves source and partial archive; the controller retains partial output ledger and raw failure facts. Shared helper acceptance comparisons and delete ordering are unchanged.
+
+## Focused GREEN and failure controls
+
+- Exact same authentic-cache controller replay now exits0, completes profile/scratch/TMP archival, inert candidate:true/DRAINED_ARCHIVED_AUDITED. This describes CPU fixture ports, not a real native result.
+- Seven whole-controller ownership modes all driver exit0: exact binding admitted; missing row, wrong UID, changed birth, wrong coalition and other executable refused; outside-cohort service absent with external ownership UNQUALIFIED. Original failure remains distinct.
+-21 current controller cases exit0, including3 new namespace cases: cache0755, empty0750, read-only0550, sticky01770 directories, profile archived first, exact bytes; fchmod error with unknown raw bytes; ignored mode-setting refused. Failure cases preserve source and partial archive and publish their output ledger. Existing bootstrap uncertainty, observer raw/error, timer interruption/drain, ledger and sink failures remain covered.
+-7 actual filesystem boundary tests exit0: admission/ancestor/FIFO/stamp/aggregate/deadline/enumeration cases.
+-16 admission/control tests exit0. No native process/service is dispatched; existing harmless owned CPU child control is reaped.
+-Node22.23.3 tools typecheck --noEmit exit0; Python AST syntax exit0; scoped JSON Prettier exit0; git diff --check exit0. There is no configured Python lint/formatter; no ignored ESLint invocation is claimed as lint coverage. Unchanged632/64/T15 suites were not rerun as requested; their prior evidence remains prior evidence.
+
+commands.jsonl, commands.md and disabled-commands.json preserve exact argv, cwd, seconds and exits. Every named run has stdout/stderr artifacts. Additional incidental failures are retained: first controller test used the wrong expected preserved-profile path (product archival had completed); corrected to the unchanged helper's actual preserved_playwright_chromiumdev_profile-fixture and reran green. Initial boundary unittest command incorrectly supplied an output-directory argument and failed before running; corrected invocation ran7 tests green. These are harness mistakes, not concealed successful runs. No full/heavy/Blender/art/codec/GPU/browser/server/DB suite ran; at most2 small CPU workers.
+
+## Source/dependency drift and preservation
+
+Audit evidence under drift-audit/: all513 failed frozen source files match readiness, and all recorded13222 dependency entries match. Failed frozen dependencies additionally contain37 generated Vite cache files totaling8099054 bytes. They remain retained, not treated as original manifest entries. Current worktree dependencies match13222 records including stamps. During the audit only this unit's task-file edits appeared; final clean Git head and three-file scope are recorded. Historical broad asset payloads have Git/lstat provenance only where explicitly marked; no claim of hydrated-byte verification is made.
+
+The old frozen bundle is not reusable: it has spent identities and runtime-generated cache extras. A fresh copy from the clean current closure was made once after checks/commit. No old bundle, namespace, cache or screenshot was deleted.
+
+## Fresh disabled freeze and next native proposal
+
+- Frozen readiness: /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/frozen-7c134b6aa/readiness.json
+- SHA256: 832311d5120d435284d5b51e4b6d430db270f98580a0009d7bae04db061f0638; bytes7893158 (<16MiB).
+- Binding SHA256: daff00c6a19f3e0375af81bfc8eca4e0a933b7c796913768576ab9675a2ef602.
+-513 source records/47565225 bytes;13222 dependencies/243636268 regular bytes;547 binary rows. Full exact source/dependency ledger is in readiness.
+- Actual freeze and verify_freeze exit0. False SetStore expected hash is refused. Frozen Python disabled CLI exit2; Node --owned disabled CLI exit1 before native imports/allocations; NEXT_LAUNCH.sh syntax check exit0 only. All new prospective paths absent; no real grant exists.
+- Current capacity observation 24607399936 bytes available, minimum8589934592. Admission reads capacity again. These are observations and copy/ledger ceilings, not an OS quota guarantee.
+
+NEXT_LAUNCH.json and NEXT_LAUNCH.sh contain exact pins, paths, source/binary dependencies, purpose, expiry, bounds and load contract. After the parent's independent review and separate enablement/grant/capacity/reservation steps, the exact proposed entry is:
+
+```sh
+/private/tmp/p1-e14-t13-native-failure.kmq_ro3n/NEXT_LAUNCH.sh <parent-enabled-readiness-sha256> <fresh-grant-sha256>
+```
+
+This script was NOT executed. New enabled readiness: /private/tmp/t13-observer-enabled-readiness-5ba6b515.json; grant: /private/tmp/t13-observer-grant-5ba6b515.json; consumption: /private/tmp/t13-observer-consumed-5ba6b515; output: /private/tmp/t13-observer-native-5ba6b515; fallback: /private/tmp/t13-observer-fallback-5ba6b515; prefix:bwt-5ba6b51563fb45f6950bbd05dc88702b. All are fresh/absent. The fresh one-use grant must bind purpose, exact head/tree, separately enabled readiness hash, plan hash, output/consumption and future expiry <=3600s. No old grant or disk accepted flag admits it.
+
+Controlled load remains parent GPU reservation + our heavy CPU jobs quiesced, load ceilings[7.5,10,15], external contenders honestly unknown-not-excluded. Expected Metal/Apple M5 Pro is an expectation: actual backend/device and complete host/load pre/post every step must still be observed. Physical child/birth/UID/cohort, drain/profile/TMP/archive/terminal proof and parent-observed actual OS exit0 + bounded hashes remain required. If another unbound executable appears, it still fails closed; this exact addition does not authorize broad XPC ownership. The new head has not run native.
+
+Protocol and workload unchanged: five alternating trace-on/off unchanged reference pairs plus one fence-only control per arm;1920x1080 Thalune suit2/noon-lush, natural history/framework/render work.12 preparations<=7200 warmups,10 frames,48 dependent passes,36 preflight fences,24 control fences,6 on segments,64MiB/250000 events/1024 reads,0 PNG/timer queries. Off makes zero tracing calls; on covers prep/control; envelopes1009100/306100/1315200ms unchanged. Classification thresholds/mixed-sign/zero policy unchanged. No16.67ms qualification or fresh performance claim. cloud03 remains FAILED/accepted:false.
+
+No native rerun, grant, readiness enablement, browser/GPU/Blender/service/DB, install/hydration, historical cleanup, push/PR/merge or orchestration-doc write occurred. Fresh independent review is parent-owned.

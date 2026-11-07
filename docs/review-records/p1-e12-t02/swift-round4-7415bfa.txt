@@ -1,0 +1,1224 @@
+TASK: P1.E12.T02/swift ROUND4 CPU/source revision
+STATUS: DONE (bounded Swift CPU/source scope only; whole P1.E12.T02 and performance not declared PASS)
+SUMMARY: Completed the Swift-only ROUND4 CPU/source revision in the authoritative editable .blend: localized wear/clouded crystal, selected fractured openings and exposed structure, finished cockpit housings/readable displays/controls/shaped seat/restraints, and protected canopy normals, rear tip and landing-foot geometry through LOD2. Preserved base/damaged/husked variants, passing silhouette/proportions/cultural design and three liveries. Promoted the exact current-source GLB after unmodified stock source/export validation, actual decoded surface/marker identity, topology/UV/normal audits and inspected CPU previews. Parent engine captures, full smoke, reliable whole-scene performance, independent blind grade and review remain pending; no whole-task or performance PASS is claimed.
+Original task: P1.E12.T02(art) Lark, Swift, Kestrel, Mule · deps: E14.T02 · done: four hulls with gear, canopy, cockpit interior, hardpoint mounts, damage state, husked variant, three liveries each; Lark rebuilds today's ship at new bar · verify: validate; review.
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+Branch: task/P1-E12-T02-swift-r4
+Base: 73f51ba436e2a8c4e3828f60439c441db4f7ef38
+Separate recovery commit: 82c3d50ff79a60b9dac38f0bdfbe421381c8dd73; tree ea744377e186a0ee48bdf40b48e891b1d7db78a2
+Final revision HEAD and tree are supplied in the accompanying final handoff after committing this report; self-referential commit hashes cannot be embedded in their own committed content.
+FILES CHANGED:
+  assets/blend/hulls/swift.blend
+  packages/client/public/models/hulls/swift.glb
+  packages/tools/blender/hulls/swift-round4/README.txt
+  packages/tools/blender/hulls/swift-round4/audit_source.py
+  packages/tools/blender/hulls/swift-round4/author.py
+  packages/tools/blender/hulls/swift-round4/check_guardian.py
+  packages/tools/blender/hulls/swift-round4/check_lane.py
+  packages/tools/blender/hulls/swift-round4/check_monitor.py
+  packages/tools/blender/hulls/swift-round4/check_packed_release.py
+  packages/tools/blender/hulls/swift-round4/check_tmp_path.py
+  packages/tools/blender/hulls/swift-round4/clean_lod_duplicates.py
+  packages/tools/blender/hulls/swift-round4/compress_precision.mjs
+  packages/tools/blender/hulls/swift-round4/cpu_sheets.py
+  packages/tools/blender/hulls/swift-round4/display_fit.py
+  packages/tools/blender/hulls/swift-round4/export_saved.py
+  packages/tools/blender/hulls/swift-round4/face_display_insets.py
+  packages/tools/blender/hulls/swift-round4/finalize.py
+  packages/tools/blender/hulls/swift-round4/finish_export.py
+  packages/tools/blender/hulls/swift-round4/finish_normals.py
+  packages/tools/blender/hulls/swift-round4/finish_slate.py
+  packages/tools/blender/hulls/swift-round4/fit_markers.py
+  packages/tools/blender/hulls/swift-round4/fix_canopy_parents.py
+  packages/tools/blender/hulls/swift-round4/fracture_cleanup.py
+  packages/tools/blender/hulls/swift-round4/guardian.py
+  packages/tools/blender/hulls/swift-round4/handoff.json
+  packages/tools/blender/hulls/swift-round4/identity.py
+  packages/tools/blender/hulls/swift-round4/inspect_details.py
+  packages/tools/blender/hulls/swift-round4/inspect_source.py
+  packages/tools/blender/hulls/swift-round4/ktx_cpu.py
+  packages/tools/blender/hulls/swift-round4/lane.py
+  packages/tools/blender/hulls/swift-round4/mesh_validation_detail.py
+  packages/tools/blender/hulls/swift-round4/preview.py
+  packages/tools/blender/hulls/swift-round4/probe_parent_transforms.py
+  packages/tools/blender/hulls/swift-round4/promote.py
+  packages/tools/blender/hulls/swift-round4/provenance.py
+  packages/tools/blender/hulls/swift-round4/record_hold.py
+  packages/tools/blender/hulls/swift-round4/refine_compression.py
+  packages/tools/blender/hulls/swift-round4/serialize_saved.py
+  packages/tools/blender/hulls/swift-round4/texture_cache.py
+  assets/renders/hulls/swift-round4-current/01-inspect/inventory.json
+  assets/renders/hulls/swift-round4-current/01-inspect/process.log
+  assets/renders/hulls/swift-round4-current/01-inspect/receipt.json
+  assets/renders/hulls/swift-round4-current/02-details/details.json
+  assets/renders/hulls/swift-round4-current/02-details/process.log
+  assets/renders/hulls/swift-round4-current/02-details/receipt.json
+  assets/renders/hulls/swift-round4-current/03-author/author.json
+  assets/renders/hulls/swift-round4-current/03-author/failed-source.blend
+  assets/renders/hulls/swift-round4-current/03-author/process.log
+  assets/renders/hulls/swift-round4-current/03-author/receipt.json
+  assets/renders/hulls/swift-round4-current/04-author-corrected/author.json
+  assets/renders/hulls/swift-round4-current/04-author-corrected/pre-refinement.blend
+  assets/renders/hulls/swift-round4-current/04-author-corrected/process.log
+  assets/renders/hulls/swift-round4-current/04-author-corrected/receipt.json
+  assets/renders/hulls/swift-round4-current/05-source-validation/process.log
+  assets/renders/hulls/swift-round4-current/05-source-validation/receipt.json
+  assets/renders/hulls/swift-round4-current/05-source-validation/source.json
+  assets/renders/hulls/swift-round4-current/06-cockpit-top/process.log
+  assets/renders/hulls/swift-round4-current/06-cockpit-top/receipt.json
+  assets/renders/hulls/swift-round4-current/06-cockpit-top/swift-cockpit-top-lod0.png
+  assets/renders/hulls/swift-round4-current/07-cancellation-proof/process.log
+  assets/renders/hulls/swift-round4-current/07-cancellation-proof/receipt.json
+  assets/renders/hulls/swift-round4-current/07-cancellation-proof/test-result.json
+  assets/renders/hulls/swift-round4-current/08-geometry-audit/audit.json
+  assets/renders/hulls/swift-round4-current/08-geometry-audit/process.log
+  assets/renders/hulls/swift-round4-current/08-geometry-audit/receipt.json
+  assets/renders/hulls/swift-round4-current/09-damage/process.log
+  assets/renders/hulls/swift-round4-current/09-damage/receipt.json
+  assets/renders/hulls/swift-round4-current/09-damage/swift_damaged-damage-lod0.png
+  assets/renders/hulls/swift-round4-current/10-refined-author/author.json
+  assets/renders/hulls/swift-round4-current/10-refined-author/process.log
+  assets/renders/hulls/swift-round4-current/10-refined-author/receipt.json
+  assets/renders/hulls/swift-round4-current/11-damage-refined/process.log
+  assets/renders/hulls/swift-round4-current/11-damage-refined/receipt.json
+  assets/renders/hulls/swift-round4-current/11-damage-refined/swift_damaged-damage-lod0.png
+  assets/renders/hulls/swift-round4-current/12-fracture-and-crystal/fracture-cleanup.json
+  assets/renders/hulls/swift-round4-current/12-fracture-and-crystal/process.log
+  assets/renders/hulls/swift-round4-current/12-fracture-and-crystal/receipt.json
+  assets/renders/hulls/swift-round4-current/13-final-geometry-audit/audit.json
+  assets/renders/hulls/swift-round4-current/13-final-geometry-audit/process.log
+  assets/renders/hulls/swift-round4-current/13-final-geometry-audit/receipt.json
+  assets/renders/hulls/swift-round4-current/14-finish-slate/process.log
+  assets/renders/hulls/swift-round4-current/14-finish-slate/receipt.json
+  assets/renders/hulls/swift-round4-current/14-finish-slate/slate.json
+  assets/renders/hulls/swift-round4-current/15-final-damage/process.log
+  assets/renders/hulls/swift-round4-current/15-final-damage/receipt.json
+  assets/renders/hulls/swift-round4-current/15-final-damage/swift_damaged-damage-lod0.png
+  assets/renders/hulls/swift-round4-current/16-stock-export/process.log
+  assets/renders/hulls/swift-round4-current/16-stock-export/receipt.json
+  assets/renders/hulls/swift-round4-current/16-stock-export/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/17-display-fit-red/display-fit.json
+  assets/renders/hulls/swift-round4-current/17-display-fit-red/process.log
+  assets/renders/hulls/swift-round4-current/17-display-fit-red/receipt.json
+  assets/renders/hulls/swift-round4-current/18-fit-display-markers/marker-fit.json
+  assets/renders/hulls/swift-round4-current/18-fit-display-markers/process.log
+  assets/renders/hulls/swift-round4-current/18-fit-display-markers/receipt.json
+  assets/renders/hulls/swift-round4-current/19-display-fit-green/display-fit.json
+  assets/renders/hulls/swift-round4-current/19-display-fit-green/process.log
+  assets/renders/hulls/swift-round4-current/19-display-fit-green/receipt.json
+  assets/renders/hulls/swift-round4-current/20-stock-export-fitted/process.log
+  assets/renders/hulls/swift-round4-current/20-stock-export-fitted/receipt.json
+  assets/renders/hulls/swift-round4-current/20-stock-export-fitted/scratch/blender_aKNnT9/cycles-tile-buffer-67433-517264714736-4-0.exr
+  assets/renders/hulls/swift-round4-current/20-stock-export-fitted/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/21-face-display-insets/inset-normals.json
+  assets/renders/hulls/swift-round4-current/21-face-display-insets/process.log
+  assets/renders/hulls/swift-round4-current/21-face-display-insets/receipt.json
+  assets/renders/hulls/swift-round4-current/22-display-fit-green/display-fit.json
+  assets/renders/hulls/swift-round4-current/22-display-fit-green/process.log
+  assets/renders/hulls/swift-round4-current/22-display-fit-green/receipt.json
+  assets/renders/hulls/swift-round4-current/23-stock-export/process.log
+  assets/renders/hulls/swift-round4-current/23-stock-export/receipt.json
+  assets/renders/hulls/swift-round4-current/23-stock-export/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/24-monitor-race-proof/monitor-test.json
+  assets/renders/hulls/swift-round4-current/24-monitor-race-proof/process.log
+  assets/renders/hulls/swift-round4-current/24-monitor-race-proof/receipt.json
+  assets/renders/hulls/swift-round4-current/25-packed-buffer-proof/packed-buffer-proof.json
+  assets/renders/hulls/swift-round4-current/25-packed-buffer-proof/process.log
+  assets/renders/hulls/swift-round4-current/25-packed-buffer-proof/receipt.json
+  assets/renders/hulls/swift-round4-current/26-cancellation-monitor-proof/process.log
+  assets/renders/hulls/swift-round4-current/26-cancellation-monitor-proof/receipt.json
+  assets/renders/hulls/swift-round4-current/26-cancellation-monitor-proof/test-result.json
+  assets/renders/hulls/swift-round4-current/27-stock-export-bounded/input-source.json
+  assets/renders/hulls/swift-round4-current/27-stock-export-bounded/interruption.json
+  assets/renders/hulls/swift-round4-current/27-stock-export-bounded/process.log
+  assets/renders/hulls/swift-round4-current/27-stock-export-bounded/scratch/blender_FKGXQM/cycles-tile-buffer-3668-527883078640-92-0.exr
+  assets/renders/hulls/swift-round4-current/27-stock-export-bounded/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/28-runner-loss-proof/guardian.json
+  assets/renders/hulls/swift-round4-current/28-runner-loss-proof/process.log
+  assets/renders/hulls/swift-round4-current/28-runner-loss-proof/test-result.json
+  assets/renders/hulls/swift-round4-current/29-cancellation-guardian-proof/guardian.json
+  assets/renders/hulls/swift-round4-current/29-cancellation-guardian-proof/process.log
+  assets/renders/hulls/swift-round4-current/29-cancellation-guardian-proof/receipt.json
+  assets/renders/hulls/swift-round4-current/29-cancellation-guardian-proof/test-result.json
+  assets/renders/hulls/swift-round4-current/30-current-source-audit/audit.json
+  assets/renders/hulls/swift-round4-current/30-current-source-audit/guardian.json
+  assets/renders/hulls/swift-round4-current/30-current-source-audit/process.log
+  assets/renders/hulls/swift-round4-current/30-current-source-audit/receipt.json
+  assets/renders/hulls/swift-round4-current/31-current-display-fit/display-fit.json
+  assets/renders/hulls/swift-round4-current/31-current-display-fit/guardian.json
+  assets/renders/hulls/swift-round4-current/31-current-display-fit/process.log
+  assets/renders/hulls/swift-round4-current/31-current-display-fit/receipt.json
+  assets/renders/hulls/swift-round4-current/32-recovery-packet-proof/guardian.json
+  assets/renders/hulls/swift-round4-current/32-recovery-packet-proof/process.log
+  assets/renders/hulls/swift-round4-current/32-recovery-packet-proof/provenance.json
+  assets/renders/hulls/swift-round4-current/32-recovery-packet-proof/receipt.json
+  assets/renders/hulls/swift-round4-current/33-current-stock-export/guardian.json
+  assets/renders/hulls/swift-round4-current/33-current-stock-export/input-source.json
+  assets/renders/hulls/swift-round4-current/33-current-stock-export/packed-cache-release.json
+  assets/renders/hulls/swift-round4-current/33-current-stock-export/process.log
+  assets/renders/hulls/swift-round4-current/33-current-stock-export/receipt.json
+  assets/renders/hulls/swift-round4-current/33-current-stock-export/source-pin.json
+  assets/renders/hulls/swift-round4-current/33-current-stock-export/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/34-short-temp-path-proof/guardian.json
+  assets/renders/hulls/swift-round4-current/34-short-temp-path-proof/launch.json
+  assets/renders/hulls/swift-round4-current/34-short-temp-path-proof/process.log
+  assets/renders/hulls/swift-round4-current/34-short-temp-path-proof/receipt.json
+  assets/renders/hulls/swift-round4-current/34-short-temp-path-proof/tmp-path-proof.json
+  assets/renders/hulls/swift-round4-current/35-runner-loss-short-path-proof/guardian.json
+  assets/renders/hulls/swift-round4-current/35-runner-loss-short-path-proof/launch.json
+  assets/renders/hulls/swift-round4-current/35-runner-loss-short-path-proof/process.log
+  assets/renders/hulls/swift-round4-current/35-runner-loss-short-path-proof/test-result.json
+  assets/renders/hulls/swift-round4-current/36-source-mesh-repair-probe/guardian.json
+  assets/renders/hulls/swift-round4-current/36-source-mesh-repair-probe/launch.json
+  assets/renders/hulls/swift-round4-current/36-source-mesh-repair-probe/mesh-validation-probe.json
+  assets/renders/hulls/swift-round4-current/36-source-mesh-repair-probe/process.log
+  assets/renders/hulls/swift-round4-current/36-source-mesh-repair-probe/receipt.json
+  assets/renders/hulls/swift-round4-current/37-source-repair-detail/guardian.json
+  assets/renders/hulls/swift-round4-current/37-source-repair-detail/launch.json
+  assets/renders/hulls/swift-round4-current/37-source-repair-detail/process.log
+  assets/renders/hulls/swift-round4-current/37-source-repair-detail/receipt.json
+  assets/renders/hulls/swift-round4-current/37-source-repair-detail/repair-detail.json
+  assets/renders/hulls/swift-round4-current/38-author-valid-lods/before-lod-validity.blend
+  assets/renders/hulls/swift-round4-current/38-author-valid-lods/guardian.json
+  assets/renders/hulls/swift-round4-current/38-author-valid-lods/launch.json
+  assets/renders/hulls/swift-round4-current/38-author-valid-lods/lod-validity.json
+  assets/renders/hulls/swift-round4-current/38-author-valid-lods/process.log
+  assets/renders/hulls/swift-round4-current/38-author-valid-lods/receipt.json
+  assets/renders/hulls/swift-round4-current/39-valid-source-audit/audit.json
+  assets/renders/hulls/swift-round4-current/39-valid-source-audit/guardian.json
+  assets/renders/hulls/swift-round4-current/39-valid-source-audit/launch.json
+  assets/renders/hulls/swift-round4-current/39-valid-source-audit/process.log
+  assets/renders/hulls/swift-round4-current/39-valid-source-audit/receipt.json
+  assets/renders/hulls/swift-round4-current/40-valid-source-display-fit/display-fit.json
+  assets/renders/hulls/swift-round4-current/40-valid-source-display-fit/guardian.json
+  assets/renders/hulls/swift-round4-current/40-valid-source-display-fit/launch.json
+  assets/renders/hulls/swift-round4-current/40-valid-source-display-fit/process.log
+  assets/renders/hulls/swift-round4-current/40-valid-source-display-fit/receipt.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/encoded-stage.glb
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/encoded-stage.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/guardian.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/input-source.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/launch.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/packed-cache-release.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/process.log
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/receipt.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/scratch/tsx-501/17940-2968155792489e501b9610b3ab359fffffdf1553
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/scratch/tsx-501/17940-fb00833060e8a451437b6f03bca789eea96eb750
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/source-pin.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/validation/hulls__swift.glb.json
+  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/validation/hulls__swift.glb.rejected.glb
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/before-normal-finish.blend
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/guardian.json
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/launch.json
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/normal-finish.json
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/process.log
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/receipt.json
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/scratch/swift_Swift_Crystal.ktx2
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/scratch/swift_Swift_Crystal.png
+  assets/renders/hulls/swift-round4-current/42-author-normal-finish/scratch/swift_Swift_Crystal_decoded.png
+  assets/renders/hulls/swift-round4-current/43-author-normal-finish/before-normal-finish.blend
+  assets/renders/hulls/swift-round4-current/43-author-normal-finish/guardian.json
+  assets/renders/hulls/swift-round4-current/43-author-normal-finish/launch.json
+  assets/renders/hulls/swift-round4-current/43-author-normal-finish/normal-finish.json
+  assets/renders/hulls/swift-round4-current/43-author-normal-finish/process.log
+  assets/renders/hulls/swift-round4-current/43-author-normal-finish/receipt.json
+  assets/renders/hulls/swift-round4-current/44-normal-finished-source-audit/audit.json
+  assets/renders/hulls/swift-round4-current/44-normal-finished-source-audit/guardian.json
+  assets/renders/hulls/swift-round4-current/44-normal-finished-source-audit/launch.json
+  assets/renders/hulls/swift-round4-current/44-normal-finished-source-audit/process.log
+  assets/renders/hulls/swift-round4-current/44-normal-finished-source-audit/receipt.json
+  assets/renders/hulls/swift-round4-current/45-normal-finished-display-fit/display-fit.json
+  assets/renders/hulls/swift-round4-current/45-normal-finished-display-fit/guardian.json
+  assets/renders/hulls/swift-round4-current/45-normal-finished-display-fit/launch.json
+  assets/renders/hulls/swift-round4-current/45-normal-finished-display-fit/process.log
+  assets/renders/hulls/swift-round4-current/45-normal-finished-display-fit/receipt.json
+  assets/renders/hulls/swift-round4-current/46-source-cockpit-finished/guardian.json
+  assets/renders/hulls/swift-round4-current/46-source-cockpit-finished/input.json
+  assets/renders/hulls/swift-round4-current/46-source-cockpit-finished/launch.json
+  assets/renders/hulls/swift-round4-current/46-source-cockpit-finished/process.log
+  assets/renders/hulls/swift-round4-current/46-source-cockpit-finished/receipt.json
+  assets/renders/hulls/swift-round4-current/46-source-cockpit-finished/swift-cockpit-top-lod0.png
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/guardian.json
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/input-source.json
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/launch.json
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/process.log
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/receipt.json
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/scratch/art-export-h4q1wkl6/swift.glb
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/scratch/art-ktx-_li9zcov/0.png
+  assets/renders/hulls/swift-round4-current/47-normal-finished-stock-export/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/48-split-compression/compression.json
+  assets/renders/hulls/swift-round4-current/48-split-compression/encoded-stage.glb
+  assets/renders/hulls/swift-round4-current/48-split-compression/encoded-stage.json
+  assets/renders/hulls/swift-round4-current/48-split-compression/guardian.json
+  assets/renders/hulls/swift-round4-current/48-split-compression/input-stage.json
+  assets/renders/hulls/swift-round4-current/48-split-compression/launch.json
+  assets/renders/hulls/swift-round4-current/48-split-compression/process.log
+  assets/renders/hulls/swift-round4-current/48-split-compression/receipt.json
+  assets/renders/hulls/swift-round4-current/48-split-compression/scratch/tsx-501/17940-2968155792489e501b9610b3ab359fffffdf1553
+  assets/renders/hulls/swift-round4-current/48-split-compression/scratch/tsx-501/17940-fb00833060e8a451437b6f03bca789eea96eb750
+  assets/renders/hulls/swift-round4-current/48-split-compression/swift.glb
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/guardian.json
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/input-stage.json
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/launch.json
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/models/hulls/swift.glb
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/process.log
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/receipt.json
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/source-pin.json
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/49-split-stock-validation/validation/hulls__swift.glb.json
+  assets/renders/hulls/swift-round4-current/50-decoded-source-export-identity/guardian.json
+  assets/renders/hulls/swift-round4-current/50-decoded-source-export-identity/identity.json
+  assets/renders/hulls/swift-round4-current/50-decoded-source-export-identity/launch.json
+  assets/renders/hulls/swift-round4-current/50-decoded-source-export-identity/process.log
+  assets/renders/hulls/swift-round4-current/50-decoded-source-export-identity/receipt.json
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/compression.json
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/guardian.json
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/input-stage.json
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/launch.json
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/process.log
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/receipt.json
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/scratch/tsx-501/17940-2968155792489e501b9610b3ab359fffffdf1553
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/scratch/tsx-501/17940-fb00833060e8a451437b6f03bca789eea96eb750
+  assets/renders/hulls/swift-round4-current/51-compress-precision16/swift.glb
+  assets/renders/hulls/swift-round4-current/52-precision16-identity/guardian.json
+  assets/renders/hulls/swift-round4-current/52-precision16-identity/identity.json
+  assets/renders/hulls/swift-round4-current/52-precision16-identity/launch.json
+  assets/renders/hulls/swift-round4-current/52-precision16-identity/process.log
+  assets/renders/hulls/swift-round4-current/52-precision16-identity/receipt.json
+  assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/guardian.json
+  assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/input-stage.json
+  assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/launch.json
+  assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/process.log
+  assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/receipt.json
+  assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/scratch/tsx-501/17940-2968155792489e501b9610b3ab359fffffdf1553
+  assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/scratch/tsx-501/17940-fb00833060e8a451437b6f03bca789eea96eb750
+  assets/renders/hulls/swift-round4-current/54-surface-precision-identity/guardian.json
+  assets/renders/hulls/swift-round4-current/54-surface-precision-identity/launch.json
+  assets/renders/hulls/swift-round4-current/54-surface-precision-identity/process.log
+  assets/renders/hulls/swift-round4-current/54-surface-precision-identity/receipt.json
+  assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/guardian.json
+  assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/input-stage.json
+  assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/launch.json
+  assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/process.log
+  assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/receipt.json
+  assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/scratch/tsx-501/17940-2968155792489e501b9610b3ab359fffffdf1553
+  assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/scratch/tsx-501/17940-fb00833060e8a451437b6f03bca789eea96eb750
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/compression.json
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/guardian.json
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/input-stage.json
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/launch.json
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/process.log
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/receipt.json
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/scratch/tsx-501/17940-2968155792489e501b9610b3ab359fffffdf1553
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/scratch/tsx-501/17940-fb00833060e8a451437b6f03bca789eea96eb750
+  assets/renders/hulls/swift-round4-current/56-surface-precision-compression/swift.glb
+  assets/renders/hulls/swift-round4-current/57-surface-precision-identity/guardian.json
+  assets/renders/hulls/swift-round4-current/57-surface-precision-identity/identity.json
+  assets/renders/hulls/swift-round4-current/57-surface-precision-identity/launch.json
+  assets/renders/hulls/swift-round4-current/57-surface-precision-identity/process.log
+  assets/renders/hulls/swift-round4-current/57-surface-precision-identity/receipt.json
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/guardian.json
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/input-stage.json
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/launch.json
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/models/hulls/swift.glb
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/process.log
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/receipt.json
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/source-pin.json
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/58-final-stock-validation/validation/hulls__swift.glb.json
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/guardian.json
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/input.json
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/launch.json
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/manifest.json
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/process.log
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/receipt.json
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_materials.png
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_materials.txt
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_swift_damaged_materials.png
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_swift_damaged_materials.txt
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_swift_damaged_turntable.png
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_swift_husked_materials.png
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_swift_husked_materials.txt
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_swift_husked_turntable.png
+  assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/swift_swift_turntable.png
+  assets/renders/hulls/swift-round4-current/60-export-cockpit-pilot/guardian.json
+  assets/renders/hulls/swift-round4-current/60-export-cockpit-pilot/input.json
+  assets/renders/hulls/swift-round4-current/60-export-cockpit-pilot/launch.json
+  assets/renders/hulls/swift-round4-current/60-export-cockpit-pilot/process.log
+  assets/renders/hulls/swift-round4-current/60-export-cockpit-pilot/receipt.json
+  assets/renders/hulls/swift-round4-current/60-export-cockpit-pilot/swift-cockpit-pilot-lod0.png
+  assets/renders/hulls/swift-round4-current/61-export-rear-lod0/guardian.json
+  assets/renders/hulls/swift-round4-current/61-export-rear-lod0/input.json
+  assets/renders/hulls/swift-round4-current/61-export-rear-lod0/launch.json
+  assets/renders/hulls/swift-round4-current/61-export-rear-lod0/process.log
+  assets/renders/hulls/swift-round4-current/61-export-rear-lod0/receipt.json
+  assets/renders/hulls/swift-round4-current/61-export-rear-lod0/swift-rear-lod0.png
+  assets/renders/hulls/swift-round4-current/62-export-rear-lod2/guardian.json
+  assets/renders/hulls/swift-round4-current/62-export-rear-lod2/input.json
+  assets/renders/hulls/swift-round4-current/62-export-rear-lod2/launch.json
+  assets/renders/hulls/swift-round4-current/62-export-rear-lod2/process.log
+  assets/renders/hulls/swift-round4-current/62-export-rear-lod2/receipt.json
+  assets/renders/hulls/swift-round4-current/62-export-rear-lod2/swift-rear-lod2.png
+  assets/renders/hulls/swift-round4-current/63-export-gear-lod0/guardian.json
+  assets/renders/hulls/swift-round4-current/63-export-gear-lod0/input.json
+  assets/renders/hulls/swift-round4-current/63-export-gear-lod0/launch.json
+  assets/renders/hulls/swift-round4-current/63-export-gear-lod0/process.log
+  assets/renders/hulls/swift-round4-current/63-export-gear-lod0/receipt.json
+  assets/renders/hulls/swift-round4-current/63-export-gear-lod0/swift-gear-lod0.png
+  assets/renders/hulls/swift-round4-current/64-parent-transform-probe/guardian.json
+  assets/renders/hulls/swift-round4-current/64-parent-transform-probe/launch.json
+  assets/renders/hulls/swift-round4-current/64-parent-transform-probe/parent-transforms.json
+  assets/renders/hulls/swift-round4-current/64-parent-transform-probe/process.log
+  assets/renders/hulls/swift-round4-current/64-parent-transform-probe/receipt.json
+  assets/renders/hulls/swift-round4-current/65-fix-source-canopy-parents/before-canopy-parent-fix.blend
+  assets/renders/hulls/swift-round4-current/65-fix-source-canopy-parents/canopy-parent-fix.json
+  assets/renders/hulls/swift-round4-current/65-fix-source-canopy-parents/guardian.json
+  assets/renders/hulls/swift-round4-current/65-fix-source-canopy-parents/launch.json
+  assets/renders/hulls/swift-round4-current/65-fix-source-canopy-parents/process.log
+  assets/renders/hulls/swift-round4-current/65-fix-source-canopy-parents/receipt.json
+  assets/renders/hulls/swift-round4-current/66-final-source-world-audit/audit.json
+  assets/renders/hulls/swift-round4-current/66-final-source-world-audit/guardian.json
+  assets/renders/hulls/swift-round4-current/66-final-source-world-audit/launch.json
+  assets/renders/hulls/swift-round4-current/66-final-source-world-audit/process.log
+  assets/renders/hulls/swift-round4-current/66-final-source-world-audit/receipt.json
+  assets/renders/hulls/swift-round4-current/67-final-display-fit/display-fit.json
+  assets/renders/hulls/swift-round4-current/67-final-display-fit/guardian.json
+  assets/renders/hulls/swift-round4-current/67-final-display-fit/launch.json
+  assets/renders/hulls/swift-round4-current/67-final-display-fit/process.log
+  assets/renders/hulls/swift-round4-current/67-final-display-fit/receipt.json
+  assets/renders/hulls/swift-round4-current/68-corrected-source-serialization/guardian.json
+  assets/renders/hulls/swift-round4-current/68-corrected-source-serialization/launch.json
+  assets/renders/hulls/swift-round4-current/68-corrected-source-serialization/process.log
+  assets/renders/hulls/swift-round4-current/68-corrected-source-serialization/receipt.json
+  assets/renders/hulls/swift-round4-current/68-corrected-source-serialization/serialization.json
+  assets/renders/hulls/swift-round4-current/68-corrected-source-serialization/serialized.glb
+  assets/renders/hulls/swift-round4-current/68-corrected-source-serialization/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/compression.json
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/encoded-stage.glb
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/encoded-stage.json
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/guardian.json
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/input-stage.json
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/launch.json
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/process.log
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/receipt.json
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/scratch/tsx-501/17940-2968155792489e501b9610b3ab359fffffdf1553
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/scratch/tsx-501/17940-fb00833060e8a451437b6f03bca789eea96eb750
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/swift.glb
+  assets/renders/hulls/swift-round4-current/69-corrected-export-compression/texture-cache-proof.json
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/guardian.json
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/input-stage.json
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/launch.json
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/process.log
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/receipt.json
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/source-pin.json
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/validation/hulls__swift.blend.json
+  assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/validation/hulls__swift.glb.json
+  assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity/guardian.json
+  assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity/identity.json
+  assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity/launch.json
+  assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity/process.log
+  assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity/receipt.json
+  assets/renders/hulls/swift-round4-current/72-current-rear-lod0/guardian.json
+  assets/renders/hulls/swift-round4-current/72-current-rear-lod0/input.json
+  assets/renders/hulls/swift-round4-current/72-current-rear-lod0/launch.json
+  assets/renders/hulls/swift-round4-current/72-current-rear-lod0/process.log
+  assets/renders/hulls/swift-round4-current/72-current-rear-lod0/receipt.json
+  assets/renders/hulls/swift-round4-current/72-current-rear-lod0/swift-rear-lod0.png
+  assets/renders/hulls/swift-round4-current/73-parent-resource-hold/guardian.json
+  assets/renders/hulls/swift-round4-current/73-parent-resource-hold/hold.json
+  assets/renders/hulls/swift-round4-current/73-parent-resource-hold/launch.json
+  assets/renders/hulls/swift-round4-current/73-parent-resource-hold/process.log
+  assets/renders/hulls/swift-round4-current/73-parent-resource-hold/receipt.json
+  assets/renders/hulls/swift-round4-current/74-current-rear-lod2/guardian.json
+  assets/renders/hulls/swift-round4-current/74-current-rear-lod2/input.json
+  assets/renders/hulls/swift-round4-current/74-current-rear-lod2/launch.json
+  assets/renders/hulls/swift-round4-current/74-current-rear-lod2/process.log
+  assets/renders/hulls/swift-round4-current/74-current-rear-lod2/receipt.json
+  assets/renders/hulls/swift-round4-current/74-current-rear-lod2/swift-rear-lod2.png
+  assets/renders/hulls/swift-round4-current/75-current-gear-lod0/guardian.json
+  assets/renders/hulls/swift-round4-current/75-current-gear-lod0/input.json
+  assets/renders/hulls/swift-round4-current/75-current-gear-lod0/launch.json
+  assets/renders/hulls/swift-round4-current/75-current-gear-lod0/process.log
+  assets/renders/hulls/swift-round4-current/75-current-gear-lod0/receipt.json
+  assets/renders/hulls/swift-round4-current/75-current-gear-lod0/swift-gear-lod0.png
+  assets/renders/hulls/swift-round4-current/76-current-gear-lod2/guardian.json
+  assets/renders/hulls/swift-round4-current/76-current-gear-lod2/input.json
+  assets/renders/hulls/swift-round4-current/76-current-gear-lod2/launch.json
+  assets/renders/hulls/swift-round4-current/76-current-gear-lod2/process.log
+  assets/renders/hulls/swift-round4-current/76-current-gear-lod2/receipt.json
+  assets/renders/hulls/swift-round4-current/76-current-gear-lod2/swift-gear-lod2.png
+  assets/renders/hulls/swift-round4-current/77-current-cockpit-pilot/guardian.json
+  assets/renders/hulls/swift-round4-current/77-current-cockpit-pilot/input.json
+  assets/renders/hulls/swift-round4-current/77-current-cockpit-pilot/launch.json
+  assets/renders/hulls/swift-round4-current/77-current-cockpit-pilot/process.log
+  assets/renders/hulls/swift-round4-current/77-current-cockpit-pilot/receipt.json
+  assets/renders/hulls/swift-round4-current/77-current-cockpit-pilot/swift-cockpit-pilot-lod0.png
+  assets/renders/hulls/swift-round4-current/78-current-cockpit-top/guardian.json
+  assets/renders/hulls/swift-round4-current/78-current-cockpit-top/input.json
+  assets/renders/hulls/swift-round4-current/78-current-cockpit-top/launch.json
+  assets/renders/hulls/swift-round4-current/78-current-cockpit-top/process.log
+  assets/renders/hulls/swift-round4-current/78-current-cockpit-top/receipt.json
+  assets/renders/hulls/swift-round4-current/78-current-cockpit-top/swift-cockpit-top-lod0.png
+  assets/renders/hulls/swift-round4-current/79-current-damage-detail/guardian.json
+  assets/renders/hulls/swift-round4-current/79-current-damage-detail/input.json
+  assets/renders/hulls/swift-round4-current/79-current-damage-detail/launch.json
+  assets/renders/hulls/swift-round4-current/79-current-damage-detail/process.log
+  assets/renders/hulls/swift-round4-current/79-current-damage-detail/receipt.json
+  assets/renders/hulls/swift-round4-current/79-current-damage-detail/swift_damaged-damage-lod0.png
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/guardian.json
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/input.json
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/launch.json
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/manifest.json
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/process.log
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/receipt.json
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_materials.png
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_materials.txt
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_swift_damaged_materials.png
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_swift_damaged_materials.txt
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_swift_damaged_turntable.png
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_swift_husked_materials.png
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_swift_husked_materials.txt
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_swift_husked_turntable.png
+  assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/swift_swift_turntable.png
+  assets/renders/hulls/swift-round4-current/81-current-compact-livery/guardian.json
+  assets/renders/hulls/swift-round4-current/81-current-compact-livery/input.json
+  assets/renders/hulls/swift-round4-current/81-current-compact-livery/launch.json
+  assets/renders/hulls/swift-round4-current/81-current-compact-livery/process.log
+  assets/renders/hulls/swift-round4-current/81-current-compact-livery/receipt.json
+  assets/renders/hulls/swift-round4-current/81-current-compact-livery/swift-quarter-lod0.png
+  assets/renders/hulls/swift-round4-current/82-current-working-livery/guardian.json
+  assets/renders/hulls/swift-round4-current/82-current-working-livery/input.json
+  assets/renders/hulls/swift-round4-current/82-current-working-livery/launch.json
+  assets/renders/hulls/swift-round4-current/82-current-working-livery/process.log
+  assets/renders/hulls/swift-round4-current/82-current-working-livery/receipt.json
+  assets/renders/hulls/swift-round4-current/82-current-working-livery/swift-quarter-lod0.png
+  assets/renders/hulls/swift-round4-current/83-current-fracture-closeup/guardian.json
+  assets/renders/hulls/swift-round4-current/83-current-fracture-closeup/input.json
+  assets/renders/hulls/swift-round4-current/83-current-fracture-closeup/launch.json
+  assets/renders/hulls/swift-round4-current/83-current-fracture-closeup/process.log
+  assets/renders/hulls/swift-round4-current/83-current-fracture-closeup/receipt.json
+  assets/renders/hulls/swift-round4-current/83-current-fracture-closeup/swift_damaged-fracture-lod0.png
+  assets/renders/hulls/swift-round4-current/84-promote-current/guardian.json
+  assets/renders/hulls/swift-round4-current/84-promote-current/launch.json
+  assets/renders/hulls/swift-round4-current/84-promote-current/process.log
+  assets/renders/hulls/swift-round4-current/84-promote-current/promotion.json
+  assets/renders/hulls/swift-round4-current/84-promote-current/receipt.json
+  assets/renders/hulls/swift-round4-current/85-final-provenance/guardian.json
+  assets/renders/hulls/swift-round4-current/85-final-provenance/launch.json
+  assets/renders/hulls/swift-round4-current/85-final-provenance/process.log
+  assets/renders/hulls/swift-round4-current/85-final-provenance/provenance.json
+  assets/renders/hulls/swift-round4-current/85-final-provenance/receipt.json
+  assets/renders/hulls/swift-round4-current/86-final-report/{REPORT.txt,inventory.json,retained-scratch.json,receipt.json,process.log}
+VERIFY:
+  Lane environment: OMP_NUM_THREADS=OPENBLAS_NUM_THREADS=MKL_NUM_THREADS=VECLIB_MAXIMUM_THREADS=NUMEXPR_NUM_THREADS=BLENDER_THREADS=ART_KTX_THREADS=2; ART_KTX_JOBS=1; PYTHONDONTWRITEBYTECODE=1; each job has its own SWIFT_JOB and TMPDIR. Factory Blender -t 2, CPU only.
+  Attempt 01-inspect
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/inspect_source.py
+  Exit 0; reason None; wall 1.66 s; peak group RSS 624656 KiB; child group empty True
+  Preflight free+inactive 16709369856 bytes; disk free 74107854848 bytes; process RSS total 24895680 KiB.
+  Attempt 02-details
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/inspect_details.py
+  Exit 0; reason None; wall 19.75 s; peak group RSS 339488 KiB; child group empty True
+  Preflight free+inactive 14924677120 bytes; disk free 73179754496 bytes; process RSS total 27384672 KiB.
+  Attempt 03-author
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/author.py
+  Exit 0; reason None; wall 5.94 s; peak group RSS 914320 KiB; child group empty True
+  Preflight free+inactive 16329768960 bytes; disk free 71519154176 bytes; process RSS total 23757264 KiB.
+  Attempt 04-author-corrected
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/author.py
+  Exit 0; reason None; wall 9.75 s; peak group RSS 915520 KiB; child group empty True
+  Preflight free+inactive 16392863744 bytes; disk free 71313948672 bytes; process RSS total 24153664 KiB.
+  Attempt 05-source-validation
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/validate.py -- --family hulls --report assets/renders/hulls/swift-round4-current/05-source-validation/source.json assets/blend/hulls/swift.blend
+  Exit 0; reason None; wall 2.25 s; peak group RSS 609440 KiB; child group empty True
+  Preflight free+inactive 13924302848 bytes; disk free 71150587904 bytes; process RSS total 30142608 KiB.
+  Attempt 06-cockpit-top
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift cockpit-top 0
+  Exit 0; reason None; wall 137.44 s; peak group RSS 1823568 KiB; child group empty True
+  Preflight free+inactive 10288955392 bytes; disk free 71098638336 bytes; process RSS total 25481552 KiB.
+  Attempt 07-cancellation-proof
+  Command: /opt/homebrew/opt/python@3.14/bin/python3.14 -c 'import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'"'"'-c'"'"','"'"'import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(120)'"'"']); print('"'"'grandchild started'"'"',flush=True); time.sleep(120)'
+  Exit 1; reason cancelled signal 15; wall 5.86 s; peak group RSS 30592 KiB; child group empty True
+  Preflight free+inactive 13878886400 bytes; disk free 69023797248 bytes; process RSS total 27452144 KiB.
+  Last 20 failure/cancellation log lines:
+    grandchild started
+  Attempt 08-geometry-audit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/audit_source.py
+  Exit 0; reason None; wall 2.22 s; peak group RSS 419632 KiB; child group empty True
+  Preflight free+inactive 14154268672 bytes; disk free 68935770112 bytes; process RSS total 27188224 KiB.
+  Attempt 09-damage
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift_damaged damage 0
+  Exit 0; reason None; wall 115.91 s; peak group RSS 1987248 KiB; child group empty True
+  Preflight free+inactive 16253911040 bytes; disk free 68920840192 bytes; process RSS total 28258176 KiB.
+  Attempt 10-refined-author
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/author.py
+  Exit 0; reason None; wall 14.17 s; peak group RSS 867184 KiB; child group empty True
+  Preflight free+inactive 14614921216 bytes; disk free 67800805376 bytes; process RSS total 27243632 KiB.
+  Attempt 11-damage-refined
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift_damaged damage 0
+  Exit 0; reason None; wall 91.99 s; peak group RSS 2133264 KiB; child group empty True
+  Preflight free+inactive 14222655488 bytes; disk free 67272351744 bytes; process RSS total 31413648 KiB.
+  Attempt 12-fracture-and-crystal
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/fracture_cleanup.py
+  Exit 0; reason None; wall 2.76 s; peak group RSS 425584 KiB; child group empty True
+  Preflight free+inactive 16229105664 bytes; disk free 68369285120 bytes; process RSS total 25717632 KiB.
+  Attempt 13-final-geometry-audit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/audit_source.py
+  Exit 0; reason None; wall 5.7 s; peak group RSS 413728 KiB; child group empty True
+  Preflight free+inactive 15381774336 bytes; disk free 68314443776 bytes; process RSS total 30248400 KiB.
+  Attempt 14-finish-slate
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/finish_slate.py
+  Exit 0; reason None; wall 1.73 s; peak group RSS 362656 KiB; child group empty True
+  Preflight free+inactive 15639445504 bytes; disk free 67880472576 bytes; process RSS total 28594368 KiB.
+  Attempt 15-final-damage
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift_damaged damage 0
+  Exit 0; reason None; wall 61.37 s; peak group RSS 2019616 KiB; child group empty True
+  Preflight free+inactive 16233758720 bytes; disk free 68793528320 bytes; process RSS total 29290608 KiB.
+  Attempt 16-stock-export
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/export_saved.py
+  Exit 1; reason cancelled signal 15; wall 265.64 s; peak group RSS 6648752 KiB; child group empty True
+  Preflight free+inactive 16585965568 bytes; disk free 68677644288 bytes; process RSS total 27266064 KiB.
+  Last 20 failure/cancellation log lines:
+    00:00.525  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend"
+  Attempt 17-display-fit-red
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/display_fit.py
+  Exit 1; reason None; wall 2.4 s; peak group RSS 339632 KiB; child group empty True
+  Preflight free+inactive 15381102592 bytes; disk free 66787815424 bytes; process RSS total 21812896 KiB.
+  Last 20 failure/cancellation log lines:
+    00:01.102  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend"
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    {"status": "FAIL", "failures": ["swift/LOD0/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift/LOD0/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift/LOD0/ScreenRight: normal mismatch,outside bezel,plane separation", "swift/LOD1/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift/LOD1/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift/LOD1/ScreenRight: normal mismatch,outside bezel,plane separation", "swift/LOD2/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift/LOD2/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift/LOD2/ScreenRight: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD0/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD0/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD0/ScreenRight: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD1/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD1/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD1/ScreenRight: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD2/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD2/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift_damaged/LOD2/ScreenRight: normal mismatch,outside bezel,plane separation", "swift_husked/LOD0/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift_husked/LOD0/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift_husked/LOD0/ScreenRight: normal mismatch,outside bezel,plane separation", "swift_husked/LOD1/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift_husked/LOD1/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift_husked/LOD1/ScreenRight: normal mismatch,outside bezel,plane separation", "swift_husked/LOD2/ScreenLeft: normal mismatch,outside bezel,plane separation", "swift_husked/LOD2/ScreenCenter: normal mismatch,outside bezel,plane separation", "swift_husked/LOD2/ScreenRight: normal mismatch,outside bezel,plane separation"]}
+  Attempt 18-fit-display-markers
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/fit_markers.py
+  Exit 0; reason None; wall 1.78 s; peak group RSS 361504 KiB; child group empty True
+  Preflight free+inactive 14687633408 bytes; disk free 61664174080 bytes; process RSS total 26768544 KiB.
+  Attempt 19-display-fit-green
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/display_fit.py
+  Exit 1; reason None; wall 1.19 s; peak group RSS 214512 KiB; child group empty True
+  Preflight free+inactive 14658895872 bytes; disk free 61745229824 bytes; process RSS total 29536960 KiB.
+  Last 20 failure/cancellation log lines:
+    00:00.389  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend"
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    {"status": "FAIL", "failures": ["swift/LOD0/ScreenLeft: normal mismatch,plane separation", "swift/LOD0/ScreenRight: normal mismatch,plane separation", "swift/LOD1/ScreenLeft: normal mismatch,plane separation", "swift/LOD1/ScreenRight: normal mismatch,plane separation", "swift/LOD2/ScreenLeft: normal mismatch,plane separation", "swift/LOD2/ScreenRight: normal mismatch,plane separation", "swift_damaged/LOD0/ScreenLeft: normal mismatch,plane separation", "swift_damaged/LOD0/ScreenRight: normal mismatch,plane separation", "swift_damaged/LOD1/ScreenLeft: normal mismatch,plane separation", "swift_damaged/LOD1/ScreenRight: normal mismatch,plane separation", "swift_damaged/LOD2/ScreenLeft: normal mismatch,plane separation", "swift_damaged/LOD2/ScreenRight: normal mismatch,plane separation", "swift_husked/LOD0/ScreenLeft: normal mismatch,plane separation", "swift_husked/LOD0/ScreenRight: normal mismatch,plane separation", "swift_husked/LOD1/ScreenLeft: normal mismatch,plane separation", "swift_husked/LOD1/ScreenRight: normal mismatch,plane separation", "swift_husked/LOD2/ScreenLeft: normal mismatch,plane separation", "swift_husked/LOD2/ScreenRight: normal mismatch,plane separation"]}
+  Attempt 20-stock-export-fitted
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/export_saved.py
+  Exit 1; reason cancelled signal 15; wall 26.0 s; peak group RSS 4832256 KiB; child group empty True
+  Preflight free+inactive 15452372992 bytes; disk free 61899100160 bytes; process RSS total 27925936 KiB.
+  Last 20 failure/cancellation log lines:
+    
+    export assets/blend/hulls/swift.blend -> assets/renders/hulls/swift-round4-current/20-stock-export-fitted/models/hulls/swift.glb
+    00:00.585  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend"
+    PASS  assets/blend/hulls/swift.blend
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+  Attempt 21-face-display-insets
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/face_display_insets.py
+  Exit 0; reason None; wall 1.71 s; peak group RSS 210720 KiB; child group empty True
+  Preflight free+inactive 14332428288 bytes; disk free 61337489408 bytes; process RSS total 27038848 KiB.
+  Attempt 22-display-fit-green
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/display_fit.py
+  Exit 0; reason None; wall 1.21 s; peak group RSS 224848 KiB; child group empty True
+  Preflight free+inactive 14336278528 bytes; disk free 61311696896 bytes; process RSS total 27323840 KiB.
+  Attempt 23-stock-export
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/export_saved.py
+  Exit 1; reason FileNotFoundError(2, 'No such file or directory'); wall 943.17 s; peak group RSS 9296496 KiB; child group empty True
+  Preflight free+inactive 15407267840 bytes; disk free 61000450048 bytes; process RSS total 31074352 KiB.
+  Last 20 failure/cancellation log lines:
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+        baked SwiftDmg_Accent.001: base colour, roughness, normal, emissive, AO at 4096 px over 1 mesh(es)
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+        baked SwiftDmg_Glass.001: roughness, normal at 4096 px over 2 mesh(es)
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+  Attempt 24-monitor-race-proof
+  Command: python3 packages/tools/blender/hulls/swift-round4/check_monitor.py
+  Exit 0; reason None; wall 0.74 s; peak group RSS 1552 KiB; child group empty True
+  Preflight free+inactive 15568322560 bytes; disk free 56764448768 bytes; process RSS total 29618816 KiB.
+  Attempt 25-packed-buffer-proof
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/check_packed_release.py
+  Exit 0; reason None; wall 3.44 s; peak group RSS 670512 KiB; child group empty True
+  Preflight free+inactive 16447504384 bytes; disk free 56759668736 bytes; process RSS total 28989168 KiB.
+  Attempt 26-cancellation-monitor-proof
+  Command: /opt/homebrew/opt/python@3.14/bin/python3.14 -c 'import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'"'"'-c'"'"','"'"'import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(120)'"'"']); print('"'"'grandchild started'"'"',flush=True); time.sleep(120)'
+  Exit 1; reason cancelled signal 15; wall 5.9 s; peak group RSS 31056 KiB; child group empty True
+  Preflight free+inactive 15880290304 bytes; disk free 57761583104 bytes; process RSS total 29096736 KiB.
+  Last 20 failure/cancellation log lines:
+    grandchild started
+  Attempt 29-cancellation-guardian-proof
+  Command: /opt/homebrew/opt/python@3.14/bin/python3.14 -c 'import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'"'"'-c'"'"','"'"'import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(120)'"'"']); print('"'"'grandchild started'"'"',flush=True); time.sleep(120)'
+  Exit 1; reason cancelled signal 15; wall 5.96 s; peak group RSS 30544 KiB; child group empty True
+  Preflight free+inactive 20520452096 bytes; disk free 47357702144 bytes; process RSS total 38334240 KiB.
+  Last 20 failure/cancellation log lines:
+    grandchild started
+  Attempt 30-current-source-audit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/audit_source.py
+  Exit 0; reason None; wall 2.32 s; peak group RSS 418464 KiB; child group empty True
+  Preflight free+inactive 20638990336 bytes; disk free 47356600320 bytes; process RSS total 38427408 KiB.
+  Attempt 31-current-display-fit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/display_fit.py
+  Exit 0; reason None; wall 1.23 s; peak group RSS 333184 KiB; child group empty True
+  Preflight free+inactive 20841103360 bytes; disk free 47330451456 bytes; process RSS total 38162416 KiB.
+  Attempt 32-recovery-packet-proof
+  Command: python3 packages/tools/blender/hulls/swift-round4/provenance.py
+  Exit 0; reason None; wall 0.71 s; peak group RSS 128 KiB; child group empty True
+  Preflight free+inactive 19068747776 bytes; disk free 47226281984 bytes; process RSS total 41095776 KiB.
+  Attempt 33-current-stock-export
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/export_saved.py
+  Exit 1; reason None; wall 1771.78 s; peak group RSS 8394704 KiB; child group empty True
+  Preflight free+inactive 18541592576 bytes; disk free 47245017088 bytes; process RSS total 41267264 KiB.
+  Last 20 failure/cancellation log lines:
+    01:46:49 | WARNING: Mesh GearRight_leg.003 is not valid, and may be exported wrongly
+    01:46:49 | INFO: Extracting primitive: GearRight_leg.003
+    01:46:49 | INFO: Primitives created: 1
+    01:46:49 | INFO: Finished glTF 2.0 export in 12.577626943588257 s
+    
+      73.0 MB with PNG textures; encoding KTX2 (1 at a time)
+      compressed 59 texture(s) to KTX2 (17 UASTC, 42 ETC1S): 72.8 -> 32.6 MB of buffers
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/artlib/export.py", line 75, in main
+        ok = export_one(rules, family, src, out, args)
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/artlib/export.py", line 128, in export_one
+        meshopt.compress(raw, tmp, meshopt.settings(rules, family))
+        ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/artlib/meshopt.py", line 60, in compress
+        raise MeshoptError(f"meshopt.ts failed ({p.returncode}): " + " | ".join(tail))
+    artlib.meshopt.MeshoptError: meshopt.ts failed (1):   syscall: 'listen', |   address: '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/33-current-stock-export/scratch/tsx-501/12541.pipe', |   port: -1 | } |  | Node.js v26.12.1
+      exporting swift.blend crashed
+    
+    export hulls: 0 of 1 source(s) exported
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+  Attempt 34-short-temp-path-proof
+  Command: python3 packages/tools/blender/hulls/swift-round4/check_tmp_path.py
+  Exit 0; reason None; wall 0.78 s; peak group RSS 1120 KiB; child group empty True
+  Preflight free+inactive 20432289792 bytes; disk free 35641511936 bytes; process RSS total 42593008 KiB.
+  Attempt 36-source-mesh-repair-probe
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/identity.py -- --probe-source
+  Exit 1; reason None; wall 9.28 s; peak group RSS 982096 KiB; child group empty True
+  Preflight free+inactive 20894072832 bytes; disk free 36739325952 bytes; process RSS total 41826512 KiB.
+  Last 20 failure/cancellation log lines:
+    00:00.431  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend"
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    {"status": "FAIL", "repairWarnings": 19, "changedSurfaces": ["CockpitInteriorMesh_R4L1", "CockpitInteriorMesh_R4L2", "Body_R4L3", "GearFront_leg_R4L3", "GearLeft_leg_R4L3", "GearRight_leg_R4L3", "Body_dmg_R4L3", "GearFront_leg_dmg_R4L3", "GearLeft_leg_dmg_R4L3", "GearRight_leg_dmg_R4L3", "CockpitInteriorMesh_dmg_R4L2", "CockpitInteriorMesh_dmg_R4L1", "Body_husk_R4L3", "GearFront_leg_husk_R4L3", "GearLeft_leg_husk_R4L3", "GearRight_leg_husk_R4L3", "Body_husk_R4L2", "CockpitInteriorMesh_husk_R4L2", "CockpitInteriorMesh_husk_R4L1"]}
+  Attempt 37-source-repair-detail
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/mesh_validation_detail.py
+  Exit 1; reason None; wall 14.28 s; peak group RSS 770832 KiB; child group empty True
+  Preflight free+inactive 19014287360 bytes; disk free 36673761280 bytes; process RSS total 45647872 KiB.
+  Last 20 failure/cancellation log lines:
+    00:13.430  geom.mesh        | ERROR Face 48 is a duplicate of 43
+    00:13.430  geom.mesh        | ERROR Face 64 is a duplicate of 28
+    00:13.430  geom.mesh        | ERROR Face 66 is a duplicate of 59
+    00:13.430  geom.mesh        | ERROR Face 70 is a duplicate of 62
+    00:13.430  geom.mesh        | ERROR Face 72 is a duplicate of 63
+    00:13.430  geom.mesh        | ERROR Face 74 is a duplicate of 36
+    00:13.430  geom.mesh        | ERROR Face 76 is a duplicate of 65
+    00:13.481  geom.mesh        | ERROR Face 24 is a duplicate of 23
+    00:13.481  geom.mesh        | ERROR Face 26 is a duplicate of 24
+    00:13.481  geom.mesh        | ERROR Face 32 is a duplicate of 29
+    00:13.481  geom.mesh        | ERROR Face 36 is a duplicate of 32
+    00:13.481  geom.mesh        | ERROR Face 48 is a duplicate of 43
+    00:13.481  geom.mesh        | ERROR Face 64 is a duplicate of 28
+    00:13.481  geom.mesh        | ERROR Face 66 is a duplicate of 59
+    00:13.481  geom.mesh        | ERROR Face 70 is a duplicate of 62
+    00:13.481  geom.mesh        | ERROR Face 72 is a duplicate of 63
+    00:13.481  geom.mesh        | ERROR Face 74 is a duplicate of 36
+    00:13.481  geom.mesh        | ERROR Face 76 is a duplicate of 65
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    {"status": "FAIL", "meshes": [{"object": "Body_dmg_R4L3", "countsBefore": {"vertices": 2588, "edges": 2294, "polygons": 1069, "triangles": 1069}, "countsAfter": {"vertices": 2588, "edges": 2294, "polygons": 743, "triangles": 743}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "Body_husk_R4L2", "countsBefore": {"vertices": 8629, "edges": 17611, "polygons": 10934, "triangles": 10934}, "countsAfter": {"vertices": 8629, "edges": 17611, "polygons": 10918, "triangles": 10918}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "Body_husk_R4L3", "countsBefore": {"vertices": 3355, "edges": 2870, "polygons": 1467, "triangles": 1467}, "countsAfter": {"vertices": 3355, "edges": 2870, "polygons": 931, "triangles": 931}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "Body_R4L3", "countsBefore": {"vertices": 2383, "edges": 2465, "polygons": 1092, "triangles": 1092}, "countsAfter": {"vertices": 2383, "edges": 2465, "polygons": 826, "triangles": 826}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "CockpitInteriorMesh_dmg_R4L1", "countsBefore": {"vertices": 2561, "edges": 5411, "polygons": 3099, "triangles": 3099}, "countsAfter": {"vertices": 2561, "edges": 5411, "polygons": 3075, "triangles": 3075}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "CockpitInteriorMesh_dmg_R4L2", "countsBefore": {"vertices": 1646, "edges": 2945, "polygons": 1548, "triangles": 1548}, "countsAfter": {"vertices": 1646, "edges": 2945, "polygons": 1514, "triangles": 1514}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "CockpitInteriorMesh_husk_R4L1", "countsBefore": {"vertices": 2561, "edges": 5411, "polygons": 3099, "triangles": 3099}, "countsAfter": {"vertices": 2561, "edges": 5411, "polygons": 3075, "triangles": 3075}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "CockpitInteriorMesh_husk_R4L2", "countsBefore": {"vertices": 1646, "edges": 2945, "polygons": 1548, "triangles": 1548}, "countsAfter": {"vertices": 1646, "edges": 2945, "polygons": 1514, "triangles": 1514}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "CockpitInteriorMesh_R4L1", "countsBefore": {"vertices": 2561, "edges": 5411, "polygons": 3099, "triangles": 3099}, "countsAfter": {"vertices": 2561, "edges": 5411, "polygons": 3075, "triangles": 3075}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "CockpitInteriorMesh_R4L2", "countsBefore": {"vertices": 1646, "edges": 2945, "polygons": 1548, "triangles": 1548}, "countsAfter": {"vertices": 1646, "edges": 2945, "polygons": 1514, "triangles": 1514}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearFront_leg_dmg_R4L3", "countsBefore": {"vertices": 97, "edges": 149, "polygons": 78, "triangles": 78}, "countsAfter": {"vertices": 97, "edges": 149, "polygons": 67, "triangles": 67}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearFront_leg_husk_R4L3", "countsBefore": {"vertices": 97, "edges": 149, "polygons": 78, "triangles": 78}, "countsAfter": {"vertices": 97, "edges": 149, "polygons": 67, "triangles": 67}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearFront_leg_R4L3", "countsBefore": {"vertices": 97, "edges": 149, "polygons": 78, "triangles": 78}, "countsAfter": {"vertices": 97, "edges": 149, "polygons": 67, "triangles": 67}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearLeft_leg_dmg_R4L3", "countsBefore": {"vertices": 96, "edges": 148, "polygons": 78, "triangles": 78}, "countsAfter": {"vertices": 96, "edges": 148, "polygons": 67, "triangles": 67}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearLeft_leg_husk_R4L3", "countsBefore": {"vertices": 96, "edges": 148, "polygons": 78, "triangles": 78}, "countsAfter": {"vertices": 96, "edges": 148, "polygons": 67, "triangles": 67}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearLeft_leg_R4L3", "countsBefore": {"vertices": 96, "edges": 148, "polygons": 78, "triangles": 78}, "countsAfter": {"vertices": 96, "edges": 148, "polygons": 67, "triangles": 67}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearRight_leg_dmg_R4L3", "countsBefore": {"vertices": 96, "edges": 147, "polygons": 77, "triangles": 77}, "countsAfter": {"vertices": 96, "edges": 147, "polygons": 66, "triangles": 66}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearRight_leg_husk_R4L3", "countsBefore": {"vertices": 96, "edges": 147, "polygons": 77, "triangles": 77}, "countsAfter": {"vertices": 96, "edges": 147, "polygons": 66, "triangles": 66}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}, {"object": "GearRight_leg_R4L3", "countsBefore": {"vertices": 96, "edges": 147, "polygons": 77, "triangles": 77}, "countsAfter": {"vertices": 96, "edges": 147, "polygons": 66, "triangles": 66}, "geometryUnchanged": false, "cornersNormalsAllUVsUnchanged": false}]}
+  Attempt 38-author-valid-lods
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/clean_lod_duplicates.py
+  Exit 0; reason None; wall 3.47 s; peak group RSS 415536 KiB; child group empty True
+  Preflight free+inactive 18197233664 bytes; disk free 39746125824 bytes; process RSS total 47147856 KiB.
+  Attempt 39-valid-source-audit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/audit_source.py
+  Exit 0; reason None; wall 2.94 s; peak group RSS 437056 KiB; child group empty True
+  Preflight free+inactive 16656515072 bytes; disk free 38631309312 bytes; process RSS total 50947840 KiB.
+  Attempt 40-valid-source-display-fit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/display_fit.py
+  Exit 0; reason None; wall 1.3 s; peak group RSS 248096 KiB; child group empty True
+  Preflight free+inactive 17375887360 bytes; disk free 53045788672 bytes; process RSS total 46984688 KiB.
+  Attempt 41-valid-source-stock-export
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/export_saved.py
+  Exit 1; reason None; wall 1730.92 s; peak group RSS 8245648 KiB; child group empty True
+  Preflight free+inactive 19235340288 bytes; disk free 59334045696 bytes; process RSS total 46819680 KiB.
+  Last 20 failure/cancellation log lines:
+    02:30:12 | INFO: Blender create Mesh node Lens_StrobeTop
+    02:30:12 | INFO: Blender create Mesh node Body
+    02:30:12 | INFO: Blender create Mesh node CanopyGlass
+    02:30:12 | INFO: Blender create Mesh node CockpitInteriorMesh
+    02:30:12 | INFO: Blender create Mesh node CockpitStick_grip
+    02:30:12 | INFO: Blender create Mesh node CockpitThrottle_lever
+    02:30:12 | INFO: Blender create Mesh node GearFront_leg
+    02:30:12 | INFO: Blender create Mesh node GearLeft_leg
+    02:30:12 | INFO: Blender create Mesh node GearRight_leg
+    02:30:12 | INFO: Blender create Mesh node Body
+    02:30:12 | INFO: Blender create Mesh node CanopyGlass
+    02:30:12 | INFO: Blender create Mesh node GearFront_leg
+    02:30:12 | INFO: Blender create Mesh node GearLeft_leg
+    02:30:12 | INFO: Blender create Mesh node GearRight_leg
+    02:30:12 | INFO: glTF import finished in 0.56s
+    FAIL  assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/models/hulls/swift.glb  (5 failures)
+      the export of swift.blend failed validation: nothing written to the models (inspect assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/validation/hulls__swift.glb.rejected.glb)
+    
+    export hulls: 0 of 1 source(s) exported
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+  Stock validation failures from assets/renders/hulls/swift-round4-current/41-valid-source-stock-export/validation/hulls__swift.glb.json:
+    Dark: normal map swift_damaged_Dark_normal is uniform under the surface's UVs (std 0.0025 < 0.0039): paint or bake real detail
+    Dark: normal map swift_husked_Dark_normal is uniform under the surface's UVs (std 0.0033 < 0.0039): paint or bake real detail
+    Dark: normal map swift_Dark_normal is uniform under the surface's UVs (std 0.0024 < 0.0039): paint or bake real detail
+    SwiftDmg_Crystal: normal map swift_damaged_SwiftDmg_Crystal_normal is uniform under the surface's UVs (std 0.0003 < 0.0039): paint or bake real detail
+    Swift_Crystal: normal map swift_Swift_Crystal_normal is uniform under the surface's UVs (std 0.0002 < 0.0039): paint or bake real detail
+  Attempt 42-author-normal-finish
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/finish_normals.py
+  Exit 1; reason None; wall 37.39 s; peak group RSS 4276416 KiB; child group empty True
+  Preflight free+inactive 25875546112 bytes; disk free 40038625280 bytes; process RSS total 43861504 KiB.
+  Last 20 failure/cancellation log lines:
+    00:00.802  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend"
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+        baked Swift_Crystal: normal at 4096 px over 1 mesh(es)
+    {"variant": "swift", "material": "Swift_Crystal", "engineName": "Swift_Crystal", "resolution": [4096, 4096], "rawStdUnderActualUVs": 0.003685540985316038, "decodedUASTCStdUnderActualUVs": 0.0036083334125578403, "stockThreshold": 0.00392156862745098, "encodeCommand": ["/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/ktx_cpu.py", "create", "--format", "R8G8B8_UNORM", "--assign-tf", "linear", "--generate-mipmap", "--threads", "2", "--encode", "uastc", "--uastc-quality", "2", "--uastc-rdo", "--uastc-rdo-l", "4.0", "--zstd", "18", "--normalize", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/42-author-normal-finish/scratch/swift_Swift_Crystal.png", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/42-author-normal-finish/scratch/swift_Swift_Crystal.ktx2"], "temporaryMapHashes": {"swift_Swift_Crystal.png": {"sha256": "1951804896cdb4582756cdac1d62877e8d60b7ace7df23c8a3cd366d8ed63da4", "bytes": 1047240}, "swift_Swift_Crystal.ktx2": {"sha256": "6ac7cecefd9e8283b70e66d5b2c84b63a9a0a4ea77ff85ad1fa690fba1e7b1fc", "bytes": 385775}, "swift_Swift_Crystal_decoded.png": {"sha256": "53aa20df123defb1f7cf0785d4bbaed9305c39bed139f68f95cc9dab73f79f0a", "bytes": 347136}}}
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/finish_normals.py", line 34, in <module>
+        assert raw_std>=M.UNIFORM_STD*1.5 and decoded_std>=M.UNIFORM_STD*1.5,'normal detail has insufficient margin'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    AssertionError: normal detail has insufficient margin
+    
+    Error: script failed, file: 'packages/tools/blender/hulls/swift-round4/finish_normals.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    
+    Blender quit
+  Attempt 43-author-normal-finish
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/finish_normals.py
+  Exit 0; reason None; wall 247.54 s; peak group RSS 5307712 KiB; child group empty True
+  Preflight free+inactive 23969103872 bytes; disk free 39778324480 bytes; process RSS total 42724176 KiB.
+  Attempt 44-normal-finished-source-audit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/audit_source.py
+  Exit 0; reason None; wall 2.33 s; peak group RSS 442144 KiB; child group empty True
+  Preflight free+inactive 29264592896 bytes; disk free 36657631232 bytes; process RSS total 37693520 KiB.
+  Attempt 45-normal-finished-display-fit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/display_fit.py
+  Exit 0; reason None; wall 1.27 s; peak group RSS 344960 KiB; child group empty True
+  Preflight free+inactive 27460370432 bytes; disk free 36403183616 bytes; process RSS total 40642976 KiB.
+  Attempt 46-source-cockpit-finished
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift cockpit-top 0 ixari
+  Exit 0; reason None; wall 78.65 s; peak group RSS 2576464 KiB; child group empty True
+  Preflight free+inactive 27599142912 bytes; disk free 36401471488 bytes; process RSS total 40147536 KiB.
+  Attempt 47-normal-finished-stock-export
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/export_saved.py
+  Exit 1; reason RSS limit; wall 1058.85 s; peak group RSS 10480112 KiB; child group empty True
+  Preflight free+inactive 24199479296 bytes; disk free 35550740480 bytes; process RSS total 44841008 KiB.
+  Last 20 failure/cancellation log lines:
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Extracting primitive: GearFront_leg.002
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Extracting primitive: GearLeft_leg.002
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Extracting primitive: GearRight_leg.002
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Extracting primitive: Body.003
+    03:01:53 | INFO: Primitives created: 6
+    03:01:53 | INFO: Extracting primitive: CanopyGlass.003
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Extracting primitive: GearFront_leg.003
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Extracting primitive: GearLeft_leg.003
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Extracting primitive: GearRight_leg.003
+    03:01:53 | INFO: Primitives created: 1
+    03:01:53 | INFO: Finished glTF 2.0 export in 11.930383920669556 s
+    
+      80.6 MB with PNG textures; encoding KTX2 (1 at a time)
+  Attempt 48-split-compression
+  Command: python3 packages/tools/blender/hulls/swift-round4/finish_export.py compress 47-normal-finished-stock-export
+  Exit 0; reason None; wall 511.73 s; peak group RSS 2055040 KiB; child group empty True
+  Preflight free+inactive 24442765312 bytes; disk free 37522587648 bytes; process RSS total 46256416 KiB.
+  Attempt 49-split-stock-validation
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/finish_export.py -- validate 48-split-compression
+  Exit 0; reason None; wall 35.86 s; peak group RSS 4899696 KiB; child group empty True
+  Preflight free+inactive 28903473152 bytes; disk free 33846214656 bytes; process RSS total 42104096 KiB.
+  Attempt 50-decoded-source-export-identity
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/identity.py -- assets/renders/hulls/swift-round4-current/49-split-stock-validation/models/hulls/swift.glb
+  Exit 1; reason None; wall 21.04 s; peak group RSS 1306144 KiB; child group empty True
+  Preflight free+inactive 30956322816 bytes; disk free 33644630016 bytes; process RSS total 39453376 KiB.
+  Last 20 failure/cancellation log lines:
+    03:18:00 | INFO: Blender create Mesh node GearRight_leg
+    03:18:00 | INFO: Blender create Mesh node Lens_NavPort
+    03:18:00 | INFO: Blender create Mesh node Lens_NavStarboard
+    03:18:00 | INFO: Blender create Mesh node Lens_StrobeTop
+    03:18:00 | INFO: Blender create Mesh node Body
+    03:18:00 | INFO: Blender create Mesh node CanopyGlass
+    03:18:00 | INFO: Blender create Mesh node CockpitInteriorMesh
+    03:18:00 | INFO: Blender create Mesh node CockpitStick_grip
+    03:18:00 | INFO: Blender create Mesh node CockpitThrottle_lever
+    03:18:00 | INFO: Blender create Mesh node GearFront_leg
+    03:18:00 | INFO: Blender create Mesh node GearLeft_leg
+    03:18:00 | INFO: Blender create Mesh node GearRight_leg
+    03:18:00 | INFO: Blender create Mesh node Body
+    03:18:00 | INFO: Blender create Mesh node CanopyGlass
+    03:18:00 | INFO: Blender create Mesh node GearFront_leg
+    03:18:00 | INFO: Blender create Mesh node GearLeft_leg
+    03:18:00 | INFO: Blender create Mesh node GearRight_leg
+    03:18:00 | INFO: glTF import finished in 0.55s
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    {"status": "FAIL", "failures": ["swift/LOD0/Trim surface mismatch", "swift/LOD0/Hull surface mismatch", "swift/LOD0/Swift_Crystal surface mismatch", "swift/LOD0/Accent surface mismatch", "swift/LOD0/Dark surface mismatch", "swift/LOD1/Trim surface mismatch", "swift/LOD1/Hull surface mismatch", "swift/LOD1/Swift_Crystal surface mismatch", "swift/LOD1/Accent surface mismatch", "swift/LOD1/Dark surface mismatch", "swift/LOD2/Trim surface mismatch", "swift/LOD3/Dark surface mismatch", "swift_damaged/LOD1/Trim surface mismatch", "swift_damaged/LOD1/Hull surface mismatch", "swift_damaged/LOD1/SwiftDmg_Crystal surface mismatch", "swift_damaged/LOD1/Dark surface mismatch", "swift_damaged/LOD1/Accent surface mismatch", "swift_damaged/LOD0/Trim surface mismatch", "swift_damaged/LOD0/Hull surface mismatch", "swift_damaged/LOD0/SwiftDmg_Crystal surface mismatch", "swift_damaged/LOD0/Dark surface mismatch", "swift_damaged/LOD0/Accent surface mismatch", "swift_husked/LOD2/Dark surface mismatch", "swift_husked/LOD1/Trim surface mismatch", "swift_husked/LOD1/Hull surface mismatch", "swift_husked/LOD1/SwiftHusk_Crystal surface mismatch", "swift_husked/LOD1/Dark surface mismatch", "swift_husked/LOD1/Accent surface mismatch", "swift_husked/LOD0/Trim surface mismatch", "swift_husked/LOD0/Hull surface mismatch", "swift_husked/LOD0/SwiftHusk_Crystal surface mismatch", "swift_husked/LOD0/Dark surface mismatch", "swift_husked/LOD0/Accent surface mismatch"], "surfaces": 127}
+  Attempt 51-compress-precision16
+  Command: python3 packages/tools/blender/hulls/swift-round4/refine_compression.py 16
+  Exit 0; reason None; wall 1.3 s; peak group RSS 424640 KiB; child group empty True
+  Preflight free+inactive 29053911040 bytes; disk free 33534136320 bytes; process RSS total 40824080 KiB.
+  Attempt 52-precision16-identity
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/identity.py -- assets/renders/hulls/swift-round4-current/51-compress-precision16/swift.glb
+  Exit 1; reason None; wall 22.33 s; peak group RSS 1286704 KiB; child group empty True
+  Preflight free+inactive 30088478720 bytes; disk free 33476546560 bytes; process RSS total 39976912 KiB.
+  Last 20 failure/cancellation log lines:
+    03:19:46 | INFO: Blender create Mesh node GearRight_leg
+    03:19:46 | INFO: Blender create Mesh node Lens_NavPort
+    03:19:46 | INFO: Blender create Mesh node Lens_NavStarboard
+    03:19:46 | INFO: Blender create Mesh node Lens_StrobeTop
+    03:19:46 | INFO: Blender create Mesh node Body
+    03:19:46 | INFO: Blender create Mesh node CanopyGlass
+    03:19:46 | INFO: Blender create Mesh node CockpitInteriorMesh
+    03:19:46 | INFO: Blender create Mesh node CockpitStick_grip
+    03:19:46 | INFO: Blender create Mesh node CockpitThrottle_lever
+    03:19:46 | INFO: Blender create Mesh node GearFront_leg
+    03:19:46 | INFO: Blender create Mesh node GearLeft_leg
+    03:19:46 | INFO: Blender create Mesh node GearRight_leg
+    03:19:46 | INFO: Blender create Mesh node Body
+    03:19:46 | INFO: Blender create Mesh node CanopyGlass
+    03:19:46 | INFO: Blender create Mesh node GearFront_leg
+    03:19:46 | INFO: Blender create Mesh node GearLeft_leg
+    03:19:46 | INFO: Blender create Mesh node GearRight_leg
+    03:19:46 | INFO: glTF import finished in 0.54s
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    {"status": "FAIL", "failures": ["swift/LOD0/Trim surface mismatch", "swift/LOD0/Accent surface mismatch", "swift/LOD1/Trim surface mismatch", "swift/LOD1/Swift_Crystal surface mismatch", "swift_damaged/LOD1/Accent surface mismatch", "swift_damaged/LOD0/Trim surface mismatch", "swift_damaged/LOD0/Accent surface mismatch", "swift_husked/LOD1/Trim surface mismatch", "swift_husked/LOD1/SwiftHusk_Crystal surface mismatch", "swift_husked/LOD0/Trim surface mismatch", "swift_husked/LOD0/Accent surface mismatch"], "surfaces": 127}
+  Attempt 53-preserve-surface-precision
+  Command: python3 packages/tools/blender/hulls/swift-round4/refine_compression.py surface
+  Exit 1; reason None; wall 1.39 s; peak group RSS 277392 KiB; child group empty True
+  Preflight free+inactive 25908707328 bytes; disk free 32120557568 bytes; process RSS total 44559424 KiB.
+  Last 20 failure/cancellation log lines:
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/refine_compression.py", line 31, in <module>
+        result = subprocess.run(command, text=True, capture_output=True, check=True, cwd=ROOT)
+      File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+        raise CalledProcessError(retcode, process.args,
+                                 output=stdout, stderr=stderr)
+    subprocess.CalledProcessError: Command '['/Users/andreyyurlov/.local/state/fnm_multishells/14304_1794032435158/bin/node', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/node_modules/tsx/dist/cli.mjs', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/compress_precision.mjs', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/48-split-compression/encoded-stage.glb', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/swift.glb']' returned non-zero exit status 1.
+  Attempt 54-surface-precision-identity
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/identity.py -- assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/swift.glb
+  Exit 1; reason None; wall 10.53 s; peak group RSS 977136 KiB; child group empty True
+  Preflight free+inactive 29348298752 bytes; disk free 32027492352 bytes; process RSS total 41011632 KiB.
+  Last 20 failure/cancellation log lines:
+    00:00.286  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend"
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/identity.py", line 55, in <module>
+        js,data=glb.read(candidate)
+                ~~~~~~~~^^^^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/artlib/glb.py", line 14, in read
+        with open(path, "rb") as f:
+             ~~~~^^^^^^^^^^^^
+    FileNotFoundError: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/53-preserve-surface-precision/swift.glb'
+    
+    Error: script failed, file: 'packages/tools/blender/hulls/swift-round4/identity.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+    
+    Blender quit
+  Attempt 55-surface-codec-diagnostic
+  Command: python3 packages/tools/blender/hulls/swift-round4/refine_compression.py surface
+  Exit 1; reason None; wall 0.74 s; peak group RSS 240 KiB; child group empty True
+  Preflight free+inactive 29195599872 bytes; disk free 31997403136 bytes; process RSS total 42719520 KiB.
+  Last 20 failure/cancellation log lines:
+    
+    file:///Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/compress_precision.mjs:27
+      if (!json.extensionsRequired?.includes(name)) throw new Error(`missing required ${name}`);
+                                                          ^
+    
+    Error: missing required KHR_mesh_quantization
+        at file:///Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/compress_precision.mjs:27:55
+    
+    Node.js v26.12.1
+    
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/refine_compression.py", line 36, in <module>
+        result.check_returncode()
+        ~~~~~~~~~~~~~~~~~~~~~~~^^
+      File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 509, in check_returncode
+        raise CalledProcessError(self.returncode, self.args, self.stdout,
+                                 self.stderr)
+    subprocess.CalledProcessError: Command '['/Users/andreyyurlov/.local/state/fnm_multishells/14304_1794032435158/bin/node', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/node_modules/tsx/dist/cli.mjs', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/compress_precision.mjs', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/48-split-compression/encoded-stage.glb', '/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/55-surface-codec-diagnostic/swift.glb']' returned non-zero exit status 1.
+  Attempt 56-surface-precision-compression
+  Command: python3 packages/tools/blender/hulls/swift-round4/refine_compression.py surface
+  Exit 0; reason None; wall 0.73 s; peak group RSS 128 KiB; child group empty True
+  Preflight free+inactive 28026814464 bytes; disk free 32029962240 bytes; process RSS total 43749968 KiB.
+  Attempt 57-surface-precision-identity
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/identity.py -- assets/renders/hulls/swift-round4-current/56-surface-precision-compression/swift.glb
+  Exit 0; reason None; wall 22.22 s; peak group RSS 1324848 KiB; child group empty True
+  Preflight free+inactive 28862382080 bytes; disk free 31998291968 bytes; process RSS total 42435168 KiB.
+  Attempt 58-final-stock-validation
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/finish_export.py -- validate 56-surface-precision-compression
+  Exit 0; reason None; wall 35.41 s; peak group RSS 5006672 KiB; child group empty True
+  Preflight free+inactive 26457751552 bytes; disk free 31875182592 bytes; process RSS total 44220816 KiB.
+  Attempt 59-final-cpu-sheets
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/cpu_sheets.py -- assets/renders/hulls/swift-round4-current/58-final-stock-validation/models/hulls/swift.glb assets/renders/hulls/swift-round4-current/59-final-cpu-sheets --asset swift --samples 12 --scale 0.6 --manifest assets/renders/hulls/swift-round4-current/59-final-cpu-sheets/manifest.json
+  Exit 0; reason None; wall 105.45 s; peak group RSS 3231536 KiB; child group empty True
+  Preflight free+inactive 26801782784 bytes; disk free 31734714368 bytes; process RSS total 44209136 KiB.
+  Attempt 60-export-cockpit-pilot
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift cockpit-pilot 0 ixari assets/renders/hulls/swift-round4-current/58-final-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 44.81 s; peak group RSS 3611264 KiB; child group empty True
+  Preflight free+inactive 31101075456 bytes; disk free 31545827328 bytes; process RSS total 39026656 KiB.
+  Attempt 61-export-rear-lod0
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift rear 0 ixari assets/renders/hulls/swift-round4-current/58-final-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 38.35 s; peak group RSS 3634112 KiB; child group empty True
+  Preflight free+inactive 30006968320 bytes; disk free 31421325312 bytes; process RSS total 40709744 KiB.
+  Attempt 62-export-rear-lod2
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift rear 2 ixari assets/renders/hulls/swift-round4-current/58-final-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 38.23 s; peak group RSS 3613888 KiB; child group empty True
+  Preflight free+inactive 29715546112 bytes; disk free 31380762624 bytes; process RSS total 40685024 KiB.
+  Attempt 63-export-gear-lod0
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift gear 0 ixari assets/renders/hulls/swift-round4-current/58-final-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 37.26 s; peak group RSS 3703776 KiB; child group empty True
+  Preflight free+inactive 29922426880 bytes; disk free 31359238144 bytes; process RSS total 39779792 KiB.
+  Attempt 64-parent-transform-probe
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/probe_parent_transforms.py
+  Exit 0; reason None; wall 1.3 s; peak group RSS 251056 KiB; child group empty True
+  Preflight free+inactive 26547306496 bytes; disk free 31197331456 bytes; process RSS total 43965152 KiB.
+  Attempt 65-fix-source-canopy-parents
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/fix_canopy_parents.py
+  Exit 0; reason None; wall 10.54 s; peak group RSS 736336 KiB; child group empty True
+  Preflight free+inactive 28184625152 bytes; disk free 30999633920 bytes; process RSS total 43665120 KiB.
+  Attempt 66-final-source-world-audit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/audit_source.py
+  Exit 0; reason None; wall 2.89 s; peak group RSS 450912 KiB; child group empty True
+  Preflight free+inactive 27975483392 bytes; disk free 30926237696 bytes; process RSS total 43267920 KiB.
+  Attempt 67-final-display-fit
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/display_fit.py
+  Exit 0; reason None; wall 3.1 s; peak group RSS 393472 KiB; child group empty True
+  Preflight free+inactive 21373845504 bytes; disk free 30918959104 bytes; process RSS total 56275536 KiB.
+  Attempt 68-corrected-source-serialization
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/serialize_saved.py
+  Exit 0; reason None; wall 1052.71 s; peak group RSS 9416960 KiB; child group empty True
+  Preflight free+inactive 26049806336 bytes; disk free 31098613760 bytes; process RSS total 42106400 KiB.
+  Attempt 69-corrected-export-compression
+  Command: python3 packages/tools/blender/hulls/swift-round4/finish_export.py compress-cache 68-corrected-source-serialization
+  Exit 0; reason None; wall 1.28 s; peak group RSS 618176 KiB; child group empty True
+  Preflight free+inactive 30554800128 bytes; disk free 29708402688 bytes; process RSS total 36869328 KiB.
+  Attempt 70-corrected-stock-validation
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/finish_export.py -- validate 69-corrected-export-compression
+  Exit 0; reason None; wall 32.82 s; peak group RSS 4906224 KiB; child group empty True
+  Preflight free+inactive 30037934080 bytes; disk free 29737930752 bytes; process RSS total 37520032 KiB.
+  Attempt 71-corrected-source-export-identity
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/identity.py -- assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 20.02 s; peak group RSS 1256160 KiB; child group empty True
+  Preflight free+inactive 29125820416 bytes; disk free 35899711488 bytes; process RSS total 38174576 KiB.
+  Attempt 72-current-rear-lod0
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift rear 0 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 37.24 s; peak group RSS 3650080 KiB; child group empty True
+  Preflight free+inactive 27760361472 bytes; disk free 35861250048 bytes; process RSS total 39081760 KiB.
+  Attempt 73-parent-resource-hold
+  Command: python3 packages/tools/blender/hulls/swift-round4/record_hold.py
+  Exit 0; reason None; wall 0.74 s; peak group RSS 144 KiB; child group empty True
+  Preflight free+inactive 30000316416 bytes; disk free 35599314944 bytes; process RSS total 40320512 KiB.
+  Attempt 74-current-rear-lod2
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift rear 2 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 36.61 s; peak group RSS 3476960 KiB; child group empty True
+  Preflight free+inactive 29465608192 bytes; disk free 27892584448 bytes; process RSS total 37951952 KiB.
+  Attempt 75-current-gear-lod0
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift gear 0 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 37.4 s; peak group RSS 3502560 KiB; child group empty True
+  Preflight free+inactive 29691576320 bytes; disk free 27836846080 bytes; process RSS total 39724208 KiB.
+  Attempt 76-current-gear-lod2
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift gear 2 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 35.67 s; peak group RSS 3613152 KiB; child group empty True
+  Preflight free+inactive 29284007936 bytes; disk free 27815989248 bytes; process RSS total 39582976 KiB.
+  Attempt 77-current-cockpit-pilot
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift cockpit-pilot 0 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 45.45 s; peak group RSS 3631600 KiB; child group empty True
+  Preflight free+inactive 28437807104 bytes; disk free 27797405696 bytes; process RSS total 40456784 KiB.
+  Attempt 78-current-cockpit-top
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift cockpit-top 0 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 43.6 s; peak group RSS 3512752 KiB; child group empty True
+  Preflight free+inactive 28458696704 bytes; disk free 27747160064 bytes; process RSS total 40162272 KiB.
+  Attempt 79-current-damage-detail
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift_damaged damage 0 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 49.83 s; peak group RSS 3769184 KiB; child group empty True
+  Preflight free+inactive 29489446912 bytes; disk free 27752443904 bytes; process RSS total 38699936 KiB.
+  Attempt 80-current-cpu-sheets
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/cpu_sheets.py -- assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb assets/renders/hulls/swift-round4-current/80-current-cpu-sheets --asset swift --samples 12 --scale 0.6 --manifest assets/renders/hulls/swift-round4-current/80-current-cpu-sheets/manifest.json
+  Exit 0; reason None; wall 97.98 s; peak group RSS 3207024 KiB; child group empty True
+  Preflight free+inactive 28344827904 bytes; disk free 27722072064 bytes; process RSS total 40213696 KiB.
+  Attempt 81-current-compact-livery
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift quarter 0 compact
+  Exit 0; reason None; wall 8.76 s; peak group RSS 2348400 KiB; child group empty True
+  Preflight free+inactive 27663581184 bytes; disk free 27699281920 bytes; process RSS total 40743664 KiB.
+  Attempt 82-current-working-livery
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift quarter 0 working
+  Exit 0; reason None; wall 8.73 s; peak group RSS 2347984 KiB; child group empty True
+  Preflight free+inactive 26836516864 bytes; disk free 26437251072 bytes; process RSS total 39457136 KiB.
+  Attempt 83-current-fracture-closeup
+  Command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/preview.py -- swift_damaged fracture 0 ixari assets/renders/hulls/swift-round4-current/70-corrected-stock-validation/models/hulls/swift.glb
+  Exit 0; reason None; wall 42.64 s; peak group RSS 3636272 KiB; child group empty True
+  Preflight free+inactive 29597745152 bytes; disk free 26337542144 bytes; process RSS total 39834720 KiB.
+  Attempt 84-promote-current
+  Command: python3 packages/tools/blender/hulls/swift-round4/promote.py 70-corrected-stock-validation 71-corrected-source-export-identity 66-final-source-world-audit 67-final-display-fit
+  Exit 0; reason None; wall 0.77 s; peak group RSS 240 KiB; child group empty True
+  Preflight free+inactive 22616686592 bytes; disk free 24623636480 bytes; process RSS total 44890608 KiB.
+  Attempt 85-final-provenance
+  Command: python3 packages/tools/blender/hulls/swift-round4/provenance.py
+  Exit 0; reason None; wall 0.71 s; peak group RSS 240 KiB; child group empty True
+  Preflight free+inactive 22410264576 bytes; disk free 24680488960 bytes; process RSS total 44225680 KiB.
+  27-stock-export-bounded interrupted command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/swift-round4/export_saved.py (lane wall 3000s; RSS 10000MiB)
+  Last 20 interrupted bake log lines:
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+    Info: Baking map saved to internal image, save it externally or pack it
+  27-stock-export-bounded: interrupted by user/harness; runner exit unavailable; guardian absent in that version; Blender group 3668 was manually SIGTERM terminated and verified empty. See interruption.json; no GLB promotion.
+  28-runner-loss-proof: python3 packages/tools/blender/hulls/swift-round4/check_guardian.py exited 0; deliberate runner SIGKILL exit -9; independent guardian terminated the ignoring command and observed empty group.
+  29-cancellation-guardian-proof: python3 packages/tools/blender/hulls/swift-round4/check_lane.py 29-cancellation-guardian-proof exited 0; repeated SIGINT/SIGTERM cleanup and competing-owner rejection passed.
+  35-runner-loss-short-path-proof: python3 packages/tools/blender/hulls/swift-round4/check_guardian.py 35-runner-loss-short-path-proof exited 0; runner deliberately killed, guardian terminated the group and removed only its owned short TMPDIR alias.
+  git diff --check: exit 0
+  All scoped Python files parsed with ast.parse: exit 0
+  Detailed numeric audits and SHA pins: see inventory.json and each immutable attempt JSON.
+  Final verification summary: {"sourceAudit": "66-final-source-world-audit/audit.json: PASS including canopy/gear world transforms", "displayFit": "67-final-display-fit/display-fit.json: PASS", "sourceSha256": "7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480", "LOD0Triangles": {"base": 68361, "damaged": 67103, "husked": 65119}, "LOD3Ratios": {"base": 0.015769225142990888, "damaged": 0.01482795106031027, "husked": 0.01816674088975568}, "preservedThroughLOD2": ["canopy vertices/faces/corner normals", "three landing gear vertices/faces/corner normals", "rear crystal tip vertices", "canopy/gear world transforms"], "zeroFindings": ["duplicate faces", "zero-area geometry", "zero-area UV triangles", "invalid corner normals", "edges with more than two faces"], "displayInstancesFitted": 27, "exportValidation": "70-corrected-stock-validation: unmodified stock source/export checks PASS, zero warnings", "sourceExportIdentity": "71-corrected-source-export-identity: PASS, 127 groups, all 12 variant/LODs, zero collapsed geometry/UV triangles, zero mesh repairs; negative control detected", "glbSha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d", "glbBytes": 24721524, "textureBudgetMB": {"base": 384.0, "damaged": 426.7, "husked": 448.0}, "encodedTextures": {"total": 59, "UASTC": 17, "ETC1S": 42, "resolution": 4096, "mipChain": "full"}, "maxSourceExportPositionErrorMeters": 0, "maxSourceExportUVError": 2.9802322387695312e-08, "maxSourceExportNormalDegrees": 0.7242514458025491, "geometryCompression": "float32 position/UV, signed-normalized-16 normals, meshopt required; KHR_mesh_quantization required", "promotion": "84-promote-current/promotion.json: exact candidate copied atomically to canonical GLB after all source pins matched", "recoveryAndR3Integrity": "85-final-provenance/provenance.json: PASS; equal pointer blobs at all three specified commits, original local LFS SHA/size and 61 R3 packet payloads unchanged", "sourceBytes": 42959316, "LODAllTriangles": {"base": [68361, 28641, 15548, 1078], "damaged": [67103, 28162, 15310, 995], "husked": [65119, 27342, 14828, 1183]}}
+  Heavy CPU lane completion: {"state": "HEAVY_CPU_WORK_COMPLETE", "observedUTC": "2026-11-07T09:51:01.778106+00:00", "lastHeavyStage": "83-current-fracture-closeup", "commandPID": 57461, "commandPGID": 57461, "guardianPID": 57462, "exit": 0, "seconds": 42.64, "childGroupEmpty": true, "liveMembers": [], "ownershipLockPresent": false, "remainingLocalWork": "Light-only report, provenance hashing and scoped Git commit; no further Blender/codec/bake/render/build/full-suite launches", "screenshotCleanup": "STOPPED; retained every finished preview and the two old interrupted internal EXR tile buffers"}
+DECISIONS:
+  Recover from history? → Verify equal Git pointer blobs at all three specified commits and SHA/size of the existing local LFS objects; hydrate only the two canonical Swift files → No fetch or old branch/debris imports; commit recovery separately before authoring.
+  Authoritative content? → Edit and save the .blend, with explicit authored LOD collections → Export entry point only consumes the saved source via stock validation/baking/export; it never imports author.py.
+  Round-3 disposition? → Treat the verbatim third verdict as REVISE → No fifth-grade waiver; parent must obtain a fresh blind grade.
+  Appearance corrections? → Contact masks around rung/grip/leading-edge/socket regions, distinct slate roughness and cloudy crystal; restore 16 displaced panels, remove 42 damaged and 46 husk floating replacement components, add 3/5 selected fracture sites → Address the specific material/destruction notes while keeping the passing hull design.
+  LOD defects? → Hold canopy and all three gear meshes exactly through LOD2, protect rear-tip vertices, retain four decreasing LODs → Verify actual vertices/faces/corner normals and decoded export, rather than chasing unattributed scene GPU timing.
+  Cockpit fit? → Author shaped seat/bolsters/head wings, harness/latch, fitted bezels, mesh labels/graphics, distinct rotary/toggle/pedal controls; fit existing ScreenLeft/Center/Right marker transforms to actual unchanged runtime plane dimensions → No Cockpit.js or runtime edits.
+  First author attempt exited 0 but failed the intended LOD3 budget → Keep 03-author/failed-source.blend and fix the inverted decimation group in 04 → A successful author process is not asset acceptance.
+  Cockpit fit checks failed in 17 and 19 (despite 19 directory name ending green) → Align marker scale/orientation and reverse side inset faces → Preserve failures and verify all 27 current LOD0/1/2 display instances.
+  Export attempts 16 and 20 cancelled when cockpit defects were found → Terminate and reap their process groups before further source edits → Never validate or promote a stale source/export pair.
+  Export 23 hit a disappearing scratch-file monitor race, not an asset/GPU failure → Preserve its failure log/receipt, make enumeration tolerate FileNotFoundError, prove the race in 24, reprove repeated-interrupt cleanup and exclusive ownership in 26 → One bounded retry at the same resource cap.
+  Export memory accumulation? → Release only reloadable decoded caches of packed maps after each stock material bake → Job25 proves exact float texels before/after release on a generated fixture and actual packed source mask; maps remain 4k and bake logic unchanged.
+  CPU preview qualification? → Use factory-started Blender, explicit CPU and two threads; strip stock turntable GPU discovery in memory without editing shared script → These images inform authoring only; they do not replace standard engine captures.
+  Failure scratch contains raw EXR tiles? → Record hashes/sizes and remove only own transient scratch after child-group-empty receipts → Preserve logs, failed source archives and visible partial artifacts without retaining raw frames.
+  Interruption orphaned Blender when the external harness killed the runner → Add an independent pipe watchdog, reproduce runner SIGKILL in 28 and repeated SIGTERM/SIGINT plus competing ownership in 29 → Command group termination/reaping now survives loss of the monitoring parent; job27 remains CANCELLED and unchanged.
+  Explicit continuation → Verify the same worktree, recovery HEAD, revised source SHA and absence of own active processes; continue from uncommitted source → No reset, rehydration, screenshot cleanup or other-checkout writes.
+  Export 33 completed baking and encoded 59 textures, then the stock tsx geometry tool failed listen EINVAL on its overlong Unix socket path → Reproduce the long-path failure and short-alias success in 34; route TMPDIR through an owned /tmp symlink to this attempt's scoped scratch → No shared tool edit; the alias is removed only after the child group is empty (normal and hard-loss proof 35).
+  Serializer reported invalid lower-LOD meshes → Disposable-copy probes 36/37 showed duplicate faces from decimation, not merely unused vertices → Remove duplicates in the saved source in 38, preserving unique triangle coverage and every LOD0 mesh; add duplicate-face/UV failure checks to the audit and validate authored LODs before saving. This is topology/source-export correctness, not performance-driven simplification.
+  Stock exporter deletes its temporary encoded file on later failure → Preserve the completed encoded stage in the fresh attempt before geometry compression → Label it INTERMEDIATE_NOT_VALIDATED; never import it into the source or promote it as canonical.
+  Export 41 passed geometry, compression and per-variant texture budgets but failed five uniform-normal checks → Author fine stone grain and crystal growth etching in those source materials, then bake and pack 4k normal maps while retaining their editable procedural nodes → Test actual surface UVs after stock UASTC before another full export; never waive the validator.
+  First targeted crystal normal in 42 remained below threshold; canonical source was not saved → Increase fine-etch depth/strength and repeat the bounded five-map authoring pass in 43 → All five compressed surface-UV deviations passed with margin (0.00967–0.01268 against 0.00392); geometry unchanged.
+  Monolithic export 47 reached the same 10000 MiB RSS cap when KTX overlapped retained Blender memory, after completing all source bakes and serialization → Preserve its receipt and exact SHA-pinned raw stage, terminate/reap, then split stock compression and stock validation into fresh bounded processes → No cap increase, source regeneration, rejected asset import, or repeated full bake.
+  Actual decoded comparison 50 rejected the stock-default candidate despite stock PASS: position quantization collapsed tiny bevels, UV quantization collapsed narrow islands, and some corner normals diverged → Check a bounded 16-bit candidate in 51/52; preserve its remaining failures → Do not relax identity tolerances or alter source geometry to fit the codec.
+  Precision resolution → Keep authored float32 positions/UVs, quantize normals/tangents at 16 bits, and use stock lossless meshopt stream compression → Both KHR_mesh_quantization and EXT_meshopt_compression remain genuinely required; no shared family/tool edit. Candidate 56 has 24,721,000 bytes and passes the unchanged identity gate in 57 across 127 surface groups and all 12 variant/LOD combinations.
+  Normal-only quantization library omission → glTF-Transform 4.5.1 isQuantizedPrimitive reads POSITION for each semantic, missing quantized NORMALs; explicitly declare their required extension and assert actual signed-short normal accessors → 53 and diagnostic55 retain failures; 54 was an erroneously started missing-candidate check and failed without promotion. Applied codec settings are in successful56/compression.json; 53 input-stage defaults were preliminary and never produced an asset.
+  Paired CPU rear previews 61/62 showed the copied lower-LOD canopy floating above its cockpit despite identical local mesh signatures → Probe64 found nine lost parent-inverse transforms; fix65 restores them in the authoritative source, with all mesh signatures, packed images and every other world transform unchanged → Extend source audit to compare world transforms, preserve the defective images, and regenerate the export from the saved source.
+  Corrected-source export after canopy hierarchy fix → Fully run stock source validation, 4k bake and serialization in 68; all 59 fresh PNG image bytes and material/texture bindings exactly match the completed 48 texture stage → Reuse only its KTX2 encodings with byte equality proofs, retain fresh geometry buffers and nodes byte-for-byte, and apply the tested Swift precision policy in 69. No cached geometry or old asset is imported into source.
+  Later parent release retains the screenshot-cleanup hold → Finalizer performs no image or scratch deletion and records the two pre-existing interrupted Cycles EXR tile buffers from 20/27 as retained failure data → These are disclosed separately from compact previews and counted conservatively toward file/byte caps; no new raw-frame deliverable is generated.
+  Final promotion? → Require matching source SHA across source audit, display fit, stock validation and actual decoded identity, plus inspected final CPU images → Job84 promotes only candidate5873c5c; job85 rechecks recovery and the unchanged R3 packet. Stage72 was reused without restarting and no additional export was launched after the parent release.
+OUT OF SCOPE FOUND:
+  T13 owns whole-scene GPU diagnosis and reliable identified-device performance readouts. The round-3 whole-scene measurements do not attribute a bottleneck to Swift.
+  Lark, Kestrel, Mule, shared artlib/families/export_hulls, runtimeShip/Cockpit/Review/capture/orchestration and services were not modified.
+  No independent fourth-round visual verdict is claimed by this implementation lane.
+ARTIFACTS:
+  34 retained PNGs (31 compact CPU scene images plus 3 texture probes); 35039336 bytes. No copied references. 2 old interrupted Cycles EXR tile buffers remain under the later explicit cleanup hold; see retained-scratch.json. Combined image/scratch bytes: 68708456, still within 48 files / 512 MiB. No cleanup performed.
+  Final source: {"path": "assets/blend/hulls/swift.blend", "bytes": 42959316, "sha256": "7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480"}
+  Final GLB: {"path": "packages/client/public/models/hulls/swift.glb", "bytes": 24721524, "sha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d"}
+  CPU images actually viewed:
+    06-cockpit-top/swift-cockpit-top-lod0.png (earlier source diagnostic)
+    09-damage/swift_damaged-damage-lod0.png (earlier source diagnostic)
+    11-damage-refined/swift_damaged-damage-lod0.png (earlier source diagnostic)
+    15-final-damage/swift_damaged-damage-lod0.png (source diagnostic before final screen-marker/inset corrections)
+    46-source-cockpit-finished/swift-cockpit-top-lod0.png (source diagnostic before canopy-parent correction; LOD0 geometry unchanged)
+    59-final-cpu-sheets/swift_swift_materials.png (pre-canopy-transform correction decoded GLB, CPU)
+    59-final-cpu-sheets/swift_swift_swift_damaged_materials.png (pre-canopy-transform correction decoded GLB, CPU)
+    59-final-cpu-sheets/swift_swift_swift_damaged_turntable.png (pre-canopy-transform correction decoded GLB, CPU)
+    59-final-cpu-sheets/swift_swift_swift_husked_materials.png (pre-canopy-transform correction decoded GLB, CPU)
+    59-final-cpu-sheets/swift_swift_swift_husked_turntable.png (pre-canopy-transform correction decoded GLB, CPU)
+    59-final-cpu-sheets/swift_swift_turntable.png (pre-canopy-transform correction decoded GLB, CPU)
+    60-export-cockpit-pilot/swift-cockpit-pilot-lod0.png (pre-canopy-transform correction decoded GLB, CPU)
+    61-export-rear-lod0/swift-rear-lod0.png (pre-canopy-transform correction decoded GLB, CPU)
+    62-export-rear-lod2/swift-rear-lod2.png (revealed lower-LOD canopy parent-inverse defect; preserved)
+    63-export-gear-lod0/swift-gear-lod0.png (pre-canopy-transform correction decoded GLB, CPU)
+    72-current-rear-lod0/swift-rear-lod0.png (current corrected-source decoded GLB, CPU; viewed before resource hold)
+    74-current-rear-lod2/swift-rear-lod2.png (current decoded GLB: canopy seated at matching LOD0 pose; rear tip silhouette retained)
+    75-current-gear-lod0/swift-gear-lod0.png (current decoded GLB, CPU)
+    76-current-gear-lod2/swift-gear-lod2.png (current decoded GLB, CPU: paired foot silhouette retained)
+    77-current-cockpit-pilot/swift-cockpit-pilot-lod0.png (current decoded GLB, CPU: readable fitted displays and differentiated controls)
+    78-current-cockpit-top/swift-cockpit-top-lod0.png (current decoded GLB, CPU: shaped seat/head wings, restraints/latch, fitted housings and controls)
+    79-current-damage-detail/swift_damaged-damage-lod0.png (current decoded GLB, CPU: selected exposed structure and localized wear)
+    80-current-cpu-sheets/swift_swift_materials.png (current decoded GLB, CPU)
+    80-current-cpu-sheets/swift_swift_swift_damaged_materials.png (current decoded GLB, CPU)
+    80-current-cpu-sheets/swift_swift_swift_damaged_turntable.png (current decoded GLB, CPU)
+    80-current-cpu-sheets/swift_swift_swift_husked_materials.png (current decoded GLB, CPU)
+    80-current-cpu-sheets/swift_swift_swift_husked_turntable.png (current decoded GLB, CPU)
+    80-current-cpu-sheets/swift_swift_turntable.png (current decoded GLB, CPU)
+    81-current-compact-livery/swift-quarter-lod0.png (current source, CPU: Compact palette diagnostic)
+    82-current-working-livery/swift-quarter-lod0.png (current source, CPU: neutral working palette diagnostic)
+    83-current-fracture-closeup/swift_damaged-fracture-lod0.png (current decoded GLB, CPU: selected wing opening, rooted exposed spars and chipped crystal edges)
+  Implementation CPU observations (not an independent grade):
+    Current rear LOD0/2 pair: canopy sits at the same authored pose and retains its faceted geometry; rear crystal tip silhouette remains present. Body specular highlights vary with body LOD reduction; intended-distance engine transitions still require the parent capture/grade.
+    Current geometry/UV/normal comparisons pass against the authoritative source; these CPU observations do not qualify whole-scene GPU performance.
+    The paired landing-foot views retain the same joint and toe silhouettes at LOD0/2, consistent with the exact source mesh/normal/world-transform audit.
+    Current cockpit pilot and open-top diagnostics show the three readable displays, shaped seat/head wings, harness and latch, differentiated rotary/toggle/pedal/stick controls, and fitted housings. No CPU image is used as a blind-grade verdict.
+    Default Ixari, Compact and neutral working treatments remain visibly distinct on the same geometry. Alternate-livery CPU views use the authoritative source Livery nodes; the parent still owns integrated engine livery evidence.
+    The selected wing fracture closeup shows a localized cavity with rooted exposed spars and clustered broken crystal edges; the larger original angular plate design remains. Damage/husk geometry remains distinct in the full current sheets. Destruction quality still requires the independent engine-backed grade.
+  Retained R3 images read in place:
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_cockpit_open_top.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_swift_materials.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_swift_swift_damaged_turntable.png
+    /private/tmp/hull-r3-packets/swift/artifacts/review/hulls/swift/swift/noon-lush_lod2.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_liveries.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_swift_swift_husked_turntable.png
+    /private/tmp/hull-r3-packets/swift/artifacts/review/hulls/swift/swift/noon-lush_lod0.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_cockpit_open_side.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_hardpoint_HP_S_1.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_hardpoint_HP_S_2.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_boarding_board.png
+    /private/tmp/hull-r3-packets/swift/artifacts/review/hulls/swift/swift/sheet.png
+    /private/tmp/hull-r3-packets/swift/artifacts/review/hulls/swift/swift/swift_damaged/sheet.png
+    /private/tmp/hull-r3-packets/swift/artifacts/review/hulls/swift/swift/swift_husked/sheet.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_swift_swift_damaged_materials.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_swift_swift_husked_materials.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_cockpit_closed_side.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_cockpit_open_q.png
+    /private/tmp/hull-r3-packets/swift/artifacts/swift_swift_turntable.png
+    /private/tmp/hull-r3-packets/shared/hulls_lineup.png
+  Failed/pre-refinement artifacts remain immutable. A directory name containing green/final is not an acceptance claim; consult its JSON status and source hash.
+NEXT GPU INVENTORY / REMAINING GATES:
+  Parent: for base, damaged and husked, standard engine noon-lush/night-exotic/open-space at LOD0 and LOD2 (18 PNGs); wireframe LOD0/2 (6); far LOD2 at 100m and 200m (6); collider/marker overlays (3). Total 33 new engine evidence PNGs, plus three composed review sheets.
+  Parent/T13: nine reliable paired whole-scene performance cases, identified device and setup, scene bottleneck diagnosis and 16.67ms requirement. CPU budgets and RSS are not GPU performance qualification.
+  Parent: refresh the integrated cockpit closed/open-quarter/open-side/open-top, boarding, both hardpoint, three-livery and shared lineup evidence against the final committed asset; preserve current standard capture paths and review tooling.
+  Parent: fresh independent blind ROUND4 model-rubric grade against the final source/export/engine packet; every criterion >=4 and mean >=4.5 remains required. Existing third-grade REVISE is unchanged.
+  Parent: review this scoped source/tooling diff and integrate sibling hull work without broadening this lane. No push, PR or merge was requested/performed.
+  Parent: run the standard full smoke and integrated runtime review on the combined hull work. This CPU/source lane did not launch the client, services, database, browser, native capture, or GPU.
+  No GPU/Metal discovery or rendering, browser/native capture, service/database/grants, push, PR, or merge was performed.

@@ -1,0 +1,238 @@
+TASK: P1.E14.T08 (art) Props — fresh independent R2 SOURCE/CPU review
+STATUS: DONE — review complete; tooling correction requires another revision.
+VERDICT: REVISE
+
+SUMMARY:
+The four original R1 defects are FIXED on the exact requested head. The original
+parent fails 12 of 16 focused controls; the corrected head passes all 16, through
+actual task-local CLI supervisors and unchanged stock props/sites publication
+code with inert CPU dependencies. Private producer destinations also prevent the
+old late-publication defect. One new P2 lifecycle defect remains: failure to
+persist the unresolved-cohort guard releases admission, so a subsequent real
+export can start and publish PASS while the previous producer is still alive.
+The private-output fence itself holds in that scenario; this finding concerns
+serial admission and unresolved process ownership, not corrupt art payloads.
+
+TASK VERBATIM:
+P1.E14.T08 (art) Props · deps: T02 · done: cargo and loot pods, terminals, market
+stalls, ammo, catalyst vials, beacons rebuilt, outposts rebuilt (3), crash-site
+ debris kit.
+
+PIN / REVIEW BOUNDARY:
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+Branch: task/P1-E14-T08-props
+HEAD: 25d3859012444f8294acc64fd566c824e88f1a85
+Tree: 0ef6a1226f595dfd0816498d48beba667009efd0
+Revision base: 9ec69d49395a8bdddc161240782a8bfa28b3cc38
+Base tree: 5fd77453d232cd4e1ed8067e424acdf27a642e9b
+Original protected base: afc0dacaaac45de27776e24ad35e42e3250d8f25
+Review output, exclusively created before any reproduction:
+  /private/tmp/t08-r2-source-25d38590-x6AaWJ
+Final observed HEAD/tree/base match the starting pins. Both production source
+files are copied exactly into private fixtures; original baseline copies were
+compared byte-for-byte with git show at the revision base.
+
+READ / CONTRACTS:
+Read current parent docs/IMPLEMENTATION_PLAN.md 0.3, 0.4, 0.9.5, T08, C.2/C.4;
+also read those contracts in the pinned target worktree. Current parent 0.9.5
+explicitly requires exclusive review output and preservation of supplied reports.
+Read relevant art-bible sections 1, 5, 8 and the parent task author-brief.txt;
+traced the unchanged stock export_props.py, export_sites.py, artlib/export.py,
+ktx.py, meshopt.py and the task's ktx_cpu.py resource wrapper. T07 continues to
+own gameplay adoption and generator removal. The task-local README requested in
+the review brief is absent: no README exists under t08 or the relevant source
+asset directories. Used the original task REPORT.txt and parent author brief;
+this absence is disclosed, not treated as a new blocker.
+Read immutable original R1 /tmp/t08-r1-review-9ec69d49/REPORT.txt, the author C.2
+revision_r1/REPORT.txt, and /tmp/t08-r1-final-dbdvwcqa/HANDOFF.json. The retained
+R1 reproducer deletes its hard-coded scratch tree, so it was READ, NOT EXECUTED.
+Fresh reproducers preserve those input bytes and run the same failures through
+stronger real stock caller paths in this review's exclusive directory.
+
+ORIGINAL FINDING DISPOSITIONS:
+F1 FIXED. export_saved.py:78-110 retires the directory entry before content reads,
+then copies readable regular bytes into an exclusive independent archive.
+Baseline symlink and relative_symlink: exit 1, safety assertion FAIL. Head:
+exit 0, PASS, archive regular/nlink=1 and unchanged after backing-file and runtime
+mutation. Hardlink control PASS on both. No mutable successful history alias.
+
+F2 FIXED. export_saved.py:149-154 and 216-266 catch quarantine/read failures and
+record them without letting a failed stem abort the batch. Baseline old and new
+mode-000 outputs: exit 1, safety FAIL; new unreadable output also prevents later
+batch work. Head old_unreadable/new_unreadable/batch_unreadable: exit 1 as expected,
+safety PASS, canonical absent, unreadable raw inode/error facts preserved without
+invented SHA256, and the later loot_pod binding is PASS. No permission restoration
+of unreadable private fixture evidence was used to manufacture hashes.
+
+F3 FIXED. run.py:48-69, 127-158, 228-289 handles SIGTERM/SIGINT without throwing
+out of ownership handoff or cleanup. export_saved.py:173 uses this same supervisor.
+Baseline actual standalone SIGTERM: exit -15, no receipt, producer still alive.
+Head: exit 143; receipt childExit=-15, childReaped=true, terminal=true, group empty.
+The actual export SIGTERM similarly changes from missing receipt/live producer to
+exit 143 with a FAILED binding and terminal cleanup. Final binding/result SIGTERM
+controls pass on head and fail on the baseline. The tested final-write windows do
+not retain current PASS receipts after interrupt.
+
+F4 FIXED for the original exception/receipt defect. run.py:133-156 catches denied
+TERM/KILL and still attempts wait and observation; result/fallback receipts are
+written at 324-348. Baseline runner_eperm: exit 1, no receipt, child alive. Head:
+exit 130, childExit=null, childReaped=false, terminal=false, survivor and error
+facts retained. The caller also remains FAILED after late release of an unkillable
+producer. Both original failures and the new green receipts remain in red/green.
+The new persistence finding below is distinct from the repaired lost receipt.
+
+NEIGHBOURING REAL-PRODUCER CHECKS:
+Head passes actual stock props and sites happy flows, source alias change,
+leader-exit/live-cohort rejection, final binding/result signal windows, and
+post-supervisor late publication under denied cleanup. Source and stock code
+hashes are recorded in the per-case evidence. The late-publication barrier is
+released only after the failed supervisor exits. Stock artlib/export.py:141 then
+moves into the attempt-private destination, never the canonical runtime path.
+The final producer receipts do not change. No helper-only publication assertion
+is used as proof of this fence.
+Stock codec subprocesses stay in the producer's process group in the reviewed
+Python code (no start_new_session); no actual codec execution was performed.
+
+NEW BLOCKING FINDING:
+F5 / P2 — failed unresolved-cohort persistence reopens the serial lane.
+Primary file: packages/tools/blender/t08/run.py:270-286.
+Admission counterpart: packages/tools/blender/t08/run.py:72-81.
+Reachable caller: export_saved.py:146,173; actual unchanged stock exporter runs.
+
+Sequence, reproduced on HEAD:
+1. The task evidence directory exists with real mode 0555. exports/ remains
+   writable. lane() checks only evidence/.lane-blocked.json.exists(), finds no
+   final marker, and admits the first exporter without proving it can retain
+   unresolved ownership. No mock of lane(), execute(), or export_one() is used.
+2. The actual stock exporter reaches a file barrier in validation. SIGTERM is
+   sent to its supervisor. Only os.killpg is fault-injected to raise EPERM,
+   reproducing the original F4 condition; the producer survives the bounded wait.
+3. run.py tries to persist evidence/.lane-blocked.json.pending. The actual OS
+   returns PermissionError errno 13. Lines 283-286 append an error, then the
+   supervisor writes its truthful FAILED receipt, exits 143, and releases flock.
+   childExit=null, childReaped=false, terminal=false. There is no final guard.
+4. Before releasing the first producer, run the real export CLI again. The new
+   invocation sees no final guard, launches a second stock producer and returns
+   exit 0 / binding PASS with a canonical output. The first PGID is observed alive
+   both before and after that completed retry. Producer substitutions increase
+   from 1 to 2. The first producer is released only after the retry finishes.
+5. The late first stock move is still private, and its FAILED receipt stays
+   unchanged. This confirms the separate publication fence remains effective.
+
+RED evidence:
+  fence-probe/guard_unwritable.json and its first/retry logs.
+  first supervisor exit 143; retry exit 0; expectationMet=false.
+  first live producer PGID 28997 persisted through the second completed export.
+  guardExists=false; bindings [FAILED,PASS]; launches 1 -> 2.
+  Error is the actual filesystem denial opening .lane-blocked.json.pending.
+GREEN control (same head, writable evidence parent):
+  fence-probe/guard_writable.json and its first/retry logs.
+  first supervisor exit 143; retry exit 1; expectationMet=true.
+  first live PGID 28814; guardExists=true; bindings [FAILED,FAILED]; launches 1 -> 1.
+The green is an environmental safety control, NOT an implemented fix for F5.
+
+Impact/rule: the bounded serial CPU lane and unresolved-cohort exclusion contract
+are broken exactly when failure evidence cannot be durably recorded. A still-live
+Blender/codec cohort in production can overlap the next heavy export, exceeding
+the task's admitted capacity. The receipt honestly reports the old failure, but
+it is not consulted on the next admission. No corrupted canonical bytes, native
+render failure or performance measurement is claimed from this CPU fixture.
+
+Concrete correction: establish an exclusive persistent ownership marker before
+launching any producer, and refuse admission if it cannot be installed. Keep it
+through errors and unresolved cleanup; clear it only after the actual child is
+reaped and the cohort is verified empty. Treat incomplete/pending marker state as
+uncertain too. Do not rely on successfully creating the only guard after cleanup
+has already failed. Add a real-caller case for marker persistence failure and a
+retry while the old producer is held behind a barrier.
+
+FILES CHANGED:
+No source, docs, tracked files, untracked repository files, dependencies, assets,
+previews, prior reports or ignored caches were changed. Only fresh review scripts,
+CPU fixture trees, logs, report and seals under the exclusive output directory.
+No commit, push, PR, merge, queue submission or cloud machine.
+
+VERIFY (exact argv/cwd/exit/timing and failure tails in *-command.json):
+Python: /opt/homebrew/opt/python@3.14/bin/python3.14, version 3.14.8, -B;
+resolved executable/hash in before.json. PYTHONDONTWRITEBYTECODE=1. Thread env=2.
+Node v22.23.3 --version is the real supervisor's pinned admission check only.
+All fixture commands serial; at most two inert producers are intentionally alive
+in the F5 retry probe. No Blender, codec, render, browser, GPU, server, DB, package
+install, pnpm, full suite, asset hydration/regeneration or screenshot cleanup.
+
+Common focused case selector:
+symlink,relative_symlink,hardlink,old_unreadable,new_unreadable,batch_unreadable,
+sigterm,denied_cleanup_late_publish,runner_sigterm,runner_eperm,sites_happy,
+leader_exit_with_cohort,source_alias,signal_during_binding,runner_signal_during_result
+(happy always runs as the fixture validity control, for 16 controls total).
+
+1. python3.14 -B <OUT>/focused.py --code <WT>/packages/tools/blender/t08/revision_r1/baseline
+   --evidence <OUT>/red --cases <selector>
+   Actual exit 1, 16.065 s. 4 controls PASS, 12 FAIL. Expected old-source RED.
+2. Same command with --code <WT>/packages/tools/blender/t08 --evidence <OUT>/green
+   Actual exit 0, 19.836 s. 16/16 PASS. Fresh F1-F4/neighbor GREEN.
+3. python3.14 -B <OUT>/fence_probe.py
+   Actual exit 1, 12.315 s. Writable guard PASS; unwritable guard FAIL (new F5).
+   Complete failure output:
+   guard_writable safeRefusal True first 143 retry 1 launches 1 1 firstAliveDuringRetry True
+   guard_unwritable safeRefusal False first 143 retry 0 launches 1 2 firstAliveDuringRetry True
+4. python3.14 -B <OUT>/prove_protected.py
+   Actual exit 0, 0.307 s. Independently compared actual starting hashes/metadata
+   with 4,951 protected entries, original 4,097 paths, 24 LFS asset OIDs and all
+   44 PNG hashes; verified all 459 entries in the author's evidence seal.
+5. python3.14 -B <OUT>/final_verify.py
+   Actual exit 0, 3.891 s. All 5,411 tracked files and 34 recorded ignored facts
+   unchanged; git porcelain empty, ignored inventory unchanged, external input
+   reports unchanged. Every recorded owned group absent. Actual caller command
+   list contains 36 invocations (baseline 16, head 16, new first/retry pairs 4).
+
+The 12 old-source failed assertions and last 20 log lines are retained in
+red-command.json; every actual caller command/exit is in actual-caller-commands.json,
+with full raw per-case logs and JSON under red/, green/, fence-probe/.
+Initial discovery included a missing task README and a shell glob with no match;
+those were inspection limitations, not test passes or product failures.
+No syntax/lint, production-loader, asset/geometry or complete 36-control rerun was
+substituted for the focused boundary proof. The author's 36/36 result is sealed
+historical evidence, separately verified for exact file bytes, not a new result.
+
+PROTECTED STATE / REUSE:
+protected-proof.json matches all 4,951 pre-existing protected paths in SHA256,
+size, mode and mtime, including all 4,097 original base paths, all 24 source/export
+assets and all 44 PNGs. Author SHA256SUMS.json SHA256:
+f0cbb60b1f0e8820d650a8ee6dfb6419b91a70dfd9afa297bdf839104a8c55f9
+Original R1 payload source/dequantized-GLB geometry/density, 21 variants/84 LODs,
+stock validators, malformed art controls and 15 production consumers are reused
+only by this exact-byte proof. No fresh art or runtime acceptance is inferred.
+Ignored check records dependency symlinks, existing Python caches, Vitest entry
+and launcher hashes, .vite directory metadata, and git's ignored inventory; it is
+not a recursive census of every shared node_modules file. No dependency code was
+loaded by the CPU fixture. Final ignored inventory:
+!! node_modules
+!! packages/client/node_modules/
+!! packages/shared/node_modules
+!! packages/tools/blender/artlib/__pycache__/
+!! packages/tools/blender/t08/__pycache__/
+!! packages/tools/node_modules/
+
+DECISIONS:
+Original failures versus neighbour gap -> mark F1-F4 fixed; report F5 separately.
+Real producer without forbidden native work -> execute exact shared stock main,
+export, compression routing, validation report writes and final move; substitute
+only inert geometry/codec/validator dependencies and requested process faults.
+Prior reproducer can overwrite its scratch -> retain untouched; use fresh private
+fixtures and exact baseline production code. No old report was repurposed.
+Output isolation versus serial resource ownership -> verify both; F5 fails the
+second invariant while the first still holds.
+
+OUT OF SCOPE FOUND / LIMITS:
+No native Review captures, blind visual grading, GPU performance, live Blender,
+codec correctness, runtime adoption, T07 removal, CI, merge or whole-task PASS.
+No new mandatory 0.9.5 category was introduced by this tooling-only diff; F5 is a
+concrete task lifecycle/admission contract failure. Native gates remain pending.
+
+ARTIFACTS:
+REPORT.txt; HANDOFF.json; SHA256SUMS.json; before.json; protected-proof.json;
+final-verification.json; actual-caller-commands.json; *-command.json; focused.py;
+fence_probe.py; commands.py; prove_protected.py; final_verify.py; red/; green/;
+fence-probe/; retained t08-life-* fixture trees. Seal lists unreadable inode/error
+facts without following symlinks or changing permissions; all scratch is retained.
