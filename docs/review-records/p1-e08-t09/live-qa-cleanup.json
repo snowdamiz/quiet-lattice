@@ -1,0 +1,70 @@
+{
+  "time_utc": "2026-11-07T03:41:27Z",
+  "remaining_owned_processes": [],
+  "ports": [
+    {
+      "argv": [
+        "lsof",
+        "-nP",
+        "-iTCP:50945",
+        "-sTCP:LISTEN"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "lsof",
+        "-nP",
+        "-iTCP:51494",
+        "-sTCP:LISTEN"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "lsof",
+        "-nP",
+        "-iTCP:51497",
+        "-sTCP:LISTEN"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "lsof",
+        "-nP",
+        "-iTCP:51510",
+        "-sTCP:LISTEN"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "remaining_browser_profiles": [],
+  "removed_scratch_cache_entries": [
+    {
+      "path": "/tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/tmp/node-compile-cache",
+      "files": 41,
+      "bytes": 911292
+    },
+    {
+      "path": "/tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/tmp/playwright-transform-cache-501",
+      "files": 10,
+      "bytes": 148557
+    },
+    {
+      "path": "/tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/tmp/tsx-501",
+      "files": 212,
+      "bytes": 1897483
+    }
+  ],
+  "tmp_empty": true,
+  "pass": true
+}

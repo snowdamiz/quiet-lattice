@@ -1,0 +1,59 @@
+P1.E16.T10 — independent read-only review — PASS
+
+Findings: none. No blocking or advisory defect substantiated; severity: none.
+This is the first T10 review. The prior T16 height-3.4 observation was reproduced under controlled time and is addressed by this fixture change.
+
+Exact source and scope
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+Branch: task/P1-E16-T10-gateway-persistence-fixture
+Head: 1ac686beaef4c87584d47659718b41d35fac8d62
+Parent: 757b3d234611bd991b15bbd12c82eaf5fc425e15
+Tree: db4f4c52cda4b197ef0eedc14fcd4be4712d534c
+Only changed path: packages/server/test/gatewayPersistence.test.ts (+27/-10).
+Fixture blob: 248c4fffc4f426834fca3e83a7d69bc2379c0995
+Fixture SHA256: 687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724
+Verified clean tracked/untracked status before and after testing, exact parent/head/tree and actual diff. Production and docs are unchanged. Archived worker baseline/final fixture bytes match the pinned parent/head. All review files are in this unique /tmp directory; no checkout edits, commits or nested delegation.
+Reviewer runtime: Darwin arm64, Node v22.23.3, pnpm 12.15.0, Vitest 5.0.5. Worker provenance records Node v26.12.1; this is independent evidence on a different supported Node version.
+
+Review reasoning and source anchors
+- gatewayPersistence.test.ts:96 and :140: the stepped world clock and derived protocol input type preserve real socket/gateway/ZoneManager/MovementAuthority processing. Each new mover first sends its welcome pose, then moves one metre after 0.5 seconds of server and client time. No entity or persistence state is directly assigned to force acceptance.
+- gatewayPersistence.test.ts:142-154 and :160-163: the input is followed by a unique application ping. gateway/ws.ts:480-488 serializes handlers, and :575-577 sends its pong after the preceding input. The helper requires no correction, the requested accepted sequence/time, unvalidated=false, and exact requested pose/mode. zones/zone.ts:488-523 only sets accepted input fields after the movement verdict succeeds; disabling authority marks the entity unvalidated. The seed does not treat an echoed sequence alone as acceptance.
+- Movement authority remains unchanged. Its fresh-input credit is bounded (sim/movement/authority.ts:324 and :661); the seed plus advancing both clocks establishes a normal accepted trajectory rather than relying on socket scheduling to grant time. The old unstamped rejoin lift can have no arrival credit. Removing the new rejoin time credit still causes the production movement validator to reject that lift before persistence is judged.
+- gatewayPersistence.test.ts:41-60 and :177-193 preserve the exact race: write is held, disconnect capture runs, the row remains revision 0, owned() clones that old row, then duringRead releases and flushes the save before returning the stale clone. The database-equivalent lookup remains case-insensitive and the rejoin explicitly uses uppercase. The gateway's canonical pin is acquired before the asynchronous read (gateway/ws.ts:745-755); persistence must retain held state across the write's eviction attempt (persistence/service.ts:704-724 and :764). Rejoined pose/mode and loaded inventory assertions remain.
+- gatewayPersistence.test.ts:195-203 retains the second real socket move and explicit save/flush, zero stale saves, and requested final height 4.4. Two write calls and final revision 2 strengthen the existing contract. Resetting held revision still fails even after the accepted movement.
+- World time changes do not release the save barrier or replace the real asynchronous read/write order. Persistence retains Date.now-based flush deadlines (service.ts:507); periodic zone and persistence loops were not started in either fixture. This test is intentionally about the join/leave race, not periodic saving or first-input timing coverage.
+- Read IMPLEMENTATION_PLAN 0.3, 0.9.5 and T10, DESIGN 17, and ARCHITECTURE 3, 7 and 8. Applied TypeScript/type-system discipline and the read-only review skill. No new server-authority violation, production system, demo retention, performance change or spec interpretation was found.
+
+Independent executions (all from the pinned worktree)
+1. pnpm exec vitest run --config /tmp/P1-E16-T10-review.tUtAsi/parent.config.mjs
+   Original parent fixture with identical production modules: PASS once. This does not establish that the original fixture was reliable.
+2. pnpm exec vitest run --config /tmp/P1-E16-T10-review.tUtAsi/controlled-red.config.mjs
+   EXPECTED FAIL twice: final saved height 3.4 versus requested 4.4. Independently reconstructed from git-show parent bytes with a stepped clock, 0.5 seconds before the first lift, and no advance before the old rejoin lift. Production modules unchanged. controlled-parent.test.ts is the transformed source; failure location :185 belongs to that snapshot, not the on-disk head's code frame.
+3. pnpm exec vitest run packages/server/test/gatewayPersistence.test.ts
+   PASS 5/5 separate processes using exact untransformed head bytes.
+4. pnpm exec vitest run --config /tmp/P1-E16-T10-review.tUtAsi/control.config.mjs
+   PASS: unmutated candidate under the same standalone config used for the negative controls.
+5. pnpm exec vitest run --config /tmp/P1-E16-T10-review.tUtAsi/missing-pin.config.mjs
+   EXPECTED FAIL at gatewayPersistence.test.ts:190: rejoin height 2.4 instead of 3.4. Transform removes only the pin check from maybeEvict; held state is lost after the save while the stale read remains in flight.
+6. pnpm exec vitest run --config /tmp/P1-E16-T10-review.tUtAsi/stale-revision.config.mjs
+   EXPECTED FAIL at gatewayPersistence.test.ts:200: stale saves 1 instead of 0. Transform assigns row.revision to the held record during join; second save is rejected by Rows' revision guard.
+7. pnpm exec vitest run --config /tmp/P1-E16-T10-review.tUtAsi/no-rejoin-credit.config.mjs
+   EXPECTED FAIL at gatewayPersistence.test.ts:144, called from :197: correction for seq 2, reverting to height 3.4, before the second save. Transform removes only the rejoining mover's 0.5-second advance.
+8. pnpm exec vitest run packages/server/src/persistence packages/server/src/gateway packages/server/src/sim/movement/firstInput.test.ts packages/server/test/gatewayPersistence.test.ts
+   PASS: 7 files, 69 tests.
+9. pnpm --filter @astra/server typecheck
+   PASS.
+10. pnpm exec eslint packages/server/test/gatewayPersistence.test.ts
+    PASS.
+11. pnpm exec prettier --check packages/server/test/gatewayPersistence.test.ts
+    PASS.
+12. git diff --check 757b3d234 1ac686beaef4c87584d47659718b41d35fac8d62
+    PASS.
+
+Negative controls use isolated Vite transforms with exact single-site checks; no production file was edited. Every expected failure was inspected for its actual assertion and value, not merely exit status. All 17 individual command invocations and per-run fixture hashes are in results.json and run_checks.py; per-command logs, source snapshots and configs are retained here. provenance.json, diff.patch and final-status.json record initial/final provenance.
+
+Worker evidence audit
+Read worker-report.txt, provenance.json, repeats.json, the controlled-red patch/snapshot and all transform configurations in /tmp/P1-E16-T10.xK6Xlw. Verified all 20 archived repeat logs report one passed test and their recorded source hashes match the pinned fixture. Independently reran the controlled failure twice, candidate five times, all three negative controls, related tests and static checks. The PASS does not depend solely on the worker's report or archived passes.
+
+Unexecuted limits
+Did not run another 20-repeat series, load/stress campaign, full repository suite/build, native client/dev servers, full DB integration/restart/migration tests, smoke/E2E, GPU/browser/Blender or production validation. No Docker or external Postgres/Redis/private QA service was used or reset; tests use the fixture's in-memory row store and ephemeral loopback sockets. Dependencies were already present; no install was needed. This review does not independently qualify real SQL, distributed ownership, periodic persistence, timing at arbitrary machine load, merged-tree gates, CI, release or deployment. No push, PR operation, merge or orchestration-document update was performed. Parent owns those gates and docs.

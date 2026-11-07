@@ -1,0 +1,95 @@
+{
+  "task": "P1.E16.T10",
+  "date": "2026-11-06",
+  "status": "source review PASS; actual-main verification pending",
+  "sourceCommit": "ae8447ce13925befe63899452bee9beb162c07ea",
+  "workerCommit": "1ac686beaef4c87584d47659718b41d35fac8d62",
+  "fixtureBlob": "248c4fffc4f426834fca3e83a7d69bc2379c0995",
+  "checks": {
+    "parentUnit": {
+      "passed": 2700,
+      "files": 212,
+      "exit": 0
+    },
+    "parentTypecheck": {
+      "exit": 0
+    },
+    "parentScopedLintFormat": {
+      "exit": 0
+    },
+    "parentRemovalGate": {
+      "exit": 0,
+      "enforced": 10
+    },
+    "independentReview": {
+      "verdict": "PASS",
+      "controlledOldFailures": 2,
+      "focusedPasses": 5,
+      "relatedTests": 69,
+      "negativeControlsDetected": 3
+    }
+  },
+  "actualMainChecks": "pending",
+  "artifacts": {
+    "worker-report.txt": {
+      "bytes": 8683,
+      "sha256": "8faf8fa4d3fe9621303631cd398b8a902c2902026ecf04eaa081587cd6b0437a"
+    },
+    "worker-provenance.json": {
+      "bytes": 772,
+      "sha256": "2811c5c712c56e507b437cbd520a037475bb08b0764ed9f5bb69a992d33616ec"
+    },
+    "worker-repeats.json": {
+      "bytes": 2514,
+      "sha256": "71822bc0bb52a0acc222df89e35aa3d930fba51ab0a9b76d7674f1d72d498242"
+    },
+    "code-review.txt": {
+      "bytes": 8325,
+      "sha256": "5ceacc72ac2407346b424d01d7f3aa7f2f8ad9e0d6fb7ca0166e27811314de19"
+    },
+    "review-results.json": {
+      "bytes": 5733,
+      "sha256": "6256c11ee89f798b3cc10c5756e53e11b37855c9e8999258dd8c9b8b74d6782b"
+    },
+    "review-provenance.json": {
+      "bytes": 519,
+      "sha256": "3df882203adcb78093e3150c8b6a8df4016a6d9f6b2a91aeb1574be00c8a2cd1"
+    },
+    "parent-typecheck.txt": {
+      "bytes": 290,
+      "sha256": "345b88af84c29655d9899de184cac771aed956768aed0678287f2aa612301f79"
+    },
+    "parent-unit.txt": {
+      "bytes": 424,
+      "sha256": "1ef57ecf1633e3f9a453d917f5717cdc44775afa1f7b5df8c8c62ab84121bd92"
+    },
+    "review-controlled-red-1.txt": {
+      "bytes": 1546,
+      "sha256": "346ef529e91376c65fb6d2b008c2599e810a22a22261448189c42fcc42357934"
+    },
+    "review-controlled-red-2.txt": {
+      "bytes": 1510,
+      "sha256": "87aa1a89396a69313dffdbceb55f88d47078cf715085136c0ffe60e68bf34e74"
+    },
+    "review-focused-green-1.txt": {
+      "bytes": 351,
+      "sha256": "89758963943378ba8fe63b1c81ce6585af2bc8afc46bb7a7b18faeb10eb92ec4"
+    },
+    "review-related.txt": {
+      "bytes": 486,
+      "sha256": "a8e88116aa67c71b3bfc6657e619c6a0fd4ffa129909d029c5f811e0ae37f3f8"
+    },
+    "review-missing-pin.txt": {
+      "bytes": 1803,
+      "sha256": "f45d28e7f1b3bcfc51d2aa891e517298f670c959b7fa7cef7b10da4409900b75"
+    },
+    "review-stale-revision.txt": {
+      "bytes": 1503,
+      "sha256": "9105aa5d3a3b8e9f4611739f02566c21137c4d0b629ddf0a88348ee4c1942712"
+    },
+    "review-no-rejoin-credit.txt": {
+      "bytes": 2113,
+      "sha256": "4dd22d8e15b55554d6a847fb323d74dcdf02ea3b0418152fdcc5f209ec441f2f"
+    }
+  }
+}

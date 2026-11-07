@@ -1,0 +1,96 @@
+TASK: P1.E08.T09 — focused live two-client QA
+STATUS: PASS — authorized fauna-online scope only. GPU released after final cleanup at 2026-11-07T03:41:27Z.
+
+SUMMARY: Executed the unchanged, documented, hang-aware fauna-online spec once on the real Metal path. Playwright reports 1 passed, 0 failed, 0 skipped, 0 flaky, one worker, retry 0, repeat 1; live command exit 0. No source/doc edits, commits, reset, capture, full smoke, Blender, encoder, or nested agents. All evidence is in this unique scratch directory.
+
+SOURCE:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+- Reviewed product source: d688579adf31c2a8ee9836495ba6b32708b99ccd
+- Base: e1ed4752805ee92be561db81910ee1bc1a87b1d9
+- Before/after runtime HEAD: 6245e5ffb68f4bd4b1baf66a2cf4f4e3806e4482 / 6245e5ffb68f4bd4b1baf66a2cf4f4e3806e4482
+- HEAD's twelve extra paths are confined to packages/tools/src/capture/fauna_packet and the four allowed station helpers. The CPU worker's uncommitted edits stayed in fauna_packet. That caller/helpers were not executed.
+- Before/after 775 protected runtime/source/smoke/configuration files match byte-for-byte and match reviewed source according to git diff. No protected untracked files. Includes entire tracked client/server/shared trees, runtime public assets, smoke tree, root/package manifests, lockfile, Vite/Playwright/TypeScript configs; .env absent.
+- 14,480 installed dependency file/symlink entries (excluding pnpm run-output metadata) unchanged; 738 installed Chromium payload files unchanged; actual Node executable unchanged.
+- Raw after-provenance comparison exited 4 because pnpm created/retired six task-run metadata entries in node_modules/.pnpm-task-run-state-v1. These are output records/markers, not package code or configuration. Full raw diff and both manifests retained. provenance-adjudicated.json records exact equality after classifying that single generated-output directory. Vite .vite/.vite-temp and .cache are generated caches excluded from both dependency inventories.
+- Node v22.23.3, pnpm 12.15.0, Playwright 1.64.1, Chromium headless-shell revision 1248. No dependency installation was performed.
+
+COMMAND (literal, inspected before execution; also in run.sh):
+```sh
+cd '/Users/andreyyurlov/.t3/worktrees/space/t3-06487465'
+CI=1 SMOKE_GL=metal SMOKE_PORT=50945 DATABASE_URL='postgres://astra:astra@127.0.0.1:53055/astra' REDIS_URL='redis://127.0.0.1:53058' TMPDIR='/tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/tmp/' DEBUG='pw:browser' PLAYWRIGHT_JSON_OUTPUT_FILE='/tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/playwright.json' pnpm --filter @astra/tools exec playwright test src/smoke/fauna-online.spec.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=600000 --trace=off --reporter=list,json --output '/tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/test-results' > '/tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/smoke.log' 2>&1
+```
+Single live attempt: 2026-11-07T03:39:29.342Z; suite duration 19.863 seconds (elapsed execution only, not an FPS or performance measurement). The test body reports 17.3 seconds. Global timeout 600000 ms, trace off, default screenshot/video off, CI=1 prevents Vite reuse. Fresh SMOKE_PORT 50945 and fresh output/TMPDIR. Discovery separately returned exactly 1 test in 1 file, exit 0. run.sh only checks the source/port, invokes the existing harness, and records exit/output; no new runtime supervisor.
+
+PRIVATE ROUTES, OBSERVED:
+- Before imports/migrations, docker inspect confirmed Postgres container space-t16-pg-20261106, ID 66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb, healthy, 127.0.0.1:53055 -> 5432; Redis space-t16-redis-20261106, ID d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4, healthy, 127.0.0.1:53058 -> 6379.
+- Initially zero astra_smoke_* databases, no server PostgreSQL/Redis sessions, and Redis DB7 only astra:shard:main:world.
+- Live server PID 3687 had cwd packages/server. lsof proved its established connections to 127.0.0.1:53055 and :53058; no default fixture ports were used.
+- The server's allowlisted runtime environment named astra_smoke_mw5uu4pi_c7f6f8 and Redis /7. PostgreSQL pg_stat_activity independently showed postgres.js sessions on precisely that scratch database; Redis CLIENT LIST independently showed ioredis 6.0.0, db=7.
+- HTTP health on 127.0.0.1:51497 returned 200, db=ok, redis=ok, protocol=24. Admin listener 51494; online Vite 51510 (observed browser-to-Vite and Vite-to-game connections); separate unchanged Playwright-config Vite 50945. Its configured wildcard bind was retained.
+- Redis mirror key after the run explicitly reported shard main (only shard field retained in live-shard.json). The baseline mirror key was updated by the standard harness; no FLUSHDB/FLUSHALL or other database reset was issued.
+- Browser PID 3712, GPU PID 3717 and network service PID 3718 were actual descendants of the runner. Browser/GPU command lines used --use-angle=metal and --enable-gpu. Native ANGLE logs identify the Metal library cache. Chromium's default --enable-unsafe-swiftshader flag remained present, but the observed selected ANGLE backend was Metal, not SwiftShader. Two client renderer processes were observed. No GPU adapter/FPS/pixel-readback instrumentation was added.
+
+WHAT PASSED:
+1. Two independent real browser contexts/pages, each 960x540, complete dev login and acknowledge authoritative snapshots.
+2. Real admin teleport places both characters on the home world's dry ground; a real admin spawn returns four authoritative herd IDs.
+3. Both clients follow all four IDs with shown=true. Their observed ID/species/name/frame tuples agree; names agree with the server spawn response. Frame-relative positions differ by less than 4 metres, allowing asynchronous sample time.
+4. A has all four drawn=true, an isInstancedMesh species rig, a drawn count of four and an instance count at least four.
+5. A picks a drawn creature with the actual fauna picking path and calls g.analyze. The real server returns result=new; the displayed banner contains the picked species name and star/Bond detail; the HUD emits a +N XP toast.
+6. Both clients close their network connections and the spec's combined browser console-error/pageerror list is empty.
+
+LIMITS:
+- B can face away: B is asserted followed/shown, not drawn or pixel-equal with A. A's instancing checks are state/mesh assertions; no image was captured or pixel graded.
+- The live stream exercises ordinary interpolation/frame integration, but this spec does not exhaustively test interpolation edges, frame transitions/rebases, or every frame position against a synchronized server sample.
+- Analysis uses a ray directed toward a nearby herd creature; the spec asserts a positive picked ID and its banner, not that picked ID is one of the four spawned IDs.
+- No live combat damage/kill/flash/loot feedback is exercised. Local AI/spawning removal and prior 282 focused CPU tests/typechecks/removal review were reported by the parent, not rerun or recertified here.
+- Native Chromium stderr includes CVDisplayLink/daemon errors, Metal cache warnings, and teardown overlay/invalid-mailbox messages. They are retained in smoke.log. The test passed without captured page/console errors, crash, timeout or hang-guard kill; this is not a claim of a warning-free browser or visual/performance qualification.
+- Successful server logs remain the unchanged harness's in-memory output; no full successful-server log capture was added. Route proof comes from live process sockets, server health, PostgreSQL and Redis observations.
+
+CLEANUP: PASS
+- Browser exited normally (exitCode=0, signal=null); Playwright logged graceful close and temporary-directory cleanup.
+- All 18 observed runner/server/browser/Vite/helper PIDs are gone. Final audit found no owned runtime/profile matches.
+- Ports 50945, 51494, 51497 and 51510 have no listeners (each lsof exit 1, empty output).
+- The exact scratch database is gone; zero astra_smoke_* databases remain. PostgreSQL has only the diagnostic psql connection, no server sessions. Redis CLIENT LIST has only the diagnostic connection, no ioredis session.
+- Redis DB7 has the same sole mirror key as baseline, no session/presence keys. The updated world mirror is retained as expected by startOnline.stop(); no pre-existing fixture data was deleted.
+- Browser profile removed by Playwright. Only three scratch compiler/transform cache directories remained; final cleanup removed those task-owned caches and proved TMPDIR empty.
+- Both exact containers remain running and healthy on their approved private routes. No containers stopped or removed. No manual process termination was needed; the harness performed its normal server/browser shutdown.
+- Preliminary cleanup audit matched the word playwright in a transform-cache path and then matched its own invoking shell command text. These diagnostic false positives are preserved in cleanup-audit.json / cleanup-preliminary-selfmatch.json; the corrected audit excludes its own ancestor processes and checks the exact browser-profile prefix. It passed, exit 0, without a test rerun.
+
+REMAINING GATES:
+Fresh authorized visual captures and independent visual acceptance (including combat feedback); any separately required live combat coverage; full pnpm smoke; actual merged-tree task/typecheck/test/smoke verification. Whole P1.E08.T09 remains unqualified by this focused QA alone. No merge authorization is inferred.
+
+EVIDENCE:
+- smoke.log, smoke.exit, playwright.json, test-results/.last-run.json: actual single-run result.
+- run.sh, run-start.txt, run-end.txt, run-root.pid, commands-and-exits.json: literal invocation, boundaries and command exits.
+- before-provenance.json, after-provenance.json, provenance-comparison.json, provenance-adjudicated.json: actual per-file SHA256/raw Git blobs, reviewed Git blobs, exact drift classification.
+- before/during-1/during-2/after-snapshot.json: private container routes, database sessions, Redis clients/keys, owned process argv/cwd/sockets, allowlisted runtime environment, health.
+- cleanup-final.json and cleanup.exit: terminal process/listener/profile/cache cleanup.
+- guidance-inputs.json: hashes of inspected workflow/QA proposal inputs.
+- evidence-sha256.json: hashes of final retained evidence artifacts.
+
+Selected inputs (before == after; full manifest contains every protected file):
+| Path | Reviewed Git blob | Actual SHA256 |
+|---|---|---|
+| packages/client/src/Game.js | f0dacdfb6745be09bbfa2eb8ce092430b997b5a2 | 76f29519ca522ff1b2faf97791c384bf8b4bacadab0ea51229d560e1e8a9b47a |
+| packages/client/src/gameplay/Fauna.js | e08a6274038c5afab73bbb1b9fef460e4c5a82e5 | d66a0844256cbcdec436253dd0a9a52ec17426291f6ee05ce344c8f1e32409a6 |
+| packages/client/src/remote/RemoteEntities.js | f88e41069540022d1e8fdfa4aead0606557d8de0 | d209db249d09ee0dcc096a3bc52710c15ad936316ab5c2175677933b82454634 |
+| packages/client/src/net/abilities.js | 90f6ed17f2885d193331ff3ef8ee728ff5681bb5 | d03a473fe3ddb22cef7576ecf3a8ddb7f43ad5a6544f01d719db554adb70b0ce |
+| packages/client/src/ui/HUD.js | 1d8a20c26a98420fec0de18901e558a535d96607 | b88c9d746d12518ba44071c7973de5b1d50726b1a672a9dc41adf7699f7ae275 |
+| packages/server/src/index.ts | 1256e7751a62483a8eb889157371c11d550a1f58 | b38db28c003216380cf2b176f888227bf1bf60f4120d72fddd010a797f0d3533 |
+| packages/server/src/config.ts | eb17d0eaf2bf2440689e1c79c8fa3c45687bc40a | 99e0f0696397c658a629bb917b7c8929dd362c4d10efdbe8385946d36a91e97e |
+| packages/server/src/server.ts | aeb53821de1acd29096b2d9bb3bf2a04db0819ee | 6ca3ae41395c0d78197bb70a829e034b1a13e4232e47893bd41bbc21ba5dfbbd |
+| packages/tools/src/smoke/fauna-online.spec.ts | d13e819e84f11ab547b47b5a7426fc6feb845636 | fadbed76165de64cf25295eb66d30cbbe9a9f4cff5a9ff17d3e232e28e2163d8 |
+| packages/tools/src/smoke/online.ts | df7047e40d07c2aa5dbc2fff07fdead415389d99 | bb7284bfa03f5bd2313d4561150040b6e5ccd1f8a96de7766f121350251c809b |
+| packages/tools/src/smoke/harness.ts | 2b07f7ce5a401c20f0d41ef439c111bc5e8f740c | 05e8e7f30f34b6fb3070e885e1f424ca539aa1787cb0542e53c2bbb240e52560 |
+| packages/tools/src/smoke/gl.ts | 771e2c23b1eed05df92658ac01a04b9a2191605f | 6704feba42452dae38df48f46a2a8d89f11e8a2eccd023901ab2d8ee80ae81d3 |
+| packages/tools/playwright.config.ts | 08077b532c3ae16f278e899b11cc12a68cf711da | 353e779faddba8b3816921bb63ee30f2e3a5cace2ae2e07b4af5e00ddf93eeac |
+| packages/client/vite.config.js | 63ad100f19ad13f0f23050bde1ecb22242705312 | d9ad7b3b5e27e07791fd1ae60320483ed594a0208e2d3136d1a8ecc735a2885e |
+| package.json | c865f10af15c363e52a00d52ec9bf895c4ff1ea9 | a555ba885349efbf0e6d4247891fddd2a4918a84c4623b73d3b23266af39a944 |
+| packages/tools/package.json | ea5b57aa0eb9d26404a75efa93c8b606d09910ae | dd24cb2cecf85efae70f043dc9d3d88f23d9fe4d967bd11a0da61f6026a7e6c0 |
+| pnpm-lock.yaml | fa850c2e93a386a217a116f9c1d7f5d2bafffcd6 | 120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f |
+| pnpm-workspace.yaml | 84466b00933c426b0924241be5fd559ad7e919ac | 9c981cc0d2c56bdf50ae9c13ad357f70c8491dcc29820cb0e0b2905136c9e224 |
+
+Stable manifest digests (SHA256 over sorted compact JSON; same before/after):
+- Runtime/source/configuration map: d74a4a680813c2bd6eaa32727ba2e7a756e92f5edc3760c12ddc292ebe0910bb
+- Installed dependencies excluding pnpm run outputs: 9c195fcdc397953deb8f5eaceaa6462f3640c3e8e6668bc51cec64a4dd8f52d1
+- Installed Chromium payload map: d1b98f8a7c8d51f0c464ee741f755a772889b1a850d66a31f6d879369b6069dc

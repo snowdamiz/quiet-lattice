@@ -1,0 +1,195 @@
+TASK: P1.E16.T10
+STATUS: DONE (implementation and local verification); independent review pending with parent.
+SUMMARY: Replaced wall-time-derived world time with a stepped clock. Each real socket sends an unchanged first input, waits for handling, verifies the accepted input/pose/mode and absence of corrections, then advances both client/server time by 0.5 s and sends the one-metre lift. Real gateway, zones, movement authority, persistence, save/read barriers, case-insensitive rejoin, inventory, stale-save and height 4.4 assertions remain active. Added explicit row revision 0 before release, successful barrier flush, two writes and final revision 2.
+FILES CHANGED: packages/server/test/gatewayPersistence.test.ts (only committed path; +27/-10)
+COMMIT: 1ac686beaef4c87584d47659718b41d35fac8d62
+BRANCH: task/P1-E16-T10-gateway-persistence-fixture
+WORKTREE: /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+BASE: 757b3d234611bd991b15bbd12c82eaf5fc425e15
+EXACT TESTED TREE: db4f4c52cda4b197ef0eedc14fcd4be4712d534c
+FIXTURE GIT BLOB: 248c4fffc4f426834fca3e83a7d69bc2379c0995
+FIXTURE SHA256: 687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724
+PROVENANCE: All green/repeat/mutation runs used the recorded fixture bytes. Commit has exactly the tested one-file diff from the pinned base; production and docs subtrees unchanged, worktree clean. Mutations applied only by Vite transforms in separate Vitest processes; no production source was edited.
+VERIFY:
+  pnpm install --frozen-lockfile
+    PASS; lockfile unchanged, 239 packages reused, no large assets materialized
+  pnpm exec vitest run packages/server/test/gatewayPersistence.test.ts
+    Original wall-clock baseline PASS once; controlled old fixture FAIL 3/3 with expected 4.4 / received 3.4; fixed fixture PASS; 20 consecutive separate processes PASS
+  pnpm exec vitest run packages/server/src/persistence packages/server/src/gateway packages/server/src/sim/movement/firstInput.test.ts packages/server/test/gatewayPersistence.test.ts
+    PASS: 7 files / 69 tests
+  pnpm --filter @astra/server typecheck
+    PASS
+  pnpm exec eslint packages/server/test/gatewayPersistence.test.ts
+    PASS
+  pnpm exec prettier --check packages/server/test/gatewayPersistence.test.ts
+    PASS
+  git diff --check
+    PASS before commit
+  pnpm exec vitest run --config /tmp/P1-E16-T10.xK6Xlw/control.config.mjs
+    PASS: identical final test under the isolated transform configuration without mutation
+  pnpm exec vitest run --config /tmp/P1-E16-T10.xK6Xlw/missing-pin.config.mjs
+    EXPECTED FAIL at rejoin pose: 2.4 instead of 3.4; removing pin protection from maybeEvict loses held state while the stale row read is in flight
+  pnpm exec vitest run --config /tmp/P1-E16-T10.xK6Xlw/stale-revision.config.mjs
+    EXPECTED FAIL at persistence.stats().stale: 1 instead of 0; replacing held revision with the stale row revision causes the second save to be skipped
+  pnpm exec vitest run --config /tmp/P1-E16-T10.xK6Xlw/no-rejoin-credit.config.mjs
+    EXPECTED FAIL at sendAccepted before second save: correction for input seq 2; ensures rejected setup movement cannot masquerade as persistence failure
+  pnpm exec vitest run --config /tmp/P1-E16-T10.xK6Xlw/red.config.mjs
+    EXPECTED FAIL: original controlled fixture replay still saves height 3.4 instead of 4.4; code-frame lines refer to the on-disk final test, archived controlled-red.test.ts is authoritative for this transform
+DECISIONS: How to establish accepted movement without changing authority? -> Seed the welcome pose at unchanged time, observe acceptance, then advance both clocks explicitly -> separates persistence behavior from first-sample credit and socket arrival timing; 1 m / 0.5 s matches the requested 2 m/s vertical velocity. No production rule, speed bound or requested height was changed.
+OUT OF SCOPE FOUND: None. Independent fresh review remains parent-owned; no reviewer spawned. No DB, browser, GPU, full smoke, push, PR, main modification or merge performed.
+ARTIFACTS: This directory contains final.patch, original/controlled-red/final fixture snapshots, controlled-red.patch, provenance.json, repeats.json, repeat-01.log through repeat-20.log, focused-green.log, related-tests.log, static-check logs, isolated control/mutation configurations and logs.
+FAILURE TAILS (expected negative controls, last 20 lines each):
+
+controlled-red-1.log
+    "pose": {
+      "pos": [
+        -30,
+-       4.4,
++       3.4,
+        -22,
+      ],
+    },
+  }
+
+ ❯ test/gatewayPersistence.test.ts:185:57
+    183|     expect(await persistence.flush()).toBe(true);
+    184|     expect(persistence.stats().stale).toBe(0);
+    185|     expect(store.rows.get(CHARACTER)!.state.pose?.data).toMatchObject(…
+       |                                                         ^
+    186|     b.s.close();
+    187|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+controlled-red-2.log
+    "pose": {
+      "pos": [
+        -30,
+-       4.4,
++       3.4,
+        -22,
+      ],
+    },
+  }
+
+ ❯ test/gatewayPersistence.test.ts:185:57
+    183|     expect(await persistence.flush()).toBe(true);
+    184|     expect(persistence.stats().stale).toBe(0);
+    185|     expect(store.rows.get(CHARACTER)!.state.pose?.data).toMatchObject(…
+       |                                                         ^
+    186|     b.s.close();
+    187|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+controlled-red-3.log
+    "pose": {
+      "pos": [
+        -30,
+-       4.4,
++       3.4,
+        -22,
+      ],
+    },
+  }
+
+ ❯ test/gatewayPersistence.test.ts:185:57
+    183|     expect(await persistence.flush()).toBe(true);
+    184|     expect(persistence.stats().stale).toBe(0);
+    185|     expect(store.rows.get(CHARACTER)!.state.pose?.data).toMatchObject(…
+       |                                                         ^
+    186|     b.s.close();
+    187|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+missing-pin.log
+-     1,
+    ],
+    "vel": [
+      0,
+-     2,
++     0,
+      0,
+    ],
+  }
+
+ ❯ packages/server/test/gatewayPersistence.test.ts:190:28
+    188|     const b = await join(CHARACTER.toUpperCase());
+    189|     expect(store.rows.get(CHARACTER)!.revision).toBe(1); // the save l…
+    190|     expect(b.welcome.pose).toEqual(moved);
+       |                            ^
+    191|     expect(b.welcome.mode).toBe('ship');
+    192|     expect(b.inventory).toEqual({ t: 'inventory', seq: 0, inventory: l…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+stale-revision.log
+
+ FAIL  packages/server/test/gatewayPersistence.test.ts > gateway join with persistence > loads what a character left when the save of its leave lands while its row is being read, however its id is spelled
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ packages/server/test/gatewayPersistence.test.ts:200:39
+    198|     expect(persistence.saveNow(CHARACTER)).toBe(true);
+    199|     expect(await persistence.flush()).toBe(true);
+    200|     expect(persistence.stats().stale).toBe(0);
+       |                                       ^
+    201|     expect(store.calls).toHaveLength(2);
+    202|     expect(store.rows.get(CHARACTER)!.revision).toBe(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+no-rejoin-credit.log
++         0,
++       ],
++     },
++     "seq": 2,
++     "t": "correction",
++   },
++ ]
+
+ ❯ sendAccepted packages/server/test/gatewayPersistence.test.ts:144:62
+    142|       s.send({ t: 'input', ...input, time: clock.now(), buttons: 0 });
+    143|       await handled(s);
+    144|       expect(s.received.filter((m) => m.t === 'correction')).toEqual([…
+       |                                                              ^
+    145|       expect(zones.zone(welcome.zone.id)?.entity(welcome.entityId)).to…
+    146|         input: { seq: input.seq, time: clock.now() },
+ ❯ moveFromJoin packages/server/test/gatewayPersistence.test.ts:154:5
+ ❯ packages/server/test/gatewayPersistence.test.ts:197:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+red.log
+    "pose": {
+      "pos": [
+        -30,
+-       4.4,
++       3.4,
+        -22,
+      ],
+    },
+  }
+
+ ❯ packages/server/test/gatewayPersistence.test.ts:185:57
+    184|       release();
+    185|       expect(await persistence.flush()).toBe(true);
+    186|     };
+       |     ^
+    187|
+    188|     const b = await join(CHARACTER.toUpperCase());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

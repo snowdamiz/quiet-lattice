@@ -1,0 +1,64 @@
+COMMAND: ["pnpm", "exec", "vitest", "run", "--config", "/tmp/P1-E16-T10-review.tUtAsi/no-rejoin-credit.config.mjs"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+
+REVIEW MUTATION APPLIED: no-rejoin-credit
+ ❯ packages/server/test/gatewayPersistence.test.ts (1 test | 1 failed) 56ms
+   ❯ gateway join with persistence (1)
+     × loads what a character left when the save of its leave lands while its row is being read, however its id is spelled 56ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/server/test/gatewayPersistence.test.ts > gateway join with persistence > loads what a character left when the save of its leave lands while its row is being read, however its id is spelled
+AssertionError: expected [ { t: 'correction', seq: 2, …(2) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "mode": "ship",
++     "pose": {
++       "frame": "2981198913:station",
++       "pos": [
++         -30,
++         3.4,
++         -22,
++       ],
++       "quat": [
++         0,
++         0,
++         0,
++         1,
++       ],
++       "vel": [
++         0,
++         2,
++         0,
++       ],
++     },
++     "seq": 2,
++     "t": "correction",
++   },
++ ]
+
+ ❯ sendAccepted packages/server/test/gatewayPersistence.test.ts:144:62
+    142|       s.send({ t: 'input', ...input, time: clock.now(), buttons: 0 });
+    143|       await handled(s);
+    144|       expect(s.received.filter((m) => m.t === 'correction')).toEqual([…
+       |                                                              ^
+    145|       expect(zones.zone(welcome.zone.id)?.entity(welcome.entityId)).to…
+    146|         input: { seq: input.seq, time: clock.now() },
+ ❯ moveFromJoin packages/server/test/gatewayPersistence.test.ts:154:5
+ ❯ packages/server/test/gatewayPersistence.test.ts:197:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  22:38:36
+   Duration  1.20s (transform 59%, import 36%, tests 5%)
+

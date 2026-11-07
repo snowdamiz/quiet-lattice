@@ -1,0 +1,248 @@
+[
+  {
+    "name": "parent-wall-time",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/P1-E16-T10-review.tUtAsi/parent.config.mjs"
+    ],
+    "exit": 0,
+    "expectedExit": null,
+    "seconds": 1.673,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "controlled-red-1",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/P1-E16-T10-review.tUtAsi/controlled-red.config.mjs"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "seconds": 3.205,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "controlled-red-2",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/P1-E16-T10-review.tUtAsi/controlled-red.config.mjs"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "seconds": 2.045,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "focused-green-1",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 3.919,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "focused-green-2",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 2.439,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "focused-green-3",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 1.535,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "focused-green-4",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 1.403,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "focused-green-5",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 1.504,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "transform-control",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/P1-E16-T10-review.tUtAsi/control.config.mjs"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 1.557,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "missing-pin",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/P1-E16-T10-review.tUtAsi/missing-pin.config.mjs"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "seconds": 1.396,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "stale-revision",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/P1-E16-T10-review.tUtAsi/stale-revision.config.mjs"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "seconds": 1.287,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "no-rejoin-credit",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "/tmp/P1-E16-T10-review.tUtAsi/no-rejoin-credit.config.mjs"
+    ],
+    "exit": 1,
+    "expectedExit": 1,
+    "seconds": 1.444,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "related",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/server/src/persistence",
+      "packages/server/src/gateway",
+      "packages/server/src/sim/movement/firstInput.test.ts",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 1.081,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@astra/server",
+      "typecheck"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 6.415,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "lint",
+    "command": [
+      "pnpm",
+      "exec",
+      "eslint",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 0.923,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "format",
+    "command": [
+      "pnpm",
+      "exec",
+      "prettier",
+      "--check",
+      "packages/server/test/gatewayPersistence.test.ts"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 0.344,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "757b3d234",
+      "1ac686beaef4c87584d47659718b41d35fac8d62"
+    ],
+    "exit": 0,
+    "expectedExit": 0,
+    "seconds": 0.021,
+    "sourceSha256": "687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724"
+  }
+]

@@ -1,0 +1,46 @@
+COMMAND: ["pnpm", "exec", "vitest", "run", "--config", "/tmp/P1-E16-T10-review.tUtAsi/controlled-red.config.mjs"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+
+REVIEW FIXTURE LOADED: controlled-red
+ ❯ packages/server/test/gatewayPersistence.test.ts (1 test | 1 failed) 71ms
+   ❯ gateway join with persistence (1)
+     × loads what a character left when the save of its leave lands while its row is being read, however its id is spelled 71ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/server/test/gatewayPersistence.test.ts > gateway join with persistence > loads what a character left when the save of its leave lands while its row is being read, however its id is spelled
+AssertionError: expected { system: +0, pose: { …(4) }, …(1) } to match object { pose: { pos: [ -30, 4.4, -22 ] } }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "pose": {
+      "pos": [
+        -30,
+-       4.4,
++       3.4,
+        -22,
+      ],
+    },
+  }
+
+ ❯ packages/server/test/gatewayPersistence.test.ts:185:57
+    184|       release();
+    185|       expect(await persistence.flush()).toBe(true);
+    186|     };
+       |     ^
+    187|
+    188|     const b = await join(CHARACTER.toUpperCase());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  22:38:15
+   Duration  2.82s (transform 70%, import 28%, tests 3%)
+

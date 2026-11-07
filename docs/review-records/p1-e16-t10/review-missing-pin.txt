@@ -1,0 +1,57 @@
+COMMAND: ["pnpm", "exec", "vitest", "run", "--config", "/tmp/P1-E16-T10-review.tUtAsi/missing-pin.config.mjs"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+
+REVIEW MUTATION APPLIED: missing-pin
+ ❯ packages/server/test/gatewayPersistence.test.ts (1 test | 1 failed) 46ms
+   ❯ gateway join with persistence (1)
+     × loads what a character left when the save of its leave lands while its row is being read, however its id is spelled 46ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/server/test/gatewayPersistence.test.ts > gateway join with persistence > loads what a character left when the save of its leave lands while its row is being read, however its id is spelled
+AssertionError: expected { frame: '2981198913:station', …(3) } to deeply equal { frame: '2981198913:station', …(3) }
+
+- Expected
++ Received
+
+  {
+    "frame": "2981198913:station",
+    "pos": [
+      -30,
+-     3.4,
++     2.4,
+      -22,
+    ],
+    "quat": [
+      0,
++     1,
+      0,
+      0,
+-     1,
+    ],
+    "vel": [
+      0,
+-     2,
++     0,
+      0,
+    ],
+  }
+
+ ❯ packages/server/test/gatewayPersistence.test.ts:190:28
+    188|     const b = await join(CHARACTER.toUpperCase());
+    189|     expect(store.rows.get(CHARACTER)!.revision).toBe(1); // the save l…
+    190|     expect(b.welcome.pose).toEqual(moved);
+       |                            ^
+    191|     expect(b.welcome.mode).toBe('ship');
+    192|     expect(b.inventory).toEqual({ t: 'inventory', seq: 0, inventory: l…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  22:38:33
+   Duration  1.14s (transform 58%, import 38%, tests 4%)
+
