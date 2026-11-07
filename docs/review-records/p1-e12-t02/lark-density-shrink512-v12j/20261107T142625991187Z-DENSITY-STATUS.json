@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-07T14:26:25.991367+00:00",
+  "status": "PRIVATE_SHRINK512_CANDIDATE_READY_AWAITING_PARENT",
+  "head_at_decision": "97db71de9379744da2f1957db91552ad474d0fa1",
+  "canonical_unchanged": true,
+  "blend_sha256": "bc08c784ef37413cd3b51c593c4109a340a8d99edc15f5da30e3dcfaba04ff75",
+  "glb_sha256": "7f11e2bd2818045c1a861d4e959f2a985828bdcc9b60d44ed2fda8ff41300bad",
+  "parent_policy": {
+    "canonical_promote": "HELD",
+    "force_fit_accept_for_promotion": "REJECTED",
+    "multi_atlas_udim_waiver": "REJECTED",
+    "single_uvmap_export_contract": true,
+    "private_candidate_only": true,
+    "cleanup": "STOPPED",
+    "push_pr_merge_trunk": false
+  },
+  "admission": {
+    "receipt": "/private/tmp/space-lark-parent-shrink512-admission-20261107.json",
+    "copied": "assets/renders/hulls/lark-round3-current/density-20261107/resource-controls/20261107T140051Z-shrink512-admission.json",
+    "stage": "unique-paint shrink AUTHORIZED"
+  },
+  "layout": {
+    "id": "20261107T141425710088Z-layout-shrink512-v12j",
+    "layout_fits": true,
+    "atlas_pages": 1,
+    "achieved_target_px_per_m": 512.0,
+    "force_fit_scale": 1.0,
+    "method": "near-palette snap \u0394\u22640.20 + Cockpit share + finish merges + area-preserving strip reshape for large finish squares; pack pad=2; no force-fit"
+  },
+  "private_v12j": {
+    "measured_min_median_px_per_m": 618.762214033127,
+    "median_of_medians_px_per_m": 2484.549035523165,
+    "max_median_px_per_m": 20459.628420509038,
+    "worst_role_key": "lark_damaged_LOD0/Body_dmg/Accent",
+    "target_px_per_m": 512,
+    "meets_art_bible_512": true,
+    "atlas_pixels": 4096,
+    "stock_validate": "PASS_5_of_5",
+    "density_receipt": "20261107T142340151034Z-private-density-v12j-private-density.json",
+    "export_receipt": "20261107T142359128282Z-private-export-v12j-private-export.json",
+    "private_blend_sha256": "68a327711238d437666fb5f76f04f8f4d519c67e44e820c0d7b3199097e825e1",
+    "private_blend_bytes": 35650695,
+    "private_glb_sha256": "e377daea38886af8065006bb5c53fb8e43211a9b55f44681018cf294ad7159e7",
+    "private_glb_bytes": 13792612,
+    "prior_v11_min_median_px_per_m": 347.7
+  },
+  "gpu_authorized": false,
+  "source_visual_review": "parent"
+}

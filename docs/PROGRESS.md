@@ -1061,3 +1061,9 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 
 - **E14.T16 serial node unit:** PASS — `modelLibrary` 6/6 and `meshopt` 4/4 under workers=1. Aggregate 0.654s / 192.3 MiB RSS / 0.005 MiB scratch (≤90s / 256 MiB / 64 MiB). Dependency/lock parity held; executable bytes still match `2156fe6`. Broader native/integration not claimed. Receipt SHA256 `ce755a1122c339ed8aa5a28ec494a330d53e06313c4d95d345070efe6caa52fd` retained under `docs/review-records/p1-e14-t16/serial-node-ovpDqK/` (index `20261107-exact-mask-serial-node-pass-ovpDqK.json`).
 - **Lark:** heavy/light CPU lane freed. Parent re-admits unique-paint shrink toward ≥512 px/m under one-atlas / single-UVMap, private-candidate only; canonical promote remains held; force-fit and multi-atlas still rejected. Bounds unchanged (1 Blender / 2 threads, ≤8 GiB RSS, 45-minute stages, ≤6 GiB growth, ≥12 GiB free). Admission `/private/tmp/space-lark-parent-shrink512-admission-20261107.json`. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+
+## 2026-11-07 — Lark private shrink-512 meets density gate
+
+- **Lark private v12j:** unique-paint shrink under one 4096 atlas reaches measured min median **618.8 px/m** (≥512; was 347.7 on rejected force-fit v11). Layout fits at true 512 (`force_fit_scale=1.0`); stock export+validate PASS 5/5. Canonical blend/glb hashes unchanged. Husked Trim pack fixed by area-preserving strip reshape after Dark’s finish square.
+- **Parent:** density gate SATISFIED. Canonical promote remains HELD until the author commits the sealed private candidate, then independent SOURCE/CPU review PASSes. Visual/GPU remain later. Force-fit and multi-atlas stay rejected.
+- Evidence retained under `docs/review-records/p1-e12-t02/lark-density-shrink512-v12j/` (index `20261107-lark-density-shrink512-v12j.json`); large private binaries as hash pointers. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
