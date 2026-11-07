@@ -105,6 +105,11 @@ class RevisionControls(unittest.TestCase):
             if path == root / 'private-tmp/evidence-resource':
                 fault()
             return lstat(path, *args, **kw)
+        actual_stat = os.stat
+        def resource_at(path, *args, **kw):
+            if path == 'evidence-resource' and kw.get('dir_fd') is not None:
+                fault()
+            return actual_stat(path, *args, **kw)
         def sink(path, data):
             if sinks_fail and Path(path).name in ('terminal.json', 'result.json', 'failed-result.json'):
                 raise OSError(28, 'SECONDARY_PUBLICATION')
@@ -112,7 +117,7 @@ class RevisionControls(unittest.TestCase):
         def stderr(data):
             if sinks_fail:
                 raise OSError(28, 'SECONDARY_STDERR')
-        with patch.object(bindings, 'ROOT', root), patch.object(Path, 'lstat', resource):
+        with patch.object(bindings, 'ROOT', root), patch.object(Path, 'lstat', resource), patch.object(os, 'stat', resource_at):
             result = caller.execute(f.ready_path, enabled=True, authorization=f.ready['pilot']['authorizationId'],
                                     verify_source=lambda _: f.source, ports_factory=factory, cache_guard=inert_clear,
                                     sink=evidence.Receipts(sink), stderr=stderr)

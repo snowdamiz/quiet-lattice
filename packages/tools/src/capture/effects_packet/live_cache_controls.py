@@ -109,12 +109,12 @@ class LiveCacheControls(unittest.TestCase):
     def test_continuous_real_publication_refuses_unknown(self):
         with self.publisher(continuous=True) as rows, self.assertRaises(FileNotFoundError):
             self.port.budgets(self.job)
-        self.assertEqual(len(rows), 3)
+        self.assertEqual(len(rows), live_cache.ATTEMPTS)
         obs = self.port.result['raw']['lastWriterObservation']
         self.assertFalse(obs['complete'])
         sample = self.port.result['raw']['writerPublicationObservations'][0]
         self.assertIsNone(sample['bytes'])
-        self.assertEqual(len(sample['attempts']), 3)
+        self.assertEqual(len(sample['attempts']), live_cache.ATTEMPTS)
         self.assertTrue(all(not a['complete'] for a in sample['attempts']))
 
     def test_unknown_errors_and_real_sigalrm_after_publication_do_not_retry(self):
@@ -221,19 +221,19 @@ class LiveCacheControls(unittest.TestCase):
         with self.publisher(), self.assertRaises(FileNotFoundError):
             cache_io.inventory(self.cache, 1000, {})
         self.assertNotIn('writerPublicationObservations', self.port.result['raw'])
-        with patch.object(live_cache, 'measure', side_effect=AssertionError('live scan forbidden')):
+        self.job.state = {'drained': True, 'kernel_terminal': {'live': 0}, 'remaining': []}
+        actual = live_cache.measure
+        def strict(*args, **kw):
+            self.assertIs(kw.get('settled'), True)
+            return actual(*args, **kw)
+        with patch.object(live_cache, 'measure', strict):
             self.port.budgets(self.job, for_archive=True)
         self.assertEqual(self.port.result['raw']['lastWriterObservation']['cacheBytes'], 137)
         (self.cache / 'deps').rename(self.pending)
-        lstat = Path.lstat
-        def renamed(path, *a, **kw):
-            if path == self.pending:
-                self.pending.rename(self.cache / 'deps')
-            return lstat(path, *a, **kw)
-        with patch.object(Path, 'lstat', renamed), self.assertRaises(FileNotFoundError):
+        with self.publisher(), self.assertRaises(FileNotFoundError):
             self.port.budgets(self.job, for_archive=True)
         self.assertFalse(self.port.result['raw']['lastWriterObservation']['complete'])
-        self.assertNotIn('writerPublicationObservations', self.port.result['raw'])
+        self.assertEqual(len(self.port.result['raw']['writerPublicationObservations'][0]['attempts']), 1)
 
     def test_zero_byte_live_tmp_is_a_sample_not_an_immutable_snapshot(self):
         p = self.port.tmp / 'tsx-current.js';p.touch()
@@ -267,7 +267,7 @@ class LiveCacheControls(unittest.TestCase):
             self.assertEqual(result['errors'][0]['type'], 'FileNotFoundError')
             self.assertEqual(result['errors'][-1]['phase'], 'stderr-fallback-write')
             sample = result['raw']['writerPublicationObservations'][0]
-            self.assertFalse(sample['complete']);self.assertEqual(len(sample['attempts']), 3)
+            self.assertFalse(sample['complete']);self.assertEqual(len(sample['attempts']), live_cache.ATTEMPTS)
             self.assertEqual(fixture.calls.count('launch'), 1)
         finally:
             fixture.cleanup()

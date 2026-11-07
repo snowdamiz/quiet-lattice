@@ -1,3 +1,58 @@
+# P1.E07.T14 live writer/shutdown observation correction
+
+Pilot2 at `4795d01fa0098d0b29310124fdeee06fd5fa4e24` produced the complete
+12-file packet but remains FAILED/SPENT. The profile observer raised ENOENT while
+Playwright was removing its profile after Chromium exited. The successful entry
+receipt was written after the observer failure; the capture process had no prior
+recorded exit and cleanup subsequently terminated it. Its packet, raw parts,
+receipts and both spent grants are retained unchanged. Evidence-only commit
+`18bbf9e2fcb62445603cdb881580000d34826070` tracks the twelve original packet files
+as FAILED/SPENT evidence. It confers no native/visual acceptance and creates no
+source-clean exception. No packet bytes are deleted, moved or ignored.
+
+Premise disproved before this fix: enumerated live profile/private-TMP/helper
+paths remain immutable until lstat, with only Vite caches needing live sampling.
+Real owned CPU writer rename/deletion reproduced the failure for all those paths.
+A paced40ms profile shutdown also disproved three immediate retries as a useful
+settling window. One existing metadata sampler now handles every admitted writer
+root. The private namespace is the anchor; profiles are ephemeral children.
+
+Live samples retain all interrupted attempts, names, metadata, errors and byte
+counts. They read no payload, never follow child/ancestor links, and preserve
+current UID checks and category limits. Existing profile/TMP/helper singleton
+symlinks/FIFOs/sockets are metadata only, with link bytes counted and no traversal;
+caches still refuse special entries. The frozen helper's root-owned macOS /tmp
+alias is explicitly checked and mapped to /private/tmp; every remaining component
+uses the same no-follow descriptor acquisition. No arbitrary alias is admitted.
+
+All roots in an observation share a2-second monotonic acceptance window, with at
+most16 live attempts/root and10ms bounded yields between transient publication
+interruptions. A cumulative8192 metadata-event cap/root bounds all attempts,
+including partial enumerations. Persistent instability, unknown I/O/permissions,
+identity/type/owner changes, caps and SIGALRM still refuse. Observed profile
+absence is explicitly not resource release. A completed live estimate remains
+non-atomic and cannot accept a capture; positive owned-cohort cleanup and strict
+terminal inspection are still required. Real native thresholds are observations,
+not OS quotas, and known sampled bytes above a limit stop immediately.
+
+Settled pre-freeze/after-drain metadata checks take one attempt, compare names and
+entry/directory stamps before/after, and fail on any mutation. Post-drain sampling
+requires drained=true,kernel live0,remaining[] first. Existing immutable cache
+copy/hash acquisition, shared T15, final packet hash/decode, grant/receipt snapshots
+and parent actual-OS-exit acceptance remain unchanged. No successful return can
+be inferred from a deleted profile or a complete-looking entry receipt.
+
+Full read-only CPU decoding validates the retained packet's twelve exact files
+and perf contract. This is characterization of a failed attempt, not visual
+acceptance. Fresh source/CPU review is required at the corrected enabled pin;
+parent alone issues a new grant after current admission and serialized slot.
+Both old grants are permanently spent; no automatic retry is authorized here.
+
+Evidence, premise tests, exact RED/GREEN, timeline, protection, budget and handoff:
+`/private/tmp/p1-e07-t14-live-writers-_fp4q0c1/APPENDIX-C2.md`.
+No native/browser/GPU/codec/service/DB/Blender/install or screenshot cleanup ran.
+The prior checkpoint descriptions below are retained historical provenance.
+
 # P1.E07.T14 exact MTLCompilerService binding correction
 
 Independent review retained SOURCE/CPU PASS for the live-cache algorithm at

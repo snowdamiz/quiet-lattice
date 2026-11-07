@@ -40,18 +40,9 @@ def phase(seconds):
 
 
 def tree_bytes(path):
-    root = Path(path)
-    if not root.exists():
-        return 0
-    total = 0
-    for p in [root, *root.rglob('*')]:
-        info = p.lstat()
-        require(info.st_uid == os.getuid(), 'Native writer ownership changed')
-        require(any(kind(info.st_mode) for kind in (stat.S_ISREG, stat.S_ISDIR, stat.S_ISLNK, stat.S_ISSOCK, stat.S_ISFIFO)), 'Unsupported native writer type')
-        # Chromium's live profile has singleton links/sockets. Count links themselves, never follow them.
-        if stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode):
-            total += info.st_size
-    return total
+    # Freeze is a settled cache measurement, not an active-writer traversal.
+    from live_cache import measure
+    return measure(path, CACHE_CAP, {}, settled=True)
 
 
 def snapshot_caches(ready, destination, observations):
@@ -197,35 +188,59 @@ class NativePorts:
         return ObservedStage()
 
     def budgets(self, job, *, for_archive=False):
+        from live_cache import SECONDS, measure
         observed = {'profileBytes': 0, 'privateTmpNonprofileBytes': 0, 'helperBytes': 0,
-                    'cacheBytes': 0, 'free': None, 'complete': False, 'probes': [], 'forArchive': for_archive}
+                    'cacheBytes': 0, 'free': None, 'complete': False, 'probes': [], 'forArchive': for_archive,
+                    'resourceReleaseProved': False, 'profileAbsenceIsNotRelease': True}
         self.result['raw']['lastWriterObservation'] = observed  # Before any resource filesystem probe.
-        def measure(key, path):
+        until = time.monotonic() + SECONDS
+        limits = {'profileBytes': 1024 ** 3, 'privateTmpNonprofileBytes': 512 * MIB,
+                  'helperBytes': 64 * MIB, 'cacheBytes': self.ready['initialCacheBytes'] + 256 * MIB}
+        def sample(key, path, *, namespace=False):
             probe = {'path': str(path), 'kind': key, 'bytes': None}
             observed['probes'].append(probe)
             try:
-                if key == 'cacheBytes' and not for_archive:
-                    from live_cache import measure as live_cache_bytes
-                    try:
-                        probe['bytes'] = live_cache_bytes(path, self.ready['initialCacheBytes'] + 256 * MIB - observed[key], probe)
-                    finally:
-                        if any(not a['complete'] for a in probe.get('attempts', [])):
-                            # Keep interrupted samples even after a later observation succeeds.
-                            self.result['raw'].setdefault('writerPublicationObservations', []).append(probe)
-                else:
-                    probe['bytes'] = tree_bytes(path)
-                observed[key] += probe['bytes']
+                path = Path(path)
+                if path.parts[:2] == ('/', 'tmp'):
+                    # The frozen helper allocates scratch through macOS's /tmp alias.
+                    # Admit only that protected OS alias; all remaining components stay no-follow.
+                    alias = Path('/tmp')
+                    info = alias.lstat()
+                    target = os.readlink(alias)
+                    probe['platformAlias'] = {'path': str(alias), 'uid': info.st_uid, 'mode': info.st_mode, 'target': target}
+                    require(stat.S_ISLNK(info.st_mode) and info.st_uid == 0 and target in ('private/tmp', '/private/tmp') and alias.resolve() == Path('/private/tmp'),
+                            'Unrecognized native scratch platform alias')
+                    path = Path('/private/tmp').joinpath(*path.parts[2:])
+                    probe['canonicalPath'] = str(path)
+                cap = {k: limits[k] for k in ('profileBytes', 'privateTmpNonprofileBytes')} if namespace else limits[key] - observed[key]
+                classify = (lambda name: 'profileBytes' if name.startswith('playwright_chromiumdev_profile-') else 'privateTmpNonprofileBytes') if namespace else None
+                probe['bytes'] = measure(path, cap, probe, allow_special=key != 'cacheBytes', allow_absent=key == 'cacheBytes',
+                                         classify=classify, until=until, settled=for_archive)
+                for kind, value in probe['totals'].items():
+                    observed[kind if namespace else key] += value
             except BaseException as error:
                 probe['failure'] = failure(error)
                 raise
+            finally:
+                if any(not a['complete'] for a in probe.get('attempts', [])):
+                    self.result['raw'].setdefault('writerPublicationObservations', []).append(probe)
+                if namespace:
+                    seen = set(self.result['raw'].get('writerProfilesObserved', []))
+                    for attempt in probe.get('attempts', []):
+                        for directory in attempt['directories'][:1]:
+                            seen.update(str(Path(path) / n) for n in directory.get('namesBefore', []) if n.startswith('playwright_chromiumdev_profile-'))
+                    self.result['raw']['writerProfilesObserved'] = sorted(seen)
+                    # A later namespace sample can omit a deleted profile; only cleanup proves release.
+                    observed['profilesEverObserved'] = sorted(seen)
         try:
-            for path in self.tmp.iterdir():
-                key = 'profileBytes' if path.name.startswith('playwright_chromiumdev_profile-') else 'privateTmpNonprofileBytes'
-                measure(key, path)
+            if for_archive:
+                require(job.state.get('drained') is True and job.state.get('kernel_terminal', {}).get('live') == 0 and job.state.get('remaining') == [],
+                        'Settled measurement requires positive owned-cohort drain')
+            sample('namespaceBytes', self.tmp, namespace=True)
             for path in (job.scratch, job.out):
-                measure('helperBytes', path)
+                sample('helperBytes', path)
             for path in self.ready['generatedCaches']:
-                measure('cacheBytes', path)
+                sample('cacheBytes', path)
             observed['free'] = shutil.disk_usage(self.ready['pilot']['output']).free
             observed['complete'] = True
             require(observed['profileBytes'] <= 1024 ** 3 and observed['privateTmpNonprofileBytes'] <= 512 * MIB and observed['helperBytes'] <= 64 * MIB, 'Native writer observed stop threshold')
