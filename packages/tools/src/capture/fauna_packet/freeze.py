@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import stat
 import subprocess
 import uuid
 
@@ -32,6 +33,8 @@ PRODUCT_REVIEW_SHA = '6305f73723f18b48da6e25be99100c6867c6d524ac5bd8ec2441eeb0a1
 PRODUCT_HEAD = 'd688579adf31c2a8ee9836495ba6b32708b99ccd'
 LEGACY_HEAD = '02248e6fc53bcaade146008f97bd83b6373af3d9'
 LEGACY_MANIFEST = ROOT / 'docs/review-records/p1-e08-t09-da01f7c6c/original-artifact-manifest.json'
+METAL_COMPILER = '/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService'
+METAL_COMPILER_SHA = '65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b'
 
 
 def unit_budget(images, common):
@@ -122,6 +125,50 @@ def validate_encoder_bindings(ready):
                            for row in ready['bindings']), 'Apple encoder signature/file binding missing/drifted: ' + file)
 
 
+def apple_metal_compiler_binding():
+    """Bind the one observed Apple compiler, never execute it or admit other XPC services."""
+    path = Path(METAL_COMPILER)
+    caller.require(path.resolve(strict=True) == path, 'Metal compiler path must be canonical')
+    protection = []
+    for item in [path, *path.parents]:
+        info = item.lstat()
+        caller.require((stat.S_ISREG(info.st_mode) if item == path else stat.S_ISDIR(info.st_mode))
+                       and info.st_uid == 0 and not info.st_mode & 0o022, 'Metal compiler route is not root protected: ' + str(item))
+        protection.append({'path': str(item), 'uid': info.st_uid, 'mode': info.st_mode, 'flags': info.st_flags})
+    caller.require(os.statvfs(path).f_flag & os.ST_RDONLY, 'Metal compiler filesystem must be read-only')
+    caller.require(caller.sha(path) == METAL_COMPILER_SHA, 'Observed Metal compiler bytes changed')
+    requirement = 'identifier "com.apple.MTLCompilerService" and anchor apple'
+    verify_argv = ['/usr/bin/codesign', '--verify', '--strict', '-R', '=' + requirement, str(path)]
+    display_argv = ['/usr/bin/codesign', '-d', '--verbose=4', '-r-', str(path)]
+    verify = subprocess.run(verify_argv, capture_output=True, text=True, timeout=5)
+    caller.require(verify.returncode == 0, 'Metal compiler Apple signature refused: ' + verify.stderr)
+    display = subprocess.run(display_argv, capture_output=True, text=True, timeout=5)
+    caller.require(display.returncode == 0, 'Metal compiler signature metadata refused: ' + display.stderr)
+    metadata = display.stdout + display.stderr
+    fields = dict(line.split('=', 1) for line in metadata.splitlines() if '=' in line)
+    caller.require(fields.get('Identifier') == 'com.apple.MTLCompilerService'
+                   and fields.get('Platform identifier', '').isdigit() and int(fields['Platform identifier']) > 0
+                   and fields.get('CDHash') and 'designated => ' + requirement in metadata.splitlines(), 'Metal compiler designated identity changed')
+    return {'canonical_path': str(path), 'sha256': METAL_COMPILER_SHA, 'codesign_sha256': caller.sha('/usr/bin/codesign'),
+            'requirement': requirement, 'identifier': fields['Identifier'], 'platform_identifier': fields['Platform identifier'],
+            'cdhash': fields['CDHash'], 'rootProtection': protection, 'filesystemReadOnly': True,
+            'verify': {'argv': verify_argv, 'exit': verify.returncode, 'stdout': verify.stdout, 'stderr': verify.stderr},
+            'display': {'argv': display_argv, 'exit': display.returncode, 'stdout': display.stdout, 'stderr': display.stderr}}
+
+
+def validate_metal_compiler_bindings(ready):
+    compiler = ready['apple_metal_compiler_binding']
+    caller.require(compiler['canonical_path'] == METAL_COMPILER and compiler['sha256'] == METAL_COMPILER_SHA,
+                   'Metal compiler observed binding changed')
+    caller.require(ready['ownedAppleMetalCompiler'] == {'path': METAL_COMPILER, 'role': 'apple-metal-compiler-xpc',
+                   'observerRole': 'owned-launch-helper', 'ownership': 'current kernel birth/UID/coalition verified by StageReceipts'},
+                   'Metal compiler ownership contract changed')
+    caller.require(ready['process_binary_sha256'].get(METAL_COMPILER) == METAL_COMPILER_SHA, 'Metal compiler process binding changed')
+    for file, digest in ((METAL_COMPILER, METAL_COMPILER_SHA), ('/usr/bin/codesign', compiler['codesign_sha256'])):
+        caller.require(any(row['path'] == file and row['realpath'] == file and row['sha256'] == digest
+                           for row in ready['bindings']), 'Metal compiler file/signature binding missing: ' + file)
+
+
 def make_ready():
     caller.optimization_guard()
     for name, expected in PINS.items():
@@ -129,6 +176,7 @@ def make_ready():
     caller.require(caller.sha(PRODUCT_REVIEW) == PRODUCT_REVIEW_SHA, 'Prior product source review drifted')
     python_probe = python_runtime_probe()
     encoder = apple_encoder_binding()
+    metal_compiler = apple_metal_compiler_binding()
     node = str(Path(subprocess.check_output(['/usr/bin/which', 'node'], text=True).strip()).resolve())
     script = """import{createRequire}from'node:module';import{dirname}from'node:path';
 const r=createRequire(process.cwd()+'/packages/tools/package.json'),t=r.resolve('@playwright/test'),p=createRequire(t).resolve('playwright'),c=createRequire(p).resolve('playwright-core');
@@ -144,7 +192,7 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
     native = [Path(sys.executable).resolve(), Path(python_probe['observation']['kernelExecutable']['path']), Path(node), Path('/usr/bin/caffeinate'), browser]
     esbuild_binary = ROOT / 'node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild'
     caller.require(esbuild_binary.is_file(), 'Exact tsx esbuild native route missing')
-    native += [esbuild_binary, Path(encoder['canonical_path'])]
+    native += [esbuild_binary, Path(encoder['canonical_path']), Path(METAL_COMPILER)]
     browser_libraries = list(browser_root.glob('*.dylib'))
     files = [Path('/usr/bin/git'), Path('/usr/sbin/lsof'), Path('/bin/ps'), Path('/bin/launchctl'), Path('/usr/bin/pmset'), Path('/usr/bin/codesign')]
     files += [HELPERS / name for name in PINS]
@@ -208,6 +256,9 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
         'apple_encoder_binding': encoder,
         'ownedAppleEncoder': {'path': encoder['canonical_path'], 'role': 'apple-video-encoder-xpc',
                              'ownership': 'current kernel birth/UID/coalition verified by StageReceipts'},
+        'apple_metal_compiler_binding': metal_compiler,
+        'ownedAppleMetalCompiler': {'path': METAL_COMPILER, 'role': 'apple-metal-compiler-xpc', 'observerRole': 'owned-launch-helper',
+                                   'ownership': 'current kernel birth/UID/coalition verified by StageReceipts'},
         'pythonRuntimeProbe': python_probe,
         'bindings': [binding(p) for p in sorted(set(files))],
         'dependencies': caller.tree_binding(ROOT / 'node_modules/.pnpm', workspace_links),
@@ -232,12 +283,14 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
         'nativeRoutes': ['StationJob Python worker via launchctl', 'caffeinate owned by StationJob', 'pinned Node + bound tsx esm API entry (no pnpm/shell route)',
                          'tsx esbuild service', 'Vite rolldown/lightningcss in-process native addons',
                          'ordinary Chromium headless shell with GPU/renderer/utility children',
-                         'exact signed Apple VTEncoderXPCService only when verified as a current owned cohort member'],
+                         'exact signed Apple VTEncoderXPCService only when verified as a current owned cohort member',
+                         'exact signed root-protected Apple MTLCompilerService only when verified as a current owned cohort member'],
         'noVideoRequested': True, 'explicitEncoderOrRecorderLaunchAllowed': False,
-        'externalSystemXpcOwnership': 'UNQUALIFIED; exact owned Apple encoder binding does not admit external system XPC services',
+        'externalSystemXpcOwnership': 'UNQUALIFIED; exact owned Apple encoder/Metal compiler bindings do not admit external system XPC services',
     }
     validate_python_runtime_bindings(ready)
     validate_encoder_bindings(ready)
+    validate_metal_compiler_bindings(ready)
     return ready
 
 

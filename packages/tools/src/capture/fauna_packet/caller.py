@@ -475,23 +475,62 @@ def observed_bytes(root):
     return total
 
 
-def observed_thresholds(ready, job, private):
+def live_cache_usage(ready, state):
+    """Bound how long concurrent publication may leave the live sample incomplete."""
+    observation = state.get('lastSample', {})
+    try:
+        with cache_deadline():
+            started = time.monotonic()
+            since = state.get('uncertainSinceMonotonic')
+            require(since is None or started - since < CACHE_SNAPSHOT_SECONDS,
+                    'Live cache enumeration remained uncertain beyond cache deadline')
+            observation = {}
+            state['lastSample'] = observation  # Keep partial facts on interruption/read failure.
+            state['samples'] = state.get('samples', 0) + 1
+            maximum = ready['initialCacheBytes'] + ready['budget']['nativeReservesAndObservedThresholds']['generatedCacheGrowth']
+            file_io.live_tree_usage(ready['generatedCaches'], maximum, observation)
+            now = time.monotonic()
+            observation['uncertaintySeconds'] = 0 if since is None else now - since
+            require(since is None or now - since < CACHE_SNAPSHOT_SECONDS,
+                    'Live cache enumeration remained uncertain beyond cache deadline')
+            if observation['enumerationComplete']:
+                state['uncertainSinceMonotonic'] = None
+                state['consecutiveIncomplete'] = 0
+            else:
+                if state.get('uncertainSinceMonotonic') is None:
+                    state['uncertainSinceMonotonic'] = started
+                state['consecutiveIncomplete'] = state.get('consecutiveIncomplete', 0) + 1
+                require(now - state['uncertainSinceMonotonic'] < CACHE_SNAPSHOT_SECONDS,
+                        'Live cache enumeration remained uncertain beyond cache deadline')
+            observation['uncertaintySeconds'] = 0 if state.get('uncertainSinceMonotonic') is None else now - state['uncertainSinceMonotonic']
+            return observation
+    except BaseException as error:
+        error.cacheObservation = observation
+        raise
+
+
+def observed_thresholds(ready, job, private, live_cache=None):
     reserves = ready['budget']['nativeReservesAndObservedThresholds']
     profiles = [p for p in Path(private).glob('playwright_chromiumdev_profile-*')] if private and Path(private).exists() else []
     profile_bytes = sum(observed_bytes(p) for p in profiles)
+    cache = (cache_size_admission(ready, ready['initialCacheBytes'] + reserves['generatedCacheGrowth'])
+             if live_cache is None else live_cache_usage(ready, live_cache))
     values = {'nativeProfileWorkingAndArchivePeak': profile_bytes,
               'privateTmpWorkingAndArchivePeak': observed_bytes(private) - profile_bytes,
               'helperLogWorkingAndArchivePeak': observed_bytes(job.scratch) + observed_bytes(job.out),
-              'generatedCacheGrowth': cache_size_admission(ready, ready['initialCacheBytes'] + reserves['generatedCacheGrowth'])['bytes']}
+              'generatedCacheGrowth': cache['bytes'] if cache.get('enumerationComplete', True) else None}
     # Before copying, source thresholds leave the matching copy/archive reserve free.
     limits = {**reserves, 'nativeProfileWorkingAndArchivePeak': reserves['nativeProfileWorkingAndArchivePeak'] // 2,
               'privateTmpWorkingAndArchivePeak': reserves['privateTmpWorkingAndArchivePeak'] // 2,
               'helperLogWorkingAndArchivePeak': reserves['helperLogWorkingAndArchivePeak'] // 2,
               'generatedCacheGrowth': ready['initialCacheBytes'] + reserves['generatedCacheGrowth']}
     for key, value in values.items():
-        require(value <= limits[key], 'Observed native stop threshold reached: ' + key)
+        if key == 'generatedCacheGrowth' and value is None:
+            require(live_cache is not None and cache['enumerationComplete'] is False, 'Unexplained missing cache usage')
+        else:
+            require(value <= limits[key], 'Observed native stop threshold reached: ' + key)
     require(shutil.disk_usage(ready['root']).free >= ready['budget']['safetyReserveBytes'], 'Disk safety reserve reached')
-    return {'observedBytes': values, 'stopThresholds': limits, 'hardQuota': False}
+    return {'observedBytes': values, 'stopThresholds': limits, 'hardQuota': False, 'cacheUsage': cache}
 
 
 def accept_outcome(raw):
@@ -579,9 +618,11 @@ def run_unit(ready, spec, record):
             started = time.monotonic()
             observation = {'calls': 0, 'failure': None, 'lastReturned': {}}
             result['raw']['captureObserver'] = observation
+            live_cache = {'uncertainSinceMonotonic': None, 'consecutiveIncomplete': 0}
+            result['raw']['liveCacheObserver'] = live_cache
             def observe():
                 observation['calls'] += 1
-                for phase, call in (('StageReceipts.observe', observer.observe), ('observed_thresholds', lambda: observed_thresholds(ready, job, private))):
+                for phase, call in (('StageReceipts.observe', observer.observe), ('observed_thresholds', lambda: observed_thresholds(ready, job, private, live_cache=live_cache))):
                     try:
                         value = call()
                         observation['lastReturned'][phase] = raw_value(value)

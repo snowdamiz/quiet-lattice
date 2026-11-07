@@ -183,6 +183,108 @@ def tree_plan(root, maximum, entry_cap=CACHE_ENTRY_CAP, metadata_cap=CACHE_ENTRY
     return {'root': root, 'files': sorted(files, key=lambda row: row['path']), 'directories': directories, 'pins': pins}
 
 
+def live_tree_usage(roots, maximum, observation):
+    """Sample mutable cache metadata through owned descriptors, without reading payloads.
+
+    Enumeration can lose a name during publication. Such a sample is explicitly
+    incomplete; it is never an immutable inventory or proof of a hard disk quota.
+    """
+    observation.update(scope='LIVE_CACHE_USAGE', atomic=False, complete=False,
+                       enumerationComplete=True, entries=[], bytes=0, payloadBytesRead=0)
+
+    def fact_size(fact):
+        require(len(json.dumps(fact).encode()) <= CACHE_ENTRY_METADATA_CAP, 'Live cache entry evidence cap exceeded')
+
+    def changed(fact, reason):
+        observation['enumerationComplete'] = False
+        fact.setdefault('changes', []).append(reason)
+        fact_size(fact)
+
+    def account(fact, info):
+        size = info.st_size if stat.S_ISREG(info.st_mode) else 0
+        previous = fact.get('bytes') or 0
+        fact['bytes'] = max(previous, size)
+        observation['bytes'] += fact['bytes'] - previous
+        require(observation['bytes'] <= maximum, 'Live cache observed usage exceeds controlled cap')
+        fact_size(fact)
+
+    def visit(parent, name, path, root=False):
+        require(len(observation['entries']) < CACHE_ENTRY_CAP, 'Live cache entry/evidence cap exceeded')
+        fact = {'path': str(path), 'bytes': None}
+        fact_size(fact)
+        observation['entries'].append(fact)
+        try:
+            before = os.stat(name, dir_fd=parent, follow_symlinks=False)
+        except FileNotFoundError as error:
+            fact['lookupFailure'] = failure(error)
+            if root:
+                fact['absentAtLookup'] = True
+                fact_size(fact)
+            else:
+                changed(fact, 'enumerated-name-vanished-before-stat')
+            return
+        is_directory = stat.S_ISDIR(before.st_mode)
+        require(is_directory or (not root and stat.S_ISREG(before.st_mode)), 'Unsafe live cache entry: ' + str(path))
+        fact.update(dev=before.st_dev, inode=before.st_ino, type='directory' if is_directory else 'file')
+        account(fact, before)
+        flags = os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | (os.O_DIRECTORY if is_directory else 0)
+        try:
+            fd = os.open(name, flags, dir_fd=parent)
+        except FileNotFoundError as error:
+            fact['openFailure'] = failure(error)
+            changed(fact, 'observed-name-vanished-before-open')
+            return
+        primary = None
+        try:
+            opened = os.fstat(fd)
+            require(stat.S_ISDIR(opened.st_mode) if is_directory else stat.S_ISREG(opened.st_mode), 'Unsafe opened live cache entry: ' + str(path))
+            account(fact, opened)
+            # A different safe object is not traversed as though it were the old one.
+            if not same_entry(before, opened, directory=True):
+                fact['openedReplacement'] = {'dev': opened.st_dev, 'inode': opened.st_ino, 'bytes': opened.st_size}
+                changed(fact, 'identity-changed-during-open')
+                return
+            if is_directory:
+                with os.scandir(fd) as entries:
+                    for entry in entries:
+                        visit(fd, entry.name, path / entry.name)
+            after = os.fstat(fd)
+            account(fact, after)
+            if is_directory and (opened.st_mtime_ns, opened.st_ctime_ns) != (after.st_mtime_ns, after.st_ctime_ns):
+                fact['directoryTimes'] = {'before': [opened.st_mtime_ns, opened.st_ctime_ns], 'after': [after.st_mtime_ns, after.st_ctime_ns]}
+                changed(fact, 'directory-mutated-during-enumeration')
+            try:
+                current = os.stat(name, dir_fd=parent, follow_symlinks=False)
+            except FileNotFoundError as error:
+                fact['afterLookupFailure'] = failure(error)
+                changed(fact, 'observed-name-vanished-after-sample')
+            else:
+                require(stat.S_ISDIR(current.st_mode) if is_directory else stat.S_ISREG(current.st_mode), 'Unsafe live cache replacement: ' + str(path))
+                account(fact, current)
+                if not same_entry(opened, current, directory=True):
+                    fact['pathnameReplacement'] = {'dev': current.st_dev, 'inode': current.st_ino, 'bytes': current.st_size}
+                    changed(fact, 'pathname-now-names-another-object')
+        except BaseException as error:
+            primary = error
+            raise
+        finally:
+            try:
+                os.close(fd)
+            except BaseException as error:
+                pending = primary if primary is not None else error
+                pending.metadata_close_failures = getattr(pending, 'metadata_close_failures', []) + [
+                    {'operation': 'os.close', 'path': str(path), 'descriptor': fd, **failure(error)}]
+                if primary is None:
+                    raise
+
+    for root in roots:
+        root = Path(root).absolute()
+        # Ancestors outside the mutable root retain the strict pathname contract.
+        with controlled_path(root.parent, directory=True) as (parent, _, _):
+            visit(parent, root.name, root, root=True)
+    return observation
+
+
 def make_directory(path, expected=None, exist_ok=False):
     """Create only relative to an admitted parent descriptor; never follow a replaced ancestor."""
     p = Path(path).absolute()
