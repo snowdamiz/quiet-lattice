@@ -46,7 +46,7 @@ export function install() {
     };
     for (const inst of F.instancesNear(a.clone().lerp(b, 0.5), len / 2 + 6, (sp) => sp.collide || sp.rock || sp.name === 'bush'))
       test(inst.pos, inst.sp.hitRadius * inst.scale + pad + (inst.sp.name === 'bush' ? 0.8 : 0), inst);
-    for (const c of game.fauna.creatures) if (c.sp.kind !== 'flyer' && c.pos.distanceTo(a) < len + 12) test(c.pos, c.sp.size * c.scale * 0.6 + 1.6, { pos: c.pos });
+    for (const { r, sp } of game.fauna.creatures()) if (sp.kind !== 'flyer' && r.frame === game.player.state.frame && r.pos.distanceTo(a) < len + 12) test(r.pos, sp.size * 0.6 + 1.6, { pos: r.pos });
     const sh = game.ship.state;
     if (game.ship.mode === 'landed' && sh.frame === game.system.homePlanet && b.distanceTo(sh.pos) > 12) test(sh.pos, 10, null);
     return out.sort((x, y) => x.t - y.t);

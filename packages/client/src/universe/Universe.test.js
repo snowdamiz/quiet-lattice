@@ -39,7 +39,7 @@ describe('world tiers', () => {
         ship: { model: new THREE.Group(), state: state(old), dockPad: old.pads[0], blend: { clear: () => {} } },
         player: { state: state(old), blend: { clear: () => {} } }, cam: state(old),
         engine: { scene: new THREE.Scene() }, prediction: { reset: () => {} },
-        flora: { reset: () => {} }, fauna: { setPlanet: () => {} }, structures: { setPlanet: () => {} }, cities: { setPlanet: () => {} },
+        flora: { reset: () => {} }, fauna: { reset: () => {} }, structures: { setPlanet: () => {} }, cities: { setPlanet: () => {} },
         asteroids: { group: new THREE.Group(), configure: () => {} }, audio: { setMood: () => {} },
         loadSystem: Game.prototype.loadSystem, disposeSystem: Game.prototype.disposeSystem,
         *buildSystem() { yield; return { system: system(2), station: station() }; },

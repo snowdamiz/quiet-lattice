@@ -714,19 +714,37 @@ describe('Game: analysis (P1.E08.T04)', () => {
   });
 
   it('shows the server’s answer: the species as the codex holds it and the XP, known, or why not', () => {
-    const { socket, banners, toasts } = online();
+    const { g, socket, banners, toasts } = online();
     socket.push(WELCOME);
+    expect(g.analyzed.size).toBe(0);
     socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
-    expect(banners).toEqual([['HORNED VELAR BULL', 'New Species Analyzed', ['Heavy quadruped · Territorial · ★★☆☆☆', 'Bond: with Big Game', '+300 XP']]]);
+    expect(g.analyzed.has(SPECIES.key)).toBe(true);
+    // a new session knows no species until the server says so again
+    socket.push(WELCOME);
+    expect(g.analyzed.size).toBe(0);
+    // (the codex line and Bond are the banner's third line; the XP a reward toast, as a kill's)
+    expect(banners).toEqual([['HORNED VELAR BULL', 'New Species Analyzed', [], 'Heavy quadruped · Territorial · ★★☆☆☆ · Bond: with Big Game']]);
     socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
     socket.push({ t: 'analyze', seq: 3, target: 42, result: 'refused', reason: 'los' });
     socket.push({ t: 'analyze', seq: 4, target: 42, result: 'refused', reason: 'stale_seq' });
     expect(toasts).toEqual([
+      ['+300 XP', 'good'],
       ['Horned Velar Bull · in your codex', undefined],
       ['No clear line to it', 'warn'],
       ['Analysis failed', 'warn'],
     ]);
     expect(banners).toHaveLength(1);
+  });
+
+  it('marks a species the server calls known, not only a new one, and reads the banner’s Bond with the owned nodes', () => {
+    const { g, socket, banners } = online();
+    socket.push(WELCOME);
+    socket.push({ t: 'analyze', seq: 1, target: 42, result: 'known', species: SPECIES });
+    expect(g.analyzed.has(SPECIES.key)).toBe(true);
+    // a Big Game owner can bond what the entry alone only offers through that node
+    g.build = { ...g.build, skills: ['big_game'] };
+    socket.push({ t: 'analyze', seq: 2, target: 42, result: 'new', species: SPECIES, xp: 300 });
+    expect(banners.at(-1)[3]).toBe('Heavy quadruped · Territorial · ★★☆☆☆ · Bond: eligible');
   });
 
   it('calls the species by the name its first finder gave it, when it has one', () => {
@@ -736,13 +754,14 @@ describe('Game: analysis (P1.E08.T04)', () => {
     socket.push({ t: 'analyze', seq: 1, target: 42, result: 'new', species: SPECIES, xp: 300 });
     socket.push({ t: 'analyze', seq: 2, target: 42, result: 'known', species: SPECIES });
     expect(banners.map((b) => b[0])).toEqual(['VELAR PRIME']);
-    expect(toasts).toEqual([['Velar Prime · in your codex', undefined]]);
+    expect(toasts).toEqual([
+      ['+300 XP', 'good'],
+      ['Velar Prime · in your codex', undefined],
+    ]);
   });
 
-  /** A game with a walker on a world, a creature of the client's own herds in its sights, and E pressed. */
-  function aiming(net) {
-    const sp = { name: 'Ambling Tovar Grazer', kind: 'quad', skittish: true, size: 1.5 };
-    const banners = [];
+  /** A game with a walker on a world, the server's creature `id` drawn in its sights (or none), and E pressed. */
+  function aiming(net, pick = { id: 42, sp: { name: 'Ambling Tovar Grazer' }, t: 12 }, extra = {}) {
     const world = { sampler: {}, kind: 'planet' };
     const g = fake({
       net,
@@ -752,39 +771,72 @@ describe('Game: analysis (P1.E08.T04)', () => {
       player: { state: { frame: world, pos: new THREE.Vector3(0, 100, 0) } },
       cities: { planet: null },
       structures: { nearestInteract: () => null },
-      fauna: { pick: () => ({ c: { sp }, t: 12 }), scanned: new Set(), scannedNames: new Set(), scare: vi.fn() },
+      fauna: { pick: vi.fn(() => pick) },
       multitool: { target: null, firing: false },
-      cam: { pos: new THREE.Vector3(), quat: new THREE.Quaternion() },
+      cam: { frame: world, pos: new THREE.Vector3(1, 2, 3), quat: new THREE.Quaternion() },
       inventory: new Inventory(),
-      hud: { showBanner: (...b) => banners.push(b) },
+      hud: { showBanner: vi.fn() },
       audio: { play: vi.fn() },
+      ...extra,
     });
-    return { g, sp, banners };
+    return g;
   }
 
-  it('in the dev sandbox analyzes the client’s own creature for its quest book, and pays nothing for it', () => {
-    const { g, sp, banners } = aiming(null);
+  it('asks the server to analyze the drawn creature in the crosshair, within 70 m along the aim from the camera', () => {
+    const net = { joined: true, send: vi.fn() };
+    const g = aiming(net);
     const units = g.inventory.units;
     g.handleInteractions();
-    expect(g.fauna.scannedNames.has(sp.name)).toBe(true);
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
+    expect(g.fauna.pick).toHaveBeenCalledWith(g.cam.frame, g.cam.pos, expect.objectContaining({ x: 0, y: 0, z: -1 }), 70);
+    expect(net.send).toHaveBeenCalledTimes(1);
+    expect(net.send.mock.calls[0][0]).toMatchObject({ t: 'analyze', target: 42 });
+    // the server's answer pays and writes the codex (onAnalyze); nothing is shown or paid here
+    expect(g.hud.showBanner).not.toHaveBeenCalled();
     expect(g.inventory.units).toBe(units);
-    expect(banners).toEqual([['AMBLING TOVAR GRAZER', 'New Species Discovered', ['Quadruped · Skittish · 1.8 m']]]);
-    // known now: its name only
-    g.handleInteractions();
-    expect(g.currentPrompt).toBe(sp.name);
-    expect(banners).toHaveLength(1);
   });
 
-  it('online leaves the client’s own creatures alone: their name, no analysis, no reward', () => {
+  it('labels a species in the codex as such once the server has said so, and still sends E: a known analysis counts for a quest step', () => {
     const net = { joined: true, send: vi.fn() };
-    const { g, sp, banners } = aiming(net);
-    const units = g.inventory.units;
+    const world = { sampler: {}, kind: 'planet' };
+    const pick = { id: 42, sp: { name: 'Ambling Tovar Grazer' }, r: { frame: world, species: 3 }, t: 12 };
+    const g = aiming(net, pick, { system: { seed: 1, planets: [world] }, station: null, cam: { frame: world, pos: new THREE.Vector3(), quat: new THREE.Quaternion() } });
     g.handleInteractions();
-    expect(g.currentPrompt).toBe(sp.name);
-    expect(g.fauna.scannedNames.size).toBe(0);
-    expect(g.inventory.units).toBe(units);
-    expect(banners).toEqual([]);
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
+    expect(net.send).toHaveBeenCalledTimes(1);
+    // (the server's answer names the species by its codex key: the world's frame id and the species' index)
+    g.analyzed = new Set(['1:0/3']);
+    g.handleInteractions();
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Ambling Tovar Grazer · in your codex');
+    expect(net.send).toHaveBeenCalledTimes(2);
+    expect(net.send.mock.calls[1][0]).toMatchObject({ t: 'analyze', target: 42 });
+    // another species of the world is still offered
+    g.analyzed = new Set(['1:0/4']);
+    g.handleInteractions();
+    expect(g.currentPrompt).toBe('<kbd>E</kbd>Analyze Ambling Tovar Grazer');
+  });
+
+  it('lets First Jobs’ analyze step be advanced by a species analysed earlier in the session', () => {
+    // (the server credits every analysis, known or new, to the quest's current analyze step; only the client could withhold it)
+    const net = { joined: true, send: vi.fn() };
+    const world = { sampler: {}, kind: 'planet' };
+    const pick = { id: 7, sp: { name: 'Skittish Ganpha Beast' }, r: { frame: world, species: 0 }, t: 5 };
+    const g = aiming(net, pick, { system: { seed: 1, planets: [world] }, station: null, cam: { frame: world, pos: new THREE.Vector3(), quat: new THREE.Quaternion() } });
+    g.analyzed = new Set(['1:0/0']);
+    g.handleInteractions();
+    expect(g.currentPrompt).toContain('in your codex');
+    expect(net.send.mock.calls.map((c) => c[0])).toEqual([expect.objectContaining({ t: 'analyze', target: 7 })]);
+  });
+
+  it('offers nothing with no creature in the sights, and analyzes nothing offline', () => {
+    const net = { joined: true, send: vi.fn() };
+    const none = aiming(net, null);
+    none.handleInteractions();
+    expect(none.currentPrompt).toBeFalsy();
     expect(net.send).not.toHaveBeenCalled();
+    const offline = aiming(null);
+    offline.handleInteractions();
+    expect(offline.hud.showBanner).not.toHaveBeenCalled();
   });
 });
 

@@ -859,7 +859,7 @@ body {
   padding: 3px 10px 3px 22px;
   border-right: 1px solid var(--accent2);
   /* a soft backing, so a notice stays legible over bright ground or the multitool */
-  background: linear-gradient(270deg, rgba(4, 8, 14, 0.45), rgba(4, 8, 14, 0));
+  background: linear-gradient(270deg, rgba(4, 8, 14, 0.6), rgba(4, 8, 14, 0));
   animation: toastIn 0.25s ease-out;
   transition: opacity 0.6s, transform 0.6s;
   display: flex;
@@ -927,7 +927,8 @@ body {
 .banner .b-line {
   font-size: 12.5px;
   letter-spacing: 0.06em;
-  color: var(--dim);
+  /* (the analysis's codex line, whose hollow stars are the thinnest strokes on the banner: full text colour holds 4.5:1 over the day sky) */
+  color: var(--text);
   margin-top: 2px;
 }
 @keyframes banner {
@@ -3999,7 +4000,8 @@ input[type='range'].range:hover::-webkit-slider-thumb {
 .location .body,
 .ec-read,
 .banner .b-sub,
-.banner .b-title {
+.banner .b-title,
+.banner .b-line {
   text-shadow:
     0 0 1px var(--ink),
     0 0 3px var(--ink),

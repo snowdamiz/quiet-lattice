@@ -4,6 +4,7 @@
 // what the capture shows went through the same decoding, store, buffers and clock as a live session.
 import * as THREE from 'three';
 import { decodeSnapshot, diffEntity, encodeSnapshot } from '@astra/shared/protocol';
+import { FAUNA_MAX_TIER, faunaSpecies } from '@astra/shared/world';
 import { frameIdOfFrame } from '../net/pose.js';
 
 /** The zone's tick. */
@@ -299,7 +300,94 @@ export function bayTicks(game, { t0 = game.time, seconds = 30 } = {}) {
   return ticksOf(t0, seconds, () => docked.map((d, i) => ({ id: 501 + i, kind: 'player', frame, ...pilot(i), ...d })));
 }
 
-export const SCENES = { flypast: flypastTicks, crowd: crowdTicks, pads: padsTicks, surface: surfaceTicks, bay: bayTicks };
+/**
+ * A herd for the dev captures, on foot on a world with fauna: the server's creatures ahead of the walker, in the world's
+ * frame, as its zone would send them. Walkers of the world's species graze and sway about their spots 14-40 m out, one a
+ * hostile that lunges (mode `attack`, its phase rising); a flyer circles 25 m up. `kills` (id → s after `t0`) are killed
+ * then: mode `dead`, hp 0, still, as the server leaves a corpse, and out of the snapshots 3 s later.
+ */
+export function herdTicks(game, { t0 = game.time, seconds = 30, kills = { 601: 9, 603: 23.6 } } = {}) {
+  const planet = game.player.state.frame;
+  const frame = frameIdOfFrame(game.system, game.station, planet);
+  const species = faunaSpecies(planet.params, FAUNA_MAX_TIER);
+  const walkers = species.filter((s) => s.kind !== 'flyer');
+  // (the biggest first: they read best from 15 m)
+  const calm = walkers.filter((s) => s.temperament === 'docile' || s.temperament === 'skittish').sort((x, y) => y.size - x.size);
+  const hostile = walkers.find((s) => s.temperament === 'territorial' || s.temperament === 'predator') ?? walkers[walkers.length - 1];
+  const flyer = species.find((s) => s.kind === 'flyer') ?? walkers[0];
+  const foot = game.player.state.pos.clone();
+  const up0 = foot.clone().normalize();
+  const fwd = game.player.heading.clone().addScaledVector(up0, -game.player.heading.dot(up0)).normalize();
+  const right = new THREE.Vector3().crossVectors(fwd, up0).normalize();
+  const radius = planet.radius;
+  // a point on the ground (or `alt` over it) at tangent-plane offsets from under the walker
+  const over = (x, z, alt, out) => {
+    const dir = out.copy(foot).normalize().multiplyScalar(radius).addScaledVector(right, x).addScaledVector(fwd, z).normalize();
+    return dir.multiplyScalar(planet.surfaceRadius(dir) + alt);
+  };
+  const herd = [
+    // [id, species, start x, z, velocity x, z, alt, level, mode]
+    [601, calm[0] ?? walkers[0], -3, 16, 0, 0, 0, 3, 'idle'],
+    [602, hostile, 6, 24, -0.4, -1.1, 0, 4, 'attack'],
+    [603, calm[0] ?? walkers[0], -9, 20, 0.5, 0.2, 0, 3, 'wander'],
+    [604, calm[1] ?? calm[0] ?? walkers[0], 12, 34, -0.6, 0.1, 0, 2, 'wander'],
+    [605, calm[0] ?? walkers[0], -14, 28, 0.3, -0.3, 0, 3, 'wander'],
+    [606, flyer, 0, 30, 0, 0, 25, 2, 'fly'],
+  ];
+  const a = new THREE.Vector3();
+  const b = new THREE.Vector3();
+  const v = new THREE.Vector3();
+  const m = new THREE.Matrix4();
+  const q = new THREE.Quaternion();
+  const heading = new THREE.Vector3();
+  const at = (h, u, out) => {
+    const [, sp, x, z, vx, vz, alt] = h;
+    // (a flyer circles its spot at its cruising speed)
+    if (sp.kind === 'flyer') {
+      const w = sp.walk / 26;
+      return over(x + 26 * Math.cos(w * u), z + 26 * Math.sin(w * u), alt + 2 * Math.sin(0.7 * u), out);
+    }
+    const sway = 4 * Math.sin(u / 4);
+    return over(x + vx * sway, z + vz * sway, alt, out);
+  };
+  return ticksOf(t0, seconds, (t) => {
+    const u = t - t0;
+    const out = [];
+    for (const h of herd) {
+      const [id, sp, , , , , , level, mode] = h;
+      const killAt = kills[id] ?? Infinity;
+      const dead = u >= killAt;
+      if (u >= killAt + 3) continue;
+      const upos = dead ? killAt : u;
+      const pos = at(h, upos, a).clone();
+      v.copy(at(h, upos + 0.01, b)).sub(pos).divideScalar(0.01);
+      const moving = !dead && v.length() > 0.05;
+      heading.copy(moving ? v : fwd.clone().multiplyScalar(-1).addScaledVector(right, id % 2 ? 0.6 : -0.5));
+      const up = pos.clone().normalize();
+      heading.addScaledVector(up, -heading.dot(up)).normalize();
+      const side = new THREE.Vector3().crossVectors(up, heading).normalize();
+      const lead = new THREE.Vector3().crossVectors(side, up);
+      q.setFromRotationMatrix(m.makeBasis(side, up, lead));
+      const lunge = mode === 'attack' ? (u * 0.8) % 1 : null;
+      out.push({
+        id,
+        kind: 'mob',
+        frame,
+        pos: pos.toArray(),
+        quat: q.toArray(),
+        vel: moving ? v.toArray() : [0, 0, 0],
+        mode: dead ? 'dead' : mode,
+        species: sp.index,
+        level,
+        hp: dead ? 0 : killAt < Infinity ? Math.max(0.15, 1 - u / killAt) : 1,
+        ...(lunge !== null && !dead ? { attack: lunge } : {}),
+      });
+    }
+    return out;
+  });
+}
+
+export const SCENES = { flypast: flypastTicks, crowd: crowdTicks, pads: padsTicks, surface: surfaceTicks, bay: bayTicks, herd: herdTicks };
 
 /** Starts scene `name` (SCENES). */
 export const play = (game, name, opts = {}) => playTicks(game, SCENES[name](game, opts), opts);

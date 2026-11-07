@@ -195,27 +195,38 @@ export function castIntent(game, bar) {
   else _aim.set(0, 0, -1).applyQuaternion(st.quat);
   const aim = [_aim.x, _aim.y, _aim.z];
   const eye = foot ? st.pos.clone().addScaledVector(game.player.up(_up), EYE_M) : st.pos.clone();
-  return { time: game.time, frame, aim, pick: (ability, node) => pickTarget(game.net, frame, eye, _aim.clone(), ability, getSkillNode(node)) };
+  return {
+    time: game.time,
+    frame,
+    aim,
+    pick: (ability, node) => pickTarget(game.net, frame, eye, _aim.clone(), ability, getSkillNode(node), game.fauna.targets(st.frame)),
+  };
 }
 
 /** The entity an `entity` cast names: of a kind the ability takes, alive, in the caster's frame and within its reach of
- * the eye, nearest the aim within TARGET_CONE_DEG; null when none is. */
-export function pickTarget(net, frame, eye, aim, ability, node) {
+ * the eye, nearest the aim within TARGET_CONE_DEG; null when none is. Creatures are the ones drawn (`drawn`, Fauna's
+ * `targets`: where each is shown, the middle of its hit sphere), not the latest the snapshots hold, so the cast names
+ * what the player is looking at; without `drawn` they are read from the snapshots like any other entity. */
+export function pickTarget(net, frame, eye, aim, ability, node, drawn = null) {
   const reach = reachOf(ability, node);
   const cos = Math.cos((TARGET_CONE_DEG * Math.PI) / 180);
   let best = null;
   let bestCos = cos;
-  for (const [id, e] of net.store.entities) {
-    if (id === net.entityId || e.frame !== frame || !ability.on?.includes(e.kind)) continue;
-    if (e.mode === 'dead' || (e.hp !== undefined && !(e.hp > 0))) continue;
-    _to.set(e.pos[0] - eye.x, e.pos[1] - eye.y, e.pos[2] - eye.z);
+  const consider = (id, x, y, z) => {
+    _to.set(x - eye.x, y - eye.y, z - eye.z);
     const d = _to.length();
-    if (!(d > 0) || d > reach + 3) continue;
+    if (!(d > 0) || d > reach + 3) return;
     const c = _to.dot(aim) / (d * aim.length());
     if (c >= bestCos) {
       bestCos = c;
       best = id;
     }
+  };
+  for (const [id, e] of net.store.entities) {
+    if (id === net.entityId || e.frame !== frame || !ability.on?.includes(e.kind) || (drawn && e.kind === 'mob')) continue;
+    if (e.mode === 'dead' || (e.hp !== undefined && !(e.hp > 0))) continue;
+    consider(id, e.pos[0], e.pos[1], e.pos[2]);
   }
+  if (drawn && ability.on?.includes('mob')) for (const c of drawn) consider(c.id, c.pos.x, c.pos.y, c.pos.z);
   return best;
 }

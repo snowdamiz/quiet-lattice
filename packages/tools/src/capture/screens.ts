@@ -892,6 +892,212 @@ async function openRemotes(
   await page.waitForTimeout(1200);
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/** What the fauna-combat screens reach of the page. */
+interface FaunaPage {
+  game: any;
+  dev: any;
+  step(n: number): Promise<void>;
+  __feed: any;
+  __herd: {
+    t0: number;
+    me: number;
+    aim(id: number, frames?: number): Promise<void>;
+    hit(id: number, amount: number, killed?: boolean): void;
+    stepTo(u: number): Promise<void>;
+  };
+  __clip: { frame(dt: number): void; t: number };
+  __hitTurn: {
+    events: { frame: number; target: number; amount: number; visible: boolean; consumed: boolean }[];
+    frames: { frame: number; ms: number; targetVisible: boolean; values: string[] }[];
+  };
+  __flyerKill: FlyerKillReceipt;
+  __restoreFaunaHudClock?: () => void;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+/** The herd's stream (replay.js `herdTicks`): creature 601 is killed this many seconds in, 603 in the clip. */
+const HERD_KILLS = { 601: 9, 603: 23.6 };
+/** Where in the stream (s) each still and the clip start; the clip's scripted fight runs from the last. */
+const HERD_AT = { base: 2.4, numbers: 2.8, kill: 9.5, flash: 9.7, analysis: 10.2, offscreen: 12, clip: 22 };
+
+/**
+ * On foot on the home world with the server's herd ahead, played into the remote layer as a recorded snapshot stream
+ * (offline and hermetic, replay.js `herd`), and the HUD's combat feed (net/combat.js, which the server's `event` messages
+ * fill) in the page's hands: `__herd.hit` is the server saying a hit landed. `night` stands the walker on the night side.
+ * Creature 601 is the one in the sights. Stops with the herd settled in view, 2.4 s into the stream.
+ */
+async function openHerd(page: Page, night: boolean, flyerKill = false): Promise<void> {
+  // (tsx names the callbacks' functions with esbuild's __name helper, which the page lacks)
+  await page.evaluate('window.__name ??= (f) => f');
+  await standingByShip(page);
+  await parkLoop(page);
+  await page.evaluate(
+    async ({ night, kills, at }) => {
+      const w = window as unknown as FaunaPage;
+      const g = w.game;
+      if (night) {
+        // the night side, on dry land clear of the sea: round the ring of directions 150° from the sun
+        const planet = g.player.state.frame;
+        const V = g.player.state.pos.constructor;
+        const toSun = new V().copy(g.system.star.position).sub(planet.position).normalize().applyQuaternion(planet.quaternionInv);
+        const axis = new V(0, 1, 0).cross(toSun).normalize();
+        const up = toSun.clone().applyAxisAngle(axis, (150 * Math.PI) / 180);
+        for (let k = 0; k < 72; k++) {
+          const h = planet.heightAt(up);
+          if (h > 15 && h < planet.params.mountainHeight * 0.3) break;
+          up.applyAxisAngle(toSun, (5 * Math.PI) / 180);
+        }
+        const heading = new V().crossVectors(up, toSun).normalize();
+        g.player.spawn(planet, up.clone().multiplyScalar(planet.groundRadius(up) + 0.5), heading);
+        g.cam.frame = undefined;
+        // (the ground streams in from the workers, a few frames at a time, finest last: until the pool has been idle a while)
+        for (let i = 0, idle = 0; i < 200 && idle < 8; i++) {
+          await w.step(6);
+          await new Promise((r) => setTimeout(r, 120));
+          idle = g.pool.pending() === 0 ? idle + 1 : 0;
+        }
+      }
+      g.hud.clearBanners();
+      const base = '/src';
+      const { CombatFeed } = await import(/* @vite-ignore */ `${base}/net/combat.js`);
+      const replay = await import(/* @vite-ignore */ `${base}/remote/replay.js`);
+      const me = 1;
+      // (the server's events reach the HUD through the feed; the page plays the server)
+      const feed = (w.__feed = new CombatFeed({ on() {}, entityId: me, now: () => performance.now() }));
+      const updateHits = g.hud.updateHits.bind(g.hud);
+      g.hud.updateHits = () => updateHits(feed);
+      const t0 = g.time;
+      replay.play(g, 'herd', { seconds: 40, kills });
+      w.__herd = {
+        t0,
+        me,
+        // steps the game to `u` s into the stream
+        async stepTo(u: number) {
+          const frames = Math.round((t0 + u - g.time) * 60);
+          if (frames > 0) await w.step(frames);
+        },
+        // turns the walker to look at creature `id` (the middle of its body)
+        async aim(id: number, frames = 24) {
+          for (let i = 0; i < frames; i++) {
+            const r = g.remotes.get(id);
+            const sp = g.fauna.speciesOf(r);
+            const mid = r.pos.clone().addScaledVector(r.pos.clone().normalize(), sp.size * 0.55);
+            w.dev.footAim(mid, 0.6);
+            await w.step(1);
+          }
+        },
+        hit(id: number, amount: number, killed = false) {
+          feed.event({ kind: 'combat', source: me, target: id, amount, killed, hp: killed ? 0 : 0.5 });
+        },
+      };
+      // the stream's buffers fill and the herd walks into view; the meadow is cleared where they stand and between, so they read
+      await w.__herd.stepTo(at.base - 1.2);
+      for (const r of g.remotes.list) {
+        if (r.kind !== 'mob') continue;
+        g.flora.clearAround(r.pos.clone(), 9, 8);
+        const from = g.player.state.pos;
+        for (const k of [0.25, 0.5, 0.75]) g.flora.clearAround(from.clone().lerp(r.pos, k), 5, 4);
+      }
+      for (let i = 0, idle = 0; i < 100 && (i < 6 || idle < 4); i++) {
+        await w.step(10);
+        await new Promise((r) => setTimeout(r, 120));
+        idle = g.pool.pending() === 0 ? idle + 1 : 0;
+      }
+      await w.__herd.aim(601);
+      await w.__herd.stepTo(at.base);
+    },
+    { night, kills: flyerKill ? { ...HERD_KILLS, 606: 9 } : HERD_KILLS, at: HERD_AT },
+  );
+  await page.waitForTimeout(600);
+}
+
+/** Holds every animation of the HUD where it is `ms` into it (the numbers' rise, the flash, a banner), for a still. Returns how
+ * many damage numbers were showing. The numbers are the game's own for as long as the page takes to be shot, which a loaded machine
+ * can stretch past their life (the HUD removes each after 1 s of wall clock); copies of them, held, are what the still shows. */
+async function holdHud(page: Page, ms: { number?: number; flash?: number; banner?: number }): Promise<number> {
+  return page.evaluate((ms) => {
+    let numbers = 0;
+    for (const a of document.getAnimations()) {
+      const el = (a.effect as KeyframeEffect | null)?.target as HTMLElement | null;
+      if (!el) continue;
+      const at = el.closest('.hit-number') ? ms.number : el.closest('.flash') ? ms.flash : el.closest('.banner') ? ms.banner : undefined;
+      if (at === undefined) continue;
+      if (el.classList.contains('hit-number')) {
+        const keep = el.cloneNode(true) as HTMLElement;
+        el.parentElement?.appendChild(keep);
+        const held = keep.animate((a.effect as KeyframeEffect).getKeyframes(), { duration: 900, easing: 'linear', fill: 'forwards' });
+        held.pause();
+        held.currentTime = at;
+        el.remove();
+        numbers++;
+        continue;
+      }
+      a.pause();
+      a.currentTime = at;
+    }
+    return numbers;
+  }, ms);
+}
+
+/** Clears the HUD of what the last still left: numbers, toasts, the flash. */
+async function clearHud(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as FaunaPage;
+    const h = w.game.hud;
+    h.hitsEl.replaceChildren();
+    h.toasts.replaceChildren();
+    h.flashEl.className = 'flash';
+    w.game.hud.clearBanners();
+  });
+}
+
+/** The hits of a fight: stacked numbers over two creatures, from the server's `combat` events. */
+async function fightHits(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const w = window as unknown as FaunaPage;
+    for (const [id, amount] of [
+      [601, 14],
+      [601, 22],
+      [601, 17],
+      [602, 31],
+      [601, 9],
+    ] as const) {
+      w.__herd.hit(id, amount);
+      await w.step(2);
+    }
+  });
+}
+
+/** The scripted events of the fight clip, fired from the clip's own frames (`__clip.frame`, so they fall on the frames
+ * they name whatever the machine's speed): 603, the one in the sights, takes hits, 602 lunges at the walker (a blow
+ * taken: the flash), and the last hit kills 603 (gold, its XP and loot toasts), the walker aimed at it throughout. */
+async function fightClip(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as FaunaPage;
+    const clip = w.__clip;
+    const frame = clip.frame.bind(clip);
+    const script: [number, () => void][] = [
+      [0.15, () => w.__herd.hit(603, 12)],
+      [0.3, () => w.__herd.hit(603, 18)],
+      [0.36, () => w.__herd.hit(603, 9)],
+      [0.55, () => w.__herd.hit(602, 21)],
+      [0.85, () => w.__feed.event({ kind: 'combat', source: 602, target: w.__herd.me, amount: 11, killed: false, hp: 0.9 })],
+      [1.1, () => w.__herd.hit(603, 15)],
+      [1.45, () => w.__herd.hit(603, 24)],
+      [1.6, () => w.__herd.hit(603, 31, true)],
+      [1.75, () => w.__feed.event({ kind: 'xp', amount: 30, level: 1 })],
+      [1.8, () => w.__feed.event({ kind: 'loot', item: 'units', count: 7 })],
+      [3.0, () => w.__feed.event({ kind: 'loot', item: 'units', count: 7 })],
+    ];
+    let next = 0;
+    clip.frame = (dt: number) => {
+      while (next < script.length && script[next]![0] <= clip.t + 1e-9) script[next++]![1]();
+      frame(dt);
+    };
+  });
+}
+
 /**
  * A dev overlay over the remote-ships screens, drawn after every frame: for each other pilot, how the local ship's sensors
  * read it (its distance against its reach, the sensor range × its signature, and what raised or lowered the signature:
@@ -1023,8 +1229,8 @@ async function uiCostProbe(page: Page, of: 'social' | 'hud'): Promise<void> {
 const UI_BUDGET_MS = 1;
 
 /** The probed UI's per-frame cost over the clip (`uiCostProbe`), as the readout under its sheet: the mean, the 95th
- * percentile and the worst frame, against the 16.7 ms a frame at 60 fps has, and the index of every frame over the 1 ms
- * budget. */
+ * percentile and the worst frame, against the 16.7 ms a frame at 60 fps has, and how many frames went over the 1 ms
+ * budget, with their indexes. */
 const uiCostReadout =
   (label: string) =>
   async (page: Page): Promise<string> => {
@@ -1032,10 +1238,10 @@ const uiCostReadout =
     const sorted = [...ms].sort((a, b) => a - b);
     const mean = ms.reduce((a, b) => a + b, 0) / Math.max(1, ms.length);
     const at = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))] ?? 0;
-    const over = ms.flatMap((v, i) => (v > UI_BUDGET_MS ? [`${String(i).padStart(3, '0')} (${v.toFixed(3)} ms)`] : []));
+    const over = ms.flatMap((v, i) => (v > UI_BUDGET_MS ? [`#${i}, ${v.toFixed(1)} ms`] : []));
     return [
       `${label} frame cost over ${ms.length} frames: mean ${mean.toFixed(3)} ms, p95 ${at(0.95).toFixed(3)} ms, worst ${(sorted.at(-1) ?? 0).toFixed(3)} ms (of 16.7 ms)`,
-      `frames over ${UI_BUDGET_MS} ms: ${over.length ? over.join(', ') : 'none'}`,
+      `frames over ${UI_BUDGET_MS} ms: ${over.length ? `${over.length} ${over.length === 1 ? 'frame' : 'frames'} (${over.join('; ')})` : 'none'}`,
     ].join('\n');
   };
 const socialCostReadout = uiCostReadout('social UI');
@@ -1663,6 +1869,340 @@ function eventBannerQueuedScreen(): ScreenDef {
     },
     motion: (page) => announceEvent(page, true),
   };
+}
+
+/** The fauna-combat stills (after the base one, in stream order: the game moves on between them). */
+function faunaStills(): Record<string, (page: Page) => Promise<void>> {
+  return {
+    async numbers(page) {
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.numbers);
+      await fightHits(page);
+      await holdHud(page, { number: 380 });
+    },
+    async kill(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.kill);
+      await page.evaluate(async () => {
+        const w = window as unknown as FaunaPage;
+        w.__herd.hit(601, 19);
+        await w.step(2);
+        w.__herd.hit(601, 26, true);
+        w.__feed.event({ kind: 'xp', amount: 30, level: 1 });
+        w.__feed.event({ kind: 'loot', item: 'units', count: 7 });
+        await w.step(2);
+      });
+      await holdHud(page, { number: 420 });
+      // (the toasts slide in over 250 ms of the page's own time)
+      await page.waitForTimeout(450);
+    },
+    async flash(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.flash);
+      await page.evaluate(async () => {
+        const w = window as unknown as FaunaPage;
+        w.__feed.event({ kind: 'combat', source: 602, target: w.__herd.me, amount: 11, killed: false, hp: 0.9 });
+        await w.step(2);
+      });
+      await holdHud(page, { flash: 120 });
+    },
+    async analysis(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => (window as unknown as FaunaPage).__herd.stepTo(at), HERD_AT.analysis);
+      await page.evaluate(async () => {
+        const w = window as unknown as FaunaPage;
+        await w.__herd.aim(605, 30);
+        // the server's answer to an `analyze` of the creature in the crosshair: the codex entry of its species
+        const r = w.game.remotes.get(605);
+        const sp = w.game.fauna.speciesOf(r);
+        const threat: Record<string, number> = { docile: 1, skittish: 1, territorial: 2, predator: 3, ambusher: 3, apex: 5 };
+        // (the codex's own key for it: the world's frame id and the species' index, which the prompt reads to say it is known)
+        const world = `${w.game.system.seed}:${w.game.system.planets.indexOf(r.frame)}`;
+        w.game.onAnalyze({
+          t: 'analyze',
+          seq: 1,
+          target: 605,
+          result: 'new',
+          xp: 300,
+          species: {
+            key: `${world}/${sp.index}`,
+            world,
+            index: sp.index,
+            name: sp.name,
+            temperament: sp.temperament,
+            threat: threat[sp.temperament],
+            bodyPlan: sp.bodyPlan,
+            bond: null,
+            at: 1000,
+          },
+        });
+        await w.step(4);
+      });
+      // (the banner fades in over its first 700 ms; held there)
+      await holdHud(page, { banner: 1800 });
+      await page.waitForTimeout(200);
+    },
+    // Real combat events on creatures behind the walker are consumed without unrelated numbers over the scenery.
+    async offscreen(page) {
+      await clearHud(page);
+      await page.evaluate(faunaOffscreenHits, HERD_AT.offscreen);
+    },
+    // the clip's first frame: the herd as the fight starts, the walker aimed at the creature that will die
+    async start(page) {
+      await clearHud(page);
+      await page.evaluate(async (at) => {
+        const w = window as unknown as FaunaPage;
+        await w.__herd.stepTo(at - 1);
+        await w.__herd.aim(603, 40);
+        await w.__herd.stepTo(at);
+      }, HERD_AT.clip);
+      await page.waitForTimeout(300);
+    },
+  };
+}
+
+/** Runs in the page; exported so the fixture's event and suppression checks can also run without a browser. */
+export async function faunaOffscreenHits(at: number): Promise<void> {
+  const w = window as unknown as FaunaPage;
+  await w.__herd.stepTo(at);
+  const from = w.game.player.state.pos;
+  const away = from.clone().multiplyScalar(2).sub(w.game.remotes.get(602).pos);
+  for (let i = 0; i < 30; i++) {
+    w.dev.footAim(away, 0.6);
+    await w.step(1);
+  }
+  if (w.__feed.dealt.length) throw new Error('offscreen fixture started with unconsumed hits');
+  const hits = [
+    { target: 602, amount: 17 },
+    { target: 603, amount: 23 },
+    { target: 602, amount: 9 },
+  ];
+  for (const { target, amount } of hits) {
+    if (w.game.hud.hitAnchor(w.game.remotes.get(target))) throw new Error(`offscreen target ${target} is still visible`);
+    w.__herd.hit(target, amount);
+  }
+  if (w.__feed.dealt.length !== hits.length || hits.some((hit, i) => w.__feed.dealt[i].target !== hit.target || w.__feed.dealt[i].amount !== hit.amount)) {
+    throw new Error('offscreen fixture did not enqueue its combat events');
+  }
+  await w.step(1);
+  if (w.__feed.dealt.length) throw new Error('offscreen combat events were not consumed');
+  if (w.game.hud.hitsEl.children.length) throw new Error('offscreen hits raised damage numbers without a visible target');
+}
+
+/** A 72-frame turn, using the capture's clock and actual combat feed. No held or cloned damage numbers. Runs in the page. */
+export function faunaTurnMotion(): void {
+  const w = window as unknown as FaunaPage;
+  const g = w.game;
+  const clip = w.__clip;
+  const frame = clip.frame.bind(clip);
+  const start = clip.t;
+  const trace: FaunaPage['__hitTurn'] = (w.__hitTurn = { events: [], frames: [] });
+  let index = 0;
+  clip.frame = (dt: number) => {
+    const i = index++;
+    const r = g.remotes.get(602);
+    const from = g.player.state.pos;
+    if (i >= 12 && i < 30) {
+      // A 120° turn leaves the target outside both viewports while its numbers are still alive.
+      const away = r.pos
+        .clone()
+        .sub(from)
+        .applyAxisAngle(from.clone().normalize(), (2 * Math.PI) / 3)
+        .add(from);
+      w.dev.footAim(away, 0.6);
+    } else if (i >= 32 && i < 52) {
+      const sp = g.fauna.speciesOf(r);
+      w.dev.footAim(r.pos.clone().addScaledVector(from.clone().normalize(), sp.size * 0.55), 0.6);
+    }
+    const hits = i === 0 ? [17] : i === 4 ? [23] : i === 8 ? [9] : i === 30 ? [17, 23, 9] : i === 54 ? [11] : [];
+    const queued: FaunaPage['__hitTurn']['events'] = [];
+    for (const amount of hits) {
+      const visible = !!g.hud.hitAnchor(g.remotes.get(602));
+      if (visible !== (i !== 30)) throw new Error(`turn fixture hit at frame ${i} has the wrong target visibility`);
+      w.__herd.hit(602, amount);
+      const event = w.__feed.dealt.at(-1);
+      if (!event || event.target !== 602 || event.amount !== amount) throw new Error(`turn fixture combat event missing at frame ${i}`);
+      const receipt = { frame: i, target: 602, amount, visible, consumed: false };
+      trace.events.push(receipt);
+      queued.push(receipt);
+    }
+    frame(dt);
+    const targetVisible = !!g.hud.hitAnchor(g.remotes.get(602));
+    const values = Array.from(document.querySelectorAll<HTMLElement>('.hit-number'), (e) => e.textContent ?? '');
+    trace.frames.push({ frame: i, ms: (clip.t - start) * 1000, targetVisible, values });
+    for (const receipt of queued) receipt.consumed = w.__feed.dealt.length === 0;
+    if (queued.some((e) => !e.consumed)) throw new Error(`turn fixture combat events not consumed at frame ${i}`);
+    if (!targetVisible && values.length) throw new Error(`live damage numbers survived their target leaving view at frame ${i}`);
+    if (i === 10 && values.length !== 3) throw new Error('turn fixture did not show three live numbers before turning');
+    if (i === 52 && (!targetVisible || values.length)) throw new Error('turn fixture did not return to a visible target with old numbers expired');
+  };
+}
+
+export interface FlyerKillReceipt {
+  offlineReplay: true;
+  target: number;
+  speciesKind: string;
+  beforeMode: string;
+  mode: string;
+  sourcePosition: number[];
+  sourcePositionAfter: number[];
+  instanceMatrix: number[];
+  cameraWorld: number[];
+  cameraInverseQuaternion: number[];
+  projectionMatrix: number[];
+  worldUp: number[];
+  size: number;
+  publishedAnchor: number[];
+  projectedAnchor: { x: number; y: number };
+  number: { value: string; left: number; top: number; fontSize: string; color: string; ageMs: number; sameRecord: boolean };
+  fallAgeMs: number;
+  viewport: number[];
+}
+
+/** Only the new turn packet: an offline replay death, with an actual live number held on the fallen flyer instance. */
+export async function faunaFlyerKillPose(): Promise<void> {
+  const w = window as unknown as FaunaPage;
+  const g = w.game;
+  const h = g.hud;
+  await w.__herd.stepTo(8);
+  await w.__herd.aim(606, 24);
+  const r = g.remotes.get(606);
+  const sp = g.fauna.speciesOf(r);
+  const beforeMode = r.pose.mode;
+  if (sp.kind !== 'flyer' || beforeMode === 'dead' || !h.hitAnchor(r)) throw new Error('kill fixture did not start on a visible living flyer');
+  await w.__herd.stepTo(9);
+  for (let i = 0; i < 24 && r.pose.mode !== 'dead'; i++) await w.step(1);
+  if (r.pose.mode !== 'dead' || !(r.vis.deadAt >= 0)) throw new Error('kill fixture did not receive the replay flyer death');
+  const sourcePosition = r.pos.toArray();
+  const old = { now: h.now, later: h.later, cancel: h.cancel };
+  const base = h.now();
+  const started = g.time;
+  let timerId = 0;
+  const timers = new Map<number, { fn: () => void; at: number }>();
+  h.now = () => base + (g.time - started) * 1000;
+  h.later = (fn: () => void, ms: number) => {
+    const id = ++timerId;
+    timers.set(id, { fn, at: h.now() + ms });
+    return id;
+  };
+  h.cancel = (id: number) => timers.delete(id);
+  w.__restoreFaunaHudClock = () => {
+    const now = h.now();
+    Object.assign(h, old);
+    for (const timer of timers.values()) old.later(timer.fn, Math.max(0, timer.at - now));
+    timers.clear();
+  };
+  w.__herd.hit(606, 26, true);
+  w.__feed.event({ kind: 'xp', amount: 30, level: 1 });
+  w.__feed.event({ kind: 'loot', item: 'units', count: 7 });
+  if (w.__feed.dealt.length !== 1 || w.__feed.dealt[0].target !== 606 || !w.__feed.dealt[0].killed) throw new Error('flyer killing-blow event missing');
+  await w.step(1);
+  await w.step(42);
+  if (w.__feed.dealt.length) throw new Error('flyer killing-blow event was not consumed');
+  const number = document.querySelector<HTMLElement>('.hit-number');
+  const live = h.hitLive.find((x: { target: unknown; el: HTMLElement }) => x.target === r && x.el === number);
+  if (!number || !live || number.textContent !== '26' || h.hitsEl.children.length !== 1)
+    throw new Error('flyer killing-blow number is not live on its original record');
+  const d = g.fauna.worlds.get(r.frame).drawn.get(r.species);
+  if (d.mesh.count !== 1) throw new Error('flyer fixture requires its one actual species instance');
+  const matrix = g.engine.camera.projectionMatrix.clone();
+  d.mesh.getMatrixAt(0, matrix);
+  const actual = r.world.clone().setFromMatrixPosition(matrix).add(g.camWorld);
+  const up = r.world.clone().sub(r.frame.position).normalize();
+  if (r.world.clone().sub(actual).dot(up) < 2) throw new Error('flyer fixture did not show its actual instance falling');
+  const point = actual.addScaledVector(up, sp.size * 0.5);
+  const p = point.clone().sub(g.camWorld).applyQuaternion(g.camWorldQuatInv).applyMatrix4(g.engine.camera.projectionMatrix);
+  const projectedAnchor = { x: (p.x * 0.5 + 0.5) * window.innerWidth, y: (-p.y * 0.5 + 0.5) * window.innerHeight };
+  const anchor = h.hitAnchor(r);
+  const ageMs = h.now() - live.at;
+  if (!anchor || Math.hypot(anchor.x - projectedAnchor.x, anchor.y - projectedAnchor.y) > 0.05 || Math.abs(ageMs - 700) > 0.1)
+    throw new Error('flyer number did not follow the actual fallen instance near 700 ms');
+  const animations = number.getAnimations();
+  if (!animations.length) throw new Error('flyer number animation missing');
+  for (const a of animations) {
+    a.pause();
+    a.currentTime = ageMs;
+  }
+  w.__flyerKill = {
+    offlineReplay: true,
+    target: r.id,
+    speciesKind: sp.kind,
+    beforeMode,
+    mode: r.pose.mode,
+    sourcePosition,
+    sourcePositionAfter: r.pos.toArray(),
+    instanceMatrix: matrix.toArray(),
+    cameraWorld: g.camWorld.toArray(),
+    cameraInverseQuaternion: g.camWorldQuatInv.toArray(),
+    projectionMatrix: g.engine.camera.projectionMatrix.toArray(),
+    worldUp: up.toArray(),
+    size: sp.size,
+    publishedAnchor: g.fauna.hitAnchor(r).toArray(),
+    projectedAnchor,
+    number: {
+      value: number.textContent,
+      left: Number.parseFloat(number.style.left),
+      top: Number.parseFloat(number.style.top),
+      fontSize: number.style.fontSize,
+      color: number.style.color,
+      ageMs,
+      sameRecord: live.target === r,
+    },
+    fallAgeMs: (g.fauna.time.value - r.vis.deadAt) * 1000,
+    viewport: [window.innerWidth, window.innerHeight],
+  };
+}
+
+function faunaTurnScreen(night: boolean, clipAspect: '16x9' | '21x9'): ScreenDef {
+  const stills = faunaStills();
+  return {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 1.2,
+    clipAspect,
+    sheetFrames: [0, 4, 8, 10, 12, 16, 20, 24, 28, 30, 32, 40, 48, 52, 54, 60, 71],
+    open: (page) => openHerd(page, night, true),
+    stills: {
+      async kill(page) {
+        await clearHud(page);
+        await page.evaluate(faunaFlyerKillPose);
+      },
+      async offscreen(page) {
+        await page.evaluate(() => {
+          const w = window as unknown as FaunaPage;
+          w.__restoreFaunaHudClock?.();
+          delete w.__restoreFaunaHudClock;
+        });
+        await stills.offscreen(page);
+      },
+      async start(page) {
+        await clearHud(page);
+        await page.evaluate(async () => {
+          const w = window as unknown as FaunaPage;
+          await w.__herd.aim(602, 30);
+        });
+      },
+    },
+    async motion(page) {
+      await clearHud(page);
+      await page.evaluate(faunaTurnMotion);
+    },
+    async readout(page) {
+      const trace = await page.evaluate(() => (window as unknown as FaunaPage).__hitTurn);
+      if (trace.frames.length !== 72 || trace.events.length !== 7 || trace.events.some((e) => !e.consumed))
+        throw new Error('turn fixture did not complete its 72 frames and seven combat events');
+      const lost = trace.frames.find((f) => !f.targetVisible);
+      if (!lost || lost.ms >= 900) throw new Error('turn fixture did not lose its target while the first number was alive');
+      return `Hit-target turn: 72 frames, seven consumed combat events; target first out of view at frame ${lost.frame} (${lost.ms.toFixed(1)} ms)\n${JSON.stringify(trace)}`;
+    },
+  };
+}
+
+/** Readies the fight clip, after the stills (the clip's own frames are the game's only steps from here): the HUD cleared, the
+ * probe of the HUD's cost in and the fight's events scripted on the clip's frames. */
+async function prepareFightClip(page: Page): Promise<void> {
+  await clearHud(page);
+  await uiCostProbe(page, 'hud');
+  await fightClip(page);
 }
 
 // ---------- the Edge following the Count (P2.E22.T02) ----------
@@ -2472,6 +3012,41 @@ export const SCREENS: Record<string, ScreenDef> = {
     clipSeconds: 2,
     open: (page) => openRemotes(page, 'bay', 1.0, 'pads'),
   },
+  // The combat HUD and the analysis on the server's creatures, drawn (P1.E08.T09; ARCHITECTURE §9, §20, §22): on foot on the home
+  // world in daylight with the server's herd ahead (a recorded snapshot stream played into the remote layer, offline), the
+  // HUD fed by the combat events the server would send. The stills: the herd with the analysis prompt on the creature in the
+  // crosshair; `numbers` stacked damage numbers over two creatures; `kill` the killing blow in gold with a toast for its XP
+  // and one for its loot, the creature down; `flash` a blow taken; `analysis` the codex banner (three lines) for a drawn creature;
+  // `offscreen` consumed hits on creatures behind the walker, with no unanchored numbers. The
+  // clip is a fight from 22 s into the stream, the HUD's per-frame cost in readout.txt.
+  'fauna-combat': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 3.4,
+    readout: hudCostReadout,
+    open: (page) => openHerd(page, false),
+    stills: faunaStills(),
+    async motion(page) {
+      await prepareFightClip(page);
+    },
+  },
+  // the same fight on the night side of the world: the numbers and toasts over dark ground
+  'fauna-combat-night': {
+    hash: '#foot',
+    hudClock: true,
+    clipSeconds: 3.4,
+    readout: hudCostReadout,
+    open: (page) => openHerd(page, true),
+    stills: faunaStills(),
+    async motion(page) {
+      await prepareFightClip(page);
+    },
+  },
+  // Fresh namespaces for the hit-target revision: both lights and both clip aspects, retaining the old combat packet.
+  'fauna-hit-turn-day-16x9': faunaTurnScreen(false, '16x9'),
+  'fauna-hit-turn-day-21x9': faunaTurnScreen(false, '21x9'),
+  'fauna-hit-turn-night-16x9': faunaTurnScreen(true, '16x9'),
+  'fauna-hit-turn-night-21x9': faunaTurnScreen(true, '21x9'),
   // the fabricators (P1.E13.T05, DESIGN 15.7): `fabricator` the Waystation's, at its terminal on the trade deck, with a
   // refusal shown (the oxygen cartridge, short of oxygen), a still of a recipe it can make (16x9-craftable.png), and the
   // clip of a warp cell crafted; `fabricator-learn` the same, and the clip of the torpedo recipe learned;

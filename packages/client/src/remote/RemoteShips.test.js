@@ -206,6 +206,17 @@ describe('remote ships’ lights and plating', () => {
 });
 
 describe('RemoteShips', () => {
+  it("leaves creatures to Fauna: a mob entity, which has the default hull, gets no ship drawn", async () => {
+    const game = scene();
+    const ships = await ready(game);
+    const creature = { ...remote(game, 1, 200), kind: 'mob', species: 0 };
+    const pilot = remote(game, 2, 200);
+    ships.update([creature, pilot], 1 / 60);
+    expect(creature.drawn).toBe(false);
+    expect(pilot.drawn).toBe(true);
+    expect(drawnIn(pieceOf(ships))).toBe(1);
+  });
+
   it("makes one kit per hull from that hull's own model, not the player's ship: the hull's surfaces merged, each leg apart", async () => {
     const game = scene();
     const ships = await ready(game);

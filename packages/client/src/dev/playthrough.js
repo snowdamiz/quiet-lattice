@@ -177,13 +177,18 @@ export function playthrough() {
     },
     async analyze() {
       const p = game.player;
-      const nearest = () => game.fauna.creatures.filter((c) => c.sp.kind !== 'flyer').sort((a, b) => a.pos.distanceTo(p.state.pos) - b.pos.distanceTo(p.state.pos))[0];
+      const nearest = () =>
+        game.fauna
+          .creatures()
+          .filter(({ r, sp }) => sp.kind !== 'flyer' && r.frame === p.state.frame && r.pose.mode !== 'dead')
+          .map(({ r, sp }) => ({ pos: r.pos, sp }))
+          .sort((a, b) => a.pos.distanceTo(p.state.pos) - b.pos.distanceTo(p.state.pos))[0];
       let c = nearest();
       if (!c) return note('no creatures about');
       hold('KeyW', true);
       for (let i = 0; i < 30 * 50; i++) {
         if (c.pos.distanceTo(p.state.pos) < 18) hold('KeyW', false);
-        dev.footAim(c.pos.clone().add(c.pos.clone().normalize().multiplyScalar(c.sp.size * c.scale * 0.5)), 0.5);
+        dev.footAim(c.pos.clone().add(c.pos.clone().normalize().multiplyScalar(c.sp.size * 0.5)), 0.5);
         await frame();
         if (prompt().includes('Analyze')) {
           await tap('KeyE');
