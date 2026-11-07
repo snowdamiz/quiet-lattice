@@ -1,0 +1,121 @@
+# Independent activation review — PASS
+
+This is the actual independent review sub-agent's bounded mechanical activation verdict. No revision or advisory was found within the authorized delta. It is not a launch authorization, grant, native capture result, visual grade, CI result or shipping approval.
+
+Final clean HEAD: `6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8`; tree: `fc1488aa0fae0727d4998205d24f914d3a32c482`; branch: `task/P1-E07-T14-effects`.
+Disabled R3 base: `587989af34fab480703f282084d20e2a27bbee48`; tree: `4d87ff72f0a72dbbcbbfde0fcc4ba3ede41d89c5`.
+Readiness SHA256: `073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee`.
+Readiness path: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json`.
+Final source/absence check UTC: `2026-11-07T08:29:59.389351+00:00`.
+
+Exactly four files differ: README.md, caller.py, entry.mjs and readiness.json under packages/tools/src/capture/effects_packet. Full-index binary diff: activation.patch. The only runtime source changes are `RUNTIME_ENABLED = False` to `True` and `export const RUNTIME_ENABLED = false;` to `true;`. Reversing each one-literal substitution exactly reproduces the R3 file bytes, including every function body. README prepends current provenance, demotes the retained title to level three and preserves the old body exactly.
+
+Readiness changes are limited to the three changed file size/hash rows; two added R3 report/seal rows; enabled flag and phase; predecessor provenance; explicit Node-first PATH; current Python self-probe PID; prerequisite text; and new attempt/authorization IDs plus four fresh paths. All other fields match R3, including every dependency tree, budget, file inventory, manifest mapping, process binary and shared capture provenance. Full before/after values are in reuse-proof.json.
+
+Existing bindings.verify passed against the real enabled readiness and current clean Git source. check_ready.py and freeze.py are byte-identical to R3. check_ready.py intentionally requires disabled flags; it was neither invoked nor reported as PASS for this enabled candidate. No freeze was generated.
+
+414 actual file bindings match. The six dependency trees were recomputed in Python before and after, by the unchanged verify primitive, and through the actual Node entry treeBinding export. All matched. The 64 protected asset working files match asset pin 2643aca9d8b85a45498d85eb637d20260ebf06d1: ordinary Git bytes or existing LFS object SHA256/size as appropriate. No source copy or hydration occurred. All four recovered helpers match the recovery commit, R3 base and current HEAD. Both adopted T15 files match the original reviewed commit, adoption, R3 base and current HEAD. The retained shared review hash also matches.
+
+## Exact binding and dependency evidence
+
+| Runtime file | R3 SHA256 | Current SHA256 |
+|---|---|---|
+| packages/tools/src/capture/effects_packet/caller.py | acbc11257be65c747b18861d5034f1025edd7d35ee51e90f32554fb9e389c023 | 661536db0f312a45a48b8096643c2974a7cb556feec37123fd526864343785d9 |
+| packages/tools/src/capture/effects_packet/entry.mjs | 3ac916bd46430339c1a7ace366ebe442a95e7292d43476e77776cd50ad35e96f | 24f8fe0a632f5fd53c70b864f78baafa4075204bfa86f316383fa1a86825ee54 |
+
+| Dependency path | Entries | Bytes | SHA256 |
+|---|---:|---:|---|
+| /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules | 12978 | 234972423 | f27ace764f39acd5423f05c42f32634e06fa5703435a8e2ef145df1cad4a8336 |
+| /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64 | 16 | 213060105 | 52724b245a2a601fdaf20420b6e1f450a6b61ab712a4a098729ce7feee52f564 |
+| /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public | 133 | 180731228 | 27af23f98d18ac9d5ba7c038ef205d3ae9df16766b57590adf7dc9f4be6477dd |
+| /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules | 4 | 4746 | 40d605de74d1d53904bcd12f0ed0e6ea7214a33f7f99246dbc0bbb7e58eda5bc |
+| /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/node_modules | 9 | 9191 | c6bcf368ba6807b30d117cb241d1f8cbe298dc419742d3cb6d93352d6efc4507 |
+| /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/node_modules | 4 | 0 | fdc9a21b6ec8aa57c59b78608186f0cbb708aa8509ab57d074d6320998ad2fc6 |
+
+## Independent refusal results
+
+Direct bound Python 3.14.8 and Node v22.23.3 only. All candidate CLI processes ran under refusal.sb, which denies filesystem writes, network operations and process forks. The raw Python CLI uses verbose import evidence; its repeat runs the actual __main__ through runpy with an audit hook. Node uses its actual entry CLI with controlled builtin ports and a synchronous module resolution guard. No source body is replaced. Each invocation has a 15-second bound and an observed OS exit of 1. No counter recorded even an attempted native import, filesystem mutation, process launch or network action. Here zero allocations means pilot/native/output resource allocation; ordinary interpreter memory and bounded readiness reads occur.
+
+| Invocation | Expected refusal | OS exit |
+|---|---|---:|
+| python-direct-missing-auth-grant | FileNotFoundError: | 1 |
+| python-audited-cli-missing-auth-grant | FileNotFoundError: | 1 |
+| node-cli-missing-auth-readiness-hash | Disabled/mismatched readiness | 1 |
+| node-cli-wrong-readiness-hash | Disabled/mismatched readiness | 1 |
+| node-cli-matching-readiness-missing-auth-grant | ENOENT: | 1 |
+
+Authorization was absent in all five invocations. Python and matching-readiness Node stop at the absent grant; other Node runs stop at the readiness hash. No valid-grant/missing-auth scenario or authorization object was fabricated.
+
+The raw Python trace excludes native_ports, inspect_packet, cache_owners and Station helpers. The controlled Python module census agrees. Node resolves only the actual entry and Node builtins; it does not load tsx, capture.ts, Playwright or Vite. The control results prove the exercised refusal boundaries; they do not qualify a grant-bearing native execution.
+
+## Reused R3 evidence and limits
+
+R3 report: `/private/tmp/p1-e07-t14-r3-independent-mrcerv14/REPORT.md`; SHA256 `d2384e36c860e19089b5ab93e3068f09c5a23f422a1604689220648b8fe151a8`. Seal SHA256 `dd68c29d07dabf9acfd8355a698f64f77f4332dfd0ee7a22c09897d2c6cfbdb9`. All seven sealed artifact hashes, sizes and immutable flags were freshly checked. Its 131 source/CPU cases and all seven prior-finding FIXED dispositions are retained evidence for the unchanged logic. Zero of those 131 cases were rerun; no independent review is attributed to the author or parent.
+
+The seven retained fixes concern constructor ownership, bootstrap fact preservation, competing-cache-owner admission, resource-observer failure precedence, browser/Vite cleanup precedence, descriptor-safe cache verification and PNG PLTE validation. Their implementation and controls are unchanged. Exact unchanged per-file hashes are in reuse-proof.json. This review does not reopen that caller design or introduce a new runtime gate.
+
+T15 staged QA report was read at `/tmp/space-t15-staged-qa-ijyeact7/REPORT.txt`, SHA256 `297b715285adfee7bce1c49a7db52c0713fcc3c29dc736ec14dcd1cfd3f1f935`. It records 38 smoke passes, 3 expected skips and GPU release at 2026-11-07T08:09:24Z. This is retained scheduling context, not this review's live GPU/resource admission.
+
+## Scope and preservation
+
+Only effects/gravitic / gravitic_pull; 1920x1080, Metal; exactly 12 files (11 PNG and one perf.json). Exact admission 5,402,312,704 bytes and output cap 184,565,760 bytes. The unchanged ledger includes future copy and native reserve allowances; observed native thresholds can overshoot and are not OS quotas. Capture 600s, cleanup 60s, decode 45s and cache snapshot 30s remain unchanged.
+
+Before and after are byte-identical: 10428 tracked entry byte/metadata records, 13092 ignored nondirectory metadata/link records, 414 file bindings, six dependency tree records, generated-cache observations and four prospective absences. Both complete inventory SHA256 values: `2863724e4caed5b458ef631573c807c91d899814a4e8a165ec5c6f3177d73464`. Access times are excluded because reading can change them. Unrelated host state is outside this inventory.
+
+All prospective paths stayed absent:
+- grant: `/private/tmp/egg-b61233fdf3564205bd01d9566f306430.json`
+- consumption: `/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json`
+- evidence: `/private/tmp/egp-b61233fdf3564205bd01d9566f306430`
+- output: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430`
+
+No native/browser/GPU/Vite/service/Blender/codec/StationJob, grant creation, consumption or capture output ran. No checkout/docs/package/dependency write, install, pnpm, source copy, hydration, screenshot cleanup, commit, push, PR, merge, broad test suite or watcher occurred. Private review artifacts alone were written in this exclusively created directory.
+
+One audit harness attempt exited 1 before CLI execution: it redundantly compared hydrated LFS working bytes with pointer blob bytes after already validating their object SHA256/size. The corrected audit compares pointer blobs across commits separately. The initial script, invocation/error, command log and exact correction patch are retained as review-initial.py, initial-attempt.json, initial-commands.json and harness-correction.patch. This was an audit bug, not a candidate failure; no asset was changed. Corrected review.py exited 0.
+
+## Exact commands and observed exits
+
+Orchestrating audit: `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/review.py`; cwd `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`; observed OS exit 0. Its internal read-only Git and binding calls are retained in the script. Environment is cleared and replaced with the explicit recorded environment before all inventory and candidate calls.
+
+commands.json records exact argv, cwd, environment, deadlines, durations and stdout/stderr byte hashes for every subordinate verification command. Duration is execution accounting, not performance evidence.
+
+- diff-check: exit 0 (expected 0), deadline 45s.
+```sh
+/usr/bin/git diff --check 587989af34fab480703f282084d20e2a27bbee48 6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8
+```
+- node-version: exit 0 (expected 0), deadline 45s.
+```sh
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --version
+```
+- node-trees: exit 0 (expected 0), deadline 45s.
+```sh
+/usr/bin/sandbox-exec -f /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/refusal.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/trees.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json
+```
+- python-direct-missing-auth-grant: exit 1 (expected 1), deadline 15s.
+```sh
+/usr/bin/sandbox-exec -f /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/refusal.sb /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B -v /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py
+```
+- python-audited-cli-missing-auth-grant: exit 1 (expected 1), deadline 15s.
+```sh
+/usr/bin/sandbox-exec -f /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/refusal.sb /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/python-guard.py /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py
+```
+- node-cli-missing-auth-readiness-hash: exit 1 (expected 1), deadline 15s.
+```sh
+/usr/bin/sandbox-exec -f /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/refusal.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/node-guard.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json
+```
+- node-cli-wrong-readiness-hash: exit 1 (expected 1), deadline 15s.
+```sh
+/usr/bin/sandbox-exec -f /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/refusal.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/node-guard.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json
+```
+- node-cli-matching-readiness-missing-auth-grant: exit 1 (expected 1), deadline 15s.
+```sh
+/usr/bin/sandbox-exec -f /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/refusal.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import /private/tmp/p1-e07-t14-activation-independent-4qtrexnw/node-guard.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json
+```
+
+## Actual independent receipt
+
+Path: `/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/RECEIPT.json`
+SHA256: `43f6c6498144f75f6ea4a6b8bff14d180250c7ead009bf98710af2575f8d18b5`
+
+The receipt was read through the actual contract.snapshot primitive and checked against the HANDOFF-DATA required schema constants and the unchanged Python/Node parser semantics. This is the reviewer's actual PASS receipt, not the delivery envelope or its example. receipt-validation.json records the bytes and semantics. seal.json records exact artifact hashes, read-only modes and user-immutable flags.
+
+No launch is authorized by this receipt. The parent separately owns any later one-use grant, current source/resource/GPU scope, fresh expiry, actual OS exit observation and exact terminal result/consumption hashes. Native output and independent visual grading remain unqualified.

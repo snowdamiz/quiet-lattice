@@ -1,0 +1,38 @@
+{
+  "registration": {
+    "argv": [
+      "/bin/launchctl",
+      "print",
+      "gui/501/local.stations.round4.51bbf452a38148ceb1329cac4d5cb181"
+    ],
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.51bbf452a38148ceb1329cac4d5cb181\" in domain for user gui: 501\n"
+  },
+  "ownedPids": {
+    "argv": [
+      "/bin/ps",
+      "-ww",
+      "-p",
+      "91110,91116,91115,91167,91173,91175,91174,91176,91761,91794",
+      "-o",
+      "pid=,ppid=,pgid=,lstart=,command="
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "time": "2026-11-07T08:32:37.108575+00:00",
+  "profiles": [
+    {
+      "path": "/private/tmp/sbr-fbnx3i_z/playwright_chromiumdev_profile-pVLJXu",
+      "exists": false
+    }
+  ],
+  "privateTmpExists": true,
+  "boundaryKernelTerminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "boundaryRemaining": []
+}

@@ -1,0 +1,76 @@
+{
+  "authRefusalBoundary": "Authorization was absent in all five invocations. Python and matching-readiness Node stop at the absent grant; other Node runs stop at the readiness hash. No valid-grant/missing-auth scenario or authorization object was fabricated.",
+  "evidence": {
+    "activation.patch": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/activation.patch",
+      "sha256": "bc81185b77b5c0b423af694264fc0b9e4b7de41009ce0299a9399920f6efac30"
+    },
+    "after.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/after.json",
+      "sha256": "2863724e4caed5b458ef631573c807c91d899814a4e8a165ec5c6f3177d73464"
+    },
+    "before.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/before.json",
+      "sha256": "2863724e4caed5b458ef631573c807c91d899814a4e8a165ec5c6f3177d73464"
+    },
+    "bindings-verify.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/bindings-verify.json",
+      "sha256": "c9fe32719c81690613f48d89b2d4deb19c5c1b6261b38c26d098c59f35d25c0f"
+    },
+    "commands.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/commands.json",
+      "sha256": "cdfabf0ccd372aac5bbfc1e84b229bfb4611f58c2badc25ef71140131afcba56"
+    },
+    "preservation.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/preservation.json",
+      "sha256": "317a871ece0153e78883bdf6936ce1ca86c6806201432be8cf608079be8cc6e9"
+    },
+    "refusal-results.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/refusal-results.json",
+      "sha256": "b5577e61b462f8ffcc4aab05757eb2a9233ef729fea0b4fd8450cfe3d7ca46d8"
+    },
+    "reuse-proof.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/reuse-proof.json",
+      "sha256": "c20c48157932cc5fedf6cfd49c4ed8f68a9994e839cfb7d1e14df83e24656d0f"
+    },
+    "summary.json": {
+      "path": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/summary.json",
+      "sha256": "fedea2d786cd839bf8ff1ed4cae180ea9e1df368529259e477f3126d09a9c7e2"
+    }
+  },
+  "explanation": "PASS applies only to the exact four-file activation from the independently reviewed disabled R3 base. Python and Node bodies normalize byte-for-byte to that base after their single runtime flag flips. Current readiness bindings, six dependency trees, assets, four helpers and T15 adoption are verified. Five bounded actual CLI/refusal invocations were observed exiting 1; no native imports, pilot allocations, launches or writes occurred. The 131 R3 cases are reused through exact hash proof, not rerun or represented as enabled native qualification.",
+  "humanReportPath": "/private/tmp/p1-e07-t14-activation-independent-4qtrexnw/REPORT.md",
+  "limits": {
+    "admissionBytes": 5402312704,
+    "consumptionCreated": false,
+    "grantCreated": false,
+    "independentNativeVisualOrPerformanceAcceptance": false,
+    "launchAuthorizedByThisReceipt": false,
+    "nativeCaptureStarted": false,
+    "nativeOSQuotas": false,
+    "outputCapBytes": 184565760,
+    "parentMustLaterOwn": "one-use grant, current source/resource/GPU scope and expiry, actual OS exit and terminal/consumption hashes",
+    "scope": "gravitic_pull only; 12 files, 11 PNG plus perf.json"
+  },
+  "priorR3": {
+    "allSevenPriorFindings": "FIXED in sealed R3; fixing logic unchanged by activation",
+    "head": "587989af34fab480703f282084d20e2a27bbee48",
+    "reportPath": "/private/tmp/p1-e07-t14-r3-independent-mrcerv14/REPORT.md",
+    "reportSha256": "d2384e36c860e19089b5ab93e3068f09c5a23f422a1604689220648b8fe151a8",
+    "rerunCases": 0,
+    "reusedCases": 131,
+    "sealSha256": "dd68c29d07dabf9acfd8355a698f64f77f4332dfd0ee7a22c09897d2c6cfbdb9",
+    "tree": "4d87ff72f0a72dbbcbbfde0fcc4ba3ede41d89c5"
+  },
+  "readinessSha256": "073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee",
+  "reviewKind": "BOUNDED_INDEPENDENT_MECHANICAL_ACTIVATION_REVIEW",
+  "reviewedAtUtc": "2026-11-07T08:29:59.389351+00:00",
+  "reviewer": "Independent review sub-agent for the activation task; this receipt records this agent's own observed source, byte-binding, preservation and refusal checks.",
+  "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+  "source": {
+    "clean": true,
+    "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
+    "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482"
+  },
+  "verdict": "PASS"
+}

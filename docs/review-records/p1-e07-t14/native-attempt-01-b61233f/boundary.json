@@ -1,0 +1,284 @@
+{
+  "scope": "CPU_CANDIDATE_BOUNDARY",
+  "exits": {
+    "capture": 143,
+    "caffeinate": -15
+  },
+  "errors": [
+    "AssertionError: Unbound owned executable: /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+  ],
+  "signals": [
+    {
+      "pid": 91794,
+      "birth": [
+        1794040260,
+        209486
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91761,
+      "birth": [
+        1794040259,
+        824417
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91176,
+      "birth": [
+        1794040258,
+        611888
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91175,
+      "birth": [
+        1794040258,
+        582734
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91174,
+      "birth": [
+        1794040258,
+        579282
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91173,
+      "birth": [
+        1794040258,
+        524927
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91167,
+      "birth": [
+        1794040257,
+        844911
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91116,
+      "birth": [
+        1794040257,
+        70437
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 91115,
+      "birth": [
+        1794040257,
+        66381
+      ],
+      "signal": "SIGTERM"
+    }
+  ],
+  "drained": true,
+  "clean": false,
+  "kernel_before_launch": {
+    "coalition_absent": false,
+    "started": 3,
+    "exited": 2,
+    "live": 1
+  },
+  "profiles": [
+    "/private/tmp/sbr-fbnx3i_z/playwright_chromiumdev_profile-pVLJXu"
+  ],
+  "incomplete_scan_receipts": [
+    {
+      "kernel": {
+        "coalition_absent": false,
+        "started": 16,
+        "exited": 13,
+        "live": 3
+      },
+      "pinned_root_live": true
+    }
+  ],
+  "kernel_before_root_release": {
+    "coalition_absent": false,
+    "started": 16,
+    "exited": 15,
+    "live": 1
+  },
+  "kernel_terminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "remaining": [],
+  "elapsed_cleanup_seconds": 0.0717701250105165,
+  "target": "gui/501/local.stations.round4.51bbf452a38148ceb1329cac4d5cb181",
+  "scratch": "/tmp/stations-round4-owned-iy1s1opo",
+  "root": {
+    "pid": 91110,
+    "ppid": 1,
+    "pgid": 91110,
+    "birth": [
+      1794040256,
+      933980
+    ],
+    "status": 2,
+    "uid": 501
+  },
+  "coalition_id": 41959,
+  "identities": {
+    "91110": {
+      "pid": 91110,
+      "ppid": 1,
+      "pgid": 91110,
+      "birth": [
+        1794040256,
+        933980
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91116": {
+      "pid": 91116,
+      "ppid": 91110,
+      "pgid": 91116,
+      "birth": [
+        1794040257,
+        70437
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91115": {
+      "pid": 91115,
+      "ppid": 91110,
+      "pgid": 91115,
+      "birth": [
+        1794040257,
+        66381
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91167": {
+      "pid": 91167,
+      "ppid": 91115,
+      "pgid": 91115,
+      "birth": [
+        1794040257,
+        844911
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91173": {
+      "pid": 91173,
+      "ppid": 91115,
+      "pgid": 91173,
+      "birth": [
+        1794040258,
+        524927
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91175": {
+      "pid": 91175,
+      "ppid": 91173,
+      "pgid": 91173,
+      "birth": [
+        1794040258,
+        582734
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91174": {
+      "pid": 91174,
+      "ppid": 91173,
+      "pgid": 91173,
+      "birth": [
+        1794040258,
+        579282
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91176": {
+      "pid": 91176,
+      "ppid": 91173,
+      "pgid": 91173,
+      "birth": [
+        1794040258,
+        611888
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91761": {
+      "pid": 91761,
+      "ppid": 91173,
+      "pgid": 91173,
+      "birth": [
+        1794040259,
+        824417
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    },
+    "91794": {
+      "pid": 91794,
+      "ppid": 1,
+      "pgid": 91794,
+      "birth": [
+        1794040260,
+        209486
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        41959,
+        41960
+      ]
+    }
+  }
+}

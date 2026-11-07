@@ -1,0 +1,82 @@
+TASK: P1.E08.T09 — R7 six-finding remediation and exact T15 adoption.
+STATUS: DONE for this source/CPU correction unit. Whole T09 is NOT complete; new independent caller review, scheduled native captures and independent current-source visual grading remain pending.
+
+SUMMARY: Corrected all six supplied R7 boundaries on the same task branch. Cache copies and caller-owned metadata/directory publication use pinned ancestor descriptors and exclusive relative creation; raw bootstrap/observer observations survive helper receipt and normalization failures; the entry retains original navigation plus both cleanup errors, raw bytes and falsy causes; PNG palette/container contracts and bounded same-byte decoder acquisition reject the supplied adversarial packets. The exact reviewed T15 patch was adopted separately. No native capture/browser/GPU/StationJob/launchctl job, real grant, DB/service, screenshot cleanup, push/PR/merge or parent document edit occurred.
+
+PINS:
+- Worktree: `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`; Git branch `task/P1-E08-T09-current-base`; final working tree clean.
+- Reviewed base: `7dbc3eeb832dbfcfdc92ada434913f75edd9aa75`, tree `d7f022e45d87e752c8b07389e7b3b68a561c7ed5`.
+- Exact T15 adoption commit: `c360967ab2bdba096bd2949c70fe679e8b7d68b3` (separate commit), original `38b6c4b58db43146df20cd760808d1461d7a667b`, tree `b8ba53c6acdf6eb604b9c046a8165f1985634be8`.
+- Final source/candidate HEAD: `4da893bef385312284531a8cd254b6c8b16e5065`.
+- Final tree: `89d333ae43e8a04626681980b881dbfba389b7bf`.
+- T15 stable patch-id: `8e90cd71186b236a00402a6bd9b985256e9b5ec7`. Full exact preimage/patch verification is in `t15-preimages.json`; no conflict or guessed adaptation.
+- T15 capture.ts SHA256 `42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d`; capture.lifecycle.test.ts SHA256 `ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18`.
+- Source patch SHA256 `0fb3ce829bf4402ba44d515bf7ce54a1ae5fcd7a32270b6235d47cf2f6eae757`; combined patch SHA256 `1f1f15fd02d6d7814a9f013fa595a8b56a5a3b1652670d19cc248a59f5c46dc5`.
+- Runtime flags: readiness.runtimeEnabled=false and sharedCaptureSourceReview.runtimeEnabled=false. Ready SHA256 `05e3bce954aef45decdf6ee7a256a61e82cc48ea31a41d3a5a3caa0f9258d619`.
+- Current task/run handle: `run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A329d01f8-9f74-43da-a701-c846c5a9970c%253Adelegate-task%253Aresume-20261106-fauna-worker-r1:ordinal:10`. Backing thread and original parent linkage are recorded in final-pins.json; this resumed the same checkout/task, not a new lane.
+
+FILES CHANGED:
+- Separate T15 commit: packages/tools/src/capture/capture.ts and capture.lifecycle.test.ts only; reviewed bytes unchanged.
+- Local source commits b1cdb40798f73b01d5b91b6b3dc6ed48688a0bc7 and4da893bef385312284531a8cd254b6c8b16e5065: fauna_packet/caller.py, file_io.py (existing descriptor/serialization/plan code moved here, plus guarded destinations), inspect.py, entry.mjs, controls.py, capture_controls.mjs, freeze.py and readiness.json.
+- No client/server/shared/smoke/assets/screens/product-fixture changes. Product d688 remains intact except the expressly authorized exact shared capture.ts adoption.
+
+VERIFY:
+All exact argv, cwd, exits, full logs and last 20 lines of every failed iteration are in COMMANDS.md and commands.json. Final relevant checks:
+- RED on exact 7dbc3eeb: cross-boundaries 10 cases, actual fauna entry/default captureUi 3 cases, complete 82-file PNG packets (valid/empty PLTE/duplicate PLTE), and actual decoder child growth. Reproducer exit0 confirms BAD old behavior, not capture acceptance.
+- GREEN: actual consume/main after real first caller OS-exit0, destination-parent replacement refuses with zero foreign payload writes; observer TimeoutExpired/unknown byte facts remain primary even if helper save fails; bootstrap0/17/exception observations and uncertain ownership are retained before receipt publication. Existing deadline/cancel controls remain active. Actual helpers are unchanged; tests extract their bodies with inert native command boundaries.
+- GREEN committed controls: 45 Python tests (including ten producer/all-sink combinations, six destination races, ten PNG palette/stream cases, five decoder acquisition cases); 7 Node tests; 11 additional actual default captureUi consumer cases including navigation + browser-close + Vite-close and all receipt/stderr sinks failing. No later decoder/dispatch after refusal; no durability claim on all-sink failure.
+- Actual full-packet decoder children: invalid empty/duplicate PLTE refused; valid packet accepted. Nine decoder read-boundary cases cover growth, FIFO, symlink, different regular leaf, raced symlink/regular ancestor, close failure, journal growth and readout growth. The 8594-byte image now reads at most8595 bytes; all opened descriptors are closed. Successful same-byte decoding is separately exercised by full correction and broad synthetic packets.
+- Six actual inert caller OS processes: six exit0, 768 files, same HEAD; no runtime launch. Decoder is inert only in this sequencing test. These test files are not visual evidence. Actual software decoder qualification above is separate.
+- Final audit added an authenticated secondary-failure successor case: RED on the retained b1cdb candidate (admission reached the inert allocation sentinel), then GREEN refusal before consumption/output/evidence/helper dispatch. Its actual first caller exited0. A separate follow-up commit preserves b1cdb history; candidate-b1cdb4079/ retains that intermediate report/pins/patches, and its disabled readiness is saved separately.
+- Prior controls retained: 26 actual predecessor mutations plus the new secondary-failure refusal; 29 metadata cases/242 observed snapshots; 14 R5 race cases; 23 R6 cache cases; 7 R6 actual artifact-process cases; 8 publication process cases and38 real deadline/cancellation cases;6 retained producer facts. All passed.
+- Exact shared-source focused tests:146 tests across6 files PASS (100 lifecycle tests plus46 current-base regression tests). This is CPU source validation, not shared Metal smoke or the independent review's separate180 supplemental tests.
+- Tools TypeScript typecheck, scoped ESLint, Prettier, Python source compile, pnpm gate:removed (10 enforced/15 waiting), disabled entry zero-effects controls, fresh readiness --check, git diff --check and clean status: PASS.
+- Initial correction iterations remain failed in the ledger: old Path.open test fault hooks were moved to the actual descriptor boundary; assertions now enforce the stricter admitted-size+1 contract; an omitted public Node error code was restored; new test imports were fixed; a typo in a format-check path was corrected. No failed log was overwritten or relabeled.
+
+DECISIONS:
+- Premise → ordinary later pathname opens and generic helper/receipt wrappers preserve earlier admission and producer facts → disproved by the exact RED repros before edits. Structural response is documented in PREMISE.md; this is shared boundary reuse, not six more isolated symptom guards.
+- Destination safety → mkdir/open relative to held no-follow parent descriptors; post-open route checks precede payload copying. Ownership facts include dev/inode/written bytes and retained partial directories; primary/close failures remain separate. Existing64MiB cache-copy,256-entry,1024-byte per-entry evidence and30s limits remain unchanged.
+- Decoder identity → enumerate before read; bounded read using admitted size+1; SHA256, PNG validation, Pillow verification/load and observation comparison all use the same snapshot. Valid optional true-color palettes with1 or256 entries remain valid; empty/duplicate/non-triplet/257-entry/late palettes are rejected. Screenshot header, CRC, IDAT contiguity, exact bounded zlib output, terminal IEND and row-filter rules are checked.
+- Error precedence → raw bootstrap command/callback facts are recorded before immutable helper writes/normalization. A nonzero bootstrap result remains the producer failure, helper writes are secondary; an exit0 plus write failure remains a failed, uncertain launch attempt. Unknown fields, non-UTF8 bytes, partial output and ownership stay in the returned structured result even when every sink fails. Cancellation/deadline guards still unwind their phase.
+- T15 → exact preimages and stable patch before cherry-pick; adoption remains a separate commit. Actual entry integration imports the real capture.ts with inert Playwright/Vite/network ports and proves serialized ordered errors/cause rather than inferring consumer correctness from source PASS.
+- Runtime admission → unchanged four82-file correction units then two220-file broad units. Each needs fresh per-unit admission after the parent's review/scheduling/GPU release. No all-six-fit claim and no inferred native quota.
+
+PROTECTION:
+- 12726 tracked protected files unchanged from the pinned R7 candidate, plus the exact two T15 hashes verified separately.
+- 31823 R7 evidence files SHA256-unchanged; 21687 prior R6 evidence fingerprints unchanged; 38 own-cache fingerprints unchanged (37 files+1 directory;8,099,840 bytes).
+- All4 immutable helper hashes match protected-helpers.json. Retained old task branch still bb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9. Legacy440 artifacts remain bound through the unchanged recorded Git/LFS manifest; no hydration, rewriting or screenshot cleanup.
+- 192 historical, intermediate and final prospective grant/consumption/output/evidence paths remain absent. Final source/dependency/executable bindings: 440.
+- Caller Python launcher and actual self-observed app-bundle executable are preserved in verified-4da893bef.json and committed readiness. Launcher: `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14`; actual executable: `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python`.
+- Latest final preservation free-space observation: 30926381056 bytes. Cache owners/competing task-local Vite owners: none in final check. This is a CPU observation; runtime free space and ownership must be refreshed per unit.
+
+OUT OF SCOPE FOUND / REMAINING LIMITS:
+- Current-source native capture, current-source independent visual grading and parent T15 Metal smoke remain outside this CPU correction. No actual screenshot/image of the game was produced. Synthetic image fixtures and inert process outputs cannot satisfy visual gates.
+- Parent-reported focused fauna live QA terminal PASS/cleanup at2026-11-07T03:41:27Z is retained context, not rerun here. Report: /tmp/p1-e08-t09-live-qa-20261106-hce9g1z8/REPORT.md. Shared T15 source adoption does not by itself qualify live/native behavior.
+- Immutable helper native resource thresholds remain observations/reserves, not hard OS quotas; external system XPC ownership remains unqualified. Full six-unit native acceptance remains unobserved. No new orchestration infrastructure or other lane edits.
+
+ARTIFACTS:
+- Review handoff: `/private/tmp/p1-e08-t09-r8-47kntr2d/APPENDIX-C2.md` (also REPORT.md).
+- Exact commands/exits: `/private/tmp/p1-e08-t09-r8-47kntr2d/COMMANDS.md`, commands.json, logs/.
+- Pins/hashes: final-pins.json, t15-preimages.json, source.patch, combined.patch, protected-helpers.json, verified-4da893bef.json, evidence-manifest.json.
+- Untouched R7 originals: /private/tmp/p1-e08-t09-r7-independent-RAzrya/REPORT.md, COMMANDS.md, evidence-manifest.json and producers. Read-only T15 source review: /private/tmp/p1-e14-t15-independent-gzn1kbbe/REPORT.txt.
+- Exact-base fresh reproductions: red/; corrected real-boundary results and retained CPU scratch fixtures: green/. Current default entry tests also retain their fixture roots in logs/default-entry-final.log and under this run's tmp/.
+- Planned commands/env/identities: proposed-runtime.json; these are proposals only and no grant file exists.
+
+FULL CHECK INVOCATION (CPU only; expands the frozen PATH and calls actual --check):
+```sh
+python3 -B /private/tmp/p1-e08-t09-r8-47kntr2d/check-readiness.py
+```
+Direct argv: `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py --check`. Exact environment is printed in logs/final-head-readiness.log; both flags remain false.
+
+FINAL SIX-UNIT ORDER / LIMITS / UNUSED OUTPUTS:
+
+| Order | Unit | Files/images | Output cap bytes | Admission bytes | Output path |
+|---:|---|---:|---:|---:|---|
+|1|fauna-hit-turn-day-16x9|82/81|1358970880|8925528064|`/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-51b0617d00104cc79533206ffcbad03d`|
+|2|fauna-hit-turn-day-21x9|82/81|1358970880|8925528064|`/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-6db615deda92409aa0bcaf17323f2837`|
+|3|fauna-hit-turn-night-16x9|82/81|1358970880|8925528064|`/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-f5b1c7f00096451d9de3662c1fb6392b`|
+|4|fauna-hit-turn-night-21x9|82/81|1358970880|8925528064|`/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-09bad855e3ec455c96cd7a73226c9c11`|
+|5|fauna-combat|220/219|3674226688|15871295488|`/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-4e6e6a438f9b4f21b0ec8e23f0422eae`|
+|6|fauna-combat-night|220/219|3674226688|15871295488|`/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-fa8dbfdf1cbd4a02a13b177272b9da26`|
+
+Correction per unit:8 stills+72 frames+1 sheet+1 readout=82 files. Broad per unit:14 stills+204 frames+1 sheet+1 readout=220 files. Total60 stills+696 frames+6 sheets+6 readouts=768 files/762 images. Image16MiB, readout16KiB. Output cap is images×16MiB+readout; future LFS and main hydration each reserve one extra output-sized copy. Existing ledger also reserves64MiB controlled metadata (32MiB Node+32MiB Python),64MiB cache copy,2GiB profile work/archive,1GiB private TMP work/archive,128MiB helper logs/archive,256MiB cache growth,16MiB filesystem metadata and1GiB safety. Capture600s, cleanup60s, decoder45s and cache30s are unchanged. Output staging/native image temporary disk copies remain0 in the controlled producer; native reserves are not hard quotas. Full exact ledger and all grant/consumption/evidence paths are in committed readiness and proposed-runtime.json.
