@@ -11,8 +11,9 @@ import signal
 import subprocess
 import sys
 import time
+import tempfile
 sys.dont_write_bytecode = True
-from metadata import Evidence, Refused, atomic, digest, encode, failure, file_hash, ledger, snapshot
+from metadata import Evidence, Refused, atomic, digest, encode, failure, file_hash, ledger, snapshot, raw_facts, Directory, mkdir, copy_tree, io_deadline
 from freeze import BOUNDS, LIMITS, PURPOSE, capacity, verify_freeze
 
 
@@ -56,7 +57,7 @@ def consume(ready, grant_snapshot):
     if type(expires) not in (int, float) or expires <= time.time():
         raise Refused('Grant expired before atomic consumption')
     path = Path(ready['binding']['consumption'])
-    path.mkdir(mode=0o700)  # Atomic one-use claim; a partial claim stays spent.
+    mkdir(path)  # Anchored atomic one-use claim; a partial claim stays spent.
     atomic(path / 'grant.json', grant_snapshot['raw'])
     consumed = snapshot(path / 'grant.json', grant_snapshot['sha256'])
     if consumed['value'] != grant_snapshot['value']:
@@ -82,12 +83,9 @@ def content(archive):
 def bounded_copies():
     original = shutil.copytree
     def checked(source, destination, *args, **kwargs):
-        before = ledger(source, count=LIMITS['profileFiles'], cap=LIMITS['profileBytes'])
-        result = original(source, destination, *args, **kwargs)
-        after = ledger(destination, count=LIMITS['profileFiles'], cap=LIMITS['profileBytes'])
-        if content(before) != content(after) or content(before) != content(ledger(source)):
-            raise Refused('Archive copy differs; originals retained')
-        return result
+        if args or any(value for key, value in kwargs.items() if key not in ('symlinks',)):
+            raise Refused('Unexpected archive-copy options')
+        return copy_tree(source, destination, count=LIMITS['profileFiles'], cap=LIMITS['profileBytes'])
     shutil.copytree = checked
     try:
         yield
@@ -113,7 +111,52 @@ def validate_packet(value):
             raise Refused('Child trace aggregate mismatch')
 
 
+@contextmanager
+def producer_commands():
+    """Observe the retained helpers' actual producer returns before writes or assertions."""
+    state = {'records': [], 'bytes': 0, 'complete': True, 'bootstrap': None}
+    exceptions = []
+    original_run, original_output = subprocess.run, subprocess.check_output
+    def wrap(name, operation):
+        def observed(*args, **kwargs):
+            argv = args[0] if args else kwargs.get('args')
+            try:
+                value = operation(*args, **kwargs)
+            except BaseException as error:
+                exceptions.append(error)
+                record = {'operation': name, 'argv': raw_facts(argv), 'failure': failure(error)}
+                keep(record)
+                raise
+            # Detached before control returns to immutable helper write/assertion code.
+            record = {'operation': name, 'argv': raw_facts(argv), 'returned': raw_facts(value)}
+            if isinstance(argv, (list, tuple)) and list(argv[:2]) == ['/bin/launchctl', 'bootstrap']:
+                state['bootstrap'] = {'returncode': getattr(value, 'returncode', None), 'registeredMayExist': getattr(value, 'returncode', None) == 0}
+            keep(record)
+            return value
+        return observed
+    def keep(record):
+        raw = encode(record)
+        if len(state['records']) >= 6000 or state['bytes'] + len(raw) > 16 * 1024**2:
+            state['complete'] = False
+            raise Refused('Native producer facts ceiling', {'records': len(state['records']), 'bytes': state['bytes']})
+        state['records'].append(record)
+        state['bytes'] += len(raw)
+        if record.get('returned', {}).get('complete') is False or record.get('failure', {}).get('rawComplete') is False:
+            state['complete'] = False
+            raise Refused('Native producer facts incomplete')
+    subprocess.run, subprocess.check_output = wrap('run', original_run), wrap('check_output', original_output)
+    try:
+        yield state, exceptions
+    finally:
+        subprocess.run, subprocess.check_output = original_run, original_output
+
+
 def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=None):
+    with producer_commands() as producers:
+        return _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, job_factory=job_factory)
+
+
+def _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, *, job_factory=None):
     boundary, proof, stages = helpers
     binding, out = ready['binding'], Path(ready['binding']['output'])
     fallback = Path(binding['fallback'])
@@ -124,6 +167,11 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
               'captureExit': 'UNKNOWN', 'physicalSettlement': 'UNPROVED', 'portsSettlementIsPhysical': False,
               'readinessSha256': admission_facts['readiness']['sha256'], 'grantSha256': grant_snapshot['sha256'],
               'admission': admission_facts, 'historical': {'cloud03': 'FAILED', 'accepted': False}}
+    terminal_at = time.monotonic() + BOUNDS['terminalMs'] / 1000
+    result['terminalDeadlineMonotonic'] = terminal_at
+    command_facts, command_exceptions = producers
+    first_observer = None
+    first_observer_facts = None
     job = observer = private_tmp = private_admission = None
     factory = job_factory or boundary.StationJob
     def retain(name, value):
@@ -132,7 +180,7 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
         except BaseException as error:
             result['secondary'].append(failure(error))
             raise
-    def observe():
+    def observe_body():
         ledger(ready['frozenRoot'], count=LIMITS['frozenFiles'], cap=LIMITS['frozenBytes'], hash_files=False, live=True)
         for location in [job.scratch, out, private_tmp]:
             ledger(location, count=LIMITS['outputFiles'], cap=LIMITS['outputBytes'], hash_files=False, live=location == private_tmp)
@@ -162,14 +210,26 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
                 raise Refused('No actual current renderer')
             atomic(release, encode({'prefix': binding['prefix'], 'browserPid': observer.launch['pid'],
                                    'rendererPids': renderer_pids, 'requestSha256': raw['sha256']}))
+    def observe():
+        nonlocal first_observer, first_observer_facts
+        offset = len(command_exceptions)
+        try:
+            observe_body()
+        except BaseException as error:
+            original = command_exceptions[offset] if len(command_exceptions) > offset else error
+            if first_observer is None:
+                first_observer, first_observer_facts = original, failure(original)
+            if error is not original:
+                result['secondary'].append(failure(error))
+            raise
     try:
         # Claim is already spent. Only directories allocated here are evidence sinks.
         for path in (out, fallback):
-            path.mkdir(mode=0o700)
+            mkdir(path)
             info = path.lstat()
             allocated.append({'path': str(path), 'device': info.st_dev, 'inode': info.st_ino, 'uid': info.st_uid})
             evidence.roots.append(path)
-        (out / 'capture').mkdir()
+        mkdir(out / 'capture')
         retain('admitted-snapshots.json', admission_facts)
         with boundary.deadline(BOUNDS['captureMs'] / 1000):
             started = time.monotonic()
@@ -182,14 +242,22 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
             argv = [binding['node'], '--import', str(Path(ready['frozenRoot']) / Path(binding['tsx']).relative_to(ready['root'])), str(Path(ready['frozenRoot']) / 'packages/tools/src/capture/trace_observer_packet/worker.ts'),
                     '--owned', str(out / 'child-admission.json'), digest(raw)]
             job = factory.__new__(factory)
-            factory.__init__(job, out / 'owned_job', argv, ready['frozenRoot'], capture_seconds=BOUNDS['captureMs'] / 1000,
-                             env={'PATH': binding['launchPath'], 'TMPDIR': str(private_tmp) + '/', 'SMOKE_GL': 'metal', 'DEBUG': 'pw:browser', 'PYTHONDONTWRITEBYTECODE': '1'})
+            # Canonical owned scratch prevents platform /var aliases in retained helper paths.
+            previous_tempdir = tempfile.tempdir
+            tempfile.tempdir = str(private_tmp)
+            try:
+                factory.__init__(job, out / 'owned_job', argv, ready['frozenRoot'], capture_seconds=BOUNDS['captureMs'] / 1000,
+                                 env={'PATH': binding['launchPath'], 'TMPDIR': str(private_tmp) + '/', 'SMOKE_GL': 'metal', 'DEBUG': 'pw:browser', 'PYTHONDONTWRITEBYTECODE': '1'})
+            finally:
+                tempfile.tempdir = previous_tempdir
             job.start()
             observer = stages.StageReceipts(job, {'prefix': binding['prefix'],
                 'resolver': {'selectedExecutable': {'path': binding['browser']}},
                 'process_binary_sha256': {**{r['path']: r['sha256'] for r in binding['binaries']}, **{str(Path(ready['frozenRoot']) / Path(r['path']).relative_to(ready['root'])): r['sha256'] for r in binding['binaries'] if Path(r['path']).is_relative_to(ready['root'])}}}, private_tmp,
                 structured_launch_receipt=out / 'capture/browser-launch.json')
             outcome = job.wait(max(.001, BOUNDS['captureMs'] / 1000 - (time.monotonic() - started)), observe)
+            if first_observer is not None:
+                raise first_observer
             result['captureExit'] = job.state['exits'].get('capture', 'UNKNOWN')
             result['outcome'] = outcome
             if outcome != 'completed' or result['captureExit'] != 0:
@@ -199,7 +267,9 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
             retain('child-packet-snapshot.json', {'value': packet['value'], 'facts': packet['facts']})
             validate_packet(packet['value'])
     except BaseException as error:
-        result['failure'] = failure(error)
+        result['failure'] = first_observer_facts if first_observer is not None else failure(error)
+        if first_observer is not None and error is not first_observer:
+            result['secondary'].append(failure(error))
     finally:
         # Preserve returned raw/unknown controller facts before drain changes any state.
         result['beforeDrain'] = copy.deepcopy({'allocated': allocated, 'job': getattr(job, 'state', None),
@@ -210,9 +280,10 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
         except BaseException:
             pass  # Persistence failure does not prevent the independent owned-process drain.
         try:
-            with boundary.deadline(BOUNDS['drainMs'] / 1000):
+            drain_seconds = max(.001, min(BOUNDS['drainMs'] / 1000, terminal_at - time.monotonic() - 32))
+            with boundary.deadline(drain_seconds):
                 if job is not None and getattr(job, 'coalition_id', None):
-                    drained = job.drain(BOUNDS['drainMs'] / 1000)
+                    drained = job.drain(drain_seconds)
                     result['lifecycle'] = copy.deepcopy(drained)
                     result['captureExit'] = drained['exits'].get('capture', 'UNKNOWN')
                     if not drained['drained'] or boundary.kernel_tasks(job.coalition_id)['live'] != 0:
@@ -230,10 +301,11 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
                 elif job is not None:
                     # A partial bootstrap has no proven coalition. Retain exact identities; never invent release.
                     result['partialAllocation'] = {'scratch': str(getattr(job, 'scratch', 'UNKNOWN')),
-                        'target': getattr(job, 'target', None), 'registered': getattr(job, 'registered', 'UNKNOWN')}
-                    if getattr(job, 'registered', False):
+                        'target': getattr(job, 'target', None), 'registered': getattr(job, 'registered', 'UNKNOWN'),
+                        'bootstrapProducer': copy.deepcopy(command_facts['bootstrap'])}
+                    if getattr(job, 'registered', False) or (command_facts['bootstrap'] or {}).get('registeredMayExist'):
                         p = subprocess.run(['/bin/launchctl', 'bootout', job.target], capture_output=True, timeout=3)
-                        result['partialAllocation']['bootout'] = {'exit': p.returncode, 'stdout': p.stdout.decode(errors='replace'), 'stderr': p.stderr.decode(errors='replace')}
+                        result['partialAllocation']['bootout'] = raw_facts(p)
                     raise Refused('Partial constructor/bootstrap needs exact retained-path audit; release unproved')
                 elif private_tmp is not None:
                     with bounded_copies():
@@ -241,21 +313,44 @@ def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=No
                     result['physicalSettlement'] = 'NO_PROCESS_ALLOCATED'
         except BaseException as error:
             result['secondary'].append(failure(error))
-        result['candidate'] = (result['failure'] is None and not result['secondary'] and not evidence.errors and
+        # Inventory failure must not skip the terminal snapshot. Each ledger is independent.
+        result['terminalPublication'] = {'durable': False, 'provisional': True}
+        try:
+            with io_deadline(max(.001, min(28, terminal_at - time.monotonic() - 4))):
+                for key, location, count, cap, live in [
+                    ('frozenTerminalLedger', ready['frozenRoot'], LIMITS['frozenFiles'], LIMITS['frozenBytes'], True),
+                    ('outputLedger', out, LIMITS['outputFiles'], LIMITS['outputBytes'], False)]:
+                    try:
+                        result[key] = ledger(location, count=count, cap=cap, live=live)
+                    except BaseException as error:
+                        result['secondary'].append(failure(error))
+                        result[key] = {'complete': False, 'failure': failure(error)}
+                        if not isinstance(error, Exception):
+                            raise
+                try:
+                    retain('native-producer-facts.json', command_facts)
+                except BaseException:
+                    pass  # Complete in-memory producer facts still accompany failure publication.
+        except BaseException as error:
+            result['secondary'].append(failure(error))
+        result['nativeProducerFacts'] = copy.deepcopy(command_facts)
+        result['candidate'] = (result['failure'] is None and not result['secondary'] and not evidence.errors and command_facts['complete'] and
             result['physicalSettlement'] == 'DRAINED_ARCHIVED_AUDITED' and result['captureExit'] == 0 and
             result.get('lifecycle', {}).get('clean') is True and result.get('lifecycle', {}).get('exits', {}).get('caffeinate') == 0)
         result['evidence'] = evidence.receipt()
+        # Even if the inventory phase exhausted its timer, publication gets a finite bounded attempt.
+        # Reserve this small interval inside the existing terminal envelope by limiting inventories above.
         try:
-            result['frozenTerminalLedger'] = ledger(ready['frozenRoot'], count=LIMITS['frozenFiles'], cap=LIMITS['frozenBytes'], live=True)
-            result['outputLedger'] = ledger(out, count=LIMITS['outputFiles'], cap=LIMITS['outputBytes'])
-            retain('result.json', result)
-            if evidence.errors:
-                result['candidate'] = False
-                result['evidence'] = evidence.receipt()
+            with io_deadline(max(.001, min(2, terminal_at - time.monotonic() - 2))):
+                receipt = evidence.put('result.json', result)
+                result['terminalPublication'] = {'durable': True, 'receipt': receipt, 'provisional': True}
         except BaseException as error:
-            result['candidate'] = False
             result['secondary'].append(failure(error))
-            result['evidence'] = evidence.receipt()
+            result['candidate'] = False
+        if evidence.errors:
+            result['candidate'] = False
+        result['evidence'] = evidence.receipt()
+
     return result
 
 
@@ -273,8 +368,14 @@ def main(args, *, helpers=native_helpers):
         owned_helpers[1].executable_path(os.getpid()) != ready['binding']['pythonKernel']):
         raise Refused('Actual Python launcher/kernel executable differs')
     result = run_owned(ready, grant, facts, owned_helpers)
-    if result['evidence']['undurable']:
-        print(json.dumps({'kind': 'T13_UNDURABLE_CONTROLLER_EVIDENCE', 'accepted': False, 'result': result}), file=sys.stderr)
+    if not result['candidate'] or not result['terminalPublication']['durable'] or result['evidence']['undurable']:
+        try:
+            with io_deadline(max(.001, min(2, result['terminalDeadlineMonotonic'] - time.monotonic()))):
+                print(json.dumps({'kind': 'T13_UNDURABLE_CONTROLLER_EVIDENCE', 'accepted': False, 'result': result}), file=sys.stderr, flush=True)
+        except BaseException as error:
+            result['candidate'] = False
+            result['secondary'].append(failure(error))
+            result['terminalEmission'] = {'durable': False, 'failure': failure(error)}
     # A disk flag never authorizes a successor. Parent must observe this actual exit and hash receipts.
     return 0 if result['candidate'] else 1
 

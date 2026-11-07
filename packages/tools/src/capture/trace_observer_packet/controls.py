@@ -46,9 +46,10 @@ class Controls(unittest.TestCase):
                 with self.assertRaisesRegex(Refused, 'descriptor'):
                     snapshot(path, digest(raw), before_open=replace)
                 self.assertLess(time.monotonic()-begin, .5)
-            self.assertEqual(len(opened), 1)
-            with self.assertRaises(OSError) as raised: os.fstat(opened[0])
-            self.assertEqual(raised.exception.errno, errno.EBADF)
+            self.assertGreater(len(opened), 1)
+            for descriptor in opened:
+                with self.assertRaises(OSError) as raised: os.fstat(descriptor)
+                self.assertEqual(raised.exception.errno, errno.EBADF)
     def test_same_snapshot_authentication_growth_symlink_and_caps(self):
         path, raw = self.metadata()
         value = snapshot(path, digest(raw), cap=len(raw))
@@ -137,10 +138,10 @@ class Controls(unittest.TestCase):
         source=self.root/'source';source.mkdir();(source/'unknown').write_bytes(b'raw facts')
         with launch.bounded_copies():shutil_copy=launch.shutil.copytree;shutil_copy(source,self.root/'good')
         self.assertEqual((self.root/'good/unknown').read_bytes(),b'raw facts')
-        original=launch.shutil.copytree
+        original=metadata.copy_file
         def corrupt(src,dst,*args,**kwargs):
-            result=original(src,dst,*args,**kwargs);(Path(dst)/'unknown').write_text('bad');return result
-        with patch.object(launch.shutil,'copytree',corrupt):
+            result=original(src,dst,*args,**kwargs);Path(dst).write_text('bad');return result
+        with patch.object(metadata,'copy_file',corrupt):
             with launch.bounded_copies():
                 with self.assertRaisesRegex(Refused,'differs'):launch.shutil.copytree(source,self.root/'bad')
         self.assertTrue((source/'unknown').exists())
@@ -223,6 +224,7 @@ class Controls(unittest.TestCase):
             def fifo_open(path, flags, *args, **kwargs):
                 target=Path(path)
                 if fault=='fifo-result' and target.name=='packet.json' and not flags & os.O_WRONLY:
+                    target=Path(created[-1].out.parent/'capture/packet.json')
                     target.rename(target.with_suffix('.saved'));os.mkfifo(target)
                 return real_open(path,flags,*args,**kwargs)
             deadline_bounds={**freeze.BOUNDS,'drainMs':50 if fault=='kernel-count' else 2000}
@@ -263,10 +265,10 @@ class Controls(unittest.TestCase):
         with self.assertRaisesRegex(Refused,'expired'):launch.admit(path,digest(raw),gpath,digest(graw),verify=lambda _:None,now=lambda:time.time()+100)
         real_open=metadata.os.open;fds=[]
         def fifo(path, flags, *args, **kwargs):
-            if Path(path)==gpath and not flags & os.O_WRONLY:
+            if Path(path).name==gpath.name and not flags & (os.O_WRONLY | os.O_DIRECTORY):
                 gpath.rename(gpath.with_suffix('.saved'));os.mkfifo(gpath)
             fd=real_open(path, flags, *args, **kwargs)
-            if Path(path)==gpath:fds.append(fd)
+            if Path(path).name==gpath.name:fds.append(fd)
             return fd
         with patch.object(metadata.os,'open',fifo):
             with self.assertRaisesRegex(Refused,'descriptor'):
@@ -315,9 +317,9 @@ class Controls(unittest.TestCase):
             def sync(fd):
                 if active['primary'] and fault=='sync':raise OSError('original sync failure')
                 return real_fsync(fd)
-            def link(a,b):
+            def link(a,b,**kwargs):
                 if active['primary'] and fault=='publish':raise OSError('original publication failure')
-                return real_link(a,b)
+                return real_link(a,b,**kwargs)
             def opened(*args,**kwargs):
                 stream=real_fdopen(*args,**kwargs)
                 class Stream:
@@ -340,10 +342,11 @@ class Controls(unittest.TestCase):
         real_open=metadata.os.open;fds=[]
         def replace(path,flags,*args,**kwargs):
             target=Path(path)
-            if target==spent/'grant.json' and not flags & os.O_WRONLY:
+            if target.name=='grant.json' and not flags & (os.O_WRONLY | os.O_DIRECTORY):
+                target=spent/'grant.json'
                 target.rename(target.with_suffix('.saved'));os.mkfifo(target)
             fd=real_open(path,flags,*args,**kwargs)
-            if target==spent/'grant.json':fds.append(fd)
+            if target.name=='grant.json':fds.append(fd)
             return fd
         with patch.object(metadata.os,'open',replace):
             with self.assertRaisesRegex(Refused,'descriptor'):launch.consume({'binding':{'consumption':str(spent)}},admitted)

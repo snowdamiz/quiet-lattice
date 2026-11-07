@@ -1,9 +1,9 @@
-import { readFileSync, existsSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cpus, loadavg } from 'node:os';
 import type { NativePorts } from './adapter.ts';
-import { EvidenceStore, readSnapshot, sha256, SnapshotFailure } from './evidence.ts';
+import { EvidenceStore, failureSnapshot, readBytes, readSnapshot, sha256 } from './evidence.ts';
 
 function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Admission object missing');
@@ -78,7 +78,6 @@ export async function nativeMain(args: string[]) {
     import('../native-work-class-budget.ts'),
   ]);
   const store = new EvidenceStore([string(ready.capture), string(ready.fallback)]);
-  store.put('admission-snapshot.json', receipt.raw);
   let browserServer: Awaited<ReturnType<typeof chromium.launchServer>> | undefined;
   let browser: Awaited<ReturnType<typeof chromium.connect>> | undefined;
   let vite: Awaited<ReturnType<typeof viteModule.startOwnedVite>> | undefined;
@@ -88,32 +87,65 @@ export async function nativeMain(args: string[]) {
   const stop = () => abort.abort(new Error('External observer cancellation'));
   process.once('SIGINT', stop);
   process.once('SIGTERM', stop);
-  let closed = false;
-  const close = async () => {
-    if (closed) return;
-    closed = true;
+  type Failure = { error: unknown; snapshot: ReturnType<typeof failureSnapshot> };
+  let primary: Failure | undefined;
+  const secondary: (Failure & { phase: string })[] = [];
+  const retainSecondary = (phase: string, error: unknown) => {
+    secondary.push({ phase, error, snapshot: failureSnapshot(error) });
+  };
+  let closing: Promise<void> | undefined;
+  const stopOwned = async () => {
     const failures: unknown[] = [];
-    for (const operation of [() => browser?.close(), () => browserServer?.close(), () => vite?.stop()]) {
+    for (const [phase, operation] of [
+      ['browser.close', () => browser?.close()],
+      ['browserServer.close', () => browserServer?.close()],
+      ['vite.stop', () => vite?.stop()],
+    ] satisfies [string, () => Promise<unknown> | undefined][]) {
       try {
         await trace.bounded(Promise.resolve(operation()), 10000, 'worker cleanup');
       } catch (error) {
-        failures.push(String(error));
+        retainSecondary(phase, error);
+        failures.push(error);
       }
     }
-    store.put('worker-close.json', { failures, helpers, physicalSettlement: 'EXTERNAL_CONTROLLER_REQUIRED' });
-    if (failures.length) throw new Error(JSON.stringify(failures));
+    try {
+      store.put('worker-close.json', {
+        failures: secondary.map(({ phase, snapshot }) => ({ phase, error: snapshot })),
+        helpers,
+        physicalSettlement: 'EXTERNAL_CONTROLLER_REQUIRED',
+      });
+    } catch (error) {
+      retainSecondary('worker-close publication', error);
+      failures.push(error);
+    }
+    if (failures.length) throw new AggregateError(failures, 'Worker cleanup failed', { cause: failures[0] });
+  };
+  const close = () => {
+    closing ??= stopOwned();
+    return closing;
   };
   try {
+    store.put('admission-snapshot.json', receipt.raw);
     await budget.withNativeWorkClassDeadline(async (deadlineSignal) => {
       const signal = AbortSignal.any([abort.signal, deadlineSignal]);
       const phase = <T>(task: Promise<T>, ms: number, label: string) => trace.bounded(task, ms, label, signal);
       signal.throwIfAborted();
-      const body = readFileSync(string(binding.assetPath));
-      if (sha256(body) !== report.observerAssetSha256 || body.toString('ascii', 0, 4) !== 'glTF') throw new Error('Exact prehydrated asset differs');
+      const { raw: body } = readBytes(string(binding.assetPath), report.observerAssetSha256, 64 * 1024 * 1024);
+      if (body.toString('ascii', 0, 4) !== 'glTF') throw new Error('Exact prehydrated asset differs');
       vite = await viteModule.startOwnedVite(string(ready.frozenRoot), helpers);
       signal.throwIfAborted();
       browserServer = await chromium.launchServer({ executablePath: string(binding.browser), args: capture.glArgs().args, timeout: 30000 });
-      probe.retainBrowserLaunch(string(ready.capture), string(binding.prefix), browserServer.process());
+      const child = browserServer.process();
+      store.put('browser-launch.json', {
+        kind: 'T13_BROWSER_LAUNCH_CHILD_PROCESS_V1',
+        provenance: 'BrowserServer.process() ChildProcess',
+        prefix: string(binding.prefix),
+        pid: child.pid ?? null,
+        spawnfile: child.spawnfile,
+        spawnargs: [...child.spawnargs],
+        at: new Date().toISOString(),
+        monotonicNs: process.hrtime.bigint().toString(),
+      });
       signal.throwIfAborted();
       browser = await chromium.connect(browserServer.wsEndpoint(), { timeout: 30000 });
       const cdp = await phase(browser.newBrowserCDPSession(), 10000, 'CDP');
@@ -230,26 +262,52 @@ export async function nativeMain(args: string[]) {
       await adapter.runAdapter({ prefix: string(binding.prefix), rendererPids, pins, maxLoad: Array.from(control.maxLoad as number[]) }, ports, store, signal);
     });
   } catch (error) {
+    primary = { error, snapshot: failureSnapshot(error) };
     try {
       store.put('worker-failure.json', {
-        error: String(error),
-        facts: error instanceof SnapshotFailure ? error.facts : null,
+        error: primary.snapshot,
         helpers,
         evidence: store.receipt(),
       });
-    } catch {
-      /* Retained memory is emitted below. */
+    } catch (publication) {
+      retainSecondary('worker-failure publication', publication);
     }
-    throw error;
   } finally {
     try {
       await close();
+    } catch {
+      // Each stop and publication error was captured before the next operation.
     } finally {
       process.off('SIGINT', stop);
       process.off('SIGTERM', stop);
-      if (store.failures.length) process.stderr.write(JSON.stringify({ kind: 'T13_UNDURABLE_EVIDENCE', accepted: false, evidence: store.receipt() }) + '\n');
     }
   }
+  const terminal = () => ({
+    accepted: false,
+    physicalSettlement: 'EXTERNAL_CONTROLLER_REQUIRED',
+    primary: primary?.snapshot ?? null,
+    secondary: secondary.map(({ phase, snapshot }) => ({ phase, error: snapshot })),
+    evidence: store.receipt(),
+  });
+  try {
+    store.put('worker-terminal.json', terminal());
+  } catch (error) {
+    retainSecondary('worker-terminal publication', error);
+  }
+  if (store.failures.length || Object.keys(store.receipt().undurable).length) {
+    try {
+      process.stderr.write(JSON.stringify({ kind: 'T13_UNDURABLE_EVIDENCE', ...terminal() }) + '\n');
+    } catch (error) {
+      retainSecondary('stderr fallback', error);
+    }
+  }
+  if (secondary.length) {
+    const errors = [...(primary ? [primary.error] : []), ...secondary.map(({ error }) => error)];
+    throw Object.assign(new AggregateError(errors, 'Worker failed; original cause and secondary failures retained', { cause: errors[0] }), {
+      facts: terminal(),
+    });
+  }
+  if (primary) throw primary.error;
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   nativeMain(process.argv.slice(2)).catch((error) => {

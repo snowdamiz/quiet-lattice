@@ -3,12 +3,11 @@ import argparse
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 import time
 sys.dont_write_bytecode = True
-from metadata import Refused, atomic, digest, encode, file_hash, snapshot
+from metadata import Refused, atomic, digest, encode, file_hash, snapshot, admit, inventory, ReadBudget, Directory, mkdir, copy_file, io_deadline
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[4]
@@ -43,7 +42,8 @@ def capacity(path):
 
 def bind_file(path, cap=512 * 1024**2):
     path = Path(path)
-    return {'path': str(path), 'sha256': file_hash(path, cap), 'bytes': path.stat().st_size}
+    admitted = admit(path, cap)['stamp']
+    return {'path': str(path), 'sha256': file_hash(path, cap, expected_stamp=admitted), 'bytes': admitted[4]}
 
 
 def source_paths(root):
@@ -59,33 +59,51 @@ def source_paths(root):
             'round4_capture_children.py', 'run_round4_browser_proof.py', 'run_round4_remaining8.py'))))
 
 
-def dependency_rows(root):
-    rows, size = [], 0
-    for relative in ['node_modules', 'packages/tools/node_modules', 'packages/client/node_modules', 'packages/shared/node_modules']:
-        base = root / relative
-        if not base.is_dir() or base.is_symlink():
-            raise Refused('Dependency root missing or symbolic: ' + relative)
-        for directory, dirs, files in os.walk(base, followlinks=False):
-            for name in sorted(dirs + files):
-                path = Path(directory) / name
-                if path.is_symlink():
-                    target = path.resolve(strict=True)
-                    if not target.is_relative_to(root):
-                        raise Refused('External dependency link')
-                    rows.append({'relative': str(path.relative_to(root)), 'link': os.readlink(path), 'resolved': str(target)})
-                elif path.is_file():
-                    row = bind_file(path)
-                    size += row['bytes']
-                    rows.append({**row, 'relative': str(path.relative_to(root))})
-                elif not path.is_dir():
-                    raise Refused('Dependency entry type')
-                if len(rows) > LIMITS['dependencyFiles'] or size > LIMITS['dependencyBytes']:
-                    raise Refused('Dependency ledger ceiling')
+DEPENDENCY_ROOTS = ['node_modules', 'packages/tools/node_modules', 'packages/client/node_modules', 'packages/shared/node_modules']
+
+
+def dependency_rows(root, *, hash_content=True):
+    rows, size, entries = [], 0, 0
+    for relative in DEPENDENCY_ROOTS:
+        admitted = inventory(root / relative, count=LIMITS['dependencyFiles'] - entries,
+                             cap=LIMITS['dependencyBytes'] - size, live=True)
+        entries += admitted['count']
+        size += admitted['bytes']
+        for record in admitted['files']:
+            name = str(Path(relative) / record['path'])
+            path = root / name
+            if record['kind'] == 'symlink-not-followed':
+                target = Path(os.path.normpath(path.parent / record['link']))
+                if not target.is_relative_to(root):
+                    raise Refused('External dependency link')
+                rows.append({'relative': name, 'link': record['link'], 'target': str(target), 'stamp': record['stamp']})
+            elif record['kind'] == 'file':
+                rows.append({'path': str(path), 'relative': name, 'bytes': record['bytes'], 'stamp': record['stamp']})
+            elif record['kind'] != 'directory':
+                raise Refused('Dependency entry type')
+    # All four inventories/counts/sizes are admitted before the first content read.
+    budget = ReadBudget(LIMITS['dependencyBytes'])
+    if hash_content:
+        for row in rows:
+            if 'bytes' in row:
+                row['sha256'] = file_hash(row['path'], LIMITS['dependencyBytes'], expected_stamp=row['stamp'], budget=budget)
     return sorted(rows, key=lambda row: row['relative'])
 
 
+def content_rows(rows):
+    return [{key: value for key, value in row.items() if key != 'stamp'} for row in rows]
+
+
+
 def make_freeze(root, destination, binding, *, dependencies=True):
-    root, destination = Path(root).resolve(strict=True), Path(destination)
+    with io_deadline(120):
+        return _make_freeze(root, destination, binding, dependencies=dependencies)
+
+
+def _make_freeze(root, destination, binding, *, dependencies=True):
+    root, destination = Path(root), Path(destination)
+    with Directory(root):
+        pass
     head = git(root, 'rev-parse', 'HEAD')
     clean(root, head)
     if destination.exists() or destination.is_symlink() or destination.is_relative_to(root) or destination.parent.resolve() != destination.parent:
@@ -95,14 +113,21 @@ def make_freeze(root, destination, binding, *, dependencies=True):
         raise Refused('Current capacity insufficient', available)
     sources, total = [], 0
     for relative in source_paths(root):
-        row = bind_file(root / relative, LIMITS['sourceBytes'])
+        admitted = admit(root / relative, LIMITS['sourceBytes'])['stamp']
+        row = {'path': str(root / relative), 'bytes': admitted[4], 'stamp': admitted}
         total += row['bytes']
         if len(sources) >= LIMITS['sourceFiles'] or total > LIMITS['sourceBytes']:
             raise Refused('Source ledger ceiling')
         sources.append({**row, 'relative': relative})
     if not sources:
         raise Refused('Source closure absent')
-    deps = dependency_rows(root) if dependencies else []
+    deps = dependency_rows(root, hash_content=False) if dependencies else []
+    source_budget, dependency_budget = ReadBudget(LIMITS['sourceBytes']), ReadBudget(LIMITS['dependencyBytes'])
+    for row in sources:
+        row['sha256'] = file_hash(row['path'], LIMITS['sourceBytes'], expected_stamp=row['stamp'], budget=source_budget)
+    for row in deps:
+        if 'bytes' in row:
+            row['sha256'] = file_hash(row['path'], LIMITS['dependencyBytes'], expected_stamp=row['stamp'], budget=dependency_budget)
     for row in binding['binaries']:
         if file_hash(row['path'], 512 * 1024**2) != row['sha256']:
             raise Refused('Binary binding changed')
@@ -113,23 +138,29 @@ def make_freeze(root, destination, binding, *, dependencies=True):
         p = Path(path)
         if p.exists() or p.is_symlink() or p.parent.resolve() != p.parent or p.is_relative_to(root):
             raise Refused('Prospective path occupied/noncanonical/in worktree: ' + path)
-    destination.mkdir(mode=0o700)
+    mkdir(destination)
     copy = destination / 'source'
-    copy.mkdir()
+    mkdir(copy)
+    source_budget = ReadBudget(LIMITS['sourceBytes'])
+    dependency_budget = ReadBudget(LIMITS['dependencyBytes'])
     for row in sources:
-        target = copy / row['relative']
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(row['path'], target, follow_symlinks=False)
-        if file_hash(target, LIMITS['sourceBytes']) != row['sha256']:
+        copied_hash = copy_file(row['path'], copy / row['relative'], row, source_budget)
+        if copied_hash != row['sha256']:
             raise Refused('Source copy mismatch')
-    # Copy the bound dependency store so Vite/tsx cannot write caches into another worktree.
-    for relative in ['node_modules', 'packages/tools/node_modules', 'packages/client/node_modules', 'packages/shared/node_modules'] if dependencies else []:
-        target = copy / relative
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(root / relative, target, symlinks=True)
+    for relative in DEPENDENCY_ROOTS if dependencies else []:
+        with Directory(copy / relative, create=True):
+            pass
+    for row in deps:
+        target = copy / row['relative']
+        if 'link' in row:
+            with Directory(target.parent, create=True) as parent:
+                os.symlink(row['link'], target.name, dir_fd=parent.fd)
+                parent.verify()
+        elif copy_file(row['path'], target, row, dependency_budget) != row['sha256']:
+            raise Refused('Dependency copy differs')
     if dependencies:
-        copied_deps = dependency_rows(copy)
-        expected_deps = json.loads(json.dumps(deps).replace(str(root) + '/', str(copy) + '/'))
+        copied_deps = content_rows(dependency_rows(copy))
+        expected_deps = json.loads(json.dumps(content_rows(deps)).replace(str(root) + '/', str(copy) + '/'))
         if copied_deps != expected_deps:
             raise Refused('Dependency copy ledger differs')
     clean(root, head)
@@ -143,6 +174,11 @@ def make_freeze(root, destination, binding, *, dependencies=True):
 
 
 def verify_freeze(ready):
+    with io_deadline(120):
+        return _verify_freeze(ready)
+
+
+def _verify_freeze(ready):
     root = Path(ready['root'])
     if not any(r['path'] == GIT and file_hash(GIT, 64 * 1024**2) == r['sha256'] for r in ready['binding']['binaries']):
         raise Refused('Actual Git executable is not bound')
@@ -156,21 +192,20 @@ def verify_freeze(ready):
         for path in [root / row['relative'], Path(ready['frozenRoot']) / row['relative']]:
             if file_hash(path, LIMITS['sourceBytes']) != row['sha256']:
                 raise Refused('Source changed: ' + str(path))
-    dependency_dirs = {'node_modules', 'packages/tools/node_modules', 'packages/client/node_modules', 'packages/shared/node_modules'}
-    observed = []
     frozen = Path(ready['frozenRoot'])
-    for directory, dirs, files in os.walk(frozen, followlinks=False):
-        dirs[:] = [name for name in dirs if str((Path(directory) / name).relative_to(frozen)) not in dependency_dirs]
-        for name in dirs + files:
-            path = Path(directory) / name
-            relative = str(path.relative_to(frozen))
-            if path.is_symlink():
-                raise Refused('Frozen source link differs')
-            elif path.is_file():
-                observed.append(relative)
+    all_files = inventory(frozen, count=LIMITS['frozenFiles'], cap=LIMITS['frozenBytes'], live=True)
+    observed = []
+    for row in all_files['files']:
+        relative = row['path']
+        if any(relative == base or relative.startswith(base + '/') for base in DEPENDENCY_ROOTS):
+            continue
+        if row['kind'] not in ('file', 'directory'):
+            raise Refused('Frozen source link/type differs')
+        if row['kind'] == 'file':
+            observed.append(relative)
     if sorted(observed) != source_paths(root):
         raise Refused('Frozen source file ledger differs')
-    if dependency_rows(root) != ready['dependencies'] or dependency_rows(frozen) != json.loads(json.dumps(ready['dependencies']).replace(str(root) + '/', str(frozen) + '/')):
+    if dependency_rows(root) != ready['dependencies'] or content_rows(dependency_rows(frozen)) != json.loads(json.dumps(content_rows(ready['dependencies'])).replace(str(root) + '/', str(frozen) + '/')):
         raise Refused('Dependencies changed')
     for row in [*ready['binding']['binaries'], ready['asset']]:
         if file_hash(row['path'], 512 * 1024**2) != row['sha256']:
