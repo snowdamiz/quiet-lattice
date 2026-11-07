@@ -1,0 +1,63 @@
+{
+  "ticks": 95,
+  "counts": {
+    "write": 651,
+    "coalition": 125053,
+    "identity": 1710,
+    "kernel_tasks": 4,
+    "_archive_profile_paths": 1,
+    "run": 3,
+    "check_output": 1
+  },
+  "events": 127423,
+  "observedBytes": 12593989,
+  "primary": "Capture did not complete: observer_failed",
+  "helperErrors": [
+    "ValueError: Raw helper observation ceiling exceeded"
+  ],
+  "publication": [
+    "Raw observation node ceiling",
+    "Raw observation node ceiling",
+    "STDERR_SINK_FAILURE"
+  ],
+  "cleanupTrace": [
+    "inert-start",
+    "inert-drain",
+    [
+      "inert-command",
+      "/bin/launchctl",
+      "bootout"
+    ],
+    [
+      "inert-command",
+      "/bin/launchctl",
+      "print"
+    ],
+    [
+      "inert-command",
+      "/bin/launchctl",
+      "print"
+    ],
+    [
+      "inert-command",
+      "/usr/bin/pmset",
+      "-g",
+      "assertions"
+    ]
+  ],
+  "nativeSnapshotReconstructed": false,
+  "syntheticNonmembers": 1024,
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/vm-observation-budget-7o2wl_r3/growth-child.py",
+    "--inert-cpu-fixture",
+    "/private/tmp/vm-observation-budget-7o2wl_r3/tmp/vm-protocol-igk_zbnq",
+    "0",
+    "success"
+  ],
+  "exit": 1,
+  "root": "/private/tmp/vm-observation-budget-7o2wl_r3/tmp/vm-protocol-igk_zbnq",
+  "retainedBoundarySha256": "5b358dd28d9b757cad0e38254a7beb5480a6c49c5487e0ee97b3b7a4223d8147",
+  "redConfirmed": true
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "DATA_ONLY_NOT_A_GRANT_OR_DISPATCH",
+  "requires": "Fresh independent source PASS, parent capacity/GPU slot decision and new one-use parent grant",
+  "sourceHead": "98a68686cb9ff26804a45909d6ca018abdb3f1e6",
+  "sourceTree": "4660e44f417ac484ece3943c6a90cc4f288f9ece",
+  "readinessSha256": "3b43d2db214cc0b99f273bbda0543dc1d990b7dbc87c26a73190c3294ae0acfa",
+  "unit": {
+    "id": "review-thalune",
+    "kind": "review",
+    "people": "thalune",
+    "asset": "characters/viewmodels/fp_thalune",
+    "files": [
+      "noon-lush_lod0.png",
+      "noon-lush_lod2.png",
+      "wireframe_lod0.png",
+      "wireframe_lod2.png",
+      "overlay.png",
+      "far_lod2.png",
+      "night-exotic_lod0.png",
+      "night-exotic_lod2.png",
+      "open-space_lod0.png",
+      "open-space_lod2.png",
+      "perf.json",
+      "sheet.png"
+    ],
+    "fromPeople": null,
+    "pngCount": 11,
+    "outputCap": 184565760,
+    "admission": 5402312704,
+    "readoutCap": 16384
+  },
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+    "--ready",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-readiness.json",
+    "--unit",
+    "review-thalune",
+    "--grant",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-review-thalune.grant.json"
+  ],
+  "env": {
+    "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/14428_1794032435263/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1"
+  },
+  "readinessCopy": {
+    "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+    "absentDestination": "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-readiness.json",
+    "sha256": "3b43d2db214cc0b99f273bbda0543dc1d990b7dbc87c26a73190c3294ae0acfa"
+  },
+  "paths": {
+    "ready": "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-readiness.json",
+    "grant": "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-review-thalune.grant.json",
+    "consumption": "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-review-thalune.consumed.json",
+    "evidence": "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3/review-thalune",
+    "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-observations-7o2wl_r3/review-thalune"
+  },
+  "derivedTerminalPaths": [
+    "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3/review-thalune/result.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-review-thalune.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3-review-thalune.consumed.json.failure-summary.json"
+  ],
+  "previous": [],
+  "grantIssued": false,
+  "allProspectivePathsAbsent": true,
+  "originalAuthorizationReusable": false,
+  "afterDispatch": "Parent observes actual OS exit before authenticating result/consumption; no automatic retry or later-unit dispatch."
+}

@@ -1005,3 +1005,10 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 
 - **Creature F2 `ccdcb1b`:** independent SOURCE/CPU REVISE. Original cancellation ownership is PARTIAL; new P2 F2-R2 late same-group fork after the final process snapshot can still seal cleanup=verified and admit a retry while a child lives. Author owns that narrow observation/admission fix. Seal retained under `docs/review-records/p1-e08-t08/lifecycle-review-ccdcb1b/`. F1 exact-float and native/visual remain open.
 
+
+## 2026-11-07 — Companion R8 PASS and viewmodel observation-budget correction
+
+- **Companion visibility `92b394d`:** independent R8 SOURCE/CPU PASS. R7 F1 living-subject/removal endpoint checks FIXED; A1 timing advisory remains nonblocking. Native gestures, real pixels, full-task and merge acceptance remain unqualified. Historical focused/live/standard-smoke passes stay separate. Seal retained under `docs/review-records/p1-e07-t07-t09/visibility-review-r8-92b394d/`.
+- **Viewmodel observation budget `98a68686`:** author SOURCE/CPU correction committed after native attempt2 Raw helper observation ceiling failure. Durable per-event journal seals 191,937 events without omitting admitted facts; exact-base RED retained. Fresh independent SOURCE/CPU review assigned. `unit1-launch.json` is data-only; no one-use grant issued. Native/visual T03 remain open.
+- Fauna blind visual, creature F2-R2 fix, T13 category-return seal, exact-mask regression prep and Lark density remain in flight. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+- Index: `docs/review-records/20261107-companion-r8-and-vm-observation-budget.json`.
