@@ -694,7 +694,7 @@ class BoundaryControls(unittest.TestCase):
 
     @contextmanager
     def boundary(self, *, deadline_at=None, cancel=False, timeout=None, allocation=False,
-                 publication=None, all_sinks=False, clean=False):
+                 publication=None, all_sinks=False, clean=False, real_git=False):
         """Actual caller/helper bodies; only native boundaries and scratch paths are inert."""
         helpers_dir = HERE.parents[4] / 'assets/blend/stations/_authoring'
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-boundary-') as tempdir:
@@ -736,7 +736,16 @@ class BoundaryControls(unittest.TestCase):
                     self.coalition_id = 7; self.known = {}; self.target = 'CPU_ONLY_NO_LAUNCH'; self.registered = True
                     self.state = {'drained': True, 'clean': True, 'exits': {'capture': 0 if clean else 1, 'caffeinate': 0}, 'futureState': {'raw': 'keep'}}
                 def start(self): calls.append('inert-start')
-                def wait(self, *a): calls.append('inert-capture'); return 'completed'
+                def wait(self, *a):
+                    calls.append('inert-capture')
+                    output = Path(spec['output']); output.mkdir(exist_ok=True)
+                    (output / '_frames').mkdir()
+                    names = ['16x9' + suffix + '.png' for suffix in ('', '-kill', '-offscreen', '-start')]
+                    names += ['_frames/%03d.jpg' % i for i in range(72)] + ['readout.txt', 'clip-sheet.png']
+                    names += ['21x9' + suffix + '.png' for suffix in ('', '-kill', '-offscreen', '-start')]
+                    for name in names: (output / name).write_bytes(('INERT CPU ARTIFACT ' + name).encode())
+                    (evidence / 'entry-result.json').write_text(json.dumps({'writes': caller.inventory(output)}))
+                    return 'completed'
                 def drain(self, *a): calls.append('inert-drain'); return self.state.copy()
                 def members(self): calls.append('members'); return []
             Job.archive = archive_ns['archive']
@@ -762,10 +771,39 @@ class BoundaryControls(unittest.TestCase):
             helpers = {'round4_job_boundary': core, 'run_round4_browser_proof': temp, 'run_round4_remaining8': support}
             ready = {'generatedCaches': [], 'stationDirectory': str(helpers_dir), 'uid': os.getuid(), 'node': 'NEVER_EXECUTED',
                      'path': 'CPU_ONLY', 'browserCache': 'NEVER_EXECUTED', 'root': str(base), 'decoderPython': 'NEVER_EXECUTED'}
-            spec = {'evidence': str(evidence), 'consumption': str(base / 'consumed.json'), 'authorizationId': 'CPU'}
+            spec = {'evidence': str(evidence), 'consumption': str(base / 'consumed.json'), 'authorizationId': 'CPU',
+                    'output': str(base / 'output'), 'budget': {'fileCount': 82}}
             record = {'unit': 'first', 'head': 'CPU_HEAD', 'readinessSha256': 'CPU_SHA', 'authorizationId': 'CPU', 'spec': spec}
-            Path(spec['consumption']).write_text(json.dumps(record))  # Synthetic transaction, no consume/grant dispatch.
+            ready_path = caller.READY
+            first_unit, second_unit = 'fauna-hit-turn-day-16x9', 'fauna-hit-turn-day-21x9'
+            first_grant = 'CPU_ONLY'
+            if real_git:
+                repo = base / 'repo'; repo.mkdir()
+                def git(*args):
+                    return subprocess.check_output(['/usr/bin/git', *args], cwd=repo, text=True, stderr=subprocess.PIPE).strip()
+                git('init', '-q'); git('config', 'core.hooksPath', '/dev/null')
+                (repo / 'source.txt').write_text('Tracked CPU source fixture\n')
+                (repo / '.gitignore').write_text('*.cache\n')
+                parent = repo / 'assets/renders/ui'; parent.mkdir(parents=True); (parent / '.keep').write_text('')
+                evidence.rmdir()  # Actual consume requires every first-unit identity to be fresh.
+                spec.update(output=str(parent / 'first-output'), grant=str(base / 'first-grant.json'))
+                next_spec = {**spec, 'output': str(parent / 'second-output'), 'evidence': str(base / 'second-evidence'),
+                             'consumption': str(base / 'second-consumed.json'), 'grant': str(base / 'second-grant.json'), 'authorizationId': 'CPU_SECOND'}
+                ready.update(root=str(repo), git='/usr/bin/git', runtimeEnabled=True, unitOrder=[first_unit, second_unit], units={first_unit: spec, second_unit: next_spec})
+                ready_path = repo / 'readiness.json'; ready_path.write_text(json.dumps(ready))
+                git('add', '.'); git('-c', 'user.name=CPU fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'isolated sequence fixture')
+                review = base / 'review'; review.write_text('CPU fixture only')
+                first_grant = spec['grant']
+                grant = {'purpose': 'FAUNA_ONE_SCREEN_VISUAL_REPLAY_ONLY', 'oneUse': True, 'authorizationId': 'CPU',
+                         'readinessSha256': caller.sha(ready_path), 'authorizedHead': git('rev-parse', 'HEAD'), 'unit': first_unit,
+                         'nativeReservesAccepted': True, 'callerReview': {'verdict': 'PASS', 'path': str(review), 'sha256': caller.sha(review)},
+                         'previousUnitsAccepted': [], 'previousUnitReceipts': {},
+                         'expiresUtc': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).isoformat()}
+                Path(first_grant).write_text(json.dumps(grant))
+            else:
+                Path(spec['consumption']).write_text(json.dumps(record))  # No real grant/consume dispatch.
             original_persist, original_read, original_run, original_open = caller.persist, caller.read_json, caller.run_unit, Path.open
+            original_process_run = subprocess.run
             def persist(p, value):
                 name = Path(p).name; writes.append(name)
                 if name == deadline_at:
@@ -799,6 +837,7 @@ class BoundaryControls(unittest.TestCase):
                 stream = original_open(p, *a, **kw)
                 return FaultyStream(stream) if publication in ('after-write', 'after-close') and p.name == 'result.json' and a and a[0] == 'xb' else stream
             def decoder(*a, **kw):
+                if real_git and a[0][0] == '/usr/bin/git': return original_process_run(*a, **kw)
                 calls.append('decoder')
                 self.assertTrue(clean and not timeout and not deadline_at and not allocation and (not all_sinks or publication), 'Decoder dispatched after failure')
                 return SimpleNamespace(args=a[0], returncode=0, stdout='{"accepted":true}', stderr='')
@@ -808,7 +847,8 @@ class BoundaryControls(unittest.TestCase):
                 def write(self, _): raise OSError('STREAM_UNAVAILABLE')
             before_path = list(sys.path); caller._receipt_bytes = 0
             try:
-                with patch.object(sys, 'argv', ['caller', '--execute', 'fauna-hit-turn-day-16x9', '--grant', 'CPU_ONLY']), patch.object(caller, 'read_json', side_effect=lambda p, *a: ready if p == caller.READY else original_read(p, *a)), patch.object(caller, 'consume', return_value=(spec, record)) as consumption, patch.object(caller, 'run_unit', side_effect=run), patch.object(caller, 'snapshot_caches'), patch.object(caller.importlib, 'import_module', side_effect=lambda n: helpers[n]), patch.object(caller, 'observed_thresholds', return_value={}), patch.object(caller, 'persist', side_effect=persist), patch.object(caller.subprocess, 'run', side_effect=decoder), patch.object(caller, 'verify_legacy'), patch.object(Path, 'open', opened), redirect_stderr(FailedSink() if all_sinks else io.StringIO()), redirect_stdout(FailedSink() if all_sinks else io.StringIO()):
+                consumption_patch = patch.object(caller, 'consume', wraps=caller.consume) if real_git else patch.object(caller, 'consume', return_value=(spec, record))
+                with patch.object(sys, 'argv', ['caller', '--execute', first_unit, '--grant', first_grant]), patch.object(caller, 'READY', ready_path), patch.dict(os.environ, {'FAUNA_CAPTURE_GRANT': 'CPU'}), patch.object(caller, 'read_json', side_effect=lambda p, *a, **kw: ready if p == caller.READY else original_read(p, *a, **kw)), consumption_patch as consumption, patch.object(caller, 'verify_bindings', return_value={'scope': 'INERT_CPU_FIXTURE'}), patch.object(caller, 'run_unit', side_effect=run), patch.object(caller, 'snapshot_caches'), patch.object(caller.importlib, 'import_module', side_effect=lambda n: helpers[n]), patch.object(caller, 'observed_thresholds', return_value={}), patch.object(caller, 'persist', side_effect=persist), patch.object(caller.subprocess, 'run', side_effect=decoder), patch.object(caller, 'verify_legacy'), patch.object(Path, 'open', opened), redirect_stderr(FailedSink() if all_sinks else io.StringIO()), redirect_stdout(FailedSink() if all_sinks else io.StringIO()):
                     exitcode = caller.main()
                 self.assertEqual(consumption.call_count, 1)
             finally:
@@ -816,6 +856,15 @@ class BoundaryControls(unittest.TestCase):
             for ns in (archive_ns, terminal_ns):
                 self.assertIs(ns['subprocess'], common['subprocess']); self.assertIs(ns['kernel_tasks'], kernel)
             self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
+            if real_git:
+                next_grant = {**grant, 'unit': second_unit, 'authorizationId': next_spec['authorizationId'],
+                              'previousUnitsAccepted': [first_unit], 'previousUnitReceipts': {first_unit: {
+                                  'callerExitCode': exitcode, **{key: {'path': str(p), 'sha256': caller.sha(p)} for key, p in
+                                  (('result', evidence / 'result.json'), ('consumption', Path(spec['consumption'])))}}}}
+                Path(next_spec['grant']).write_text(json.dumps(next_grant))
+                yield SimpleNamespace(base=base, repo=repo, spec=spec, ready=ready, ready_path=ready_path, git=git, result=returned[0],
+                                      exitcode=exitcode, next_spec=next_spec, next_grant=next_grant, second_unit=second_unit, calls=calls)
+                return
             review = base / 'review'; review.write_text('CPU fixture only')
             next_ready = {'runtimeEnabled': True, 'unitOrder': ['first', 'second'], 'units': {'first': spec, 'second': {'CPU': 'fixture'}}}
             grant = {'purpose': 'FAUNA_ONE_SCREEN_VISUAL_REPLAY_ONLY', 'oneUse': True, 'authorizationId': 'CPU', 'readinessSha256': 'CPU_SHA', 'authorizedHead': 'CPU_HEAD', 'unit': 'second', 'nativeReservesAccepted': True,
@@ -826,6 +875,49 @@ class BoundaryControls(unittest.TestCase):
 
     def gate(self, case, grant):
         return caller.grant_gate(case.next_ready, 'second', grant, 'CPU_SHA', 'CPU_HEAD', 'CPU')
+
+    def test_real_git_successor_admission_allows_only_exact_predecessor_artifacts(self):
+        for mutation in ('none', 'unrelated', 'quoted-untracked', 'tracked-edit', 'staged-edit', 'modified-artifact',
+                         'missing-artifact', 'extra-artifact', 'ignored-extra', 'extra-empty-directory', 'artifact-symlink',
+                         'output-symlink', 'frames-symlink', 'unrelated-symlink', 'staged-artifact'):
+            with self.subTest(mutation=mutation), self.boundary(clean=True, real_git=True) as case:
+                self.assertEqual(case.exitcode, 0); self.assertTrue(case.result['accepted'])
+                head = case.git('rev-parse', 'HEAD')
+                self.assertEqual(case.result['admission']['head'], head)
+                status = subprocess.check_output(['/usr/bin/git', 'status', '--porcelain=v1', '-z', '--untracked-files=all'], cwd=case.repo)
+                self.assertEqual(len([row for row in status.split(b'\0') if row]), 82)
+                self.assertTrue(all(row.startswith(b'?? assets/renders/ui/first-output/') for row in status.split(b'\0') if row))
+                self.assertEqual(subprocess.run(['/usr/bin/git', 'check-ignore', str(case.spec['output'])], cwd=case.repo, capture_output=True).returncode, 1)
+                output = Path(case.spec['output']); artifact = output / '16x9.png'
+                if mutation == 'unrelated': (case.repo / 'unexpected.txt').write_text('unrelated')
+                elif mutation == 'quoted-untracked': (case.repo / 'unrelated "name\n.txt').write_text('unrelated')
+                elif mutation in ('tracked-edit', 'staged-edit'):
+                    (case.repo / 'source.txt').write_text('changed tracked source')
+                    if mutation == 'staged-edit': case.git('add', 'source.txt')
+                elif mutation == 'modified-artifact': artifact.write_bytes(b'X' + artifact.read_bytes()[1:])
+                elif mutation == 'missing-artifact': artifact.unlink()
+                elif mutation in ('extra-artifact', 'ignored-extra'): (output / ('extra.cache' if mutation == 'ignored-extra' else 'extra.png')).write_text('extra')
+                elif mutation == 'extra-empty-directory': (output / 'extra').mkdir()
+                elif mutation == 'artifact-symlink':
+                    saved = case.base / 'saved-artifact'; artifact.rename(saved); artifact.symlink_to(saved)
+                elif mutation in ('output-symlink', 'frames-symlink'):
+                    target = output if mutation == 'output-symlink' else output / '_frames'
+                    saved = case.base / 'saved-directory'; target.rename(saved); target.symlink_to(saved, target_is_directory=True)
+                elif mutation == 'unrelated-symlink': (case.repo / 'unrelated-link').symlink_to(artifact)
+                elif mutation == 'staged-artifact': case.git('add', str(artifact))
+                consumption_before = Path(case.spec['consumption']).read_bytes()
+                with patch.object(caller, 'READY', case.ready_path), patch.dict(os.environ, {'FAUNA_CAPTURE_GRANT': case.next_spec['authorizationId']}), patch.object(caller, 'verify_bindings', return_value={'scope': 'INERT_CPU_FIXTURE'}):
+                    if mutation == 'none':
+                        admitted, record = caller.consume(case.ready, case.second_unit, case.next_spec['grant'])
+                        self.assertEqual(admitted, case.next_spec); self.assertEqual(record['head'], head)
+                        self.assertTrue(Path(admitted['consumption']).is_file())
+                    else:
+                        with self.assertRaises(caller.Refused):
+                            caller.consume(case.ready, case.second_unit, case.next_spec['grant'])
+                        for key in ('output', 'evidence', 'consumption'): self.assertFalse(Path(case.next_spec[key]).exists())
+                self.assertEqual(case.git('rev-parse', 'HEAD'), head)
+                self.assertEqual(Path(case.spec['consumption']).read_bytes(), consumption_before)
+                self.assertEqual(case.calls.count('inert-start'), 1)
 
     def completion(self, case):
         return {'callerExitCode': case.exitcode, **{key: {'path': str(path), 'sha256': caller.sha(path)}

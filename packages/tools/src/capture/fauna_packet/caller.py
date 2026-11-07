@@ -53,11 +53,14 @@ def sha(path):
     return h.hexdigest()
 
 
-def read_json(path, maximum=2 * 1024 * 1024):
+def read_json(path, maximum=2 * 1024 * 1024, expected_sha256=None):
     p = Path(path)
     require(p.is_file() and not p.is_symlink() and p.stat().st_size <= maximum, 'Unsafe/oversized JSON: ' + str(p))
     with p.open('rb') as stream:
-        return json.loads(stream.read(maximum + 1))
+        data = stream.read(maximum + 1)
+    require(len(data) <= maximum, 'JSON grew beyond cap: ' + str(p))
+    require(expected_sha256 is None or hashlib.sha256(data).hexdigest() == expected_sha256, 'JSON reference drifted: ' + str(p))
+    return json.loads(data)
 
 
 def persist(path, value):
@@ -308,6 +311,52 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
     return ready['units'][unit]
 
 
+def verified_output_paths(ready, spec, manifest):
+    """Recheck the inspector's complete manifest before allowing its exact Git paths."""
+    root, output = Path(ready['root']), Path(spec['output'])
+    require(output.is_absolute() and output.resolve() == output and output.is_dir()
+            and output.is_relative_to(root) and output != root, 'Unsafe predecessor output root')
+    require(isinstance(manifest, list) and len(manifest) == spec['budget']['fileCount'], 'Incomplete output manifest')
+    expected, directories = {}, set()
+    for row in manifest:
+        require(isinstance(row, dict) and set(row) == {'path', 'bytes', 'sha256'}, 'Malformed output manifest row')
+        name = row['path']
+        require(isinstance(name, str) and name and str(Path(name)) == name and not Path(name).is_absolute()
+                and '..' not in Path(name).parts and name != '.' and name not in expected, 'Unsafe/duplicate manifest path')
+        require(type(row['bytes']) is int and 0 < row['bytes'] <= (16384 if name == 'readout.txt' else 16 * 1024 * 1024), 'Manifest file cap exceeded')
+        expected[name] = row
+        directories.update(str(p) for p in Path(name).parents if str(p) != '.')
+    files, found_directories = set(), set()
+    for path in output.rglob('*'):
+        name, info = str(path.relative_to(output)), path.lstat()
+        if stat.S_ISDIR(info.st_mode):
+            require(name in directories, 'Unexpected output directory: ' + name)
+            found_directories.add(name)
+        else:
+            require(stat.S_ISREG(info.st_mode) and name in expected, 'Unsafe/extra output artifact: ' + name)
+            require(info.st_size == expected[name]['bytes'], 'Output artifact size changed: ' + name)
+            files.add(name)
+    require(files == set(expected) and found_directories == directories, 'Missing output artifact/directory')
+    for name, row in expected.items():
+        with (output / name).open('rb') as stream:
+            data = stream.read(row['bytes'] + 1)
+        require(len(data) == row['bytes'] and hashlib.sha256(data).hexdigest() == row['sha256'], 'Output artifact hash changed: ' + name)
+    return {os.fsencode(str((output / name).relative_to(root))) for name in expected}
+
+
+def verify_worktree(ready, grant):
+    allowed = set()
+    for previous in grant['previousUnitsAccepted']:
+        prior = ready['units'][previous]
+        result = read_json(Path(prior['evidence']) / 'result.json',
+                           expected_sha256=grant['previousUnitReceipts'][previous]['result']['sha256'])
+        allowed.update(verified_output_paths(ready, prior, result['raw'].get('outputManifest')))
+    status = subprocess.check_output([ready['git'], 'status', '--porcelain=v1', '-z', '--untracked-files=all', '--ignore-submodules=none'],
+                                     cwd=ready['root'], timeout=5)
+    require(all(row[:3] == b'?? ' and row[3:] in allowed for row in status.split(b'\0') if row),
+            'Worktree has changes outside verified predecessor artifacts')
+
+
 def consume(ready, unit, grant_path):
     optimization_guard()
     # The disabled candidate is rejected before reading a grant or importing any ownership helper.
@@ -316,7 +365,7 @@ def consume(ready, unit, grant_path):
     head = subprocess.check_output([ready['git'], 'rev-parse', 'HEAD'], cwd=ready['root'], text=True, timeout=5).strip()
     spec = grant_gate(ready, unit, grant, sha(READY), head, os.environ.get('FAUNA_CAPTURE_GRANT'))
     require(str(Path(grant_path).resolve()) == spec['grant'] and grant['authorizationId'] == spec['authorizationId'], 'Grant attempt identity changed')
-    require(not subprocess.check_output([ready['git'], 'status', '--porcelain'], cwd=ready['root'], text=True, timeout=5).strip(), 'Worktree is not clean')
+    verify_worktree(ready, grant)
     verify_bindings(ready, unit)
     for key in ('output', 'evidence', 'consumption'):
         p = Path(spec[key])
@@ -508,6 +557,7 @@ def run_unit(ready, spec, record):
         receipt('raw-before-acceptance.json', result)
         if result['primaryFailure'] or result['cleanupFailures'] or result['persistenceFailures']:
             raise Refused('Capture/cleanup failed; raw outcome retained')
+        result['raw']['outputManifest'] = read_json(evidence / 'entry-result.json')['writes']
         command = [ready['decoderPython'], '-I', '-B', str(HERE / 'inspect.py'), str(READY), record['unit']]
         decoded = subprocess.run(command, capture_output=True, text=True, timeout=45,
                                  env={'PATH': ready['path'], 'PYTHONOPTIMIZE': '0', 'PYTHONDONTWRITEBYTECODE': '1'})
@@ -517,6 +567,8 @@ def run_unit(ready, spec, record):
         result['raw']['inspection'] = json.loads(decoded.stdout)
         result['raw']['persistenceFailures'] = result['persistenceFailures']
         accept_outcome(result['raw'])
+        require(read_json(evidence / 'entry-result.json')['writes'] == result['raw']['outputManifest'], 'Inspected output manifest changed')
+        verified_output_paths(ready, spec, result['raw']['outputManifest'])
         verify_legacy(ready)
         receipt('accepted-evidence.json', result['raw'])
         require(not result['persistenceFailures'], 'Evidence persistence failed')
