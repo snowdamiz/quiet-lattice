@@ -1,0 +1,66 @@
+{
+  "task": "P1.E14.T10",
+  "status": "PASS",
+  "priorHead": "e72f49005d4597a06aea1389aedeab99248ae6f5",
+  "sourceBeforeSha256": "001f57e2d088f733de58f396e7a5329bcf13c4dbbd4d9e96cef0e42c7c9cae9e",
+  "sourceAfterSha256": "f2240caccd6c318c796d142f1272f90c29484ff53f02ba0fa06d3bd81f49e5d8",
+  "sourceAfterBytes": 12420819,
+  "exportBeforeSha256": "6f64b0366bb7090ba5fd61049073d78b8144002af408bdee98c847a938655853",
+  "exportAfterSha256": "6f64b0366bb7090ba5fd61049073d78b8144002af408bdee98c847a938655853",
+  "exportRegenerated": false,
+  "sourceExportLOD2": {
+    "status": "PASS",
+    "orientedTriangleBijection": 2866,
+    "unmatchedSource": 0,
+    "unmatchedExport": 0,
+    "maxCornerDistanceM": 0.0004439726696334843,
+    "positionToleranceM": 0.002,
+    "maxUVDistance": 9.824350831096473e-05,
+    "uvTolerance": 0.001,
+    "maxCornerNormalAngleDegrees": 1.1225677369095122,
+    "normalComparison": "measurement only; positions, winding and UVs are matched one-to-one within existing export quantization",
+    "mappingSha256": "13680e5b70b3fa3c9925c9c22043ee81561450162d3e12d0f7207421865d6120",
+    "sourceSurfaceSha256": "fddc2821ae21a59aab5e0195bc847656a07e646b00ee82e302d2f2edccc73c1c",
+    "exportSurfaceSha256": "c37fca19edaa159bba71a2c51c3623cbeb95c8040879b76d09d8315ae17fd7aa"
+  },
+  "exactDelta": {
+    "removedFaces": [
+      1563,
+      2849,
+      2855
+    ],
+    "removedCorners": 9,
+    "removedVertices": 0,
+    "removedEdges": 0,
+    "before": {
+      "sha256": "bf5716a8c8ee5f294b4aa0d88148e166532be6ebfbd3aa0d40661391553a5bbe",
+      "vertices": 1385,
+      "edges": 4126,
+      "faces": 2869,
+      "loops": 8607
+    },
+    "after": {
+      "sha256": "1e5d5153f13362c1e2edd8a44e802616a5a8ee8806ca782094772f609eaff68f",
+      "vertices": 1385,
+      "edges": 4126,
+      "faces": 2866,
+      "loops": 8598
+    },
+    "otherMeshCount": 18,
+    "otherMeshesUnchanged": true,
+    "objectsMarkersMaterialsImagesCollectionsUnitsAndPropertiesUnchanged": true
+  },
+  "unusedShaderRetention": {
+    "before": {
+      "users": 0,
+      "fake": false,
+      "extra": false
+    },
+    "after": {
+      "users": 0,
+      "fake": false,
+      "extra": false
+    },
+    "method": "temporary extra user during save, cleared by reload; original shader retained without fake-user/property changes"
+  }
+}

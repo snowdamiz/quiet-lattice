@@ -1,0 +1,125 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/sites/den_nest_1.blend",
+  "family": "sites",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:05:42Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "den_nest_1",
+      "variants": [
+        {
+          "id": "den_nest_1",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 28828,
+            "1": 8609,
+            "2": 2866,
+            "3": 517
+          },
+          "implicitLods": false,
+          "dims": [
+            8.058,
+            6.707,
+            5.674
+          ],
+          "materials": [
+            "Den_den_nest_1_Organic"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "info",
+          "subject": "_PaintSource",
+          "message": "collection starts with '_': ignored and never exported"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "den_nest_1.blend",
+          "message": "1 variant(s) in 1 asset(s) follow the sites rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "den_nest_1",
+          "message": "LOD0 28,828 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "den_nest_1",
+          "message": "28,828 > 8,609 > 2,866 > 517 triangles; LOD3 1.8% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Den_den_nest_1_Organic",
+          "message": "pbr: base colour, roughness, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "den_nest_1",
+          "message": "longest side 8.06 m within 1-250 m"
+        }
+      ]
+    }
+  ]
+}

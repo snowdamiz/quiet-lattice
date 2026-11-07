@@ -30,6 +30,13 @@ for file in a.files:
     assert report.status=='PASS', f'Family validation failed for {file}'
     model=report.model
     variant=model.assets[0].variants[path.stem]
+    for lod,group in variant.lods.items():
+        for obj in S.render_meshes(rules,group):
+            probe=obj.data.copy()
+            try:
+                assert not probe.validate(verbose=True,clean_customdata=False), (file,lod,obj.name,'invalid saved/exported mesh')
+            finally:
+                bpy.data.meshes.remove(probe)
     meshes=S.render_meshes(rules,variant.lods[0])
     if path.suffix=='.blend':
         assert bpy.context.scene.unit_settings.system=='METRIC'

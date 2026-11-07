@@ -39,6 +39,10 @@ for n,ratio in [(1,.30),(2,.10),(3,.018)]:
     lods._decimate([copy],int(t0*ratio))
     tri=copy.modifiers.new('ExplicitTriangles','TRIANGULATE')
     with bpy.context.temp_override(object=copy,active_object=copy): bpy.ops.object.modifier_apply(modifier=tri.name)
+    # Triangulated decimation can retain duplicate cap faces. Clean the saved
+    # mesh here so it agrees with the valid geometry consumed by glTF export.
+    copy.data.validate(verbose=True,clean_customdata=False)
+    S.clear_cache()
     copy.hide_set(True)
 bpy.context.scene['den_lod_revision']='explicit triangulated .30/.10/.018 reductions after compressed LOD3 exceeded 5%'
 bpy.ops.wm.save_as_mainfile(filepath=str(file),compress=True)
