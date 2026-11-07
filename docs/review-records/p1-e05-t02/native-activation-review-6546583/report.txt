@@ -1,0 +1,115 @@
+TASK: P1.E05.T02 — fresh independent bounded mechanical review of revision-09 native189 activation, Appendix C.2/C.4.
+
+STATUS: DONE. **PASS for the exact source/CPU activation prerequisite only.** No substantiated remaining finding. This is not native, browser, visual, whole-library or whole-task acceptance, and creates no grant or new authorization.
+
+SUMMARY: The pinned activation changes only readiness.nativeFixtureAuthorization from false to true, refreshes the index/audit metadata, and adds revision-09 evidence and handoff files. The production implementation, plan, allowlist, assets, playback, helpers and toolchain are unchanged from the independent R5 source PASS. Missing native grant and disabled full capture both refuse with zero operational effects. The reserve arithmetic, current clean HEAD and bound provenance pass. Historical pnpm snapshot FAILED/MISMATCH remains explicitly failed.
+
+PINS:
+
+- Worktree: `/Users/andreyyurlov/.t3/worktrees/space/t3-11167406`.
+- Branch: `codex/task/P1-E05-T02-thalune-reel-candidate`.
+- HEAD: `654658363a0347b1f50a40f868c32140b90881db`.
+- Tree: `de2bacc2cec04a2dbb6dc9ef06a2499f82aac5f6`.
+- Base: `b6ad8528c7fe504817078fcfe0f253caac45020d`.
+- Base tree: `3a8f15923b5314dd894012f98d5728bb99a9a69d`.
+- Readiness SHA256: `daa896c0281cfe5d3c539eb5627f352df68ad52e4b7ca2637183c5105b37a040`.
+- Candidate index SHA256: `79eb11a88c72e815ea66b1c57eb582a6e9ed8e840a5515607cd182c65f0649d4`.
+- Plan SHA256: `3854b1996c49640e77b65950c429f6e017730b90206fbf0c58ae46f3d1656f21`.
+- Runtime identity/provenance bindings SHA256: `728f5c138f7fd0a374d49e6074fdd4f82256c07c8feb2511538699aa20884199`.
+- Author report SHA256: `a7fc445dac4bdf1185a991c913595161bf0b4d25752a77df779397a5104f54c2`.
+- Prior R5 report SHA256: `13d3b55df57ca6c053a058e9db373f00d04b101ac9c3e2ccbb185caf0d0ec533`.
+
+FILES CHANGED: No checkout or existing evidence files changed by this review. All new review scripts, logs and reports are under the exclusive `/private/tmp/t02-native189-activation-independent-cd74hzde`. No edits, grants, native jobs, codec/process-helper jobs, Blender/browser launches, full producer run, package manager, install, shared dependency write, LFS hydration, screenshot cleanup, push, PR or merge occurred. CPU review work was sequential; only a small Python driver/child pair was active, within the two-CPU review limit. Swift's heavy-CPU ownership was not used as permission to run native work.
+
+DIFF: 39 files: three existing JSON metadata files modified and 36 revision-09 files added. readiness.json differs in exactly nativeFixtureAuthorization. candidate-index.json changes phase, adds nativeFixtureAuthorization=true and updates exactly its readiness row; runtimeAuthorization stays false. source-audit.json refreshes activation scope, evidence counts and hashes and retains the historical failure. There is no production source, plan, helper, allowlist, toolchain, asset, playback or orchestration-document delta. All 24 root Python files equal their base blobs. `activation-v3.diff` contains the complete existing-file diff; `changed-files-v3.json` lists the entire delta. `git diff --check b6ad8528c7fe504817078fcfe0f253caac45020d 654658363a0347b1f50a40f868c32140b90881db` exits 0.
+
+FINDINGS: None. No advisory style blocker. None of the mandatory REVISE categories in plan 0.9.5 is demonstrated in this metadata-only bounded activation: no client authority change, new untested system, surviving replacement demo, demonstrated budget regression or unlogged spec interpretation.
+
+PRIOR FINDING DISPOSITIONS: R1-R4 source corrections remain FIXED/PRESERVED by exact R5 source and evidence hashes: primary evidence precedence; raw/unknown facts and failed-sink fallback; bounded JSON/file/hash reads; anchored ancestor traversal; and incomplete-inventory refusal. R5's checked-scandir correction is unchanged. This review does not re-prove their runtime behavior or relabel old failures. Historical three pnpm task-state deviations remain FAILED/MISMATCH, with current state equal to R5 and no restoration or writer attribution.
+
+VERIFY:
+
+- Fresh current-checkout execution of the unchanged revision-09 admission driver: **22 PASS**, exit 0, report `fresh-admission.json`. Includes actual source/plan admission; exact reserve and one-byte-short; purpose/native/capture flags; job order/frame count; expiry; HEAD/readiness/plan/index bindings; grant path; cancellation; existing run/spent claim; cached-readiness drift; and actual main with absent grant and forbidden launch ports. Synthetic grant snapshots, consumption records, free space and allocation ports remain in memory. No operational grant, directory or consumption record was written. This is not live capacity admission.
+- **Five actual CLI refusals**: all exit 1 with expected diagnostic and empty stdout; all 11 prospective paths absent before/after. These are successful negative checks, not native runs. Exact PATH is the bound readiness/command.json PATH, with PYTHONDONTWRITEBYTECODE=1 and the frozen Python; complete argv, cwd and environment are in commands.json and per-case logs.
+- **Two independently authored guarded entry probes** execute the actual entry files using runpy under an audit hook that refuses write/process operations and a retained-helper import guard. Native refuses during absent-grant lstat with admissionObservation.readBytes=0. Full capture refuses SOURCE_ONLY_RUNTIME_DISABLED before grant read, adapter construction or helper import. Both observe zero write/process attempts and zero retained-helper imports. These probes are separate from the raw CLI processes and do not claim OS-wide monitoring.
+- Actual native.verify_sources, check_plan and native.git_head accept the final clean checkout; `clean-admission.json` records the exact current HEAD and deterministic 189-frame, 1920x1080, 60 Hz, opaque diagnostic specification. This does not call consume with a real grant or run a cohort.
+- All **2,354 source/data bindings, 12 software identities, 42 candidate rows, 1,117 audit rows, 1,190 combined-manifest rows, 1,151 protected prior-manifest rows and 945 historical protected rows** match hashes/sizes. The process executable map and asset identities match. No allowlist expansion or executable retarget occurred.
+- All 21 activation evidence originals match retained copies. R5's report/result/manifest seal and 998 sealed evidence files verify. All 195 revision-08 evidence sources, including encoded raw logs, and eight external provenance sources verify. Retained input inventory is 157 files / 874,877 bytes. Changed JSON and new Python syntax parse.
+- **525 retained controls = 393+47+39+8+2+1+7+28**, verified by source/evidence hashes and retained command exits/counts; not rerun. R5's 56 fresh controls remain sealed prior evidence, not this review's fresh count. Exactly three historical copied metadata inputs differ from the current checkout: readiness, candidate index and source audit. They are the authorized activation metadata, independently checked here; they are not claimed byte-identical disabled inputs. No 540-test/broad or full-producer rerun occurred.
+- Before/after snapshots match exactly across **29,774 entries**, including complete no-follow dependency inventories, current pnpm state, tracked files, bound software, protected inputs and top-level prior/author evidence. HEAD/tree/branch/status/index flags also match. All **29,651 R5 protected rows** outside the three authorized metadata files match both times. All 11 operational paths remain absent, including dangling-symlink checks. Historical failure stays separate.
+
+Actual refusal commands (cwd `/Users/andreyyurlov/.t3/worktrees/space/t3-11167406`; exact frozen PATH/environment in commands.json):
+
+- native-missing-grant: expected exit 1; FileNotFoundError
+  `/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -B /Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py --execute --grant /private/tmp/t02-native189-r04-20261107-t3-11167406-grant.json`
+
+- capture-disabled: expected exit 1; SOURCE_ONLY_RUNTIME_DISABLED
+  `/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -B /Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py --execute --grant /Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json`
+
+- optimized-native: expected exit 1; T02_ASSERTIONS_REQUIRED
+  `/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -B -O /Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py --execute --grant /private/tmp/t02-native189-r04-20261107-t3-11167406-grant.json`
+
+- legacy-native: expected exit 1; AssertionError
+  `/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -B /Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py`
+
+- legacy-capture: expected exit 1; AssertionError
+  `/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -B /Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py --preflight`
+
+MECHANICAL TRACE:
+
+- native189.py:87-106 verifies readiness/plan, then snapshots the exact grant path before exclusive consumption and mkdir. main at 250-258 constructs NativeAdapter only after consume returns. Missing grant therefore reaches no allocation or adapter. NativeAdapter at 164-172 imports the retained helper only after current-grant checks.
+- caller.py:48-51 refuses runtimeAuthorization=false before grant read; consume at 83-98 cannot allocate and main at 468-471 cannot construct StationAdapter. The legacy source-only preflights require both flags false at caller.py:31-33, so their refusals after native-only activation are intentional and unchanged.
+- native189.py:128-130 requires positive owned release plus an exact integer capture exit 0. run_sequence at 224-247 rechecks previous release before the validator; final inspection requires accepted189 and refused190. The unchanged producer/codec source specifies 1920x1080, 60 Hz, opaque RGB, one ACK in flight, one encoder/decoder thread, libx264rgb and software decoding. No producer or codec was executed here.
+- resource_admission.py:385-399 recomputes fresh capacity at an eventual run. Four 1,217,495,040-byte copies + eleven 1,073,741,824-byte archives + 16,777,216 Git + 1,073,741,824 staging + 4,294,967,296 safety = **22,066,626,560 bytes**. Fresh in-memory admission accepts equality and refuses one byte short. The reel cap stays **39,354,368 bytes**; aggregate RSS stop **8,589,934,592 bytes**, sampled, not an OS quota. Native metadata 64 MiB, archive 1 GiB/job, cache 384 MiB/4,096 entries, cohort/cleanup/final-inspection 600/60/30 seconds remain unchanged. No disk observation here admits a run.
+
+REVIEW-HARNESS CORRECTIONS: Four first-attempt reviewer checks failed on incorrect reviewer expectations; inputs and raw failures are retained unchanged. verify.py expected an existing status key instead of the actual phase plus newly added native flag. verify-v2.py omitted the final integration-result.json when comparing the 13 pre-terminal and 14 final paths; the existing terminal-summary contract accounts for that file. guarded-entry.py expected a grant open event, but the actual bounded reader correctly fails at lstat first with zero bytes read. admission.py guessed a diagnostic pattern label; admission-v2.py obtains the exact unchanged source constant via AST and matches it to the plan. Corrected checks pass; no production source or test fixture was changed to obtain that outcome.
+
+verify: reviewer harness exit 1, retained unchanged.
+```text
+Traceback (most recent call last):
+  File "/private/tmp/t02-native189-activation-independent-cd74hzde/verify.py", line 15, in <module>
+    assert {k for k in index if index[k]!=oldindex[k]}=={'status','nativeFixtureAuthorization','files'}
+                                          ~~~~~~~~^^^
+KeyError: 'nativeFixtureAuthorization'
+```
+
+verify-v2: reviewer harness exit 1, retained unchanged.
+```text
+Traceback (most recent call last):
+  File "/private/tmp/t02-native189-activation-independent-cd74hzde/verify-v2.py", line 37, in <module>
+    assert launch['packetFiles']==[str(Path(plan['runRoot'])/'packet'/p) for p in plan['packetFilesBeforeTerminal']]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+```
+
+guarded-native: reviewer harness exit 1, retained unchanged.
+```text
+Traceback (most recent call last):
+  File "/private/tmp/t02-native189-activation-independent-cd74hzde/guarded-entry.py", line 24, in <module>
+    assert seen==[] and prohibited==[] and grantReads==([grant] if mode=='native' else [])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+```
+
+clean-admission: reviewer harness exit 1, retained unchanged.
+```text
+Traceback (most recent call last):
+  File "/private/tmp/t02-native189-activation-independent-cd74hzde/admission.py", line 8, in <module>
+    assert plan['diagnostic']==dict(frames=189,width=1920,height=1080,fps=60,alpha=255,pattern='ordinal-xy-rgb-v1')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+```
+
+DECISIONS:
+
+- Activate broader capture → no → only nativeFixtureAuthorization is in scope; runtimeAuthorization and plan.captureAuthorization remain false.
+- Re-run all prior controls → no → exact source/evidence hashes support bounded reuse; exercise changed admission with the authorized small controls and actual negative CLI paths.
+- Treat configuration/source PASS as native qualification → no → no actual grant, encoder, validator, native process ownership/release, peak RSS or parent-observed OS exit was exercised.
+- Treat preserved historical failures as repaired → no → their bytes and FAILED/MISMATCH qualification remain intact.
+- Add a human permission stage → no → this review does not invent approval. Any later parent-owned native attempt must satisfy the existing authorization, fresh one-use grant, current capacity/ownership and actual OS-exit requirements. The review itself grants nothing.
+
+PLAN/TASK: Read docs/IMPLEMENTATION_PLAN.md sections 0.3, 0.9.5, Appendix C.2/C.4 and the task block. Original task: “P1.E05.T02 (art) Animation set” depends on T01 and requires ~40 shared-skeleton clips (idle, walk, run, sprint, jump, jet, swim, mine, three cast archetypes, hit, Recall, emotes), source bind profiles, T01 compatibility on all three peoples, validation, clip-list fixture and actual three-export compatibility. Its accepted body sources/exports and fifth-grade packets stay protected. This bounded review does not complete that art task or E05.T04 gameplay integration.
+
+OUT OF SCOPE FOUND: Native codec execution, process inheritance/ownership, release/cleanup, peak RSS, parent-observed OS completion, browser capture and visual grading remain **NOT RUN / UNQUALIFIED** here. The two configured cohorts are encoder189 → positive owned release → validator189 including bounded negative190. Provisional NATIVE189_CHECKS_PASSED_AWAITING_PARENT_EXIT is not actual parent-observed exit proof. No whole-animation, CI, deployment, production or merge acceptance is implied.
+
+ARTIFACTS: REPORT.md, review-result.json, commands.json/txt, per-command argv/environment/exits and raw stdout/stderr, activation diffs, changed-file lists, verification.json, fresh-admission.json, clean-admission.json, before.json/after.json, preservation-before.json/preservation-after.json, guarded entry scripts/results, retained failed reviewer scripts/logs, artifact-hashes.json and delivery.json. The exclusive review directory is sealed read-only after hashing. No visual artifact exists.

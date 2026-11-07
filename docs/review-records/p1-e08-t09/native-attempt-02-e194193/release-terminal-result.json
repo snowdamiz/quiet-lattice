@@ -1,0 +1,357 @@
+{
+  "failure": {
+    "args": [],
+    "attributes": {},
+    "line": 367,
+    "message": "",
+    "predicate": "assert job.state['drained'] and job.state['clean']",
+    "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/blend/stations/_authoring/run_round4_remaining8.py",
+    "type": "AssertionError"
+  },
+  "jobState": {
+    "clean": false,
+    "drained": true,
+    "elapsed_cleanup_seconds": 0.12003029201878235,
+    "errors": [
+      "FileNotFoundError: [Errno 2] No such file or directory: 'deps_temp_a4ff6522'"
+    ],
+    "exits": {
+      "caffeinate": -15,
+      "capture": 143
+    },
+    "incomplete_scan_receipts": [
+      {
+        "kernel": {
+          "coalition_absent": false,
+          "exited": 12,
+          "live": 2,
+          "started": 14
+        },
+        "pinned_root_live": true
+      }
+    ],
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "exited": 2,
+      "live": 1,
+      "started": 3
+    },
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "exited": 13,
+      "live": 1,
+      "started": 14
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "remaining": [],
+    "scope": "CPU_CANDIDATE_BOUNDARY",
+    "signals": [
+      {
+        "birth": [
+          1794045737,
+          136492
+        ],
+        "pid": 67204,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794045737,
+          89938
+        ],
+        "pid": 67203,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794045737,
+          84917
+        ],
+        "pid": 67202,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794045737,
+          10004
+        ],
+        "pid": 67201,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794045736,
+          328885
+        ],
+        "pid": 67197,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794045735,
+          892412
+        ],
+        "pid": 67194,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794045735,
+          890147
+        ],
+        "pid": 67193,
+        "signal": "SIGTERM"
+      }
+    ]
+  },
+  "known": {
+    "67192": {
+      "birth": [
+        1794045735,
+        812335
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67192,
+      "pid": 67192,
+      "ppid": 1,
+      "status": 2,
+      "uid": 501
+    },
+    "67193": {
+      "birth": [
+        1794045735,
+        890147
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67193,
+      "pid": 67193,
+      "ppid": 67192,
+      "status": 2,
+      "uid": 501
+    },
+    "67194": {
+      "birth": [
+        1794045735,
+        892412
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67194,
+      "pid": 67194,
+      "ppid": 67192,
+      "status": 2,
+      "uid": 501
+    },
+    "67197": {
+      "birth": [
+        1794045736,
+        328885
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67193,
+      "pid": 67197,
+      "ppid": 67193,
+      "status": 2,
+      "uid": 501
+    },
+    "67201": {
+      "birth": [
+        1794045737,
+        10004
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67201,
+      "pid": 67201,
+      "ppid": 67193,
+      "status": 2,
+      "uid": 501
+    },
+    "67202": {
+      "birth": [
+        1794045737,
+        84917
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67201,
+      "pid": 67202,
+      "ppid": 67201,
+      "status": 2,
+      "uid": 501
+    },
+    "67203": {
+      "birth": [
+        1794045737,
+        89938
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67201,
+      "pid": 67203,
+      "ppid": 67201,
+      "status": 2,
+      "uid": 501
+    },
+    "67204": {
+      "birth": [
+        1794045737,
+        136492
+      ],
+      "coalition": [
+        42628,
+        42629
+      ],
+      "pgid": 67201,
+      "pid": 67204,
+      "ppid": 67201,
+      "status": 2,
+      "uid": 501
+    }
+  },
+  "observations": [
+    {
+      "probe": "initial-state",
+      "raw": {
+        "clean": false,
+        "drained": true,
+        "elapsed_cleanup_seconds": 0.12003029201878235,
+        "errors": [
+          "FileNotFoundError: [Errno 2] No such file or directory: 'deps_temp_a4ff6522'"
+        ],
+        "exits": {
+          "caffeinate": -15,
+          "capture": 143
+        },
+        "incomplete_scan_receipts": [
+          {
+            "kernel": {
+              "coalition_absent": false,
+              "exited": 12,
+              "live": 2,
+              "started": 14
+            },
+            "pinned_root_live": true
+          }
+        ],
+        "kernel_before_launch": {
+          "coalition_absent": false,
+          "exited": 2,
+          "live": 1,
+          "started": 3
+        },
+        "kernel_before_root_release": {
+          "coalition_absent": false,
+          "exited": 13,
+          "live": 1,
+          "started": 14
+        },
+        "kernel_terminal": {
+          "coalition_absent": true,
+          "live": 0
+        },
+        "remaining": [],
+        "scope": "CPU_CANDIDATE_BOUNDARY",
+        "signals": [
+          {
+            "birth": [
+              1794045737,
+              136492
+            ],
+            "pid": 67204,
+            "signal": "SIGTERM"
+          },
+          {
+            "birth": [
+              1794045737,
+              89938
+            ],
+            "pid": 67203,
+            "signal": "SIGTERM"
+          },
+          {
+            "birth": [
+              1794045737,
+              84917
+            ],
+            "pid": 67202,
+            "signal": "SIGTERM"
+          },
+          {
+            "birth": [
+              1794045737,
+              10004
+            ],
+            "pid": 67201,
+            "signal": "SIGTERM"
+          },
+          {
+            "birth": [
+              1794045736,
+              328885
+            ],
+            "pid": 67197,
+            "signal": "SIGTERM"
+          },
+          {
+            "birth": [
+              1794045735,
+              892412
+            ],
+            "pid": 67194,
+            "signal": "SIGTERM"
+          },
+          {
+            "birth": [
+              1794045735,
+              890147
+            ],
+            "pid": 67193,
+            "signal": "SIGTERM"
+          }
+        ]
+      }
+    },
+    {
+      "probe": "paths",
+      "raw": [
+        {
+          "exists": false,
+          "path": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-nh35hf5p",
+          "symlink": false
+        },
+        {
+          "exists": false,
+          "path": "/private/tmp/sbr-8xrlr_ej",
+          "symlink": false
+        },
+        {
+          "exists": false,
+          "path": "/private/tmp/sbr-8xrlr_ej/playwright_chromiumdev_profile-6UEqsc",
+          "symlink": false
+        }
+      ]
+    }
+  ],
+  "returned": null
+}

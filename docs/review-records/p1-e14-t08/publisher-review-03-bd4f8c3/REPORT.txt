@@ -1,0 +1,198 @@
+TASK: P1.E14.T08 (art) Props — independent R3 SOURCE/CPU review
+STATUS: DONE — bounded source/tooling review complete.
+VERDICT: PASS — SOURCE/CPU tooling correction only.
+
+SUMMARY:
+F5 is FIXED. Exact old source reproduces the failed-guard/live-producer retry:
+first supervisor exits 143, real retry exits 0/PASS, producer launches increase
+1 -> 2 while the original producer remains observed alive. Current source passes
+all 33 focused controls: nine ownership, sixteen retained R1, and eight new
+independent neighbor controls. Ownership exists durably before Popen, partial
+claims block retry, and release requires actual direct-child reaping AND an
+observed empty cohort. F1-F4 remain FIXED. Private late publication remains
+isolated. No new blocking finding or advisory was substantiated in this scope.
+
+TASK VERBATIM:
+P1.E14.T08 (art) Props · deps: T02 · done: cargo and loot pods, terminals, market
+stalls, ammo, catalyst vials, beacons rebuilt, outposts rebuilt (3), crash-site
+debris kit.
+
+PIN / PROVENANCE:
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+Branch: task/P1-E14-T08-props
+HEAD: bd4f8c3c34357a28ceb4c8f475b5b5d7f15807b4
+Tree: a8ab18e2a1322695308594f34b79dd90aaa81fe7
+Revision base: 25d3859012444f8294acc64fd566c824e88f1a85
+Base tree: 0ef6a1226f595dfd0816498d48beba667009efd0
+Exclusive review directory: /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4
+Current run.py SHA256: 693861140b7ae41154ddf3eac789d6cdfa99494795c27a4a6ff2ca7353afe97e
+Old run.py SHA256: 4ba8022e52929e22008ad8858bb76d1e0608b90020fc50eb78c0e1022e7617fa
+Unchanged export_saved.py SHA256: a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d
+Exact old reviewer fence_probe.py SHA256: 34e157fbe5edfce9f2e0563c425bbe898ccc9ef24c19d1e33af1df98d339346b
+Author R2 evidence seal SHA256: cc50b6487f29e15b3056fd103e829992f0325420fbd05153820c533b0dd43b04
+Original R2 review seal SHA256: 5ce4d08dc41511a376cf54ee202f0789135826f19acd8f787c3e12c6aa6bfb0e
+All pins match at closeout. Baseline scripts came from git show at the exact base,
+then matched the retained author baseline. All 35 case copies of task code and
+unchanged stock props/sites/core code are hash-bound in code-bindings.json.
+
+READ / CONTRACT:
+Read target and parent IMPLEMENTATION_PLAN 0.3/0.4/0.9.5, task T08 and C.2/C.4,
+DESIGN 19.1-19.4/20.3 and relevant art-bible scale/PBR/budgets/LOD/naming/export
+rules. Read original task REPORT/inventory, R1 correction REPORT, original R2
+review REPORT/HANDOFF/reproducer and author R2 REPORT/final HANDOFF. Traced
+run.py, export_saved.py, unchanged export_props/sites and artlib/export.py;
+checked stock codec subprocess grouping. No new spec interpretation is needed.
+Original scope remains twelve saved sources, twelve compressed GLBs, twenty-one
+variants and eighty-four LODs. Gameplay adoption and generator removal belong to
+T07; no Structures/modelLibrary/Planet/ground ownership moved into this correction.
+
+FINDINGS / DISPOSITIONS:
+F1 FIXED — readable history aliases become independent regular archives after
+canonical entry retirement (export_saved.py:78-110). Fresh symlink, relative link
+and hardlink controls verify immutable history after backing/runtime mutation.
+F2 FIXED — unreadable output cannot prevent canonical invalidation or the next
+batch item (export_saved.py:149-154,216-266). Fresh old/new unreadable and batch
+controls preserve raw error facts and allow the later loot_pod PASS.
+F3 FIXED — supervisor owns signal handling and actual producer cleanup through
+publication (run.py:48-69,136-172,252-293; export_saved.py:173). Fresh runner/export
+SIGTERM and final binding/result signal windows leave no false current PASS.
+F4 FIXED — denied TERM/KILL and failed observation retain truthful unresolved
+receipts (run.py:136-172,287-302,351-379). Denied cleanup/late publication and
+runner EPERM retain errors and uncertainty; the private publication fence holds.
+F5 FIXED (original P2) — previous run.py:270-286 could not persist the only guard
+and released the serial lane. Reachable via export_saved.py:146,173. Current
+run.py:79-81 rejects final/pending/dangling claims, 241-251 establishes and syncs
+ownership before Popen, and 294-301 releases only after terminal proof. The
+concrete prior requested correction is implemented; no further fix is required.
+
+EXACT OLD NEGATIVE / CURRENT REAL RETRY:
+exact-old/guard_unwritable.json: real mode-0555 parent, killpg EPERM injection,
+first 143/retry 0, launches 1 -> 2, first producer alive before and after retry.
+Expected RED exit 1 retained. Writable control first 143/retry 1, launches 1 -> 1.
+The original fence_probe.py bytes execute unchanged; only root/output settings
+and inert CPU capacity/dependencies are supplied. No original evidence is reused
+as a new test output, overwritten, chmodded or deleted.
+Current unwritable-before-launch: exits 1/1, ZERO launches. Current writable live,
+parent made unwritable AFTER the producer barrier, and supervisor SIGKILL:
+retry rejected, launches 1 -> 1, producer alive throughout attempted retry.
+A released producer executes the real stock final move only into its private
+attempt path. Canonical stays absent and first receipts remain byte-identical.
+Successful normal completion releases the claim and both first/retry return PASS.
+Unlink denial retains the claim, reports failure and rejects retry.
+
+INDEPENDENT NEIGHBORS (neighbors.py; exact production code, dependency faults only):
+1. Partial claim json write with ENOSPC: retained incomplete pending bytes;
+   exits 1/1, no producer launch. Retry refuses the partial claim.
+2. Claim rename EIO: pending survives; exits 1/1, zero launches.
+3. Containing-directory fsync EIO: final claim survives; exits 1/1, zero launches.
+4. Lock filesystem failure: real mode-0555 private lock parent causes EACCES;
+   exits 1/1, zero launches, prior canonical bytes untouched on lane refusal.
+5. Process-group observation EIO after producer reaches validation: direct child
+   is reaped but remainingGroup=null and terminal=false. Claim retained, retry
+   rejected; lack of observation never becomes proof of termination.
+6. Popen EAGAIN after claim: no producer launched; persistent claim blocks retry.
+   This conservative hold is the documented contract, not a new defect.
+7. Leader exits 0 while barrier-controlled descendant survives; denied group
+   signals leave childReaped=true but terminal=false. Actual retry refuses,
+   launches stay 1 -> 1 and descendant remains observed alive through retry.
+8. Same leader-exit cohort with successful cleanup: initial attempt rejected for
+   unexpected survivors, then direct child reaped/group empty/claimReleased=true.
+   Actual retry succeeds; launches 1 -> 2 only after terminal proof.
+All eight pass, exit 0. No helper-only return value or elapsed time is substituted
+for the actual caller, child handle, group observation, retry, or stock move.
+
+FILES CHANGED:
+None in either repository, dependencies, assets, previews or prior inputs.
+Only new scripts, logs, receipts, fixtures and this handoff under /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4.
+The reviewed production diff changes only packages/tools/blender/t08/run.py;
+all other additions are revision_r2 evidence. No source/dependency write, install,
+pnpm, screenshot cleanup, asset hydration, push, PR, merge or queue action.
+
+VERIFY (exact vectors/cwd/exits; full logs and command JSON retained):
+  /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/replay.py --code /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/baseline --evidence /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/exact-old --original-review
+  cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  exit: 1; seconds: 12.214; log: /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/exact-old.log
+  Failure tail (complete output has fewer than 20 lines):
+    guard_writable safeRefusal True first 143 retry 1 launches 1 1 firstAliveDuringRetry True
+    guard_unwritable safeRefusal False first 143 retry 0 launches 1 2 firstAliveDuringRetry True
+
+  /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/replay.py --code /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08 --evidence /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/current-claims
+  cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  exit: 0; seconds: 14.658; log: /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/current-claims.log
+
+  /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/replay.py --code /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08 --evidence /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/current-prior --prior-controls
+  cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  exit: 0; seconds: 19.246; log: /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/current-prior.log
+
+  /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/neighbors.py
+  cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  exit: 0; seconds: 11.631; log: /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/neighbors.log
+
+  /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/verify.py --out /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/protected.json
+  cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  exit: 0; seconds: 3.718; log: /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/protected.log
+
+  /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/final_verify.py
+  cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  exit: 0; seconds: 5.049; log: /private/tmp/t08-r3-source-bd4f8c3c-HYh1n4/final-verify.log
+
+All nonzero actual caller exits (including expected failure paths) are retained
+in actual-caller-commands.json, per-case JSON and raw logs. All six top-level
+commands completed within their recorded deadlines. No unexpected fixture or
+verification failure occurred. Exact old negative is intentionally not green.
+
+PROTECTED STATE / CLEANUP:
+Independent before/after checks: all 5692 tracked files unchanged
+in hash, size, mode, mtime and inode; clean git porcelain and same HEAD/tree/base.
+All 34 selected ignored dependency/cache/link facts and the ignored
+inventory unchanged. Scope includes recorded launcher/entry hashes and existing
+Python caches; it is not a recursive content census of shared node_modules targets.
+No shared dependency code was loaded by these Python CPU fixtures.
+Separately verified all 5,410 original protected records in hash/size/mode/mtime,
+including the original 4,951 and 4,097 base paths, all 24 assets and 44 PNGs.
+Asset hashes match original LFS OIDs. Original supplied reports/handoffs unchanged.
+Verified all 281 author R2 seal entries and original
+independent R2 sealed input entries, including unreadable inode/error facts.
+All 81 recorded owned process groups absent on final ps.
+Actual Popen supervisors were waited; direct producer reaping is in receipts;
+surviving orphan cohorts were released or killed within bounded fixture cleanup,
+then observed absent. No peer process was signalled. All scratch, failed receipts,
+raw logs and unreadable inodes retained; no permissions relaxed to invent hashes.
+
+RESOURCE / QUALIFICATION LIMITS:
+Direct Python 3.14.8 at /opt/homebrew/opt/python@3.14/bin/python3.14, -B, bytecode disabled;
+thread variables=2; fixtures serial, maximum two inert producer workers.
+Retained producers use at most 60-second barriers, new descendant deadline 30s;
+first/retry supervisors bounded to 15-20s, process-group teardown to 5-10s.
+The real pinned Node v22.23.3 check, memory-pressure/load readings and process
+observations execute. No Blender or codec executable, render/bake, native/GPU,
+browser, server, DB, full suite or package-manager execution.
+Actual free space was 22213267456..22808027136
+bytes, below the unchanged production 25GiB admission threshold. Explicit CPU-only
+statvfs fixtures record each actual reading and supply 32GiB solely for these tiny
+lifecycle probes. This does not qualify host capacity for an art workload.
+Prior source/dequantized GLB geometry, density/PBR/markers, compressed formats,
+stock validators, eight malformed art cases and fifteen consumer checks are
+reused only by exact protected-byte evidence, not rerun or newly accepted here.
+
+DECISIONS:
+Unresolved ownership -> persistent claim before launch and fail-closed retry ->
+verified at real producer/caller boundaries, without expanding to arbitrary
+external mutation, privileged tampering, detached programs or unrelated hardening.
+Termination proof -> actual child reaped plus observed empty cohort -> signal
+success, PID disappearance alone and the leader's exit are insufficient.
+SOURCE/CPU PASS -> correction is accepted within this brief -> native/visual,
+CI, runtime adoption and whole-task gates remain separate with the parent.
+
+OUT OF SCOPE FOUND:
+Native standard Review captures, independent blind grading, GPU performance,
+T07 gameplay adoption/generator removal, CI and whole-task acceptance remain open.
+No new out-of-scope defect was substantiated. No new artwork or visual verdict.
+
+ARTIFACTS:
+REPORT.txt; HANDOFF.json; SHA256SUMS.json; before.json; final-verification.json;
+protected.json; actual-caller-commands.json; code-bindings.json; *-command.json;
+*.log; replay.py; neighbors.py; review_tools.py; final_verify.py; baseline/;
+exact-old/; current-claims/; current-prior/; neighbors/; private retained fixtures.
+SHA256SUMS.json seals readable bytes and records unreadable/symlink facts without
+following aliases or modifying permissions; the seal excludes itself.

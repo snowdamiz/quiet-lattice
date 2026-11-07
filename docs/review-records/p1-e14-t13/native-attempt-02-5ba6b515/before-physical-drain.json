@@ -1,0 +1,143 @@
+{
+  "allocated": [
+    {
+      "device": 16777232,
+      "inode": 489794052,
+      "path": "/private/tmp/t13-observer-native-5ba6b515",
+      "uid": 501
+    },
+    {
+      "device": 16777232,
+      "inode": 489794053,
+      "path": "/private/tmp/t13-observer-fallback-5ba6b515",
+      "uid": 501
+    }
+  ],
+  "complete": true,
+  "job": {
+    "clean": false,
+    "drained": false,
+    "errors": [
+      "Refused: Incomplete ledger: Enumerated entry changed"
+    ],
+    "exits": {},
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "exited": 2,
+      "live": 1,
+      "started": 3
+    },
+    "scope": "CPU_CANDIDATE_BOUNDARY",
+    "signals": []
+  },
+  "observer": {
+    "all_ever_lived_processes_observed": false,
+    "external_native_XPC_ownership": "UNQUALIFIED",
+    "launch": null,
+    "processes": [
+      {
+        "admitted": true,
+        "binary": "/private/tmp/p1-e14-t13-native-failure.kmq_ro3n/frozen-7c134b6aa/source/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+        "coalition": [
+          42792,
+          42793
+        ],
+        "command_observed": true,
+        "kernel": {
+          "birth": [
+            1794046097,
+            357411
+          ],
+          "pgid": 4408,
+          "pid": 4410,
+          "ppid": 4408,
+          "status": 2,
+          "uid": 501
+        },
+        "prelaunch_sha256": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384",
+        "role": "owned-launch-helper"
+      },
+      {
+        "admitted": true,
+        "binary": "/usr/bin/caffeinate",
+        "coalition": [
+          42792,
+          42793
+        ],
+        "command_observed": true,
+        "kernel": {
+          "birth": [
+            1794046097,
+            288268
+          ],
+          "pgid": 4409,
+          "pid": 4409,
+          "ppid": 4407,
+          "status": 2,
+          "uid": 501
+        },
+        "prelaunch_sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3",
+        "role": "owned-launch-helper"
+      },
+      {
+        "admitted": true,
+        "binary": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "coalition": [
+          42792,
+          42793
+        ],
+        "command_observed": true,
+        "kernel": {
+          "birth": [
+            1794046097,
+            283511
+          ],
+          "pgid": 4408,
+          "pid": 4408,
+          "ppid": 4407,
+          "status": 2,
+          "uid": 501
+        },
+        "prelaunch_sha256": "68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b",
+        "role": "owned-launch-helper"
+      },
+      {
+        "admitted": true,
+        "binary": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "coalition": [
+          42792,
+          42793
+        ],
+        "command_observed": true,
+        "kernel": {
+          "birth": [
+            1794046097,
+            148656
+          ],
+          "pgid": 4407,
+          "pid": 4407,
+          "ppid": 1,
+          "status": 2,
+          "uid": 501
+        },
+        "prelaunch_sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22",
+        "role": "owned-launch-helper"
+      }
+    ],
+    "scope": "OBSERVED_STATION_CHROMIUM_COHORT",
+    "structured_launch": {
+      "admitted_ever": false,
+      "current_member": false,
+      "debug_launch": null,
+      "failure": null,
+      "persistence_errors": [],
+      "provenance": "BrowserServer.process() ChildProcess",
+      "raw": null,
+      "state": "waiting-for-receipt"
+    },
+    "utc": "2026-11-07T10:08:17.640383+00:00"
+  },
+  "privateTmp": "/private/tmp/sbr-_00jowa6",
+  "retainedReads": [],
+  "scratch": "/private/tmp/sbr-_00jowa6/stations-round4-owned-dop349kv"
+}

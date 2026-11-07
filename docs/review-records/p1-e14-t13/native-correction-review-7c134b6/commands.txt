@@ -1,0 +1,82 @@
+Validation commands. All Python execution used -B; child environment and cwd are recorded in commands.jsonl. CPU groups ran serially, maximum one test worker. Introspection uses only read-only Git/filesystem commands.
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/audit.py
+exit=1
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/finish_audit.py
+exit=1
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/finish_audit_v2.py
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/run_cpu.py
+exit=1
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/run_cpu_v2.py
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/signature_disabled.py
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/final_checks.py
+exit=0
+
+git diff --check 66ce38ec5ca03d86289fb63b116d6ca53b163032 7c134b6aa29f2abedba347d91aed28323fd93006
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/copy_boundaries.py
+exit=1
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/copy_boundaries_v2.py
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/controller_controls.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controllers namespace-cache namespace-mode-error namespace-mode-ignored helper-ancestor positive
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/ownership-bound
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/ownership-missing
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/ownership-wrong-uid
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/ownership-wrong-birth
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/ownership-wrong-coalition
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/ownership-other-executable
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/ownership-external-absent
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/exact-base-unbound
+exit=1
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/exact-base-cache
+exit=1
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py /private/tmp/p1-e14-t13-source-review.EtBSg1Hy/head-native-cache
+exit=0
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/boundary_controls.py
+exit=0
+
+/usr/bin/codesign -d --verbose=4 -r- /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService
+exit=0
+
+/usr/bin/codesign --verify --strict -R '=identifier "com.apple.SetStoreUpdateService" and anchor apple' /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService
+exit=0
+
+/usr/bin/codesign --verify --strict -R '=identifier "com.apple.CascadeSets.SetStoreUpdateService" and anchor apple' /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService
+exit=3
+
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/frozen-7c134b6aa/source/packages/tools/src/capture/trace_observer_packet/launch.py --readiness /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/frozen-7c134b6aa/readiness.json --readiness-sha256 832311d5120d435284d5b51e4b6d430db270f98580a0009d7bae04db061f0638 --grant /private/tmp/t13-observer-grant-5ba6b515.json --grant-sha256 0000000000000000000000000000000000000000000000000000000000000000
+exit=2
+
+/bin/sh -n /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/NEXT_LAUNCH.sh
+exit=0

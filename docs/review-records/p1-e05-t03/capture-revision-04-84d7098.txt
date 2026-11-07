@@ -1,0 +1,181 @@
+# Appendix C.2 — P1.E05.T03 combined R4 corrections
+
+TASK: Correct the real pinned Playwright module boundary and mandatory runtime frame/update budget, preserve all reviewed assets/helpers/history, and return one fresh enabled source candidate.
+
+STATUS: Scoped implementation and focused SOURCE/CPU checks complete; independent R5 and parent-owned native execution remain pending. This enabled candidate has no real grant, consumption or output. No autonomous retry, push, PR or merge.
+
+SUMMARY: `productionCapture` now consumes the exact CommonJS module's default export. Its actual installed CJS and public ESM objects share the Chromium singleton used by the unchanged shared capture helper. The inspector adds mandatory initial zero updates to elapsed positive updates and requires the hidden/visible update pair for a visible downward raise reset. The incorrect one-update positive test is corrected. No product/fixture pose or helper/shared behavior was changed.
+
+PIN: worktree /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8, branch task/P1-E05-T03. Base af301db512343f2d578e68b8cfdbe7f72bfe794d; tree 70fa16f7484cf5af0e9d150b49e7c3269fe675e2. Exact final HEAD/tree and clean post-commit verification are recorded in /private/tmp/vm-r4-fix-rdtnxbus/POST-COMMIT.json and C2-FINAL.md. Readiness SHA256 af3bd910c210e71bee87b23f2f000c3d7c60a0be5c41be28989f9061caeebb96; inventory SHA256 5c08f26d1fdd8c2ed074293b2efcd5bed18d410cbe1f2bd3ea14100db996c67e. Future real grants must bind that final clean HEAD and exact readiness bytes; committed readiness avoids a circular self-hash.
+
+FILES: entry.mjs (one expression), inspect_packet.py (+9/-2), production.test.mjs/publication.test.mjs (real-module regression ports), test_inspect.py (three new methods and one corrected prior positive), caller.py (four fresh identity literals only), README/readiness, this new C.2 and exclusive evidence. Product05909e4 assets/runtime, fixture.mjs, boundary/native/helper code, bindings.py/allowlist, shared T15 and tests, source validation, inventory/budgets and all orchestration docs are unchanged.
+
+VERIFY — FRESH:
+
+- Exact-base RED copies were checked against Git af301db5 before implementation. Actual Node26 imported the real pinned @playwright/test1.64.1 index.js: keys default/module.exports, named chromium undefined. Actual unmodified productionCapture throws TypeError reading launch with zero native/process attempts/resources/output. Actual authenticated entry CLI reproduces OSexit1 and durable primary TypeError. Scratch authority binds only a private synthetic Git repo.
+- New real-module production regression against those exact old bytes exits1 with actual `Cannot read properties of undefined (reading 'launch')` instead of expected PRIMARY_newPage. GREEN two targeted Node methods pass:12 operation/close scenarios plus42 raw/falsy/cyclic durable/fallback/all-sinks scenarios. They import the actual CJS and public ESM modules, prove shared Chromium identity, and intercept only its launch property. Actual shared captureReview bodies execute with inert Vite/free-port/browser methods and CPU TypeScript stripping. Child-process/network ports fail closed. No fake Playwright namespace qualifies this fix.
+- Actual authenticated entry GREEN, repeated after final freeze: actual admit/main/execute/productionCapture/captureReview reaches the real singleton's inert launch port once. Deliberate navigation failure remains primary with non-UTF8 bytes/unknown facts; browser close and Vite stop remain secondary. Actual OSexit1 is expected for that injected failure; this is successful error-contract verification, not a successful native capture. One inert launch/page, zero PNG writes, original launch property restored. Actual native launches0.
+- Inspector exact-base RED: all four original counterexamples accepted (three peoples' one-update visible resets and omitted initial zero); valid two-update controls also accepted. Final new regression bytes against old inspector: three methods/72 CLI calls, inner exit1 with12 failing subtests and0 harness errors. The earlier RED draft is preserved separately.
+- Inspector GREEN:11 focused methods, all pass; 301 complete authenticated CLI cases in total:101 accepted controls and200 expected refusals. This comprises270 focused CLI calls,7 original reviewer replays,14 retained runtime packets and10 additional runtime-generated packets. All four original bad packets now fail the common frame/time budget; all matching controls pass. Every raw readout/unknown field remains retained. No broad full suite ran.
+- Three pinned Node runtime oracle calls PASS. Unchanged Multitool/fixture/Three/meter oracle reproduces14 timelines/224 endpoints/57 transitions identically to R4, all14 authenticated packets accepted. Additional12 transition controls and10 full timelines/167 endpoints prove reachable mixed hidden-positive/visible-zero resets and long initial budgets. One-step hidden underwater reset, settled zero-dt observations, extra cooling/zero updates and all prior upward/sway controls remain valid. Thirty of31 prior test methods AST-identical; the sole changed method previously blessed the impossible reset.
+- Fresh actual caller/entry missing-auth CLI:14 expected exit1 refusals across7 units, no prospective allocation. Both source flags and inventory/readiness remain enabled. This is ENABLED missing-auth refusal, never a disabled-source PASS.
+- Scoped ESLint/Prettier, 15 Python AST parses without bytecode, diff whitespace pass. Exact source hashes and commands are in freeze.json/COMMANDS.md; full decoder commands/environment/failure tails in its REPORT.txt and commands.json.
+
+REUSED, NOT FRESHLY RECOUNTED: previous22 Python boundary/native/revision methods,4 R2 regression methods,3 encoder methods,5 protocol methods including the actual seven-process/101-file receipt chain; shared lifecycle100, client110 and four-package typecheck. Logs and unchanged source/toolchain/dependency closure were hash-verified. The only caller code change is prospective path identity literals; native/boundary/protocol/helper/error bodies are unchanged. Independent R4 separately passed the actual seven-process chain. These historical broader executions are not substituted for fresh changed-boundary checks above and are not counted as a new full suite.
+
+FAILURES PRESERVED: expected RED real-module test exit1 with TypeError assertion, expected authenticated old-entry OSexit1, decoder final RED inner exit1/12 failures and earlier draft15 failures. Earlier initial switch-gap draft variants were narrowed to actual producer last dt0 before implementation; both exact draft and final test sources are retained. Parent auxiliary read attempted a mistyped fixture path, exit1, no files changed; it was not verification evidence. No unexpected runtime GREEN failure or native job occurred. All complete logs and failure tails remain in exclusive evidence; no old report/probe was edited.
+
+DECISIONS:
+
+1. Consume the exact bound CJS default with one expression; no fallback guessing or alternate browser stack. CJS path SHA256499da5dd8585212108a1443793de31ebc061ca7db02343f107955f261180cdfc; public ESM index.mjs SHA256ec8997c2e5cea26befc76e7bf990750e96babb16977673a9ff3b5c0575d01e48. Native launch is still the existing Chromium singleton. Source tests now exercise the installed package boundary that prior fake named exports concealed.
+2. Count runtime transitions, not pose-name exceptions. Clock budget is elapsed positive steps plus mandatory zero updates. First ordinary endpoint needs the setup zero, and a final zero observation/gap needs its own update. A visible raise decrease needs hidden reset then visible observation, hence at least two updates; a hidden positive update may already consume a positive step. Named raise0 remains last-dt0. Actual runtime permits initial frame385 at384 positive steps and switch-gap frame266 at264 positive steps. Runtime/fixture/await/render count are unchanged.
+3. Keep source enabled with fresh viewmodel-packet-r5-rdtnxbus identities. Readiness refreshed once after final executable edits; 31 new and62 historical prospective paths absent. allUnitsQualified/nativeQualified remain false. Parent alone grants a unit after independent R5/current capacity/GPU schedule.
+4. Storemember assessed separately, no binding expansion: actual unchanged StageReceipts/current map rejects historically observed SetStoreUpdateService as Unbound owned executable. Six inert controls confirm exact-hash positive isolation and wrong UID/birth/coalition/nonmember behavior. T13 used full Google Chrome for Testing via BrowserServer; this packet pins ordinary chrome-headless-shell, with different paths and bytes (setstore-route-assessment.json). T13 evidence does not establish VM service creation or authorize a binding. If such a member occurs, current VM source will refuse and retain facts; task-specific provenance/ownership would need parent assessment. No T13 cleanup or physical-settlement claim is borrowed.
+
+INVENTORY / LEDGER: unchanged7units/101files =94PNGs+7readouts. Three reviews each12files/output184565760/admission5402312704 B; Thalune view19/output302022656/admission5754683392 B; Ixari/Ulgani each21/output335577088/admission5855346688 B; return4/output50348032/admission4999659520 B. Three physical output copies plus4848615424 fixed reserves. PNG16MiB; full-view readout32KiB, review/return16KiB. Capture600s/cleanup60s/CPUdecode45s/cachecopy64MiB30s. Observed reserve ceilings, not OS quotas. RequestedLOD2/actualLOD0, authored PBR/material admission, Muzzle-only overlay and one render per pose remain unchanged. Actual prospective file names/paths remain in inventory/readiness.
+
+PROTECTED HASHES: all822 files unchanged (6 accepted bodies,6 viewmodel blend/GLB,6 CPU previews,745 review packets,59 runtime/history), all4 helpers, shared T15 two-file patch parity and protected old reports. Protected manifest SHA256 09d67b371caa811a47c621d0131870d9541dd2e288315e59a7c4d8416fb19b4e. Full individual asset/helper/report hashes are in freeze.json.gz and preserved protected-audit.txt. All13018 prior tracked working files were rehashed; exactly7 authorized packet differences existed before readiness refresh. 1252 R4 indexed files and 290 additional report/probe/source hashes reverified. Decoder separately rehashed20587 scoped originals/dependencies/evidence unchanged.
+
+Non-packet sourceDigest cfd22c5cf2d6736cce266f26f39b1c0bd76e04f1eb292915aed12791fa40d0d4; ignored inventory 2fde53955b2b8855c9cae24565e0ba0c300667c203f4001e2ae2d56b0d58f552. node_modules tree c9ca9b99ea32b544e006174013458c83feb842f339634b4746d694f236e681dc (12848files/288634535B), browser5fb8dcd8d2606ed66b09d4e545ba7f264b0bb2bb129022db4369de534b2a9645 and Pillow6addcbac6ae4bd93ca6cfe79295d32b2d30662040f466ca4f554057df33a8b1c unchanged. Entire process map including narrow Apple VTEncoder and signature/route bindings unchanged. Pinned Node26.12.1 SHA25606eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b; actual Python launcher and self-observed kernel separately re-bound. No dependency restoration/write/install. Prior review's disclosed8213-byte cache movement remains historical; current ignored/dependency fingerprints match the reviewed baseline.
+
+OUT OF SCOPE: independent/source acceptance, native/browser/GPU/Metal/codec/Blender/services/DB, actual captures, screenshot cleanup, T04 clips/gameplay, full GPU smoke/CI/visual acceptance, grants, main/push/PR/merge. CPU PNG decoding and inert real consumer controls only. Storemember conditional exposure is recorded, not silently authorized. Whole T03 remains incomplete until parent review/visual/merge requirements pass.
+
+ARTIFACTS: /private/tmp/vm-r4-fix-rdtnxbus/APPENDIX-C2.md, COMMANDS.md/commands.jsonl, copied original/base source, actual RED/GREEN authenticated receipts, real-module identity/failure controls, Storemember observer/route assessment, freeze.json, decoder REPORT/SUMMARY/owned.diff/476 command records/raw packets/runtime oracles. Committed evidence under evidence/combined-r4-corrections includes a bounded gzip archive, readback manifest/index and core reports. Original scratch and every prior evidence directory remain untouched. No screenshots/native previews were created. Post-commit exact HEAD/tree/readiness/check result will be in POST-COMMIT.json and C2-FINAL.md.
+
+FINAL COMMITTED PIN
+
+base: af301db512343f2d578e68b8cfdbe7f72bfe794d
+
+baseTree: 70fa16f7484cf5af0e9d150b49e7c3269fe675e2
+
+head: 84d7098432de296b1db916849804c912d1558cd3
+
+tree: 66f984284e67ad7aae3c49ed60c89eb162f4c9f7
+
+branch: task/P1-E05-T03
+
+clean: True
+
+readinessSha256: af3bd910c210e71bee87b23f2f000c3d7c60a0be5c41be28989f9061caeebb96
+
+inventorySha256: 5c08f26d1fdd8c2ed074293b2efcd5bed18d410cbe1f2bd3ea14100db996c67e
+
+Actual committed caller --check exit0: {"status": "ENABLED_AWAITING_PARENT_GRANT", "runtimeEnabled": true, "entryEnabled": true, "allUnitsQualified": false, "nativeQualified": false}. All31 new paths and62 historical paths remain absent. Entire worktree clean; no real grant, consumption, output, native job, push/PR/merge.
+
+Archive SHA256 545ab3d0461fbbe7466a081f190f4e90c9409c5084e0c710a799343f2643df2a, 5783740 bytes. Readback verified 12145 regular files / 117942416 logical bytes. POST-COMMIT.json SHA256 b57ab4216067618a43a3ffede4c8d633ee9936ba876a2163c52fd67872fdd16f.
+
+Exact accepted body/viewmodel identities (remaining822-file entries in freeze.json.gz/protected-audit.txt):
+
+| File | SHA256 |
+|---|---|
+| assets/blend/characters/thalune.blend | d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b |
+| packages/client/public/models/characters/thalune.glb | dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27 |
+| assets/blend/characters/ixari.blend | 9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c |
+| packages/client/public/models/characters/ixari.glb | 1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b |
+| assets/blend/characters/ulgani.blend | 06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b |
+| packages/client/public/models/characters/ulgani.glb | 9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682 |
+| assets/blend/characters/viewmodels/fp_thalune.blend | 46d483c8cc0b10f555dc35f60008d64f7b883d392daa4bf4e87abb91da97b1db |
+| packages/client/public/models/characters/viewmodels/fp_thalune.glb | b4859735bd2f203bd30ca41705a156858cc362dd6de1000d308bd1e12b53e76f |
+| assets/blend/characters/viewmodels/fp_ixari.blend | 44c408a64b59353810119640471b2faf9506da57250bdb47e7ce067445f2c4b5 |
+| packages/client/public/models/characters/viewmodels/fp_ixari.glb | 78f90acfc0087b63e97c3ae50cb7c1f5e045e447e12975b6ec21a0dd5f038abc |
+| assets/blend/characters/viewmodels/fp_ulgani.blend | aabb32cb139c544d7a57f2fe22c34931fe720d2215e02936876f2dd02dd1aa3b |
+| packages/client/public/models/characters/viewmodels/fp_ulgani.glb | 8319097e97e3ccf2f9fdcbbe114742ea45f1f24eb8ba98420f12678d3511e954 |
+
+Retained helpers:
+
+| File | SHA256 |
+|---|---|
+| assets/blend/stations/_authoring/round4_job_boundary.py | 3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c |
+| assets/blend/stations/_authoring/round4_capture_children.py | e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07 |
+| assets/blend/stations/_authoring/run_round4_browser_proof.py | f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab |
+| assets/blend/stations/_authoring/run_round4_remaining8.py | 4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8 |
+
+Final commands after the archived snapshot:
+
+```json
+{
+  "name": "archive",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/vm-r4-fix-rdtnxbus/package_evidence.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 2.610928124981001,
+  "logSha256": "bd093723c2229060195b6a7d5db457f42fae3db7f74729e41a73b862f6a91812",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r4-fix-rdtnxbus/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r4-fix-rdtnxbus/tmp"
+  }
+}
+```
+
+```json
+{
+  "name": "staged-diff",
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.01248850004049018,
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r4-fix-rdtnxbus/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r4-fix-rdtnxbus/tmp"
+  }
+}
+```
+
+```json
+{
+  "name": "commit",
+  "argv": [
+    "git",
+    "commit",
+    "-m",
+    "fix(P1-E05-T03): use real Playwright exports and runtime update budgets"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.24005420797038823,
+  "logSha256": "78b352732098b0148d3bcd244df3733b7f4c11192814bde4b18ab40f4242ae38",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r4-fix-rdtnxbus/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r4-fix-rdtnxbus/tmp"
+  }
+}
+```
+
+```json
+{
+  "name": "postcommit",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/vm-r4-fix-rdtnxbus/postcommit.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 16.840111207973678,
+  "logSha256": "9ea49a5a7e766d366be6c64fc11cfab937408d78acbf07cadb54aab96da4edac",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r4-fix-rdtnxbus/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r4-fix-rdtnxbus/tmp"
+  }
+}
+```
+
+Remaining gates: independent R5 of this exact enabled candidate; parent-owned current capacity/GPU scheduling and a fresh one-unit grant; then actual native and blind visual acceptance. Conditional Storemember refusal is retained because different-browser history does not establish a VM binding need. No runtime retry or cleanup is authorized by this report.

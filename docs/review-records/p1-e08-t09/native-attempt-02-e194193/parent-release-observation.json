@@ -1,0 +1,97 @@
+{
+  "at": "2026-11-07T10:03:18.187567+00:00",
+  "callerExitCode": 1,
+  "resultSha256": "e89df47ea79b9d169b38a8d894d82c37c99e89dfd2ce4ab45a41789bf598b0cb",
+  "knownPidChecks": [
+    {
+      "pid": 67167,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67170,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67192,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67193,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67194,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67197,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67201,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67202,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67203,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 67204,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "registrationChecks": [
+    {
+      "label": "local.stations.round4.165d0588787c41b58afb3ab8a8ac62b5",
+      "exit": 113,
+      "stdout": "",
+      "stderr": "Bad request.\nCould not find service \"local.stations.round4.165d0588787c41b58afb3ab8a8ac62b5\" in domain for user gui: 501\n"
+    }
+  ],
+  "pathsAbsent": [
+    "/private/tmp/sbr-8xrlr_ej",
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-nh35hf5p"
+  ],
+  "rawKernelTerminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "rawDrained": true,
+  "rawClean": false,
+  "terminalAuditFailureRetained": {
+    "args": [],
+    "attributes": {},
+    "line": 367,
+    "message": "",
+    "predicate": "assert job.state['drained'] and job.state['clean']",
+    "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/blend/stations/_authoring/run_round4_remaining8.py",
+    "type": "AssertionError"
+  },
+  "gpuReleased": true,
+  "taskAccepted": false,
+  "screenshots": 0
+}

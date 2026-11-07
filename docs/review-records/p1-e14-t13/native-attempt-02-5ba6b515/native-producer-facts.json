@@ -1,0 +1,136 @@
+{
+  "bootstrap": {
+    "attempted": true,
+    "completion": "returned",
+    "registeredMayExist": true,
+    "returncode": 0
+  },
+  "bytes": 3642,
+  "complete": true,
+  "records": [
+    {
+      "argv": {
+        "bytesCharged": 96,
+        "complete": true,
+        "value": [
+          "/bin/launchctl",
+          "bootstrap",
+          "gui/501",
+          "/private/tmp/sbr-_00jowa6/stations-round4-owned-dop349kv/job.plist"
+        ]
+      },
+      "operation": "run",
+      "returned": {
+        "bytesCharged": 96,
+        "complete": true,
+        "value": {
+          "attributes": {
+            "args": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/sbr-_00jowa6/stations-round4-owned-dop349kv/job.plist"
+            ],
+            "returncode": 0,
+            "stderr": "",
+            "stdout": ""
+          },
+          "type": "CompletedProcess"
+        }
+      }
+    },
+    {
+      "argv": {
+        "bytesCharged": 51,
+        "complete": true,
+        "value": [
+          "/bin/ps",
+          "-ww",
+          "-p",
+          "4411,4410,4409,4408,4407",
+          "-o",
+          "pid=,command="
+        ]
+      },
+      "operation": "run",
+      "returned": {
+        "bytesCharged": 1090,
+        "complete": true,
+        "value": {
+          "attributes": {
+            "args": [
+              "/bin/ps",
+              "-ww",
+              "-p",
+              "4411,4410,4409,4408,4407",
+              "-o",
+              "pid=,command="
+            ],
+            "returncode": 0,
+            "stderr": "",
+            "stdout": " 4407 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /private/tmp/sbr-_00jowa6/stations-round4-owned-dop349kv/round4_job_boundary.py --worker /private/tmp/sbr-_00jowa6/stations-round4-owned-dop349kv/request.json\n 4408 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/frozen-7c134b6aa/source/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/frozen-7c134b6aa/source/packages/tools/src/capture/trace_observer_packet/worker.ts --owned /private/tmp/t13-observer-native-5ba6b515/child-admission.json b1fb89b98519a973e3c8313febe66fd51dbeef89fc4aa9a607d7f5a7ef9c6c0f\n 4409 /usr/bin/caffeinate -i -w 4408\n 4410 /private/tmp/p1-e14-t13-native-failure.kmq_ro3n/frozen-7c134b6aa/source/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.28.2 --ping\n 4411 (Python)\n"
+          },
+          "type": "CompletedProcess"
+        }
+      }
+    },
+    {
+      "argv": {
+        "bytesCharged": 83,
+        "complete": true,
+        "value": [
+          "/bin/launchctl",
+          "bootout",
+          "gui/501/local.stations.round4.315ef377089447b5be5114c202c6d88c"
+        ]
+      },
+      "operation": "run",
+      "returned": {
+        "bytesCharged": 119,
+        "complete": true,
+        "value": {
+          "attributes": {
+            "args": [
+              "/bin/launchctl",
+              "bootout",
+              "gui/501/local.stations.round4.315ef377089447b5be5114c202c6d88c"
+            ],
+            "returncode": 3,
+            "stderr": "Boot-out failed: 3: No such process\n",
+            "stdout": ""
+          },
+          "type": "CompletedProcess"
+        }
+      }
+    },
+    {
+      "argv": {
+        "bytesCharged": 81,
+        "complete": true,
+        "value": [
+          "/bin/launchctl",
+          "print",
+          "gui/501/local.stations.round4.315ef377089447b5be5114c202c6d88c"
+        ]
+      },
+      "operation": "run",
+      "returned": {
+        "bytesCharged": 202,
+        "complete": true,
+        "value": {
+          "attributes": {
+            "args": [
+              "/bin/launchctl",
+              "print",
+              "gui/501/local.stations.round4.315ef377089447b5be5114c202c6d88c"
+            ],
+            "returncode": 113,
+            "stderr": "Bad request.\nCould not find service \"local.stations.round4.315ef377089447b5be5114c202c6d88c\" in domain for user gui: 501\n",
+            "stdout": ""
+          },
+          "type": "CompletedProcess"
+        }
+      }
+    }
+  ]
+}

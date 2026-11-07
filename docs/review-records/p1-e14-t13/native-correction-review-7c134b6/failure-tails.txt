@@ -1,0 +1,93 @@
+audit.stderr
+```
+Traceback (most recent call last):
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/audit.py", line 61, in <module>
+    assert sha(ROOT/row['relative'])==row['currentSha256']==row['basePayloadSha256'],row['relative']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: packages/tools/src/capture/trace_observer_packet/controller_controls.py
+```
+
+finish-audit.stderr
+```
+Traceback (most recent call last):
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/finish_audit.py", line 8, in <module>
+    assert sha(ROOT/row['relative'])==row['currentSha256'],row['relative']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: packages/tools/src/capture/trace_observer_packet/local-binding.json
+```
+
+cpu.stderr
+```
+Traceback (most recent call last):
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/run_cpu.py", line 2, in <module>
+    run('copy-boundaries',[PY,'-B',str(OUT/'copy_boundaries.py')])
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/reviewlib.py", line 32, in run
+    assert p.returncode==expected,(n,p.returncode,p.stderr[-1500:])
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('copy-boundaries', 1, b' ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/copy_boundaries.py", line 97, in blockchmod\n    while True:signal.pause()\n               ~~~~~~~~~~~~^^\n  File "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/metadata.py", line 89, in expire\n    raise IODeadline(\'Bounded observer I/O deadline expired\')\nmetadata.IODeadline: Bounded observer I/O deadline expired\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/copy_boundaries.py", line 100, in <module>\n    with m.io_deadline(.05):refused(\'mode-deadline\',src,dst,lambda:m.copy_tree(src,dst,count=100,cap=4096))\n                            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/copy_boundaries.py", line 17, in refused\n    assert src.exists() and rows(src)==before\n           ~~~~~~~~~~^^\n  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 663, in exists\n    def exists(self, *, follow_symlinks=True):\n    \n  File "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/metadata.py", line 89, in expire\n    raise IODeadline(\'Bounded observer I/O deadline expired\')\nmetadata.IODeadline: Bounded observer I/O deadline expired\n')
+```
+
+copy-boundaries.stderr
+```
+               ~~~~~~~~~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/metadata.py", line 89, in expire
+    raise IODeadline('Bounded observer I/O deadline expired')
+metadata.IODeadline: Bounded observer I/O deadline expired
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/copy_boundaries.py", line 100, in <module>
+    with m.io_deadline(.05):refused('mode-deadline',src,dst,lambda:m.copy_tree(src,dst,count=100,cap=4096))
+                            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/copy_boundaries.py", line 17, in refused
+    assert src.exists() and rows(src)==before
+           ~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 663, in exists
+    def exists(self, *, follow_symlinks=True):
+    
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/metadata.py", line 89, in expire
+    raise IODeadline('Bounded observer I/O deadline expired')
+metadata.IODeadline: Bounded observer I/O deadline expired
+```
+
+exact-base-unbound.stderr
+```
+Traceback (most recent call last):
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py", line 9, in <module>
+    runpy.run_path(script,run_name='__main__')
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py", line 172, in <module>
+    assert result['candidate'] is True,result['failure']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'type': 'AssertionError', 'message': 'Unbound owned executable: /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService', 'args': ['Unbound owned executable: /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService'], 'attributes': {}, 'facts': None, 'allocation': None, 'cause': None, 'context': None, 'rawComplete': True}
+```
+
+exact-base-cache.stderr
+```
+Traceback (most recent call last):
+  File "/private/tmp/p1-e14-t13-source-review.EtBSg1Hy/controller_entry.py", line 9, in <module>
+    runpy.run_path(script,run_name='__main__')
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/private/tmp/p1-e14-t13-native-failure.kmq_ro3n/assessment_controller.py", line 172, in <module>
+    assert result['candidate'] is True,result['failure']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None
+```
+
+signature-wrong-identifier.stderr
+```
+test-requirement: code failed to satisfy specified code requirement(s)
+```
+
+disabled-python.stderr
+```
+{"accepted": false, "candidate": false, "failure": {"type": "Refused", "message": "Trace observer readiness disabled", "args": ["Trace observer readiness disabled"], "attributes": {}, "facts": null, "allocation": null, "cause": null, "context": null, "rawComplete": true}}
+```

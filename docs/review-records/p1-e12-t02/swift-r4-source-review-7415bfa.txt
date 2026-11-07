@@ -1,0 +1,142 @@
+VERDICT: REVISE
+TASK: P1.E12.T02 / Swift R4 independent SOURCE/CPU review (not blind visual grading)
+STATUS: DONE (review completed; candidate requires revision)
+SUMMARY: The exact saved source and shipped GLB match the requested hashes. Stock source validation, current topology/UV/normal/LOD audit, display fit, independent meshopt decoding, 127 source/export surface aggregates and marker/articulation world transforms pass. However, actual hull density is only 60.5-79.6 px/m against the art-bible ~512 px/m target. Two reproducible task-local tooling defects also remain: an unguarded command-dispatch interval on runner death, and promotion without successful terminal receipts. The current committed stage receipts themselves are successful; these findings do not allege a currently orphaned Blender or invalid provenance for the existing promoted bytes. No visual score or whole-task acceptance is given.
+
+PINNED SCOPE:
+  Worktree /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+  Branch task/P1-E12-T02-swift-r4
+  HEAD 7415bfa5ec9f2115c6304cdfa70c36129702f593
+  Tree 140a35f31eacfa8ef1825646b20c5be3b7fbffba
+  Base 73f51ba436e2a8c4e3828f60439c441db4f7ef38
+  Separate recovery 82c3d50ff79a60b9dac38f0bdfbe421381c8dd73
+  Recovery tree ea744377e186a0ee48bdf40b48e891b1d7db78a2
+  509 changed files, all confined to Swift source/export, task-local tools and the Swift R4 evidence directory.
+  Source 42,959,316 bytes, SHA256 7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480
+  GLB 24,721,524 bytes, SHA256 5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d
+  Author REPORT.txt SHA256 b4a733c2e691a15216418d3e9f622a90578edbf4d44c4ec8a28f39d76b6cdead
+  Author inventory.json SHA256 2b49200a0d4ee77d184578b2a280426446fdf45f9006971fa102b609327a40cc
+
+FINDINGS (all P2; substantive corrections, not style):
+
+1. Actual source/export texel density misses the required hull target by 6.4-8.5 times.
+   Location: packages/tools/blender/hulls/swift-round4/author.py:289-294, especially smart_project at :294; saved assets/blend/hulls/swift.blend; packages/client/public/models/hulls/swift.glb.
+   Rule: docs/art-bible.md:220-222 (~512 px/m hull density), IMPLEMENTATION_PLAN 0.3/0.4; the C.2 decisions contain no interpretation or exception for this density shortfall (0.9.5 unlogged spec interpretation gate).
+   Measurement: Blender scale_length=1.0. For each material surface, apply the object world matrix, sum world triangle area and absolute triangle UV area, then use texture edge * sqrt(UV area / world area). Independently decode meshopt bufferViews and all normalized accessors, apply GLB node world transforms, and read actual KTX2 dimensions. All 59 maps are 4096x4096 with 13 mips; no texture-transform extension increases these samples.
+   LOD0 Hull surface       World area m2   Summed UV area   Actual px/m
+   swift                  79.272306       0.0299719923     79.644723
+   swift_damaged          74.523707       0.0271401758     78.166209
+   swift_husked           54.647353       0.0119316873     60.523818
+   The source and decoded export agree. The base Hull uses about 3.0% summed 0-1 UV triangle area; this is actual triangle coverage, not bounding-box coverage. These are not meshopt integer positions misread as world floats: final POSITION and TEXCOORD_0 are float32 (5126); NORMAL is normalized signed-short (5122), decoded correctly. Base Hull area-weighted density p05/median/p95 is 71.06/81.14/83.86 px/m, so the result is not a tiny outlier.
+   Impact: the 4K maps cannot deliver the required hull detail at the authored physical scale. Stock source/texture checks do not measure this requirement. This is a source/asset-contract finding, not a visual grade.
+   Correction: repack and size material UV islands using measured world-space density; use suitable repeated/trim/mirrored layouts or additional budgeted atlas coverage where unique surface area exceeds one atlas. Re-bake/export only in a separately authorized writer slot, and verify source plus decoded export density. A resolution label alone is insufficient. If the intended bar changes, obtain an explicit documented spec decision; do not silently treat this stock PASS as density acceptance.
+   Repro: source_probe.py + decode_glb.mjs; data source-probe.json and glb-decoded.json under this report directory.
+
+2. Runner death between command dispatch and watchdog launch leaves a live unguarded command.
+   Location: packages/tools/blender/hulls/swift-round4/lane.py:67-70; guardian.py cannot cover the interval before it exists.
+   Boundary: the real lane calls Popen(command, start_new_session=True), assigns child, and only then creates its pipe and launches guardian.py. SIGKILL or external harness loss in this interval bypasses finally and leaves no independent timeout/resource monitor for the command. The stale lock correctly stays charged, but it does not terminate the work.
+   Repro: unmodified copies of lane.py/guardian.py in a new private fixture. A Python trace interrupts the actual line 68 (after real command launch, before watchdog setup); there is no mock Popen or fabricated process handle. Runner PID 66263 exited -9. Command PID/PGID 66273 was observed alive, reparented to PID 1. No guardian receipt existed and the ownership lock remained. The lightweight child only slept; no Blender, encoder, render or service was used.
+   Correction: an independently owned launcher/watchdog must be established before it dispatches the command, or use a startup handshake in which the guardian owns dispatch and can terminate it if the owner disappears. Cover the startup interval in addition to established-watchdog death and cancellation tests.
+   Repro evidence: lifecycle_repros.py, interrupt_dispatch.py, lifecycle-results.json. The reviewer sent SIGTERM to the exact owned test process group and verified it empty; the private stale lock is retained as evidence. Only its newly created temporary alias was removed after empty-group proof.
+   Existing ordinary cancellation/exclusive ownership and established-watchdog runner-loss tests both still pass. This finding is specifically the uncovered dispatch interval.
+
+3. Promotion ignores real terminal failure/cleanup receipts.
+   Location: packages/tools/blender/hulls/swift-round4/promote.py:10-17 (particularly :13-15).
+   Boundary: it checks PASS payloads and source/identity hashes but never loads receipt.json or guardian.json from any of the four prerequisite stages. Thus a stage can publish its payload and subsequently fail/cancel, yet promotion proceeds. It also does not compare source-pin.json glbSha256 with the candidate hash, leaving the stock validation pin less tightly bound than the identity pin.
+   Repro: exact current source, candidate and existing validation/identity/audit/fit payloads copied into an isolated fixture. A lightweight worker publishes the exact existing stock outputs, verifies their real source/candidate hashes, and deliberately exits 23. Unmodified lane.py records a real exit=23 terminal receipt with childGroupEmpty=true (command 67902, guardian 67903). Unmodified promote.py then exits 0, prints PROMOTED 5873c5ca..., replaces the private destination inode, and writes promotion.json. No fixture receipt was hand-authored. The injected worker reuses known validation output; it does not claim a new stock Blender validation.
+   Correction: before copying/replacing, require all four stages' successful terminal receipts (exit 0, no cancellation/resource reason, proven empty group and successful guardian outcome where present); tie their recorded input hashes and the stock pin's glbSha256 to the current source/candidate; reject missing/live/failed receipts. Preserve failed outputs as evidence without eligibility for promotion.
+   Repro evidence: promotion_repro.py, publish_then_fail.py, promotion-result.json, promotion-fixture/.../stock-terminal-failed/receipt.json and promotion-attempt/promotion.json.
+   Existing stage 70/71/66/67 and promotion 84 have successful receipts; this is a gating defect, not an assertion those exact existing stages failed.
+
+FILES CHANGED:
+  No worktree/source/report/old-packet/dependency files edited.
+  All reports, scripts and fixture copies created exclusively under /private/tmp/swift-r4-review-v69_mmzw.
+  The current worktree remains clean. No installs, hydration, dependency writes, browser, GPU, capture, services, DB, pnpm, push, PR or merge.
+  Screenshot cleanup remains STOPPED. All prior 34 PNG and 2 interrupted EXR files are untouched.
+
+VERIFY:
+  1. Exactly one admitted Blender run, through the existing unmodified stock source validation route.
+     Supervisor: /opt/homebrew/bin/python3 -B /private/tmp/swift-r4-review-v69_mmzw/run_source.py
+     Actual child command:
+     /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -t 2 --python-exit-code 1 -P /private/tmp/swift-r4-review-v69_mmzw/source_probe.py
+     source_probe.py invokes the unchanged validate.py main with --family hulls --report /private/tmp/swift-r4-review-v69_mmzw/stock-source.json --quiet /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/blend/hulls/swift.blend, then performs read-only density/metadata extraction and invokes the unchanged audit_source.py and display_fit.py. No save, render, bake, export or codec encoding.
+     Supervisor PID 57369; Blender PID/PGID 57465; watchdog PID 57473.
+     Exit 0, 7.162 seconds, peak sampled process-group RSS 1,810,120,704 bytes, private output at termination 338,685 bytes. Enforced 180 s wall / 8 GiB sampled RSS / 128 MiB private output. Fresh preflight free+inactive 27,470,430,208 bytes, free disk 23,157,923,840 bytes, no active Blender and no Swift ownership/hold sentinel.
+     Child group empty, watchdog exit 0, slotReleased=true. THE ONE BLENDER CPU SLOT IS RELEASED. No validation repeat or additional heavy job is planned.
+     Stock source, actual topology/UV/normal/LOD audit and all 27 display-fit instances: PASS.
+
+  2. Pure CPU GLB decoding, no compression/encoding/transcoding:
+     /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --max-old-space-size=1024 /private/tmp/swift-r4-review-v69_mmzw/decode_glb.mjs
+     Exit 0. Read-only import of existing meshoptimizer 1.3.0 decoder, no dependency installation or writing. Independent accessors, world matrices, material maps, image headers, triangle/UV/normal counts and density in glb-decoded.json.
+     Independent source/export aggregate comparison: 127 material/LOD groups, zero count/area/UV-area mismatches at stated tolerances. All source marker and rigid-articulation matrices match decoded GLB under the Blender-Z-up to glTF-Y-up basis change within 1e-5. The full author bidirectional corner-matching receipt was inspected and hash-verified, not rerun.
+
+  3. /opt/homebrew/bin/python3 -B /private/tmp/swift-r4-review-v69_mmzw/lifecycle_repros.py
+     Exit 0: expected assertions reproduced. Unmodified check_lane.py exit 0 (cancellation exit 1, contender exit 1, no contender log, group empty, lock released). Unmodified check_guardian.py exit 0 (runner deliberately killed, owned group emptied by established guardian). Added dispatch-loss probe: runner exit -9, orphan observed, exact group manually terminated and verified empty.
+
+  4. /opt/homebrew/bin/python3 -B /private/tmp/swift-r4-review-v69_mmzw/promotion_repro.py
+     Exit 0: expected bad acceptance reproduced. Upstream real lane exit 23; downstream promote exit 0 and destination replacement observed. Failure output is preserved in the private fixture process.log and real receipt.json; injected worker prints "Preserved exact existing validation payloads; injected terminal process failure after publication" before exit 23.
+
+  5. Read-only original provenance.py, SWIFT_JOB=/private/tmp/swift-r4-review-v69_mmzw/recovery-verification:
+     /opt/homebrew/bin/python3 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/provenance.py
+     Exit 0: original recovery Git pointer identities, existing local LFS bytes, 61 retained R3 packet payloads, prior verdict and index all match. No hydration or copying old packet images.
+
+  6. Author final inventory: independently hashed all 502 entries / 804,317,215 bytes; zero mismatches. Historical failed/partial attempts remain historical evidence, not passing validation. 34 PNG (31 CPU scene images and 3 texture probes) + 2 interrupted EXR = 68,708,456 bytes, unchanged. None viewed or scored by this source reviewer.
+     git diff --check 73f51ba436e2a8c4e3828f60439c441db4f7ef38 7415bfa5ec9f2115c6304cdfa70c36129702f593: exit 0.
+     All task-local Python files ast.parse: PASS, no pycache writes.
+     git status --porcelain=v1 --untracked-files=all: empty before/after.
+     Protected baseline actual-file SHA256/size comparison: zero drift; exact records in baseline.json and final-integrity.json.
+
+ASSET CONTRACT / PRIOR R3 DISPOSITION:
+  Three geometry states: swift, swift_damaged, swift_husked; four LODs each.
+  Triangle counts LOD0/1/2/3:
+    base    68361 / 28641 / 15548 / 1078
+    damaged 67103 / 28162 / 15310 / 995
+    husked  65119 / 27342 / 14828 / 1183
+  All decrease; LOD0 within 60k-150k; LOD3 1.58%, 1.48%, 1.82%, below 5%. Dimensions 10.026 x 11.521 x 3.937 m; source grid and 1.85 m biped valid.
+  Fresh source audit: no missing UVs, degenerate geometric/UV triangles, duplicate faces, multi-face edges, nonfinite coordinates or invalid corner normals. Open component boundaries are not automatically defects in layered hull construction.
+  Decoded GLB render geometry: zero degenerate world/UV triangles; zero normals outside 1e-4 unit-length tolerance. Correct normalized-short normals; POSITION/UV float32, required meshopt and quantization extensions present.
+  All 59 KTX2 maps are 4096 square with 13 mip levels. Image binding/material metadata inspected; current stock compressed-map report PASS was hash-verified. Independent 8-bit/texel full mip estimates: base 384.0 MiB, damaged 426.7 MiB, husked 448.0 MiB, within 512 MiB hero cap. Pixel payloads were not freshly transcoded; color-space/codec classification and detailed normal-texel checks rely on the pinned stock report.
+  Static primitive submissions at LOD0/1/2 are 20 base, 21 damaged, 20 husked; LOD3 10/10/11. These are primitive counts, not a native draw-call/timing measurement. No separate numeric per-hull draw cap was found in the cited family/art-bible rules; whole-scene GPU timing remains open.
+  Colliders COL_Body/Crystals/WingL/WingR: 104/88/64/68 triangles, each below 512.
+  HP_S_1 and HP_S_2 exist, small mounts as Swift's 2S roster specifies; GLB world positions (-1.62,-0.60,0.70) and (+1.62,-0.60,0.70), forward -Z. Source/export transforms agree. No bay is required for this scout.
+  Gear and canopy are rigid parent-child articulation, not skeletal skinning: all 12 LOD/variant sets retain one canopy and three gear pivots and meshes (48 each); no JOINTS/WEIGHTS/skinning or deformation modifiers are involved. Source parents and world matrices agree with export. Actual motion clearance/traversal is not tested.
+  R3 canopy normals, landing feet and rear tip: FIXED at the source/static contract boundary. Unchanged audit proves canopy/gear vertices, faces, corner normals and world transforms identical through LOD2; rear-tip positions retained. Native temporal transitions remain unqualified.
+  R3 localized wear/clouding, fractures/exposed structure and cockpit finishing: implementation exists in saved-source authoring/repair chain, geometry/material metadata and source/display-fit checks support structural completion. Their appearance disposition remains OPEN for an independent visual grader. Texel-density finding above prevents source-quality acceptance.
+  Liveries: saved Hull/Accent/Trim roles, ixari base colors, livery metadata and editable Livery inputs are retained; preview.py supplies compact and working palette selection. Existing final inputs cover ixari/compact/working diagnostic selectors. Native application of all three liveries and their appearance were not exercised; source previews do not qualify exported native livery behavior.
+  C2 receipt binding: current stages 66,67,68,69,70,71,84 all have exit 0 and empty-group receipts; source 7627b0c3... and GLB 5873c5ca... pins agree. Cache code requires exact equality of all 59 newly baked PNG streams/material bindings and non-image buffers/nodes; no source generation from the cached export. Future promotion's terminal-gate defect is finding 3.
+
+PROTECTED IDENTITIES:
+  Equal base/HEAD Git tree/object identities:
+    packages/tools/blender/artlib tree 5cf85c331d1b2af89d2f3550166a73f4f0b86562
+    families.json blob 51cdabb86b6fb9e25b7359290b193109a8c24f24
+    export_hulls.py blob ebf1e60e902392ba5192092e4d6d82c9b78ebd92
+    validate.py blob 55fccc56abef1ce2e25df13b4f880fd8bc4a2d8f
+  Current actual file SHA256s:
+    families.json 2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d
+    export_hulls.py 9efe68bd1c73d56c6c81049451b45fd6a947280cd326f9281728d81c1dcec200
+    validate.py d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704
+    All artlib .py SHA256s retained in baseline.json and verified unchanged.
+  Lark/Mule/Kestrel canonical source and GLB paths are absent at BOTH this base and this HEAD and absent in this checkout. Their absence is unchanged, with no recovery/hydration performed. No fictional live asset hash is supplied. This is scoped Swift preservation, not verification of other hulls on another branch.
+  Existing node_modules and packages/tools/node_modules symlink targets preserved. Installed decoder was read with the pinned node executable; no shared cache/dependency writes or symlinks were added.
+
+DECISIONS:
+  Source-only verdict -> no visual scoring, no fresh GPU/native/browser operation -> user explicitly assigned independent SOURCE/CPU review.
+  Density -> measure world-space surfaces with true UV coverage and decoded normalized accessors -> 4K dimension does not establish px/m.
+  One admitted slot -> run stock validation and all source probes in one factory Blender process -> 180 s / two-thread / 8 GiB / 128 MiB bounds; no repeat.
+  Lifecycle defects -> exercise unchanged task tools against real lightweight subprocesses in private fixtures -> prove ownership and promotion boundaries without touching original inputs or running another heavy job.
+  Existing provenance -> retain separate current-artifact PASS evidence and future-tool defects -> no inference that an unobserved historical failure occurred in the successful current chain.
+
+OUT OF SCOPE FOUND / NATIVE VISUAL REMAINING:
+  Whole P1.E12.T02 remains unaccepted. Parent must schedule controlled native189/T13 performance work independently; this review's source slot is released.
+  Fresh native three-light LOD0/LOD2, wireframe, distance and collider/marker evidence; actual boarding/cockpit/canopy/gear/hardpoint behavior, clearance and temporal LOD transitions; native three-livery switching; full smoke; reliable device-identified whole-scene timing; and a fresh blind visual grade remain required.
+  No new heavy job is requested or authorized by this report. Screenshot cleanup remains STOPPED.
+
+ARTIFACTS:
+  /private/tmp/swift-r4-review-v69_mmzw/REPORT.txt
+  baseline.json, final-integrity.json, inventory-check.json
+  source_probe.py, run_source.py, source-launch.json, source-receipt.json, source.log
+  stock-source.json, source-probe.json, audit.json, display-fit.json
+  decode_glb.mjs, glb-decoded.json, independent-comparison.json
+  lifecycle_repros.py, interrupt_dispatch.py, lifecycle-results.json, lifecycle/ (immutable fixture evidence)
+  promotion_repro.py, publish_then_fail.py, promotion-result.json, promotion-fixture/, promotion-attempt/
+  recovery-verification/command.json and provenance.json

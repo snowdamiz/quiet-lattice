@@ -1,0 +1,117 @@
+{
+  "at": "2026-11-07T10:09:48.004951+00:00",
+  "callerExitCode": 1,
+  "knownPidChecks": [
+    {
+      "pid": 4407,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 4408,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 4409,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 4410,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 4411,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 95305,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 95462,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "registration": {
+    "label": "local.stations.round4.315ef377089447b5be5114c202c6d88c",
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.315ef377089447b5be5114c202c6d88c\" in domain for user gui: 501\n"
+  },
+  "privateNamespaceAbsent": "/private/tmp/sbr-_00jowa6",
+  "rawLifecycle": {
+    "clean": false,
+    "drained": true,
+    "elapsed_cleanup_seconds": 0.09034266596427187,
+    "errors": [
+      "Refused: Incomplete ledger: Enumerated entry changed"
+    ],
+    "exits": {
+      "caffeinate": -15,
+      "capture": -15
+    },
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "exited": 2,
+      "live": 1,
+      "started": 3
+    },
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "exited": 11,
+      "live": 1,
+      "started": 12
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "remaining": [],
+    "scope": "CPU_CANDIDATE_BOUNDARY",
+    "signals": [
+      {
+        "birth": [
+          1794046097,
+          357411
+        ],
+        "pid": 4410,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794046097,
+          288268
+        ],
+        "pid": 4409,
+        "signal": "SIGTERM"
+      },
+      {
+        "birth": [
+          1794046097,
+          283511
+        ],
+        "pid": 4408,
+        "signal": "SIGTERM"
+      }
+    ]
+  },
+  "rawPhysicalSettlement": "UNPROVED",
+  "resultSha256": "610872bcc941ee24e2de5ec700dff46302d115aaf41aeb9ed649323b64264350",
+  "gpuReleased": true,
+  "accepted": false,
+  "timingSamples": 0,
+  "browserLaunchObserved": false
+}
