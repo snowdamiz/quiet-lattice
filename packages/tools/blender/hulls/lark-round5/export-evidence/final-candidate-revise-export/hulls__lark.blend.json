@@ -1,0 +1,998 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/tools/blender/hulls/lark-round5/scratch/revise-src/hulls/lark.blend",
+  "family": "hulls",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T19:03:57Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 136
+  },
+  "assets": [
+    {
+      "asset": "lark",
+      "variants": [
+        {
+          "id": "lark",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 108746,
+            "1": 73947,
+            "2": 59940,
+            "3": 4388
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.38,
+            4.285
+          ],
+          "materials": [
+            "Lark_Hull",
+            "Lark_Dark",
+            "Lark_Accent",
+            "Lark_Trim",
+            "Lark_EngineGlow",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite",
+            "Lark_Glass"
+          ]
+        },
+        {
+          "id": "lark_damaged",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 113554,
+            "1": 79329,
+            "2": 65758,
+            "3": 4557
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.38,
+            4.49
+          ],
+          "materials": [
+            "LarkDmg_Hull",
+            "LarkDmg_Dark",
+            "LarkDmg_Accent",
+            "LarkDmg_Trim",
+            "LarkDmg_EngineGlow",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite",
+            "LarkDmg_Glass"
+          ]
+        },
+        {
+          "id": "lark_husked",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 110411,
+            "1": 77956,
+            "2": 66049,
+            "3": 4760
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.431,
+            4.285
+          ],
+          "materials": [
+            "LarkHusk_HuskHull",
+            "LarkHusk_HuskDark",
+            "LarkHusk_HuskAccent",
+            "LarkHusk_HuskTrim",
+            "LarkHusk_HuskEngineGlow",
+            "LarkHusk_DeadNavRed",
+            "LarkHusk_DeadNavGreen",
+            "LarkHusk_DeadNavWhite",
+            "LIB_HollowSeam_Lark",
+            "LarkHusk_HuskGlass"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "warn",
+          "subject": "Body.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Blink_Strobes.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Lens_Strobes.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Light_Landing.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanismMesh.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanismMesh.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Blink_Strobes.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Lens_Strobes.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Light_Landing.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanismMesh.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanismMesh.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Blink_Strobes.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Lens_Strobes.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Light_Landing.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanismMesh.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanismMesh.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Blink_Strobes_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Lens_Strobes_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Light_Landing_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_dmgMesh.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_dmgMesh.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_dmg.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Blink_Strobes_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Lens_Strobes_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Light_Landing_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_dmgMesh.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_dmgMesh.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_dmg.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Blink_Strobes_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Lens_Strobes_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Light_Landing_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_dmgMesh.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_dmgMesh.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_dmg.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_huskMesh.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_huskMesh.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_husk.001",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_huskMesh.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_huskMesh.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_husk.002",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Body_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "Canopy_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyGlass_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CanopyFrame_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_huskMesh.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitInterior_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenLeft_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenCenter_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "ScreenRight_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_huskMesh.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "CockpitMechanism_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "GearAssembly_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        },
+        {
+          "level": "warn",
+          "subject": "LandingMechanism_husk.003",
+          "message": "object name carries Blender's duplicate suffix; give it a real name"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "lark.blend",
+          "message": "3 variant(s) in 1 asset(s) follow the hulls rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "lark",
+          "message": "LOD0 108,746 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "lark/lark_damaged",
+          "message": "LOD0 113,554 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "lark/lark_husked",
+          "message": "LOD0 110,411 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "lark",
+          "message": "108,746 > 73,947 > 59,940 > 4,388 triangles; LOD3 4.0% of LOD0"
+        },
+        {
+          "subject": "lark/lark_damaged",
+          "message": "113,554 > 79,329 > 65,758 > 4,557 triangles; LOD3 4.0% of LOD0"
+        },
+        {
+          "subject": "lark/lark_husked",
+          "message": "110,411 > 77,956 > 66,049 > 4,760 triangles; LOD3 4.3% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "warn",
+          "subject": "Hull (LarkHusk_HuskHull)",
+          "message": "emissive map lark_husked_4k_emissive is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "HollowSeam (LIB_HollowSeam_Lark)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavGreen (LIB_NavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LIB_NavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LIB_NavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Accent (LarkDmg_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Dark (LarkDmg_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "EngineGlow (LarkDmg_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (LarkDmg_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (LarkDmg_Hull)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Trim (LarkDmg_Trim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "NavGreen (LarkHusk_DeadNavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LarkHusk_DeadNavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LarkHusk_DeadNavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Accent (LarkHusk_HuskAccent)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "Dark (LarkHusk_HuskDark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "EngineGlow (LarkHusk_HuskEngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (LarkHusk_HuskGlass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (LarkHusk_HuskHull)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "Trim (LarkHusk_HuskTrim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Accent (Lark_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Dark (Lark_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "EngineGlow (Lark_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (Lark_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (Lark_Hull)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Trim (Lark_Trim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "lark",
+          "message": "longest side 13.52 m within 6-80 m"
+        },
+        {
+          "subject": "lark/lark_damaged",
+          "message": "longest side 13.52 m within 6-80 m"
+        },
+        {
+          "subject": "lark/lark_husked",
+          "message": "longest side 13.52 m within 6-80 m"
+        }
+      ]
+    }
+  ]
+}
