@@ -1,0 +1,55 @@
+{
+  "kind": "T13_DISABLED_FREEZE_BUILD_PLAN",
+  "runtimeAuthorized": false,
+  "executed": false,
+  "head": "8a881e369de35c4fb62cc9ae5d68e48d54716cbf",
+  "tree": "3ca9cef5984e6b996b89ffbca5d96d7ef9751cec",
+  "bindingSha256": "dddf5f64bdd171f7154b10c843c56467b7612f287e3e5d8de5e5053406ccfaf5",
+  "destination": "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9",
+  "readiness": "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9/readiness.json",
+  "argv": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/freeze.py",
+    "--binding",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/local-binding.json",
+    "--binding-sha256",
+    "dddf5f64bdd171f7154b10c843c56467b7612f287e3e5d8de5e5053406ccfaf5",
+    "--destination",
+    "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9"
+  ],
+  "sourceBytes": 47606128,
+  "dependencyBytes": 247567641,
+  "payloadBytesBeforeReadiness": 295173769,
+  "testEvidenceScratchLimit": 268435456,
+  "existingFrozenLimit": 805306368,
+  "sizeClarificationPending": false,
+  "capacity": {
+    "at": 1794055460.8532841,
+    "path": "/private/tmp/p1-e14-t13-category-retention-sczivq8g",
+    "availableBytes": 47884910592,
+    "minimumFreeBytes": 8589934592,
+    "quotaGuaranteed": false
+  },
+  "sizeClarification": {
+    "resolved": true,
+    "resolvedAt": 1794055954.58914,
+    "decision": "SEPARATE_FREEZE_AND_SCRATCH_CEILINGS",
+    "authority": "user_explicit_confirmation",
+    "frozenBundleCeilingBytes": 805306368,
+    "newTestEvidenceScratchCeilingBytes": 268435456,
+    "scratchLimitNotRaised": true,
+    "scratchAndFrozenRemainSeparate": true,
+    "freezePayloadChargedTo": "existingFrozenLimit",
+    "estimatedFrozenPayloadBytes": {
+      "sourceBytes": 47606128,
+      "dependencyBytes": 247567641,
+      "payloadBytesBeforeReadiness": 295173769,
+      "priorReadinessBytesReference": 7949751,
+      "estimatedSourceDepsReadinessBytes": 303123520,
+      "note": "\u2248303 MiB source+deps+readiness belongs to the frozen-bundle ceiling, not NEW test/evidence scratch"
+    },
+    "conflictResolved": "303MiB freeze payload does not violate \u2264256MiB NEW scratch because ceilings are separate"
+  },
+  "estimatedSourceDepsReadinessBytes": 303123520
+}

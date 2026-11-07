@@ -1,0 +1,99 @@
+{
+  "createdAt": "2026-11-07T12:54:25.646934+00:00",
+  "parentBase": {
+    "head": "b57a767ac047163d5000489f91fc9957d7e17df4"
+  },
+  "limits": {
+    "noMainRemotePrTrunk": true,
+    "screenshotCleanup": "STOPPED",
+    "nativeGrantsUnchanged": true,
+    "noRecapture": true
+  },
+  "records": [
+    {
+      "source": "/private/tmp/fauna-blind-grade-6gHQDn/VERDICT.md",
+      "path": "docs/review-records/p1-e08-t09/blind-visual-0922f7f/VERDICT.md",
+      "sourceBytes": 5839,
+      "sourceSha256": "60b092d2398ed29c5498f527894e589f2579fd6245df047dde947928319e6f58",
+      "storedBytes": 5839,
+      "storedSha256": "60b092d2398ed29c5498f527894e589f2579fd6245df047dde947928319e6f58",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/private/tmp/fauna-blind-grade-6gHQDn/scores.json",
+      "path": "docs/review-records/p1-e08-t09/blind-visual-0922f7f/scores.json",
+      "sourceBytes": 529,
+      "sourceSha256": "9c3e3aa6055b88e21e9fb9ce97d82e62da588faf74e36df50f058d1463744a02",
+      "storedBytes": 529,
+      "storedSha256": "9c3e3aa6055b88e21e9fb9ce97d82e62da588faf74e36df50f058d1463744a02",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/private/tmp/fauna-blind-grade-6gHQDn/inventory.json",
+      "path": "docs/review-records/p1-e08-t09/blind-visual-0922f7f/inventory.json",
+      "sourceBytes": 31244,
+      "sourceSha256": "2aa05d9c4a7c9830c41219200c7d4678b942fd53b9ff3cc117c56c7a50d31838",
+      "storedBytes": 31244,
+      "storedSha256": "2aa05d9c4a7c9830c41219200c7d4678b942fd53b9ff3cc117c56c7a50d31838",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/private/tmp/fauna-blind-grade-6gHQDn/verification.json",
+      "path": "docs/review-records/p1-e08-t09/blind-visual-0922f7f/verification.json",
+      "sourceBytes": 260,
+      "sourceSha256": "8c88849785db2955f575e97068eb041d9263950cf001ecb9a174902998cb62c8",
+      "storedBytes": 260,
+      "storedSha256": "8c88849785db2955f575e97068eb041d9263950cf001ecb9a174902998cb62c8",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/private/tmp/fauna-blind-grade-6gHQDn/SEAL.json",
+      "path": "docs/review-records/p1-e08-t09/blind-visual-0922f7f/SEAL.json",
+      "sourceBytes": 506,
+      "sourceSha256": "208b105d0a44f10341d4299917196be4da31422d973a45da440dcd967cceeac4",
+      "storedBytes": 506,
+      "storedSha256": "208b105d0a44f10341d4299917196be4da31422d973a45da440dcd967cceeac4",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/private/tmp/fauna-blind-grade-6gHQDn/MANIFEST.json",
+      "path": "docs/review-records/p1-e08-t09/blind-visual-0922f7f/MANIFEST.json",
+      "sourceBytes": 779,
+      "sourceSha256": "22d1f437ee09b666f17a9c48b406ce78ec38430211a269d070b69b1399d21c1c",
+      "storedBytes": 779,
+      "storedSha256": "22d1f437ee09b666f17a9c48b406ce78ec38430211a269d070b69b1399d21c1c",
+      "encoding": "exact",
+      "alreadyPresent": false
+    }
+  ],
+  "summary": {
+    "faunaBlindVisual": "PASS mean 4.71 for P1.E08.T09 on original 768-file packet at sourceHead 0922f7f",
+    "scores": {
+      "verdict": "PASS",
+      "task": "P1.E08.T09",
+      "scores": {
+        "hierarchy_and_legibility": 5,
+        "fit_with_hud_language": 5,
+        "motion": 4,
+        "theme_and_palette": 5,
+        "correctness": 5,
+        "spec_match": 5,
+        "performance": 4
+      },
+      "mean": 4.71,
+      "sourceHead": "0922f7fc3df310cbdd624d8fa5846b73a9cfe533",
+      "sourceTree": "baa2cd37e8e767e73612161bca28fc425d87cde1",
+      "packet": "/private/tmp/fauna-visual-packet-current-xmd3v6d9",
+      "indexSha256": "1e67e5d166ffb38ac9491bf4b245b6801f8a197e3558dee7745aacce0ea3a117"
+    },
+    "sealSha256": "208b105d0a44f10341d4299917196be4da31422d973a45da440dcd967cceeac4",
+    "indexSha256": "1e67e5d166ffb38ac9491bf4b245b6801f8a197e3558dee7745aacce0ea3a117",
+    "evidenceLimits": "1/60 simulation samples not observed realtime 60fps; HUD readout <1ms not whole-scene budget",
+    "scratch": "/private/tmp/fauna-blind-grade-6gHQDn"
+  }
+}

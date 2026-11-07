@@ -1,0 +1,241 @@
+diff --git a/packages/tools/src/capture/browser-work-trace.ts b/packages/tools/src/capture/browser-work-trace.ts
+index 142c92466..77c90c33e 100644
+--- a/packages/tools/src/capture/browser-work-trace.ts
++++ b/packages/tools/src/capture/browser-work-trace.ts
+@@ -1038,7 +1038,15 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
+           options.trace.on('Tracing.bufferUsage', usage);
+           options.trace.on('close', lost);
+           listening = true;
+-          receipt.categories = await owned(() => options.trace.send({ method: 'Tracing.getCategories' }), 5000, 'categories', step);
++          await owned(
++            async () => {
++              const raw = await options.trace.send({ method: 'Tracing.getCategories' });
++              if (acceptingEvidence) receipt.categories = structuredClone(raw);
++            },
++            5000,
++            'categories',
++            step,
++          );
+           const categories = isRecord(receipt.categories) ? receipt.categories.categories : null;
+           if (
+             !isRecord(receipt.categories) ||
+diff --git a/packages/tools/src/capture/trace-observer.test.ts b/packages/tools/src/capture/trace-observer.test.ts
+index 2f70cd98a..f4d8446e3 100644
+--- a/packages/tools/src/capture/trace-observer.test.ts
++++ b/packages/tools/src/capture/trace-observer.test.ts
+@@ -1129,6 +1129,104 @@ describe('R3 advisory admission boundaries in the new native caller unit', () =>
+ });
+ 
+ describe('native category discovery regression', () => {
++  it.each(['cancelled-return', 'deadline-draining-return'])('retains the detached category reply during %s', async (mode) => {
++    const f = fixture(),
++      response = { categories: [], unknown: { bytes: 'RETURNED_RAW', nested: [1, null] } },
++      expected = structuredClone(response),
++      send = f.options.trace.send;
++    let release = () => {},
++      entered = () => {},
++      returned = false;
++    const gate = new Promise<void>((resolve) => {
++        release = resolve;
++      }),
++      started = new Promise<void>((resolve) => {
++        entered = resolve;
++      });
++    f.options.trace.send = async (command) => {
++      if (command.method !== 'Tracing.getCategories') return send(command);
++      entered();
++      if (mode === 'deadline-draining-return') await gate;
++      returned = true;
++      if (mode === 'cancelled-return') f.abort.abort(new Error('CATEGORY_CANCEL'));
++      return response;
++    };
++    f.options.trace.disconnect = async () => {
++      response.unknown.bytes = 'MUTATED_BY_CLEANUP';
++    };
++    if (mode === 'deadline-draining-return') {
++      f.options.clock = {
++        now: () => 1,
++        bound: async (task, ms, label, signal) => {
++          if (label === 'categories') {
++            await started;
++            throw new Error('CATEGORY_DEADLINE');
++          }
++          return bounded(task, ms, label, signal);
++        },
++      };
++      f.options.probe.cancel = async () => {
++        release();
++      };
++    }
++    const packet = await failed(f);
++    expect(returned).toBe(true);
++    expect(packet.failure).toBe(mode === 'cancelled-return' ? 'Error: CATEGORY_CANCEL' : 'Error: CATEGORY_DEADLINE');
++    expect(packet.steps[0].receipt).toMatchObject({ categories: expected, categoryDiscovery: { status: 'unrequested' }, startRequested: false });
++    expect(packet.summary).toBeNull();
++    expect(packet.portSettlement.kind).toBe('ports-settled');
++    expect(packet.totals.preparations).toBe(0);
++    expect(packet.totals.segments).toBe(0);
++    expect(f.calls).toEqual([]);
++    expect(methods(f)).not.toContain('Tracing.start');
++    expect(f.reports[0].steps[0].receipt).toMatchObject({ categories: expected });
++  });
++  it('cuts off a category reply after publication without changing failed evidence or writing sinks', async () => {
++    const f = fixture(),
++      send = f.options.trace.send;
++    let release = () => {},
++      entered = () => {},
++      ownedReply: Promise<unknown> = Promise.resolve();
++    const gate = new Promise<void>((resolve) => {
++        release = resolve;
++      }),
++      started = new Promise<void>((resolve) => {
++        entered = resolve;
++      });
++    f.options.trace.send = async (command) => {
++      if (command.method !== 'Tracing.getCategories') return send(command);
++      entered();
++      await gate;
++      return { categories: [], unknown: { late: true } };
++    };
++    f.options.clock = {
++      now: () => 1,
++      bound: async (task, ms, label, signal) => {
++        if (label === 'categories') {
++          ownedReply = task;
++          await started;
++          throw new Error('CATEGORY_DEADLINE');
++        }
++        if (label.includes('callbacks-drain')) throw new Error('CATEGORY_STILL_PENDING');
++        return bounded(task, ms, label, signal);
++      },
++    };
++    const packet = await failed(f),
++      saved = JSON.stringify({ packet, reports: f.reports, retained: f.retained, chunks: [...f.chunks] });
++    expect(packet.steps[0].receipt).toMatchObject({ categories: null, categoryDiscovery: { status: 'unrequested' } });
++    expect(packet.portSettlement).toMatchObject({ kind: 'ports-unsettled', requiresController: true });
++    if (packet.portSettlement.kind !== 'ports-unsettled') throw new Error('Expected pending category callback');
++    expect(packet.portSettlement.pendingCallbacks).toBeGreaterThan(0);
++    expect(packet.finishedMs).toBeNull();
++    expect(packet.failure).toBe('Error: CATEGORY_DEADLINE');
++    expect(packet.summary).toBeNull();
++    release();
++    await ownedReply;
++    expect(JSON.stringify({ packet, reports: f.reports, retained: f.retained, chunks: [...f.chunks] })).toBe(saved);
++    expect(f.calls).toEqual([]);
++    expect(methods(f)).not.toContain('Tracing.start');
++    expect(f.emitter.eventNames()).toEqual([]);
++  });
+   it.each([
+     { label: 'null receipt', response: null },
+     { label: 'missing field', response: {} },
+diff --git a/packages/tools/src/capture/trace_observer_packet/local-binding.json b/packages/tools/src/capture/trace_observer_packet/local-binding.json
+index 0fe2294ac..e9955ce2e 100644
+--- a/packages/tools/src/capture/trace_observer_packet/local-binding.json
++++ b/packages/tools/src/capture/trace_observer_packet/local-binding.json
+@@ -2922,7 +2922,7 @@
+     }
+   ],
+   "browser": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+-  "consumption": "/private/tmp/t13-observer-consumed-d72c8e62",
++  "consumption": "/private/tmp/t13-observer-consumed-0b3adcd9",
+   "controlledLoad": {
+     "externalContenders": "unknown-not-excluded",
+     "logicalCores": 15,
+@@ -2937,14 +2937,14 @@
+     "provenance": "read-only system_profiler; actual GL device must still be observed",
+     "rendererContains": "Apple M5 Pro"
+   },
+-  "fallback": "/private/tmp/t13-observer-fallback-d72c8e62",
+-  "grant": "/private/tmp/t13-observer-grant-d72c8e62.json",
++  "fallback": "/private/tmp/t13-observer-fallback-0b3adcd9",
++  "grant": "/private/tmp/t13-observer-grant-0b3adcd9.json",
+   "kind": "T13_OBSERVER_DISABLED_LOCAL_PATHS_V1",
+   "launchPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+   "osBuild": "26A434",
+-  "output": "/private/tmp/t13-observer-native-d72c8e62",
+-  "prefix": "bwt-d72c8e6226c040d7b94c8f28cb42447c",
++  "output": "/private/tmp/t13-observer-native-0b3adcd9",
++  "prefix": "bwt-0b3adcd9c21c44e581bbda869f8fc205",
+   "pythonKernel": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+   "pythonLauncher": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+   "runtimeAuthorized": false,
+diff --git a/packages/tools/src/capture/trace_observer_packet/worker.drain.test.ts b/packages/tools/src/capture/trace_observer_packet/worker.drain.test.ts
+index 06dcf3261..1ede21edc 100644
+--- a/packages/tools/src/capture/trace_observer_packet/worker.drain.test.ts
++++ b/packages/tools/src/capture/trace_observer_packet/worker.drain.test.ts
+@@ -6,7 +6,13 @@ import { sha256 } from './evidence.ts';
+ import { observerRequiredSources } from '../trace-observer-report.ts';
+ import nativeCategoryReceipt from './fixtures/native-attempt3-categories.json';
+ 
+-const state = vi.hoisted(() => ({ calls: [] as string[], closed: false, categories: { categories: [] } as unknown, detachFails: false }));
++const state = vi.hoisted(() => ({
++  calls: [] as string[],
++  closed: false,
++  categories: { categories: [] } as unknown,
++  detachFails: false,
++  categoryCancel: false,
++}));
+ vi.mock('@playwright/test', async () => {
+   const { EventEmitter } = await import('node:events');
+   return {
+@@ -32,7 +38,10 @@ vi.mock('@playwright/test', async () => {
+               state.calls.push(method);
+               if (method === 'Browser.getVersion') return { product: 'CPU inert producer' };
+               if (method === 'SystemInfo.getProcessInfo') return { processInfo: [{ id: 624243, type: 'renderer' }] };
+-              if (method === 'Tracing.getCategories') return state.categories;
++              if (method === 'Tracing.getCategories') {
++                if (state.categoryCancel) process.emit('SIGTERM');
++                return state.categories;
++              }
+               if (method === 'Tracing.end') events.emit('Tracing.tracingComplete', { dataLossOccurred: false, stream: 'owned-stream' });
+               if (method === 'IO.read') return { data: '{"traceEvents":[]}', eof: true };
+               return {};
+@@ -73,13 +82,17 @@ afterEach(() => {
+   vi.unstubAllEnvs();
+ });
+ 
+-it.each(['malformed', 'empty', 'detach-failure'])(
++it.each(['malformed', 'empty', 'detach-failure', 'category-cancel'])(
+   'drains the page before browser disposal through nativeMain, actual adapter and dispatcher: %s',
+   async (mode) => {
+     state.calls.length = 0;
+     state.closed = false;
+     state.detachFails = mode === 'detach-failure';
+-    state.categories = mode === 'empty' ? nativeCategoryReceipt.response : { categories: [null], unknown: 'retained raw reply' };
++    state.categoryCancel = mode === 'category-cancel';
++    state.categories =
++      mode === 'empty' || state.categoryCancel
++        ? { ...nativeCategoryReceipt.response, unknown: { retained: 'worker category reply' } }
++        : { categories: [null], unknown: 'retained raw reply' };
+     const root = realpathSync(mkdtempSync(join(tmpdir(), 't13-worker-drain-')));
+     for (const dir of ['capture', 'fallback', 'consumption']) mkdirSync(join(root, dir));
+     const grant = {
+@@ -151,9 +164,13 @@ it.each(['malformed', 'empty', 'detach-failure'])(
+         },
+       },
+     });
++    const listeners = process.listenerCount('SIGTERM');
+     await expect(nativeMain(['--owned', path, sha256(raw)])).rejects.toThrow('adapter failed');
++    expect(process.listenerCount('SIGTERM')).toBe(listeners);
+     const packet = JSON.parse(readFileSync(join(root, 'capture/packet.json'), 'utf8'));
+-    expect(packet.failure).toContain(mode === 'empty' ? 'PRIMARY_PREPARE' : 'Malformed category receipt');
++    expect(packet.failure).toContain(
++      state.categoryCancel ? 'External observer cancellation' : mode === 'empty' ? 'PRIMARY_PREPARE' : 'Malformed category receipt',
++    );
+     expect(packet.steps[0].receipt.categories).toEqual(state.categories);
+     expect(packet.status).toBe('failed');
+     expect(packet.summary).toBeNull();
+@@ -163,6 +180,12 @@ it.each(['malformed', 'empty', 'detach-failure'])(
+     expect(state.calls.lastIndexOf('probe.cancel')).toBeLessThan(state.calls.indexOf('browser.close'));
+     expect(state.calls.slice(-3)).toEqual(['browser.close', 'server.close', 'vite.stop']);
+     expect(state.calls.filter((x) => x === 'browser.close')).toHaveLength(1);
++    if (state.categoryCancel) {
++      expect(packet.totals.preparations).toBe(0);
++      expect(packet.steps[0].prepare).toBeNull();
++      expect(packet.steps[0].receipt.categoryDiscovery.status).toBe('unrequested');
++      expect(state.calls).not.toContain('probe.prepare');
++    }
+     if (mode === 'empty') {
+       expect(state.calls).toContain('IO.close');
+       expect(packet.steps[0].prepare.value.unknown).toBe('partial CPU producer');

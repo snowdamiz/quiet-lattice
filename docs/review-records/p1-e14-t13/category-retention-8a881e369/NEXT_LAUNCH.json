@@ -1,0 +1,128 @@
+{
+  "kind": "T13_DISABLED_NEXT_LAUNCH",
+  "runtimeAuthorized": false,
+  "freezeExecuted": false,
+  "freshFreezeDisabled": true,
+  "head": "8a881e369de35c4fb62cc9ae5d68e48d54716cbf",
+  "tree": "3ca9cef5984e6b996b89ffbca5d96d7ef9751cec",
+  "base": "54a36dc47e0429f6aeb057fa9aba4ff421f8b9c9",
+  "baseTree": "3b3bf250cf9a1ea4091e1cd1520f994a27ea28b7",
+  "binding": "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/local-binding.json",
+  "bindingSha256": "dddf5f64bdd171f7154b10c843c56467b7612f287e3e5d8de5e5053406ccfaf5",
+  "planSha256": "73522bd42bd66eb35e9f94fcaa6f8813c2b5738be8ee9d34553ca14c50c7abed",
+  "purpose": "P1.E14.T13/unchanged-reference-trace-observer-v1",
+  "freezePlan": "/private/tmp/p1-e14-t13-category-retention-sczivq8g/freeze-plan.json",
+  "plannedFrozenRoot": "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9",
+  "plannedReadiness": "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9/readiness.json",
+  "disabledReadinessSha256": null,
+  "disabledReadinessNote": "Fresh freeze intentionally not executed in this unit; parent must freeze after independent review before enablement.",
+  "parentEnabledReadinessPath": "/private/tmp/t13-observer-enabled-readiness-0b3adcd9.json",
+  "entry": "/private/tmp/p1-e14-t13-category-retention-sczivq8g/NEXT_LAUNCH.sh",
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "pythonLauncher": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "pythonKernel": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+  "browser": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "boundPaths": {
+    "prefix": "bwt-0b3adcd9c21c44e581bbda869f8fc205",
+    "output": "/private/tmp/t13-observer-native-0b3adcd9",
+    "fallback": "/private/tmp/t13-observer-fallback-0b3adcd9",
+    "consumption": "/private/tmp/t13-observer-consumed-0b3adcd9",
+    "grant": "/private/tmp/t13-observer-grant-0b3adcd9.json",
+    "assetPath": "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/client/public/models/characters/thalune.glb"
+  },
+  "bounds": {
+    "captureMs": 1009100,
+    "controlFences": 24,
+    "dependentPasses": 48,
+    "drainMs": 306100,
+    "events": 250000,
+    "frames": 10,
+    "png": 0,
+    "preflightFences": 36,
+    "preparations": 12,
+    "queries": 0,
+    "reads": 1024,
+    "segments": 6,
+    "terminalMs": 1315200,
+    "traceBytes": 67108864,
+    "warmUpFrames": 7200
+  },
+  "limits": {
+    "dependencyBytes": 536870912,
+    "dependencyFiles": 30000,
+    "frozenBytes": 805306368,
+    "frozenFiles": 40000,
+    "logBytes": 268435456,
+    "metadataBytes": 16777216,
+    "minimumFreeBytes": 8589934592,
+    "outputBytes": 536870912,
+    "outputFiles": 20000,
+    "profileBytes": 536870912,
+    "profileFiles": 20000,
+    "sourceBytes": 268435456,
+    "sourceFiles": 6000,
+    "testEvidenceScratchBytes": 268435456
+  },
+  "controlledLoad": {
+    "externalContenders": "unknown-not-excluded",
+    "logicalCores": 15,
+    "maxLoad": [
+      7.5,
+      10,
+      15
+    ],
+    "requiresOurHeavyCPUJobsQuiesced": true,
+    "requiresParentGPUReservation": true
+  },
+  "expectedDevice": {
+    "backend": "metal",
+    "provenance": "read-only system_profiler; actual GL device must still be observed",
+    "rendererContains": "Apple M5 Pro"
+  },
+  "grantFieldRequirements": [
+    "purpose=P1.E14.T13/unchanged-reference-trace-observer-v1",
+    "head=8a881e369de35c4fb62cc9ae5d68e48d54716cbf",
+    "tree=3ca9cef5984e6b996b89ffbca5d96d7ef9751cec",
+    "readinessSha256=hash of separately parent-enabled readiness after authorized freeze",
+    "planSha256=73522bd42bd66eb35e9f94fcaa6f8813c2b5738be8ee9d34553ca14c50c7abed",
+    "output=/private/tmp/t13-observer-native-0b3adcd9",
+    "consumption=/private/tmp/t13-observer-consumed-0b3adcd9",
+    "expiresAtEpochSeconds must be future and no more than 3600 seconds ahead",
+    "controlledLoad.ourHeavyCpuJobsQuiesced=true",
+    "controlledLoad.gpuReservation=explicit parent reservation identity"
+  ],
+  "prospectivePathsAbsent": {
+    "/private/tmp/t13-observer-native-0b3adcd9": false,
+    "/private/tmp/t13-observer-fallback-0b3adcd9": false,
+    "/private/tmp/t13-observer-grant-0b3adcd9.json": false,
+    "/private/tmp/t13-observer-consumed-0b3adcd9": false,
+    "/private/tmp/t13-observer-enabled-readiness-0b3adcd9.json": false
+  },
+  "capacityAtSeal": {
+    "at": 1794055858.983559,
+    "path": "/private/tmp/p1-e14-t13-category-retention-sczivq8g",
+    "availableBytes": 47395315712,
+    "minimumFreeBytes": 8589934592,
+    "quotaGuaranteed": false
+  },
+  "sizeClarification": {
+    "resolved": true,
+    "resolvedAt": 1794055954.58914,
+    "decision": "SEPARATE_FREEZE_AND_SCRATCH_CEILINGS",
+    "authority": "user_explicit_confirmation",
+    "frozenBundleCeilingBytes": 805306368,
+    "newTestEvidenceScratchCeilingBytes": 268435456,
+    "scratchLimitNotRaised": true,
+    "scratchAndFrozenRemainSeparate": true,
+    "freezePayloadChargedTo": "existingFrozenLimit",
+    "estimatedFrozenPayloadBytes": {
+      "sourceBytes": 47606128,
+      "dependencyBytes": 247567641,
+      "payloadBytesBeforeReadiness": 295173769,
+      "priorReadinessBytesReference": 7949751,
+      "estimatedSourceDepsReadinessBytes": 303123520,
+      "note": "\u2248303 MiB source+deps+readiness belongs to the frozen-bundle ceiling, not NEW test/evidence scratch"
+    },
+    "conflictResolved": "303MiB freeze payload does not violate \u2264256MiB NEW scratch because ceilings are separate"
+  }
+}

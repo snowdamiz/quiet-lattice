@@ -1,0 +1,232 @@
+{
+  "head": "8a881e369de35c4fb62cc9ae5d68e48d54716cbf",
+  "tree": "3ca9cef5984e6b996b89ffbca5d96d7ef9751cec",
+  "base": "54a36dc47e0429f6aeb057fa9aba4ff421f8b9c9",
+  "baseTree": "3b3bf250cf9a1ea4091e1cd1520f994a27ea28b7",
+  "worktreeClean": true,
+  "branch": "codex/task/P1-E14-T13-trace-observer",
+  "bindingSha256": "dddf5f64bdd171f7154b10c843c56467b7612f287e3e5d8de5e5053406ccfaf5",
+  "planSha256": "73522bd42bd66eb35e9f94fcaa6f8813c2b5738be8ee9d34553ca14c50c7abed",
+  "oldProtocolPrefixSha256": "aaaef3705f0da62b15b72187f30c5cc1f6e8350f281727322906951200554f52",
+  "reviewReportSha256": "79b15910e89b2eca9f7140737538bbe7ef2295dd14969d3b6c1f8ce6899463b1",
+  "reviewSealSha256": "5a7b268f3cf206291550faa6869b3e1830c78559869e427c6c3e21aded7d90ce",
+  "tests": {
+    "reviewerExactBaseRed": {
+      "exit": 1,
+      "failed": 3,
+      "passed": 15,
+      "seconds": 4.705269749974832
+    },
+    "ownExactBaseRed": {
+      "exit": 1,
+      "failed": 4,
+      "passed": 0,
+      "seconds": 1.298532292013988
+    },
+    "ownExactBaseRed2": {
+      "exit": 1,
+      "failed": 3,
+      "passed": 1,
+      "seconds": 1.2221469999640249,
+      "note": "late-after-cutoff already green against base production"
+    },
+    "reviewerCurrentGreen": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 18,
+      "seconds": 4.644566833041608
+    },
+    "ownCurrentGreen": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 4,
+      "seconds": 1.2615866659907624
+    },
+    "focusedCurrent": {
+      "exit": 0,
+      "failed": 0,
+      "passed": 297,
+      "files": [
+        "trace-observer.test.ts",
+        "worker.drain.test.ts"
+      ],
+      "seconds": 3.516994541976601
+    },
+    "toolsTypecheck": {
+      "exit": 0,
+      "seconds": 1.9605376669787802
+    },
+    "scopedLint": {
+      "exit": 0,
+      "seconds": 0.6228747080313042
+    },
+    "scopedFormat": {
+      "exit": 0,
+      "seconds": 0.26379654195625335
+    },
+    "diffCheck": {
+      "exit": 0,
+      "seconds": 0.026198915962595493
+    },
+    "maxWorkers": 2
+  },
+  "freeze": {
+    "kind": "T13_DISABLED_FREEZE_BUILD_PLAN",
+    "runtimeAuthorized": false,
+    "executed": false,
+    "head": "8a881e369de35c4fb62cc9ae5d68e48d54716cbf",
+    "tree": "3ca9cef5984e6b996b89ffbca5d96d7ef9751cec",
+    "bindingSha256": "dddf5f64bdd171f7154b10c843c56467b7612f287e3e5d8de5e5053406ccfaf5",
+    "destination": "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9",
+    "readiness": "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9/readiness.json",
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/freeze.py",
+      "--binding",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/tools/src/capture/trace_observer_packet/local-binding.json",
+      "--binding-sha256",
+      "dddf5f64bdd171f7154b10c843c56467b7612f287e3e5d8de5e5053406ccfaf5",
+      "--destination",
+      "/private/tmp/t13-observer-frozen-8a881e369-0b3adcd9"
+    ],
+    "sourceBytes": 47606128,
+    "dependencyBytes": 247567641,
+    "payloadBytesBeforeReadiness": 295173769,
+    "testEvidenceScratchLimit": 268435456,
+    "existingFrozenLimit": 805306368,
+    "sizeClarificationPending": false,
+    "capacity": {
+      "at": 1794055460.8532841,
+      "path": "/private/tmp/p1-e14-t13-category-retention-sczivq8g",
+      "availableBytes": 47884910592,
+      "minimumFreeBytes": 8589934592,
+      "quotaGuaranteed": false
+    },
+    "sizeClarification": {
+      "resolved": true,
+      "resolvedAt": 1794055954.58914,
+      "decision": "SEPARATE_FREEZE_AND_SCRATCH_CEILINGS",
+      "authority": "user_explicit_confirmation",
+      "frozenBundleCeilingBytes": 805306368,
+      "newTestEvidenceScratchCeilingBytes": 268435456,
+      "scratchLimitNotRaised": true,
+      "scratchAndFrozenRemainSeparate": true,
+      "freezePayloadChargedTo": "existingFrozenLimit",
+      "estimatedFrozenPayloadBytes": {
+        "sourceBytes": 47606128,
+        "dependencyBytes": 247567641,
+        "payloadBytesBeforeReadiness": 295173769,
+        "priorReadinessBytesReference": 7949751,
+        "estimatedSourceDepsReadinessBytes": 303123520,
+        "note": "\u2248303 MiB source+deps+readiness belongs to the frozen-bundle ceiling, not NEW test/evidence scratch"
+      },
+      "conflictResolved": "303MiB freeze payload does not violate \u2264256MiB NEW scratch because ceilings are separate"
+    },
+    "estimatedSourceDepsReadinessBytes": 303123520
+  },
+  "preservation": {
+    "protectedRecords": 517,
+    "reviewRegularFilesVerified": 1074,
+    "reviewReportSha256": "79b15910e89b2eca9f7140737538bbe7ef2295dd14969d3b6c1f8ce6899463b1",
+    "oldProtocolPrefixSha256": "aaaef3705f0da62b15b72187f30c5cc1f6e8350f281727322906951200554f52",
+    "oldFrozenSourceFiles": 516,
+    "currentDependencyRecords": 13322,
+    "currentDependenciesExactlyEqual54a36Freeze": true,
+    "priorDeclaredCacheDriftPreserved": true,
+    "originalMetadataFilesVerified": 24,
+    "attempt3FullLedgersUnchanged": true,
+    "allProspectivePathsAbsent": true
+  },
+  "greenPackets": {
+    "category-cancelled-return.json": {
+      "path": "/private/tmp/p1-e14-t13-category-retention-sczivq8g/tmp/category-cancelled-return.json",
+      "sha256": "ef5fc919dd18f33eab9591cdb8d8881257699a6fa34a58b26bfeb806e59ab0b7",
+      "returned": true,
+      "failure": "Error: REVIEW_CANCEL",
+      "categories": {
+        "categories": [],
+        "unknown": {
+          "bytes": "RETURNED_RAW"
+        }
+      },
+      "categoryDiscovery": {
+        "status": "unrequested"
+      },
+      "summary": null,
+      "preparations": 0,
+      "segments": 0
+    },
+    "category-deadline-draining-return.json": {
+      "path": "/private/tmp/p1-e14-t13-category-retention-sczivq8g/tmp/category-deadline-draining-return.json",
+      "sha256": "ff9d361f1e05684182eb1c2cbcc0d03510f8d7a76c6ca3ed4805ff385cfbcd06",
+      "returned": true,
+      "failure": "Error: REVIEW_CATEGORY_DEADLINE",
+      "categories": {
+        "categories": [],
+        "unknown": {
+          "bytes": "RETURNED_RAW"
+        }
+      },
+      "categoryDiscovery": {
+        "status": "unrequested"
+      },
+      "summary": null,
+      "preparations": 0,
+      "segments": 0
+    }
+  },
+  "capacityAtSeal": {
+    "at": 1794055858.983559,
+    "path": "/private/tmp/p1-e14-t13-category-retention-sczivq8g",
+    "availableBytes": 47395315712,
+    "minimumFreeBytes": 8589934592,
+    "quotaGuaranteed": false
+  },
+  "sourceHashes": [
+    {
+      "path": "packages/tools/src/capture/browser-work-trace.ts",
+      "baseSha256": "86339ea514767fd824b7efa83887f00bff1ad593121127ad12dc225689a2613f",
+      "currentSha256": "3462692a384be7d4a4a7e58b651e2751058e7b59e896ef8f01ef1fb81f5be61b",
+      "bytes": 54674
+    },
+    {
+      "path": "packages/tools/src/capture/trace-observer.test.ts",
+      "baseSha256": "82f1e6e530cb46c7f32209e98c5ac7cae62dc9df1671064502e02a258970b73c",
+      "currentSha256": "5dd96ff31dfe7822823219df3ffc4cd331705135a22d3b356c1e472294709467",
+      "bytes": 58843
+    },
+    {
+      "path": "packages/tools/src/capture/trace_observer_packet/worker.drain.test.ts",
+      "baseSha256": "abad68374f2227d1f02b70c86f5955718ef4abbd800e21a3b1ce2aeb636305a9",
+      "currentSha256": "e5dc6118a247a087929abb2ef05dccecb000a9547bf74954285fb7780ad9a33f",
+      "bytes": 8285
+    },
+    {
+      "path": "packages/tools/src/capture/trace_observer_packet/local-binding.json",
+      "baseSha256": "6c63cf528a7cf1553a1a4563b24e19e9a35d1c28a8b9b8bf8c2897d04fc46f4d",
+      "currentSha256": "dddf5f64bdd171f7154b10c843c56467b7612f287e3e5d8de5e5053406ccfaf5",
+      "bytes": 191875
+    }
+  ],
+  "sizeClarification": {
+    "resolved": true,
+    "resolvedAt": 1794055954.58914,
+    "decision": "SEPARATE_FREEZE_AND_SCRATCH_CEILINGS",
+    "authority": "user_explicit_confirmation",
+    "frozenBundleCeilingBytes": 805306368,
+    "newTestEvidenceScratchCeilingBytes": 268435456,
+    "scratchLimitNotRaised": true,
+    "scratchAndFrozenRemainSeparate": true,
+    "freezePayloadChargedTo": "existingFrozenLimit",
+    "estimatedFrozenPayloadBytes": {
+      "sourceBytes": 47606128,
+      "dependencyBytes": 247567641,
+      "payloadBytesBeforeReadiness": 295173769,
+      "priorReadinessBytesReference": 7949751,
+      "estimatedSourceDepsReadinessBytes": 303123520,
+      "note": "\u2248303 MiB source+deps+readiness belongs to the frozen-bundle ceiling, not NEW test/evidence scratch"
+    },
+    "conflictResolved": "303MiB freeze payload does not violate \u2264256MiB NEW scratch because ceilings are separate"
+  }
+}
