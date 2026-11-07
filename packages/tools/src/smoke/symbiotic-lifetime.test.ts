@@ -235,22 +235,33 @@ function release(page: ReturnType<typeof terminalPage>, calls: string[], capture
   const code = transpileModule(spec.slice(begin, end + '    await online.clock.thaw();'.length), {
     compilerOptions: { target: ScriptTarget.ES2022 },
   }).outputText;
-  const run = new Function('a', 'online', 'until', 'expect', 'pixels', 'info', 'evidence', `return (async () => {${code}})();`);
-  return run(
-    { page },
-    { clock: { thaw: async () => calls.push('thaw') } },
-    async (_page: unknown, predicate: string) => {
-      expect(new Function(`return (${predicate})`)()).toBe(true);
-    },
+  const observerPage = { role: 'observer' };
+  const ports = {
+    until: async () => {},
+    a: { page },
+    b: { page: observerPage },
+    online: { clock: { thaw: async () => calls.push('thaw') } },
     expect,
-    async (_info: unknown, pages: unknown[], label: string) => {
-      expect(pages).toEqual([page]);
+    frameSubjects: async (target: unknown) => {
+      expect(target).toBe(observerPage);
+    },
+    capture: async (_info: unknown, target: unknown, role: string, label: string) => {
+      expect(target).toBe(observerPage);
+      expect(role).toBe('observer');
       if (captureFails) throw new Error('capture failed');
       calls.push(label);
+      return { before: {}, after: {} };
     },
-    {},
-    {},
-  );
+    sameCaptureView: () => true, // Real camera positives/negatives live in symbiotic-visibility.test.ts.
+    info: {},
+    evidence: {},
+    owner: 1,
+    observer: 2,
+    companion: 34,
+    enemy: 35,
+    parkedShips: [],
+  };
+  return new Function(...Object.keys(ports), `return (async () => {${code}})();`)(...Object.values(ports));
 }
 
 function fixtureAwait(fragment: string) {
@@ -319,12 +330,12 @@ describe('owner disconnect uses terminal page lifetime', () => {
     expect(o.calls).not.toContain('thaw');
   });
   it('captures post-retirement pixels from the surviving observer only', async () => {
-    const screenshot = vi.fn(async () => Buffer.from('CPU screenshot port, not pixels'));
-    const attach = vi.fn();
-    const run = new Function('b', 'info', `return (async () => {${fixtureAwait("info.attach('disconnect-observer'")}})();`);
-    await run({ page: { screenshot } }, { attach });
-    expect(screenshot).toHaveBeenCalledExactlyOnceWith({ timeout: 15_000 });
-    expect(attach).toHaveBeenCalledExactlyOnceWith('disconnect-observer', { body: Buffer.from('CPU screenshot port, not pixels'), contentType: 'image/png' });
+    const page = { role: 'surviving observer' },
+      capture = vi.fn(async () => ({}));
+    const code = fixtureAwait("capture(info, b.page, 'observer', 'disconnect'");
+    const run = new Function('b', 'info', 'capture', 'owner', 'observer', 'companion', 'enemy', `return (async () => {${code}})();`);
+    await run({ page }, {}, capture, 1, 2, 34, 35);
+    expect(capture).toHaveBeenCalledExactlyOnceWith({}, page, 'observer', 'disconnect', [1, 2, 34, 35]);
   });
   it('does not evaluate the closed owner again during existing final cleanup', async () => {
     const closedOwner = {

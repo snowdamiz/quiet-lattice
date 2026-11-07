@@ -1,20 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
-import type { EntityState } from '@astra/shared/protocol';
+import { EntityState } from '@astra/shared/protocol';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
 import {
   createSourceFile,
-  forEachChild,
-  isAwaitExpression,
-  isCallExpression,
   isClassDeclaration,
   isConstructorDeclaration,
   isFunctionDeclaration,
   isMethodDeclaration,
-  isVariableDeclaration,
-  type Node,
   ScriptTarget,
   transpileModule,
 } from 'typescript';
@@ -254,7 +249,7 @@ function predicate(marker: string) {
   const render = new Function('enemy', 'owner', 'companion', 'observer', 'arena', 'release', 'beforeHp', 'i', 'return `' + source + '`;');
   return new Function('window', 'return !!(' + render(33, 11, 22, 44, { frame: '123:4', enemy: { index: 7 } }, { tick: 30 }, [1, 1], 0) + ');');
 }
-const retirement = predicate('window.game.net.joined &&');
+const retirement = predicate('window.game.net.joined && window.game.net.entityId ===');
 const combat = predicate("window.symbioticQa.messages.some(m => m.t === 'event'");
 function world() {
   return {
@@ -802,21 +797,11 @@ async function pickingScene(positions: 'rendered' | 'wire', historicalObserver: 
     },
   };
   vi.stubGlobal('window', { game: g });
-  const source = createSourceFile('spec.ts', spec, ScriptTarget.Latest, true);
-  let groundCode: string | undefined;
-  const visit = (n: Node) => {
-    if (isVariableDeclaration(n) && n.name.getText(source) === 'ground' && n.initializer && isAwaitExpression(n.initializer)) {
-      const call = n.initializer.expression;
-      if (isCallExpression(call)) groundCode = call.arguments[0]!.getText(source);
-    }
-    forEachChild(n, visit);
-  };
-  visit(source);
-  if (!groundCode) throw new Error('Missing real arena ground callback');
-  const ground = new Function(transpileModule(`return (${groundCode});`, { compilerOptions: { target: ScriptTarget.ES2022 } }).outputText)()({
-    body: 7,
-    gearHeight: SHIP_GEAR_HEIGHT,
-  });
+  // Historical R4 geometry, paired with the actual corrected R5 parked pose. The new plaza is tested separately.
+  const historical = JSON.parse(
+    readFileSync(new URL('../../../../docs/review-records/p1-e07-t07-t09-close-fix/evidence/retained-gameplay-evidence.json', import.meta.url), 'utf8'),
+  );
+  const ground = { observer: EntityState.parse(historical.arrivals[1].landed).pos! };
   const at = await placement('observer', 31, 7, ground.observer.join(','));
   const shipState = new FrameState();
   shipState.frame = planet;
@@ -847,6 +832,7 @@ async function pickingScene(positions: 'rendered' | 'wire', historicalObserver: 
   }));
   remotes.ingest(new Map(entities.map((e) => [e.id, e])), game.time, game.time, null);
   g.frame();
+  const source = createSourceFile('spec.ts', spec, ScriptTarget.Latest, true);
   const aimSource = source.statements.find((s) => isFunctionDeclaration(s) && s.name?.text === 'aim');
   if (!aimSource) throw new Error('Missing real aim');
   const aim = new Function(

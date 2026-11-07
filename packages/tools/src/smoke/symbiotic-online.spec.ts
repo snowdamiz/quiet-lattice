@@ -1,9 +1,9 @@
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import type { Browser, Page, TestInfo } from '@playwright/test';
 import { CharacterSummary, EntityState, ServerMessage, type Vec3 } from '@astra/shared/protocol';
 import { newSkillState, storedSkills, type SkillOp } from '@astra/shared/skills';
 import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
-import { describeGalaxySystem, faunaSpecies, Galaxy, GALAXY_SEED, frameId } from '@astra/shared/world';
+import { describeGalaxySystem, faunaSpecies, Galaxy, GALAXY_SEED, frameId, drawnGround, streetPlan, cityFrame, cityPoint } from '@astra/shared/world';
 import { expect, test } from './harness.ts';
 import { startOnline, type Online } from './online.ts';
 import { symbioticRoutes, verifySymbioticClaim } from './symbiotic-private.ts';
@@ -101,20 +101,167 @@ function selectArena(tiers: number[]) {
   for (const [system, info] of galaxy.systems.entries()) {
     if (tiers[system] !== 1) continue;
     for (const body of describeGalaxySystem(info).bodies) {
-      if (body.params.type !== 'lush') continue;
+      if (body.params.type !== 'lush' || !body.params.cityCount) continue;
       const species = faunaSpecies(body.params, 1);
       const companion = species.find((s) => s.temperament === 'docile' && s.bodyPlan !== 'quad_heavy' && s.kind !== 'flyer');
-      const enemy = species.find((s) => s.temperament === 'territorial');
-      if (companion && enemy) return { system, seed: info.seed, body: body.index, companion, enemy, frame: frameId(info.seed, body.index) };
+      const enemy = species.find((s) => s.temperament === 'territorial' && s.bodyPlan !== 'quad_heavy');
+      if (companion && enemy) {
+        const city = drawnGround(body.params, 1).cities.find((city) => streetPlan(city).plaza >= 100);
+        if (city)
+          return {
+            system,
+            seed: info.seed,
+            body: body.index,
+            companion,
+            enemy,
+            frame: frameId(info.seed, body.index),
+            city,
+            plaza: streetPlan(city).plaza,
+            radius: body.params.radius,
+          };
+      }
     }
   }
-  throw new Error('No live tier-one lush world with a Bond-eligible docile species and territorial opponent');
+  throw new Error('No tier-one living world with eligible fauna and a clear existing plaza');
 }
 
 async function place(character: string, arena: ReturnType<typeof selectArena>, pose: string, frame = String(arena.body)) {
   // Cross-system placement is saved and restored: transport the owned ship, then disembark through normal input.
   const result = await online.admin({ cmd: 'teleport', character, system: arena.system, frame, pose, mode: pose === 'docked' ? 'docked' : 'landed' });
   expect(result, JSON.stringify(result)).toMatchObject({ ok: true });
+}
+
+function captureGround(arena: ReturnType<typeof selectArena>) {
+  const frame = cityFrame(arena.city);
+  const u = -arena.plaza * 0.65;
+  const at = (x: number, y: number, clearance = 0): Vec3 => cityPoint(arena.city, frame, arena.radius, u + x, y, clearance).toArray();
+  return {
+    owner: at(0, -60, SHIP_GEAR_HEIGHT),
+    observer: at(-16, -60, SHIP_GEAR_HEIGHT),
+    ownerMark: at(0, 0),
+    observerMark: at(-1, -6),
+    companion: at(8, 3),
+    east: frame.east.toArray(),
+    north: frame.north.toArray(),
+  };
+}
+
+/** Read the desired look delta; actual mouse events are the only writer. */
+async function lookAt(page: Page, point: number[]) {
+  await acquireInput(page);
+  let x = 640,
+    y = 360;
+  await page.mouse.move(x, y);
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const delta = await page.evaluate((point) => {
+      const g = window.game,
+        up = g.player.up(g.player.state.pos.clone());
+      const direction = g.player.state.pos.clone().fromArray(point).sub(g.cam.pos).normalize();
+      const flat = direction.clone().addScaledVector(up, -direction.dot(up)).normalize();
+      const heading = g.player.heading;
+      const yaw = Math.atan2(up.dot(heading.clone().cross(flat)), heading.dot(flat));
+      const pitch = Math.asin(direction.dot(up)) - g.player.pitch;
+      return { yaw, pitch, sensitivity: g.input.sensitivity, invertY: g.input.invertY };
+    }, point);
+    if (Math.abs(delta.yaw) < 0.004 && Math.abs(delta.pitch) < 0.004) return;
+    const clamp = (v: number) => Math.max(-160, Math.min(160, v));
+    x += clamp(-delta.yaw / (0.0021 * delta.sensitivity));
+    y += clamp(-delta.pitch / (0.0021 * delta.sensitivity * (delta.invertY ? -1 : 1)));
+    await page.mouse.move(x, y);
+    await page.evaluate(() => window.game.frame(1 / 60));
+  }
+  throw new Error('Real mouse look did not reach the capture direction');
+}
+
+async function walkTo(page: Page, point: number[]) {
+  await lookAt(page, point);
+  await page.keyboard.down('KeyW');
+  try {
+    await until(
+      page,
+      `Math.hypot(...window.game.net.store.entities.get(window.game.net.entityId).pos.map((v,i) => v - ${JSON.stringify(point)}[i])) < 1.5`,
+      20_000,
+    );
+  } finally {
+    await page.keyboard.up('KeyW');
+  }
+  await until(page, 'window.game.player.grounded && window.game.player.state.vel.length() < 0.03', 10_000);
+}
+
+/** Bounds from the actual submitted instance geometry; shader animation still needs independent pixel review. */
+async function frameSubjects(page: Page, ids: number[], parkedShips: number[][]) {
+  const read = () =>
+    page.evaluate((ids) => {
+      const g = window.game;
+      return ids.map((id) => {
+        const r = g.remotes.get(id),
+          d = r && g.fauna.worlds.get(r.frame)?.drawn.get(r.species);
+        if (!r?.drawn || !d?.mesh) throw new Error(`Capture subject ${id} is not drawn`);
+        const slot = Array.from({ length: d.mesh.count }, (_, k) => k).find((k) => d.seed.array[k] === Math.fround(r.vis.seed));
+        if (slot === undefined) throw new Error(`Capture subject ${id} has no instance`);
+        const matrix = d.mesh.matrixWorld.clone().fromArray(d.mesh.instanceMatrix.array, slot * 16);
+        const local = g.cam.pos.clone(),
+          min = [Infinity, Infinity, Infinity],
+          max = [-Infinity, -Infinity, -Infinity];
+        const pos = d.mesh.geometry.attributes.position;
+        for (let k = 0; k < pos.count; k++) {
+          local.fromBufferAttribute(pos, k).applyMatrix4(matrix).applyMatrix4(d.mesh.matrixWorld);
+          const screen = local.clone().project(g.engine.camera);
+          for (let axis = 0; axis < 3; axis++) {
+            const v = screen.getComponent(axis);
+            min[axis] = Math.min(min[axis]!, v);
+            max[axis] = Math.max(max[axis]!, v);
+          }
+        }
+        // Actual model centre in body coordinates: the geometry's vertical span is not the gameplay hit sphere.
+        let low = Infinity,
+          high = -Infinity;
+        for (let k = 0; k < pos.count; k++) {
+          low = Math.min(low, pos.getY(k));
+          high = Math.max(high, pos.getY(k));
+        }
+        const centre = r.pos.clone().addScaledVector(r.pos.clone().normalize(), (low + high) * 0.5 * d.sp.size);
+        return { id, min, max, centre: centre.toArray(), species: r.species, size: d.sp.size };
+      });
+    }, ids);
+  const initial = await read();
+  const centre = initial[0]!.centre.map((_: number, axis: number) => initial.reduce((sum, subject) => sum + subject.centre[axis]!, 0) / initial.length);
+  await lookAt(page, centre);
+  const bounds = await read();
+  for (const b of bounds) {
+    expect(b.min[0], `left edge of ${b.id}`).toBeGreaterThan(-0.85);
+    expect(b.max[0], `right edge of ${b.id}`).toBeLessThan(0.85);
+    expect(b.min[1], `feet of ${b.id}`).toBeGreaterThan(-0.55);
+    expect(b.max[1], `head of ${b.id}`).toBeLessThan(0.65);
+    expect(b.min[2]).toBeGreaterThan(-1);
+    expect(b.max[2]).toBeLessThan(1);
+    expect((b.max[1]! - b.min[1]!) * 360, `body height in pixels for ${b.id}`).toBeGreaterThan(100);
+  }
+  if (bounds.length === 2) {
+    const a = bounds[0]!,
+      b = bounds[1]!;
+    const dx = Math.abs((a.min[0]! + a.max[0]!) / 2 - (b.min[0]! + b.max[0]!) / 2) * 640;
+    expect(dx, 'combatant projected centres must be distinguishable').toBeGreaterThan(60);
+    const gap = Math.max(a.min[0]! - b.max[0]!, b.min[0]! - a.max[0]!) * 640;
+    expect(gap, 'full projected combatant bodies must be separated').toBeGreaterThan(8);
+  }
+  const surroundings = await page.evaluate((parkedShips) => {
+    const g = window.game,
+      p = g.player.state.pos,
+      up = p.clone().normalize();
+    const forward = g.cam.pos.clone().set(0, 0, -1).applyQuaternion(g.cam.quat);
+    const ships = parkedShips.map((pos) => {
+      const delta = p.clone().fromArray(pos).sub(g.cam.pos);
+      return { distance: delta.length(), angle: (Math.acos(Math.max(-1, Math.min(1, delta.normalize().dot(forward)))) * 180) / Math.PI };
+    });
+    return { clientId: g.net.entityId, ships, paving: g.player.state.frame.sampler.padWear(up.x, up.y, up.z) };
+  }, parkedShips);
+  for (const ship of surroundings.ships) {
+    expect(ship.distance).toBeGreaterThan(25);
+    expect(ship.angle).toBeGreaterThan(80);
+  }
+  expect(surroundings.paving).toBeGreaterThan(0.3);
+  return { bounds, surroundings };
 }
 
 async function spawn(arena: ReturnType<typeof selectArena>, species: number, at: Vec3) {
@@ -241,12 +388,137 @@ function drawn(e: Awaited<ReturnType<typeof inspect>>, arena: ReturnType<typeof 
   expect(e.screen[2]).toBeLessThan(1);
 }
 
-async function pixels(info: TestInfo, pages: Page[], label: string) {
-  for (const [i, page] of pages.entries())
-    await info.attach(`${label}-${i === 0 ? 'owner' : 'observer'}`, {
-      body: await page.screenshot({ timeout: 15_000 }),
-      contentType: 'image/png',
-    });
+interface CaptureView {
+  clientId: number;
+  tick: number;
+  serverTime: number;
+  ack: number;
+  sampledAt: number;
+  rendererFrame: number;
+  frame: string;
+  cameraBody: number;
+  camera: {
+    pos: number[];
+    quat: number[];
+    worldPos: number[];
+    worldQuat: number[];
+    projection: number[];
+    fov: number;
+    near: number;
+    far: number;
+    aspect: number;
+  };
+  viewport: { width: number; height: number; pixelRatio: number };
+  subjects: { id: number; wire: EntityState | null; shown: boolean; drawn: boolean; pos: number[] | null; world: number[] | null }[];
+  bannerOpacity: number;
+  overlay: string | null;
+}
+
+async function captureView(page: Page, ids: number[]) {
+  return page.evaluate<CaptureView, number[]>((ids) => {
+    const g = window.game;
+    const player: EntityState = g.net.store.entities.get(g.net.entityId);
+    if (!g.net.joined || !player?.frame) throw new Error('Missing live capture player/frame');
+    const camera = g.engine.camera;
+    const banner = document.querySelector('.banner');
+    return {
+      clientId: g.net.entityId,
+      tick: g.net.store.tick,
+      serverTime: g.net.store.time,
+      ack: g.net.store.ack,
+      sampledAt: performance.now(),
+      rendererFrame: g.engine.renderer.info.render.frame,
+      frame: player.frame,
+      cameraBody: g.system.planets.indexOf(g.cam.frame),
+      camera: {
+        pos: g.cam.pos.toArray(),
+        quat: g.cam.quat.toArray(),
+        worldPos: g.camWorld.toArray(),
+        worldQuat: g.camWorldQuat.toArray(),
+        projection: camera.projectionMatrix.toArray(),
+        fov: camera.fov,
+        near: camera.near,
+        far: camera.far,
+        aspect: camera.aspect,
+      },
+      viewport: { width: innerWidth, height: innerHeight, pixelRatio: g.engine.renderer.getPixelRatio() },
+      subjects: ids.map((id) => {
+        const remote = g.remotes.get(id);
+        return {
+          id,
+          wire: g.net.store.entities.get(id) ?? null,
+          shown: remote?.shown === true,
+          drawn: remote?.drawn === true,
+          pos: remote?.pos.toArray() ?? null,
+          world: remote?.world.toArray() ?? null,
+        };
+      }),
+      bannerOpacity: banner ? Number(getComputedStyle(banner).opacity) : 0,
+      overlay: g.overlay ?? null,
+    };
+  }, ids);
+}
+
+// Compare the body's local camera; planetary world transforms keep advancing normally.
+// Tiny arithmetic tolerances are below a pixel; no camera field is written or reset.
+function sameCaptureView(a: CaptureView, b: CaptureView) {
+  const close = (x: number[], y: number[], epsilon: number) => x.length === y.length && x.every((n, i) => Math.abs(n - y[i]!) <= epsilon);
+  const rotation = (x: number[], y: number[]) =>
+    close(x, y, 1e-7) ||
+    close(
+      x,
+      y.map((n) => -n),
+      1e-7,
+    );
+  return (
+    a.clientId === b.clientId &&
+    a.frame === b.frame &&
+    a.cameraBody === b.cameraBody &&
+    a.viewport.width === b.viewport.width &&
+    a.viewport.height === b.viewport.height &&
+    a.viewport.pixelRatio === b.viewport.pixelRatio &&
+    close(a.camera.pos, b.camera.pos, 1e-5) &&
+    rotation(a.camera.quat, b.camera.quat) &&
+    close(a.camera.projection, b.camera.projection, 1e-10) &&
+    a.camera.fov === b.camera.fov &&
+    a.camera.near === b.camera.near &&
+    a.camera.far === b.camera.far &&
+    a.camera.aspect === b.camera.aspect
+  );
+}
+
+async function capture(info: TestInfo, page: Page, role: 'owner' | 'observer', label: string, ids: number[]) {
+  // Wait for the real banner's CSS lifetime; never hide an overlay or alter a mesh.
+  await page.waitForFunction(
+    () => {
+      const banner = document.querySelector('.banner');
+      return !window.game.overlay && !document.querySelector('.pause-menu.show') && (!banner || Number(getComputedStyle(banner).opacity) < 0.01);
+    },
+    undefined,
+    { timeout: 25_000 },
+  );
+  const before = await captureView(page, ids);
+  const body = await page.screenshot({ timeout: 15_000 });
+  const after = await captureView(page, ids);
+  const name = `${label}-${role}`;
+  const receipt = { name, role, pngSha256: createHash('sha256').update(body).digest('hex'), before, after };
+  // The image belongs to this explicit capture interval, not an invented exact raster tick.
+  await info.attach(name, { body, contentType: 'image/png' });
+  await info.attach(`${name}-binding`, { body: Buffer.from(JSON.stringify(receipt, null, 2)), contentType: 'application/json' });
+  expect(before.clientId).toBe(after.clientId);
+  expect(before.frame).toBe(after.frame);
+  expect(after.tick).toBeGreaterThanOrEqual(before.tick);
+  expect(after.sampledAt).toBeGreaterThanOrEqual(before.sampledAt);
+  return receipt;
+}
+
+async function pixels(info: TestInfo, pages: Page[], label: string, ids: number[]) {
+  const receipts = [];
+  for (const [i, page] of pages.entries()) {
+    await acquireInput(page);
+    receipts.push(await capture(info, page, i === 0 ? 'owner' : 'observer', label, ids));
+  }
+  return receipts;
 }
 
 async function cast(page: Page, target: number) {
@@ -260,6 +532,75 @@ async function cast(page: Page, target: number) {
   await until(page, `window.symbioticQa.messages.some(m => m.t === 'cast' && m.seq === ${sent.seq})`);
   const answer = ServerMessage.parse(await page.evaluate((seq: number) => window.symbioticQa.messages.find((m) => m.t === 'cast' && m.seq === seq), sent.seq));
   return answer;
+}
+
+async function activeFollow(info: TestInfo, pages: Page[], companion: number, owner: number, observer: number, parkedShips: number[][]) {
+  if (!online.clock) throw new Error('Active follow requires the stepped clock');
+  const page = pages[0]!;
+  const initial: number[] = await page.evaluate((owner) => window.game.net.store.entities.get(owner).pos, owner);
+  let frozen = false;
+  const trail: { tick: number; owner: EntityState; companion: EntityState }[] = [];
+  const away = await page.evaluate(
+    ({ owner, companion }) => {
+      const p = window.game.net.store.entities.get(owner).pos,
+        c = window.game.net.store.entities.get(companion).pos;
+      return p.map((v: number, i: number) => v + (v - c[i]) * 2);
+    },
+    { owner, companion },
+  );
+  await lookAt(page, away);
+  try {
+    await page.keyboard.down('ShiftLeft');
+    await page.keyboard.down('KeyW');
+    await online.clock.thaw();
+    for (let sample = 0; sample < 120; sample++) {
+      const state = await page.evaluate(
+        ({ owner, companion }) => ({
+          tick: window.game.net.store.tick,
+          owner: window.game.net.store.entities.get(owner),
+          companion: window.game.net.store.entities.get(companion),
+        }),
+        { owner, companion },
+      );
+      const player = EntityState.parse(state.owner),
+        creature = EntityState.parse(state.companion);
+      if (creature.mode === 'follow' && creature.owner === owner && state.tick > (trail.at(-1)?.tick ?? -1)) {
+        trail.push({ tick: state.tick, owner: player, companion: creature });
+        if (trail.length > 3) trail.splice(1, 1);
+      }
+      if (distance(player.pos!, initial) > 12) throw new Error('Active-follow capture window missed');
+      if (trail.length === 3 && creature.mode === 'follow' && distance(player.pos!, initial) > 7 && distance(creature.pos!, trail[0]!.companion.pos!) > 1) {
+        await online.clock.freeze();
+        frozen = true;
+        break;
+      }
+      await page.waitForTimeout(50);
+    }
+  } finally {
+    await Promise.all([page.keyboard.up('KeyW'), page.keyboard.up('ShiftLeft')]);
+  }
+  expect(frozen).toBe(true);
+  expect(trail).toHaveLength(3);
+  const last = trail.at(-1)!;
+  expect(distance(last.owner.pos!, initial)).toBeGreaterThan(7);
+  expect(distance(last.companion.pos!, trail[0]!.companion.pos!)).toBeGreaterThan(1);
+  expect(last.tick).toBeGreaterThan(trail[0]!.tick);
+  for (const client of pages)
+    await until(
+      client,
+      `window.game.net.joined && window.game.net.store.entities.get(${companion})?.owner === ${owner} && window.game.net.store.entities.get(${companion})?.mode === 'follow'`,
+      3000,
+    );
+  const framing = [];
+  for (const client of pages) framing.push(await frameSubjects(client, [companion], parkedShips));
+  const captures = await pixels(info, pages, 'follow-active', [owner, observer, companion]);
+  for (const capture of captures)
+    for (const endpoint of [capture.before, capture.after]) {
+      const c = endpoint.subjects.find((subject) => subject.id === companion)?.wire;
+      expect(c).toMatchObject({ id: companion, owner, mode: 'follow' });
+    }
+  await online.clock.thaw();
+  return { trail, framing, captures };
 }
 
 const distance = (a: number[], b: number[]) => Math.hypot(...a.map((n, i) => n - b[i]!));
@@ -291,46 +632,8 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
         60_000,
       );
     }
-    const ground = await a.page.evaluate(
-      ({ body, gearHeight }) => {
-        const p = window.game.system.planets[body];
-        // Broad dry patch; all offsets are tangent metres, never fixed world-axis displacements on a sphere.
-        for (let lat = -60; lat <= 60; lat += 5)
-          for (let lon = 0; lon < 360; lon += 5) {
-            const up = window.game.player.state.pos
-              .clone()
-              .set(
-                Math.cos((lat * Math.PI) / 180) * Math.cos((lon * Math.PI) / 180),
-                Math.sin((lat * Math.PI) / 180),
-                Math.cos((lat * Math.PI) / 180) * Math.sin((lon * Math.PI) / 180),
-              );
-            const east = up.clone().set(-up.z, 0, up.x).normalize();
-            const north = up.clone().cross(east).normalize();
-            const at = (x: number, y: number, clearance = 0) => {
-              const dir = up.clone().multiplyScalar(p.radius).addScaledVector(east, x).addScaledVector(north, y).normalize();
-              return dir.multiplyScalar(p.surfaceRadius(dir) + clearance);
-            };
-            const points = [
-              [0, 0],
-              [60, 0],
-              [-60, 0],
-              [0, 60],
-              [0, -60],
-            ].map(([x, y]) => at(x!, y!));
-            const heights = points.map((v) => v.length() - p.radius);
-            if (heights.every((h) => h > 30) && Math.max(...heights) - Math.min(...heights) < 4)
-              return {
-                owner: at(0, 0, gearHeight).toArray(),
-                // Watch from behind the owner's retreat so the live enemy does not mask the companion's pick sphere.
-                observer: at(-24, -24, gearHeight).toArray(),
-                companion: at(12, 0).toArray(),
-                east: east.toArray(),
-              };
-          }
-        throw new Error('No broad dry arena on the selected world');
-      },
-      { body: arena.body, gearHeight: SHIP_GEAR_HEIGHT },
-    );
+    const ground = captureGround(arena);
+    evidence.ground = ground;
     await place(a.character, arena, ground.owner.join(','));
     await place(b.character, arena, ground.observer.join(','));
     const arrivals: { character: string; landed: EntityState; foot: EntityState }[] = [];
@@ -360,8 +663,11 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
       expect(foot.hp).toBeGreaterThan(0);
       arrivals.push({ character: client.character, landed, foot });
     }
-    await until(a.page, 'window.game.fauna.shown.length > 0', 60_000);
+    const parkedShips = arrivals.map((arrival) => arrival.landed.pos!);
+    await walkTo(a.page, ground.ownerMark);
+    await walkTo(b.page, ground.observerMark);
     const companion = await spawn(arena, arena.companion.index, ground.companion);
+    await until(a.page, 'window.game.fauna.shown.length > 0', 60_000);
     evidence.companion = companion;
     for (const page of pages) {
       await aim(page, companion);
@@ -375,6 +681,8 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     await until(a.page, `window.symbioticQa.messages.some(m => m.t === 'analyze' && m.target === ${companion} && m.result === 'new')`);
     evidence.analysis = await a.page.evaluate(() => window.symbioticQa.messages.filter((m) => m.t === 'analyze'));
     expect(await cast(a.page, companion)).toMatchObject({ result: 'cast' });
+    if (!online.clock) throw new Error('Stepped fixture clock is required');
+    await online.clock.freeze();
     const owner: number = await a.page.evaluate(() => window.game.net.entityId);
     const observer: number = await b.page.evaluate(() => window.game.net.entityId);
     expect(observer).not.toBe(owner);
@@ -391,8 +699,12 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     evidence.bound = bound;
     expect(bound[0]!.name).toBe(arena.companion.name);
     expect(bound[1]!.name).toBe(bound[0]!.name);
-    await pixels(info, pages, 'bond');
+    const bondFraming = [];
+    for (const page of pages) bondFraming.push(await frameSubjects(page, [companion], parkedShips));
+    evidence.bondFraming = bondFraming;
+    evidence.bondCaptures = await pixels(info, pages, 'bond', [owner, observer, companion]);
 
+    evidence.activeFollow = await activeFollow(info, pages, companion, owner, observer, parkedShips);
     const initialOwner: number[] = await a.page.evaluate(() => window.game.net.store.entities.get(window.game.net.entityId).pos);
     await aim(a.page, companion);
     await acquireInput(a.page);
@@ -427,12 +739,21 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
       followed.push(result);
     }
     evidence.followed = followed;
-    await pixels(info, pages, 'follow');
-
-    const enemyAt: Vec3 = await a.page.evaluate((east) => {
+    // The observer walks with the procession, staying south of the combat lane and north of both ships.
+    const observerMark = await a.page.evaluate(({ east, north }) => {
       const p = window.game.net.store.entities.get(window.game.net.entityId).pos;
-      return [p[0] + east[0] * 8, p[1] + east[1] * 8, p[2] + east[2] * 8];
-    }, ground.east);
+      return p.map((v: number, i: number) => v - east[i] * 7 - north[i] * 3);
+    }, ground);
+    await walkTo(b.page, observerMark);
+
+    const enemyAt: Vec3 = await a.page.evaluate((companion) => {
+      const g = window.game,
+        p = g.player.state.pos.clone().fromArray(g.net.store.entities.get(g.net.entityId).pos);
+      const toward = p.clone().fromArray(g.net.store.entities.get(companion).pos).sub(p);
+      // The hostile approaches across the follower's lane, exposing both bodies to the owner and western observer.
+      const across = toward.cross(p.clone().normalize()).normalize();
+      return p.addScaledVector(across, 8).toArray();
+    }, companion);
     if (!online.clock) throw new Error('Stepped fixture clock is required');
     await online.clock.freeze();
     const enemy = await spawn(arena, arena.enemy.index, enemyAt);
@@ -445,6 +766,13 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     }
     expect(beforeHp).toEqual([1, 1]);
     await online.clock.thaw();
+    // A short ordinary sidestep gives the owner a view across the contact instead of down the attack lane.
+    const combatMark = await a.page.evaluate((east) => {
+      const p = window.game.net.store.entities.get(window.game.net.entityId).pos;
+      return p.map((v: number, i: number) => v - east[i] * 4);
+    }, ground.east);
+    await walkTo(a.page, combatMark);
+    evidence.combatOwner = EntityState.parse(await a.page.evaluate(() => window.game.net.store.entities.get(window.game.net.entityId)));
     for (const [i, page] of pages.entries())
       await until(
         page,
@@ -474,7 +802,10 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
       });
     }
     evidence.combat = { beforeHp, after: combat };
-    await pixels(info, pages, 'combat');
+    const combatFraming = [];
+    for (const page of pages) combatFraming.push(await frameSubjects(page, [companion, enemy], parkedShips));
+    evidence.combatFraming = combatFraming;
+    evidence.combatCaptures = await pixels(info, pages, 'combat', [owner, observer, companion, enemy]);
 
     await aim(b.page, companion);
     const beforeRelease = await inspect(b.page, companion);
@@ -498,7 +829,11 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     expect(release.enemy.mode).not.toBe('dead');
     evidence.release = release;
     // Close the owner while combat is frozen, then require a newer live observer snapshot after thaw.
-    await pixels(info, [a.page], 'before-disconnect');
+    evidence.retirementFraming = await frameSubjects(b.page, [companion, enemy], parkedShips);
+    await until(b.page, 'window.game.player.grounded && window.game.player.state.vel.length() < 1e-7 && window.game.player.landShake === 0', 10_000);
+    const observerBefore = await capture(info, b.page, 'observer', 'before-disconnect', [owner, observer, companion, enemy]);
+    evidence.observerBefore = observerBefore;
+    expect(sameCaptureView(observerBefore.before, observerBefore.after)).toBe(true);
     // Net.close() reloads this dev-login URL. Destroy the page so the owner cannot rejoin.
     await a.page.close({ runBeforeUnload: false });
     expect(a.page.isClosed()).toBe(true);
@@ -540,7 +875,11 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     expect(retired.enemy.mode).not.toBe('dead');
     expect(retired.picked).not.toBe(companion);
     evidence.retired = retired;
-    await info.attach('disconnect-observer', { body: await b.page.screenshot({ timeout: 15_000 }), contentType: 'image/png' });
+    const observerAfter = await capture(info, b.page, 'observer', 'disconnect', [owner, observer, companion, enemy]);
+    evidence.observerAfter = observerAfter;
+    expect(observerBefore.after.clientId).toBe(observer);
+    expect(sameCaptureView(observerBefore.after, observerAfter.before)).toBe(true);
+    expect(sameCaptureView(observerAfter.before, observerAfter.after)).toBe(true);
     expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
   } finally {
     await info.attach('symbiotic-evidence', { body: Buffer.from(JSON.stringify({ ...evidence, errors }, null, 2)), contentType: 'application/json' });
