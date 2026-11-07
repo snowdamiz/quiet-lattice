@@ -1,0 +1,104 @@
+VERDICT: REVISE
+TASK: P1.E05.T03 — fresh independent SOURCE review, R1
+
+Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8`
+Branch: `task/P1-E05-T03`
+Source: `2e4feb5d437b9535637f5338ab6162069f0b75f1`
+Tree: `bd880cc68379610c20d191a6cf72701a41d03fd1`
+Base: `45c172a102f1944ff00be0b6e5006eef13fd793b`
+
+Four P2 findings require correction. No previous T03 findings existed to classify. This is a source verdict, not visual acceptance or task completion.
+
+1. **P2 — Reject incomplete material loads before attaching the viewmodel.** `packages/client/src/entities/Multitool.js:161–178` (particularly the validation at 161–165 and publication at 175–178).
+
+   A valid GLB can reach this success callback with all required textures missing. The installed Three GLTFLoader catches texture-load rejection in `loadTextureImage()` and resolves it to null; `assignTexture()` then omits that map. Multitool checks only Muzzle and hand node names, so it treats this incomplete asset as ready.
+
+   Executed reproduction: load the exact committed Thalune GLB through production `Multitool.buildViewModel()` → `Engine.gltfLoader()` → GLTFLoader/KTX2Loader/MeshoptDecoder, with only the two Basis HTTP responses injected as 503s. Actual GLB bytes were supplied from disk through a URL transport shim; there was no mocked success callback. Result: two failed transcoder requests, `attached=true`, `viewModelError=null`, zero toasts, and all six map slots absent on the tool material (Skin/Bio maps also absent). The new unit tests cannot catch this: they mock top-level loader rejection or strip materials/textures from the GLB before decoding.
+
+   Correction: validate the material/texture contract required by this asset before publication; dispose incomplete geometry/materials/maps/skeletons and use the existing failure path. Preserve shared-loader ownership. Add a real-consumer texture-failure test rather than only a fake loader rejection.
+
+   Evidence: `material_failure.mjs`, `material-failure.log`, `material-failure.json`. Exit 0 means the script successfully asserted the buggy behavior.
+
+2. **P2 — Reap the owned child on interruption before releasing the runner lock.** `packages/tools/blender/characters/viewmodels/run_cpu.py:22–28`.
+
+   The runner creates a new process session, then catches only `TimeoutExpired`. SIGINT raises KeyboardInterrupt in the runner, releasing its file lock while the separate child process group keeps running without its deadline. SIGTERM likewise lacks cleanup. A replacement invocation can acquire the lock while the original job remains alive.
+
+   Executed reproduction: a byte-identical copy of the runner at a matching directory depth under `/tmp`, with a harmless sleeping Python executable named `Blender` as the child. Send SIGINT to the runner while waiting. Observed runner exit -2, child still alive, and a new exclusive nonblocking lock acquisition succeeded. The harness then explicitly terminated the child process group. This test used no Blender workload or GPU.
+
+   Correction: handle interruption/termination and ensure owned process-group termination and wait/reap in cleanup before the lock is released, retaining bounded TERM/KILL behavior.
+
+   Evidence: `pipeline_negatives.py`, `pipeline-negatives-2.log`, `pipeline-negatives.json`, `runner-signal-2.log`.
+
+3. **P2 — Invalidate stale runtime exports when the new wrapper fails.** `packages/tools/blender/characters/viewmodels/export.py:40–42`.
+
+   Viewmodel-specific validation occurs before `export_one()`. If a saved source has lost its Muzzle or fails another viewmodel check, the assertion exits while the previous runtime GLB remains available. Exceptions during the delegated codec/export operation also escape this wrapper. The cleanup in the shared `artlib/export.py` outer main loop is bypassed by calling `export_one()` directly. This defeats that pipeline's explicit stale-export removal contract.
+
+   Concrete source reproduction: keep a previous destination GLB, remove Muzzle in a scratch saved source, and invoke the wrapper; validation fails but the old destination survives. Independently, a codec exception after validation has the same result.
+
+   Executed bounded reproduction: exact wrapper bytes relocated to `/tmp`; validation rejection and codec exception were injected at those dependency boundaries, with a preexisting scratch destination. Both errors escaped and preserved the exact previous destination bytes. Separately, the actual Blender validator rejected a missing Muzzle in memory on each real saved source. No real source was edited and no export/bake/LOD run was performed.
+
+   Correction: give this wrapper the shared pipeline's failure cleanup for known-invalid sources and export exceptions, so an unsuccessful export cannot silently leave the prior model serving as the current result.
+
+   Evidence: `pipeline_negatives.py`, `pipeline-negatives.json` (`export_validation_failure` and `export_codec_failure`), `source-check.json`.
+
+4. **P2 — Bind validation evidence to the exact exported bytes.** `packages/tools/blender/characters/viewmodels/inventory.py:24–27`.
+
+   Inventory verifies the source hash against the rig report, but only checks status/failure counts for the source/export art reports. It then hashes the current GLB independently. There is no check that the GLB being inventoried is the one that received the retained PASS. An accidental replacement or truncated export can therefore be packaged with stale passing evidence.
+
+   Executed reproduction: run a byte-identical copy of inventory.py over a fresh scratch layout, retaining original source/report/preview inputs but replacing the Thalune export with the nine bytes `not a GLB`. Read-only Git identity queries were redirected to the pinned checkout. Inventory exited 0 and wrote `CPU_CANDIDATE_REVIEW_PENDING`, 48,000 triangles, 35 bones, and the hash/length of that corrupt file. It never rejected the mismatch.
+
+   Correction: record source/export hashes when successful validation completes; require that exact pair in inventory and reject substituted or truncated export bytes. The current checked-in assets do match their inventory hashes; this finding concerns the evidence-producing failure path, not an allegation that today's GLBs are corrupt.
+
+   Evidence: `pipeline_negatives.py`, `pipeline-negatives.json` (`inventory_substitution`), scratch `pipeline-repo-2/assets/renders/characters/viewmodels/inventory.json`.
+
+Independent positive evidence
+
+- Full base-to-head diff reviewed and saved as `full.diff`: 44 files, 1,626 insertions, 48 deletions. Read task/global rules/0.9.5, T01/T03/T04 scope, relevant DESIGN 5/19/20 and art bible, viewmodel README/REPORT, authoring/export/check/inventory scripts, actual consumers and tests. Two disjoint supporting source reviewers independently covered the pipeline and lifecycle; all accepted findings above were reproduced or bounded independently here.
+- Focused pinned suite: **7 files / 91 tests passed**, maxWorkers=2 and file parallelism disabled. Includes actual compressed geometry/skin loading, neutral sampled skin preservation and intended wrist motion through the existing adapter for nine viewmodel source/target pairs, plus articulation and existing meter/game tests.
+- Exact artifact audit: all three current GLBs contain **48,000 triangles**, 35-joint skins, required Muzzle/Grip_R/Grip_L nodes, EXT_meshopt_compression, KHR_mesh_quantization and KHR_texture_basisu. Embedded KTX2 maps are 2048×2048 with 12 mip levels. Thalune/Ixari/Ulgani have 11/11/7 images. File SHA256/lengths match committed LFS pointers and inventory.
+- Six accepted body files matched the base's exact SHA256 values. Existing accepted review packet changes are empty. All six current CPU preview hashes match inventory; previews are not visual evidence for this verdict.
+- **One actual Blender 5.2.3 LTS process**, factory startup/background/two threads, loaded the three saved sources read-only. All five standard source gates and added rig/axes/weights/packed-map/clearance checks passed for each. Missing-marker and wrong-axis-profile mutations in memory were rejected for all three. Each source hash was unchanged afterward. The source's accepted-body provenance SHA matched the base body source.
+- Production success path additionally exercised without stripping material JSON: actual GLTFLoader + Meshopt + KTX2Loader + shipped Basis JS/WASM decoded all maps using **one CPU Worker**. Only browser transport/Worker APIs and GPU capability selection were supplied by a Node shim; no renderer or browser was created. Required tool PBR maps loaded; compressed textures have complete 2k mip chains.
+- Full `Multitool.update()` projection checks with actual decoded rigs, repeated sway/bob/kick, view FOV 66, world FOV 64/70/80, and 16:9/21:9 passed. Largest observed NDC muzzle/beam error was 1.6653345369377348e-16; vmLight followed the same actual Muzzle. Meter stepping was stubbed only in this geometry-focused harness; pinned meter tests and source diff establish the independent meter scope.
+- On people changes, real loaded resource disposal occurred exactly once: Thalune 31 geometry/material/texture resources and 16 skeletons; Ixari 33/18; Ulgani 40/35. No resources were shared between those successive loads.
+- A real delayed A→B→A load sequence used production loaders and texture decoding, including simultaneous same-URL FileLoader work. Ixari and obsolete Thalune completions were fully disposed; current Thalune remained attached with no resource disposed or shared with retired scenes. This extends the committed fake-loader race test to the real consumer boundary.
+- The old runtime `multitool.glb` and load path are removed. The old authoring generator remains in E14.T07's explicit separate scope. Selected people still comes from `game.build.people`; no new authoritative state or gameplay write path was introduced. Mining/heat authority code remains intact; relevant existing tests passed.
+- Saved-source export imports no authoring pass, hashes the source around export, and makes bake/LOD generation calls fail. This is source-traced; a fresh export was deliberately not run under the read-only review contract.
+
+Commands and results
+
+All project commands ran with cwd `/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8`. Evidence directory is `/tmp/p1-e05-t03-r1.AxTqL9`.
+
+```sh
+git status --porcelain=v1
+git branch --show-current
+git rev-parse HEAD 'HEAD^{tree}'
+git diff --check 45c172a102f1944ff00be0b6e5006eef13fd793b HEAD
+git diff 45c172a102f1944ff00be0b6e5006eef13fd793b HEAD > /tmp/p1-e05-t03-r1.AxTqL9/full.diff
+```
+
+Exit 0; clean checkout; branch/head/tree match the pins; no diff whitespace errors. Clean state rechecked at the end.
+
+```sh
+pnpm exec vitest run packages/client/src/entities packages/client/src/exosuit.test.js packages/client/src/Game.test.js --maxWorkers=2 --no-file-parallelism
+python3 /tmp/p1-e05-t03-r1.AxTqL9/artifact_audit.py
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 ART_KTX_JOBS=1 PYTHONDONTWRITEBYTECODE=1 /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -t 2 --python-exit-code 1 -P /tmp/p1-e05-t03-r1.AxTqL9/source_check.py
+pnpm exec tsx /tmp/p1-e05-t03-r1.AxTqL9/material_failure.mjs
+pnpm exec tsx /tmp/p1-e05-t03-r1.AxTqL9/full_consumer.mjs
+pnpm exec tsx /tmp/p1-e05-t03-r1.AxTqL9/actual_stale.mjs
+python3 /tmp/p1-e05-t03-r1.AxTqL9/pipeline_negatives.py
+```
+
+Final executed versions all exited 0. Logs and JSON accompany each script. The first pipeline harness attempt exited 1 because `/tmp` resolves to `/private/tmp` on macOS and its scratch Git-cwd redirection compared unresolved paths; this harness-only error was corrected with `.resolve()` and rerun in a new scratch directory. Both logs are retained. Pipeline scripts use one-time scratch paths; choose fresh names to replay them. No failed product check was converted into a PASS: negative harness exit 0 means the stated defect was reproduced.
+
+Exact new asset identities
+
+- Thalune source `46d483c8cc0b10f555dc35f60008d64f7b883d392daa4bf4e87abb91da97b1db`, 24,733,334 bytes; export `b4859735bd2f203bd30ca41705a156858cc362dd6de1000d308bd1e12b53e76f`, 3,891,516 bytes.
+- Ixari source `44c408a64b59353810119640471b2faf9506da57250bdb47e7ce067445f2c4b5`, 18,934,076 bytes; export `78f90acfc0087b63e97c3ae50cb7c1f5e045e447e12975b6ec21a0dd5f038abc`, 3,248,228 bytes.
+- Ulgani source `aabb32cb139c544d7a57f2fe22c34931fe720d2215e02936876f2dd02dd1aa3b`, 10,586,540 bytes; export `8319097e97e3ccf2f9fdcbbe114742ea45f1f24eb8ba98420f12678d3511e954`, 1,593,132 bytes.
+
+Independent limits
+
+No source edits, commits, LFS fetch, GPU work, browser/native runtime, render, bake, LOD generation, server, DB, full smoke, push, PR, or merge. No screenshot/CPU-preview visual acceptance. No fresh production export, typecheck or lint rerun; those retained worker reports are not claimed as independently rerun. The successful CPU texture test proves loading/transcoding/binding, not GPU upload or material appearance. No full 42-clip integration claim; tests cover nine viewmodel profile pairs and limited neutral/articulation/motion channels. Intentional body/viewmodel hierarchy differences are accepted; matching clip-profile selection, animation playback and the gameplay state machine remain T04.
+
+Whole-task acceptance still requires parent-owned actual view-pass GPU cases/transitions, blind grading, full smoke and merged verification after source corrections. No merge is authorized by this review.
