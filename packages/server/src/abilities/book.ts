@@ -108,6 +108,8 @@ export interface CastContext {
   };
   /** What an ability leaves on a target for a while, per caster (`Statuses`). */
   readonly status: {
+    /** Contributes damage to one per-caster status clock. Live producers merge at greater power/later end. */
+    damage(target: number, id: string, durationS: number, power: number, tickS: number): void;
     /** Puts `id` on `target` for `durationS` at `power`; true when this caster's was not running (start its ticks). */
     apply(target: number, id: string, durationS: number, power?: number): boolean;
     /** This caster's `id` on `target` (`until` the world time it ends, `power`, and the `gen` of the application that began it:

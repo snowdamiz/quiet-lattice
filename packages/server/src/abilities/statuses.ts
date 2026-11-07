@@ -17,8 +17,17 @@ export interface Status {
   gen: number;
 }
 
-export class Statuses {
-  private readonly zones = new Map<string, Map<number, Map<string, Map<string, Status>>>>();
+interface Contributions<Producer> {
+  gen: number;
+  readonly by: Map<Producer | undefined, { until: number; power: number }>;
+}
+
+function merged<Producer>(s: Contributions<Producer>): Status {
+  return { gen: s.gen, until: Math.max(...[...s.by.values()].map((c) => c.until)), power: Math.max(...[...s.by.values()].map((c) => c.power)) };
+}
+
+export class Statuses<Producer = object> {
+  private readonly zones = new Map<string, Map<number, Map<string, Map<string, Contributions<Producer>>>>>();
   private lastPrune = -Infinity;
   private lastGen = 0;
 
@@ -27,7 +36,7 @@ export class Statuses {
   /** Puts `id` on `target` for `durationS` from the character: a fresh status, or the character's own running one made to
    * last until the later of the two ends and act at the greater power. True when it was fresh (none of the character's
    * was running or just ended: its effect ticks it still). */
-  apply(zone: string, characterId: string, target: number, id: string, durationS: number, power = 1): boolean {
+  apply(zone: string, characterId: string, target: number, id: string, durationS: number, power = 1, producer?: Producer): boolean {
     const now = this.now();
     this.prune(now);
     let byEntity = this.zones.get(zone);
@@ -37,26 +46,28 @@ export class Statuses {
     let byCharacter = byId.get(id);
     if (!byCharacter) byId.set(id, (byCharacter = new Map()));
     const running = byCharacter.get(characterId);
-    const held = !!running && running.until + GRACE_S > now;
-    const live = !!running && running.until > now;
-    byCharacter.set(characterId, {
-      until: Math.max(live ? running.until : 0, now + durationS),
-      power: live ? Math.max(running.power, power) : power,
-      gen: running && held ? running.gen : ++this.lastGen,
-    });
+    const held = !!running && merged(running).until + GRACE_S > now;
+    const group = held ? running : { gen: ++this.lastGen, by: new Map<Producer | undefined, { until: number; power: number }>() };
+    if (held && merged(group).until <= now) group.by.clear();
+    // Natural expiry retains the normal greater-power/later-end merge. Only revocation subtracts a producer.
+    const previous = group.by.get(producer);
+    const live = previous && previous.until > now;
+    group.by.set(producer, { until: Math.max(live ? previous.until : 0, now + durationS), power: live ? Math.max(previous.power, power) : power });
+    byCharacter.set(characterId, group);
     return !held;
   }
 
   /** The character's own `id` on `target` while it runs and for GRACE_S after, or null. */
   get(zone: string, characterId: string, target: number, id: string): Status | null {
     const s = this.zones.get(zone)?.get(target)?.get(id)?.get(characterId);
-    return s && s.until + GRACE_S > this.now() ? s : null;
+    const status = s && merged(s);
+    return status && status.until + GRACE_S > this.now() ? status : null;
   }
 
   /** Whether anyone's `id` runs on `target`. */
   active(zone: string, target: number, id: string): boolean {
     const now = this.now();
-    for (const s of this.zones.get(zone)?.get(target)?.get(id)?.values() ?? []) if (s.until > now) return true;
+    for (const s of this.zones.get(zone)?.get(target)?.get(id)?.values() ?? []) if (merged(s).until > now) return true;
     return false;
   }
 
@@ -64,6 +75,18 @@ export class Statuses {
   remove(zone: string, characterId: string, target: number, id: string, gen?: number): void {
     const byCharacter = this.zones.get(zone)?.get(target)?.get(id);
     if (gen === undefined || byCharacter?.get(characterId)?.gen === gen) byCharacter?.delete(characterId);
+  }
+
+  producers(zone: string, characterId: string, target: number, id: string): Producer[] {
+    return [...(this.zones.get(zone)?.get(target)?.get(id)?.get(characterId)?.by.keys() ?? [])].filter((p): p is Producer => p !== undefined);
+  }
+
+  /** Subtract only this producer's power and expiry; other applications still share their normal merge. */
+  revoke(zone: string, characterId: string, target: number, id: string, producer: Producer): void {
+    const byCharacter = this.zones.get(zone)?.get(target)?.get(id);
+    const s = byCharacter?.get(characterId);
+    s?.by.delete(producer);
+    if (s?.by.size === 0) byCharacter?.delete(characterId);
   }
 
   /** Ends every status the character put anywhere (it left play: nothing ticks them any more). */
@@ -87,7 +110,7 @@ export class Statuses {
     for (const [zone, byEntity] of this.zones) {
       for (const [entity, byId] of byEntity) {
         for (const [id, byCharacter] of byId) {
-          for (const [c, s] of byCharacter) if (s.until + GRACE_S <= now) byCharacter.delete(c);
+          for (const [c, s] of byCharacter) if (merged(s).until + GRACE_S <= now) byCharacter.delete(c);
           if (!byCharacter.size) byId.delete(id);
         }
         if (!byId.size) byEntity.delete(entity);

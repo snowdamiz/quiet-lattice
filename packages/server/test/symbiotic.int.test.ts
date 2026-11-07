@@ -562,3 +562,120 @@ describe('Symbiotic gateway lifecycle and ally boundaries', () => {
     expect(w.zone.fauna!.creature(id)).toBeNull();
   });
 });
+
+describe('R2 production ability and objective boundaries', () => {
+  it.each([
+    ['sear', 'flare'],
+    ['flare', 'sear'],
+  ] as const)('keeps %s → %s as one live burn after refunding the first through the gateway', async (first, second) => {
+    const w = await world(['lance', 'sear', 'flare']);
+    const target = w.spawn(5);
+    w.zone.fauna!.stun(target, 20);
+    const from = w.zone.entity(w.p.entityId)!.fields.pos;
+    const to = creatureSphere(w.zone.fauna!.creature(target)!).pos;
+    const radius = Math.hypot(...from);
+    const d: Vec3 = [to[0] - from[0] - (from[0] / radius) * 1.6, to[1] - from[1] - (from[1] / radius) * 1.6, to[2] - from[2] - (from[2] / radius) * 1.6];
+    const length = Math.hypot(...d);
+    const aim: Vec3 = [d[0] / length, d[1] / length, d[2] / length];
+    expect(await cast(w.p, first, { target, aim })).toMatchObject({ result: 'cast' });
+    advance(0.5);
+    expect(await cast(w.p, second, { target, aim })).toMatchObject({ result: 'cast' });
+    const hp = w.zone.combat.creatureHealth(target)!.hp;
+    const trainer = server.ws.skills.hooks.trainerAtHand;
+    server.ws.skills.hooks.trainerAtHand = () => true;
+    try {
+      const seq = ++sequence;
+      w.p.sock.send({ t: 'skills', seq, op: { op: 'respec', nodes: [first] } });
+      for (;;) {
+        const reply = await w.p.sock.next('skills');
+        if (reply.seq !== seq) continue;
+        expect(reply.error).toBeUndefined();
+        break;
+      }
+      advance(0.5);
+      expect(w.zone.combat.creatureHealth(target)!.hp).toBeCloseTo(hp - (second === 'flare' ? 3 : 2.5), 5);
+      advance(second === 'flare' ? 4 : 8);
+      expect(w.zone.combat.creatureHealth(target)!.hp).toBeCloseTo(hp - (second === 'flare' ? 24 : 40), 5);
+    } finally {
+      server.ws.skills.hooks.trainerAtHand = trainer;
+    }
+  });
+
+  it('Call drives a shared herd into a caster-visible event enemy without changing the herd phase', async () => {
+    const w = await world(['bond', 'call']);
+    const herd = w.spawn(5);
+    const target = w.spawn(26);
+    w.zone.fauna!.stun(target, 10);
+    const session = server.ws.registry.holding(w.p.characterId)!;
+    const phase = w.zone.phases.phaseFor(session, 'event', { key: 'call-contact', frame: w.frame, center: w.at(0), radius: 100 });
+    w.zone.phases.adopt(phase.id, target);
+    const hp = w.zone.combat.creatureHealth(target)!.hp;
+    expect(await cast(w.p, 'call', { aim: w.aim(30) })).toMatchObject({ result: 'cast' });
+    advance(6.1);
+    expect(w.zone.combat.creatureHealth(target)!.hp).toBeCloseTo(hp - 12, 5);
+    expect(w.zone.phases.phaseOf(herd)).toBeNull();
+  });
+
+  it('Bond neutralizes an actual event objective and sends exactly one event reward without a kill', async () => {
+    const w = await world(['bond', 'big_game']);
+    const events = server.ws.events;
+    events.stop();
+    try {
+      const id = events.run(
+        {
+          id: 'bond_drill',
+          name: 'Bond drill',
+          kind: 'waves',
+          tiers: [0, 5],
+          schedule: { everyS: 3600, durationS: 600, announceS: 0, stagger: false },
+          place: { kind: 'surface', radius: 100 },
+          enemies: { kind: 'fauna', temperaments: ['territorial', 'predator'], level: 3 },
+          waves: { count: 1, size: 1, firstS: 1, gapS: 1 },
+          scaling: { sizePerPlayer: 0, healthPerPlayer: 0 },
+          contribution: { damage: 0.6, objective: 0.25, presence: 0.15 },
+          rewards: { xp: 400, units: 120, items: [{ item: 'count_residue', count: 2 }], rep: [] },
+        },
+        w.zone.id,
+        { startsIn: 30 },
+      );
+      await waitFor(() => {
+        events.sweep();
+        return events.list().find((o) => o.id === id)?.place != null;
+      });
+      const place = events.list().find((o) => o.id === id)!.place!;
+      await teleport(w.p, w.zone, place.frame, place.center);
+      events.startNow(id);
+      advance(0.3);
+      events.sweep();
+      advance(1.3);
+      events.sweep();
+      const target = events.list().find((o) => o.id === id)!.instances[0]!.mobs[0]!;
+      const creature = w.zone.fauna!.creature(target)!;
+      w.zone.fauna!.stun(target, 10);
+      await teleport(w.p, w.zone, place.frame, [...creature.pos]);
+      expect(await analyze(w.p, target)).toMatchObject({ result: 'new' });
+      await handled(w.p);
+      const start = w.p.sock.received.length;
+      const hp = w.zone.combat.creatureHealth(target)!.hp;
+      expect(await cast(w.p, 'bond', { target })).toMatchObject({ result: 'cast' });
+      const inst = events.list().find((o) => o.id === id)!.instances[0]!;
+      expect(inst.mobs).toEqual([]);
+      expect(inst.scores.get(w.p.characterId)).toMatchObject({ objective: 1, damage: 0 });
+      expect(w.zone.combat.creatureHealth(target)!.hp).toBe(hp);
+      advance(0.3);
+      events.sweep();
+      await handled(w.p);
+      expect(w.p.sock.received.slice(start).filter((m) => m.t === 'event_reward')).toEqual([
+        expect.objectContaining({ id, outcome: 'completed', xp: 400, units: 120, share: 1 }),
+      ]);
+      expect(w.p.sock.received.slice(start).filter((m) => m.t === 'event' && (m.event.kind === 'xp' || m.event.kind === 'combat'))).toEqual([]);
+      expect(w.zone.entity(target)).toBeUndefined();
+      advance(1);
+      events.sweep();
+      await handled(w.p);
+      expect(w.p.sock.received.slice(start).filter((m) => m.t === 'event_reward')).toHaveLength(1);
+    } finally {
+      events.start();
+    }
+  });
+});
