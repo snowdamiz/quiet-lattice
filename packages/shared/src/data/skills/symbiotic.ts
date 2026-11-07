@@ -25,7 +25,7 @@ export const SYMBIOTIC = branchNodes('symbiotic', [
     name: 'Repair Drones',
     tier: 1,
     type: 'ship',
-    text: 'Hull regenerates 1/s in flight (today: only docked)',
+    text: 'Hull regenerates 1/s in flight',
     cost: { charge: 15 },
     cooldown: { kind: 'seconds', seconds: 20 },
     params: { hullPerS: 1 },

@@ -275,7 +275,7 @@ Fantasy: the worlds' life answers you; discovery becomes power.
 |---|---|---|---|---|
 | Bond | I | active | Tame one creature of a species you have analyzed: follows, fights, rides at Tier III | 30 heat / 60 s |
 | Second Lung | I | passive | Life support drains 30% slower | |
-| Repair Drones | I | ship | Hull regenerates 1/s in flight (today: only docked) | 15 charge / 20 s |
+| Repair Drones | I | ship | Hull regenerates 1/s in flight | 15 charge / 20 s |
 | Regrow | II | active | Heal self or ally 40 over 6 s | 20 heat / 10 s |
 | Spore | II | active | 8 m cloud, 10 s: poisons enemies, heals allies | 25 heat / 15 s |
 | Call | II | active | The local herd stampedes through a point you aim at | 30 heat / 45 s |
