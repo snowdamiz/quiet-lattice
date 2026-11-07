@@ -341,8 +341,10 @@ def observations(value, spec, stills):
             require(dt == 0 and number(entry.get("raiseSeconds"), filename) == 0, f"{filename}: raise-0 requires a zero dt/reset frame")
         if pose == "raise-0.4":
             require(abs(raised - 1) <= 1e-6 and abs(number(entry.get("raiseSeconds"), filename) - 0.4) <= 1e-8, f"{filename}: raise did not settle in 0.4s")
-            require(previous is not None and previous["file"] == filename.replace("raise-0.4", "raise-0"),
-                    f"{filename}: missing preceding raise-0 endpoint")
+        if pose in ("raise-0.4", "switch-settled"):
+            start = "raise-0" if pose == "raise-0.4" else "switch-gap"
+            require(previous is not None and previous["file"] == filename.replace(pose, start),
+                    f"{filename}: missing preceding {start} endpoint")
             duration, updates = elapsed - previous["elapsed"], frame - previous["frame"]
             # Cooling and zero-dt resets can separate the two saved endpoints.
             require(duration + 1e-8 >= 24 / 60 and updates >= 24 and

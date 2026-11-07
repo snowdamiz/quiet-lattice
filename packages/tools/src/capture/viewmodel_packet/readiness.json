@@ -121,14 +121,14 @@
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
         "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
-        "bytes": 18858,
-        "sha256": "4f574ffe97acd0d4432228f1b7d4615487f5ddd8e0e14529c6af8943c1f07eb8"
+        "bytes": 18876,
+        "sha256": "2f378ed3a883311b8bac787a0d1a2df4a152ed5496c70c30f56e628c43128549"
       },
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/boundary.py",
         "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/boundary.py",
-        "bytes": 8931,
-        "sha256": "2644bdfb4538b79c5e5169bdd20501fd18cfb38b75a744898ee1ff9f6aeb8e8d"
+        "bytes": 12669,
+        "sha256": "cb398796f25efb10fc5d97e4eeab84db803ff849ca813a7db0e03733f033b140"
       },
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/bindings.py",
@@ -139,14 +139,14 @@
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/native.py",
         "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/native.py",
-        "bytes": 10527,
-        "sha256": "aca89ddcd8ff5c20e600cf4068c1595d55dc77026fc27ae7eaf8e79fab91cc47"
+        "bytes": 11691,
+        "sha256": "40faffc819e9cb401233c7281e5c5f7494ac0c538d492bc018dfff20f27c8850"
       },
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs",
         "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs",
-        "bytes": 12765,
-        "sha256": "aace15af4836c6245c3f996cb05152763028194463854c8b6c419f3e6d940e77"
+        "bytes": 15880,
+        "sha256": "220f205fc942bd9b15093359a98d4977c3f9de57e7c60c6358fec1f2678879ea"
       },
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/fixture.mjs",
@@ -157,8 +157,8 @@
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/inspect_packet.py",
         "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/inspect_packet.py",
-        "bytes": 26224,
-        "sha256": "f51410422b5c36a36f240bead001b7869cddc747dffb008302c945480ff05ee9"
+        "bytes": 26336,
+        "sha256": "467600ce62d0bd3e208216759cf8d1a89552b4a2b26f34d8eebf8810eadae2d9"
       },
       {
         "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/resolve.mjs",
@@ -270,7 +270,7 @@
   },
   "pythonSelfObservation": {
     "scope": "CPU_SELF_PROCESS_ONLY",
-    "pid": 38381,
+    "pid": 32410,
     "uid": 501,
     "launcher": {
       "path": "/opt/homebrew/opt/python@3.14/bin/python3.14",
@@ -299,7 +299,16 @@
       "packages/tools/src/capture/capture.lifecycle.test.ts": "ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18"
     },
     "sourceDigestIncludesSharedLifecycleTest": true,
-    "legacyReviewedSourceScope": "accepted runtime/art SOURCE R3 anchor; combined packet R2 remains pending",
-    "finalHeadBinding": "final combined metadata commit is recorded by the post-commit handoff and must be bound by a future external grant"
+    "legacyReviewedSourceScope": "accepted runtime/art SOURCE R3 anchor only; corrected combined packet requires fresh VMR3",
+    "finalHeadBinding": "final combined metadata commit is recorded by the post-commit handoff and must be bound by a future external grant",
+    "packetRevision": {
+      "base": "182fc27d1a5459270e2a3c4673f8e70b86ef3a33",
+      "baseTree": "546f57bc68c5a19f8144ae2ccd205a368bd9982f",
+      "review": "/private/tmp/p1-e05-t03-r2-yrN5o2/REPORT-FINAL.txt",
+      "reviewSha256": "2ae3d5153fe23b0670567919f1d882e878215a5386df81865c555043312e7fa3",
+      "scope": "three task-local combined VMR2 corrections; independent VMR3 required",
+      "sharedT15Unchanged": true,
+      "finalHeadBinding": "post-commit handoff records the exact new HEAD/tree; any future external grant must bind that clean HEAD"
+    }
   }
 }

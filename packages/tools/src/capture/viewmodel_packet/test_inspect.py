@@ -657,6 +657,54 @@ class InspectorTests(unittest.TestCase):
                         fixture.write(value)
                         self.assert_cli_refused(fixture, value, "24 updates at 1/60")
 
+    def test_cli_switch_settled_reconciles_gap_elapsed_frames_and_last_dt(self):
+        cases = [
+            ("zero-time", 1, 0, 0),
+            ("one-step", 1, 1 / 60, 1 / 60),
+            ("23-steps", 23, 23 / 60, 1 / 60),
+            ("short-duration", 24, 0.399, 1 / 60),
+            ("fractional-update-time", 25, 0.401, 1 / 60),
+            ("too-few-updates", 23, 0.4, 1 / 60),
+            ("too-much-time", 24, 25 / 60, 1 / 60),
+            ("zero-dt", 24, 0.4, 0),
+            ("duration-as-dt", 24, 0.4, 0.4),
+            ("wrong-step-dt", 24, 0.4, 1 / 30),
+        ]
+        for unit in ("return-thalune", "view-ixari", "view-ulgani"):
+            with packet(unit) as fixture:
+                for label, updates, duration, dt in cases:
+                    with self.subTest(unit=unit, case=label):
+                        value = copy.deepcopy(fixture.value)
+                        value["unknownRaw"] = {"switchTiming": [label, {"retain": [False, None, 17]}]}
+                        gap, settled = value["frames"][:2]
+                        self.assertEqual(gap["file"], "16x9-switch-gap.png")
+                        self.assertEqual(settled["file"], "16x9-switch-settled.png")
+                        settled.update(frame=gap["frame"] + updates, elapsed=gap["elapsed"] + duration, dt=dt)
+                        fixture.write(value)
+                        self.assert_cli_refused(fixture, value, "24 updates at 1/60")
+
+    def test_cli_switch_settled_accepts_fixed_steps_and_zero_dt_resets(self):
+        for unit in ("return-thalune", "view-ixari", "view-ulgani"):
+            with packet(unit) as fixture:
+                for extra_steps, zero_steps in ((0, 0), (240, 0), (0, 2), (240, 2)):
+                    with self.subTest(unit=unit, extra_steps=extra_steps, zero_steps=zero_steps):
+                        value = copy.deepcopy(fixture.value)
+                        value["unknownRaw"] = {"switchTiming": {"extraSteps": extra_steps, "zeroSteps": zero_steps}}
+                        for frame in value["frames"][1:]:
+                            frame["frame"] += extra_steps + zero_steps
+                            frame["elapsed"] += extra_steps / 60
+                        self.assertEqual(value["frames"][0]["dt"], 0)
+                        self.assertEqual(value["frames"][0]["raise"], 0)
+                        self.assertEqual(value["frames"][1]["raise"], 1)
+                        fixture.write(value)
+                        result = fixture.run_cli()
+                        self.assertEqual(result.returncode, 0, result.stderr)
+                        self.assertEqual(result.stderr, "")
+                        decoded = json.loads(result.stdout)
+                        self.assertEqual(decoded["status"], "PASS")
+                        self.assertIs(decoded["valid"], True)
+                        self.assertEqual(decoded["observations"], value)
+
     def test_cli_all_seven_units_and_extra_cooling_intervals(self):
         for spec in INVENTORY["units"]:
             with self.subTest(unit=spec["id"]), packet(spec["id"]) as fixture:

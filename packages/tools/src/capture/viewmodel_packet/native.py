@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from boundary import MIB, deadline, encoded, raw, require
+from boundary import MIB, deadline, encoded, raw, require, retain
 from bindings import HELPERS
 
 
@@ -35,8 +35,12 @@ def observed_helpers(modules, evidence):
         original = getattr(owner, name)
         def call(*args, **kwargs):
             nonlocal metadata_bytes, observation_bytes
-            event = {'operation': name, 'args': raw(args), 'kwargs': raw(kwargs)}
+            event = {'operation': name}
             evidence['helperCalls'].append(event)
+            observed = retain(evidence, event, 'args', args, encoder=raw)
+            observed &= retain(evidence, event, 'kwargs', kwargs, encoder=raw)
+            if evidence.get('phase') != 'cleanup':
+                require(observed, 'Helper argument observation failed')
             try:
                 if receipt:
                     data = encoded(args[1])
@@ -45,18 +49,26 @@ def observed_helpers(modules, evidence):
                     require(len(data) <= 2 * MIB and metadata_bytes <= 16 * MIB, 'Helper metadata ceiling')
                 value = original(*args, **kwargs)
                 if isinstance(value, subprocess.CompletedProcess):
-                    event['value'] = raw(vars(value))
+                    observed = retain(evidence, event, 'value', vars(value), encoder=raw)
                 else:
-                    event['value'] = raw(copy.deepcopy(value))
+                    observed = retain(evidence, event, 'value', value, encoder=raw)
+                if evidence.get('phase') != 'cleanup':
+                    require(observed, 'Helper result observation failed')
                 return value
             except BaseException as error:
-                event['error'] = raw(error)
+                retain(evidence, event, 'error', error, encoder=raw)
                 if receipt and evidence.get('phase') == 'cleanup' and isinstance(error, Exception):
                     evidence.setdefault('cleanupReceiptFailures', []).append(event)
                     return None  # Retain the failure; mandatory owned drain must still run.
                 raise
             finally:
-                observation_bytes += len(encoded(event))
+                unwinding = sys.exc_info()[0] is not None
+                try:
+                    observation_bytes += len(encoded(event))
+                except Exception as error:
+                    evidence.setdefault('unencodedFacts', []).append({'key': 'helper-event', 'original': event, 'encodingError': error})
+                    if not unwinding and evidence.get('phase') != 'cleanup':
+                        raise
                 if observation_bytes > 12 * MIB and evidence.get('phase') != 'cleanup' and sys.exc_info()[0] is None:
                     raise ValueError('Raw helper observation ceiling exceeded')
         restored.append((owner, name, original))
@@ -88,7 +100,7 @@ def capture(ready, spec, paths, record):
     evidence = {'helperCalls': [], 'allocations': [], 'released': False}
     record['native'] = evidence
     job = observer = private = admission = None
-    primary = callback_failure = None
+    primary = callback_failure = secondary = cleanup_failure = None
     env = {'PATH': ready['bindings']['path'], 'SMOKE_GL': 'metal', 'DEBUG': 'pw:browser',
            'VIEWMODEL_READY': paths['ready'], 'VIEWMODEL_CONSUMPTION': paths['consumption'],
            'VIEWMODEL_UNIT': spec['id'], 'VIEWMODEL_ENTRY_TOKEN': record['entryToken'],
@@ -123,7 +135,7 @@ def capture(ready, spec, paths, record):
                     except BaseException as error:
                         if callback_failure is None:
                             callback_failure = error
-                            evidence['callbackFailure'] = raw(error)
+                            retain(evidence, evidence, 'callbackFailure', error, encoder=raw)
                         raise
                 job.start()
                 outcome = job.wait(600, observer=observe)
@@ -138,9 +150,8 @@ def capture(ready, spec, paths, record):
                 require(job.state['exits'].get('capture') == 0, 'Capture process did not exit 0')
         except BaseException as error:
             primary = callback_failure if callback_failure is not None else error
-            evidence['primaryFailure'] = evidence['callbackFailure'] if callback_failure is not None else raw(error)
-            if error is not primary:
-                evidence.setdefault('secondaryFailures', []).append(raw(error))
+            # Serialization is deferred until mandatory owned cleanup is attempted.
+            secondary = error if error is not primary else None
         # Cleanup gets one finite phase; any interruption stops archive/audit dispatch.
         evidence['phase'] = 'cleanup'
         try:
@@ -166,18 +177,23 @@ def capture(ready, spec, paths, record):
                     require(private is None and job is None, 'Partial helper allocation retained; manual ownership review required')
                     evidence['released'] = True
         except BaseException as error:
-            evidence.setdefault('secondaryFailures', []).append(raw(error))
+            cleanup_failure = error
             if primary is None:
                 primary = error
-            if not isinstance(error, Exception):
-                primary.evidence = evidence
-                raise primary
+        if primary is not None:
+            retain(evidence, evidence, 'primaryFailure', primary, encoder=raw)
+        for failure in (secondary, cleanup_failure):
+            if failure is not None:
+                row = {}
+                retain(evidence, row, 'error', failure, encoder=raw)
+                evidence.setdefault('secondaryFailures', []).append(row['error'])
         if observer:
-            evidence['lastObservation'] = raw(vars(observer))
+            retain(evidence, evidence, 'lastObservation', vars(observer), encoder=raw)
         if job:
-            evidence['jobState'] = raw(vars(job))
+            retain(evidence, evidence, 'jobState', vars(job), encoder=raw)
         if primary is not None:
             primary.evidence = evidence
             raise primary
+    require(not evidence.get('unencodedFacts'), 'Observation encoding failed; originals retained in memory')
     require(evidence['released'], 'Release must precede decoder')
     return evidence

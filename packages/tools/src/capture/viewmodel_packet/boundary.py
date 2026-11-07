@@ -91,20 +91,95 @@ def json_snapshot(path, cap=META_CAP, expected=None):
     return value, digest
 
 
-def raw(value):
-    if isinstance(value, bytes):
-        return {'base64': base64.b64encode(value).decode(), 'bytes': len(value)}
-    if isinstance(value, Path):
-        return str(value)
-    if isinstance(value, BaseException):
-        return {'type': type(value).__name__, 'message': str(value), 'attributes': raw(vars(value))}
-    if isinstance(value, dict):
-        return {str(k): raw(v) for k, v in value.items()}
-    if isinstance(value, (tuple, list)):
-        return [raw(v) for v in value]
-    if value is None or type(value) in (str, int, float, bool):
-        return value
-    return {'type': type(value).__name__, 'repr': repr(value)}
+def raw(value, *, cap=20 * MIB, max_nodes=100000, max_depth=128):
+    """JSON facts; shared/cyclic values use a reversible, encounter-ordered graph.
+
+    Graph edges are either {ref: node index} or {value: JSON scalar}. Nodes
+    retain container kinds and ordered dictionary entries, so user keys cannot
+    collide with reference tags. Ordinary trees keep the original receipt shape.
+    """
+    nodes, seen = [], {}
+    remaining = cap
+    shared = False
+    def charge(amount):
+        nonlocal remaining
+        remaining -= amount
+        require(remaining >= 0, 'Raw observation byte ceiling')
+    def scalar(item):
+        require(not isinstance(item, str) or len(item) <= remaining, 'Raw observation string ceiling')
+        charge(len(json.dumps(item, allow_nan=False).encode()) + 16)
+        return {'value': item}
+    def visit(item, depth=0):
+        nonlocal shared
+        require(depth <= max_depth, 'Raw observation depth ceiling')
+        if item is None or type(item) in (str, int, bool):
+            return scalar(item)
+        if type(item) is float:
+            import math
+            if math.isfinite(item): return scalar(item)
+        identity = id(item)
+        if identity in seen:
+            shared = True
+            charge(32)
+            return {'ref': seen[identity]}
+        require(len(nodes) < max_nodes, 'Raw observation node ceiling')
+        charge(128)
+        index = len(nodes); seen[identity] = index
+        node = {}; nodes.append(node)
+        edge = lambda x: visit(x, depth + 1)
+        if isinstance(item, bytes):
+            charge(4 * ((len(item) + 2) // 3))
+            node.update(kind='bytes', base64=base64.b64encode(item).decode(), bytes=len(item))
+        elif isinstance(item, Path):
+            node.update(kind='path', value=edge(str(item)))
+        elif isinstance(item, BaseException):
+            node.update(kind='exception', type=type(item).__name__, message=edge(str(item)), attributes=edge(vars(item)))
+        elif isinstance(item, dict):
+            node.update(kind='dict', entries=[])
+            for key, item_value in item.items():
+                charge(16)
+                node['entries'].append([edge(key), edge(item_value)])
+                if type(key) is not str: shared = True
+        elif isinstance(item, (tuple, list)):
+            node.update(kind='tuple' if isinstance(item, tuple) else 'list', items=[])
+            for part in item:
+                charge(8); node['items'].append(edge(part))
+        elif type(item) is float:
+            node.update(kind='float', value=str(item))
+        elif hasattr(item, '__dict__'):
+            node.update(kind='object', type=type(item).__name__, attributes=edge(vars(item)))
+        else:
+            node.update(kind='opaque', type=type(item).__name__, representation=edge(repr(item)))
+        return {'ref': index}
+    root = visit(value)
+    if shared:
+        result = {'rawGraph': 1, 'root': root, 'nodes': nodes}
+    else:
+        def tree(edge):
+            if 'value' in edge: return edge['value']
+            node = nodes[edge['ref']]; kind = node['kind']
+            if kind == 'dict': return {tree(k): tree(v) for k, v in node['entries']}
+            if kind in ('tuple', 'list'): return [tree(x) for x in node['items']]
+            if kind == 'bytes': return {'base64': node['base64'], 'bytes': node['bytes']}
+            if kind == 'path': return tree(node['value'])
+            if kind == 'float': return {'nonfinite': node['value']}
+            if kind == 'exception': return {'type': node['type'], 'message': tree(node['message']), 'attributes': tree(node['attributes'])}
+            if kind == 'object': return {'type': node['type'], 'attributes': tree(node['attributes'])}
+            return {'type': node['type'], 'repr': tree(node['representation'])}
+        result = tree(root)
+    require(len(json.dumps(result, allow_nan=False).encode()) <= cap, 'Raw observation encoded ceiling')
+    return result
+
+
+def retain(evidence, destination, key, value, *, encoder=raw):
+    """Keep an unencodable original in memory without blocking owned draining."""
+    try:
+        destination[key] = encoder(value)
+        return True
+    except Exception as error:
+        destination[key] = {'encodingFailed': True}
+        evidence.setdefault('unencodedFacts', []).append({'key': key, 'original': value, 'encodingError': error})
+        return False
 
 
 def encoded(value):

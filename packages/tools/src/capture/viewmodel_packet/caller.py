@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 from boundary import (MIB, canonical, deadline, encoded, exclusive_json, git, json_snapshot,
-                      output_manifest, persist, raw, require, snapshot, validate_inventory, verify_worktree)
+                      output_manifest, persist, raw, require, retain, snapshot, validate_inventory, verify_worktree)
 import bindings
 
 HERE = Path(__file__).resolve().parent
@@ -292,7 +292,7 @@ def main(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bind
         runner(ready, spec, paths, record)
         record.update(checksPassed=True, status='AWAITING_CALLER_COMPLETION')
     except BaseException as error:
-        record['primaryFailure'] = raw(error)
+        retain(record, record, 'primaryFailure', error)
     result = persist(record, [Path(paths['evidence']) / 'result.json', Path(paths['consumption'] + '.fallback.json')], write=metadata_write, emit=emit)
     return (0 if record['checksPassed'] and not record['persistenceErrors'] and result['durable'] else 1), result
 

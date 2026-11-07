@@ -135,3 +135,79 @@ test('regular metadata replaced by actual FIFO refuses before read and closes de
     fs.rmSync(scratch, { recursive: true });
   }
 });
+
+test('encoding faults cannot skip cleanup or claim durable incomplete evidence', async () => {
+  const original = new Error('producer');
+  const encodingError = new Error('getter failed');
+  Object.defineProperty(original, 'unknown', {
+    get() {
+      throw encodingError;
+    },
+  });
+  const trace = [];
+  const cleanup = new Error('cleanup');
+  const result = await execute(
+    {},
+    {
+      capture: (_c, _r, cleanups) => {
+        cleanups.push(
+          () => {
+            trace.push('first');
+            throw cleanup;
+          },
+          () => trace.push('second'),
+        );
+        throw original;
+      },
+      receipt: () => assert.fail('incomplete publication'),
+      emit: () => assert.fail('incomplete publication'),
+    },
+  );
+  assert.deepEqual(trace, ['second', 'first']);
+  assert.equal(result.code, 1);
+  assert.equal(result.durable, false);
+  assert.equal(result.record.unencodedFailures[0].original, original);
+  assert.equal(result.record.unencodedFailures[0].encodingError, encodingError);
+  assert.equal(result.record.secondaryFailures[0].error.message, 'cleanup');
+});
+
+test('raw scalar distinctions and bounded cyclic facts survive JSON', () => {
+  for (const value of [undefined, null, false, 0, '', -0, NaN, Infinity, -Infinity, 1n]) {
+    const facts = errorFacts(value);
+    assert.deepEqual(JSON.parse(JSON.stringify(facts)), facts);
+  }
+  assert.notDeepEqual(errorFacts(undefined), errorFacts(null));
+  assert.notDeepEqual(errorFacts(-0), errorFacts(0));
+  const x = { rawGraph: 1, unknown: [7, null] };
+  x.self = x;
+  const facts = errorFacts(x);
+  assert.deepEqual(facts, errorFacts(x));
+  assert.equal(facts.nodes[facts.root.ref].entries.find(([k]) => k.value === 'self')[1].ref, facts.root.ref);
+  for (const options of [{ cap: 32 }, { maxNodes: 1 }, { maxDepth: 0 }]) assert.throws(() => errorFacts(x, options), /ceiling/);
+});
+
+test('undefined cleanup and receipt failures remain explicit facts', async () => {
+  const result = await execute(
+    {},
+    {
+      capture: (_c, _r, cleanups) => {
+        cleanups.push(() => {
+          throw undefined;
+        });
+        throw null;
+      },
+      receipt: () => {
+        throw undefined;
+      },
+      emit: () => {
+        throw undefined;
+      },
+    },
+  );
+  assert.equal(result.record.captureFailed, true);
+  assert.equal(result.record.primaryFailure, null);
+  assert.equal(result.record.secondaryFailures.length, 4);
+  for (const failure of result.record.secondaryFailures) assert.deepEqual(failure.error, { type: 'undefined' });
+  assert.equal(result.code, 1);
+  assert.equal(result.durable, false);
+});

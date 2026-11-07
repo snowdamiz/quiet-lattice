@@ -38,56 +38,129 @@ export function metadata(path, expected, cap = 2 * 1024 * 1024) {
     fs.closeSync(fd);
   }
 }
-export function errorFacts(error) {
-  const seen = new Set();
-  function value(v) {
-    if (v === null || ['string', 'number', 'boolean', 'undefined'].includes(typeof v)) return v;
-    if (typeof v === 'bigint') return { bigint: String(v) };
-    if (Buffer.isBuffer(v) || v instanceof Uint8Array) return { base64: Buffer.from(v).toString('base64'), bytes: v.length };
-    if (seen.has(v)) return '[cycle]';
-    seen.add(v);
-    if (Array.isArray(v)) return v.map(value);
-    return Object.fromEntries(Object.getOwnPropertyNames(v).map((k) => [k, value(v[k])]));
+// The value is independent of presence: throwing undefined is still a failure.
+const firstFailure = Symbol('first capture failure');
+function rememberFailure(record, error) {
+  if (!Object.hasOwn(record, firstFailure)) record[firstFailure] = error;
+}
+
+export function errorFacts(error, { cap = 2 * 1024 * 1024, maxNodes = 16384, maxDepth = 128 } = {}) {
+  const nodes = [],
+    seen = new Map();
+  let remaining = cap,
+    shared = false;
+  const charge = (n) => {
+    remaining -= n;
+    need(remaining >= 0, 'Error observation byte ceiling');
+  };
+  function visit(v, depth = 0) {
+    need(depth <= maxDepth, 'Error observation depth ceiling');
+    if (v === null || ['string', 'number', 'boolean', 'undefined', 'bigint'].includes(typeof v)) {
+      let scalar = v;
+      if (v === undefined) scalar = { type: 'undefined' };
+      if (typeof v === 'number' && (!Number.isFinite(v) || Object.is(v, -0))) scalar = { number: Object.is(v, -0) ? '-0' : String(v) };
+      if (typeof v === 'bigint') scalar = { bigint: String(v) };
+      need(typeof scalar !== 'string' || scalar.length <= remaining, 'Error observation string ceiling');
+      charge(Buffer.byteLength(JSON.stringify(scalar)) + 16);
+      return { value: scalar };
+    }
+    if (seen.has(v)) {
+      shared = true;
+      charge(32);
+      return { ref: seen.get(v) };
+    }
+    need(nodes.length < maxNodes, 'Error observation node ceiling');
+    charge(128);
+    const index = nodes.length,
+      node = {};
+    seen.set(v, index);
+    nodes.push(node);
+    if (Buffer.isBuffer(v) || v instanceof Uint8Array) {
+      charge(4 * Math.ceil(v.length / 3));
+      Object.assign(node, { kind: 'bytes', base64: Buffer.from(v).toString('base64'), bytes: v.length });
+    } else if (typeof v === 'symbol') {
+      Object.assign(node, { kind: 'symbol', description: visit(v.description, depth + 1), global: visit(Symbol.keyFor(v), depth + 1) });
+      shared = true;
+    } else {
+      Object.assign(node, { kind: Array.isArray(v) ? 'array' : 'object', entries: [] });
+      for (const key of Reflect.ownKeys(v)) {
+        charge(16);
+        node.entries.push([visit(key, depth + 1), visit(v[key], depth + 1)]);
+      }
+    }
+    return { ref: index };
   }
-  return value(error);
+  const root = visit(error);
+  function tree(edge) {
+    if (Object.hasOwn(edge, 'value')) return edge.value;
+    const node = nodes[edge.ref];
+    if (node.kind === 'bytes') return { base64: node.base64, bytes: node.bytes };
+    const value = node.kind === 'array' ? [] : {};
+    for (const [key, part] of node.entries) {
+      const name = tree(key);
+      if (node.kind === 'array' && name === 'length') value.length = tree(part);
+      else Object.defineProperty(value, name, { value: tree(part), enumerable: true, configurable: true, writable: true });
+    }
+    return value;
+  }
+  const result = shared ? { rawGraph: 1, root, nodes } : tree(root);
+  need(Buffer.byteLength(JSON.stringify(result)) <= cap, 'Error observation encoded ceiling');
+  return result;
 }
 
 export async function execute(context, ports) {
-  const record = { accepted: false, checksPassed: false, primaryFailure: null, secondaryFailures: [], writes: [], resources: [] };
-  const cleanups = [];
+  const record = { accepted: false, checksPassed: false, captureFailed: false, primaryFailure: null, secondaryFailures: [], writes: [], resources: [] };
+  const cleanups = [],
+    failures = [];
+  let primary;
   try {
     await ports.capture(context, record, cleanups);
     record.checksPassed = true;
   } catch (error) {
-    const failure = errorFacts(error);
-    record.primaryFailure = record.firstCaptureFailure ?? failure;
-    if (record.firstCaptureFailure && JSON.stringify(failure) !== JSON.stringify(record.firstCaptureFailure))
-      record.secondaryFailures.push({ phase: 'capture-finally', error: failure });
-  }
-  for (const cleanup of cleanups.reverse()) {
-    try {
-      await cleanup();
-    } catch (error) {
-      record.secondaryFailures.push({ phase: 'cleanup', error: errorFacts(error) });
+    record.captureFailed = true;
+    primary = Object.hasOwn(record, firstFailure) ? record[firstFailure] : error;
+    if (!Object.is(primary, error)) failures.push({ phase: 'capture-finally', error });
+  } finally {
+    // Observe raw objects first; fallible serialization must never skip cleanup.
+    for (const cleanup of cleanups.reverse()) {
+      try {
+        await cleanup();
+      } catch (error) {
+        failures.push({ phase: 'cleanup', error });
+      }
     }
   }
+  function facts(error) {
+    try {
+      return errorFacts(error);
+    } catch (encodingError) {
+      // Retained originals are in memory only if encoding cannot fit/complete.
+      (record.unencodedFailures ??= []).push({ original: error, encodingError });
+      record.checksPassed = false;
+      return { encodingFailed: true };
+    }
+  }
+  if (record.captureFailed) record.primaryFailure = facts(primary);
+  for (const failure of failures) record.secondaryFailures.push({ phase: failure.phase, error: facts(failure.error) });
   record.checksPassed &&= record.secondaryFailures.length === 0;
   let durable = false;
   for (const name of ['entry-result.json', 'entry-fallback.json']) {
     try {
+      need(!record.unencodedFailures, 'Unencoded observations retained in memory; publication refused');
       await ports.receipt(name, record);
       durable = true;
       break;
     } catch (error) {
-      record.secondaryFailures.push({ phase: name, error: errorFacts(error) });
+      record.secondaryFailures.push({ phase: name, error: facts(error) });
       record.checksPassed = false;
     }
   }
   if (!durable) {
     try {
+      need(!record.unencodedFailures, 'Unencoded observations retained in memory; stderr publication refused');
       ports.emit(JSON.stringify(record));
     } catch (error) {
-      record.secondaryFailures.push({ phase: 'stderr', error: errorFacts(error) });
+      record.secondaryFailures.push({ phase: 'stderr', error: facts(error) });
     }
   }
   return { code: record.checksPassed && durable ? 0 : 1, durable, record };
@@ -131,10 +204,10 @@ export function admit(env = process.env, enabled = ENTRY_ENABLED) {
 
 export async function productionCapture(context, record, cleanups) {
   const { ready, spec, paths } = context;
-  // Observe operations before captureReview's frozen finally can replace their error.
+  // Retain the first raw operation failure separately from the shared cleanup aggregate.
   function observeOperation(operation) {
     const failed = (error) => {
-      record.firstCaptureFailure ??= errorFacts(error);
+      rememberFailure(record, error);
       throw error;
     };
     return function (...args) {
@@ -187,7 +260,7 @@ export async function productionCapture(context, record, cleanups) {
     try {
       return write(...args);
     } catch (error) {
-      record.firstCaptureFailure ??= errorFacts(error);
+      rememberFailure(record, error);
       throw error;
     }
   };
@@ -227,7 +300,7 @@ export async function productionCapture(context, record, cleanups) {
           try {
             result = await evaluate(fn, arg);
           } catch (error) {
-            record.firstCaptureFailure ??= errorFacts(error);
+            rememberFailure(record, error);
             throw error;
           }
           if (!instrumented && String(fn).includes('window.review.select')) {

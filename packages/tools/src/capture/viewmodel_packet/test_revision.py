@@ -28,7 +28,7 @@ def scratch():
 
 
 class RevisionControls(unittest.TestCase):
-    def adapter(self, mode='healthy', save_fails=False):
+    def adapter(self, mode='healthy', save_fails=False, encoder_fails=False, allow_git=False):
         root = scratch(); evidence_dir = root / 'evidence'; evidence_dir.mkdir()
         ready = json.loads((HERE / 'readiness.json').read_text())
         spec = caller.plan()['units'][0]
@@ -41,6 +41,14 @@ class RevisionControls(unittest.TestCase):
         commands = {row['pid']: binary + ('' if i == 0 else ' --type=' + ['gpu-process', 'renderer', 'utility'][i - 1]) for i, row in enumerate(rows)}
         def mkdtemp(*args, **kwargs):
             kwargs['dir'] = str(root); return temp(*args, **kwargs)
+        saved_ports = (subprocess.run, subprocess.check_output, subprocess.Popen)
+        def git_port(port):
+            def call(*args, **kwargs):
+                if allow_git and args and args[0][0] == 'git':
+                    with patch.object(subprocess, 'run', saved_ports[0]), patch.object(subprocess, 'check_output', saved_ports[1]), patch.object(subprocess, 'Popen', saved_ports[2]):
+                        return port(*args, **kwargs)
+                return forbidden(*args, **kwargs)
+            return call
         def forbidden(*args, **kwargs):
             raise AssertionError('Native process port forbidden')
         def start(job):
@@ -57,9 +65,12 @@ class RevisionControls(unittest.TestCase):
             trace.append('mandatory-inert-drain'); job.state['drained'] = False; return job.state
         def current_commands(_):
             trace.append('actual-observer-command-port')
-            if mode == 'observer':
+            if mode in ('observer', 'cyclic'):
                 error = subprocess.TimeoutExpired(['inert-observer'], .01, output=b'RAW\xff', stderr=b'ERR\xfe')
-                error.unknown = {'retained': b'\x00'}; originals.append(error); raise error
+                error.unknown = {'retained': b'\x00'}
+                if mode == 'cyclic':
+                    error.unknown.update(nested={'sourceError': error}, shared=error.unknown)
+                originals.append(error); raise error
             if mode == 'deadline':
                 try:
                     with boundary.deadline(.01): time.sleep(.05)
@@ -83,13 +94,25 @@ class RevisionControls(unittest.TestCase):
             real_require_browser(observer); trace.append('actual-require-browser-pass')
         with contextlib.ExitStack() as stack:
             for owner, name, value in [
-                (tempfile, 'mkdtemp', mkdtemp), (subprocess, 'run', forbidden), (subprocess, 'check_output', forbidden), (subprocess, 'Popen', forbidden),
+                (tempfile, 'mkdtemp', mkdtemp), (subprocess, 'run', git_port(saved_ports[0])), (subprocess, 'check_output', git_port(saved_ports[1])), (subprocess, 'Popen', forbidden),
                 (jb.StationJob, 'start', start), (jb.StationJob, 'status', status), (jb.StationJob, 'drain', drain),
                 (jb.StationJob, 'members', lambda _: rows), (jb, 'kernel_tasks', lambda _: {'live': 0}), (jb, 'write', write),
                 (stages, 'current_commands', current_commands), (stages, 'identity', lambda pid: next(row for row in rows if row['pid'] == pid)),
                 (stages, 'coalition', lambda _: [111111, 0]), (stages, 'executable_path', lambda _: binary),
                 (stages.StageReceipts, 'require_browser', require_browser), (native, 'require', resource_require),
             ]: stack.enter_context(patch.object(owner, name, value))
+            if encoder_fails:
+                real_raw = native.raw
+                encoding_attempts = []
+                def encoder(value):
+                    if isinstance(value, subprocess.TimeoutExpired):
+                        encoding_attempts.append(True)
+                        if encoder_fails == 'deadline':
+                            if len(encoding_attempts) == 1:
+                                with boundary.deadline(.01): time.sleep(.05)
+                        else: raise ValueError('INJECTED_ENCODER_FAILURE')
+                    return real_raw(value)
+                stack.enter_context(patch.object(native, 'raw', encoder))
             try:
                 native.capture(ready, spec, paths, record)
                 self.fail('Inert release deliberately remains unproved')
@@ -115,7 +138,7 @@ class RevisionControls(unittest.TestCase):
                     evidence, trace, caught, originals = self.adapter(mode, save_fails)
                     self.assertIs(caught, originals[0])
                     self.assertEqual(evidence['primaryFailure']['attributes']['unknown']['retained']['base64'], 'AA==')
-                    if mode == 'observer':
+                    if mode in ('observer', 'cyclic'):
                         self.assertEqual(evidence['primaryFailure']['attributes']['output']['base64'], 'UkFX/w==')
                         self.assertEqual(evidence['primaryFailure']['attributes']['stderr']['base64'], 'RVJS/g==')
                     if save_fails:
