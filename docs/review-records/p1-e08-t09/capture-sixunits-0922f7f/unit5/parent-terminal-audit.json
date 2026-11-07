@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-07T12:33:14.199723+00:00",
+  "slot": "parent:fauna-0922f7f-unit5-r4-20261107",
+  "outcome": "PASS_OFFLINE_CAPTURE_UNIT",
+  "released": true,
+  "unit": "fauna-combat",
+  "exit": {
+    "exitCode": 0,
+    "wallSeconds": 130.25532112497604,
+    "finishedAt": "2026-11-07T12:32:18.259119+00:00"
+  },
+  "head": "0922f7fc3df310cbdd624d8fa5846b73a9cfe533",
+  "tree": "baa2cd37e8e767e73612161bca28fc425d87cde1",
+  "receipt": {
+    "callerExitCode": 0,
+    "result": {
+      "path": "/private/tmp/fhp-c32d5545b0e747b78a33fd90ea8992ad/result.json",
+      "sha256": "b78f823e346cb52bb65f93a8d9452c17689cc5dd122f34965f70145125b2d225"
+    },
+    "consumption": {
+      "path": "/private/tmp/fhc-c32d5545b0e747b78a33fd90ea8992ad.json",
+      "sha256": "0f58081c6201a2cbd73277c0d29c3d02be6338c23e6bbb1b4e07a193374bd4c7"
+    }
+  },
+  "inspection": {
+    "accepted": true,
+    "decodedImages": 219,
+    "frames": 204,
+    "outputBytes": 132185438,
+    "readouts": 1,
+    "realTimeOrServerQualification": false,
+    "scope": "OFFLINE_VISUAL_REPLAY_ONLY",
+    "sheets": 1,
+    "stills": 14,
+    "unit": "fauna-combat"
+  },
+  "knownPidsAbsent": [
+    53005,
+    53009,
+    53029,
+    53030,
+    53031,
+    53034,
+    53041,
+    53043,
+    53047,
+    53048,
+    53054,
+    53058,
+    54671
+  ],
+  "registration": {
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.c73fa65fe2114eb6bb8a6e21ade7b8f4\" in domain for user gui: 501\n"
+  },
+  "ownedPathsAbsent": [
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-hkktkmzt",
+    "/private/tmp/sbr-tv8tez78",
+    "/private/tmp/sbr-tv8tez78/playwright_chromiumdev_profile-tiKBvj"
+  ],
+  "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-c32d5545b0e747b78a33fd90ea8992ad",
+  "manifestSha256": "1de410939efbb53bb9f24e6d939d5b36e76b95c353888daaa9272fcb79b93c4a",
+  "scope": "One offline capture and physical release only; no visual, live-server, performance or whole-task acceptance."
+}

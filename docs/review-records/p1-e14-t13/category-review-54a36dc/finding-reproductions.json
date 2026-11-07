@@ -1,0 +1,37 @@
+[
+  {
+    "path": "/private/tmp/p1-e14-t13-review-native3-vj5fl6fu/tmp/t13-worker-drain-DL6BQe/capture/packet.json",
+    "sha256": "0531576b8fc49c3ef966180a513bfa99d4753b83b720f64d93ddec6a17b51339",
+    "failure": "Error: External observer cancellation",
+    "categories": null,
+    "prepare": null,
+    "cleanupErrors": [],
+    "terminal": "/private/tmp/p1-e14-t13-review-native3-vj5fl6fu/tmp/t13-worker-drain-DL6BQe/capture/worker-terminal.json"
+  },
+  {
+    "path": "/private/tmp/p1-e14-t13-review-native3-vj5fl6fu/tmp/category-cancelled-return.json",
+    "sha256": "d401a7ad1cf8dadcaffcfc327f46a0bb74ccbbdc03061a165008f7eec195a619",
+    "response": {
+      "categories": [],
+      "unknown": {
+        "bytes": "RETURNED_RAW"
+      }
+    },
+    "returned": true,
+    "packetCategories": null,
+    "failure": "Error: REVIEW_CANCEL"
+  },
+  {
+    "path": "/private/tmp/p1-e14-t13-review-native3-vj5fl6fu/tmp/category-deadline-draining-return.json",
+    "sha256": "64daf4911ba72e672c881b2fbd7216f4120a436d44966601e2ed2fad0105a956",
+    "response": {
+      "categories": [],
+      "unknown": {
+        "bytes": "RETURNED_RAW"
+      }
+    },
+    "returned": true,
+    "packetCategories": null,
+    "failure": "Error: REVIEW_CATEGORY_DEADLINE"
+  }
+]

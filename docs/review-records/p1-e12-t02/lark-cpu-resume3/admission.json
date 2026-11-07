@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-07T12:35:17.350135+00:00",
+  "slot": "parent:lark-density-cpu-r3-20261107",
+  "freeBytes": 49499213824,
+  "requiredBeforeEachStageBytes": 35198648320,
+  "concurrentFaunaReservedBytes": 15871295488,
+  "stageNewGrowthBytes": 6442450944,
+  "freeFloorBytes": 12884901888,
+  "wallSecondsPerStage": 2700,
+  "sampledAggregateRssBytes": 8589934592,
+  "blenderProcesses": 1,
+  "blenderThreads": 2,
+  "codecProcesses": 1,
+  "codecThreads": 1,
+  "gpuAllowed": false,
+  "newPngCountLimit": 12,
+  "newPngBytesLimit": 134217728,
+  "priorCpuRelease": "/private/tmp/space-e14t16-native2-byd4r6ar/final-release.json",
+  "priorCpuReleaseRecord": {
+    "at": "2026-11-07T12:25:35.451863+00:00",
+    "knownIdentitiesRemaining": [],
+    "coalition": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "members": [],
+    "locks": {
+      "slot.lock": "reacquired and released",
+      "guard.lock": "reacquired and released"
+    },
+    "registrationExit": 113,
+    "registrationStderr": "Bad request.\nCould not find service \"local.stations.round4.d8cdf690ad564b4fb2c9b6137a1173ff\" in domain for user gui: 501\n",
+    "freeBytes": 49887293440,
+    "lessGpuReservationBytes": 40961765376
+  },
+  "heavyAtAdmission": [],
+  "scope": "Release parent heavy hold for existing Lark density correction only; other heavy authors remain held. Per-stage admission and owned cleanup mandatory. No screenshot cleanup."
+}

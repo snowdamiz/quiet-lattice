@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-07T12:37:23.124160+00:00",
+  "slot": "parent:fauna-0922f7f-unit6-r4-20261107",
+  "outcome": "PASS_OFFLINE_CAPTURE_UNIT",
+  "released": true,
+  "unit": "fauna-combat-night",
+  "exit": {
+    "exitCode": 0,
+    "wallSeconds": 154.42628120799782,
+    "finishedAt": "2026-11-07T12:36:58.036524+00:00"
+  },
+  "head": "0922f7fc3df310cbdd624d8fa5846b73a9cfe533",
+  "tree": "baa2cd37e8e767e73612161bca28fc425d87cde1",
+  "receipt": {
+    "callerExitCode": 0,
+    "result": {
+      "path": "/private/tmp/fhp-dd7057238c19429fa2dd6151ef07ac3a/result.json",
+      "sha256": "ee4930bc35c108f565455d8c525ac1d58bf328161f602cec6a8d3a18c83d09a6"
+    },
+    "consumption": {
+      "path": "/private/tmp/fhc-dd7057238c19429fa2dd6151ef07ac3a.json",
+      "sha256": "c5a63e79307b032b51588db225d28e234bfa617167d1b4da9f9859b6cc7624d5"
+    }
+  },
+  "inspection": {
+    "accepted": true,
+    "decodedImages": 219,
+    "frames": 204,
+    "outputBytes": 82859202,
+    "readouts": 1,
+    "realTimeOrServerQualification": false,
+    "scope": "OFFLINE_VISUAL_REPLAY_ONLY",
+    "sheets": 1,
+    "stills": 14,
+    "unit": "fauna-combat-night"
+  },
+  "knownPidsAbsent": [
+    72611,
+    72614,
+    72629,
+    72630,
+    72631,
+    72634,
+    72638,
+    72640,
+    72641,
+    72642,
+    72648,
+    72652,
+    76179
+  ],
+  "registration": {
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.c0bf90d8602846b9855f2229afaeb7dc\" in domain for user gui: 501\n"
+  },
+  "ownedPathsAbsent": [
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-ixme389y",
+    "/private/tmp/sbr-yi_sq4v8",
+    "/private/tmp/sbr-yi_sq4v8/playwright_chromiumdev_profile-cu9hNc"
+  ],
+  "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-dd7057238c19429fa2dd6151ef07ac3a",
+  "manifestSha256": "a67ff3b7e2bb2ba9312f6aad5daea29dae67103787f811eb5b868c4364ba4a1b",
+  "scope": "One offline capture and physical release only; no visual, live-server, performance or whole-task acceptance."
+}

@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-07T12:25:38.708437+00:00",
+  "slot": "parent:fauna-0922f7f-unit3-r4-20261107",
+  "outcome": "PASS_OFFLINE_CAPTURE_UNIT",
+  "released": true,
+  "unit": "fauna-hit-turn-night-16x9",
+  "exit": {
+    "exitCode": 0,
+    "wallSeconds": 93.27268762502354,
+    "finishedAt": "2026-11-07T12:25:09.022361+00:00"
+  },
+  "head": "0922f7fc3df310cbdd624d8fa5846b73a9cfe533",
+  "tree": "baa2cd37e8e767e73612161bca28fc425d87cde1",
+  "receipt": {
+    "callerExitCode": 0,
+    "result": {
+      "path": "/private/tmp/fhp-af7b26603a2d4a2889a1bf23ab246da1/result.json",
+      "sha256": "3f4eda2b2b5da3937d1fcd0bbefb5212af5548d8776c280f83648798a585c88d"
+    },
+    "consumption": {
+      "path": "/private/tmp/fhc-af7b26603a2d4a2889a1bf23ab246da1.json",
+      "sha256": "199ecab332fb6460419bce284d69d098138223cce615b5c8e93a9c315b56e4e3"
+    }
+  },
+  "inspection": {
+    "accepted": true,
+    "decodedImages": 81,
+    "frames": 72,
+    "outputBytes": 36603252,
+    "readouts": 1,
+    "realTimeOrServerQualification": false,
+    "scope": "OFFLINE_VISUAL_REPLAY_ONLY",
+    "sheets": 1,
+    "stills": 8,
+    "unit": "fauna-hit-turn-night-16x9"
+  },
+  "knownPidsAbsent": [
+    28752,
+    28755,
+    28770,
+    28773,
+    28774,
+    28777,
+    28779,
+    28786,
+    28787,
+    28788,
+    28805,
+    28809,
+    30978
+  ],
+  "registration": {
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.437341196d5c4fa5ae2201ae75f3fa57\" in domain for user gui: 501\n"
+  },
+  "ownedPathsAbsent": [
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-gu2cjjsr",
+    "/private/tmp/sbr-9m7ut15u",
+    "/private/tmp/sbr-9m7ut15u/playwright_chromiumdev_profile-t3ewFi"
+  ],
+  "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-af7b26603a2d4a2889a1bf23ab246da1",
+  "manifestSha256": "5b7cd3f975582d13d9ebe818076b38bc80febf18a1c419004582c5ceacc3c8c5",
+  "scope": "One offline capture and physical release only; no visual, live-server, performance or whole-task acceptance."
+}

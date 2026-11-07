@@ -1,0 +1,150 @@
+TASK: P1.E14.T16 Preserve exact colour masks through stock export (deps T12).
+C4 VERDICT: PASS — fresh independent read-only SOURCE/CPU review of the cumulative candidate.
+C2 STATUS: Review complete. Whole-task acceptance remains BLOCKED on the separately required regressions and parent integration; this is not native, visual, integration, CI, merge, release or asset-adoption acceptance.
+SEVERITY: No blocking P0/P1/P2 source finding established. No required code correction from this review.
+
+PROVENANCE:
+Candidate worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Branch: task/P1-E14-T16-exact-masks
+Base: 3888f189b16bd9ce70d914eebce3260750ca475d
+Base tree: 00909cfc9b45153e3e18eefbca3227b3b00a30b5
+Final reviewed HEAD: e11acd393201115e5fa682325fc19a463c0d539a
+Final reviewed tree: 3ffe09045b4d0673b7921018fb7f8a435a79b941
+Author native2 tested HEAD: 2156fe66bb596f5604a26e4eea9fc88ed0a712c8
+Author native2 tested tree: eb49d23813f0105293b546cfd965b33acebd18cd
+Initial source/native1 HEAD: 75cf76fd9581d492bdf81de7c385ccd84ecc5eb9
+Initial source/native1 tree: 381e5246f1559971441f589e2d7f43265688ca03
+Final versus tested changes: only exact_mask/README.md and new native-attempt2.json. Every changed executable source/fixture/test/launcher byte equals the native2 tested commit. The three production files also equal the initial checkpoint/native1 tested commit.
+Cumulative patch SHA256: d023a8580d8583aec2d971e76ebe513568916cd9d050b63b71e592314fd38550
+Final evidence-only patch SHA256: 1db0c80092899c4813de998816009d6c647cea051b6395b9a089830e7cc534c3
+Both patches were compared byte-for-byte to git diff --binary. Initial checkpoint, resolver-correction and native1 cumulative patches were also compared against their exact git ranges and stated hashes.
+
+SUMMARY:
+The adapter is correctly placed before the installed Blender packer's UINT16 clip/multiply/round step. It reuses mapped Float32 RGBA and changes only COLOR_0's descriptor in copied dictionaries; it does not recover already-rounded integers. Independent tests confirm exact packing, the retained raw/compressed loader boundary, alpha-dependent palette output, other-family raw formats, and rejection of wrong exported formats. All three supplied C2 reports and the cumulative implementation/test/documentation changes were read. The final source review does not substitute for rerunning the author's Blender export or encodes.
+
+SOURCE FINDINGS / REACHABILITY / EVIDENCE:
+1. PASS — artlib/export.py:113; artlib/exact_masks.py:15,20,35,42,45,49.
+   export_one validates/reloads the source, prepares bake/LODs/skins/names/nodes, scopes preserve(required(...)) around the existing two-argument _write only, then finalizes/compresses/reloads/validates outside the scope. Blender's primitives.py:267 resolves the patched module attribute at call time, including shared-attribute and per-primitive paths. primitive_extract.py:1181-1380 gathers POINT or CORNER Float32 data and material/loop/UV mapping before this call. primitive_attributes.py:183 onward is the actual first UINT16 conversion; array_to_accessor's ordinary noncodec writer serializes Float32 .tobytes() unchanged. No alternate consumer attribute, integer-to-float repair or duplicated mapping was introduced.
+   Dtype/shape/descriptor incompatibilities fail closed. Independent real-packer tests exercise success, nested enabled scopes, injected body failure, critical backend extension failure and bad integer/float64/VEC3/normalized streams; the backend function identity restores. Existing attributes including secondary color and _LIMB/_PIVOT/_GLOW take their ordinary path. Other families use the disabled scope and remain UINT16 in independent control tests. Only creatures/flora currently require this adapter. Current stock calls are synchronous; no concurrent exporter qualification is claimed.
+   The T05 owner's existing two-argument write_exact wrapper was inspected read-only: it calls its captured original writer and then restores its local carriers; the candidate preserves that signature. This source compatibility check is not owner adoption or execution.
+   Remedy: none established for the supported stock call path.
+2. PASS — artlib/checks.py:521-530; artlib/exact_masks.py:59-76; artlib/core.py:84-93.
+   Every export reaches geometry validation. Actual GLB accessor checks run before the legacy/uncompressed branches. Every mesh-bearing noncollider node and each primitive is checked, including LODs and a mesh shared with a collider. Missing/out-of-range/noninteger/bool COLOR_0 references fail; wrong componentType, shape or normalized metadata fail. Malformed container/accessor objects become a stock triangle-check failure through the existing catch, rather than acceptance. This is targeted mask-format validation, not a replacement general glTF schema validator.
+   Independently mutated every one of the 16 real material primitives for each exact family: all 32 cases failed under geometry(..., compressed=False, legacy=True). Seventeen additional malformed metadata cases also failed. The exact unchanged stock geometry function was AST-isolated to avoid importing bpy; this checks its CPU error boundary and real GLB reader, not Blender import integration. Current retained root creatures.glb/flora.glb were directly confirmed to fail the new format contract.
+   Remedy: none; do not add exemptions to make legacy assets pass.
+3. PASS — reviewed 515ba1f00810a50b499970b5468ef7bf0af84c32 material behavior.
+   checks.py's entire materials section and all of materials.py are byte-identical to that reviewed commit. families.json, meshopt.ts, Engine.js and modelLibrary.js are byte-identical to the implementation base. No family/budget/material-graph change or source/asset payload migration is hidden in the patch.
+4. PASS within fixture scope — exact_mask/fixture.py, consumer.mjs, dependencies.mjs and tests.
+   Saved/reopened-source oracle, non-grid RGBA, distinct POINT/CORNER data, material and UV splits, oriented triangles, rig attributes, four LODs, markers, material-instance count, raw/compressed assertions, alpha=1 negative and props controls are substantive. The resolver loads existing dependencies explicitly and transpiles TypeScript in memory; it does not install, generate compiled files or change shared source. The independent decoder used this resolver with filesystem writes forbidden by Node permissions and reached the real Engine loader/consumer imports.
+   Limit: flat Glass fixture, existing flora class override. No real PBR bake/texture/skin/morph/visual qualification follows from this fixture. Props' six retained TEXCOORD_0 out-of-range warnings mean that fixture does not prove UV quantization for those coordinates.
+
+INDEPENDENT VERIFY:
+All CPU producers ran serially under run_cpu.py in the exclusive scratch directory, 35-second timeout, 64 MiB per-file limit, bytecode/Node compile cache disabled, numeric/UV thread settings one. Total new scratch remains below 256 MiB. No nested agents, Blender application, encoding/compression, ffmpeg, bake/render, browser/GPU, server/DB, install, pnpm, hydration, asset regeneration, cleanup or grants ran. Packing tests use Blender's bundled Python interpreter, not the Blender application. Their TemporaryDirectory cleanup was replaced by detach-only retention in the scratch launcher; test bodies are unchanged and all outputs remain.
+All commands below use candidate CWD. Full exact environment/argv/exits are retained in the named JSON receipts. Node decoder additionally uses --permission --allow-fs-read=*; it imports no compressor and writes no files itself.
+
+packing-red
+Command: /Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13 -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/packing_runner.py --baseline
+Exit: 1; timeout: False; reaped: True
+Log: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/packing-red.log
+Receipt: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/packing-red.json
+
+packing-green
+Command: /Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13 -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/packing_runner.py
+Exit: 0; timeout: False; reaped: True
+Log: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/packing-green.log
+Receipt: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/packing-green.json
+
+decode-only
+Command: /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --permission '--allow-fs-read=*' --import /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/dependencies.mjs /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/decode-only.mjs
+Exit: 0; timeout: False; reaped: True
+Log: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/decode-only.log
+Receipt: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/decode-only.json
+
+metadata-boundary
+Command: /Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13 -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/metadata_boundary.py
+Exit: 0; timeout: False; reaped: True
+Log: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/metadata-boundary.log
+Receipt: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/metadata-boundary.json
+
+Packing GREEN: all 15 tests pass. Packing RED: expected exit 1, actual installed unadapted writer emits 5123 instead of 5126. Failure tail is retained below.
+Decode-only: exit 0. Actual Engine.gltfLoader decoded creatures/flora raw and compressed, each 16 primitives, 488 oriented triangles and 5,856 RGBA channel comparisons against retained source.json, including position/normal/UV/_LIMB/_PIVOT/_GLOW. Direct independently implemented palette/AO arithmetic from saved source agrees with maskColors/recolor for two option sets. Alpha=1 differs. Markers match [.25,.75,-.5]. Both unadapted raw and compressed RED remain Uint16Array and fail exact Float32 checks. Props raw COLOR_0 remains normalized UINT16; props compressed retains KHR_mesh_quantization and decodes. Four materials and exact material JSON/order were independently checked for all three raw/compressed pairs.
+Metadata CPU boundary: exit 0; 49 negative cases pass their rejection assertions, plus legacy root format rejection. No full Blender validator rerun claimed.
+Authentication: /opt/homebrew/bin/python3 -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/authenticate.py (exit 0); authentication.json retains 110 native1 and 104 native2 artifact-manifest checks, tested source hashes, unchanged backend hashes, material preservation and release-record consistency. These are retained evidence checks, not a fresh native run or current capacity grant.
+Protection: GIT_OPTIONAL_LOCKS=0 /opt/homebrew/bin/python3 -B /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/snapshot.py before.json and after.json (both exit 0). Identical byte snapshots; SHA256 b1df0e21c12d9236195cd8648d25771872f5916f6a3d7b4adfd97f04825dc2f1. Covered 17,319 dependency lstat entries (including symlink targets), 158 protected source/backend hashes, 242 prior evidence-file hashes, candidate HEAD/tree and full tracked/untracked/ignored status. All review producer process groups were absent after reaping. Not a whole-machine mutation audit.
+
+RETAINED AUTHOR NATIVE EVIDENCE (AUTHENTICATED, NOT RERUN):
+Native1 controller command: /opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native1-tkcyk12j/controller.py
+Exit 1. Raw saved-source exports succeeded; Node then failed at shared/src/world/sites.ts:309 with ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX, before compression/consumer. The old resolver's CPU import RED and corrected resolver GREEN are retained. Native1 artifact manifest SHA256 44b983defc74ac8cc41671156288b4bca1175965ac7814c574611f7ecf144f93; all 110 entries match.
+Native2 controller command: /opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/controller.py
+Exit 0. Expanded producer: /bin/bash /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/run_boundary.sh /private/tmp/space-e14t16-native2-byd4r6ar/boundary
+The retained launcher has two Blender stages around four serial stock compression calls and the actual loader/consumer. Native logs, fixture.blend, source.json, raw/compressed GLBs, five format-negative files, consumer RED/GREEN and all compressed stock-validation reports match the manifest. Native2 artifact manifest SHA256 33e9588cee30cc0cd05692cb31e6645980843eed0b110784dcc114df5ea72cdb; all 104 entries match.
+Native2 source .blend SHA256 53a63457f654891c9361c7a8acc58e6b0d28c81946d1705e05827d7aa616c263. Exported source.json was independently used by the decode-only check; Blender source extraction/reopening itself remains authenticated author evidence, not independently re-executed here.
+Retained native2 controller wall 2.893954875 seconds and peak sampled coalition RSS 320,569,344 bytes (~306 MiB); these are author observations, not new measurements. Both native admissions' SHA256 values match the C2 reports. Recorded supervisors reaped children, drained coalitions, reacquired/released locks and confirmed absent registrations (launchctl print exit 113; bootout exit 3 because already absent). This review did not acquire/release native slots or re-run cleanup. The sampled resource-accounting limitations in the author reports remain applicable.
+Author's subsequent 15 packing tests, resolver regression and 16 exporter-target tests passed. Packing and actual resolver/loader behavior were exercised independently here as specified above; the 16 exporter-target tests were authenticated but not rerun.
+
+RETAINED FAILURES:
+The expected source packing RED, failed native1, both resolver RED logs, native2 expected unadapted compressed RED, and this review's packing RED remain intact. No failed report/output was overwritten, removed or reclassified as a pass. Non-test discovery misses in this review were nonexistent PLAN.md/docs/plan* lookups before resolving docs/IMPLEMENTATION_PLAN.md; no execution or acceptance was claimed for those lookups.
+Independent packing RED final output:
+test_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... FAIL
+
+======================================================================
+FAIL: test_exact_float_rgba (__main__.Packing.test_exact_float_rgba)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/cpu_test.py", line 38, in test_exact_float_rgba
+    self.assertEqual(out.component_type, 5126)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 5123 != 5126
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (failures=1)
+
+MISSING REQUIRED REGRESSIONS / REMEDY FOR WHOLE-TASK ACCEPTANCE:
+- packages/tools/src/art/meshopt.test.ts: existing encode/compression, quantization, marker/empty/material and nonquantizing regression suite; NOT RUN in this source/CPU review because new encodes are forbidden.
+- packages/client/src/gameplay/modelLibrary.test.js: existing compressed creature/flora library/rig/pivot/recolor and quantized-hull regressions; full existing suite NOT RUN here. This independent retained-GLB check is complementary, not that suite's result. The author left its codec-generating setup pending.
+- packages/tools/blender/selftest.py (art:test): native pipeline validation, ordinary props, linked material/PBR baking, generated LODs, texture/KTX2 and JPEG paths, skinned character/jawOpen morph and stale-output rejection; NOT RUN under this review's prohibitions.
+- packages/tools/blender/material_mask_selftest.py: full Blender material-graph/active/named/shared mask and negative regression suite on admitted retained owner assets; NOT RUN. Exact source preservation of 515ba1f does not claim this runtime PASS.
+- Parent combined-head integration/global dev/smoke checks remain NOT RUN. Parent owns resources, final integration and any visual obligations. This review does not authorize their execution or merging.
+Required remedy is separate parent-owned execution of applicable remaining gates, retaining actual failures; source PASS cannot close these gates.
+
+OUT OF SCOPE / OWNER ADOPTION:
+Inherited pinned audit: E08.T08 f9294a466d6223f695f102dc1a13ed526f155e67 has five normalized-UINT16 creature GLBs (biped/flyer/quad_grazer/quad_heavy/quad_small), 136 primitive/LOD selections. Candidate consumer passes do not waive format requirements. Owner re-export remains required after separate admission; owner stage.py/finalize.py and sources untouched.
+Inherited T04 70f8a164614ad9cf370e448a081603bfc4fa1cf4 eight flora GLBs and T05 a46e7c4d444befd6efe6e06b9134b3a41abcb639 three flora GLBs already have Float32 headers through local carriers (76 and 124 selections). This pinned inventory is not refreshed current-owner status or a new source-value proof. Adoption/carrier retirement belongs to owners after their validation. Root legacy creatures/flora were independently confirmed incompatible; T07 adoption remains separate. No artwork, exported production asset, family contract or budget changed.
+
+FILES CHANGED BY CANDIDATE (ALL REVIEWED):
+packages/tools/blender/artlib/checks.py
+packages/tools/blender/artlib/exact_masks.py
+packages/tools/blender/artlib/export.py
+packages/tools/blender/exact_mask/README.md
+packages/tools/blender/exact_mask/backend_cpu.py
+packages/tools/blender/exact_mask/consumer.mjs
+packages/tools/blender/exact_mask/cpu_test.py
+packages/tools/blender/exact_mask/dependencies.mjs
+packages/tools/blender/exact_mask/dependencies.test.mjs
+packages/tools/blender/exact_mask/fixture.py
+packages/tools/blender/exact_mask/native-attempt1.json
+packages/tools/blender/exact_mask/native-attempt2.json
+packages/tools/blender/exact_mask/run_boundary.sh
+packages/tools/blender/exact_mask/source-evidence.json
+
+FILES CHANGED BY REVIEW:
+None in candidate, parent, dependency/backend trees or supplied evidence. Only new exclusive scratch scripts, logs, metadata controls, snapshots and this report. No orchestration documents edited. No PR, comment, merge, watcher or nested agent used.
+
+DECISIONS:
+- PASS is scoped to independent source/CPU review; authenticated author native evidence is identified explicitly.
+- Preserve mapping at the installed backend boundary; no alternative extraction scheme or material-rule relaxation is needed.
+- Reject incompatible legacy masks without asset migration or exemptions.
+- Retain every generated CPU control and all failures; seal this report and scratch with hashes/read-only permissions.
+
+ARTIFACTS:
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/C2-C4-independent-review.txt
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/authentication.json; supplemental-authentication.json; protection.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/before.json; after.json; snapshot.py; authenticate.py
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/{packing-red,packing-green,decode-only,metadata-boundary}.{json,log}
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/{packing_runner.py,decode-only.mjs,metadata_boundary.py,run_cpu.py}
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/artifact-sha256.json
+Inputs: /tmp/space-e14t16-source-2wuGqU/C2-source-checkpoint.txt
+/private/tmp/space-e14t16-native1-tkcyk12j/C2-native-attempt1.txt
+/private/tmp/space-e14t16-native2-byd4r6ar/C2-native-attempt2.txt

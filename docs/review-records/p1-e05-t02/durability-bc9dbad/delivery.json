@@ -1,0 +1,97 @@
+{
+  "status": "CLEAN_SOURCE_CPU_CORRECTION_AWAITING_FRESH_PARENT_REVIEW",
+  "base": "ff497e5525f8e93c71df67827446d7e426bbc20d",
+  "baseTree": "5eccd017f148fbedc6b1fc751fb16ea7fcc1c660",
+  "sourceCommit": "b761fa1950c85a0814b19f92885b452ae877b505",
+  "head": "bc9dbad83c772e6202075404362490eef4f46d2b",
+  "tree": "3b25f1b6ff405127f0f011890719f0795e9b341a",
+  "branch": "codex/task/P1-E05-T02-thalune-reel-candidate",
+  "clean": true,
+  "verificationExit": 0,
+  "currentSourcePassingExecutions": 186,
+  "counts": {
+    "supplied": 142,
+    "sinkMatrix": 41,
+    "exactReviewerGreen": 3,
+    "oldBaseMilestoneAssertions": 5,
+    "intendedCLIRefusals": 3
+  },
+  "red": {
+    "terminalBothSinksExit": 1,
+    "proofOnlyExit": 0,
+    "packetOnlyExit": 0,
+    "suppliedOldRedExit": 1,
+    "suppliedOldRedClassification": "2 genuine failures + 2 TypeError harness failures + 1 negative pass",
+    "independentCompatibleExit": 1,
+    "correctedMilestonesExit": 0,
+    "fourGenuineOldFailures": true
+  },
+  "manifestRows": 1562,
+  "priorManifestRowsUnchangedOutsideFourMutableFiles": 1429,
+  "priorProtectedRows": 1368,
+  "priorProtectedRowsUnchanged": 1367,
+  "authorizedException": "release_accounting.py C2-R12-F1 correction; original row and bytes retained",
+  "attempt2RowsUnchanged": 50,
+  "immutableReviewSealRows": 579,
+  "harmlessChildrenReapedAndAbsent": 9,
+  "flags": {
+    "nativeFixtureAuthorization": true,
+    "runtimeAuthorization": false
+  },
+  "prospectivePathsAbsent": 11,
+  "newOperationalGrants": 0,
+  "nativeJobs": 0,
+  "capacityProbes": 0,
+  "originalNamespaceCleanup": 0,
+  "screenshotCleanup": "STOPPED",
+  "reserveBytes": 22066626560,
+  "rssBytes": 8589934592,
+  "perReelBytes": 39354368,
+  "scratchAndRepositoryProofBytesBeforeDelivery": 12863473,
+  "newScratchLimitBytes": 268435456,
+  "whitespace": {
+    "fullDiffExit": 2,
+    "reason": "Inherited EOF blank lines in four exact immutable review copies; preserved",
+    "authoredDiffExit": 0,
+    "correctedFinalReport": "REPORT-final.md",
+    "initialReportPreserved": "REPORT.md"
+  },
+  "files": {
+    "report": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/REPORT-final.md",
+      "sha256": "3359f5b774609b52ac67b93dff08107cc3851ba601bcf0e839c2ce6750d7cf0a"
+    },
+    "manifest": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/delivery-hash-manifest.json",
+      "sha256": "3d8fddb650ebc67ffc28d8f3f9711c00148a538e0ff2bbce63fef7206e5dfaa9"
+    },
+    "initialSeal": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/combined-hash-manifest.json",
+      "sha256": "17c283ce1dea7ce009d9604650d71aef05cd1c78fd9bf767d4c4e2f4e6cdbe45"
+    },
+    "readiness": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
+      "sha256": "b3df11c94dd6ebfe2a7da561d20e5a79812eb87e43de23dfdb65b202015809d5"
+    },
+    "candidateIndex": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/candidate-index.json",
+      "sha256": "803af330c64ba7bc953ad5fcd8237993fe75d89a61cbd3c36a245276b9abbd53"
+    },
+    "plan": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189-plan.json",
+      "sha256": "3586236af42894a4a36c88361db4049abb0990f86ce2327ead482552ebf8ad70"
+    },
+    "sourceAudit": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/source-audit.json",
+      "sha256": "13671575072abfa938dda4cd33fb973a8c5b105ab5b0d3f4ca81f968ff35bd2c"
+    },
+    "source": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/release_accounting.py",
+      "sha256": "d2c7a641642fc8c588b93a3536fd7a76fdd4e64e00023090f6782cc686fa81b0"
+    },
+    "commands": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/commands.json",
+      "sha256": "9c72d8b16e0e196ce8cdae3bd2f20dd24054811eb8eaedfc96d20f3f95b17119"
+    }
+  }
+}

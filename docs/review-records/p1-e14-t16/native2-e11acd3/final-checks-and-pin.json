@@ -1,0 +1,67 @@
+{
+  "priorAttemptFilesUnchanged": 110,
+  "dependencyEntriesUnchanged": 17319,
+  "changedSourceHashes": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/README.md",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/native-attempt2.json"
+  ],
+  "cpuChecks": [
+    {
+      "case": "packing",
+      "argv": [
+        "/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13",
+        "-B",
+        "packages/tools/blender/exact_mask/cpu_test.py",
+        "--backend",
+        "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2"
+      ],
+      "exit": 0,
+      "terminal": true,
+      "remainingGroup": [],
+      "lock": "reacquired and released",
+      "wallSeconds": 0.3365175829967484,
+      "peakRss": 39616512,
+      "sampledScratchBytes": 10322815
+    },
+    {
+      "case": "loader",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "packages/tools/blender/exact_mask/dependencies.test.mjs"
+      ],
+      "exit": 0,
+      "terminal": true,
+      "remainingGroup": [],
+      "lock": "reacquired and released",
+      "wallSeconds": 0.3178954999893904,
+      "peakRss": 174555136,
+      "sampledScratchBytes": 10344483
+    },
+    {
+      "case": "export-targets",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "/private/tmp/space-e14t16-native2-byd4r6ar/cpu-vitest.config.mjs",
+        "--configLoader",
+        "runner"
+      ],
+      "exit": 0,
+      "terminal": true,
+      "remainingGroup": [],
+      "lock": "reacquired and released",
+      "wallSeconds": 0.45659883302869275,
+      "peakRss": 128516096,
+      "sampledScratchBytes": 10366952
+    }
+  ],
+  "head": "e11acd393201115e5fa682325fc19a463c0d539a",
+  "tree": "3ffe09045b4d0673b7921018fb7f8a435a79b941",
+  "branch": "task/P1-E14-T16-exact-masks",
+  "status": "",
+  "evidence-checkpoint.patch": "1db0c80092899c4813de998816009d6c647cea051b6395b9a089830e7cc534c3",
+  "complete-source.patch": "d023a8580d8583aec2d971e76ebe513568916cd9d050b63b71e592314fd38550",
+  "retainedEvidenceFileBytes": 18270804
+}

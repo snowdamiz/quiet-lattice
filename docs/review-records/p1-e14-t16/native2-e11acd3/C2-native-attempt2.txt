@@ -1,0 +1,134 @@
+TASK: P1.E14.T16 Preserve exact colour masks through stock export (deps T12).
+
+STATUS: PASS — the admitted tiny real saved-source/export/compression/GLTFLoader/consumer boundary. READY FOR FRESH INDEPENDENT REVIEW. Whole-task acceptance remains pending broader required regressions, independent review and parent integration. No further native or codec execution is authorized by this completed slot.
+
+SUMMARY:
+One newly admitted attempt ran at clean 2156fe66bb596f5604a26e4eea9fc88ed0a712c8 and exited 0. The fixture saved and reopened real FLOAT_COLOR source, exported through stock export_one, ran four serial actual stock meshopt encodes, decoded with actual Engine.gltfLoader(), checked maskColors/recolor and alpha occlusion, then passed stock validation of all three compressed outputs. The unadapted source export remained normalized UINT16 after nonquantizing compression and actual GLTFLoader decoding; the strict Float32 assertion rejected it as expected. This real RED remains retained.
+For each exact family, creatures and flora, both raw and compressed actual decoded geometry matched all source triangle corners exactly: POINT/CORNER color domains, two material primitives per mesh, four LODs per variant, eight objects, sixteen primitives, 488 triangles and 5,856 RGBA channel values per comparison. The comparison also includes positions, normals, UVs, _LIMB, _PIVOT and _GLOW. Non-grid alpha affects real consumer output, proven by an alpha=1 negative control. The two consumer option sets match source-derived expected output. Four material instances and their definitions survive compression, marker transforms match, and stock compressor reports zero empty-node movement. Props retains the ordinary raw normalized UINT16 color format and its quantizing compression path.
+The parent may now review the implementation with real consumer evidence. No source fix was needed during this admission. The only follow-up commit records evidence and updates the fixture README. No production asset adoption or regeneration was performed.
+
+FILES:
+Follow-up e11acd393 changes only:
+- packages/tools/blender/exact_mask/README.md
+- packages/tools/blender/exact_mask/native-attempt2.json (new receipt)
+Two files; 71 insertions, 4 deletions. Executable source, fixtures and assertions equal the tested 2156fe6 bytes.
+The cumulative implementation remains: artlib/export.py scopes a pre-rounding adapter around the existing _write call; artlib/exact_masks.py preserves the already mapped source Float32 RGBA array and restores backend state in finally; artlib/checks.py validates actual exported render-primitive COLOR_0 accessors. Task-local fixture, consumer, CPU tests and evidence are under exact_mask/. Existing exact/nonquantizing family contracts, compressor, consumer and reviewed material validation are unchanged. No parent/art-worktree/asset/manifest/plan/progress/decisions changes, no installed/backend/dependency writes, no push/PR/merge or nested agents.
+
+VERIFY:
+Provenance:
+CWD /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Branch task/P1-E14-T16-exact-masks
+Base HEAD 3888f189b16bd9ce70d914eebce3260750ca475d
+Base tree 00909cfc9b45153e3e18eefbca3227b3b00a30b5
+Native/CPU tested HEAD 2156fe66bb596f5604a26e4eea9fc88ed0a712c8
+Native/CPU tested tree eb49d23813f0105293b546cfd965b33acebd18cd
+Final HEAD e11acd393201115e5fa682325fc19a463c0d539a
+Final tree 3ffe09045b4d0673b7921018fb7f8a435a79b941
+Final status --porcelain=v1 --untracked-files=all --ignored=matching: empty.
+Evidence-only patch SHA256 1db0c80092899c4813de998816009d6c647cea051b6395b9a089830e7cc534c3
+Cumulative patch SHA256 d023a8580d8583aec2d971e76ebe513568916cd9d050b63b71e592314fd38550
+
+Admission and ownership:
+Receipt /private/tmp/space-t16-cpu-admission-r2-9bkbjcik/admission.json
+Receipt SHA256 e890df6019967e7ee4469f355a3782c7a6c6810fe2ed85ed7dd0cb9207799f69
+Slot parent:t16-tiny-mask-2156fe6-r2-20261107
+Fresh absent boundary scratch /private/tmp/space-e14t16-native2-byd4r6ar/boundary
+Independent controller acquired slot.lock before dispatch; unchanged local guard acquired guard.lock before producer; retained StationJob helper established a unique launchd root/birth identity and kernel coalition before the go handshake. No autonomous retries. Total deadline remained <=300s, with inner 280s (5s cleanup reserve), outer 285s wait, bounded drain/unload. Limits 4 GiB sampled aggregate RSS, 256 MiB cumulative new scratch, 8 GiB free floor; controller and guard conservatively added the 8,925,528,064-byte fauna GPU reservation to the disk floor. Blender two threads, NumPy one, UV_THREADPOOL_SIZE one, serial encodes. RLIMIT_FSIZE 64 MiB per file.
+Guard SHA256 68bc8172d5be46330e1c56413ffaac5ba037d8cd887fc1f114d83f9b0be26834, byte-identical to the seven-control-tested native1 guard. Controller SHA256 5b8184852d32675031493cf2cbd7728f5705a4c9cbf22f35069e01da6b521b4a. The controller change is only admission/pin/schema/tree/previous-release verification and conservative reserved disk allowance; controller-admission.diff is retained.
+Unchanged frozen ownership helpers: round4_job_boundary.py SHA256 3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c; round4_capture_children.py SHA256 e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07. Both read from the same retained T13 frozen source, not edited. No profile/screenshot cleanup path was invoked.
+
+Exact native command (once, exit 0):
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/controller.py > /private/tmp/space-e14t16-native2-byd4r6ar/controller.stdout 2> /private/tmp/space-e14t16-native2-byd4r6ar/controller.stderr
+Producer command:
+/bin/bash /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/run_boundary.sh /private/tmp/space-e14t16-native2-byd4r6ar/boundary
+Pinned Node /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node (v26.12.1)
+Explicit read-only dependencies /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+Installed TypeScript 6.0.3, transpiled in memory by the task-local resolver. No package manager/install/link/cache mutation.
+Native environment: NODE_OPTIONS empty; NODE_DISABLE_COMPILE_CACHE=1; PYTHONDONTWRITEBYTECODE=1; OMP_NUM_THREADS, OPENBLAS_NUM_THREADS, MKL_NUM_THREADS, VECLIB_MAXIMUM_THREADS and UV_THREADPOOL_SIZE all 1. Exact whitelist environment and argv in native-config.json. Source HEAD/tree/clean status and previous release receipt hash asserted before dispatch.
+
+Stage 1 exact argv, exit 0:
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/fixture.py -- export /private/tmp/space-e14t16-native2-byd4r6ar/boundary/fixture
+Blender 5.2.3 LTS e13b728c6880, build 2026-10-22. Real source SHA256 53a63457f654891c9361c7a8acc58e6b0d28c81946d1705e05827d7aa616c263. Eight mesh objects, POINT/CORNER variants, four LODs 160/64/16/4 triangles each, UV/material splits, four material instances, rig attributes, marker transforms. Stock raw export validation PASS for creatures/flora/props. Five incompatible format controls per exact family rejected: normalized UINT16, normalized UINT8, non-normalized UINT16, normalized FLOAT, FLOAT/VEC3. Source hash unchanged through validation. 01-export.log and export-result.json retained.
+
+Stage 2 exact argv, exit 0:
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --import /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/dependencies.mjs /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/consumer.mjs /private/tmp/space-e14t16-native2-byd4r6ar/boundary/fixture
+Real RED: unadapted raw accessor 5123 rather than 5126; compressGeometry(...,{quantize:false}) then actual GLTFLoader still exposes a non-Float32 color attribute, rejected by verify. consumer-red.json is EXPECTED_FAIL; stock-red.glb and stock-red-compressed.glb preserved.
+GREEN: actual raw and compressed loader output for both exact families matches reopened-source oriented triangle multisets and per-vertex Float32 values, not merely accessor headers or rounded-to-float casts. maskColors and recolor compare with source-derived expected arrays under two option sets; alpha=1 must differ. Markers match [.25,.75,-.5], geometry/rig attributes survive, material JSON/order unchanged with four instances. Props raw format remains UINT16 normalized, compressed props requires KHR_mesh_quantization and decodes. All compressed outputs require EXT_meshopt_compression. consumer-green.json PASS.
+Compression summaries:
+creatures: geometryBefore 75,008 B; compressed streams 31,822 B; input 96,920 B; output 69,280 B; splitMeshes 0; maxEmptyShift 0; quantized false.
+flora: same sizes/counts as creatures; quantized false.
+props: geometryBefore 66,528 B; compressed streams 20,033 B; input 88,724 B; output 57,804 B; splitMeshes 0; maxEmptyShift 0; quantized true.
+Six nonfatal stock warnings in the props path: "quantize: Skipping TEXCOORD_0; out of [0,1] range." The fixture deliberately contains UV splits outside [0,1]; the props control demonstrates its ordinary quantizing path but does not prove UV quantization for those ranges. No contract or production source was changed to suppress them.
+
+Stage 3 exact argv, exit 0:
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/fixture.py -- validate /private/tmp/space-e14t16-native2-byd4r6ar/boundary/fixture
+All five stock checks PASS for creatures-compressed.glb, flora-compressed.glb and props-compressed.glb. Each compressed-validation.json is retained. result.txt reads: PASS: saved-source export, compression, GLTFLoader/consumer and stock validation.
+
+After release, bounded focused CPU regressions (one worker, serial, no further Blender or codec):
+All commands below ran through /opt/homebrew/bin/python3 -B <evidence>/guard.py <evidence>/cpu-CASE.json, with per-command wall 45s, RSS 2 GiB, the same scratch/free caps, NODE_DISABLE_COMPILE_CACHE=1, TMPDIR inside evidence, numeric libraries/UV/Rayon at one. Every guard and producer exited 0, was reaped, left an empty process group and had its lock reacquired.
+1. /Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13 -B packages/tools/blender/exact_mask/cpu_test.py --backend /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2
+15/15 PASS. This is the bundled Python interpreter with real installed pure-Python packing/accessor code, not the Blender application. Includes bit-identical Float32 payload, first-lossy-boundary validation, restoration on success/failure/nesting, rejection of rounded/wrong-shaped streams, other-family/attribute formats, and actual GLB metadata controls.
+2. EXACT_MASK_DEPS=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node packages/tools/blender/exact_mask/dependencies.test.mjs
+PASS actual sites.ts import regression; no Engine or codec invoked by this test. The corrected resolver was already exercised by the real native consumer stage.
+3. /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs run --config /private/tmp/space-e14t16-native2-byd4r6ar/cpu-vitest.config.mjs --configLoader runner
+16/16 existing packages/tools/src/art/targets.test.ts tests PASS (one file only). Scratch-only explicit config: maxWorkers 1, maxConcurrency 1, fileParallelism false, cache false, fsModuleCache false, optimizer disabled; no shared dependency/config edits. Nonfatal warning: deps.optimizer.web is deprecated in favor of client. No full suite or compressed fixture tests were selected.
+Per-command CPU wall/RSS: packing 0.336518s / 39,616,512 B; resolver 0.317895s / 174,555,136 B; exporter-targets 0.456599s / 128,516,096 B. All command lines/terminal receipts in final-checks-and-pin.json.
+
+Additional read-only/static checks, exit 0:
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/inspect_raw.py
+Raw actual binary accessors independently match reopened-source geometry/rig/UV/RGBA triangles (488 triangles, 5,856 RGBA channels each exact family). Supports, but does not replace, the reached GLTFLoader checks.
+/opt/homebrew/bin/python3 -B /tmp/space-e14t16-source-2wuGqU/static.py
+Six Python files parse; checks.py material section and whole materials.py match reviewed 515ba1f00810a50b499970b5468ef7bf0af84c32 exactly; families.json, meshopt.ts and modelLibrary.js match parent bytes.
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/snapshot.py before.json
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/snapshot.py after-native.json
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/snapshot.py after-cpu.json
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/snapshot.py after-final.json
+cmp before.json after-native.json (absolute evidence paths); cmp before.json after-cpu.json: exit 0, identical.
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/release_audit.py
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/final_audit.py
+Both exit 0. Final audit verifies previous-attempt hashes, all dependencies, allowed evidence-only source changes, final pins, clean status, all CPU process groups/locks and native release.
+git diff --check; git diff --cached --check: exit 0.
+git commit -m 'P1.E14.T16: record passing tiny native boundary': exit 0.
+git rev-parse HEAD HEAD^{tree}; git branch --show-current; git status --porcelain=v1 --untracked-files=all --ignored=matching: exit 0, pins above, status empty.
+git diff 3888f189b16bd9ce70d914eebce3260750ca475d HEAD --check and git diff 2156fe66bb596f5604a26e4eea9fc88ed0a712c8 HEAD --check: exit 0.
+
+Resource and release observations:
+Total native controller wall 2.893954875s; inner producer/guard wall 2.561897875s. Peak sampled aggregate coalition RSS 320,569,344 B (about 306 MiB), producer-group RSS 276,561,920 B. Minimum sampled free 50,346,291,200 B; less the reserved GPU allowance 41,420,763,136 B, above the 8 GiB floor. Native sampled cumulative per-inode scratch high-water 6,413,088 B. Last CPU guard observed 10,366,952 B. Final retained evidence/patches before this report 18,270,804 B, well below 256 MiB.
+Scratch accounting is sampled per-inode high-water and can miss transient deleted writes; it is not a claim of exact all-write accounting. Per-file RLIMIT_FSIZE also applied. No limit triggered.
+Controller PID 8803; independent root PID 8810, coalition 43513; inner guard 8811; Bash producer PID/PGID 8814. Producer and direct children reaped; capture and caffeinate exited 0; no cleanup signals/errors were needed. Kernel live count was 1 before root release, then coalition absent/live 0 with no remaining members. Registration gui/501/local.stations.round4.d8cdf690ad564b4fb2c9b6137a1173ff absent. bootout exit 3 because the job had already gone; print exit 113 explicitly confirms absence. Both native locks reacquired/released after termination. Final independent release audit at 2026-11-07T12:25:35.451863Z confirms no known PID birth identities, no coalition members, both locks available, registration absent. Free 49,887,293,440 B; less GPU reserve 40,961,765,376 B. All three CPU groups also empty and locks reacquired; no ownership hold remains.
+
+Preservation and failed attempts:
+Native1 remains immutable: all 110 files in its artifact manifest and the manifest itself verified before and after native2. No retry occurred within either admission. The previously retained native1 failure was ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX at sites.ts:309 before compression/GLTFLoader; its raw output, checkpoint and C2 report remain at /private/tmp/space-e14t16-native1-tkcyk12j. Native2 has no unexpected test/native failure; the actual unadapted RED is intentional and caught by assert.throws.
+Non-mutating discovery misses this turn: initially requested nonexistent packages/tools/src/meshopt.ts before reading src/art/meshopt.ts; looked for absent @voidzero-dev/vite-plus-test before using the installed vitest; packages/tools/test does not exist. These are not native attempts or regression failures.
+Snapshots before/after native and CPU are identical: 17,319 dependency lstat entries, 143 source/backend hashes, empty ignored/untracked status. Final snapshot changes only README and new native-attempt2.json. No dependency/backend/lock/manifest/production source mutation observed within this scope; not a whole-machine audit. Pure CPU guard receipt environment fields redact unused inherited credential values before sealing; argv, test stdout/stderr and result/ownership fields are unchanged. Native environment receipts use the exact whitelist and need no such redaction. cpu-receipt-redactions.json identifies the affected receipt fields without retaining secret values.
+
+DECISIONS:
+1. Exercise the corrected real boundary once under the new parent receipt, without preemptive fixture/assertion edits or further native execution. It passed; retain all evidence and release capacity immediately.
+2. Keep the smallest production adapter at the first lossy boundary. Real saved-source and actual decoded consumer evidence now supports the chosen point: source Float32 survives, alpha remains meaningful, and other attributes/materials/markers are preserved. No cast of rounded integers, alternate mask consumer or backend installation edit.
+3. Keep post-boundary verification to the authorized pure CPU subset. The existing meshopt suite and compressed modelLibrary fixture tests execute codecs, and Blender selftest/material_mask_selftest require native work; they were not silently included after the slot.
+4. Commit only new evidence and README status, leaving prior failed receipts unchanged and the reviewed/tested executable source intact.
+
+OUTOFSCOPE:
+Still required for whole-task acceptance: independent review on final head/tree; parent integration checks; appropriately admitted existing meshopt.test.ts, compressed modelLibrary regressions, Blender exporter pipeline/material-mask regressions as selected by parent. No full-suite claim. The tiny fixture uses existing flora class override/Glass material exemptions, not production PBR baking, KTX2, GPU/render, skinned/morph export or visual equivalence. No runtime capture or screenshot cleanup; the parent's capture lane is independent. No production asset adoption, re-export, LFS hydration, fetch/install, PR or merge.
+Affected-family/adoption inventory from the initial read-only checkpoint (not refreshed owner status):
+- Creatures E08.T08 f9294a466d6223f695f102dc1a13ed526f155e67: biped/flyer/quad_grazer/quad_heavy/quad_small, 34 variants/136 primitive-LOD selections normalized UINT16. Owner re-export after separate capacity admission remains needed. Owner stage.py/finalize.py work untouched. Constructs outpost_drone/outpost_overseer have no COLOR_0 and remain ordinary quantizing families.
+- Flora T04 70f8a164614ad9cf370e448a081603bfc4fa1cf4: tree_blob_t04/tree_cactus_t04/tree_conifer_t04/tree_coral_t04/tree_mushroom_t04/tree_palm_t04/tree_round_t04/tree_spiral_t04, 76 primitive-LOD selections already FLOAT/VEC4 through local source-float carriers/promote_masks.mjs. Header compatibility is not an independent source-value proof for those retained assets.
+- Flora T05 a46e7c4d444befd6efe6e06b9134b3a41abcb639: non_tree_foliage/non_tree_resources/non_tree_stone, 124 primitive-LOD selections already FLOAT/VEC4 via write_exact carriers. Two-argument _write compatibility preserved; owner decides future adoption/removal of carriers after validation.
+- Legacy root creatures.glb/flora.glb remain normalized UINT16 and subject to the new exact accessor contract. T06/future creature/flora outputs inherit it; no retained T06 artifact identified in initial inventory. No silent exemptions, format-budget widening or mass regeneration.
+
+ARTIFACTS:
+Primary report /private/tmp/space-e14t16-native2-byd4r6ar/C2-native-attempt2.txt
+Command/resource/ownership /private/tmp/space-e14t16-native2-byd4r6ar/{controller.py,controller-admission.diff,native-config.json,slot-owned-before-dispatch.json,controller-terminal.json,guard/terminal.json,owned-job/boundary.json,release-audit.json,final-release.json,final-checks-and-pin.json}
+Native logs /private/tmp/space-e14t16-native2-byd4r6ar/boundary/{01-export.log,02-consumer.log,03-validate.log,result.txt}
+Saved source/oracle /private/tmp/space-e14t16-native2-byd4r6ar/boundary/fixture/{fixture.blend,source.json,export-result.json}
+Actual RED /private/tmp/space-e14t16-native2-byd4r6ar/boundary/fixture/{stock-red.glb,stock-red-compressed.glb,consumer-red.json}
+Actual GREEN /private/tmp/space-e14t16-native2-byd4r6ar/boundary/fixture/consumer-green.json plus creatures/flora/props raw, compressed and compressed-validation files
+Raw analysis /private/tmp/space-e14t16-native2-byd4r6ar/{inspect_raw.py,raw-analysis.json}
+Focused CPU logs /private/tmp/space-e14t16-native2-byd4r6ar/cpu-{packing,loader,export-targets}/producer.log
+CPU config/guard receipts /private/tmp/space-e14t16-native2-byd4r6ar/{cpu-vitest.config.mjs,cpu-*.json,cpu-*/terminal.json,cpu-receipt-redactions.json}
+Snapshots/preservation /private/tmp/space-e14t16-native2-byd4r6ar/{before.json,after-native.json,after-cpu.json,after-final.json,prior-attempt-preservation.json,static-preservation.log}
+Patches /private/tmp/space-e14t16-native2-byd4r6ar/{evidence-checkpoint.patch,complete-source.patch}
+Committed receipt packages/tools/blender/exact_mask/native-attempt2.json
+Prior immutable failure report /private/tmp/space-e14t16-native1-tkcyk12j/C2-native-attempt1.txt
+Initial source report /tmp/space-e14t16-source-2wuGqU/C2-source-checkpoint.txt
+Artifact hashes /private/tmp/space-e14t16-native2-byd4r6ar/artifact-sha256.json
