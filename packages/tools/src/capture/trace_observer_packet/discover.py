@@ -38,7 +38,7 @@ def discover():
             if not p.is_symlink() and p.stat().st_mode & 0o111: paths.add(p)
     return {'kind':'T13_OBSERVER_DISABLED_LOCAL_PATHS_V1', 'runtimeAuthorized':False,
             'node':NODE, 'pythonLauncher':str(Path(sys.executable).resolve()), 'pythonKernel':python_kernel,
-            'browser':str(browser), 'tsx':resolved['tsx'], 'binaries':[bind_file(p) for p in sorted(paths)],
+            'browser':str(browser), 'tsx':resolved['tsx'], 'binaries':[bind_file(p, system=True) for p in sorted(paths)],
             'assetPath':str(ROOT/'packages/client/public/models/characters/thalune.glb'),
             'prefix':'bwt-7b836b7ae1754aac9d95e3b74a980efd',
             'output':'/private/tmp/t13-observer-native-7b836b7a',

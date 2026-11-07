@@ -21,6 +21,13 @@ class Boundaries(unittest.TestCase):
         self.root = Path(self.temp.name).resolve()
     def tearDown(self):
         self.temp.cleanup()
+    def test_real_system_binary_owner_is_explicit_and_metadata_stays_private(self):
+        binding=json.loads((f.HERE/'local-binding.json').read_text())
+        row=next(row for row in binding['binaries'] if row['path']=='/bin/ps')
+        self.assertEqual(Path(row['path']).stat().st_uid,0)
+        with self.assertRaises(m.Refused):m.read_bytes(row['path'],16*1024**2)
+        with self.assertRaises(m.Refused):f.bind_file(row['path'])
+        self.assertEqual(f.bind_file(row['path'],system=True),row)
     def test_ancestor_static_race_and_destination(self):
         for kind in ('snapshot', 'file_hash', 'ledger', 'atomic'):
             for raced in (False, True):

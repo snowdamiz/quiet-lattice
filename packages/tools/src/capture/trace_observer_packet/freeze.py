@@ -40,10 +40,11 @@ def capacity(path):
             'minimumFreeBytes': LIMITS['minimumFreeBytes'], 'quotaGuaranteed': False}
 
 
-def bind_file(path, cap=512 * 1024**2):
+def bind_file(path, cap=512 * 1024**2, *, system=False):
     path = Path(path)
-    admitted = admit(path, cap)['stamp']
-    return {'path': str(path), 'sha256': file_hash(path, cap, expected_stamp=admitted), 'bytes': admitted[4]}
+    owners = (os.getuid(), 0) if system else (os.getuid(),)
+    admitted = admit(path, cap, owners=owners)['stamp']
+    return {'path': str(path), 'sha256': file_hash(path, cap, expected_stamp=admitted, owners=owners), 'bytes': admitted[4]}
 
 
 def source_paths(root):
@@ -129,7 +130,7 @@ def _make_freeze(root, destination, binding, *, dependencies=True):
         if 'bytes' in row:
             row['sha256'] = file_hash(row['path'], LIMITS['dependencyBytes'], expected_stamp=row['stamp'], budget=dependency_budget)
     for row in binding['binaries']:
-        if file_hash(row['path'], 512 * 1024**2) != row['sha256']:
+        if bind_file(row['path'], system=True)['sha256'] != row['sha256']:
             raise Refused('Binary binding changed')
     asset = bind_file(binding['assetPath'], 64 * 1024**2)
     if asset['sha256'] != 'dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27':
@@ -180,7 +181,7 @@ def verify_freeze(ready):
 
 def _verify_freeze(ready):
     root = Path(ready['root'])
-    if not any(r['path'] == GIT and file_hash(GIT, 64 * 1024**2) == r['sha256'] for r in ready['binding']['binaries']):
+    if not any(r['path'] == GIT and bind_file(GIT, 64 * 1024**2, system=True)['sha256'] == r['sha256'] for r in ready['binding']['binaries']):
         raise Refused('Actual Git executable is not bound')
     clean(root, ready['head'])
     if (git(root, 'rev-parse', 'HEAD^{tree}') != ready['tree'] or encode(ready['bounds']) != encode(BOUNDS) or
@@ -207,9 +208,11 @@ def _verify_freeze(ready):
         raise Refused('Frozen source file ledger differs')
     if dependency_rows(root) != ready['dependencies'] or content_rows(dependency_rows(frozen)) != json.loads(json.dumps(content_rows(ready['dependencies'])).replace(str(root) + '/', str(frozen) + '/')):
         raise Refused('Dependencies changed')
-    for row in [*ready['binding']['binaries'], ready['asset']]:
-        if file_hash(row['path'], 512 * 1024**2) != row['sha256']:
+    for row in ready['binding']['binaries']:
+        if bind_file(row['path'], system=True)['sha256'] != row['sha256']:
             raise Refused('Bound input changed')
+    if bind_file(ready['asset']['path'], 64 * 1024**2)['sha256'] != ready['asset']['sha256']:
+        raise Refused('Bound asset changed')
 
 
 if __name__ == '__main__':

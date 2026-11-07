@@ -174,11 +174,11 @@ def mkdir(path, *, parents=False):
         parent.verify()
 
 
-def admit(path, cap=METADATA_CAP):
+def admit(path, cap=METADATA_CAP, *, owners=None):
     path = Path(path)
     with Directory(path.parent) as parent:
         info = os.stat(path.name, dir_fd=parent.fd, follow_symlinks=False)
-        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or not 0 <= info.st_size <= cap:
+        if not stat.S_ISREG(info.st_mode) or info.st_uid not in (owners or (os.getuid(),)) or not 0 <= info.st_size <= cap:
             raise Refused('Metadata type/owner/size refused', {'path': str(path), 'stamp': stamp(info)})
         parent.verify()
         return {'stamp': stamp(info)}
@@ -197,7 +197,7 @@ class ReadBudget:
         self.read += size
 
 
-def read_content(path, cap, *, expected_stamp=None, budget=None, consume=lambda _chunk: None, before_open=lambda: None):
+def read_content(path, cap, *, expected_stamp=None, budget=None, consume=lambda _chunk: None, before_open=lambda: None, owners=None):
     path = Path(path)
     budget = budget or ReadBudget(cap)
     facts = {'path': str(path), 'bytes_read': 0, 'complete': False}
@@ -207,7 +207,7 @@ def read_content(path, cap, *, expected_stamp=None, budget=None, consume=lambda 
             before = os.stat(path.name, dir_fd=parent.fd, follow_symlinks=False)
             facts['before'] = stamp(before)
             admitted = expected_stamp if expected_stamp is not None else stamp(before)
-            if not stat.S_ISREG(before.st_mode) or before.st_uid != os.getuid() or stamp(before) != admitted or not 0 <= before.st_size <= cap:
+            if not stat.S_ISREG(before.st_mode) or before.st_uid not in (owners or (os.getuid(),)) or stamp(before) != admitted or not 0 <= before.st_size <= cap:
                 raise Refused('Bound file type/owner/size/admitted stamp differs')
             budget.preflight(before.st_size)
             before_open()
@@ -410,8 +410,8 @@ def inventory(root, *, count=20000, cap=512 * 1024 * 1024, live=False):
         raise Refused('Incomplete ledger: ' + str(error), facts) from error
 
 
-def file_hash(path, cap, *, expected_stamp=None, budget=None):
-    return read_content(path, cap, expected_stamp=expected_stamp, budget=budget)['sha256']
+def file_hash(path, cap, *, expected_stamp=None, budget=None, owners=None):
+    return read_content(path, cap, expected_stamp=expected_stamp, budget=budget, owners=owners)['sha256']
 
 
 def ledger(root, *, count=20000, cap=512 * 1024 * 1024, hash_files=True, live=False):
