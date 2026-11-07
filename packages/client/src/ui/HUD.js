@@ -43,6 +43,23 @@ function el(tag, cls, parent, html) {
   return e;
 }
 
+// Damage numbers (hitNumber): each pops in over HIT_POP_MS, rises HIT_RISE_PX on an ease-out and fades out, over HIT_MS in
+// all. The rise is sampled from `hitRise`, the same curve the stacking reads back to know where a number is by now.
+const HIT_MS = 900;
+const HIT_POP_MS = 100;
+const HIT_RISE_PX = 42;
+const HIT_PX = 19;
+const HIT_KILL_PX = 26;
+const HIT_GAP_PX = 4;
+// (a digit's advance in em, a little over the condensed face's, to decide which numbers share a column)
+const HIT_GLYPH_EM = 0.62;
+const hitRise = (u) => 1 - (1 - Math.min(Math.max(u, 0), 1)) ** 2;
+const HIT_FRAMES = [0, HIT_POP_MS / HIT_MS, 0.25, 0.4, 0.55, 0.7, 0.85, 1].map((u) => ({
+  offset: u,
+  transform: `translate(-50%, ${-HIT_RISE_PX * hitRise(u)}px) scale(${0.7 + 0.3 * Math.min(1, u / (HIT_POP_MS / HIT_MS))})`,
+  opacity: u === 0 ? 0 : u <= HIT_POP_MS / HIT_MS ? 1 : 1 - ((u - HIT_POP_MS / HIT_MS) / (1 - HIT_POP_MS / HIT_MS)) ** 2,
+}));
+
 export function fmtDist(m) {
   if (m < 1000) return `${m.toFixed(0)} m`;
   if (m < 1e6) return `${(m / 1000).toFixed(m < 1e4 ? 1 : 0)} km`;
@@ -201,7 +218,7 @@ export class HUD {
     this.inventory = el('div', 'inventory', this.layer);
     this.prompt = el('div', 'prompt', this.layer);
     this.toasts = el('div', 'toasts', this.layer);
-    // the server's word on the player's shots: damage numbers off the reticle
+    // the server's word on the player's shots: damage numbers over the hit creature
     this.hitsEl = el('div', 'hits', this.layer);
     // the bar the player casts from, keys 1–6 on foot and 1–5 in flight, with its cooldowns (ARCHITECTURE §28)
     this.abilitiesEl = el('div', 'abilities', this.layer, '<div class="ab-row"></div><div class="ab-why"></div>');
@@ -272,8 +289,9 @@ export class HUD {
   }
 
   // (as plain text: a toast can carry the server's words, a notice event, which must never be read as markup)
-  toast(text, kind = 'info') {
-    if (text === this.lastToast && this.now() - this.lastToastT < 2500) return;
+  // (`repeat`: a reward is shown every time it comes, though the last toast said the same: two kills paid the same)
+  toast(text, kind = 'info', { repeat = false } = {}) {
+    if (!repeat && text === this.lastToast && this.now() - this.lastToastT < 2500) return;
     this.lastToast = text;
     this.lastToastT = this.now();
     const t = el('div', `toast ${kind}`, this.toasts);
@@ -298,19 +316,25 @@ export class HUD {
   }
 
   // Banners queue instead of overwriting each other; one that waited too long is stale and dropped.
-  showBanner(title, sub, lines = []) {
-    this.banners.push({ title, sub, lines });
+  showBanner(title, sub, lines = [], detail = '') {
+    this.banners.push({ title, sub, lines, detail });
   }
 
   raiseBanner(b) {
-    // two lines only — what it is and its name; the details (and rewards, which the units counter
-    // shows) were reading as filler
+    // two lines — what it is and its name — and, where the banner brings facts the player reads (an analysis's codex line:
+    // DESIGN 12.1), a third, `detail`; the other lines (and rewards, which the units counter shows) were reading as filler
     // (as text, never markup: banners carry names players and the server chose)
     const sub = el('div', 'b-sub');
     sub.textContent = b.sub;
     const title = el('div', 'b-title');
     title.textContent = b.title;
-    this.banner.replaceChildren(sub, title);
+    const rows = [sub, title];
+    if (b.detail) {
+      const detail = el('div', 'b-line');
+      detail.textContent = b.detail;
+      rows.push(detail);
+    }
+    this.banner.replaceChildren(...rows);
     // raised in a cutscene, it is a title card in the letterbox's top bar, and stays there for its life
     this.banner.classList.toggle('in-bar', !!this.game.cutscenes?.active);
     this.banner.classList.remove('show');
@@ -670,14 +694,20 @@ export class HUD {
     this.abilitiesEl.classList.toggle('rest', now - (this._abBusyAt ?? 0) > BAR_REST_MS);
   }
 
-  // What the server says the player's shots did and the blows it took (ARCHITECTURE §20): a number rising off the reticle
+  // What the server says the player's shots did and the blows it took (ARCHITECTURE §20): a number rising over the creature
   // for each hit (gold for a kill), a flash for a blow taken, and a kill's XP and loot as toasts.
   updateHits(feed) {
+    this.updateHitNumbers();
     if (!feed) return;
     const { dealt, taken, gained } = feed.take();
-    for (const h of dealt) this.hitNumber(h.amount, h.killed);
+    for (const h of dealt) this.hitNumber(h.amount, h.killed, h.target);
     if (taken.length) this.flash('damage');
-    for (const x of gained) this.toast(x.what === 'xp' ? `+${x.count} XP` : `+${x.count} ${x.what === 'units' ? 'units' : RESOURCES[x.what]?.name ?? x.what}`, 'good');
+    // (one toast for each kind of reward a frame brought: an area attack that kills several would otherwise push the earlier
+    // toasts out of the stack)
+    if (!gained.length) return;
+    const totals = new Map();
+    for (const x of gained) totals.set(x.what, (totals.get(x.what) ?? 0) + x.count);
+    for (const [what, count] of totals) this.toast(what === 'xp' ? `+${count} XP` : `+${count} ${what === 'units' ? 'units' : RESOURCES[what]?.name ?? what}`, 'good', { repeat: true });
   }
 
   // World events (ARCHITECTURE §26): a banner as one is announced, starts and ends in the system, and toasts as the
@@ -690,21 +720,77 @@ export class HUD {
     }
   }
 
-  hitNumber(amount, killed) {
+  // Fauna publishes the billboard point on the creature as drawn, including a corpse's fall. Project a copy of it;
+  // nowhere when it is not drawn this frame, behind the camera or off screen.
+  hitAnchor(target) {
+    const g = this.game;
+    if (!target || g.remotes?.get(target.id) !== target) return null;
+    const at = g.fauna.hitAnchor(target);
+    if (!at) return null;
+    const cam = g.engine.camera;
+    _v.copy(at).sub(g.camWorld).applyQuaternion(g.camWorldQuatInv);
+    if (_v.z >= 0) return null;
+    _v.applyMatrix4(cam.projectionMatrix);
+    const x = (_v.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (-_v.y * 0.5 + 0.5) * window.innerHeight;
+    return x > 0 && x < window.innerWidth && y > 0 && y < window.innerHeight ? { x, y } : null;
+  }
+
+  // Keep live numbers over their hit targets as the view moves; once a target is lost, its numbers expire with it.
+  updateHitNumbers() {
+    const now = this.now();
+    this.hitLive = (this.hitLive ?? []).filter((h) => {
+      if (!h.el.isConnected) return false;
+      const at = now - h.at < HIT_MS && this.hitAnchor(h.target);
+      if (!at) {
+        h.el.remove();
+        return false;
+      }
+      const x = at.x + h.dx;
+      const top = at.y + h.dy;
+      if (x !== h.x) h.el.style.left = `${(h.x = x)}px`;
+      if (top !== h.top) h.el.style.top = `${(h.top = top)}px`;
+      return true;
+    });
+  }
+
+  // A hit's damage rising: over the visible creature it landed on, gold and larger for a
+  // kill. A new number starts a full line above the top of every live one it could touch, whichever creature that one is
+  // for (where it is by now, having risen): it rises faster than the older ones, so it never closes on them, and none
+  // sits on another.
+  hitNumber(amount, killed, targetId) {
+    this.updateHitNumbers();
+    const target = this.game.remotes?.get(targetId);
+    const at = this.hitAnchor(target);
+    if (!at) return;
     const e = el('div', 'hit-number', this.hitsEl);
     e.textContent = String(amount > 0 ? Math.max(1, Math.round(amount)) : 0);
-    const dx = ((this.hitsEl.children.length % 5) - 2) * 18;
+    const now = this.now();
+    const px = killed ? HIT_KILL_PX : HIT_PX;
+    // (a little sideways in turn, so the column reads as separate hits)
+    const dx = ((this.hitsEl.children.length % 3) - 1) * 8;
+    const x = at.x + dx;
+    const half = (e.textContent.length * px * HIT_GLYPH_EM) / 2;
+    const live = this.hitLive;
+    let top = at.y;
+    for (const h of live) {
+      if (Math.abs(x - h.x) >= half + h.half) continue;
+      const nowTop = h.top - HIT_RISE_PX * hitRise((now - h.at) / HIT_MS);
+      // (one wholly below where this starts stays below it: the new number rises away from it)
+      if (nowTop >= at.y + px) continue;
+      top = Math.min(top, nowTop - px - HIT_GAP_PX);
+    }
+    live.push({ el: e, at: now, top, x, half, target, dx, dy: top - at.y });
     // (the reticle readouts' type and the HUD's palette: style.css's tokens)
     Object.assign(e.style, {
-      position: 'absolute', left: `calc(50% + ${dx}px)`, top: '44%', transform: 'translate(-50%, 0)', pointerEvents: 'none',
-      color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '500', fontSize: killed ? '20px' : '16px',
-      lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: 'var(--shadow)',
-      transition: 'transform 0.9s ease-out, opacity 0.9s ease-in',
+      position: 'absolute', left: `${at.x + dx}px`, top: `${top}px`, transform: 'translate(-50%, 0)', pointerEvents: 'none',
+      color: killed ? 'var(--accent-hi)' : 'var(--text)', fontFamily: 'var(--font-cond)', fontWeight: '600', fontSize: `${px}px`,
+      // (a dark halo, not only the drop shadow: a number over bright sky or sand keeps 4.5:1)
+      lineHeight: '1', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.01em', textShadow: '0 0 2px #0b0c0f, 0 0 5px #0b0c0f, 0 1px 3px rgba(0, 0, 0, 0.9)',
     });
-    void e.offsetWidth;
-    e.style.transform = 'translate(-50%, -42px)';
-    e.style.opacity = '0';
-    this.later(() => e.remove(), 1000);
+    // (popping in, rising and fading on the compositor: nothing forces a layout as each number is added)
+    e.animate(HIT_FRAMES, { duration: HIT_MS, easing: 'linear', fill: 'forwards' });
+    this.later(() => e.remove(), HIT_MS + 100);
     while (this.hitsEl.children.length > 12) this.hitsEl.firstChild.remove();
   }
 

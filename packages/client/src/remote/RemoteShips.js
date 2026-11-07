@@ -211,6 +211,8 @@ export class RemoteShips {
     }
     const camWorld = this.game.camWorld;
     for (const r of list) {
+      // (creatures are Fauna's)
+      if (r.kind === 'mob') continue;
       r.drawn = false;
       if (!r.shown) continue;
       const kit = this.kit(r.hull);

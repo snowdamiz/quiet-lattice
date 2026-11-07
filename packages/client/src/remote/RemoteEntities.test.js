@@ -64,7 +64,7 @@ function play(remotes, game, at, { from, to, trip = () => 0.03, watch = () => {}
 }
 
 describe('RemoteEntities: what it follows and shows', () => {
-  it('follows players and ships (not the player itself, creatures, walkers, props or loot) and shows those it can draw', () => {
+  it('follows players, ships and creatures (not the player itself, walkers, props or loot) and shows those it can draw', () => {
     const { game } = world();
     game.place(100);
     const v = view();
@@ -92,7 +92,9 @@ describe('RemoteEntities: what it follows and shows', () => {
     expect(remotes.get(3)).toMatchObject({ shown: false, hull: 'mule' });
     // a ship that names no hull is a Lark
     expect(remotes.get(6)).toMatchObject({ shown: true, hull: 'lark' });
-    for (const id of [4, 5, 7, 8]) expect(remotes.get(id)).toBeUndefined();
+    for (const id of [5, 7, 8]) expect(remotes.get(id)).toBeUndefined();
+    // a creature is followed like a ship, and shown only where Fauna draws it (the view here has none)
+    expect(remotes.get(4)).toMatchObject({ kind: 'mob', species: 0, shown: false });
     expect(v.update).toHaveBeenLastCalledWith(remotes.list, DT);
     // it stands where the snapshot put it, in the Waystation's frame as the Waystation is now
     expect(remotes.get(1).frame).toBe(game.station);
