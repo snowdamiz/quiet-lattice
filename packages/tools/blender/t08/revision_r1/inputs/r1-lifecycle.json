@@ -1,0 +1,154 @@
+[
+  {
+    "case": "symlink_dst_left_live",
+    "returned": false,
+    "thrown": null,
+    "bindingStatus": "FAILED",
+    "error": "runtime path is an unexpected symlink; refusing alias mutation",
+    "names": [
+      "binding.json"
+    ],
+    "liveIsSymlink": true,
+    "liveReads": "MUTATED-AFTER-FAIL",
+    "previous": null
+  },
+  {
+    "case": "unreadable_existing_glb",
+    "returned": null,
+    "thrown": "PermissionError: [Errno 13] Permission denied: '/tmp/t08-r1-review-9ec69d49/life/mode000/packages/client/public/models/props/cargo_pod.glb'",
+    "bindingStatus": "FAILED",
+    "error": "[Errno 13] Permission denied: '/tmp/t08-r1-review-9ec69d49/life/mode000/packages/client/public/models/props/cargo_pod.glb'",
+    "names": [
+      "binding.json"
+    ],
+    "runtimeBytes": "CURRENT-GLB",
+    "previous": null
+  },
+  {
+    "case": "unreadable_source_after_quarantine",
+    "returned": false,
+    "thrown": null,
+    "bindingStatus": "FAILED",
+    "error": "[Errno 13] Permission denied: '/tmp/t08-r1-review-9ec69d49/life/badsourceread/assets/blend/props/cargo_pod.blend'",
+    "names": [
+      "binding.json",
+      "previous.glb"
+    ],
+    "runtimeExists": false,
+    "previous": "CURRENT-GLB"
+  },
+  {
+    "case": "source_changed_after_child_exit_0",
+    "returned": false,
+    "thrown": null,
+    "bindingStatus": "FAILED",
+    "error": "source changed during export",
+    "names": [
+      "binding.json",
+      "launcher.log",
+      "previous.glb",
+      "rejected.glb",
+      "stock"
+    ],
+    "runtimeExists": false,
+    "previous": "CURRENT-GLB",
+    "src": "SOURCE-MUTATED"
+  },
+  {
+    "case": "child_fail_removes_new_glb",
+    "returned": false,
+    "thrown": null,
+    "bindingStatus": "FAILED",
+    "names": [
+      "binding.json",
+      "launcher.log",
+      "previous.glb",
+      "rejected.glb",
+      "stock"
+    ],
+    "runtimeExists": false,
+    "previous": "CURRENT-GLB",
+    "rejectedPresent": true
+  },
+  {
+    "case": "stock_fail_removes_new_glb",
+    "returned": false,
+    "thrown": null,
+    "bindingStatus": "FAILED",
+    "names": [
+      "binding.json",
+      "launcher.log",
+      "previous.glb",
+      "rejected.glb",
+      "stock"
+    ],
+    "runtimeExists": false,
+    "previous": "CURRENT-GLB"
+  },
+  {
+    "case": "unreadable_new_glb_left_in_place",
+    "returned": null,
+    "thrown": "PermissionError: [Errno 13] Permission denied: '/tmp/t08-r1-review-9ec69d49/life/new000/packages/client/public/models/props/cargo_pod.glb'",
+    "bindingStatus": "FAILED",
+    "error": "[Errno 13] Permission denied: '/tmp/t08-r1-review-9ec69d49/life/new000/packages/client/public/models/props/cargo_pod.glb'",
+    "names": [
+      "binding.json",
+      "launcher.log",
+      "previous.glb",
+      "stock"
+    ],
+    "runtimeExists": true,
+    "runtimeBytes": "NEW-UNREADABLE",
+    "previous": "CURRENT-GLB"
+  },
+  {
+    "case": "pass_archives_independent_bytes",
+    "returned": true,
+    "bindingStatus": "PASS",
+    "previousIsSymlink": false,
+    "previousAfterRuntimeMutation": "CURRENT-GLB",
+    "nlink": 1,
+    "runtimeNow": "MUTATED-RUNTIME-AFTER-PASS"
+  },
+  {
+    "case": "sigterm_runner",
+    "runnerExit": -15,
+    "launch": true,
+    "receipt": false,
+    "markerWritten": true,
+    "marker": "WROTE",
+    "stdoutTail": "run-sigterm/evidence/20261107T082911284404Z-sigterm\n"
+  },
+  {
+    "case": "sigint_runner",
+    "runnerExit": -2,
+    "receipt": true,
+    "receiptExit": -15,
+    "receiptPass": false,
+    "remaining": [],
+    "markerWritten": false,
+    "stdoutTail": "run-sigint/evidence/20261107T082916291748Z-sigint\nTraceback (most recent call last):\n  File \"<string>\", line 9, in <module>\n    raise SystemExit(m.main())\n                     ~~~~~~^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py\", line 146, in main\n    time.sleep(1)\n    ~~~~~~~~~~^^^\nKeyboardInterrupt\n"
+  },
+  {
+    "case": "killpg_permissionerror",
+    "runnerExit": 1,
+    "receipt": false,
+    "sleeperAlive": [
+      "75908 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import sys,time; from pathlib import Path; time.sleep(8); Path(sys.argv[1]).write_text('WROTE') /tmp/t08-r1-review-9ec69d49/life/eperm-marker"
+    ],
+    "markerWritten": false,
+    "stdoutTail": "orktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py\", line 152, in main\n    os.killpg(proc.pid, signal.SIGTERM)\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 8, in <lambda>\n    m.os.killpg = lambda *a, **k: (_ for _ in ()).throw(PermissionError(1, 'Operation not permitted'))\n                                  ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<string>\", line 8, in <genexpr>\n    m.os.killpg = lambda *a, **k: (_ for _ in ()).throw(PermissionError(1, 'Operation not permitted'))\nPermissionError: [Errno 1] Operation not permitted\n"
+  },
+  {
+    "case": "lock_second_runner",
+    "secondExit": 1,
+    "firstLogUnchanged": true,
+    "secondReceipts": 0,
+    "secondLaunch": 0,
+    "stdoutTail": " recent call last):\n  File \"<string>\", line 9, in <module>\n    raise SystemExit(m.main())\n                     ~~~~~~^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py\", line 64, in main\n    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)\n    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nBlockingIOError: [Errno 35] Resource temporarily unavailable\n"
+  },
+  {
+    "case": "repo_status_after_lifecycle",
+    "porcelain": ""
+  }
+]

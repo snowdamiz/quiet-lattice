@@ -1,0 +1,51 @@
+cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090346782917Z-probe-cargo_pod
+stock export failed: packages/tools/blender/t08/evidence/20261107T090346833323Z-export-cargo_pod-probe
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "cargo_pod",
+    "--report-dir",
+    "/private/tmp/t08-life-bp90e1lk/child_signal_exit/packages/tools/blender/t08/exports/20261107T090346782917Z-probe-cargo_pod/stock"
+  ],
+  "cwd": "/private/tmp/t08-life-bp90e1lk/child_signal_exit",
+  "admission": {
+    "freeBytes": 35603042304,
+    "memoryFreePercent": 82,
+    "load": [
+      4.76708984375,
+      4.29443359375,
+      6.37109375
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T09:03:46.821712+00:00"
+  },
+  "limits": {
+    "wallSeconds": 1800,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-u76d2nw1",
+  "exit": -15,
+  "peakSampledGroupRSSKiB": 5648,
+  "pid": 22792,
+  "pgid": 22792,
+  "remainingGroup": [],
+  "elapsedSeconds": 1.1623740830109455,
+  "logSHA256": "0909ce1674abf410d0b831427b1322f0a9df9662b3632f1c25a2ed1040e9494f",
+  "pass": false
+}
+
+export /tmp/t08-life-bp90e1lk/child_signal_exit/assets/blend/props/cargo_pod.blend -> /tmp/t08-life-bp90e1lk/child_signal_exit/packages/client/public/models/props/cargo_pod.glb
+  0.0 MB with PNG textures; encoding KTX2 (1 at a time)
+

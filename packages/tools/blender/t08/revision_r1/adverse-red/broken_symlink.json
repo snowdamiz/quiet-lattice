@@ -1,0 +1,81 @@
+{
+  "case": "broken_symlink",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-plfujmpo/broken_symlink",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-plfujmpo/broken_symlink/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+    "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+  },
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "current entry retired incompletely; retained failure facts"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [
+            {
+              "operation": "quarantine/detach",
+              "type": "FileNotFoundError",
+              "errno": 2,
+              "message": "[Errno 2] No such file or directory: '/private/tmp/t08-life-plfujmpo/broken_symlink/packages/client/public/models/props/missing.glb'"
+            }
+          ],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 487507587,
+            "mode": 41453,
+            "size": 11,
+            "mtimeNs": 1794042662764267178,
+            "ctimeNs": 1794042662764276470
+          },
+          "quarantine": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/tools/blender/t08/exports/20261107T091102797260Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": true
+        },
+        {
+          "path": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/tools/blender/t08/exports/20261107T091102797260Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "canonicalAbsent": true
+    }
+  ],
+  "receipts": [],
+  "receiptHashesBeforeRelease": {},
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {},
+  "previous": [],
+  "stockMove": null,
+  "expectationMet": true,
+  "failureTail20": []
+}

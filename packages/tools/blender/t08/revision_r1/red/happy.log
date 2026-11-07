@@ -1,0 +1,64 @@
+cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090246942140Z-probe-cargo_pod
+stock export failed: packages/tools/blender/t08/evidence/20261107T090246992734Z-export-cargo_pod-probe
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "cargo_pod",
+    "--report-dir",
+    "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/exports/20261107T090246942140Z-probe-cargo_pod/stock"
+  ],
+  "cwd": "/private/tmp/t08-life-f4xtkqgs/happy",
+  "admission": {
+    "freeBytes": 35780640768,
+    "memoryFreePercent": 82,
+    "load": [
+      2.61474609375,
+      4.0361328125,
+      6.447265625
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T09:02:46.981020+00:00"
+  },
+  "limits": {
+    "wallSeconds": 1800,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-t79sd_8l",
+  "exit": 1,
+  "peakSampledGroupRSSKiB": 5888,
+  "pid": 20869,
+  "pgid": 20869,
+  "remainingGroup": [],
+  "elapsedSeconds": 1.1567347090458497,
+  "logSHA256": "4faf08149a6d20b47c96323624979f8f2b10b6479b862422656adcca1a073b36",
+  "pass": false
+}
+
+export /tmp/t08-life-f4xtkqgs/happy/assets/blend/props/cargo_pod.blend -> /tmp/t08-life-f4xtkqgs/happy/packages/client/public/models/props/cargo_pod.glb
+Traceback (most recent call last):
+  File "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py", line 75, in main
+    ok = export_one(rules, family, src, out, args)
+  File "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py", line 109, in export_one
+    roots = _build_nodes(rules, model)
+  File "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py", line 251, in _build_nodes
+    root = _empty(a.name)
+  File "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py", line 230, in _empty
+    bpy.context.scene.collection.objects.link(e)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'types.SimpleNamespace' object has no attribute 'objects'
+  exporting cargo_pod.blend crashed
+
+export props: 0 of 1 source(s) exported
+

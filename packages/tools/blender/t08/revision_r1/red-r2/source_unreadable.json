@@ -1,0 +1,44 @@
+{
+  "case": "source_unreadable",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-bp90e1lk/source_unreadable",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-bp90e1lk/source_unreadable/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "dca257513a05aed401ce7eab2bea367bfaeca7a570eb6441ce04f428a0fa1a45",
+    "export_saved.py": "3df6f58db90204f577092fe75241d35c911ac9469d5a6f7cd0887c1e22c64f45"
+  },
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "retiredSHA256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+      "error": "[Errno 13] Permission denied: '/private/tmp/t08-life-bp90e1lk/source_unreadable/assets/blend/props/cargo_pod.blend'"
+    }
+  ],
+  "receipts": [],
+  "receiptHashesBeforeRelease": {},
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {},
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "stockMove": null,
+  "expectationMet": true,
+  "failureTail20": []
+}

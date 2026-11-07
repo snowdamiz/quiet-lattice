@@ -1,0 +1,115 @@
+[
+  {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "packages/tools/blender/t08/revision_r1/test_lifecycle.py",
+      "--code",
+      "packages/tools/blender/t08",
+      "--evidence",
+      "packages/tools/blender/t08/revision_r1/green-final"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 1,
+    "elapsedSeconds": 28.64726483298,
+    "log": "packages/tools/blender/t08/revision_r1/final-checks/00.log",
+    "failureTail20": [
+      "sigterm True",
+      "sigint True",
+      "denied_cleanup_late_publish True",
+      "outer_sigterm True",
+      "child_signal_exit True",
+      "leader_exit_with_cohort True",
+      "broken_symlink True",
+      "fifo_current True",
+      "directory_source True",
+      "readlink_error True",
+      "rename_denied True",
+      "receipt_after_replace True",
+      "final_source_change True",
+      "observation_failure True",
+      "runner_happy True",
+      "runner_sigterm True",
+      "runner_sigint True",
+      "runner_eperm True",
+      "runner_wall True",
+      "runner_lock True"
+    ]
+  },
+  {
+    "command": [
+      "/Users/andreyyurlov/.cache/uv/archive-v0/ZbLJ3VthZ-DdA6kn/ruff-0.17.4.data/scripts/ruff",
+      "check",
+      "--no-cache",
+      "--select",
+      "E9,F",
+      "packages/tools/blender/t08/run.py",
+      "packages/tools/blender/t08/export_saved.py",
+      "packages/tools/blender/t08/revision_r1/test_lifecycle.py",
+      "packages/tools/blender/t08/revision_r1/fixture_sitecustomize.py",
+      "packages/tools/blender/t08/revision_r1/fixture_blender.py",
+      "packages/tools/blender/t08/revision_r1/verify_revision.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 0.020986290997825563,
+    "log": "packages/tools/blender/t08/revision_r1/final-checks/01.log",
+    "failureTail20": []
+  },
+  {
+    "command": [
+      "/Users/andreyyurlov/.cache/uv/archive-v0/ZbLJ3VthZ-DdA6kn/ruff-0.17.4.data/scripts/ruff",
+      "format",
+      "--check",
+      "--no-cache",
+      "packages/tools/blender/t08/run.py",
+      "packages/tools/blender/t08/export_saved.py",
+      "packages/tools/blender/t08/revision_r1/test_lifecycle.py",
+      "packages/tools/blender/t08/revision_r1/fixture_sitecustomize.py",
+      "packages/tools/blender/t08/revision_r1/fixture_blender.py",
+      "packages/tools/blender/t08/revision_r1/verify_revision.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 0.012017292028758675,
+    "log": "packages/tools/blender/t08/revision_r1/final-checks/02.log",
+    "failureTail20": []
+  },
+  {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "packages/tools/blender/t08/revision_r1/verify_revision.py",
+      "--out",
+      "packages/tools/blender/t08/revision_r1/protected-final.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 3.1715140839805827,
+    "log": "packages/tools/blender/t08/revision_r1/final-checks/03.log",
+    "failureTail20": []
+  },
+  {
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--version"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 0.0240818330203183,
+    "log": "packages/tools/blender/t08/revision_r1/final-checks/04.log",
+    "failureTail20": []
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 0.018469459027983248,
+    "log": "packages/tools/blender/t08/revision_r1/final-checks/05.log",
+    "failureTail20": []
+  }
+]

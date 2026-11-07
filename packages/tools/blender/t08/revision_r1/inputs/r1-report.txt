@@ -1,0 +1,144 @@
+P1.E14.T08 — fresh independent SOURCE/CPU R1 review
+VERDICT: REVISE for this source/CPU revision.
+The twelve saved blends and twelve shipped GLBs meet the measured art contract. The task-local publisher does not. export_saved.py can leave the runtime GLB in place or still aliased after a failed publish, and the exception leaves export_one. run.py drops its receipt on SIGTERM and on an error from killpg. Those are the blocking findings. This does not grade GPU appearance, native performance, T07 runtime adoption, CI, or the whole task. No merge.
+
+PIN
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+Branch: task/P1-E14-T08-props
+HEAD: 9ec69d49395a8bdddc161240782a8bfa28b3cc38
+Tree: 5fd77453d232cd4e1ed8067e424acdf27a642e9b
+Parent / base: afc0dacaaac45de27776e24ad35e42e3250d8f25
+Before and after this review: the same three pins. git status --porcelain=v1 --untracked-files=all is empty.
+Evidence: /tmp/t08-r1-review-9ec69d49
+Host: macOS 27.0.1 (26A434), Darwin arm64. Load about 8 on 15 CPUs, memory free 83%, disk about 31 GB free when the CPU checks started. Other Blender and ktx jobs were already running for other tasks. They were not signalled.
+Python for the publisher probes: /opt/homebrew/opt/python@3.14/bin/python3.14 (3.14.8), PYTHONDONTWRITEBYTECODE=1.
+Node: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node (v22.23.3).
+Vitest entry: node_modules/vitest/vitest.mjs, package version 5.0.5, sha256 39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6. Same hash after the run.
+Launcher node_modules/.bin/vitest sha256 before and after: ea93cd290b11b2707af8b331cf894244ec3cdd61c98ae0acb1983a0e97d529dd. Regular file. Not invoked.
+Blender: /Applications/Blender.app/Contents/MacOS/Blender 5.2.3 LTS e13b728c6880. Each review Blender was -b --factory-startup -t 2 and did not save. They ran one at a time.
+pnpm, npm, Corepack, install, fetch, and the live Blender MCP were not used.
+Library sha256 33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c matches base.json. Lock sha256 120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f matches base.json.
+
+WHAT WAS REVIEWED
+Plan 0.3, 0.4, 0.9.5, 0.10, the T08 line, and Appendix C. Author brief docs/review-records/p1-e14-t08/author-brief.txt on the parent worktree (it is not in this commit). Author REPORT.txt, reports/delivery-final.json, commands-final.json, staged-ownership.json, future-native-inventory.json.
+Diff vs afc0dac is 856 additions and nothing else. The parent tree has 4097 entries. None of those paths are in the diff. No city, den, or runtime file was replaced.
+Saved sources are the authority. Exports were measured, not regenerated. The first GLB world-size script treated raw normalized int16 positions as meters. Those numbers are discarded. The measurement below uses Accessor.getElement, which divides signed normalized values by 32767, then the node world matrix (the quantization scale lives on the node).
+
+0.9.5
+No client authority over server-owned state. The production loader test exists and was run. This revision does not leave a second demo validator; T07 owns adoption and the generators stay, which the author brief records. It is not a perf-budget task. The class limits used below are families.json prop and building, which match the author brief. No 0.9.5 condition is the reason for REVISE. The publisher findings are the task brief's failure, receipt, and archive contract.
+
+ART CONTRACT, MEASURED, NOT THE REVISE
+Inventory is 12 stems, 21 variants, 84 LODs. Classes match the files: props are prop, sites are building, no class override. Units are metric, scale length 1, no linked libraries.
+LOD0 triangles and longest side, from the saved blends (Blender Z-up) and again from the dequantized GLBs (glTF Y-up, axes swapped, agreement about 0.1 mm):
+
+  cargo_pod                 3602 / 1766 / 366 / 48     longest 2.182 m
+  loot_pod                  4166 / 2234 / 498 / 60     longest 3.044 m
+  terminal                  3600 / 1168 / 184 / 48     longest 1.815 m
+  terminal_reaches          same triangle counts and bounds as terminal
+  market_stall              4284 / 2416 / 364 / 60     longest 3.348 m
+  market_stall_reaches      same triangle counts and bounds as market_stall
+  ammo_flak                 4924 / 2308 / 308 / 36     longest 0.554 m
+  ammo_torpedo              2412 / 1060 / 364 / 84     longest 1.430 m
+  catalyst_vial_frostglass  5020 / 2240 / 760 / 168    longest 0.340 m
+  catalyst_vial_stormquartz 4840 / 2160 / 760 / 168    longest 0.340 m
+  catalyst_vial_gamma       5056 / 2256 / 760 / 168    longest 0.340 m
+  catalyst_vial_acidsalt    5092 / 2272 / 760 / 168    longest 0.340 m
+  crash_debris_plate        4348 / 1388 / 236 / 44     longest 2.522 m
+  crash_debris_shard        4348 / 1388 / 236 / 44     longest 1.412 m
+  crash_debris_rim          7056 / 1504 / 400 / 32     longest 5.350 m
+  crash_debris_scorch       5340 / 972 / 276 / 36      longest 5.100 m
+  outpost_0                 19118 / 11290 / 1466 / 192 longest 37.580 m
+  outpost_1                 21216 / 14008 / 1916 / 152 longest 37.442 m
+  outpost_2                 21512 / 14160 / 2044 / 152 longest 37.442 m
+  beacon_0                  15504 / 8584 / 1644 / 84   longest 18.700 m
+  beacon_1                  10368 / 5432 / 1020 / 108  longest 13.100 m
+
+Prop LOD0 is inside 2,000–10,000 and 0.05–6 m. Building LOD0 is inside 8,000–60,000 and 1–250 m. Every LOD3 is under 5% of LOD0. The largest LOD3 fraction is ammo_torpedo at 0.0348. Counts fall at each LOD. The three outposts differ in triangle count and height (5.716 m, 4.500 m, 7.005 m). The two beacons differ in triangle count and height.
+Texel density on the saved meshes and again on the dequantized exports: props target 512, buildings target 256. Every LOD mean is at least 99.5% of target, the area below 97% of target is under 0.5%, and zero-UV and zero-world triangle counts are 0. The weakest export means are ammo_flak LOD3 at 511.843 and catalyst_vial_stormquartz LOD1 at 510.662. The largest below-97 fraction is ammo_flak LOD1 at 0.003446. Glass on outpost_1 and outpost_2 is exempt. Missing textured maps: 0.
+Each shipped GLB requires EXT_meshopt_compression, KHR_mesh_quantization, and KHR_texture_basisu. Slot headers, read from the KTX2 data format descriptor: baseColor and emissive are ETC1S / BasisLZ / sRGB transfer 2; metallicRoughness and occlusion are ETC1S / BasisLZ / linear transfer 1; normal is UASTC / Zstandard / linear. Props are 1024 with 11 levels. Buildings are 2048 with 12 levels. Every chain is full. This matches families.json textures.codec.
+Every variant has a COL_* mesh of 12 triangles and an Interact empty. Outpost collider distance from the pad centre is at least 12.039 m. The shelter, wing, tower, and link boxes are farther. Interact at (1.55, 13.6, 1.5) m in the blend is outside every collider AABB. Pad inscribed diameters, largest connected ring, source and export: LOD0 24.347 m and 24.345 m, LOD1 24.331 m and 24.329 m, LOD2 24.285 m and 24.284 m, LOD3 24.152 m. All are at least 24 m.
+Outpost approach is a ramp, which the brief allows in place of 0.18/0.30 steps. The L0 perimeter has four ground-contact vertices whose radii run from 12.235 m to 14.121 m (run about 1.89 m). Mesh height reaches 0.280 m, which includes the curb plates. Beacon platforms have vertex bands at 0, 0.18, and 0.36 m.
+Service doors Door_outpost_{0,1,2}_DoorService_L0 measure 1.520 m by 0.100 m by 2.460 m in Blender and 1.520 m wide by 2.460 m high by 0.100 m thick in the GLB. Height and the clear width meet 2.4 by 1.4 m.
+Blink_beacon_0_L0 through L3 are empties at z 18.200 m, each with child beacon_0_SignalLens. Blink_beacon_1 is the same pattern at z 9.700 m. Light_1 on both beacons has color, intensity, and distance. The color components are 0.949, 0.549, 0.157, the 0–1 sRGB encoding of #F28C28. Intensity 2.2, distance 34. Lamp_compact emission is the linear form of that hex, (0.887923, 0.262251, 0.021219), strength 3, and the color sockets are not linked to maps. Outpost Light_Entry has color (1, 0.55, 0.16), intensity 0.9, distance 6.
+No material factor and no sampled image pixel landed within the glyph test distance of #D8F6FF or #7FD8FF. Source images were sampled every 16th pixel. Three shipped base-color KTX2 images were transcoded to PNG and sampled the same way: cargo_pod std about 8/5/5 in 8-bit with 32 distinct samples, beacon_0 std about 19/6/3 with 81, outpost_0 std about 20/20/20 with 116. nearGlyph 0. That is a non-uniformity check, not a visual grade.
+Item ids in inventory.json match packages/shared/src/data/items.ts: ammo_flak/flak_ammo, ammo_torpedo/torpedo, and the four catalyst ids frostglass_catalyst, stormquartz_catalyst, gamma_catalyst, acidsalt_catalyst. The production test asserts the same set.
+Stock reports in reports/stock-final-r2: 24 files, all status PASS. Not re-run. Source and export clearance hashes were matched to the asset bytes in the earlier file census (12/12 source SHA, 12/12 export SHA, binding PASS). Compressed blends start with the zstd magic 28b52ffd. GLBs start with glTF. Preview tree: 44 PNGs, 423681967 bytes (404.055 MiB). commands-final.json records threads 2, which is Blender -t 2, and codecs 1. Log text has no --threads override. ktx_cpu.py holds /tmp/space-t08-ktx.lock for the exec and, when --threads is present, sets it to 1. The author report's historical exceptions (one early cargo encode at the host thread count, and decoded_copy launching two extracts before the mutex) are disclosed in REPORT.txt and were not treated as a current failure.
+
+PRODUCTION LOADER
+Direct Node, Vitest 5.0.5, config packages/tools/blender/t08/vitest.config.mjs, --maxWorkers=1 --no-file-parallelism --no-cache. Exit 0. 15 passed, 0 failed, duration 1.63 s (test body 844 ms). The test parses each shipped GLB with the production GLTFLoader, checks four LODs, triangle budgets, mip chains, compressed maps, COL_/Interact helpers, the 32/128 MB texture budget, and the two malformed controls. It does not check world size, door, pad, blink, lights, glyph, or px/m. Those were measured above. node_modules/.vite was last written 26 Oct and was not touched. /tmp/t08-vitest-vite was not created. No ignored repo write was found.
+
+FINDINGS
+
+F1. A symlink at the runtime path is left live.
+Severity: blocking for this publisher contract.
+File: packages/tools/blender/t08/export_saved.py:50-53.
+Reachable from export_one whenever packages/client/public/models/<family>/<stem>.glb is a symlink. The real caller is export_saved.py, which run.py does not wrap.
+What happens: is_symlink() raises before any archive or unlink. binding.json is FAILED with "runtime path is an unexpected symlink; refusing alias mutation". previous.glb is absent. The symlink stays. Writing the link target after that failure changes the bytes the runtime path serves. Reproduced as symlink_dst_left_live: returned false, liveIsSymlink true, liveReads MUTATED-AFTER-FAIL.
+Fix: if the runtime path is a symlink, copy the target bytes into the attempt as a regular nlink-1 previous.glb when the target is a regular file, then unlink the symlink itself before the child. Do not leave the alias in place. If the target cannot be read, still unlink the symlink and record the read error on the FAILED binding. Do not resolve the path and write through it.
+
+F2. A GLB that cannot be read is not removed, and the error escapes the publish of one stem.
+Severity: blocking.
+File: packages/tools/blender/t08/export_saved.py:54-58 and 94-98.
+Reachable from export_one on any PermissionError or other OSError from read_bytes, both for a pre-existing runtime GLB and for a GLB the child has just written.
+What happens: the handler's dst.read_bytes() runs before dst.unlink(). If that read raises, finally still writes binding.json and then the exception leaves export_one, so a multi-stem batch stops. Reproduced:
+  unreadable_existing_glb: thrown PermissionError errno 13, binding FAILED, runtime bytes still CURRENT-GLB, previous null, names [binding.json].
+  unreadable_new_glb_left_in_place: same throw, runtime bytes NEW-UNREADABLE, previous CURRENT-GLB, the new mode-000 file was not unlinked.
+Fix: quarantine with os.replace of the directory entry, which moves a mode-000 inode without reading it. On any failure path, unlink the runtime path in a finally that does not read it. Catch errors inside the except handler so they are stored on the binding and do not escape export_one. Re-hash the source immediately before status is set to PASS.
+
+F3. SIGTERM drops the runner receipt and leaves the child.
+Severity: blocking.
+File: packages/tools/blender/t08/run.py:125-132 and 147-170. There is no signal handler. The child is started with start_new_session=True, so it is not in the runner's process group.
+Reachable when a watchdog, the lock owner, or an operator sends SIGTERM to the runner. export_one unlinks the old GLB before it starts run.py, so a dead runner can leave the child to write the runtime path with nobody left to validate it. That composition was read from the two functions. It was not executed as a Blender export into the repo.
+What happens: default SIGTERM does not run finally. Reproduced as sigterm_runner: runnerExit -15, receipt false, markerWritten true, marker WROTE. The child survived the parent.
+Fix: handle SIGTERM and SIGINT by setting a flag, or catch them and fall into the existing cleanup. Track the child process group in export_one and reap it if the runner does not return. Always write result.json.
+
+F4. killpg is outside the cleanup try, so one OSError loses the receipt.
+Severity: blocking.
+File: packages/tools/blender/t08/run.py:152, and the SIGKILL call at line 158 is in the same unguarded sequence. result.json is written only after both calls, at line 170.
+Reachable when killpg raises. A normal SIGINT did not: sigint_runner wrote a receipt, exit recorded -15, pass false, remaining group empty, and the child was reaped. The KeyboardInterrupt is the sleep at line 146, after finally has started. An injected PermissionError at the real killpg call did fail: killpg_permissionerror, runnerExit 1, receipt false, sleeper still alive (pid 75908 at the time; the harness later confirmed no review process left).
+Fix: put killpg and the SIGKILL fallback in try/except for ProcessLookupError and PermissionError. Record the error on the receipt. Write result.json in a nested try so a cleanup error cannot skip it.
+
+CONTROLS THAT HELD
+These were reproduced against the real export_saved.py and run.py in /tmp and are not findings.
+  unreadable_source_after_quarantine: runtime removed, previous.glb holds CURRENT-GLB, binding FAILED. The bad source is hashed after the runtime file is unlinked.
+  source_changed_after_child_exit_0: binding FAILED "source changed during export", runtime gone, rejected.glb present, previous.glb intact. Not a false PASS.
+  child_fail_removes_new_glb and stock_fail_removes_new_glb: runtime gone, rejected.glb present, previous.glb intact.
+  pass_archives_independent_bytes: PASS, previous.glb is a regular file, nlink 1, and stays CURRENT-GLB after the runtime path is overwritten.
+  lock_second_runner: second process exit 1, BlockingIOError errno 35 at run.py:64, first log unchanged, second receipts 0. The uncaught traceback is noisy. It did not race the first log. Advisory only.
+The committed malformed-control result (8/8) was not re-executed. The publisher cases above are the fresh boundary checks.
+
+ADVISORY, NOT BLOCKING
+delivery.py:36 asserts git HEAD equals base.json base (afc0dac). Re-running delivery on this review HEAD fails closed. That guard was true only before the commit that published the branch. delivery.py:177 asserts protected base blob equals index blob and records workingSHA256 without asserting it. This review's worktree is clean, so the fifteen protected paths were not dirty.
+Light_1 stores #F28C28 as 0–1 sRGB components. Structures.js:142 passes those numbers to the THREE.Color constructor. Whether that constructor treats them as linear is a T07 adoption question. The required keys are present, and the Lamp material is the linear hex. Not graded as adoption.
+The second-runner BlockingIOError is uncaught. See the lock control above.
+
+NOT ESTABLISHED
+No visual grade from the CPU PNGs or from the three transcoded samples. No native or GPU timing. No T07 adoption of these GLBs into gameplay. No browser, server, DB, capture, or LFS fetch. Stock validation and the eight committed malformed controls were not re-run. The historical codec-concurrency deviations were not re-created; the current wrapper is one encoding thread when --threads is present, and final validation is serial. A first dequantization attempt that multiplied raw int16 values by the node matrix is invalid and is not an asset result.
+
+EXACT COMMANDS
+Pins and cleanliness, both ends of the review, exit 0:
+  git -C /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5 status --porcelain=v1 --untracked-files=all
+  git rev-parse HEAD; git rev-parse 'HEAD^{tree}'; git rev-parse 'HEAD^'
+Diff, exit 0: 856 lines, all status A. base ls-tree count 4097, overlap 0.
+Blender source census, readonly, exit 0, peak 469136 KiB, 8.1 s:
+  Blender -b --factory-startup -t 2 --python-exit-code 1 -P /tmp/t08-r1-review-9ec69d49/source_census.py
+  output /tmp/t08-r1-review-9ec69d49/source.json
+Marker census, same Blender flags. Two harness failures kept:
+  markers.log exit 1, 41.5 s, peak 1412784 KiB. JSON dump of an IDPropertyArray after all 12 files had been read. No output file.
+  markers2.log exit 1, 12.8 s, peak 575200 KiB. float() on the same property.
+  markers3.log exit 0, 34.7 s, peak 1401408 KiB. output source-markers.json. MARKERS_DONE 12.
+Dequantized GLB census, Node 22.23.3, exit 0:
+  node /tmp/t08-r1-review-9ec69d49/glb-meters.mjs
+  GLB_METERS_DONE 12, loose nodes 0 on every file. output glb-meters.json.
+KTX extract harness miss, exit 1, three times: ktx extract has no --threads option.
+Retry, exit 0, three files, no --threads flag:
+  ktx extract --transcode rgba8 cargo_pod.ktx2, beacon_0.ktx2, outpost_0.ktx2
+  PNG colour type 3. Sample stddev and nearGlyph recorded above.
+Production loader, exit 0, 15/15, 1.63 s:
+  node node_modules/vitest/vitest.mjs run --config packages/tools/blender/t08/vitest.config.mjs --configLoader native --maxWorkers=1 --no-file-parallelism --no-cache
+Publisher probe, second run exit 0, LIFECYCLE_DONE 13, repo porcelain empty afterward:
+  python3.14 -B /tmp/t08-r1-review-9ec69d49/lifecycle.py
+  output lifecycle.json. Scratch only under /tmp/t08-r1-review-9ec69d49/life. The first probe run exited 1 because the harness read a mode-000 source after the call; that was not a product result. The second run is the one cited.
+
+IGNORED WRITES AND CLEANUP
+No tracked or untracked repo path changed. node_modules/.vite mtime stayed 26 Oct. The Vitest cache directory /tmp/t08-vitest-vite was not created. Review scratch remains under /tmp/t08-r1-review-9ec69d49, including the failed marker logs and the failed ktx extract attempt. No review Blender, vitest, or sleeper was still running at the end. User Blender and ktx processes were not signalled. This report is the review record. The worktree was not committed, pushed, or merged.

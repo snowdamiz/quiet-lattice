@@ -1,0 +1,528 @@
+{
+  "case": "batch_unreadable",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-wkkmufq1/batch_unreadable",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod,loot_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "c6eef5da1e62458d87f18cddbf543e90894f9a1054903be8674e4299206b6753",
+    "export_saved.py": "2f05988296c65b268507ba1f88cfcbcea519cfece3f8ba89a546798613ce7c23"
+  },
+  "supervisorPID": 44869,
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "PermissionError",
+          "errno": 13,
+          "message": "[Errno 13] Permission denied: '/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/models/props/cargo_pod.glb'"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 488421613,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794043568023527219,
+            "ctimeNs": 1794043568023527219
+          },
+          "quarantine": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/previous.glb",
+          "detachedRegular": true
+        },
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        },
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [
+            {
+              "operation": "quarantine/detach",
+              "type": "PermissionError",
+              "errno": 13,
+              "message": "[Errno 13] Permission denied: '/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/failed-private-quarantine/cargo_pod.glb'"
+            }
+          ],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 488421644,
+            "mode": 32768,
+            "size": 30,
+            "mtimeNs": 1794043568108185526,
+            "ctimeNs": 1794043568108479776
+          },
+          "quarantine": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/failed-private-quarantine/cargo_pod.glb",
+          "quarantineRetained": true
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 488421608,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794043568023321428,
+          "ctimeNs": 1794043568023321428
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-wkkmufq1/batch_unreadable/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-wkkmufq1/batch_unreadable",
+        "exit": 0,
+        "childExit": 0,
+        "childReaped": true,
+        "terminal": true,
+        "remainingGroup": [],
+        "errors": [],
+        "cleanupSignals": [],
+        "pass": true,
+        "peakSampledGroupRSSKiB": 160,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "admission": {
+          "freeBytes": 28319793152,
+          "memoryFreePercent": 79,
+          "load": [
+            6.0166015625,
+            6.0,
+            4.95458984375
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:26:08.061102+00:00"
+        },
+        "tmpdir": "/tmp/t08-nzcbuyud",
+        "pid": 44878,
+        "pgid": 44878,
+        "unexpectedSurvivors": [],
+        "signal": null,
+        "elapsedSeconds": 0.3124500830308534,
+        "logComplete": true,
+        "logSHA256": "fabbd6457859d85896dbe5677cfc185abfccc56350c0d7aa6d74cc2ce3f82936",
+        "logSnapshotSHA256": "fabbd6457859d85896dbe5677cfc185abfccc56350c0d7aa6d74cc2ce3f82936",
+        "receiptPath": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 488421608,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794043568023321428,
+          "ctimeNs": 1794043568023321428
+        }
+      },
+      "sourceChanged": false,
+      "stock": [
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/stock/props__cargo_pod.blend.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 488421637,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794043568107561985,
+            "ctimeNs": 1794043568107561985
+          }
+        },
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/stock/props__cargo_pod.glb.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 488421646,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794043568108358943,
+            "ctimeNs": 1794043568108358943
+          }
+        }
+      ],
+      "canonicalAbsent": true
+    },
+    {
+      "source": "assets/blend/props/loot_pod.blend",
+      "output": "packages/client/public/models/props/loot_pod.glb",
+      "status": "PASS",
+      "exit": 0,
+      "outputSHA256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+      "errors": [],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/client/public/models/props/loot_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 488421615,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794043568023645886,
+            "ctimeNs": 1794043568023645886
+          },
+          "quarantine": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/previous-quarantine/loot_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/previous.glb",
+          "detachedRegular": true
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/models/props/loot_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 488421614,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794043568023593886,
+          "ctimeNs": 1794043568023593886
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/assets/blend",
+        "--only",
+        "loot_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-wkkmufq1/batch_unreadable/assets/blend",
+          "--only",
+          "loot_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-wkkmufq1/batch_unreadable",
+        "exit": 0,
+        "childExit": 0,
+        "childReaped": true,
+        "terminal": true,
+        "remainingGroup": [],
+        "errors": [],
+        "cleanupSignals": [],
+        "pass": true,
+        "peakSampledGroupRSSKiB": 4624,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "admission": {
+          "freeBytes": 28319629312,
+          "memoryFreePercent": 79,
+          "load": [
+            6.0166015625,
+            6.0,
+            4.95458984375
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:26:08.375453+00:00"
+        },
+        "tmpdir": "/tmp/t08-o6b69iu8",
+        "pid": 44921,
+        "pgid": 44921,
+        "unexpectedSurvivors": [],
+        "signal": null,
+        "elapsedSeconds": 0.32001450000097975,
+        "logComplete": true,
+        "logSHA256": "f49b54e430e8c2af9e48ad2e52059e92cf5c2584ce70cb9d6b64ee520b353dfa",
+        "logSnapshotSHA256": "f49b54e430e8c2af9e48ad2e52059e92cf5c2584ce70cb9d6b64ee520b353dfa",
+        "receiptPath": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 488421614,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794043568023593886,
+          "ctimeNs": 1794043568023593886
+        }
+      },
+      "sourceChanged": false,
+      "stock": [
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/stock/props__loot_pod.blend.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 488421730,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794043568423515940,
+            "ctimeNs": 1794043568423515940
+          }
+        },
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/stock/props__loot_pod.glb.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 488421738,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794043568424445523,
+            "ctimeNs": 1794043568424445523
+          }
+        }
+      ]
+    }
+  ],
+  "receipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-wkkmufq1/batch_unreadable",
+      "exit": 0,
+      "childExit": 0,
+      "childReaped": true,
+      "terminal": true,
+      "remainingGroup": [],
+      "errors": [],
+      "cleanupSignals": [],
+      "pass": true,
+      "peakSampledGroupRSSKiB": 160,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "admission": {
+        "freeBytes": 28319793152,
+        "memoryFreePercent": 79,
+        "load": [
+          6.0166015625,
+          6.0,
+          4.95458984375
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:26:08.061102+00:00"
+      },
+      "tmpdir": "/tmp/t08-nzcbuyud",
+      "pid": 44878,
+      "pgid": 44878,
+      "unexpectedSurvivors": [],
+      "signal": null,
+      "elapsedSeconds": 0.3124500830308534,
+      "logComplete": true,
+      "logSHA256": "fabbd6457859d85896dbe5677cfc185abfccc56350c0d7aa6d74cc2ce3f82936",
+      "logSnapshotSHA256": "fabbd6457859d85896dbe5677cfc185abfccc56350c0d7aa6d74cc2ce3f82936",
+      "receiptPath": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/run/result.json"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/assets/blend",
+        "--only",
+        "loot_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-wkkmufq1/batch_unreadable",
+      "exit": 0,
+      "childExit": 0,
+      "childReaped": true,
+      "terminal": true,
+      "remainingGroup": [],
+      "errors": [],
+      "cleanupSignals": [],
+      "pass": true,
+      "peakSampledGroupRSSKiB": 4624,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "admission": {
+        "freeBytes": 28319629312,
+        "memoryFreePercent": 79,
+        "load": [
+          6.0166015625,
+          6.0,
+          4.95458984375
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:26:08.375453+00:00"
+      },
+      "tmpdir": "/tmp/t08-o6b69iu8",
+      "pid": 44921,
+      "pgid": 44921,
+      "unexpectedSurvivors": [],
+      "signal": null,
+      "elapsedSeconds": 0.32001450000097975,
+      "logComplete": true,
+      "logSHA256": "f49b54e430e8c2af9e48ad2e52059e92cf5c2584ce70cb9d6b64ee520b353dfa",
+      "logSnapshotSHA256": "f49b54e430e8c2af9e48ad2e52059e92cf5c2584ce70cb9d6b64ee520b353dfa",
+      "receiptPath": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/run/result.json"
+    }
+  ],
+  "receiptHashesBeforeRelease": {
+    "/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/run/result.json": "2a1f5de942d0996b56a96322c69dc86134143eae8ad8f2d76457107064c34632",
+    "/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/run/result.json": "cb186276997138c7fd16aa86cc6f4de2a246bba4f54cdb40ebaefde04c93f514"
+  },
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {
+    "/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/run/result.json": "2a1f5de942d0996b56a96322c69dc86134143eae8ad8f2d76457107064c34632",
+    "/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/run/result.json": "cb186276997138c7fd16aa86cc6f4de2a246bba4f54cdb40ebaefde04c93f514"
+  },
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    },
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "stockMove": {
+    "source": "/tmp/t08-o6b69iu8/art-export-61dggev4/meshopt/loot_pod.glb",
+    "destination": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/models/props/loot_pod.glb"
+  },
+  "stockMoves": [
+    {
+      "source": "/tmp/t08-nzcbuyud/art-export-utkfz4_o/meshopt/cargo_pod.glb",
+      "destination": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod/producer/models/props/cargo_pod.glb"
+    },
+    {
+      "source": "/tmp/t08-o6b69iu8/art-export-61dggev4/meshopt/loot_pod.glb",
+      "destination": "/private/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod/producer/models/props/loot_pod.glb"
+    }
+  ],
+  "expectationMet": true,
+  "failureTail20": []
+}

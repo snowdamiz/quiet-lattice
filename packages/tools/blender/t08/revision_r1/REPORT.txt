@@ -1,0 +1,204 @@
+TASK: P1.E14.T08 (art) Props — independent R1 tooling-only REVISE
+STATUS: DONE — assigned implementation correction only; fresh independent review remains with the parent.
+
+SUMMARY:
+Corrected all four R1 lifecycle defects and the adjacent T04 R2 late-publication
+defect at the task-local ownership boundary. Current output names are retired
+before content reads. Readable historical aliases are copied into exclusive
+regular archives; unreadable inodes retain explicit error facts and no invented
+digest. The exporter and runner now share one supervising process. The unchanged
+stock producers receive only attempt-private destinations, including their unique
+TMPDIR intermediates. Only the supervisor can promote to the canonical GLB after
+actual producer/cohort termination, unchanged-source checks and stock PASS reports.
+SIGTERM/SIGINT, denied signals, process observation errors and final receipt-write
+failures preserve bounded cleanup attempts and truthful failure receipts. Fresh
+CPU dependency-fixture controls pass 36/36. No art fix was required or performed.
+
+TASK VERBATIM:
+P1.E14.T08 (art) Props · deps: T02 · done: cargo and loot pods, terminals, market
+stalls, ammo, catalyst vials, beacons rebuilt, outposts rebuilt (3), crash-site
+debris kit.
+
+PROVENANCE:
+  Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  Branch: task/P1-E14-T08-props
+  Original isolated base: afc0dacaaac45de27776e24ad35e42e3250d8f25
+  Original base tree: 172bce71ceeda8d496a724a8ee568521d65fcce4
+  Revision parent: 9ec69d49395a8bdddc161240782a8bfa28b3cc38
+  Revision parent tree: 5fd77453d232cd4e1ed8067e424acdf27a642e9b
+  Final HEAD/tree: the containing commit, reported exactly in the worker handoff.
+  This report does not claim a recursive commit self-hash.
+  Final run.py SHA256: 4ba8022e52929e22008ad8858bb76d1e0608b90020fc50eb78c0e1022e7617fa
+  Final export_saved.py SHA256: a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d
+  Immutable independent inputs: inputs/r1-report.txt, r1-lifecycle.py,
+    r1-lifecycle.json, t04-r2-report.txt, t04-r2-exporter-boundary.py,
+    t04-r2-adverse.py. Original /tmp files and exact copied hashes are verified
+    in protection-before.json and protected-final-r3.json.
+
+FILES CHANGED:
+  packages/tools/blender/t08/run.py — process supervision and terminal receipts.
+  packages/tools/blender/t08/export_saved.py — quarantine, binding, private stock
+    destinations and supervisor-only promotion.
+  packages/tools/blender/t08/revision_r1/** — one focused Python boundary suite,
+    inert dependency fixtures, protection/sealing scripts, immutable input copies,
+    exact baseline/intermediate code, failed attempts and final evidence.
+  No expanded ownership was necessary. The original REPORT.txt and every other
+  pre-existing task artifact remain exact. No source asset, runtime GLB, preview,
+  shared exporter/artlib/schema/library, Review/runtime/generator, other family,
+  orchestration document or linked dependency was edited.
+
+VERIFY:
+Paths below are relative to packages/tools/blender/t08/revision_r1 unless noted.
+The final checks use direct /opt/homebrew/opt/python@3.14/bin/python3.14 -B and
+PYTHONDONTWRITEBYTECODE=1. One serial test harness; at most one test case active.
+Node is direct v22.23.3. Vitest 5.0.5 entry and launcher hashes match independent
+R1, but Vitest was not rerun. No Blender, codec, GPU, native capture, browser,
+server, DB, dependency install, LFS hydration, new PNG or screenshot cleanup ran.
+
+Fresh RED and GREEN:
+  red-r2/results.json: exact revision-parent run.py/export_saved.py, 19 controls.
+    Nine failed safety assertions reproduce F1/F2/F3/F4 and adjacent cohort/late
+    publication cases; ten safe controls pass. The CLI safety suite exits 1.
+    Each actual caller command/exit is recorded, not inferred from a helper.
+  green/results.json: first correction, 19/19, suite exit 0.
+  adverse-red/results.json: first correction against nine additional controls,
+    suite exit 1. Seven hold; readlink-before-retirement and a write error after
+    binding installation fail. iteration1/ retains those exact implementation bytes.
+  green-r2/results.json: corrected 33/33, suite exit 0.
+  green-final/results.json: 32/33, suite exit 1. This was a test association error:
+    a multi-stem batch's last stock move was compared with its first binding.
+    Batch failure isolation passed; the check was corrected to match each private
+    destination to its owning binding. The failed result and log remain unchanged.
+  green-final-r2/results.json: corrected per-stem check, 33/33, suite exit 0.
+  binding-red/results.json: iteration2/ against final-binding signal injection;
+    safety assertion fails; happy props and sites controls pass; suite exit 1.
+  result-red/results.json: iteration2/ standalone result-write signal injection;
+    safety assertion fails; happy control passes; suite exit 1.
+  green-final-r3/results.json: FINAL 36/36, suite exit 0. Final code hashes match
+    the production scripts in this commit. The two signal windows are corrected.
+
+Exact final command vectors, cwd, exits, elapsed time, logs and failure tails:
+  final-checks-r3/commands.json:
+    python3.14 -B test_lifecycle.py --code .. --evidence green-final-r3: exit 0.
+    cached Ruff 0.17.4 check --no-cache --select E9,F on six changed Python files:
+      exit 0; no cache or dependency writes.
+    cached Ruff format --check --no-cache on the same files: exit 0.
+    python3.14 -B verify_revision.py --out protected-final-r3.json: exit 0.
+    direct pinned Node --version: exit 0, v22.23.3.
+    git diff --check: exit 0.
+    final-checks-r3/syntax.json: AST parse PASS for all six files, no pyc.
+  closeout-checks/commands.json records final scoped checks including
+    seal_evidence.py and protection after report/evidence creation.
+    staged-ownership.json records the staged path boundary.
+  The whole staged git diff --check exits 2 only for blank EOF lines in six
+    immutable raw failure logs (listed in staged-ownership.json). Those log bytes
+    are intentionally preserved. The scoped source/report whitespace check passes.
+  commands-cases.json contains all 188 actual caller commands from every retained
+    run, their process exits, assertion outcomes, logs and last 20 lines for every
+    nonzero exit or failed assertion, including expected failure controls.
+  binding-red-command/, result-red-command/, seal-command/ retain their exact
+    top-level vectors, exit codes and failure tails.
+  final-checks/ and final-checks-r2/ retain earlier complete command receipts.
+  Initial red/happy.log is also retained: an incomplete inert bpy fixture lacked
+    scene.collection.objects. That setup failure is not a product result. The
+    inert dependency was completed before the real baseline RED at red-r2/.
+
+R1 finding resolution and real boundary evidence:
+  F1: symlink and relative_symlink now pass; canonical entry moved before readlink
+    or content open. Historical bytes are regular nlink=1 and stay unchanged when
+    the backing file changes. The hardlink safe control also stays true.
+  F2: old_unreadable/new_unreadable record failed facts without content hashes,
+    retire the canonical name, and keep unreadable raw inodes. batch_unreadable
+    proves the next stem still exports and binds successfully. Source failures,
+    same-byte alias changes, child exit 7 and stock FAIL also remain safe.
+  F3: sigterm, outer_sigterm and runner_sigterm have real child handles and
+    separate sessions. Signal handling stays installed through cleanup/publication;
+    direct-child reaping and observed group absence precede success. Interrupts
+    return 143/130, not a fabricated child success. Leader exit with a live cohort
+    is rejected even when subsequent cleanup terminates that cohort.
+  F4: denied_cleanup_late_publish and runner_eperm retain TERM/KILL EPERM errors,
+    wait timeout, childExit=null, childReaped=false, terminal=false and observed
+    surviving members. The persistent lane guard refuses a new producer.
+  Adjacent T04 F-E: a file barrier releases the real stock export code only AFTER
+    the failed supervisor exits and writes its receipt. Baseline recreates the
+    canonical GLB. Final code leaves it absent; the actual stock shutil.move lands
+    in the attempt's private models path, and the failed receipt hash is unchanged.
+    This is structural destination isolation, not a child-side guard check.
+  Additional controls: broken link, FIFO, directory source, readlink error,
+    canonical rename denial, observation failure, source mutation after promotion,
+    receipt error after os.replace, final binding/result SIGTERM, wall limit,
+    standalone successful run and lock contention. All 36 final controls hold.
+
+Fixture scope:
+  test_lifecycle.py copies exact stock export_props.py, export_sites.py and
+  artlib/export.py bytes and verifies them against the protected originals.
+  fixture_sitecustomize.py substitutes only the requested Blender executable with
+  Python fixture_blender.py and injects specified syscall failures. Substitution
+  logs retain requested and actual argv. Inert geometry, validators and codec
+  dependencies execute no Blender/codec work. Actual unchanged stock main/export,
+  compression routing, temporary paths, report writes and final move execute.
+  Both props and sites entry points are exercised. The fake payload is explicitly
+  CPU-DEPENDENCY-FIXTURE-NOT-ART; these tests make no new art validation claim.
+  Unique short TMPDIRs, CPU thread=2 environment, codec=1 setting, fresh real
+  admission, finite wall/RSS limits and exclusive receipts remain configured.
+
+PROTECTED PROOF / RETENTION:
+  protected-final-r3.json and the closeout audit verify 4,951 pre-existing tracked
+  paths in hash, size, mode and mtime. This includes ALL 4,097 original parent
+  paths, ALL 24 art assets, ALL 44 PNGs, prior reports and protected consumers.
+  The only excluded pre-existing paths are the two authorized tooling edits.
+  All 24 source/export SHA256 values are listed in assetHashes and match the
+  9ec69d49 LFS pointer OIDs. All 44 preview hashes remain in the unchanged original
+  delivery-final.json and protection-before.json. No PNG was added in this revision.
+  The original 12 sources / 12 GLBs / 21 variants / 84 LODs, measured scale,
+  density, PBR, markers, stock checks, eight malformed art controls and 15 consumer
+  test results are reused only by exact byte proof. They were not rerun here.
+  fixtures-evidence.tar.gz preserves 4,263 readable regular fixture files.
+    SHA256: 9b064853209e1fb7e16fa023eaf39498751465676864eb2f4f197f5e0c27cb9d
+  fixtures-manifest.json records all 8,182 fixture entries across 161 private
+  roots, including 30 unreadable inode/error records with null SHA256. Their
+  original scratch inodes remain at the recorded paths; no chmod/unlink/pruning
+  was used to manufacture a readable digest. Symlink targets and special-file
+  facts are recorded without following them into the archive.
+  terminal-process-check.json observes 243 owned process-group IDs absent after
+  all probes. The harness signals only its own Popen groups/recorded fixture
+  producers. Existing peer Blender/codec processes were not controlled.
+  SHA256SUMS.json seals new evidence and tooling bytes, excluding itself.
+
+DECISIONS:
+  Who may publish after a failed cleanup? → only the supervisor → producer paths
+    remain private even when killpg is denied and a surviving child later finishes.
+  How to archive unreadable current output? → retire directory entry first and
+    preserve inode/error facts → content permission is not removal authority.
+  How to preserve readable alias history? → exclusive independent regular copy,
+    fsync, no shared inode → mutations cannot rewrite recorded historical bytes.
+  Is signal delivery itself proof of termination? → no → wait the actual child,
+    observe its group, preserve uncertainty and block reuse if unresolved.
+  What if a canonical rename is physically denied? → record invalidated=false,
+    canonicalAbsent=false and launch no producer → never claim impossible removal.
+  What if an atomic receipt write reports an error after installing PASS? → retire
+    that uncommitted receipt and write FAILED/fallback → no false current PASS.
+  What if signal arrives during the final receipt write? → check after the write,
+    retire uncommitted PASS and invalidate output → process and failure facts agree.
+  How to prove caller reachability without forbidden art tools? → unchanged stock
+    code plus inert CPU dependency fixtures and barriers → real publication paths,
+    explicitly no claim about geometry/codec execution.
+
+OUT OF SCOPE FOUND:
+No source-asset fix was necessary. Fresh independent source review is the parent's
+next gate. Native Review captures, visual grading, native performance, T07 gameplay
+adoption/generator removal, CI and whole-task acceptance remain pending. Standard
+Review remains the art consumer. The unchanged concrete future capture inventory
+is ../reports/future-native-inventory.json. No GPU reservation was used. No push,
+PR, merge or merge-queue action was performed.
+
+ARTIFACTS:
+  This REPORT.txt; protection-before.json; protected-final-r3.json;
+  closeout-protected.json; final-checks-r3/; closeout-checks/;
+  green-final-r3/; red-r2/; adverse-red/; binding-red/; result-red/;
+  baseline/; iteration1/; iteration2/; inputs/; commands-cases.json;
+  fixtures-evidence.tar.gz; fixtures-manifest.json; terminal-process-check.json;
+  toolchain.json; SHA256SUMS.json.
+  evidence-audit.json independently verifies all 4,263 archive members and binds
+  all 36 final fixture copies to the exact production and unchanged stock code.
+  Existing assets/renders/props/t08/ and all original art evidence remain exact.

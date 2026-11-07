@@ -1,0 +1,84 @@
+{
+  "case": "readlink_error",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-wkkmufq1/readlink_error",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-wkkmufq1/readlink_error/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "c6eef5da1e62458d87f18cddbf543e90894f9a1054903be8674e4299206b6753",
+    "export_saved.py": "2f05988296c65b268507ba1f88cfcbcea519cfece3f8ba89a546798613ce7c23"
+  },
+  "supervisorPID": 45347,
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "current entry retired incompletely; retained failure facts"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/readlink_error/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [
+            {
+              "operation": "quarantine/detach",
+              "type": "PermissionError",
+              "errno": 13,
+              "message": "[Errno 13] controlled readlink denial"
+            }
+          ],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 488423094,
+            "mode": 41453,
+            "size": 49,
+            "mtimeNs": 1794043577184143814,
+            "ctimeNs": 1794043577184154648
+          },
+          "quarantine": "/private/tmp/t08-life-wkkmufq1/readlink_error/packages/tools/blender/t08/exports/20261107T092617217268Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": true
+        },
+        {
+          "path": "/private/tmp/t08-life-wkkmufq1/readlink_error/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-wkkmufq1/readlink_error/packages/tools/blender/t08/exports/20261107T092617217268Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "canonicalAbsent": true
+    }
+  ],
+  "receipts": [],
+  "receiptHashesBeforeRelease": {},
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {},
+  "previous": [],
+  "detachedHistory": false,
+  "stockMove": null,
+  "stockMoves": [],
+  "expectationMet": true,
+  "failureTail20": []
+}

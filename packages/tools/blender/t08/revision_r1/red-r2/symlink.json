@@ -1,0 +1,41 @@
+{
+  "case": "symlink",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-bp90e1lk/symlink",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-bp90e1lk/symlink/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "dca257513a05aed401ce7eab2bea367bfaeca7a570eb6441ce04f428a0fa1a45",
+    "export_saved.py": "3df6f58db90204f577092fe75241d35c911ac9469d5a6f7cd0887c1e22c64f45"
+  },
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "error": "runtime path is an unexpected symlink; refusing alias mutation"
+    }
+  ],
+  "receipts": [],
+  "receiptHashesBeforeRelease": {},
+  "currentAbsentBeforeRelease": false,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": false,
+  "receiptHashesAfterRelease": {},
+  "previous": [],
+  "detachedHistory": false,
+  "stockMove": null,
+  "expectationMet": false,
+  "failureTail20": [
+    "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090332877803Z-probe-cargo_pod",
+    "runtime path is an unexpected symlink; refusing alias mutation"
+  ]
+}

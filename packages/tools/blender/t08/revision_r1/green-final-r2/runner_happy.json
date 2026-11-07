@@ -1,0 +1,66 @@
+{
+  "case": "runner_happy",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-wkkmufq1/runner_happy/packages/tools/blender/t08/run.py",
+    "--label",
+    "runner_happy",
+    "--wall",
+    "20",
+    "--",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-wkkmufq1/runner_happy/probe.py"
+  ],
+  "scratch": "/tmp/t08-life-wkkmufq1/runner_happy",
+  "supervisorPID": 45749,
+  "exit": 0,
+  "receipt": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_happy/probe.py"
+    ],
+    "cwd": "/private/tmp/t08-life-wkkmufq1/runner_happy",
+    "exit": 0,
+    "childExit": 0,
+    "childReaped": true,
+    "terminal": true,
+    "remainingGroup": [],
+    "errors": [],
+    "cleanupSignals": [],
+    "pass": true,
+    "peakSampledGroupRSSKiB": 5920,
+    "limits": {
+      "wallSeconds": 20.0,
+      "rssGiB": 8,
+      "threads": 2,
+      "codecs": 1
+    },
+    "admission": {
+      "freeBytes": 28315009024,
+      "memoryFreePercent": 80,
+      "load": [
+        5.19384765625,
+        5.8193359375,
+        4.90771484375
+      ],
+      "cpus": 15,
+      "observed": "2026-11-07T09:26:22.292088+00:00"
+    },
+    "tmpdir": "/tmp/t08-asl3sf_f",
+    "pid": 45752,
+    "pgid": 45752,
+    "unexpectedSurvivors": [],
+    "signal": null,
+    "elapsedSeconds": 0.3230357500142418,
+    "logComplete": true,
+    "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receiptPath": "/private/tmp/t08-life-wkkmufq1/runner_happy/packages/tools/blender/t08/evidence/20261107T092622288875Z-runner_happy/result.json"
+  },
+  "remainingBeforeRelease": [],
+  "expectationMet": true,
+  "failureTail20": []
+}

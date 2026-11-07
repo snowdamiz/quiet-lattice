@@ -1,0 +1,84 @@
+{
+  "case": "directory_source",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-v8xxqk9g/directory_source",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-v8xxqk9g/directory_source/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "4ba8022e52929e22008ad8858bb76d1e0608b90020fc50eb78c0e1022e7617fa",
+    "export_saved.py": "a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d"
+  },
+  "supervisorPID": 70932,
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "ValueError",
+          "errno": null,
+          "message": "not a regular file: /private/tmp/t08-life-v8xxqk9g/directory_source/assets/blend/props/cargo_pod.blend"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-v8xxqk9g/directory_source/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 488447182,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794043757523840349,
+            "ctimeNs": 1794043757523840349
+          },
+          "quarantine": "/private/tmp/t08-life-v8xxqk9g/directory_source/packages/tools/blender/t08/exports/20261107T092917557518Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-v8xxqk9g/directory_source/packages/tools/blender/t08/exports/20261107T092917557518Z-probe-cargo_pod/previous.glb",
+          "detachedRegular": true
+        },
+        {
+          "path": "/private/tmp/t08-life-v8xxqk9g/directory_source/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-v8xxqk9g/directory_source/packages/tools/blender/t08/exports/20261107T092917557518Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "canonicalAbsent": true
+    }
+  ],
+  "receipts": [],
+  "receiptHashesBeforeRelease": {},
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {},
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "stockMove": null,
+  "stockMoves": [],
+  "expectationMet": true,
+  "failureTail20": []
+}

@@ -1,0 +1,2443 @@
+{
+  "cases": [
+    {
+      "case": "happy",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/happy",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 0,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "PASS",
+          "exit": 0,
+          "outputSHA256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+          "errors": [],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/happy/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+              "errors": [],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507524,
+                "mode": 33188,
+                "size": 11,
+                "mtimeNs": 1794042662372832904,
+                "ctimeNs": 1794042662372832904
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+              "quarantineRetained": false,
+              "archive": "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/previous.glb",
+              "detachedRegular": true
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "sourceBefore": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507519,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042662372624945,
+              "ctimeNs": 1794042662372624945
+            }
+          },
+          "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+          "command": [
+            "blender",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/happy/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/stock"
+          ],
+          "producerReceipt": "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/run/result.json",
+          "producer": {
+            "command": [
+              "/Applications/Blender.app/Contents/MacOS/Blender",
+              "-b",
+              "--factory-startup",
+              "-t",
+              "2",
+              "--python-exit-code",
+              "1",
+              "-P",
+              "packages/tools/blender/export_props.py",
+              "--",
+              "--src-root",
+              "/private/tmp/t08-life-plfujmpo/happy/assets/blend",
+              "--only",
+              "cargo_pod",
+              "--out-dir",
+              "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/models",
+              "--report-dir",
+              "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/stock"
+            ],
+            "cwd": "/private/tmp/t08-life-plfujmpo/happy",
+            "exit": 0,
+            "childExit": 0,
+            "childReaped": true,
+            "terminal": true,
+            "remainingGroup": [],
+            "errors": [],
+            "cleanupSignals": [],
+            "pass": true,
+            "peakSampledGroupRSSKiB": 5264,
+            "limits": {
+              "wallSeconds": 1800,
+              "rssGiB": 8,
+              "threads": 2,
+              "codecs": 1
+            },
+            "admission": {
+              "freeBytes": 33562845184,
+              "memoryFreePercent": 83,
+              "load": [
+                2.53759765625,
+                2.90673828125,
+                4.8095703125
+              ],
+              "cpus": 15,
+              "observed": "2026-11-07T09:11:02.413053+00:00"
+            },
+            "tmpdir": "/tmp/t08-2_1q9s96",
+            "pid": 52041,
+            "pgid": 52041,
+            "unexpectedSurvivors": [],
+            "signal": null,
+            "elapsedSeconds": 0.3065964999841526,
+            "logSHA256": "035c5ae32a3ec5c067e904c7b34ce204ddae0f0781185dd9c8f959654c41dcec"
+          },
+          "sourceAfter": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507519,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042662372624945,
+              "ctimeNs": 1794042662372624945
+            }
+          },
+          "sourceChanged": false,
+          "stock": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/stock/props__cargo_pod.blend.json",
+              "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+              "identity": {
+                "device": 16777232,
+                "inode": 487507546,
+                "mode": 33188,
+                "size": 49,
+                "mtimeNs": 1794042662459249843,
+                "ctimeNs": 1794042662459249843
+              }
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/stock/props__cargo_pod.glb.json",
+              "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+              "identity": {
+                "device": 16777232,
+                "inode": 487507555,
+                "mode": 33188,
+                "size": 49,
+                "mtimeNs": 1794042662460036136,
+                "ctimeNs": 1794042662460036136
+              }
+            }
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "command": [
+            "/Applications/Blender.app/Contents/MacOS/Blender",
+            "-b",
+            "--factory-startup",
+            "-t",
+            "2",
+            "--python-exit-code",
+            "1",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/happy/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/stock"
+          ],
+          "cwd": "/private/tmp/t08-life-plfujmpo/happy",
+          "exit": 0,
+          "childExit": 0,
+          "childReaped": true,
+          "terminal": true,
+          "remainingGroup": [],
+          "errors": [],
+          "cleanupSignals": [],
+          "pass": true,
+          "peakSampledGroupRSSKiB": 5264,
+          "limits": {
+            "wallSeconds": 1800,
+            "rssGiB": 8,
+            "threads": 2,
+            "codecs": 1
+          },
+          "admission": {
+            "freeBytes": 33562845184,
+            "memoryFreePercent": 83,
+            "load": [
+              2.53759765625,
+              2.90673828125,
+              4.8095703125
+            ],
+            "cpus": 15,
+            "observed": "2026-11-07T09:11:02.413053+00:00"
+          },
+          "tmpdir": "/tmp/t08-2_1q9s96",
+          "pid": 52041,
+          "pgid": 52041,
+          "unexpectedSurvivors": [],
+          "signal": null,
+          "elapsedSeconds": 0.3065964999841526,
+          "logSHA256": "035c5ae32a3ec5c067e904c7b34ce204ddae0f0781185dd9c8f959654c41dcec"
+        }
+      ],
+      "receiptHashesBeforeRelease": {
+        "/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/run/result.json": "5938d52deff7701739a9dd4c27870c31b5c3cc0fd669c4aad8fd2272ec777c9e"
+      },
+      "currentAbsentBeforeRelease": false,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": false,
+      "receiptHashesAfterRelease": {
+        "/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/run/result.json": "5938d52deff7701739a9dd4c27870c31b5c3cc0fd669c4aad8fd2272ec777c9e"
+      },
+      "previous": [
+        {
+          "isSymlink": false,
+          "nlink": 1,
+          "bytes": "CURRENT-GLB"
+        }
+      ],
+      "stockMove": {
+        "source": "/tmp/t08-2_1q9s96/art-export-bjnwjznz/meshopt/cargo_pod.glb",
+        "destination": "/private/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/exports/20261107T091102408700Z-probe-cargo_pod/producer/models/props/cargo_pod.glb"
+      },
+      "expectationMet": true,
+      "failureTail20": []
+    },
+    {
+      "case": "broken_symlink",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/broken_symlink",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/broken_symlink/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "exit": 1,
+          "outputSHA256": null,
+          "errors": [
+            {
+              "operation": "export transaction",
+              "type": "RuntimeError",
+              "errno": null,
+              "message": "current entry retired incompletely; retained failure facts"
+            }
+          ],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": null,
+              "errors": [
+                {
+                  "operation": "quarantine/detach",
+                  "type": "FileNotFoundError",
+                  "errno": 2,
+                  "message": "[Errno 2] No such file or directory: '/private/tmp/t08-life-plfujmpo/broken_symlink/packages/client/public/models/props/missing.glb'"
+                }
+              ],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507587,
+                "mode": 41453,
+                "size": 11,
+                "mtimeNs": 1794042662764267178,
+                "ctimeNs": 1794042662764276470
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/tools/blender/t08/exports/20261107T091102797260Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+              "quarantineRetained": true
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": null,
+              "errors": [],
+              "existed": false
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/broken_symlink/packages/tools/blender/t08/exports/20261107T091102797260Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "canonicalAbsent": true
+        }
+      ],
+      "receipts": [],
+      "receiptHashesBeforeRelease": {},
+      "currentAbsentBeforeRelease": true,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": true,
+      "receiptHashesAfterRelease": {},
+      "previous": [],
+      "stockMove": null,
+      "expectationMet": true,
+      "failureTail20": []
+    },
+    {
+      "case": "fifo_current",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/fifo_current",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/fifo_current/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "exit": 1,
+          "outputSHA256": null,
+          "errors": [
+            {
+              "operation": "export transaction",
+              "type": "RuntimeError",
+              "errno": null,
+              "message": "current entry retired incompletely; retained failure facts"
+            }
+          ],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/fifo_current/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": null,
+              "errors": [
+                {
+                  "operation": "quarantine/detach",
+                  "type": "ValueError",
+                  "errno": null,
+                  "message": "not a regular file: /private/tmp/t08-life-plfujmpo/fifo_current/packages/tools/blender/t08/exports/20261107T091102846948Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb"
+                }
+              ],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507621,
+                "mode": 4516,
+                "size": 0,
+                "mtimeNs": 1794042662814883830,
+                "ctimeNs": 1794042662814894247
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/fifo_current/packages/tools/blender/t08/exports/20261107T091102846948Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+              "quarantineRetained": true
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/fifo_current/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": null,
+              "errors": [],
+              "existed": false
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/fifo_current/packages/tools/blender/t08/exports/20261107T091102846948Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "canonicalAbsent": true
+        }
+      ],
+      "receipts": [],
+      "receiptHashesBeforeRelease": {},
+      "currentAbsentBeforeRelease": true,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": true,
+      "receiptHashesAfterRelease": {},
+      "previous": [],
+      "stockMove": null,
+      "expectationMet": true,
+      "failureTail20": []
+    },
+    {
+      "case": "directory_source",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/directory_source",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/directory_source/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "exit": 1,
+          "outputSHA256": null,
+          "errors": [
+            {
+              "operation": "export transaction",
+              "type": "ValueError",
+              "errno": null,
+              "message": "not a regular file: /private/tmp/t08-life-plfujmpo/directory_source/assets/blend/props/cargo_pod.blend"
+            }
+          ],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/directory_source/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+              "errors": [],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507653,
+                "mode": 33188,
+                "size": 11,
+                "mtimeNs": 1794042662861807350,
+                "ctimeNs": 1794042662861807350
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/directory_source/packages/tools/blender/t08/exports/20261107T091102893831Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+              "quarantineRetained": false,
+              "archive": "/private/tmp/t08-life-plfujmpo/directory_source/packages/tools/blender/t08/exports/20261107T091102893831Z-probe-cargo_pod/previous.glb",
+              "detachedRegular": true
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/directory_source/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": null,
+              "errors": [],
+              "existed": false
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/directory_source/packages/tools/blender/t08/exports/20261107T091102893831Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "canonicalAbsent": true
+        }
+      ],
+      "receipts": [],
+      "receiptHashesBeforeRelease": {},
+      "currentAbsentBeforeRelease": true,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": true,
+      "receiptHashesAfterRelease": {},
+      "previous": [
+        {
+          "isSymlink": false,
+          "nlink": 1,
+          "bytes": "CURRENT-GLB"
+        }
+      ],
+      "stockMove": null,
+      "expectationMet": true,
+      "failureTail20": []
+    },
+    {
+      "case": "readlink_error",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/readlink_error",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/readlink_error/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "exit": 1,
+          "outputSHA256": null,
+          "errors": [
+            {
+              "operation": "export transaction",
+              "type": "RuntimeError",
+              "errno": null,
+              "message": "current entry retired incompletely; retained failure facts"
+            }
+          ],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/readlink_error/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": false,
+              "sha256": null,
+              "errors": [
+                {
+                  "operation": "quarantine/detach",
+                  "type": "PermissionError",
+                  "errno": 13,
+                  "message": "[Errno 13] controlled readlink denial"
+                }
+              ],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507692,
+                "mode": 41453,
+                "size": 49,
+                "mtimeNs": 1794042662908870870,
+                "ctimeNs": 1794042662908879745
+              }
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/readlink_error/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": false,
+              "sha256": null,
+              "errors": [
+                {
+                  "operation": "quarantine/detach",
+                  "type": "PermissionError",
+                  "errno": 13,
+                  "message": "[Errno 13] controlled readlink denial"
+                }
+              ],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507692,
+                "mode": 41453,
+                "size": 49,
+                "mtimeNs": 1794042662908870870,
+                "ctimeNs": 1794042662908879745
+              }
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/readlink_error/packages/tools/blender/t08/exports/20261107T091102940837Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "canonicalAbsent": false
+        }
+      ],
+      "receipts": [],
+      "receiptHashesBeforeRelease": {},
+      "currentAbsentBeforeRelease": false,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": false,
+      "receiptHashesAfterRelease": {},
+      "previous": [],
+      "detachedHistory": false,
+      "stockMove": null,
+      "expectationMet": false,
+      "failureTail20": [
+        "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091102940837Z-probe-cargo_pod"
+      ]
+    },
+    {
+      "case": "rename_denied",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/rename_denied",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/rename_denied/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "exit": 1,
+          "outputSHA256": null,
+          "errors": [
+            {
+              "operation": "export transaction",
+              "type": "RuntimeError",
+              "errno": null,
+              "message": "current entry retired incompletely; retained failure facts"
+            }
+          ],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/rename_denied/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": false,
+              "sha256": null,
+              "errors": [
+                {
+                  "operation": "quarantine/detach",
+                  "type": "PermissionError",
+                  "errno": 13,
+                  "message": "[Errno 13] controlled canonical rename denial"
+                }
+              ],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507724,
+                "mode": 33188,
+                "size": 11,
+                "mtimeNs": 1794042662955825306,
+                "ctimeNs": 1794042662955825306
+              }
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/rename_denied/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": false,
+              "sha256": null,
+              "errors": [
+                {
+                  "operation": "quarantine/detach",
+                  "type": "PermissionError",
+                  "errno": 13,
+                  "message": "[Errno 13] controlled canonical rename denial"
+                }
+              ],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507724,
+                "mode": 33188,
+                "size": 11,
+                "mtimeNs": 1794042662955825306,
+                "ctimeNs": 1794042662955825306
+              }
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/rename_denied/packages/tools/blender/t08/exports/20261107T091102989956Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "canonicalAbsent": false
+        }
+      ],
+      "receipts": [],
+      "receiptHashesBeforeRelease": {},
+      "currentAbsentBeforeRelease": false,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": false,
+      "receiptHashesAfterRelease": {},
+      "previous": [],
+      "stockMove": null,
+      "expectationMet": true,
+      "failureTail20": []
+    },
+    {
+      "case": "receipt_after_replace",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/receipt_after_replace",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "PASS",
+          "exit": 0,
+          "outputSHA256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+          "errors": [],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+              "errors": [],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507758,
+                "mode": 33188,
+                "size": 11,
+                "mtimeNs": 1794042663005110414,
+                "ctimeNs": 1794042663005110414
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+              "quarantineRetained": false,
+              "archive": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/previous.glb",
+              "detachedRegular": true
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "sourceBefore": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507753,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042663004742038,
+              "ctimeNs": 1794042663004742038
+            }
+          },
+          "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+          "command": [
+            "blender",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/receipt_after_replace/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/stock"
+          ],
+          "producerReceipt": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/run/result.json",
+          "producer": {
+            "command": [
+              "/Applications/Blender.app/Contents/MacOS/Blender",
+              "-b",
+              "--factory-startup",
+              "-t",
+              "2",
+              "--python-exit-code",
+              "1",
+              "-P",
+              "packages/tools/blender/export_props.py",
+              "--",
+              "--src-root",
+              "/private/tmp/t08-life-plfujmpo/receipt_after_replace/assets/blend",
+              "--only",
+              "cargo_pod",
+              "--out-dir",
+              "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/models",
+              "--report-dir",
+              "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/stock"
+            ],
+            "cwd": "/private/tmp/t08-life-plfujmpo/receipt_after_replace",
+            "exit": 0,
+            "childExit": 0,
+            "childReaped": true,
+            "terminal": true,
+            "remainingGroup": [],
+            "errors": [],
+            "cleanupSignals": [],
+            "pass": true,
+            "peakSampledGroupRSSKiB": 4736,
+            "limits": {
+              "wallSeconds": 1800,
+              "rssGiB": 8,
+              "threads": 2,
+              "codecs": 1
+            },
+            "admission": {
+              "freeBytes": 33561124864,
+              "memoryFreePercent": 83,
+              "load": [
+                2.53759765625,
+                2.90673828125,
+                4.8095703125
+              ],
+              "cpus": 15,
+              "observed": "2026-11-07T09:11:03.043184+00:00"
+            },
+            "tmpdir": "/tmp/t08-pk_r0sxt",
+            "pid": 52056,
+            "pgid": 52056,
+            "unexpectedSurvivors": [],
+            "signal": null,
+            "elapsedSeconds": 0.32969854201655835,
+            "logSHA256": "14f094d502b0933068c5426180d42bdf4582d4bd28c6ea268eb8387053c0a63e"
+          },
+          "sourceAfter": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507753,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042663004742038,
+              "ctimeNs": 1794042663004742038
+            }
+          },
+          "sourceChanged": false,
+          "stock": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/stock/props__cargo_pod.blend.json",
+              "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+              "identity": {
+                "device": 16777232,
+                "inode": 487507778,
+                "mode": 33188,
+                "size": 49,
+                "mtimeNs": 1794042663088300263,
+                "ctimeNs": 1794042663088300263
+              }
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/stock/props__cargo_pod.glb.json",
+              "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+              "identity": {
+                "device": 16777232,
+                "inode": 487507787,
+                "mode": 33188,
+                "size": 49,
+                "mtimeNs": 1794042663089066223,
+                "ctimeNs": 1794042663089066223
+              }
+            }
+          ]
+        }
+      ],
+      "receipts": [
+        {
+          "command": [
+            "/Applications/Blender.app/Contents/MacOS/Blender",
+            "-b",
+            "--factory-startup",
+            "-t",
+            "2",
+            "--python-exit-code",
+            "1",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/receipt_after_replace/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/stock"
+          ],
+          "cwd": "/private/tmp/t08-life-plfujmpo/receipt_after_replace",
+          "exit": 0,
+          "childExit": 0,
+          "childReaped": true,
+          "terminal": true,
+          "remainingGroup": [],
+          "errors": [],
+          "cleanupSignals": [],
+          "pass": true,
+          "peakSampledGroupRSSKiB": 4736,
+          "limits": {
+            "wallSeconds": 1800,
+            "rssGiB": 8,
+            "threads": 2,
+            "codecs": 1
+          },
+          "admission": {
+            "freeBytes": 33561124864,
+            "memoryFreePercent": 83,
+            "load": [
+              2.53759765625,
+              2.90673828125,
+              4.8095703125
+            ],
+            "cpus": 15,
+            "observed": "2026-11-07T09:11:03.043184+00:00"
+          },
+          "tmpdir": "/tmp/t08-pk_r0sxt",
+          "pid": 52056,
+          "pgid": 52056,
+          "unexpectedSurvivors": [],
+          "signal": null,
+          "elapsedSeconds": 0.32969854201655835,
+          "logSHA256": "14f094d502b0933068c5426180d42bdf4582d4bd28c6ea268eb8387053c0a63e"
+        }
+      ],
+      "receiptHashesBeforeRelease": {
+        "/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/run/result.json": "73e15a2c358115dc00f95e906719a8b71d221d6c2d8502fd7048baf29c0db71d"
+      },
+      "currentAbsentBeforeRelease": true,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": true,
+      "receiptHashesAfterRelease": {
+        "/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/run/result.json": "73e15a2c358115dc00f95e906719a8b71d221d6c2d8502fd7048baf29c0db71d"
+      },
+      "previous": [
+        {
+          "isSymlink": false,
+          "nlink": 1,
+          "bytes": "CURRENT-GLB"
+        }
+      ],
+      "stockMove": {
+        "source": "/tmp/t08-pk_r0sxt/art-export-zvlqse7w/meshopt/cargo_pod.glb",
+        "destination": "/private/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod/producer/models/props/cargo_pod.glb"
+      },
+      "expectationMet": false,
+      "failureTail20": [
+        "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod"
+      ]
+    },
+    {
+      "case": "final_source_change",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/final_source_change",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "exit": 1,
+          "outputSHA256": null,
+          "errors": [
+            {
+              "operation": "export transaction",
+              "type": "RuntimeError",
+              "errno": null,
+              "message": "source changed before PASS"
+            }
+          ],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+              "errors": [],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507822,
+                "mode": 33188,
+                "size": 11,
+                "mtimeNs": 1794042663456660611,
+                "ctimeNs": 1794042663456660611
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+              "quarantineRetained": false,
+              "archive": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/previous.glb",
+              "detachedRegular": true
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+              "errors": [],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507868,
+                "mode": 33188,
+                "size": 30,
+                "mtimeNs": 1794042663836553901,
+                "ctimeNs": 1794042663836652402
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/rejected-quarantine/cargo_pod.glb",
+              "quarantineRetained": false,
+              "archive": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/rejected.glb",
+              "detachedRegular": true
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+              "errors": [],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507853,
+                "mode": 33188,
+                "size": 30,
+                "mtimeNs": 1794042663543654135,
+                "ctimeNs": 1794042663544164053
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/failed-private-quarantine/cargo_pod.glb",
+              "quarantineRetained": false,
+              "archive": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/failed-private.glb",
+              "detachedRegular": true
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "sourceBefore": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507817,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042663456474736,
+              "ctimeNs": 1794042663456474736
+            }
+          },
+          "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+          "command": [
+            "blender",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/final_source_change/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/stock"
+          ],
+          "producerReceipt": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/run/result.json",
+          "producer": {
+            "command": [
+              "/Applications/Blender.app/Contents/MacOS/Blender",
+              "-b",
+              "--factory-startup",
+              "-t",
+              "2",
+              "--python-exit-code",
+              "1",
+              "-P",
+              "packages/tools/blender/export_props.py",
+              "--",
+              "--src-root",
+              "/private/tmp/t08-life-plfujmpo/final_source_change/assets/blend",
+              "--only",
+              "cargo_pod",
+              "--out-dir",
+              "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/models",
+              "--report-dir",
+              "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/stock"
+            ],
+            "cwd": "/private/tmp/t08-life-plfujmpo/final_source_change",
+            "exit": 0,
+            "childExit": 0,
+            "childReaped": true,
+            "terminal": true,
+            "remainingGroup": [],
+            "errors": [],
+            "cleanupSignals": [],
+            "pass": true,
+            "peakSampledGroupRSSKiB": 5920,
+            "limits": {
+              "wallSeconds": 1800,
+              "rssGiB": 8,
+              "threads": 2,
+              "codecs": 1
+            },
+            "admission": {
+              "freeBytes": 33561075712,
+              "memoryFreePercent": 83,
+              "load": [
+                2.53759765625,
+                2.90673828125,
+                4.8095703125
+              ],
+              "cpus": 15,
+              "observed": "2026-11-07T09:11:03.496543+00:00"
+            },
+            "tmpdir": "/tmp/t08-a4wzxv5v",
+            "pid": 52069,
+            "pgid": 52069,
+            "unexpectedSurvivors": [],
+            "signal": null,
+            "elapsedSeconds": 0.34209779097000137,
+            "logSHA256": "e92106327403fc5ad0bc8f5c1c338f6d9f80add7a8ba7702d22b6efeaf049577"
+          },
+          "sourceAfter": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507817,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042663456474736,
+              "ctimeNs": 1794042663456474736
+            }
+          },
+          "sourceChanged": false,
+          "stock": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/stock/props__cargo_pod.blend.json",
+              "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+              "identity": {
+                "device": 16777232,
+                "inode": 487507846,
+                "mode": 33188,
+                "size": 49,
+                "mtimeNs": 1794042663543026092,
+                "ctimeNs": 1794042663543026092
+              }
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/stock/props__cargo_pod.glb.json",
+              "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+              "identity": {
+                "device": 16777232,
+                "inode": 487507855,
+                "mode": 33188,
+                "size": 49,
+                "mtimeNs": 1794042663544009427,
+                "ctimeNs": 1794042663544009427
+              }
+            }
+          ],
+          "canonicalAbsent": true
+        }
+      ],
+      "receipts": [
+        {
+          "command": [
+            "/Applications/Blender.app/Contents/MacOS/Blender",
+            "-b",
+            "--factory-startup",
+            "-t",
+            "2",
+            "--python-exit-code",
+            "1",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/final_source_change/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/stock"
+          ],
+          "cwd": "/private/tmp/t08-life-plfujmpo/final_source_change",
+          "exit": 0,
+          "childExit": 0,
+          "childReaped": true,
+          "terminal": true,
+          "remainingGroup": [],
+          "errors": [],
+          "cleanupSignals": [],
+          "pass": true,
+          "peakSampledGroupRSSKiB": 5920,
+          "limits": {
+            "wallSeconds": 1800,
+            "rssGiB": 8,
+            "threads": 2,
+            "codecs": 1
+          },
+          "admission": {
+            "freeBytes": 33561075712,
+            "memoryFreePercent": 83,
+            "load": [
+              2.53759765625,
+              2.90673828125,
+              4.8095703125
+            ],
+            "cpus": 15,
+            "observed": "2026-11-07T09:11:03.496543+00:00"
+          },
+          "tmpdir": "/tmp/t08-a4wzxv5v",
+          "pid": 52069,
+          "pgid": 52069,
+          "unexpectedSurvivors": [],
+          "signal": null,
+          "elapsedSeconds": 0.34209779097000137,
+          "logSHA256": "e92106327403fc5ad0bc8f5c1c338f6d9f80add7a8ba7702d22b6efeaf049577"
+        }
+      ],
+      "receiptHashesBeforeRelease": {
+        "/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/run/result.json": "82a3e3e64a7a480c91bcb5ff4f7e918b32d1405a4a5893b63b667e3fc8d34c4b"
+      },
+      "currentAbsentBeforeRelease": true,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": true,
+      "receiptHashesAfterRelease": {
+        "/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/run/result.json": "82a3e3e64a7a480c91bcb5ff4f7e918b32d1405a4a5893b63b667e3fc8d34c4b"
+      },
+      "previous": [
+        {
+          "isSymlink": false,
+          "nlink": 1,
+          "bytes": "CURRENT-GLB"
+        }
+      ],
+      "stockMove": {
+        "source": "/tmp/t08-a4wzxv5v/art-export-pahpyrxn/meshopt/cargo_pod.glb",
+        "destination": "/private/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod/producer/models/props/cargo_pod.glb"
+      },
+      "expectationMet": true,
+      "failureTail20": []
+    },
+    {
+      "case": "observation_failure",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-plfujmpo/observation_failure",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+        "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "exit": 1,
+          "outputSHA256": null,
+          "errors": [
+            {
+              "operation": "export transaction",
+              "type": "RuntimeError",
+              "errno": null,
+              "message": "producer did not finish with a verified empty cohort"
+            }
+          ],
+          "archives": [
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+              "errors": [],
+              "existed": true,
+              "original": {
+                "device": 16777232,
+                "inode": 487507897,
+                "mode": 33188,
+                "size": 11,
+                "mtimeNs": 1794042663910796731,
+                "ctimeNs": 1794042663910796731
+              },
+              "quarantine": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+              "quarantineRetained": false,
+              "archive": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/previous.glb",
+              "detachedRegular": true
+            },
+            {
+              "path": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/client/public/models/props/cargo_pod.glb",
+              "invalidated": true,
+              "sha256": null,
+              "errors": [],
+              "existed": false
+            }
+          ],
+          "privateOutput": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+          "sourceBefore": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507892,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042663910611647,
+              "ctimeNs": 1794042663910611647
+            }
+          },
+          "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+          "command": [
+            "blender",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/observation_failure/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/stock"
+          ],
+          "producerReceipt": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/run/result.json",
+          "producer": {
+            "command": [
+              "/Applications/Blender.app/Contents/MacOS/Blender",
+              "-b",
+              "--factory-startup",
+              "-t",
+              "2",
+              "--python-exit-code",
+              "1",
+              "-P",
+              "packages/tools/blender/export_props.py",
+              "--",
+              "--src-root",
+              "/private/tmp/t08-life-plfujmpo/observation_failure/assets/blend",
+              "--only",
+              "cargo_pod",
+              "--out-dir",
+              "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models",
+              "--report-dir",
+              "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/stock"
+            ],
+            "cwd": "/private/tmp/t08-life-plfujmpo/observation_failure",
+            "exit": 1,
+            "childExit": -15,
+            "childReaped": true,
+            "terminal": false,
+            "remainingGroup": null,
+            "errors": [
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "execute",
+                "type": "RuntimeError",
+                "errno": null,
+                "message": "process-group observation is uncertain"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              },
+              {
+                "operation": "observe process group",
+                "type": "OSError",
+                "errno": 5,
+                "message": "[Errno 5] controlled process observation failure"
+              }
+            ],
+            "cleanupSignals": [
+              {
+                "signal": 15,
+                "sent": true
+              },
+              {
+                "signal": 9,
+                "alreadyAbsent": true,
+                "error": {
+                  "operation": "killpg",
+                  "type": "ProcessLookupError",
+                  "errno": 3,
+                  "message": "[Errno 3] No such process"
+                }
+              }
+            ],
+            "pass": false,
+            "peakSampledGroupRSSKiB": 0,
+            "limits": {
+              "wallSeconds": 1800,
+              "rssGiB": 8,
+              "threads": 2,
+              "codecs": 1
+            },
+            "admission": {
+              "freeBytes": 33560686592,
+              "memoryFreePercent": 83,
+              "load": [
+                2.53759765625,
+                2.90673828125,
+                4.8095703125
+              ],
+              "cpus": 15,
+              "observed": "2026-11-07T09:11:03.949927+00:00"
+            },
+            "tmpdir": "/tmp/t08-uyhe_sjp",
+            "pid": 52106,
+            "pgid": 52106,
+            "signal": null,
+            "elapsedSeconds": 4.0717914999695495,
+            "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "sourceAfter": {
+            "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+            "identity": {
+              "device": 16777232,
+              "inode": 487507892,
+              "mode": 33188,
+              "size": 15,
+              "mtimeNs": 1794042663910611647,
+              "ctimeNs": 1794042663910611647
+            }
+          },
+          "sourceChanged": false,
+          "privateOutputUnresolved": true,
+          "canonicalAbsent": true
+        }
+      ],
+      "receipts": [
+        {
+          "command": [
+            "/Applications/Blender.app/Contents/MacOS/Blender",
+            "-b",
+            "--factory-startup",
+            "-t",
+            "2",
+            "--python-exit-code",
+            "1",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--src-root",
+            "/private/tmp/t08-life-plfujmpo/observation_failure/assets/blend",
+            "--only",
+            "cargo_pod",
+            "--out-dir",
+            "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models",
+            "--report-dir",
+            "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/stock"
+          ],
+          "cwd": "/private/tmp/t08-life-plfujmpo/observation_failure",
+          "exit": 1,
+          "childExit": -15,
+          "childReaped": true,
+          "terminal": false,
+          "remainingGroup": null,
+          "errors": [
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "execute",
+              "type": "RuntimeError",
+              "errno": null,
+              "message": "process-group observation is uncertain"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            },
+            {
+              "operation": "observe process group",
+              "type": "OSError",
+              "errno": 5,
+              "message": "[Errno 5] controlled process observation failure"
+            }
+          ],
+          "cleanupSignals": [
+            {
+              "signal": 15,
+              "sent": true
+            },
+            {
+              "signal": 9,
+              "alreadyAbsent": true,
+              "error": {
+                "operation": "killpg",
+                "type": "ProcessLookupError",
+                "errno": 3,
+                "message": "[Errno 3] No such process"
+              }
+            }
+          ],
+          "pass": false,
+          "peakSampledGroupRSSKiB": 0,
+          "limits": {
+            "wallSeconds": 1800,
+            "rssGiB": 8,
+            "threads": 2,
+            "codecs": 1
+          },
+          "admission": {
+            "freeBytes": 33560686592,
+            "memoryFreePercent": 83,
+            "load": [
+              2.53759765625,
+              2.90673828125,
+              4.8095703125
+            ],
+            "cpus": 15,
+            "observed": "2026-11-07T09:11:03.949927+00:00"
+          },
+          "tmpdir": "/tmp/t08-uyhe_sjp",
+          "pid": 52106,
+          "pgid": 52106,
+          "signal": null,
+          "elapsedSeconds": 4.0717914999695495,
+          "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "receiptHashesBeforeRelease": {
+        "/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/run/result.json": "5efec61d18b304ad88499a865bcf93771018d97fd0972b8e914f63218415a10e"
+      },
+      "currentAbsentBeforeRelease": true,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": true,
+      "receiptHashesAfterRelease": {
+        "/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/run/result.json": "5efec61d18b304ad88499a865bcf93771018d97fd0972b8e914f63218415a10e"
+      },
+      "previous": [
+        {
+          "isSymlink": false,
+          "nlink": 1,
+          "bytes": "CURRENT-GLB"
+        }
+      ],
+      "stockMove": null,
+      "expectationMet": true,
+      "failureTail20": []
+    }
+  ],
+  "allPassed": false,
+  "ownedGroups": [
+    52041,
+    52056,
+    52069
+  ],
+  "remainingGroups": []
+}

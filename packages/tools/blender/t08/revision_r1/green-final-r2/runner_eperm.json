@@ -1,0 +1,99 @@
+{
+  "case": "runner_eperm",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-wkkmufq1/runner_eperm/packages/tools/blender/t08/run.py",
+    "--label",
+    "runner_eperm",
+    "--wall",
+    "20",
+    "--",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-wkkmufq1/runner_eperm/probe.py"
+  ],
+  "scratch": "/tmp/t08-life-wkkmufq1/runner_eperm",
+  "supervisorPID": 45810,
+  "exit": 130,
+  "receipt": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_eperm/probe.py"
+    ],
+    "cwd": "/private/tmp/t08-life-wkkmufq1/runner_eperm",
+    "exit": 130,
+    "childExit": null,
+    "childReaped": false,
+    "terminal": false,
+    "remainingGroup": [
+      {
+        "pid": 45814,
+        "rssKiB": 17056,
+        "state": "Ss",
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-wkkmufq1/runner_eperm/probe.py"
+      }
+    ],
+    "errors": [
+      {
+        "operation": "execute",
+        "type": "InterruptedError",
+        "errno": null,
+        "message": "received signal 2"
+      },
+      {
+        "operation": "killpg 15",
+        "type": "PermissionError",
+        "errno": 1,
+        "message": "[Errno 1] controlled killpg EPERM"
+      },
+      {
+        "operation": "killpg 9",
+        "type": "PermissionError",
+        "errno": 1,
+        "message": "[Errno 1] controlled killpg EPERM"
+      },
+      {
+        "operation": "wait direct child",
+        "type": "TimeoutExpired",
+        "errno": null,
+        "message": "Command '['/opt/homebrew/opt/python@3.14/bin/python3.14', '-B', '/tmp/t08-life-wkkmufq1/runner_eperm/probe.py']' timed out after 1 seconds"
+      }
+    ],
+    "cleanupSignals": [],
+    "pass": false,
+    "peakSampledGroupRSSKiB": 5920,
+    "limits": {
+      "wallSeconds": 20.0,
+      "rssGiB": 8,
+      "threads": 2,
+      "codecs": 1
+    },
+    "admission": {
+      "freeBytes": 28313358336,
+      "memoryFreePercent": 80,
+      "load": [
+        5.19384765625,
+        5.8193359375,
+        4.90771484375
+      ],
+      "cpus": 15,
+      "observed": "2026-11-07T09:26:23.875750+00:00"
+    },
+    "tmpdir": "/tmp/t08-sro44g7v",
+    "pid": 45814,
+    "pgid": 45814,
+    "signal": 2,
+    "elapsedSeconds": 5.391172082978301,
+    "logComplete": false,
+    "logSHA256": null,
+    "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receiptPath": "/private/tmp/t08-life-wkkmufq1/runner_eperm/packages/tools/blender/t08/evidence/20261107T092623872546Z-runner_eperm/result.json"
+  },
+  "remainingBeforeRelease": [
+    "45814 45814 Ss"
+  ],
+  "expectationMet": true,
+  "failureTail20": []
+}

@@ -1,0 +1,69 @@
+[
+  {
+    "command": [
+      "/Users/andreyyurlov/.cache/uv/archive-v0/ZbLJ3VthZ-DdA6kn/ruff-0.17.4.data/scripts/ruff",
+      "check",
+      "--no-cache",
+      "--select",
+      "E9,F",
+      "packages/tools/blender/t08/run.py",
+      "packages/tools/blender/t08/export_saved.py",
+      "packages/tools/blender/t08/revision_r1/test_lifecycle.py",
+      "packages/tools/blender/t08/revision_r1/fixture_sitecustomize.py",
+      "packages/tools/blender/t08/revision_r1/fixture_blender.py",
+      "packages/tools/blender/t08/revision_r1/verify_revision.py",
+      "packages/tools/blender/t08/revision_r1/seal_evidence.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 0.0883157909847796,
+    "log": "packages/tools/blender/t08/revision_r1/closeout-checks/00.log",
+    "failureTail20": []
+  },
+  {
+    "command": [
+      "/Users/andreyyurlov/.cache/uv/archive-v0/ZbLJ3VthZ-DdA6kn/ruff-0.17.4.data/scripts/ruff",
+      "format",
+      "--check",
+      "--no-cache",
+      "packages/tools/blender/t08/run.py",
+      "packages/tools/blender/t08/export_saved.py",
+      "packages/tools/blender/t08/revision_r1/test_lifecycle.py",
+      "packages/tools/blender/t08/revision_r1/fixture_sitecustomize.py",
+      "packages/tools/blender/t08/revision_r1/fixture_blender.py",
+      "packages/tools/blender/t08/revision_r1/verify_revision.py",
+      "packages/tools/blender/t08/revision_r1/seal_evidence.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 0.022849250002764165,
+    "log": "packages/tools/blender/t08/revision_r1/closeout-checks/01.log",
+    "failureTail20": []
+  },
+  {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "packages/tools/blender/t08/revision_r1/verify_revision.py",
+      "--out",
+      "packages/tools/blender/t08/revision_r1/closeout-protected.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 3.2813187079736963,
+    "log": "packages/tools/blender/t08/revision_r1/closeout-checks/02.log",
+    "failureTail20": []
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+    "exit": 0,
+    "elapsedSeconds": 0.012418625003192574,
+    "log": "packages/tools/blender/t08/revision_r1/closeout-checks/03.log",
+    "failureTail20": []
+  }
+]

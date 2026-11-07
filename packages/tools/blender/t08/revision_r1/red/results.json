@@ -1,0 +1,143 @@
+{
+  "cases": [
+    {
+      "case": "happy",
+      "dependencyFixture": true,
+      "scratch": "/tmp/t08-life-f4xtkqgs/happy",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/export_saved.py",
+        "--label",
+        "probe",
+        "--only",
+        "cargo_pod"
+      ],
+      "codeSHA256": {
+        "run.py": "dca257513a05aed401ce7eab2bea367bfaeca7a570eb6441ce04f428a0fa1a45",
+        "export_saved.py": "3df6f58db90204f577092fe75241d35c911ac9469d5a6f7cd0887c1e22c64f45"
+      },
+      "exit": 1,
+      "bindings": [
+        {
+          "source": "assets/blend/props/cargo_pod.blend",
+          "output": "packages/client/public/models/props/cargo_pod.glb",
+          "status": "FAILED",
+          "retiredSHA256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+          "command": [
+            "/opt/homebrew/Cellar/python@3.14/3.14.8/bin/python3.14",
+            "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/run.py",
+            "--label",
+            "export-cargo_pod-probe",
+            "--wall",
+            "1800",
+            "--",
+            "blender",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--only",
+            "cargo_pod",
+            "--report-dir",
+            "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/exports/20261107T090246942140Z-probe-cargo_pod/stock"
+          ],
+          "exit": 1,
+          "error": "stock export failed: packages/tools/blender/t08/evidence/20261107T090246992734Z-export-cargo_pod-probe\n{\n  \"command\": [\n    \"/Applications/Blender.app/Contents/MacOS/Blender\",\n    \"-b\",\n    \"--factory-startup\",\n    \"-t\",\n    \"2\",\n    \"--python-exit-code\",\n    \"1\",\n    \"-P\",\n    \"packages/tools/blender/export_props.py\",\n    \"--\",\n    \"--only\",\n    \"cargo_pod\",\n    \"--report-dir\",\n    \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/exports/20261107T090246942140Z-probe-cargo_pod/stock\"\n  ],\n  \"cwd\": \"/private/tmp/t08-life-f4xtkqgs/happy\",\n  \"admission\": {\n    \"freeBytes\": 35780640768,\n    \"memoryFreePercent\": 82,\n    \"load\": [\n      2.61474609375,\n      4.0361328125,\n      6.447265625\n    ],\n    \"cpus\": 15,\n    \"observed\": \"2026-11-07T09:02:46.981020+00:00\"\n  },\n  \"limits\": {\n    \"wallSeconds\": 1800,\n    \"rssGiB\": 8,\n    \"threads\": 2,\n    \"codecs\": 1\n  },\n  \"tmpdir\": \"/tmp/t08-t79sd_8l\",\n  \"exit\": 1,\n  \"peakSampledGroupRSSKiB\": 5888,\n  \"pid\": 20869,\n  \"pgid\": 20869,\n  \"remainingGroup\": [],\n  \"elapsedSeconds\": 1.1567347090458497,\n  \"logSHA256\": \"4faf08149a6d20b47c96323624979f8f2b10b6479b862422656adcca1a073b36\",\n  \"pass\": false\n}\n\nexport /tmp/t08-life-f4xtkqgs/happy/assets/blend/props/cargo_pod.blend -> /tmp/t08-life-f4xtkqgs/happy/packages/client/public/models/props/cargo_pod.glb\nTraceback (most recent call last):\n  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 75, in main\n    ok = export_one(rules, family, src, out, args)\n  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 109, in export_one\n    roots = _build_nodes(rules, model)\n  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 251, in _build_nodes\n    root = _empty(a.name)\n  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 230, in _empty\n    bpy.context.scene.collection.objects.link(e)\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'types.SimpleNamespace' object has no attribute 'objects'\n  exporting cargo_pod.blend crashed\n\nexport props: 0 of 1 source(s) exported\n"
+        }
+      ],
+      "receipts": [
+        {
+          "command": [
+            "/Applications/Blender.app/Contents/MacOS/Blender",
+            "-b",
+            "--factory-startup",
+            "-t",
+            "2",
+            "--python-exit-code",
+            "1",
+            "-P",
+            "packages/tools/blender/export_props.py",
+            "--",
+            "--only",
+            "cargo_pod",
+            "--report-dir",
+            "/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/exports/20261107T090246942140Z-probe-cargo_pod/stock"
+          ],
+          "cwd": "/private/tmp/t08-life-f4xtkqgs/happy",
+          "admission": {
+            "freeBytes": 35780640768,
+            "memoryFreePercent": 82,
+            "load": [
+              2.61474609375,
+              4.0361328125,
+              6.447265625
+            ],
+            "cpus": 15,
+            "observed": "2026-11-07T09:02:46.981020+00:00"
+          },
+          "limits": {
+            "wallSeconds": 1800,
+            "rssGiB": 8,
+            "threads": 2,
+            "codecs": 1
+          },
+          "tmpdir": "/tmp/t08-t79sd_8l",
+          "exit": 1,
+          "peakSampledGroupRSSKiB": 5888,
+          "pid": 20869,
+          "pgid": 20869,
+          "remainingGroup": [],
+          "elapsedSeconds": 1.1567347090458497,
+          "logSHA256": "4faf08149a6d20b47c96323624979f8f2b10b6479b862422656adcca1a073b36",
+          "pass": false
+        }
+      ],
+      "receiptHashesBeforeRelease": {
+        "/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/evidence/20261107T090246992734Z-export-cargo_pod-probe/result.json": "cc42cd6339d8b69354cd11401f691fe50c1c566dac30483149dec7befa4d4ec6"
+      },
+      "currentAbsentBeforeRelease": true,
+      "remainingBeforeRelease": [],
+      "currentAbsentAfterRelease": true,
+      "receiptHashesAfterRelease": {
+        "/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/evidence/20261107T090246992734Z-export-cargo_pod-probe/result.json": "cc42cd6339d8b69354cd11401f691fe50c1c566dac30483149dec7befa4d4ec6"
+      },
+      "previous": [
+        {
+          "isSymlink": false,
+          "nlink": 1,
+          "bytes": "CURRENT-GLB"
+        }
+      ],
+      "stockMove": null,
+      "expectationMet": false,
+      "failureTail20": [
+        "  \"logSHA256\": \"4faf08149a6d20b47c96323624979f8f2b10b6479b862422656adcca1a073b36\",",
+        "  \"pass\": false",
+        "}",
+        "",
+        "export /tmp/t08-life-f4xtkqgs/happy/assets/blend/props/cargo_pod.blend -> /tmp/t08-life-f4xtkqgs/happy/packages/client/public/models/props/cargo_pod.glb",
+        "Traceback (most recent call last):",
+        "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 75, in main",
+        "    ok = export_one(rules, family, src, out, args)",
+        "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 109, in export_one",
+        "    roots = _build_nodes(rules, model)",
+        "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 251, in _build_nodes",
+        "    root = _empty(a.name)",
+        "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 230, in _empty",
+        "    bpy.context.scene.collection.objects.link(e)",
+        "    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AttributeError: 'types.SimpleNamespace' object has no attribute 'objects'",
+        "  exporting cargo_pod.blend crashed",
+        "",
+        "export props: 0 of 1 source(s) exported",
+        ""
+      ]
+    }
+  ],
+  "allPassed": false,
+  "ownedGroups": [
+    20869
+  ],
+  "remainingGroups": []
+}

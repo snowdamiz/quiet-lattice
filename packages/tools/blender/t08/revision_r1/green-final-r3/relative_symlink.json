@@ -1,0 +1,271 @@
+{
+  "case": "relative_symlink",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-v8xxqk9g/relative_symlink",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "4ba8022e52929e22008ad8858bb76d1e0608b90020fc50eb78c0e1022e7617fa",
+    "export_saved.py": "a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d"
+  },
+  "supervisorPID": 70622,
+  "exit": 0,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "PASS",
+      "exit": 0,
+      "outputSHA256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+      "errors": [],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 488445140,
+            "mode": 41453,
+            "size": 26,
+            "mtimeNs": 1794043744770614583,
+            "ctimeNs": 1794043744770624916
+          },
+          "quarantine": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/previous.glb",
+          "detachedRegular": true
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 488445131,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794043744770204499,
+          "ctimeNs": 1794043744770204499
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-v8xxqk9g/relative_symlink/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-v8xxqk9g/relative_symlink/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-v8xxqk9g/relative_symlink",
+        "exit": 0,
+        "childExit": 0,
+        "childReaped": true,
+        "terminal": true,
+        "remainingGroup": [],
+        "errors": [],
+        "cleanupSignals": [],
+        "pass": true,
+        "peakSampledGroupRSSKiB": 2288,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "admission": {
+          "freeBytes": 28258185216,
+          "memoryFreePercent": 80,
+          "load": [
+            3.33349609375,
+            4.72607421875,
+            4.61669921875
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:29:04.815751+00:00"
+        },
+        "tmpdir": "/tmp/t08-b1yevktm",
+        "pid": 70626,
+        "pgid": 70626,
+        "unexpectedSurvivors": [],
+        "signal": null,
+        "elapsedSeconds": 0.32399141701171175,
+        "logSnapshotBytes": 526,
+        "logComplete": true,
+        "logSHA256": "5a100065b8b78fd749ef698bc1a608df9d40405032afe7ac2752279f28e1422d",
+        "logSnapshotSHA256": "5a100065b8b78fd749ef698bc1a608df9d40405032afe7ac2752279f28e1422d",
+        "receiptPath": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 488445131,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794043744770204499,
+          "ctimeNs": 1794043744770204499
+        }
+      },
+      "sourceChanged": false,
+      "stock": [
+        {
+          "path": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/stock/props__cargo_pod.blend.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 488445175,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794043744869645680,
+            "ctimeNs": 1794043744869645680
+          }
+        },
+        {
+          "path": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/stock/props__cargo_pod.glb.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 488445184,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794043744870416390,
+            "ctimeNs": 1794043744870416390
+          }
+        }
+      ]
+    }
+  ],
+  "receipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-v8xxqk9g/relative_symlink/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-v8xxqk9g/relative_symlink",
+      "exit": 0,
+      "childExit": 0,
+      "childReaped": true,
+      "terminal": true,
+      "remainingGroup": [],
+      "errors": [],
+      "cleanupSignals": [],
+      "pass": true,
+      "peakSampledGroupRSSKiB": 2288,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "admission": {
+        "freeBytes": 28258185216,
+        "memoryFreePercent": 80,
+        "load": [
+          3.33349609375,
+          4.72607421875,
+          4.61669921875
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:29:04.815751+00:00"
+      },
+      "tmpdir": "/tmp/t08-b1yevktm",
+      "pid": 70626,
+      "pgid": 70626,
+      "unexpectedSurvivors": [],
+      "signal": null,
+      "elapsedSeconds": 0.32399141701171175,
+      "logSnapshotBytes": 526,
+      "logComplete": true,
+      "logSHA256": "5a100065b8b78fd749ef698bc1a608df9d40405032afe7ac2752279f28e1422d",
+      "logSnapshotSHA256": "5a100065b8b78fd749ef698bc1a608df9d40405032afe7ac2752279f28e1422d",
+      "receiptPath": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/run/result.json"
+    }
+  ],
+  "receiptHashesBeforeRelease": {
+    "/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/run/result.json": "a7b23f99fa6731af1fafce89576cec1ecba37122e44b82fdc2c1bac338fdbc96"
+  },
+  "currentAbsentBeforeRelease": false,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": false,
+  "receiptHashesAfterRelease": {
+    "/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/run/result.json": "a7b23f99fa6731af1fafce89576cec1ecba37122e44b82fdc2c1bac338fdbc96"
+  },
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "detachedHistory": true,
+  "stockMove": {
+    "source": "/tmp/t08-b1yevktm/art-export-zydwsjsw/meshopt/cargo_pod.glb",
+    "destination": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/models/props/cargo_pod.glb"
+  },
+  "stockMoves": [
+    {
+      "source": "/tmp/t08-b1yevktm/art-export-zydwsjsw/meshopt/cargo_pod.glb",
+      "destination": "/private/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/exports/20261107T092904806358Z-probe-cargo_pod/producer/models/props/cargo_pod.glb"
+    }
+  ],
+  "historyAfterRuntimeMutation": [
+    "CURRENT-GLB"
+  ],
+  "expectationMet": true,
+  "failureTail20": []
+}

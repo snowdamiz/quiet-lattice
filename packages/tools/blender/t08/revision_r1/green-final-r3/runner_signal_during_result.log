@@ -1,0 +1,52 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-v8xxqk9g/runner_signal_during_result/probe.py"
+  ],
+  "cwd": "/private/tmp/t08-life-v8xxqk9g/runner_signal_during_result",
+  "exit": 143,
+  "childExit": 0,
+  "childReaped": true,
+  "terminal": true,
+  "remainingGroup": [],
+  "errors": [
+    {
+      "operation": "write result receipt",
+      "type": "InterruptedError",
+      "errno": null,
+      "message": "signal received during result commit"
+    }
+  ],
+  "cleanupSignals": [],
+  "pass": false,
+  "peakSampledGroupRSSKiB": 5856,
+  "limits": {
+    "wallSeconds": 20.0,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "admission": {
+    "freeBytes": 28245946368,
+    "memoryFreePercent": 80,
+    "load": [
+      3.3154296875,
+      4.61669921875,
+      4.57958984375
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T09:29:32.542168+00:00"
+  },
+  "tmpdir": "/tmp/t08-2o7kk62e",
+  "pid": 71219,
+  "pgid": 71219,
+  "unexpectedSurvivors": [],
+  "signal": 15,
+  "elapsedSeconds": 0.3118479579570703,
+  "logSnapshotBytes": 0,
+  "logComplete": true,
+  "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "receiptPath": "/private/tmp/t08-life-v8xxqk9g/runner_signal_during_result/packages/tools/blender/t08/evidence/20261107T092932539486Z-runner_signal_during_result/result-failure.json"
+}

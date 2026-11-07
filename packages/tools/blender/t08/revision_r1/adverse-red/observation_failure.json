@@ -1,0 +1,1193 @@
+{
+  "case": "observation_failure",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-plfujmpo/observation_failure",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+    "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+  },
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "producer did not finish with a verified empty cohort"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 487507897,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794042663910796731,
+            "ctimeNs": 1794042663910796731
+          },
+          "quarantine": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/previous.glb",
+          "detachedRegular": true
+        },
+        {
+          "path": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 487507892,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794042663910611647,
+          "ctimeNs": 1794042663910611647
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-plfujmpo/observation_failure/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-plfujmpo/observation_failure/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-plfujmpo/observation_failure",
+        "exit": 1,
+        "childExit": -15,
+        "childReaped": true,
+        "terminal": false,
+        "remainingGroup": null,
+        "errors": [
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "execute",
+            "type": "RuntimeError",
+            "errno": null,
+            "message": "process-group observation is uncertain"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          },
+          {
+            "operation": "observe process group",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled process observation failure"
+          }
+        ],
+        "cleanupSignals": [
+          {
+            "signal": 15,
+            "sent": true
+          },
+          {
+            "signal": 9,
+            "alreadyAbsent": true,
+            "error": {
+              "operation": "killpg",
+              "type": "ProcessLookupError",
+              "errno": 3,
+              "message": "[Errno 3] No such process"
+            }
+          }
+        ],
+        "pass": false,
+        "peakSampledGroupRSSKiB": 0,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "admission": {
+          "freeBytes": 33560686592,
+          "memoryFreePercent": 83,
+          "load": [
+            2.53759765625,
+            2.90673828125,
+            4.8095703125
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:11:03.949927+00:00"
+        },
+        "tmpdir": "/tmp/t08-uyhe_sjp",
+        "pid": 52106,
+        "pgid": 52106,
+        "signal": null,
+        "elapsedSeconds": 4.0717914999695495,
+        "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 487507892,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794042663910611647,
+          "ctimeNs": 1794042663910611647
+        }
+      },
+      "sourceChanged": false,
+      "privateOutputUnresolved": true,
+      "canonicalAbsent": true
+    }
+  ],
+  "receipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-plfujmpo/observation_failure/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-plfujmpo/observation_failure",
+      "exit": 1,
+      "childExit": -15,
+      "childReaped": true,
+      "terminal": false,
+      "remainingGroup": null,
+      "errors": [
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "execute",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "process-group observation is uncertain"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        },
+        {
+          "operation": "observe process group",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled process observation failure"
+        }
+      ],
+      "cleanupSignals": [
+        {
+          "signal": 15,
+          "sent": true
+        },
+        {
+          "signal": 9,
+          "alreadyAbsent": true,
+          "error": {
+            "operation": "killpg",
+            "type": "ProcessLookupError",
+            "errno": 3,
+            "message": "[Errno 3] No such process"
+          }
+        }
+      ],
+      "pass": false,
+      "peakSampledGroupRSSKiB": 0,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "admission": {
+        "freeBytes": 33560686592,
+        "memoryFreePercent": 83,
+        "load": [
+          2.53759765625,
+          2.90673828125,
+          4.8095703125
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:11:03.949927+00:00"
+      },
+      "tmpdir": "/tmp/t08-uyhe_sjp",
+      "pid": 52106,
+      "pgid": 52106,
+      "signal": null,
+      "elapsedSeconds": 4.0717914999695495,
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "receiptHashesBeforeRelease": {
+    "/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/run/result.json": "5efec61d18b304ad88499a865bcf93771018d97fd0972b8e914f63218415a10e"
+  },
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {
+    "/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod/producer/run/result.json": "5efec61d18b304ad88499a865bcf93771018d97fd0972b8e914f63218415a10e"
+  },
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "stockMove": null,
+  "expectationMet": true,
+  "failureTail20": []
+}

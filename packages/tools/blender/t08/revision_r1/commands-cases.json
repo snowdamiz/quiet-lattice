@@ -1,0 +1,4268 @@
+[
+  {
+    "run": "adverse-red",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "adverse-red/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "adverse-red",
+    "case": "broken_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/broken_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/broken_symlink",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "adverse-red/broken_symlink.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091102797260Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "adverse-red",
+    "case": "fifo_current",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/fifo_current/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/fifo_current",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "adverse-red/fifo_current.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091102846948Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "adverse-red",
+    "case": "directory_source",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/directory_source/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/directory_source",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "adverse-red/directory_source.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091102893831Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "adverse-red",
+    "case": "readlink_error",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/readlink_error/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/readlink_error",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "adverse-red/readlink_error.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091102940837Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "adverse-red",
+    "case": "rename_denied",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/rename_denied/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/rename_denied",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "adverse-red/rename_denied.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091102989956Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "adverse-red",
+    "case": "receipt_after_replace",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/receipt_after_replace/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/receipt_after_replace",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "adverse-red/receipt_after_replace.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091103039694Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "adverse-red",
+    "case": "final_source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/final_source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/final_source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "adverse-red/final_source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091103492907Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "adverse-red",
+    "case": "observation_failure",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-plfujmpo/observation_failure/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-plfujmpo/observation_failure",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "adverse-red/observation_failure.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091103946685Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "binding-red",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-gud6q2j8/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-gud6q2j8/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "binding-red/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "binding-red",
+    "case": "signal_during_binding",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-gud6q2j8/signal_during_binding/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-gud6q2j8/signal_during_binding",
+    "exit": 143,
+    "expectationMet": false,
+    "log": "binding-red/signal_during_binding.log",
+    "failureTail20": [
+      "cargo_pod PASS packages/tools/blender/t08/exports/20261107T092734380066Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "binding-red",
+    "case": "sites_happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-gud6q2j8/sites_happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "outpost_0"
+    ],
+    "cwd": "/tmp/t08-life-gud6q2j8/sites_happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "binding-red/sites_happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green",
+    "case": "symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green/symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green",
+    "case": "relative_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/relative_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/relative_symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green/relative_symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green",
+    "case": "hardlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/hardlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/hardlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green/hardlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green",
+    "case": "old_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/old_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/old_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/old_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090808607741Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "source_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/source_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/source_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/source_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090808654810Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090808705355Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "source_alias",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/source_alias/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/source_alias",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/source_alias.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090809091259Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "source_unreadable_after",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/source_unreadable_after/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/source_unreadable_after",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/source_unreadable_after.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090809530996Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "child_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/child_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/child_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/child_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090809973169Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "stock_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/stock_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/stock_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/stock_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090810364165Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "new_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/new_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/new_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/new_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090810757345Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "batch_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/batch_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod,loot_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/batch_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/batch_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090811157015Z-probe-cargo_pod",
+      "loot_pod PASS packages/tools/blender/t08/exports/20261107T090811481094Z-probe-loot_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green/sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090811873350Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/sigint/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green/sigint.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090812434866Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "denied_cleanup_late_publish",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green/denied_cleanup_late_publish.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "outer_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/outer_sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/outer_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green/outer_sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090818691464Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "child_signal_exit",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/child_signal_exit/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/child_signal_exit",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/child_signal_exit.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090819238210Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green",
+    "case": "leader_exit_with_cohort",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ss1z8cci/leader_exit_with_cohort/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ss1z8cci/leader_exit_with_cohort",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green/leader_exit_with_cohort.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090819627063Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final",
+    "case": "symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final/symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final",
+    "case": "relative_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/relative_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/relative_symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final/relative_symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final",
+    "case": "hardlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/hardlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/hardlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final/hardlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final",
+    "case": "old_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/old_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/old_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/old_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092004143852Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "source_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/source_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/source_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/source_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092004228427Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092004278272Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "source_alias",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/source_alias/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/source_alias",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/source_alias.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092004714816Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "source_unreadable_after",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/source_unreadable_after/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/source_unreadable_after",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/source_unreadable_after.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092005107416Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "child_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/child_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/child_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/child_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092005490618Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "stock_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/stock_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/stock_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/stock_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092005882134Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "new_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/new_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/new_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/new_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092006317368Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "batch_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/batch_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod,loot_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/batch_unreadable",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "green-final/batch_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092006710665Z-probe-cargo_pod",
+      "loot_pod PASS packages/tools/blender/t08/exports/20261107T092007034657Z-probe-loot_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final/sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092007445197Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/sigint/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final/sigint.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092008051513Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "denied_cleanup_late_publish",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/denied_cleanup_late_publish/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/denied_cleanup_late_publish",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final/denied_cleanup_late_publish.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092008745344Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "outer_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/outer_sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/outer_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final/outer_sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092014475149Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "child_signal_exit",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/child_signal_exit/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/child_signal_exit",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/child_signal_exit.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092015075076Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "leader_exit_with_cohort",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/leader_exit_with_cohort/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/leader_exit_with_cohort",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/leader_exit_with_cohort.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092015467303Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "broken_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/broken_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/broken_symlink",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/broken_symlink.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092015979179Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "fifo_current",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/fifo_current/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/fifo_current",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/fifo_current.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092016029279Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "directory_source",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/directory_source/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/directory_source",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/directory_source.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092016076888Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "readlink_error",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/readlink_error/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/readlink_error",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/readlink_error.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092016121250Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "rename_denied",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/rename_denied/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/rename_denied",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/rename_denied.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092016168641Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "receipt_after_replace",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/receipt_after_replace/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/receipt_after_replace",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/receipt_after_replace.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092016215948Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "final_source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/final_source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/final_source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/final_source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092016602737Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "observation_failure",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/observation_failure/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/observation_failure",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final/observation_failure.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092017000204Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "runner_happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_happy/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_happy",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_happy/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/runner_happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final/runner_happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final",
+    "case": "runner_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_sigterm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigterm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_sigterm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/runner_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final/runner_sigterm.log",
+    "failureTail20": [
+      "    \"freeBytes\": 32427327488,",
+      "    \"memoryFreePercent\": 83,",
+      "    \"load\": [",
+      "      2.5849609375,",
+      "      2.3720703125,",
+      "      3.58056640625",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:20:21.593757+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-s2kln710\",",
+      "  \"pid\": 93988,",
+      "  \"pgid\": 93988,",
+      "  \"signal\": 15,",
+      "  \"elapsedSeconds\": 0.46752541698515415,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-qqitz2ij/runner_sigterm/packages/tools/blender/t08/evidence/20261107T092021590602Z-runner_sigterm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "runner_sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_sigint/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigint",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_sigint/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/runner_sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final/runner_sigint.log",
+    "failureTail20": [
+      "    \"freeBytes\": 32427278336,",
+      "    \"memoryFreePercent\": 83,",
+      "    \"load\": [",
+      "      2.5849609375,",
+      "      2.3720703125,",
+      "      3.58056640625",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:20:22.204962+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-3mtsqb0i\",",
+      "  \"pid\": 94010,",
+      "  \"pgid\": 94010,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 0.4571249580476433,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-qqitz2ij/runner_sigint/packages/tools/blender/t08/evidence/20261107T092022202046Z-runner_sigint/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "runner_eperm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_eperm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_eperm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_eperm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/runner_eperm",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final/runner_eperm.log",
+    "failureTail20": [
+      "    \"freeBytes\": 32427057152,",
+      "    \"memoryFreePercent\": 83,",
+      "    \"load\": [",
+      "      2.5849609375,",
+      "      2.3720703125,",
+      "      3.58056640625",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:20:22.744358+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-ne1tfw4g\",",
+      "  \"pid\": 94024,",
+      "  \"pgid\": 94024,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 5.4517869999981485,",
+      "  \"logComplete\": false,",
+      "  \"logSHA256\": null,",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-qqitz2ij/runner_eperm/packages/tools/blender/t08/evidence/20261107T092022741604Z-runner_eperm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "runner_wall",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_wall/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_wall",
+      "--wall",
+      "1",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_wall/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/runner_wall",
+    "exit": 124,
+    "expectationMet": true,
+    "log": "green-final/runner_wall.log",
+    "failureTail20": [
+      "  \"pid\": 94085,",
+      "  \"pgid\": 94085,",
+      "  \"limitFailure\": {",
+      "    \"elapsedSeconds\": 1.0334134579752572,",
+      "    \"members\": [",
+      "      {",
+      "        \"pid\": 94085,",
+      "        \"rssKiB\": 17136,",
+      "        \"state\": \"Ss\",",
+      "        \"command\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-qqitz2ij/runner_wall/probe.py\"",
+      "      }",
+      "    ]",
+      "  },",
+      "  \"signal\": null,",
+      "  \"elapsedSeconds\": 1.3370837919646874,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-qqitz2ij/runner_wall/packages/tools/blender/t08/evidence/20261107T092028364924Z-runner_wall/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final",
+    "case": "runner_lock",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_lock/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_lock",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-qqitz2ij/runner_lock/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-qqitz2ij/runner_lock",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final/runner_lock.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r2",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r2/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r2",
+    "case": "symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r2/symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r2",
+    "case": "relative_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/relative_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/relative_symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r2/relative_symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r2",
+    "case": "hardlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/hardlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/hardlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r2/hardlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r2",
+    "case": "old_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/old_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/old_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/old_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092605542633Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "source_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/source_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/source_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/source_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092605585943Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092605634250Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "source_alias",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/source_alias/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/source_alias",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/source_alias.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092606037242Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "source_unreadable_after",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/source_unreadable_after/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/source_unreadable_after",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/source_unreadable_after.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092606431760Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "child_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/child_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/child_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/child_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092606824591Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "stock_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/stock_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/stock_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/stock_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092607225975Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "new_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/new_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/new_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/new_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092607665659Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "batch_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/batch_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod,loot_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/batch_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/batch_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092608057849Z-probe-cargo_pod",
+      "loot_pod PASS packages/tools/blender/t08/exports/20261107T092608372183Z-probe-loot_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r2/sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092608779138Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/sigint/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r2/sigint.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092609344410Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "denied_cleanup_late_publish",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/denied_cleanup_late_publish/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/denied_cleanup_late_publish",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r2/denied_cleanup_late_publish.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092609932530Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "outer_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/outer_sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/outer_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r2/outer_sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092615610006Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "child_signal_exit",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/child_signal_exit/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/child_signal_exit",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/child_signal_exit.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092616178236Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "leader_exit_with_cohort",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/leader_exit_with_cohort/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/leader_exit_with_cohort",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/leader_exit_with_cohort.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092616564775Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "broken_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/broken_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/broken_symlink",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/broken_symlink.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092617075684Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "fifo_current",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/fifo_current/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/fifo_current",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/fifo_current.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092617121387Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "directory_source",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/directory_source/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/directory_source",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/directory_source.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092617169356Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "readlink_error",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/readlink_error/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/readlink_error",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/readlink_error.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092617217268Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "rename_denied",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/rename_denied/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/rename_denied",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/rename_denied.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092617260536Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "receipt_after_replace",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/receipt_after_replace/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/receipt_after_replace",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/receipt_after_replace.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092617310082Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "final_source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/final_source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/final_source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/final_source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092617750689Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "observation_failure",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/observation_failure/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/observation_failure",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r2/observation_failure.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092618135565Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "runner_happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_happy/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_happy",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_happy/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/runner_happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r2/runner_happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r2",
+    "case": "runner_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_sigterm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigterm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_sigterm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/runner_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r2/runner_sigterm.log",
+    "failureTail20": [
+      "    \"freeBytes\": 28314898432,",
+      "    \"memoryFreePercent\": 80,",
+      "    \"load\": [",
+      "      5.19384765625,",
+      "      5.8193359375,",
+      "      4.90771484375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:26:22.709424+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-h91xkcoc\",",
+      "  \"pid\": 45771,",
+      "  \"pgid\": 45771,",
+      "  \"signal\": 15,",
+      "  \"elapsedSeconds\": 0.4844840000150725,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-wkkmufq1/runner_sigterm/packages/tools/blender/t08/evidence/20261107T092622706445Z-runner_sigterm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "runner_sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_sigint/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigint",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_sigint/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/runner_sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r2/runner_sigint.log",
+    "failureTail20": [
+      "    \"freeBytes\": 28313468928,",
+      "    \"memoryFreePercent\": 80,",
+      "    \"load\": [",
+      "      5.19384765625,",
+      "      5.8193359375,",
+      "      4.90771484375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:26:23.287778+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-rzjpls_d\",",
+      "  \"pid\": 45791,",
+      "  \"pgid\": 45791,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 0.4802200419944711,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-wkkmufq1/runner_sigint/packages/tools/blender/t08/evidence/20261107T092623284714Z-runner_sigint/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "runner_eperm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_eperm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_eperm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_eperm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/runner_eperm",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r2/runner_eperm.log",
+    "failureTail20": [
+      "    \"freeBytes\": 28313358336,",
+      "    \"memoryFreePercent\": 80,",
+      "    \"load\": [",
+      "      5.19384765625,",
+      "      5.8193359375,",
+      "      4.90771484375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:26:23.875750+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-sro44g7v\",",
+      "  \"pid\": 45814,",
+      "  \"pgid\": 45814,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 5.391172082978301,",
+      "  \"logComplete\": false,",
+      "  \"logSHA256\": null,",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-wkkmufq1/runner_eperm/packages/tools/blender/t08/evidence/20261107T092623872546Z-runner_eperm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "runner_wall",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_wall/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_wall",
+      "--wall",
+      "1",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_wall/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/runner_wall",
+    "exit": 124,
+    "expectationMet": true,
+    "log": "green-final-r2/runner_wall.log",
+    "failureTail20": [
+      "  \"pid\": 45948,",
+      "  \"pgid\": 45948,",
+      "  \"limitFailure\": {",
+      "    \"elapsedSeconds\": 1.1277829589671455,",
+      "    \"members\": [",
+      "      {",
+      "        \"pid\": 45948,",
+      "        \"rssKiB\": 17040,",
+      "        \"state\": \"Ss\",",
+      "        \"command\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-wkkmufq1/runner_wall/probe.py\"",
+      "      }",
+      "    ]",
+      "  },",
+      "  \"signal\": null,",
+      "  \"elapsedSeconds\": 1.4370469999848865,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-wkkmufq1/runner_wall/packages/tools/blender/t08/evidence/20261107T092629405354Z-runner_wall/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r2",
+    "case": "runner_lock",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_lock/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_lock",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-wkkmufq1/runner_lock/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-wkkmufq1/runner_lock",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r2/runner_lock.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r3/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r3/symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "relative_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/relative_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/relative_symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r3/relative_symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "hardlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/hardlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/hardlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r3/hardlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "old_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/old_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/old_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/old_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092905656853Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "source_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/source_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/source_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/source_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092905711220Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092905773982Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "source_alias",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/source_alias/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/source_alias",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/source_alias.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092906190309Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "source_unreadable_after",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/source_unreadable_after/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/source_unreadable_after",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/source_unreadable_after.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092906649115Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "child_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/child_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/child_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/child_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092907101500Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "stock_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/stock_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/stock_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/stock_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092907553083Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "new_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/new_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/new_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/new_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092908016360Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "batch_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/batch_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod,loot_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/batch_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/batch_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092908471385Z-probe-cargo_pod",
+      "loot_pod PASS packages/tools/blender/t08/exports/20261107T092908803941Z-probe-loot_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r3/sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092909202442Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/sigint/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r3/sigint.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092909790448Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "denied_cleanup_late_publish",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/denied_cleanup_late_publish/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/denied_cleanup_late_publish",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r3/denied_cleanup_late_publish.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092910364867Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "outer_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/outer_sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/outer_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r3/outer_sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092915969094Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "child_signal_exit",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/child_signal_exit/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/child_signal_exit",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/child_signal_exit.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092916544118Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "leader_exit_with_cohort",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/leader_exit_with_cohort/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/leader_exit_with_cohort",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/leader_exit_with_cohort.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092916936150Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "broken_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/broken_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/broken_symlink",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/broken_symlink.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092917427766Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "fifo_current",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/fifo_current/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/fifo_current",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/fifo_current.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092917510590Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "directory_source",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/directory_source/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/directory_source",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/directory_source.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092917557518Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "readlink_error",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/readlink_error/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/readlink_error",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/readlink_error.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092917600635Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "rename_denied",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/rename_denied/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/rename_denied",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/rename_denied.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092917644940Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "receipt_after_replace",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/receipt_after_replace/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/receipt_after_replace",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/receipt_after_replace.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092917694305Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "final_source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/final_source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/final_source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/final_source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092918089496Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "observation_failure",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/observation_failure/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/observation_failure",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-final-r3/observation_failure.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092918492966Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "signal_during_binding",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/signal_during_binding/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/signal_during_binding",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r3/signal_during_binding.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T092922616854Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "sites_happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/sites_happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "outpost_0"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/sites_happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r3/sites_happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "runner_happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_happy/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_happy",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_happy/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/runner_happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r3/runner_happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "runner_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_sigterm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigterm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_sigterm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/runner_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r3/runner_sigterm.log",
+    "failureTail20": [
+      "    \"memoryFreePercent\": 80,",
+      "    \"load\": [",
+      "      3.54736328125,",
+      "      4.7060546875,",
+      "      4.61083984375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:29:23.896063+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-si176knm\",",
+      "  \"pid\": 71041,",
+      "  \"pgid\": 71041,",
+      "  \"signal\": 15,",
+      "  \"elapsedSeconds\": 0.4582312079728581,",
+      "  \"logSnapshotBytes\": 0,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-v8xxqk9g/runner_sigterm/packages/tools/blender/t08/evidence/20261107T092923892973Z-runner_sigterm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "runner_sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_sigint/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigint",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_sigint/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/runner_sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r3/runner_sigint.log",
+    "failureTail20": [
+      "    \"memoryFreePercent\": 80,",
+      "    \"load\": [",
+      "      3.54736328125,",
+      "      4.7060546875,",
+      "      4.61083984375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:29:24.502210+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-lqugd_50\",",
+      "  \"pid\": 71066,",
+      "  \"pgid\": 71066,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 0.4691771670477465,",
+      "  \"logSnapshotBytes\": 0,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-v8xxqk9g/runner_sigint/packages/tools/blender/t08/evidence/20261107T092924498945Z-runner_sigint/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "runner_eperm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_eperm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_eperm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_eperm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/runner_eperm",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-final-r3/runner_eperm.log",
+    "failureTail20": [
+      "    \"memoryFreePercent\": 80,",
+      "    \"load\": [",
+      "      3.34326171875,",
+      "      4.64404296875,",
+      "      4.58935546875",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:29:25.084503+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-pzul0jj6\",",
+      "  \"pid\": 71094,",
+      "  \"pgid\": 71094,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 5.471837290970143,",
+      "  \"logSnapshotBytes\": 0,",
+      "  \"logComplete\": false,",
+      "  \"logSHA256\": null,",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-v8xxqk9g/runner_eperm/packages/tools/blender/t08/evidence/20261107T092925081478Z-runner_eperm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "runner_wall",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_wall/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_wall",
+      "--wall",
+      "1",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_wall/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/runner_wall",
+    "exit": 124,
+    "expectationMet": true,
+    "log": "green-final-r3/runner_wall.log",
+    "failureTail20": [
+      "  \"pgid\": 71187,",
+      "  \"limitFailure\": {",
+      "    \"elapsedSeconds\": 1.0681002500350587,",
+      "    \"members\": [",
+      "      {",
+      "        \"pid\": 71187,",
+      "        \"rssKiB\": 17024,",
+      "        \"state\": \"Ss\",",
+      "        \"command\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-v8xxqk9g/runner_wall/probe.py\"",
+      "      }",
+      "    ]",
+      "  },",
+      "  \"signal\": null,",
+      "  \"elapsedSeconds\": 1.355137000035029,",
+      "  \"logSnapshotBytes\": 0,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-v8xxqk9g/runner_wall/packages/tools/blender/t08/evidence/20261107T092930691249Z-runner_wall/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-final-r3",
+    "case": "runner_lock",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_lock/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_lock",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_lock/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/runner_lock",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-final-r3/runner_lock.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-final-r3",
+    "case": "runner_signal_during_result",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_signal_during_result/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_signal_during_result",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-v8xxqk9g/runner_signal_during_result/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-v8xxqk9g/runner_signal_during_result",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-final-r3/runner_signal_during_result.log",
+    "failureTail20": [
+      "    \"load\": [",
+      "      3.3154296875,",
+      "      4.61669921875,",
+      "      4.57958984375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:29:32.542168+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-2o7kk62e\",",
+      "  \"pid\": 71219,",
+      "  \"pgid\": 71219,",
+      "  \"unexpectedSurvivors\": [],",
+      "  \"signal\": 15,",
+      "  \"elapsedSeconds\": 0.3118479579570703,",
+      "  \"logSnapshotBytes\": 0,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-v8xxqk9g/runner_signal_during_result/packages/tools/blender/t08/evidence/20261107T092932539486Z-runner_signal_during_result/result-failure.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-r2/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-r2",
+    "case": "symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-r2/symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-r2",
+    "case": "relative_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/relative_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/relative_symlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-r2/relative_symlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-r2",
+    "case": "hardlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/hardlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/hardlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-r2/hardlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-r2",
+    "case": "old_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/old_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/old_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/old_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091318586365Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "source_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/source_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/source_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/source_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091318627171Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091318668836Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "source_alias",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/source_alias/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/source_alias",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/source_alias.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091319058272Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "source_unreadable_after",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/source_unreadable_after/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/source_unreadable_after",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/source_unreadable_after.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091319442951Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "child_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/child_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/child_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/child_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091319840746Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "stock_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/stock_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/stock_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/stock_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091320240595Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "new_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/new_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/new_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/new_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091320686094Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "batch_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/batch_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod,loot_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/batch_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/batch_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091321070942Z-probe-cargo_pod",
+      "loot_pod PASS packages/tools/blender/t08/exports/20261107T091321422425Z-probe-loot_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-r2/sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091321855161Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/sigint/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-r2/sigint.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091322421957Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "denied_cleanup_late_publish",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/denied_cleanup_late_publish/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/denied_cleanup_late_publish",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-r2/denied_cleanup_late_publish.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091323071647Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "outer_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/outer_sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/outer_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-r2/outer_sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091328735167Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "child_signal_exit",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/child_signal_exit/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/child_signal_exit",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/child_signal_exit.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091329300820Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "leader_exit_with_cohort",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/leader_exit_with_cohort/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/leader_exit_with_cohort",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/leader_exit_with_cohort.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091329696854Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "broken_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/broken_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/broken_symlink",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/broken_symlink.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091330218628Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "fifo_current",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/fifo_current/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/fifo_current",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/fifo_current.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091330262823Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "directory_source",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/directory_source/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/directory_source",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/directory_source.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091330309432Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "readlink_error",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/readlink_error/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/readlink_error",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/readlink_error.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091330355068Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "rename_denied",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/rename_denied/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/rename_denied",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/rename_denied.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091330396508Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "receipt_after_replace",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/receipt_after_replace/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/receipt_after_replace",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/receipt_after_replace.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091330444813Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "final_source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/final_source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/final_source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/final_source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091330887206Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "observation_failure",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/observation_failure/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/observation_failure",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "green-r2/observation_failure.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T091331328662Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "runner_happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_happy/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_happy",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_happy/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/runner_happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-r2/runner_happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "green-r2",
+    "case": "runner_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_sigterm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigterm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_sigterm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/runner_sigterm",
+    "exit": 143,
+    "expectationMet": true,
+    "log": "green-r2/runner_sigterm.log",
+    "failureTail20": [
+      "    \"freeBytes\": 33380999168,",
+      "    \"memoryFreePercent\": 83,",
+      "    \"load\": [",
+      "      2.3291015625,",
+      "      2.75927734375,",
+      "      4.44287109375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:13:35.880978+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-euk25lgb\",",
+      "  \"pid\": 70226,",
+      "  \"pgid\": 70226,",
+      "  \"signal\": 15,",
+      "  \"elapsedSeconds\": 0.486980790970847,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-t7hf_o1n/runner_sigterm/packages/tools/blender/t08/evidence/20261107T091335877968Z-runner_sigterm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "runner_sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_sigint/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_sigint",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_sigint/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/runner_sigint",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-r2/runner_sigint.log",
+    "failureTail20": [
+      "    \"freeBytes\": 33380728832,",
+      "    \"memoryFreePercent\": 83,",
+      "    \"load\": [",
+      "      2.3291015625,",
+      "      2.75927734375,",
+      "      4.44287109375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:13:36.478402+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-iavorzjr\",",
+      "  \"pid\": 70255,",
+      "  \"pgid\": 70255,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 0.4647263329825364,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-t7hf_o1n/runner_sigint/packages/tools/blender/t08/evidence/20261107T091336474523Z-runner_sigint/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "runner_eperm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_eperm/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_eperm",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_eperm/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/runner_eperm",
+    "exit": 130,
+    "expectationMet": true,
+    "log": "green-r2/runner_eperm.log",
+    "failureTail20": [
+      "    \"freeBytes\": 33379950592,",
+      "    \"memoryFreePercent\": 83,",
+      "    \"load\": [",
+      "      2.3291015625,",
+      "      2.75927734375,",
+      "      4.44287109375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:13:37.071220+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-f8klwki5\",",
+      "  \"pid\": 70270,",
+      "  \"pgid\": 70270,",
+      "  \"signal\": 2,",
+      "  \"elapsedSeconds\": 5.408707958005834,",
+      "  \"logComplete\": false,",
+      "  \"logSHA256\": null,",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-t7hf_o1n/runner_eperm/packages/tools/blender/t08/evidence/20261107T091337068057Z-runner_eperm/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "runner_wall",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_wall/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_wall",
+      "--wall",
+      "1",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_wall/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/runner_wall",
+    "exit": 124,
+    "expectationMet": true,
+    "log": "green-r2/runner_wall.log",
+    "failureTail20": [
+      "  \"pid\": 70369,",
+      "  \"pgid\": 70369,",
+      "  \"limitFailure\": {",
+      "    \"elapsedSeconds\": 1.0432365410379134,",
+      "    \"members\": [",
+      "      {",
+      "        \"pid\": 70369,",
+      "        \"rssKiB\": 17264,",
+      "        \"state\": \"Ss\",",
+      "        \"command\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-t7hf_o1n/runner_wall/probe.py\"",
+      "      }",
+      "    ]",
+      "  },",
+      "  \"signal\": null,",
+      "  \"elapsedSeconds\": 1.331284083018545,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-t7hf_o1n/runner_wall/packages/tools/blender/t08/evidence/20261107T091342670459Z-runner_wall/result.json\"",
+      "}"
+    ]
+  },
+  {
+    "run": "green-r2",
+    "case": "runner_lock",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_lock/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_lock",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-t7hf_o1n/runner_lock/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-t7hf_o1n/runner_lock",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "green-r2/runner_lock.log",
+    "failureTail20": []
+  },
+  {
+    "run": "red",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-f4xtkqgs/happy",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red/happy.log",
+    "failureTail20": [
+      "  \"logSHA256\": \"4faf08149a6d20b47c96323624979f8f2b10b6479b862422656adcca1a073b36\",",
+      "  \"pass\": false",
+      "}",
+      "",
+      "export /tmp/t08-life-f4xtkqgs/happy/assets/blend/props/cargo_pod.blend -> /tmp/t08-life-f4xtkqgs/happy/packages/client/public/models/props/cargo_pod.glb",
+      "Traceback (most recent call last):",
+      "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 75, in main",
+      "    ok = export_one(rules, family, src, out, args)",
+      "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 109, in export_one",
+      "    roots = _build_nodes(rules, model)",
+      "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 251, in _build_nodes",
+      "    root = _empty(a.name)",
+      "  File \"/private/tmp/t08-life-f4xtkqgs/happy/packages/tools/blender/artlib/export.py\", line 230, in _empty",
+      "    bpy.context.scene.collection.objects.link(e)",
+      "    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "AttributeError: 'types.SimpleNamespace' object has no attribute 'objects'",
+      "  exporting cargo_pod.blend crashed",
+      "",
+      "export props: 0 of 1 source(s) exported",
+      ""
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "red-r2/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "red-r2",
+    "case": "symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/symlink",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red-r2/symlink.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090332877803Z-probe-cargo_pod",
+      "runtime path is an unexpected symlink; refusing alias mutation"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "relative_symlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/relative_symlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/relative_symlink",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red-r2/relative_symlink.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090332967618Z-probe-cargo_pod",
+      "runtime path is an unexpected symlink; refusing alias mutation"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "hardlink",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/hardlink/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/hardlink",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "red-r2/hardlink.log",
+    "failureTail20": []
+  },
+  {
+    "run": "red-r2",
+    "case": "old_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/old_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/old_unreadable",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red-r2/old_unreadable.log",
+    "failureTail20": [
+      "",
+      "During handling of the above exception, another exception occurred:",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"/tmp/t08-life-bp90e1lk/old_unreadable/packages/tools/blender/t08/export_saved.py\", line 120, in <module>",
+      "    sys.exit(main())",
+      "             ~~~~^^",
+      "  File \"/tmp/t08-life-bp90e1lk/old_unreadable/packages/tools/blender/t08/export_saved.py\", line 115, in main",
+      "    results = [export_one(x, args.label) for x in items if x[\"stem\"] in selected]",
+      "               ~~~~~~~~~~^^^^^^^^^^^^^^^",
+      "  File \"/tmp/t08-life-bp90e1lk/old_unreadable/packages/tools/blender/t08/export_saved.py\", line 97, in export_one",
+      "    (attempt / \"rejected.glb\").write_bytes(dst.read_bytes())",
+      "                                           ~~~~~~~~~~~~~~^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 777, in read_bytes",
+      "    with self.open(mode='rb', buffering=0) as f:",
+      "         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 771, in open",
+      "    return io.open(self, mode, buffering, encoding, errors, newline)",
+      "           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "PermissionError: [Errno 13] Permission denied: '/private/tmp/t08-life-bp90e1lk/old_unreadable/packages/client/public/models/props/cargo_pod.glb'"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "source_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/source_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/source_unreadable",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/source_unreadable.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090334693059Z-probe-cargo_pod",
+      "[Errno 13] Permission denied: '/private/tmp/t08-life-bp90e1lk/source_unreadable/assets/blend/props/cargo_pod.blend'"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "source_change",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/source_change/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/source_change",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/source_change.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090334800506Z-probe-cargo_pod",
+      "source changed during export"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "source_alias",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/source_alias/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/source_alias",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/source_alias.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090336310759Z-probe-cargo_pod",
+      "expected a regular file, not an alias or missing source: /private/tmp/t08-life-bp90e1lk/source_alias/assets/blend/props/cargo_pod.blend"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "source_unreadable_after",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/source_unreadable_after/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/source_unreadable_after",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/source_unreadable_after.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090337818169Z-probe-cargo_pod",
+      "[Errno 13] Permission denied: '/private/tmp/t08-life-bp90e1lk/source_unreadable_after/assets/blend/props/cargo_pod.blend'"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "child_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/child_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/child_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/child_fail.log",
+    "failureTail20": [
+      "  \"limits\": {",
+      "    \"wallSeconds\": 1800,",
+      "    \"rssGiB\": 8,",
+      "    \"threads\": 2,",
+      "    \"codecs\": 1",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-5h3h5q43\",",
+      "  \"exit\": 7,",
+      "  \"peakSampledGroupRSSKiB\": 5408,",
+      "  \"pid\": 22113,",
+      "  \"pgid\": 22113,",
+      "  \"remainingGroup\": [],",
+      "  \"elapsedSeconds\": 1.162109958997462,",
+      "  \"logSHA256\": \"9740f12a1b3102e426310a840ef1015a3f8eaeac9fe337992d376dd53b3044b5\",",
+      "  \"pass\": false",
+      "}",
+      "",
+      "export /tmp/t08-life-bp90e1lk/child_fail/assets/blend/props/cargo_pod.blend -> /tmp/t08-life-bp90e1lk/child_fail/packages/client/public/models/props/cargo_pod.glb",
+      "  0.0 MB with PNG textures; encoding KTX2 (1 at a time)",
+      ""
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "stock_fail",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/stock_fail/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/stock_fail",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/stock_fail.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090340489510Z-probe-cargo_pod",
+      "stock report is not PASS"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "new_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/new_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/new_unreadable",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red-r2/new_unreadable.log",
+    "failureTail20": [
+      "",
+      "During handling of the above exception, another exception occurred:",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"/tmp/t08-life-bp90e1lk/new_unreadable/packages/tools/blender/t08/export_saved.py\", line 120, in <module>",
+      "    sys.exit(main())",
+      "             ~~~~^^",
+      "  File \"/tmp/t08-life-bp90e1lk/new_unreadable/packages/tools/blender/t08/export_saved.py\", line 115, in main",
+      "    results = [export_one(x, args.label) for x in items if x[\"stem\"] in selected]",
+      "               ~~~~~~~~~~^^^^^^^^^^^^^^^",
+      "  File \"/tmp/t08-life-bp90e1lk/new_unreadable/packages/tools/blender/t08/export_saved.py\", line 97, in export_one",
+      "    (attempt / \"rejected.glb\").write_bytes(dst.read_bytes())",
+      "                                           ~~~~~~~~~~~~~~^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 777, in read_bytes",
+      "    with self.open(mode='rb', buffering=0) as f:",
+      "         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 771, in open",
+      "    return io.open(self, mode, buffering, encoding, errors, newline)",
+      "           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "PermissionError: [Errno 13] Permission denied: '/private/tmp/t08-life-bp90e1lk/new_unreadable/packages/client/public/models/props/cargo_pod.glb'"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "batch_unreadable",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/batch_unreadable/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod,loot_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/batch_unreadable",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red-r2/batch_unreadable.log",
+    "failureTail20": [
+      "",
+      "During handling of the above exception, another exception occurred:",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"/tmp/t08-life-bp90e1lk/batch_unreadable/packages/tools/blender/t08/export_saved.py\", line 120, in <module>",
+      "    sys.exit(main())",
+      "             ~~~~^^",
+      "  File \"/tmp/t08-life-bp90e1lk/batch_unreadable/packages/tools/blender/t08/export_saved.py\", line 115, in main",
+      "    results = [export_one(x, args.label) for x in items if x[\"stem\"] in selected]",
+      "               ~~~~~~~~~~^^^^^^^^^^^^^^^",
+      "  File \"/tmp/t08-life-bp90e1lk/batch_unreadable/packages/tools/blender/t08/export_saved.py\", line 97, in export_one",
+      "    (attempt / \"rejected.glb\").write_bytes(dst.read_bytes())",
+      "                                           ~~~~~~~~~~~~~~^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 777, in read_bytes",
+      "    with self.open(mode='rb', buffering=0) as f:",
+      "         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 771, in open",
+      "    return io.open(self, mode, buffering, encoding, errors, newline)",
+      "           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "PermissionError: [Errno 13] Permission denied: '/private/tmp/t08-life-bp90e1lk/batch_unreadable/packages/client/public/models/props/cargo_pod.glb'"
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/sigterm",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red-r2/sigterm.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090344444126Z-probe-cargo_pod",
+      "stock export failed: packages/tools/blender/t08/evidence/20261107T090344490068Z-export-cargo_pod-probe",
+      ""
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "sigint",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/sigint",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/sigint.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090344655167Z-probe-cargo_pod",
+      "stock export failed: packages/tools/blender/t08/evidence/20261107T090344700581Z-export-cargo_pod-probe",
+      ""
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "denied_cleanup_late_publish",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/denied_cleanup_late_publish/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/denied_cleanup_late_publish",
+    "exit": 1,
+    "expectationMet": false,
+    "log": "red-r2/denied_cleanup_late_publish.log",
+    "failureTail20": [
+      "cargo_pod FAILED packages/tools/blender/t08/exports/20261107T090345296136Z-probe-cargo_pod",
+      "stock export failed: packages/tools/blender/t08/evidence/20261107T090345344244Z-export-cargo_pod-probe",
+      ""
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "outer_sigterm",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/outer_sigterm/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/outer_sigterm",
+    "exit": -15,
+    "expectationMet": false,
+    "log": "red-r2/outer_sigterm.log",
+    "failureTail20": []
+  },
+  {
+    "run": "red-r2",
+    "case": "child_signal_exit",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/child_signal_exit/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/child_signal_exit",
+    "exit": 1,
+    "expectationMet": true,
+    "log": "red-r2/child_signal_exit.log",
+    "failureTail20": [
+      "  \"limits\": {",
+      "    \"wallSeconds\": 1800,",
+      "    \"rssGiB\": 8,",
+      "    \"threads\": 2,",
+      "    \"codecs\": 1",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-u76d2nw1\",",
+      "  \"exit\": -15,",
+      "  \"peakSampledGroupRSSKiB\": 5648,",
+      "  \"pid\": 22792,",
+      "  \"pgid\": 22792,",
+      "  \"remainingGroup\": [],",
+      "  \"elapsedSeconds\": 1.1623740830109455,",
+      "  \"logSHA256\": \"0909ce1674abf410d0b831427b1322f0a9df9662b3632f1c25a2ed1040e9494f\",",
+      "  \"pass\": false",
+      "}",
+      "",
+      "export /tmp/t08-life-bp90e1lk/child_signal_exit/assets/blend/props/cargo_pod.blend -> /tmp/t08-life-bp90e1lk/child_signal_exit/packages/client/public/models/props/cargo_pod.glb",
+      "  0.0 MB with PNG textures; encoding KTX2 (1 at a time)",
+      ""
+    ]
+  },
+  {
+    "run": "red-r2",
+    "case": "leader_exit_with_cohort",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-bp90e1lk/leader_exit_with_cohort/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-bp90e1lk/leader_exit_with_cohort",
+    "exit": 0,
+    "expectationMet": false,
+    "log": "red-r2/leader_exit_with_cohort.log",
+    "failureTail20": [
+      "cargo_pod PASS packages/tools/blender/t08/exports/20261107T090348070718Z-probe-cargo_pod"
+    ]
+  },
+  {
+    "run": "result-red",
+    "case": "happy",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ywwm4yus/happy/packages/tools/blender/t08/export_saved.py",
+      "--label",
+      "probe",
+      "--only",
+      "cargo_pod"
+    ],
+    "cwd": "/tmp/t08-life-ywwm4yus/happy",
+    "exit": 0,
+    "expectationMet": true,
+    "log": "result-red/happy.log",
+    "failureTail20": []
+  },
+  {
+    "run": "result-red",
+    "case": "runner_signal_during_result",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ywwm4yus/runner_signal_during_result/packages/tools/blender/t08/run.py",
+      "--label",
+      "runner_signal_during_result",
+      "--wall",
+      "20",
+      "--",
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-ywwm4yus/runner_signal_during_result/probe.py"
+    ],
+    "cwd": "/tmp/t08-life-ywwm4yus/runner_signal_during_result",
+    "exit": 0,
+    "expectationMet": false,
+    "log": "result-red/runner_signal_during_result.log",
+    "failureTail20": [
+      "    \"memoryFreePercent\": 80,",
+      "    \"load\": [",
+      "      3.251953125,",
+      "      4.8583984375,",
+      "      4.65771484375",
+      "    ],",
+      "    \"cpus\": 15,",
+      "    \"observed\": \"2026-11-07T09:28:37.817561+00:00\"",
+      "  },",
+      "  \"tmpdir\": \"/tmp/t08-t2d6his3\",",
+      "  \"pid\": 69103,",
+      "  \"pgid\": 69103,",
+      "  \"unexpectedSurvivors\": [],",
+      "  \"signal\": null,",
+      "  \"elapsedSeconds\": 0.3214563750079833,",
+      "  \"logComplete\": true,",
+      "  \"logSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"logSnapshotSHA256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",",
+      "  \"receiptPath\": \"/private/tmp/t08-life-ywwm4yus/runner_signal_during_result/packages/tools/blender/t08/evidence/20261107T092837814324Z-runner_signal_during_result/result.json\"",
+      "}"
+    ]
+  }
+]

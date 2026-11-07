@@ -1,0 +1,66 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-wkkmufq1/runner_wall/probe.py"
+  ],
+  "cwd": "/private/tmp/t08-life-wkkmufq1/runner_wall",
+  "exit": 124,
+  "childExit": -15,
+  "childReaped": true,
+  "terminal": true,
+  "remainingGroup": [],
+  "errors": [
+    {
+      "operation": "execute",
+      "type": "TimeoutError",
+      "errno": null,
+      "message": "owned wall/RSS limit"
+    }
+  ],
+  "cleanupSignals": [
+    {
+      "signal": 15,
+      "sent": true
+    }
+  ],
+  "pass": false,
+  "peakSampledGroupRSSKiB": 17040,
+  "limits": {
+    "wallSeconds": 1.0,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "admission": {
+    "freeBytes": 28313260032,
+    "memoryFreePercent": 80,
+    "load": [
+      5.00341796875,
+      5.7587890625,
+      4.89697265625
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T09:26:29.408356+00:00"
+  },
+  "tmpdir": "/tmp/t08-o_gm94er",
+  "pid": 45948,
+  "pgid": 45948,
+  "limitFailure": {
+    "elapsedSeconds": 1.1277829589671455,
+    "members": [
+      {
+        "pid": 45948,
+        "rssKiB": 17040,
+        "state": "Ss",
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-wkkmufq1/runner_wall/probe.py"
+      }
+    ]
+  },
+  "signal": null,
+  "elapsedSeconds": 1.4370469999848865,
+  "logComplete": true,
+  "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "receiptPath": "/private/tmp/t08-life-wkkmufq1/runner_wall/packages/tools/blender/t08/evidence/20261107T092629405354Z-runner_wall/result.json"
+}

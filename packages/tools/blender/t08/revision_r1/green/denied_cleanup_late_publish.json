@@ -1,0 +1,294 @@
+{
+  "case": "denied_cleanup_late_publish",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "715aba2333bb9e734aa798959bbc23972983ade92bef5e3eb111e1fc947f9c0e",
+    "export_saved.py": "72d9fbdb55b4f50af16034633e35315aaae231df0938fed4a22772c7c05639e2"
+  },
+  "exit": 130,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 130,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "InterruptedError",
+          "errno": null,
+          "message": "received signal 2"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 487471056,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794042492984308306,
+            "ctimeNs": 1794042492984308306
+          },
+          "quarantine": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/previous.glb",
+          "detachedRegular": true
+        },
+        {
+          "path": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 487471051,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794042492984135180,
+          "ctimeNs": 1794042492984135180
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish",
+        "exit": 130,
+        "childExit": null,
+        "childReaped": false,
+        "terminal": false,
+        "remainingGroup": [
+          {
+            "pid": 46086,
+            "rssKiB": 22864,
+            "state": "Ss",
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/fixture_blender.py -b --factory-startup -t 2 --python-exit-code 1 -P packages/tools/blender/export_props.py -- --src-root /private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/assets/blend --only cargo_pod --out-dir /private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models --report-dir /private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/stock"
+          }
+        ],
+        "errors": [
+          {
+            "operation": "execute",
+            "type": "InterruptedError",
+            "errno": null,
+            "message": "received signal 2"
+          },
+          {
+            "operation": "killpg 15",
+            "type": "PermissionError",
+            "errno": 1,
+            "message": "[Errno 1] controlled killpg EPERM"
+          },
+          {
+            "operation": "killpg 9",
+            "type": "PermissionError",
+            "errno": 1,
+            "message": "[Errno 1] controlled killpg EPERM"
+          },
+          {
+            "operation": "wait direct child",
+            "type": "TimeoutExpired",
+            "errno": null,
+            "message": "Command '['/opt/homebrew/Cellar/python@3.14/3.14.8/bin/python3.14', '-B', '/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/fixture_blender.py', '-b', '--factory-startup', '-t', '2', '--python-exit-code', '1', '-P', 'packages/tools/blender/export_props.py', '--', '--src-root', '/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/assets/blend', '--only', 'cargo_pod', '--out-dir', '/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models', '--report-dir', '/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/stock']' timed out after 1 seconds"
+          }
+        ],
+        "cleanupSignals": [],
+        "pass": false,
+        "peakSampledGroupRSSKiB": 5920,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "admission": {
+          "freeBytes": 34762526720,
+          "memoryFreePercent": 83,
+          "load": [
+            1.79638671875,
+            3.13623046875,
+            5.30224609375
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:08:13.020345+00:00"
+        },
+        "tmpdir": "/tmp/t08-6med_l0y",
+        "pid": 46086,
+        "pgid": 46086,
+        "signal": 2,
+        "elapsedSeconds": 5.531313417013735,
+        "logSHA256": "0a8bf00f4d0aa5b9d5afbb404892a28ab8e7d86ffa034824326f4a57f3a53381"
+      },
+      "privateOutputUnresolved": true,
+      "canonicalAbsent": true
+    }
+  ],
+  "receipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish",
+      "exit": 130,
+      "childExit": null,
+      "childReaped": false,
+      "terminal": false,
+      "remainingGroup": [
+        {
+          "pid": 46086,
+          "rssKiB": 22864,
+          "state": "Ss",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/fixture_blender.py -b --factory-startup -t 2 --python-exit-code 1 -P packages/tools/blender/export_props.py -- --src-root /private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/assets/blend --only cargo_pod --out-dir /private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models --report-dir /private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/stock"
+        }
+      ],
+      "errors": [
+        {
+          "operation": "execute",
+          "type": "InterruptedError",
+          "errno": null,
+          "message": "received signal 2"
+        },
+        {
+          "operation": "killpg 15",
+          "type": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] controlled killpg EPERM"
+        },
+        {
+          "operation": "killpg 9",
+          "type": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] controlled killpg EPERM"
+        },
+        {
+          "operation": "wait direct child",
+          "type": "TimeoutExpired",
+          "errno": null,
+          "message": "Command '['/opt/homebrew/Cellar/python@3.14/3.14.8/bin/python3.14', '-B', '/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/fixture_blender.py', '-b', '--factory-startup', '-t', '2', '--python-exit-code', '1', '-P', 'packages/tools/blender/export_props.py', '--', '--src-root', '/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/assets/blend', '--only', 'cargo_pod', '--out-dir', '/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models', '--report-dir', '/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/stock']' timed out after 1 seconds"
+        }
+      ],
+      "cleanupSignals": [],
+      "pass": false,
+      "peakSampledGroupRSSKiB": 5920,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "admission": {
+        "freeBytes": 34762526720,
+        "memoryFreePercent": 83,
+        "load": [
+          1.79638671875,
+          3.13623046875,
+          5.30224609375
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:08:13.020345+00:00"
+      },
+      "tmpdir": "/tmp/t08-6med_l0y",
+      "pid": 46086,
+      "pgid": 46086,
+      "signal": 2,
+      "elapsedSeconds": 5.531313417013735,
+      "logSHA256": "0a8bf00f4d0aa5b9d5afbb404892a28ab8e7d86ffa034824326f4a57f3a53381"
+    }
+  ],
+  "receiptHashesBeforeRelease": {
+    "/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/run/result.json": "dcf42d44b1c97e42437b2f063d8a6e2e55cc200bea8d230bdc8b659ad2f781de"
+  },
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [
+    "46086 46086 Ss"
+  ],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {
+    "/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/run/result.json": "dcf42d44b1c97e42437b2f063d8a6e2e55cc200bea8d230bdc8b659ad2f781de"
+  },
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "stockMove": {
+    "source": "/tmp/t08-6med_l0y/art-export-1y73rn3x/meshopt/cargo_pod.glb",
+    "destination": "/private/tmp/t08-life-ss1z8cci/denied_cleanup_late_publish/packages/tools/blender/t08/exports/20261107T090813017052Z-probe-cargo_pod/producer/models/props/cargo_pod.glb"
+  },
+  "expectationMet": true,
+  "failureTail20": []
+}

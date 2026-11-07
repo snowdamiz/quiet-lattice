@@ -1,0 +1,94 @@
+{
+  "case": "rename_denied",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-qqitz2ij/rename_denied",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-qqitz2ij/rename_denied/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "c6eef5da1e62458d87f18cddbf543e90894f9a1054903be8674e4299206b6753",
+    "export_saved.py": "2f05988296c65b268507ba1f88cfcbcea519cfece3f8ba89a546798613ce7c23"
+  },
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "current entry retired incompletely; retained failure facts"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-qqitz2ij/rename_denied/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": false,
+          "sha256": null,
+          "errors": [
+            {
+              "operation": "quarantine/detach",
+              "type": "PermissionError",
+              "errno": 13,
+              "message": "[Errno 13] controlled canonical rename denial"
+            }
+          ],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 487807510,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794043216135355320,
+            "ctimeNs": 1794043216135355320
+          }
+        },
+        {
+          "path": "/private/tmp/t08-life-qqitz2ij/rename_denied/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": false,
+          "sha256": null,
+          "errors": [
+            {
+              "operation": "quarantine/detach",
+              "type": "PermissionError",
+              "errno": 13,
+              "message": "[Errno 13] controlled canonical rename denial"
+            }
+          ],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 487807510,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794043216135355320,
+            "ctimeNs": 1794043216135355320
+          }
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-qqitz2ij/rename_denied/packages/tools/blender/t08/exports/20261107T092016168641Z-probe-cargo_pod/producer/models/props/cargo_pod.glb",
+      "canonicalAbsent": false
+    }
+  ],
+  "receipts": [],
+  "receiptHashesBeforeRelease": {},
+  "currentAbsentBeforeRelease": false,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": false,
+  "receiptHashesAfterRelease": {},
+  "previous": [],
+  "stockMove": null,
+  "expectationMet": true,
+  "failureTail20": []
+}

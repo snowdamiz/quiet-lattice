@@ -1,0 +1,120 @@
+{
+  "case": "sigint",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-bp90e1lk/sigint",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "dca257513a05aed401ce7eab2bea367bfaeca7a570eb6441ce04f428a0fa1a45",
+    "export_saved.py": "3df6f58db90204f577092fe75241d35c911ac9469d5a6f7cd0887c1e22c64f45"
+  },
+  "exit": 1,
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "retiredSHA256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.8/bin/python3.14",
+        "/private/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/run.py",
+        "--label",
+        "export-cargo_pod-probe",
+        "--wall",
+        "1800",
+        "--",
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--only",
+        "cargo_pod",
+        "--report-dir",
+        "/private/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/exports/20261107T090344655167Z-probe-cargo_pod/stock"
+      ],
+      "exit": -2,
+      "error": "stock export failed: packages/tools/blender/t08/evidence/20261107T090344700581Z-export-cargo_pod-probe\n"
+    }
+  ],
+  "receipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--only",
+        "cargo_pod",
+        "--report-dir",
+        "/private/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/exports/20261107T090344655167Z-probe-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-bp90e1lk/sigint",
+      "admission": {
+        "freeBytes": 35603968000,
+        "memoryFreePercent": 82,
+        "load": [
+          4.833984375,
+          4.2998046875,
+          6.38525390625
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:03:44.689310+00:00"
+      },
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "tmpdir": "/tmp/t08-hr4rsa5q",
+      "exit": -15,
+      "peakSampledGroupRSSKiB": 0,
+      "pid": 22693,
+      "pgid": 22693,
+      "cleanupBefore": [
+        {
+          "pid": 22693,
+          "rssKiB": 22496,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-bp90e1lk/sigint/fixture_blender.py -b --factory-startup -t 2 --python-exit-code 1 -P packages/tools/blender/export_props.py -- --only cargo_pod --report-dir /private/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/exports/20261107T090344655167Z-probe-cargo_pod/stock"
+        }
+      ],
+      "remainingGroup": [],
+      "elapsedSeconds": 0.5060766249662265,
+      "logSHA256": "72accdfd3a5a3761e2457f15f223712dcd46ab5cb923303c1b11b971404b1a2e",
+      "pass": false
+    }
+  ],
+  "receiptHashesBeforeRelease": {
+    "/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/evidence/20261107T090344700581Z-export-cargo_pod-probe/result.json": "437b945f3c04881ad934696a1404d06380fd7fde15007aa39fdced4c647c8e54"
+  },
+  "currentAbsentBeforeRelease": true,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": true,
+  "receiptHashesAfterRelease": {
+    "/tmp/t08-life-bp90e1lk/sigint/packages/tools/blender/t08/evidence/20261107T090344700581Z-export-cargo_pod-probe/result.json": "437b945f3c04881ad934696a1404d06380fd7fde15007aa39fdced4c647c8e54"
+  },
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "stockMove": null,
+  "expectationMet": true,
+  "failureTail20": []
+}
