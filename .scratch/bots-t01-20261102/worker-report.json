@@ -1,0 +1,45 @@
+{
+  "TASK": "P1.E16.T01",
+  "STATUS": "DONE",
+  "head": "6b8f624311b0a4a1093d7e55e35fd3f1683a38a4",
+  "summary": "Reusable protocol-24 headless bot clients, bounded action scripts, CLI patrol and authoritative action integrations. Independent code review and merged QA remain pending.",
+  "verify": {
+    "typecheck": "passed",
+    "lint": "passed",
+    "unit": "209 files / 2668 tests passed",
+    "botIntegration": "6 tests passed, all seven required actions accepted plus explicit refusal, correction, liveness and handoff coverage",
+    "gateRemoved": "passed, 10 rules enforced",
+    "tenBotTenMinutePatrol": {
+      "clients": 10,
+      "inputs": 120855,
+      "snapshotsAndAcks": 121665,
+      "corrections": 0,
+      "maxPoseErrorM": 9.587668731342185e-10,
+      "elapsedSeconds": 609.4093021249864
+    }
+  },
+  "decisions": [
+    "Use Node built-in WebSocket on the existing Node >=22 runtime; no new dependency or lockfile changes needed.",
+    "Movement actions wait for authoritative snapshots; corrections stop and rebase the route, exposing a BotRefusal to the caller.",
+    "Explicit waypoints and mode transitions provide reusable e2e primitives; the default load script is a flight patrol, separately verified from action integrations.",
+    "The accept-quest integration obtains a genuine offer through the existing runtime offer hook because world quest-giver/board interaction is outside this task."
+  ],
+  "outOfScope": [
+    "P1.E16.T02 50-bot budget and future active-pirate workload",
+    "Whole-game FPS and browser rendering",
+    "Independent review and merged QA, owned by the parent"
+  ],
+  "artifacts": [
+    "actions.log",
+    "soak.log",
+    "soak-run.json",
+    "sockets-during.json",
+    "cleanup.json",
+    "typecheck.log",
+    "lint.log",
+    "unit.log",
+    "gate-removed.log",
+    "soak-server.log"
+  ],
+  "finishedAt": "2026-11-02T05:42:46.513261+00:00"
+}

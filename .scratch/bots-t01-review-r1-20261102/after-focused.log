@@ -1,0 +1,13 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e16t07
+
+{"event":"bot.action","action":"corrected timed flight","first":"refused","result":"refused","requestedMs":4000,"correctionAfterMs":19.377708999999868,"settledAfterMs":43.46087499999999,"stats":{"inputs":3,"snapshots":2,"corrections":1,"handoffs":0,"frameChanges":0,"messages":15,"maxPoseErrorM":7.802062335758611e-10}}
+{"event":"bot.action","action":"replanned after timed flight refusal","mode":"ship","pose":{"frame":"2981198913:station","pos":[-30,14.000000000152683,-22.000000000714927],"quat":[0.7071067798114845,-1.0734461083459769e-14,0,0.7071067825616106],"vel":[0,0,0]},"stats":{"inputs":51,"snapshots":49,"corrections":1,"handoffs":0,"frameChanges":0,"messages":15,"maxPoseErrorM":9.184832195675386e-10}}
+{"event":"bot.action","action":"completed timed flight","requestedMs":300,"elapsedMs":350.0336659999998,"stats":{"inputs":11,"snapshots":9,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":7.907183786317199e-10}}
+{"event":"bot.action","action":"closed pending timed flight","healthy":false,"mode":"ship","stats":{"inputs":3,"snapshots":2,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":8.864226355068445e-10}}
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 6 skipped (9)
+   Start at  00:53:02
+   Duration  4.12s (tests 82%, import 13%, transform 6%)
+

@@ -1,0 +1,55 @@
+{
+  "TASK": "P1.E16.T01 review revision 1",
+  "STATUS": "DONE",
+  "head": "478a5e6ccc429f8ba8539e69ebc7d91fb39a6bb4",
+  "finding": "Corrected flyFor waited its full duration before reporting refusal.",
+  "fix": "The existing bounded until poll now ends on either the flight deadline or a route revision change.",
+  "negativeEvidence": {
+    "log": "before.log",
+    "requestedMs": 4000,
+    "correctionAfterMs": 47.74245899999994,
+    "refusedAfterMs": 4050.693917,
+    "testResult": "failed: still waiting instead of refused"
+  },
+  "positiveEvidence": {
+    "log": "after-all-actions.log",
+    "requestedMs": 4000,
+    "correctionAfterMs": 29.846874999999272,
+    "refusedAfterMs": 53.944916000000376,
+    "replanning": "accepted",
+    "normalDuration": "300 ms requested, 355.246 ms observed",
+    "pendingWaitCleanup": "closing cancels flight, inputs stop and session is released"
+  },
+  "verification": {
+    "focusedUnits": "6 passed",
+    "focusedTimedFlightIntegration": "3 passed",
+    "allBotIntegrations": "9 passed; all seven original action cases preserved",
+    "workspaceTypecheck": "passed",
+    "focusedEslint": "passed",
+    "changedFileFormatting": "passed",
+    "diffCheck": "passed"
+  },
+  "cleanup": {
+    "at": "2026-11-02T05:54:34.814791+00:00",
+    "head": "478a5e6ccc429f8ba8539e69ebc7d91fb39a6bb4",
+    "databaseDropped": "astra_bots_t01_review_r1_20261102",
+    "redisPidStopped": 12217,
+    "redisPortFree": 56481,
+    "sharedRedisResponds": true,
+    "sharedPostgresResponds": true
+  },
+  "pending": [
+    "Fresh independent review",
+    "Merged integration/smoke/ten-minute soak owned by parent"
+  ],
+  "artifacts": [
+    "before.log",
+    "after-focused.log",
+    "after-all-actions.log",
+    "units.log",
+    "typecheck.log",
+    "lint-focused.log",
+    "format.log",
+    "cleanup.json"
+  ]
+}

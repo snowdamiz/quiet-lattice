@@ -1,0 +1,15 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e16t07
+
+{"event":"bot.action","action":"fly/walk/board/dock","mode":"docked","pose":{"frame":"2981198913:station","pos":[-29.999999999999996,2.399999999952584,-21.999999999665164],"quat":[-0.7071067822119087,-1.85673111346624e-14,0,0.7071067801611863],"vel":[0,0,0]},"stats":{"inputs":319,"snapshots":318,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":4.854673161988433e-10}}
+{"event":"bot.action","action":"land/walk/mine/fight","mine":{"t":"mine","seq":1,"frame":"2981198913:1","node":"2_966_1135_dihydrogen_0","result":"hit","hp":0.8588059663772583},"fire":{"t":"fire","seq":1,"result":"hit","target":29},"healthBefore":108.79999999999998,"healthAfter":97.79999999999998,"setupCorrections":2,"stats":{"inputs":136,"snapshots":129,"corrections":2,"handoffs":0,"frameChanges":0,"messages":22,"maxPoseErrorM":5.053157801318095e-10}}
+{"event":"bot.action","action":"acceptQuest/refusals","accepted":{"step":"reach","counters":{},"seen":{},"started":26371785.245334208,"since":26371785.245334208},"quest":{"t":"quests","seq":2,"quests":{"active":{"first_jobs":{"step":"land","counters":{},"seen":{},"started":26371785.233026747,"since":26371785.233026747},"wing_over_rolis_iii":{"step":"reach","counters":{},"seen":{},"started":26371785.245334208,"since":26371785.245334208}},"done":{},"flags":[],"offered":[]},"error":"not_offered"},"fire":{"t":"fire","seq":1,"result":"refused","reason":"mode"},"mine":{"t":"mine","seq":1,"frame":"2981198913:1","node":"0_0_0_ferrite_0","result":"refused","reason":"mode"},"mode":"docked","stats":{"inputs":13,"snapshots":10,"corrections":1,"handoffs":0,"frameChanges":0,"messages":23,"maxPoseErrorM":4.4894265003735203e-10}}
+{"event":"bot.action","action":"frame/warp","zone":"sys:1","fuelRefusal":{"t":"warp","seq":2,"reason":"fuel"},"stats":{"inputs":17,"snapshots":14,"corrections":1,"handoffs":1,"frameChanges":2,"messages":19,"maxPoseErrorM":4.635522500534302e-10}}
+{"event":"bot.action","action":"flight zone handoff","zone":"deep:0","stats":{"inputs":15,"snapshots":13,"corrections":1,"handoffs":1,"frameChanges":0,"messages":16,"maxPoseErrorM":3.145203039834534e-10}}
+{"event":"bot.action","action":"lost correction/silent stream","mode":"docked","healthy":false,"stats":{"inputs":13,"snapshots":2,"corrections":1,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":5.039383762089361e-10}}
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  00:29:20
+   Duration  27.60s (tests 92%, import 5%, transform 3%)
+

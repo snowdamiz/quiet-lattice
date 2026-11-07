@@ -1,0 +1,80 @@
+$ pnpm --filter @astra/tools smoke
+$ tsx src/smoke/run.ts
+
+Running 39 tests using 1 worker
+
+  ✓   1 src/smoke/account.spec.ts:76:1 › title → a new account → a refused name, then a character of the people picked → enter, by keyboard (14.2s)
+  ✓   2 src/smoke/account.spec.ts:149:1 › a wrong password is refused on its field; Esc steps back; the session lasts until signing out (6.6s)
+  ✓   3 src/smoke/account.spec.ts:190:1 › dev scenarios go through the dev login: ?dev#foot on foot in its home hangar (5.7s)
+  ✓   4 src/smoke/account.spec.ts:211:1 › ?dev=<name>&people=<id>: that people's dev character, in its home system (7.4s)
+  ✓   5 src/smoke/account.spec.ts:226:1 › #foot without ?dev is still the offline sandbox: no sign-in, no socket (5.6s)
+[WebServer] 11:37:43 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓   6 src/smoke/boot.spec.ts:4:1 › client boots and renders (5.1s)
+[WebServer] 11:37:48 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓   7 src/smoke/compressed.spec.ts:38:1 › a KTX2 and meshopt model loads and draws through the game loader (3.5s)
+Chromium 156.0.8078.4: 974553 values compared with Node's, 0 differ (generated in 4838 ms); its own Math differs from Node's on 1053 of 14000 calls
+  ✓   8 src/smoke/cross-engine.spec.ts:58:1 › world generation in Chromium gives Node’s bits (42.7s)
+Firefox cannot start here: Could not find profile folder.
+  -   9 src/smoke/cross-engine.spec.ts:67:3 › world generation in Firefox gives Node’s bits
+WebKit 27.2: 974553 values compared with Node's, 0 differ (generated in 3509 ms); its own Math differs from Node's on 2166 of 14000 calls
+  ✓  10 src/smoke/cross-engine.spec.ts:67:3 › world generation in WebKit gives Node’s bits (8.0s)
+  ✓  11 src/smoke/cutscene-online.spec.ts:69:1 › plays the test cutscene in the story phase the server places the player in (6.5s)
+  ✓  12 src/smoke/cutscene-online.spec.ts:103:1 › plays the first cutscene of a session when the server starts it from a quest step, and its done ends the step (9.7s)
+[WebServer] 11:39:01 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓  13 src/smoke/cutscene.spec.ts:23:1 › plays the test cutscene end to end, and skips it (12.7s)
+[WebServer] 11:39:14 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+den roost (predator): natural spread 4.024 m over 873 vertices, levelled spread 3.64e-7 m over 873
+den pad captures: /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e16t07/packages/tools/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-before.png /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e16t07/packages/tools/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-after.png
+  ✓  14 src/smoke/den-pad.spec.ts:70:1 › a Tier 1 den pad is levelled in the engine, and nothing is drawn for the den (15.1s)
+[WebServer] 11:39:29 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓  15 src/smoke/edge.spec.ts:39:1 › the galaxy map and the sky draw the Edge where the Count puts it, at three Counts (4.0s)
+[WebServer] 11:39:33 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓  16 src/smoke/edge.spec.ts:103:1 › the galaxy map marks the dark Waystations the server names, and says so for the system selected, after frames have run (5.0s)
+  -  17 src/smoke/harness-hang.spec.ts:7:1 › a page that never answers
+  -  18 src/smoke/harness-hang.spec.ts:15:1 › the next test gets a working browser
+  ✓  19 src/smoke/harness.spec.ts:26:3 › a hung page fails at its 6 s timeout, closing grace 15 s, and the next test still runs (15.2s)
+  ✓  20 src/smoke/harness.spec.ts:26:3 › a hung page fails at its 6 s timeout, closing grace 1 s, and the next test still runs (10.0s)
+  ✓  21 src/smoke/mining-online.spec.ts:226:1 › two clients mine one node and a third watches: all see it vanish, none asks for it while it is gone, all see it grow back (58.0s)
+hang guard: the page did not close in time; killing the browser (pid 89505, 8 processes)
+  ✘  22 src/smoke/movement-online.spec.ts:196:1 › takes off, flies out of the Waystation, boosts and engages the pulse drive without a correction (6.7s)
+  ✓  23 src/smoke/movement-online.spec.ts:208:1 › flies on through page stalls of 4 s and 9 s and a hidden tab’s 40 s pause without a correction (47.1s)
+  ✓  24 src/smoke/online.spec.ts:90:1 › sign up, make a character and spawn docked at the home Waystation (6.4s)
+  ✓  25 src/smoke/online.spec.ts:136:1 › a reload resumes the character where the server holds it (13.5s)
+  ✓  26 src/smoke/online.spec.ts:196:1 › a server restart: the client reconnects, its snapshot store starts over, and it stays where it was (10.7s)
+  ✓  27 src/smoke/online.spec.ts:234:1 › a page stalled for 9 s keeps its session: the snapshots it missed are acknowledged once (20.8s)
+  ✓  28 src/smoke/online.spec.ts:274:1 › a frame loop stopped for a while (a hidden tab) comes back on the server's clock at once, and so do its inputs (10.3s)
+flight {"max":0,"judged":676,"worst":null,"edge":{"max":9.492545692283843e-10,"judged":38,"apart":777.8710237169464,"worst":{"ack":433,"d":9.492545692283843e-10,"mode":"ship","sentMode":"ship","frame":"2981198913:station","sentFrame":"2981198913:1"}},"sentIn":{"docked@2981198913:station":52,"ship@2981198913:station":296,"ship@2981198913:1":296,"pulse@2981198913:1":103},"link":{"released":745,"answered":745,"lostOut":28,"lostIn":20},"rtt":200}
+  ✓  29 src/smoke/prediction-online.spec.ts:294:1 › in flight: out of the Waystation into its world’s frame, boosting and on the pulse drive, within 0.5 m of the server (44.8s)
+small {"jump":3,"shown":0.05256928890594281,"after":0.07951722884899937,"apart":2.947430711094057,"apartAfter":0.0004164720303378999}
+large {"jump":2000.0006175283502,"shown":2000.0007223818584,"after":2000.0007490245464,"apart":0,"apartAfter":0}
+refused {"max":6.507814330688532e-11,"judged":200,"worst":{"ack":65,"d":6.507814330688532e-11,"mode":"ship","sentMode":"ship","frame":"2981198913:1","sentFrame":"2981198913:1"},"edge":{"max":0,"judged":0,"apart":0,"worst":null},"sentIn":{"ship@2981198913:1":223},"link":{"released":221,"answered":221,"lostOut":13,"lostIn":8},"rtt":200}
+rewound {"off":0,"speed":599.88883508874,"since":0.19995228201150894}
+engage {"jump":63.922599014185835,"shown":2.166745021182578,"after":3.422104029392358,"apart":61.75585399300326,"apartAfter":0.00013887311797589064}
+shadow {"max":6.507814330688532e-11,"judged":283,"worst":{"ack":65,"d":6.507814330688532e-11,"mode":"ship","sentMode":"ship","frame":"2981198913:1","sentFrame":"2981198913:1"},"edge":{"max":0,"judged":0,"apart":0,"worst":null},"sentIn":{"ship@2981198913:1":309,"pulse@2981198913:1":5},"link":{"released":312,"answered":312,"lostOut":17,"lostIn":9},"rtt":200}
+  ✓  30 src/smoke/prediction-online.spec.ts:327:1 › on an empty Charge in its world’s shadow: the engage refused by the client, corrections blended or shown, a mispredicted engage rewound (23.5s)
+walked {"max":0.00006551469784454866,"judged":238,"worst":{"ack":229,"d":0.00006551469784454866,"mode":"foot","sentMode":"foot","frame":"2981198913:station","sentFrame":"2981198913:station"},"edge":{"max":0,"judged":0,"apart":0,"worst":null},"sentIn":{"docked@2981198913:station":41,"foot@2981198913:station":212},"link":{"released":251,"answered":251,"lostOut":16,"lostIn":3},"rtt":200}
+small {"jump":1.5000000177619761,"shown":0.026284644770912975,"after":0.03975861487665799,"apart":1.473715372991063,"apartAfter":0.00020823602053722054}
+large {"jump":38.5,"shown":38.49985591248803,"after":38.5,"apart":0,"apartAfter":0}
+  ✓  31 src/smoke/prediction-online.spec.ts:449:1 › on foot in the hangar: walking, sprinting and jumping within 0.5 m, a small correction blended and a large one shown (21.3s)
+[WebServer] 11:44:53 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships: 450 pilot marks and 294 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 4 names and 0 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 150
+  ✓  32 src/smoke/remote-markers.spec.ts:25:3 › remote-ships: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.8s)
+[WebServer] 11:45:00 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-crowd: 2028 pilot marks and 1468 labels in 120 frames, 6.8..6.8 px from their marks; 5 side moves, 27 names and 9 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 120
+  ✓  33 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-crowd: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.9s)
+[WebServer] 11:45:07 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-pads: 419 pilot marks and 412 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 2 names and 1 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 0
+  ✓  34 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-pads: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.9s)
+[WebServer] 11:45:14 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-surface: 298 pilot marks and 181 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 3 names and 2 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 150
+  ✓  35 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-surface: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (18.2s)
+[WebServer] 11:45:32 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+remote-ships-bay: 1440 pilot marks and 1200 labels in 120 frames, 6.8..6.8 px from their marks; 0 side moves, 0 names and 0 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 0
+  ✓  36 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-bay: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.5s)
+[ELIFECYCLE] Command failed with exit code 1.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in /Users/andreyyurlov/Documents/dev/
+  │ space/.claude/worktrees/task-p1e16t07/packages/tools
+
+[ELIFECYCLE] Command failed with exit code 1.

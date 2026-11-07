@@ -1,0 +1,6 @@
+$ pnpm --filter @astra/tools bots -- --count 3 --duration 5
+$ tsx src/bots/cli.ts -- --count 3 --duration 5
+{"event":"bots.start","at":"2026-11-02T05:26:55.021Z","count":3,"durationMs":5000,"url":"http://127.0.0.1:50933","startedAt":"2026-11-02T05:26:55.020Z"}
+{"event":"bots.joined","at":"2026-11-02T05:26:55.186Z","count":3}
+{"event":"bots.passed","at":"2026-11-02T05:27:08.424Z","startedAt":"2026-11-02T05:26:55.020Z","count":3,"durationMs":5000,"clients":[{"characterId":"5db4af02-6ed9-4aac-861f-e331a396b254","zone":"sys:0","inputs":266,"snapshots":267,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":6.354450241630464e-10},{"characterId":"2e3236b1-6453-4c54-9363-e9bbef08e729","zone":"sys:0","inputs":265,"snapshots":266,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":6.540848044917755e-10},{"characterId":"6b3b9167-ac3a-46c1-834e-a0cd82c2c64f","zone":"sys:0","inputs":265,"snapshots":265,"corrections":0,"handoffs":0,"frameChanges":0,"messages":14,"maxPoseErrorM":6.282259465477101e-10}]}
+{"event":"bots.closed","at":"2026-11-02T05:27:08.426Z","count":3}

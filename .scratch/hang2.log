@@ -1,0 +1,28 @@
+
+Running 2 tests using 1 worker
+
+  ✘  1 src/smoke/harness-hang.spec.ts:7:1 › a page that never answers (11.0s)
+  ✓  2 src/smoke/harness-hang.spec.ts:15:1 › the next test gets a working browser (46ms)
+
+
+  1) src/smoke/harness-hang.spec.ts:7:1 › a page that never answers ────────────────────────────────
+
+    Test timeout of 6000ms exceeded.
+
+    Error: page.evaluate: Test timeout of 6000ms exceeded.
+
+       8 |   test.setTimeout(6000);
+       9 |   await page.goto('about:blank');
+    > 10 |   await page.evaluate(() => {
+         |              ^
+      11 |     for (;;);
+      12 |   });
+      13 | });
+        at /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e16t07/packages/tools/src/smoke/harness-hang.spec.ts:10:14
+
+    Error Context: test-results/smoke-harness-hang-a-page-that-never-answers/error-context.md
+
+  1 failed
+    src/smoke/harness-hang.spec.ts:7:1 › a page that never answers ─────────────────────────────────
+  1 passed (12.1s)
+done 1

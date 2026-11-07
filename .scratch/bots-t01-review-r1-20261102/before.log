@@ -1,0 +1,32 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e16t07
+
+{"event":"bot.action","action":"corrected timed flight","first":"still waiting","result":"refused","requestedMs":4000,"correctionAfterMs":47.74245899999994,"settledAfterMs":4050.693917,"stats":{"inputs":83,"snapshots":83,"corrections":1,"handoffs":0,"frameChanges":0,"messages":15,"maxPoseErrorM":9.302354551183789e-10}}
+ ❯ packages/server/test/bots.int.test.ts (9 tests | 1 failed | 8 skipped) 4319ms
+   ❯ the shipped headless bot against real authorities (9)
+     × refuses a corrected timed flight promptly so its caller can replan 4164ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/server/test/bots.int.test.ts > the shipped headless bot against real authorities > refuses a corrected timed flight promptly so its caller can replan
+AssertionError: expected 'still waiting' to be 'refused' // Object.is equality
+
+Expected: "refused"
+Received: "still waiting"
+
+ ❯ packages/server/test/bots.int.test.ts:247:26
+    245|         settledAfterMs: result.at - startedAt,
+    246|       });
+    247|       expect(first.kind).toBe('refused');
+       |                          ^
+    248|       if (result.kind !== 'refused') throw new Error('the illegal flig…
+    249|       expect(result.error).toBeInstanceOf(BotRefusal);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 skipped (9)
+   Start at  00:52:02
+   Duration  4.92s (tests 89%, import 8%, transform 3%)
+

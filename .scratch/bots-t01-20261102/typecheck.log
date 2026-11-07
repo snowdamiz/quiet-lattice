@@ -1,0 +1,10 @@
+$ pnpm -r typecheck
+Scope: 4 of 5 workspace projects
+packages/shared typecheck$ tsc -p .
+packages/shared typecheck: Done
+packages/client typecheck$ tsc -p .
+packages/tools typecheck$ tsc -p .
+packages/server typecheck$ tsc -p .
+packages/tools typecheck: Done
+packages/client typecheck: Done
+packages/server typecheck: Done
