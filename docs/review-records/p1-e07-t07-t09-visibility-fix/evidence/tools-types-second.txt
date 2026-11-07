@@ -1,0 +1,22 @@
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-visibility.test.ts[0m:[93m30[0m:[93m32[0m - [91merror[0m[90m TS2345: [0mArgument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'PlanetParams'.
+  Type 'GasParams' is missing the following properties from type 'PlanetParams': isMoon, continentBias, continentFreq, seaDepth, and 24 more.
+
+[7m30[0m const plan = world.drawnGround(params, 1);
+[7m  [0m [91m                               ~~~~~~[0m
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-visibility.test.ts[0m:[93m201[0m:[93m74[0m - [91merror[0m[90m TS2322: [0mType 'any[]' is not assignable to type 'Vec3'.
+  Target requires 3 element(s) but source may have fewer.
+
+[7m201[0m   const c=newCreature({id:34,herd,species:arena.companion,slot:0,scale:1,pos:[...ground.companion],heading:ground.east,rng:new world.Random(1)});
+[7m   [0m [91m                                                                         ~~~[0m
+
+  [96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/fauna/ai.ts[0m:[93m235[0m:[93m3[0m
+    [7m235[0m   pos: Vec3;
+    [7m   [0m [96m  ~~~[0m
+    The expected type comes from property 'pos' which is declared here on type '{ id: number; herd: Herd; species: FaunaSpecies; slot: number; scale: number; pos: Vec3; heading: Vec3; rng: Random; }'
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-visibility.test.ts[0m:[93m203[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'PlanetParams'.
+  Type 'GasParams' is missing the following properties from type 'PlanetParams': isMoon, continentBias, continentFreq, seaDepth, and 24 more.
+
+[7m203[0m   const terrain=new Ground(params,plan.pads);let frozen=true, captures=0,steps=0;
+[7m   [0m [91m                           ~~~~~~[0m
+
+{"diagnostics":3,"virtualCandidateOnly":true,"emit":false}

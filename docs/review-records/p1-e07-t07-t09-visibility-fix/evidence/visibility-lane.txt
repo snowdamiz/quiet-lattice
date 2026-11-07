@@ -1,0 +1,58 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521[39m
+
+ [31m❯[39m packages/tools/src/smoke/symbiotic-visibility.test.ts [2m([22m[2m27 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 485[2mms[22m[39m
+   [32m✓[39m visibility staging on the actual eligible world [2m(4)[22m
+     [32m✓[39m keeps the previously proved species and selects a real open plaza[32m 1[2mms[22m[39m
+     [32m✓[39m parks owner through real placement and disembark authority[32m 18[2mms[22m[39m
+     [32m✓[39m parks observer through real placement and disembark authority[32m 1[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps staging and the bounded procession on existing flora-free paving, outside buildings[33m 303[2mms[22m[39m
+   [32m✓[39m actual input, instances and camera framing [2m(9)[22m
+     [32m✓[39m acquires input and converges through actual mouse events and Player.update[32m 16[2mms[22m[39m
+     [32m✓[39m rejects ignored mouse motion instead of directly writing a look transform[32m 11[2mms[22m[39m
+     [32m✓[39m releases W when a real-source walk wait rejects[32m 10[2mms[22m[39m
+     [32m✓[39m frames the whole actual procedural instance from ownerMark without parked ships in view[32m 7[2mms[22m[39m
+     [32m✓[39m frames the whole actual procedural instance from observerMark without parked ships in view[32m 6[2mms[22m[39m
+     [32m✓[39m rejects the old near-body cropping through real instance projection[32m 5[2mms[22m[39m
+     [32m✓[39m rejects an observer too far away to distinguish the body[32m 4[2mms[22m[39m
+     [32m✓[39m rejects overlapping combatants instead of equating drawn with visible[32m 6[2mms[22m[39m
+     [32m✓[39m rejects a foreground ship even when the body geometry projects inside the image[32m 4[2mms[22m[39m
+   [32m✓[39m per-image provenance and fixed observer camera [2m(7)[22m
+     [32m✓[39m binds actual entity, frame, projection and renderer samples to exact attachment bytes[32m 8[2mms[22m[39m
+     [32m✓[39m rejects actual position drift[32m 5[2mms[22m[39m
+     [32m✓[39m rejects actual rotation drift[32m 5[2mms[22m[39m
+     [32m✓[39m rejects actual projection drift[32m 8[2mms[22m[39m
+     [32m✓[39m rejects actual client drift[32m 5[2mms[22m[39m
+     [32m✓[39m rejects actual bob drift[32m 4[2mms[22m[39m
+     [32m✓[39m accepts unchanged camera across newer actual store ticks and equivalent quaternion sign[32m 5[2mms[22m[39m
+   [32m✓[39m bounded active-follow capture from the real motion producer [2m(5)[22m
+     [32m✓[39m gets newer moving follow samples before freezing and capturing[32m 12[2mms[22m[39m
+     [32m✓[39m rejects idle evidence with keys released and no capture[32m 6[2mms[22m[39m
+     [32m✓[39m rejects stunned evidence with keys released and no capture[32m 7[2mms[22m[39m
+     [32m✓[39m rejects owner evidence with keys released and no capture[32m 6[2mms[22m[39m
+     [32m✓[39m retains a screenshot failure instead of claiming an active follow picture[32m 7[2mms[22m[39m
+[31m   [31m×[31m frames actual companion approach across the hostile lane for owner[39m[32m 6[2mms[22m[39m
+   [32m✓[39m frames actual companion approach across the hostile lane for observer[32m 5[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mframes actual companion approach across the hostile lane for owner
+[31m[1mAssertionError[22m: feet of 34: expected -0.6899105023654151 to be greater than -0.55[39m
+[36m [2m❯[22m Object.frameSubjects packages/tools/src/smoke/symbiotic-visibility.test.ts:[2m23:10[22m[39m
+    [90m 21|[39m   if (!fn) throw new Error(`Missing fixture function ${name}`);
+    [90m 22|[39m   const code = transpileModule(fn.getText(ast), { compilerOptions: { t…
+    [90m 23|[39m   return new Function(...Object.keys(ports), `${code};return ${name};`…
+    [90m   |[39m          [31m^[39m
+    [90m 24|[39m }
+    [90m 25|[39m const selectArena = fixture('selectArena', world);
+[90m [2m❯[22m packages/tools/src/smoke/symbiotic-visibility.test.ts:[2m263:18[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m26 passed[39m[22m[90m (27)[39m
+[2m   Start at [22m 06:39:35
+[2m   Duration [22m 926ms[2m (tests 55%, import 33%, transform 13%)[22m
+
+JSON report written to /private/tmp/symbiotic-visibility-apply-8o_t2b8f/visibility-lane.json

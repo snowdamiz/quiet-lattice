@@ -1,0 +1,7 @@
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-visibility.test.ts[0m:[93m204[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type 'PlanetParams | GasParams' is not assignable to parameter of type 'PlanetParams'.
+  Type 'GasParams' is missing the following properties from type 'PlanetParams': isMoon, continentBias, continentFreq, seaDepth, and 24 more.
+
+[7m204[0m   const terrain=new Ground(params,plan.pads);let frozen=true, captures=0,steps=0;
+[7m   [0m [91m                           ~~~~~~[0m
+
+{"diagnostics":1,"virtualCandidateOnly":true,"emit":false}

@@ -1,0 +1,22 @@
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts[0m:[93m195[0m:[93m42[0m - [91merror[0m[90m TS7006: [0mParameter '_' implicitly has an 'any' type.
+
+[7m195[0m   const centre = initial[0]!.centre.map((_, axis) => initial.reduce((sum, subject) => sum + subject.centre[axis]!, 0) / initial.length);
+[7m   [0m [91m                                         ~[0m
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts[0m:[93m195[0m:[93m45[0m - [91merror[0m[90m TS7006: [0mParameter 'axis' implicitly has an 'any' type.
+
+[7m195[0m   const centre = initial[0]!.centre.map((_, axis) => initial.reduce((sum, subject) => sum + subject.centre[axis]!, 0) / initial.length);
+[7m   [0m [91m                                            ~~~~[0m
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts[0m:[93m838[0m:[93m21[0m - [91merror[0m[90m TS2304: [0mCannot find name 'source'.
+
+[7m838[0m   const aimSource = source.statements.find((s) => isFunctionDeclaration(s) && s.name?.text === 'aim');
+[7m   [0m [91m                    ~~~~~~[0m
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts[0m:[93m838[0m:[93m45[0m - [91merror[0m[90m TS7006: [0mParameter 's' implicitly has an 'any' type.
+
+[7m838[0m   const aimSource = source.statements.find((s) => isFunctionDeclaration(s) && s.name?.text === 'aim');
+[7m   [0m [91m                                            ~[0m
+[96m../../../Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts[0m:[93m842[0m:[93m39[0m - [91merror[0m[90m TS2304: [0mCannot find name 'source'.
+
+[7m842[0m     transpileModule(aimSource.getText(source), { compilerOptions: { target: ScriptTarget.ES2022 } }).outputText + ';return aim;',
+[7m   [0m [91m                                      ~~~~~~[0m
+
+{"diagnostics":5,"virtualCandidateOnly":true,"emit":false}

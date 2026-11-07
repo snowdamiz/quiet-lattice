@@ -1,0 +1,104 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521[39m
+
+ [31m❯[39m packages/tools/src/smoke/symbiotic-private.test.ts [2m([22m[2m55 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 190[2mms[22m[39m
+   [32m✓[39m Symbiotic smoke private routes (no connections) [2m(8)[22m
+     [32m✓[39m keeps the exact preclaimed namespace and Redis8[32m 1[2mms[22m[39m
+     [32m✓[39m refuses missing, default or differently owned routes: {}[32m 0[2mms[22m[39m
+     [32m✓[39m refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}[32m 0[2mms[22m[39m
+     [32m✓[39m refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:55432/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}[32m 0[2mms[22m[39m
+     [32m✓[39m refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra","REDIS_URL":"redis://127.0.0.1:53058/8"}[32m 0[2mms[22m[39m
+     [32m✓[39m refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521?host=elsewhere","REDIS_URL":"redis://127.0.0.1:53058/8"}[32m 0[2mms[22m[39m
+     [32m✓[39m refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/7"}[32m 0[2mms[22m[39m
+     [32m✓[39m refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:56379/8"}[32m 0[2mms[22m[39m
+   [32m✓[39m R1 online lifecycle [2m(8)[22m
+     [32m✓[39m passes borrowed routes to migration and never creates/drops them[32m 7[2mms[22m[39m
+     [32m✓[39m preserves the primary setup failure when server termination fails[32m 1[2mms[22m[39m
+     [32m✓[39m closes the created handle after listen fails and preserves listen error identity[32m 1[2mms[22m[39m
+     [32m✓[39m retains listen failure plus both owned stop errors[32m 0[2mms[22m[39m
+     [32m✓[39m attempts all owned cleanup after Vite close fails (synchronous=false)[32m 0[2mms[22m[39m
+     [32m✓[39m attempts all owned cleanup after Vite close fails (synchronous=true)[32m 0[2mms[22m[39m
+     [32m✓[39m cleans only its own scratch database after migration fails[32m 0[2mms[22m[39m
+     [32m✓[39m retains both bounded close failures and attempts KILL after TERM timeout[32m 2[2mms[22m[39m
+   [31m❯[39m R1 live lifecycle predicates [2m(22)[22m
+[31m     [31m×[31m accepts only the fresh identified live observer/enemy control[39m[32m 3[2mms[22m[39m
+     [32m✓[39m rejects corpse plus missing observer[32m 0[2mms[22m[39m
+     [32m✓[39m rejects missing observer[32m 0[2mms[22m[39m
+     [32m✓[39m rejects dead observer[32m 0[2mms[22m[39m
+     [32m✓[39m rejects different observer identity[32m 0[2mms[22m[39m
+     [32m✓[39m rejects different observer frame[32m 0[2mms[22m[39m
+     [32m✓[39m rejects different observer kind[32m 0[2mms[22m[39m
+     [32m✓[39m rejects dead enemy[32m 0[2mms[22m[39m
+     [32m✓[39m rejects enemy corpse mode[32m 0[2mms[22m[39m
+     [32m✓[39m rejects different enemy species[32m 0[2mms[22m[39m
+     [32m✓[39m rejects different enemy frame[32m 0[2mms[22m[39m
+     [32m✓[39m rejects different enemy kind[32m 0[2mms[22m[39m
+     [32m✓[39m rejects stale snapshot[32m 0[2mms[22m[39m
+     [32m✓[39m rejects disconnected observer[32m 0[2mms[22m[39m
+     [32m✓[39m rejects owner retained[32m 0[2mms[22m[39m
+     [32m✓[39m rejects companion snapshot retained[32m 0[2mms[22m[39m
+     [32m✓[39m rejects companion remote retained[32m 0[2mms[22m[39m
+     [32m✓[39m rejects companion instance retained[32m 0[2mms[22m[39m
+     [32m✓[39m accepts a living target with actual source-attributed health loss[32m 0[2mms[22m[39m
+     [32m✓[39m rejects health loss with no companion hit[32m 0[2mms[22m[39m
+     [32m✓[39m rejects attack phase without health loss[32m 0[2mms[22m[39m
+     [32m✓[39m rejects a corpse after a credited killing hit[32m 0[2mms[22m[39m
+   [32m✓[39m live arena setup respects owned ship authority [2m(6)[22m
+     [32m✓[39m reproduces the live cross-system foot rejection at the real persistence pose check[32m 7[2mms[22m[39m
+     [32m✓[39m moves owner across systems in a restorable ship pose[32m 21[2mms[22m[39m
+     [32m✓[39m moves observer across systems in a restorable ship pose[32m 8[2mms[22m[39m
+     [32m✓[39m lands owner with an owned ship that remains restorable after disembarking[32m 21[2mms[22m[39m
+     [32m✓[39m lands observer with an owned ship that remains restorable after disembarking[32m 5[2mms[22m[39m
+     [32m✓[39m does not hide a refused admin placement[32m 4[2mms[22m[39m
+   [32m✓[39m real UI admission before fixture keyboard input [2m(7)[22m
+     [32m✓[39m resumes initially unlocked owner through the actual UI before F[32m 5[2mms[22m[39m
+     [32m✓[39m resumes initially unlocked observer through the actual UI before F[32m 4[2mms[22m[39m
+     [32m✓[39m still rejects a failed gesture without sending F[32m 4[2mms[22m[39m
+     [32m✓[39m still rejects missing focus or a lock event without sending F[32m 10[2mms[22m[39m
+     [32m✓[39m releases F and rejects if admitted input never reaches foot[32m 3[2mms[22m[39m
+     [32m✓[39m reacquires owner input after observer F, sends S, and still rejects missing server movement[32m 10[2mms[22m[39m
+     [32m✓[39m rejects failed owner reacquisition before sending S[32m 10[2mms[22m[39m
+   [32m✓[39m companion picker sightline through real camera and instances [2m(4)[22m
+     [32m✓[39m reproduces the historical nearer enemy using rendered positions[32m 32[2mms[22m[39m
+     [32m✓[39m places the observer with a clear companion sightline using rendered positions[32m 11[2mms[22m[39m
+     [32m✓[39m reproduces the historical nearer enemy using wire positions[32m 9[2mms[22m[39m
+     [32m✓[39m places the observer with a clear companion sightline using wire positions[32m 9[2mms[22m[39m
+ [32m✓[39m packages/client/src/net/Net.test.js [2m([22m[2m29 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-visibility.test.ts [2m([22m[2m25 tests[22m[2m)[22m[33m 477[2mms[22m[39m
+   [32m✓[39m visibility staging on the actual eligible world [2m(4)[22m
+     [33m[2m✓[22m[39m keeps staging and the bounded procession on existing flora-free paving, outside buildings[33m 304[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 3288[2mms[22m[39m
+   [32m✓[39m owner disconnect uses terminal page lifetime [2m(7)[22m
+     [33m[2m✓[22m[39m dispatches target close before thaw, without executing Net.close or rejoining[33m 812[2mms[22m[39m
+     [33m[2m✓[22m[39m waits for the closed receipt, not just command acceptance[33m 851[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects a failed close without thawing or claiming retirement[33m 804[2mms[22m[39m
+     [33m[2m✓[22m[39m retains a capture failure before closing the owner[33m 803[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22maccepts only the fresh identified live observer/enemy control
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m packages/tools/src/smoke/symbiotic-private.test.ts:[2m278:105[22m[39m
+    [90m276|[39m }
+    [90m277|[39m describe('R1 live lifecycle predicates', () => {
+    [90m278|[39m   it('accepts only the fresh identified live observer/enemy control', …
+    [90m   |[39m                                                                                                         [31m^[39m
+    [90m279|[39m   it.each([
+    [90m280|[39m     {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m115 passed[39m[22m[90m (116)[39m
+[2m   Start at [22m 06:35:08
+[2m   Duration [22m 5.19s[2m (tests 79%, import 18%, transform 3%)[22m
+
+JSON report written to /private/tmp/symbiotic-visibility-apply-8o_t2b8f/focused-cpu-initial.json

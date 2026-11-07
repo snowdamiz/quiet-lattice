@@ -1,0 +1,18 @@
+{
+  "file": "/private/tmp/symbiotic-visibility-da532383-y1y_tk7x/base/packages/tools/src/smoke/symbiotic-online.spec.ts",
+  "sourceSha256": "e0e93db3515ea2362d85a24942ecf3e4b2abebb24ed3e60a78411c114b234ab1",
+  "node": "v22.23.3",
+  "results": [
+    {
+      "name": "actual image producer attaches bytes and client/entity/tick/camera bindings for both clients",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n0 !== 2\n"
+    },
+    {
+      "name": "actual pre-disconnect call captures the same surviving observer identity as post-disconnect",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'before-disconnect-owner'\n- 'before-disconnect-observer'\n                      ^\n"
+    }
+  ],
+  "limit": "CPU actual source calls with inert screenshot/metadata ports; not native evidence"
+}

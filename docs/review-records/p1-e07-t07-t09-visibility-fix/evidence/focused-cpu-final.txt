@@ -1,0 +1,19 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521[39m
+
+ [32m✓[39m packages/tools/src/smoke/symbiotic-private.test.ts [2m([22m[2m55 tests[22m[2m)[22m[32m 179[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-visibility.test.ts [2m([22m[2m27 tests[22m[2m)[22m[33m 493[2mms[22m[39m
+ [32m✓[39m packages/client/src/net/Net.test.js [2m([22m[2m29 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 3360[2mms[22m[39m
+   [32m✓[39m owner disconnect uses terminal page lifetime [2m(7)[22m
+     [33m[2m✓[22m[39m dispatches target close before thaw, without executing Net.close or rejoining[33m 865[2mms[22m[39m
+     [33m[2m✓[22m[39m waits for the closed receipt, not just command acceptance[33m 863[2mms[22m[39m
+     [33m[2m✓[22m[39m rejects a failed close without thawing or claiming retirement[33m 813[2mms[22m[39m
+     [33m[2m✓[22m[39m retains a capture failure before closing the owner[33m 799[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m118 passed[39m[22m[90m (118)[39m
+[2m   Start at [22m 06:46:22
+[2m   Duration [22m 5.25s[2m (tests 79%, import 18%, transform 3%)[22m
+
+JSON report written to /private/tmp/symbiotic-visibility-apply-8o_t2b8f/focused-cpu-final.json
