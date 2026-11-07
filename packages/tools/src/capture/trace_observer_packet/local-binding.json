@@ -1,4 +1,66 @@
 {
+  "appleEncoderBinding": {
+    "atEpochSeconds": 1794042757.053717,
+    "identities": {
+      "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService": {
+        "binding": {
+          "bytes": 167280,
+          "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+          "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5"
+        },
+        "currentUserWritable": false,
+        "groupOrOtherWritable": false,
+        "stamp": [16777232, 1152921500312213518, 33261, 0, 167280, 1790233837000000000, 1790233837000000000]
+      },
+      "/usr/bin/codesign": {
+        "binding": {
+          "bytes": 973408,
+          "path": "/usr/bin/codesign",
+          "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+        },
+        "currentUserWritable": false,
+        "groupOrOtherWritable": false,
+        "stamp": [16777232, 1152921500312607711, 33261, 0, 973408, 1790233837000000000, 1790233837000000000]
+      }
+    },
+    "kind": "T13_EXACT_SIGNED_APPLE_EXECUTABLE_OBSERVATION_V1",
+    "runtimeAuthorized": false,
+    "scope": "Prelaunch immutable hash/identity/signature observation; current process UID/birth/coalition still required. External XPC ownership remains UNQUALIFIED.",
+    "signature": {
+      "canonical_path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "cdhash": "1a44901103cc99a0b15b19f81156f25748c3a0d9",
+      "codesign_sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e",
+      "display": {
+        "argv": [
+          "/usr/bin/codesign",
+          "-d",
+          "--verbose=4",
+          "-r-",
+          "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+        ],
+        "exit": 0,
+        "stderr": "Executable=/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService\nIdentifier=com.apple.coremedia.videoencoder\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=441 flags=0x0(none) hashes=3+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9\nCandidateCDHashFull sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nHash choices=sha256\nCMSDigest=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=1a44901103cc99a0b15b19f81156f25748c3a0d9\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 8, 2026 at 7:25:11\u202fPM\nInfo.plist entries=22\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n",
+        "stdout": "designated => identifier \"com.apple.coremedia.videoencoder\" and anchor apple\n"
+      },
+      "identifier": "com.apple.coremedia.videoencoder",
+      "platform_identifier": "26",
+      "requirement": "identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+      "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5",
+      "verify": {
+        "argv": [
+          "/usr/bin/codesign",
+          "--verify",
+          "--strict",
+          "-R",
+          "=identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+          "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    }
+  },
   "assetPath": "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/client/public/models/characters/thalune.glb",
   "binaries": [
     {
@@ -2720,6 +2782,16 @@
       "bytes": 470608,
       "path": "/usr/sbin/lsof",
       "sha256": "deff85c7b4750a948a69fcd48eae3b394a37575e5048e5eb4a35b7a0482c3dc8"
+    },
+    {
+      "bytes": 167280,
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5"
+    },
+    {
+      "bytes": 973408,
+      "path": "/usr/bin/codesign",
+      "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
     }
   ],
   "browser": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
