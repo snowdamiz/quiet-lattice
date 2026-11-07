@@ -1,0 +1,129 @@
+{
+  "objects": [
+    {
+      "object": "CanopyGlass",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy"
+    },
+    {
+      "object": "CanopyGlass.001",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy.001"
+    },
+    {
+      "object": "CanopyGlass.002",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy.002"
+    },
+    {
+      "object": "CanopyGlass.003",
+      "before_triangles": 48,
+      "after_triangles": 648,
+      "parent": "Canopy.003"
+    },
+    {
+      "object": "CanopyGlass_dmg",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy_dmg"
+    },
+    {
+      "object": "CanopyGlass_dmg.001",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy_dmg.001"
+    },
+    {
+      "object": "CanopyGlass_dmg.002",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy_dmg.002"
+    },
+    {
+      "object": "CanopyGlass_dmg.003",
+      "before_triangles": 48,
+      "after_triangles": 648,
+      "parent": "Canopy_dmg.003"
+    },
+    {
+      "object": "CanopyGlass_husk",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy_husk"
+    },
+    {
+      "object": "CanopyGlass_husk.001",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy_husk.001"
+    },
+    {
+      "object": "CanopyGlass_husk.002",
+      "before_triangles": 48,
+      "after_triangles": 1296,
+      "parent": "Canopy_husk.002"
+    },
+    {
+      "object": "CanopyGlass_husk.003",
+      "before_triangles": 48,
+      "after_triangles": 648,
+      "parent": "Canopy_husk.003"
+    }
+  ],
+  "triangles": {
+    "lark": [
+      108302,
+      33393,
+      22693,
+      4388
+    ],
+    "lark_damaged": [
+      113110,
+      34835,
+      23655,
+      4557
+    ],
+    "lark_husked": [
+      113994,
+      35100,
+      23833,
+      5018
+    ]
+  },
+  "sha256": "e6e7d8c4cf73bfe22cdb18c0c5b7eb85c4b1baab46a2133a1fd304a68bf7c129",
+  "arch_inset_m": 0.006,
+  "partial_overall": true,
+  "status": "glazing geometry unit complete; overall Lark REVISE remains",
+  "cause": "48-triangle disconnected panes bridged swept saved arches with straight chords. Original CAN profile is incompatible with saved swept frame geometry; identity object matrices confirmed.",
+  "fit": {
+    "before": {
+      "max_m": 0.18724088370800018,
+      "mean_m": 0.06959268507719236,
+      "samples": 76
+    },
+    "after": {
+      "max_m": 0.005907380022108555,
+      "mean_m": 0.004954803257102245,
+      "samples": 76
+    }
+  },
+  "inspection": [
+    "neutral-flat-closed-canopy.png: large open arch gaps before",
+    "fitted-neutral-flat-closed-canopy.png: arch gaps closed, fine grid facets under deliberate flat shading",
+    "fitted-material-closed-canopy.png: geometry fitted; strong white material/reflection patches remain for parent material work"
+  ],
+  "constraints": {
+    "new_renders": 2,
+    "total_with_initial_diagnostics": 5,
+    "render_size": "640x480",
+    "CPU": true,
+    "threads": 2,
+    "GPU_denoising": false,
+    "watchdog": "run_stage.py; all stages exited 0"
+  },
+  "preservation": "Only glass mesh datablocks replaced. Existing material slots, variant materials, object parenting/matrices/pivots, non-glass geometry and packed 4096 maps unchanged. All glass has one active render UVMap with parametric pane UVs; no rebake. Existing damage/husk geometry outside glass retained; preexisting glass geometry was identical across states.",
+  "limits": "No export, runtime, density revalidation, blind review or overall acceptance. Parametric glass UV changes require parent material review; non-glass density untouched. Arch fit measured at 76 tube centre samples, not a continuous distance bound."
+}
