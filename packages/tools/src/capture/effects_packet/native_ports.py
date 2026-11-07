@@ -54,46 +54,38 @@ def tree_bytes(path):
 
 
 def snapshot_caches(ready, destination, observations):
-    def stable(info):
-        return {key: getattr(info, key) for key in ('st_dev', 'st_ino', 'st_mode', 'st_uid', 'st_gid', 'st_size', 'st_mtime_ns', 'st_ctime_ns')}
-    charged = 0
+    from cache_io import inventory, create_directory, copy_file
+    charged, created = 0, []
     with phase(CACHE_SECONDS):
         for index, name in enumerate(ready['generatedCaches']):
             root = Path(name)
-            row = {'source': name, 'exists': root.exists(), 'files': [], 'complete': False}
+            row = {'source': name, 'exists': None, 'files': [], 'complete': False, 'createdDirectories': []}
             observations.append(row)
-            if not root.exists():
+            try:
+                admitted = inventory(root, CACHE_CAP - charged, row)
+                if row['exists']:
+                    if not created:
+                        create_directory(destination, row['createdDirectories'])
+                        created.append(destination)
+                    target = destination / str(index)
+                    create_directory(target, row['createdDirectories'])
+                    for source in admitted:
+                        p = Path(source['path'])
+                        q = target / p.relative_to(root)
+                        if source['directory']:
+                            create_directory(q, row['createdDirectories'])
+                            continue
+                        size = source['before']['st_size']
+                        require(charged + size <= CACHE_CAP, 'Cache snapshot file cap')
+                        charged += size  # Includes every attempted copy, even failed partials; no retry.
+                        row['chargedBytes'] = charged
+                        item = {'path': str(p), 'bytes': size, 'before': source['before'], 'complete': False}
+                        row['files'].append(item)
+                        copy_file(p, q, source, item)
                 row['complete'] = True
-                continue
-            require(root.resolve() == root and not root.is_symlink(), 'Cache root route changed')
-            require(tree_bytes(root) + charged <= CACHE_CAP, 'Cache snapshot admission cap')
-            target = destination / str(index)
-            target.mkdir(parents=True, exist_ok=False)
-            for p in sorted(root.rglob('*')):
-                require(not p.is_symlink(), 'Cache symlink')
-                q = target / p.relative_to(root)
-                if p.is_dir():
-                    q.mkdir(exist_ok=False)
-                    continue
-                before = p.stat()
-                require(p.is_file() and charged + before.st_size <= CACHE_CAP, 'Cache snapshot file cap')
-                charged += before.st_size  # Include partial attempts; no retry.
-                item = {'path': str(p), 'bytes': before.st_size, 'complete': False,
-                        'before': stable(before), 'accessedBeforeNs': before.st_atime_ns}
-                row['files'].append(item)
-                with p.open('rb') as src, q.open('xb') as dst:
-                    remaining = before.st_size
-                    while remaining:
-                        block = src.read(min(MIB, remaining))
-                        require(block, 'Cache shrank')
-                        dst.write(block)
-                        remaining -= len(block)
-                    require(not src.read(1), 'Cache grew')
-                after = p.stat()
-                item.update(after=stable(after), accessedAfterNs=after.st_atime_ns)
-                require(stable(after) == stable(before) and sha(p) == sha(q), 'Cache snapshot drift')
-                item.update(complete=True, sha256=sha(q))
-            row['complete'] = True
+            except BaseException as error:
+                row['failure'] = failure(error)
+                raise
     return charged
 
 
@@ -204,19 +196,37 @@ class NativePorts:
         return ObservedStage()
 
     def budgets(self, job, *, for_archive=False):
-        p = self.ready['pilot']
-        profiles = sum(tree_bytes(x) for x in self.tmp.iterdir() if x.name.startswith('playwright_chromiumdev_profile-'))
-        tmp = sum(tree_bytes(x) for x in self.tmp.iterdir() if not x.name.startswith('playwright_chromiumdev_profile-'))
-        logs = tree_bytes(job.scratch) + tree_bytes(job.out)
-        caches = sum(tree_bytes(x) for x in self.ready['generatedCaches'])
-        observed = {'profileBytes': profiles, 'privateTmpNonprofileBytes': tmp, 'helperBytes': logs,
-                    'cacheBytes': caches, 'free': shutil.disk_usage(p['output']).free}
-        self.result['raw']['lastWriterObservation'] = observed
-        require(profiles <= 1024 ** 3 and tmp <= 512 * MIB and logs <= 64 * MIB, 'Native writer observed stop threshold')
-        require(caches <= self.ready['initialCacheBytes'] + 256 * MIB and observed['free'] >= 1024 ** 3, 'Cache growth/free-space stop threshold')
-        if for_archive:
-            observed['archiveRequiredFree'] = profiles + tmp + logs + 1024 ** 3
-            require(observed['free'] >= observed['archiveRequiredFree'], 'Insufficient actual copy-before-remove archive headroom')
+        observed = {'profileBytes': 0, 'privateTmpNonprofileBytes': 0, 'helperBytes': 0,
+                    'cacheBytes': 0, 'free': None, 'complete': False, 'probes': [], 'forArchive': for_archive}
+        self.result['raw']['lastWriterObservation'] = observed  # Before any resource filesystem probe.
+        def measure(key, path):
+            probe = {'path': str(path), 'kind': key, 'bytes': None}
+            observed['probes'].append(probe)
+            try:
+                probe['bytes'] = tree_bytes(path)
+                observed[key] += probe['bytes']
+            except BaseException as error:
+                probe['failure'] = failure(error)
+                raise
+        try:
+            for path in self.tmp.iterdir():
+                key = 'profileBytes' if path.name.startswith('playwright_chromiumdev_profile-') else 'privateTmpNonprofileBytes'
+                measure(key, path)
+            for path in (job.scratch, job.out):
+                measure('helperBytes', path)
+            for path in self.ready['generatedCaches']:
+                measure('cacheBytes', path)
+            observed['free'] = shutil.disk_usage(self.ready['pilot']['output']).free
+            observed['complete'] = True
+            require(observed['profileBytes'] <= 1024 ** 3 and observed['privateTmpNonprofileBytes'] <= 512 * MIB and observed['helperBytes'] <= 64 * MIB, 'Native writer observed stop threshold')
+            require(observed['cacheBytes'] <= self.ready['initialCacheBytes'] + 256 * MIB and observed['free'] >= 1024 ** 3, 'Cache growth/free-space stop threshold')
+            if for_archive:
+                observed['archiveRequiredFree'] = observed['profileBytes'] + observed['privateTmpNonprofileBytes'] + observed['helperBytes'] + 1024 ** 3
+                require(observed['free'] >= observed['archiveRequiredFree'], 'Insufficient actual copy-before-remove archive headroom')
+        except BaseException as error:
+            observed['failure'] = failure(error)
+            self.result['raw'].setdefault('writerObservationFailures', []).append(observed)
+            raise
 
     def cleanup(self, job, observer):
         records = self.result['raw'].setdefault('cleanup', [])

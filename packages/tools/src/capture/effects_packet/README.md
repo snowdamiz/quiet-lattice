@@ -21,6 +21,7 @@ Run from this checkout with its installed tools; no fetch or hydration:
 ```sh
 python3 -B packages/tools/src/capture/effects_packet/controls.py
 python3 -B packages/tools/src/capture/effects_packet/boundary_controls.py
+python3 -B packages/tools/src/capture/effects_packet/revision_controls.py
 node packages/tools/src/capture/effects_packet/controls.mjs
 node node_modules/eslint/bin/eslint.js packages/tools/src/capture/effects_packet/*.mjs
 node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/capture/effects_packet/*.mjs packages/tools/src/capture/effects_packet/*.json
@@ -98,6 +99,22 @@ The cache copy compares identity, permissions, size, modification/change time an
 content hashes. It records access time separately because the copy's own read
 can update it without changing the cache content.
 
+The shared cache reader acquires every ancestor with descriptor-relative
+`O_NOFOLLOW|O_NONBLOCK` opens, retains directory identities, and admits regular
+type, owner, identity and size before reading. Copy, source verification and
+destination verification use that same reader. Each reads at most the admitted
+size plus one growth byte, reconciles the descriptor afterward and checks that
+every route component still names the opened identity. Enumeration is capped at
+8,192 entries inside the existing 30-second phase. Failed copies remain charged
+and retained; a content hash alone cannot admit a replacement link or inode.
+
+The capture callback retains its original complete failure before the frozen
+wait helper can normalize it or fail writing its receipt. Writer observations
+are registered before filesystem probes; incomplete counts remain explicitly
+partial. Later helper, receipt and cleanup failures stay secondary. A callback
+deadline uses a distinct BaseException to unwind past the helper's own deadline
+catch without its post-deadline receipt I/O; the original deadline is retained.
+
 Capture has a 600-second outer phase. Nested wait receives remaining time; start
 requires enough time for its existing 3-second bootstrap and 5-second handshake.
 Cleanup has its own 60-second outer deadline, with 45 seconds for drain and the
@@ -115,6 +132,9 @@ shape, manifest material `LIB_FX_Gravitic`, 576 triangles, one mesh, compressed
 textures >0, `shown === 0` and `lods: [0]` are checked. LOD2 is a requested view
 selecting authored LOD0; no LOD2 geometry is invented. Perf is retained, without
 claiming T13 GPU attribution or a performance grade.
+Palette validation permits one optional nonempty 1–256-entry PLTE for the
+existing RGB/RGBA formats, only before the first IDAT, including empty IDATs.
+Consecutive empty IDATs are valid; interrupted IDAT sequences are refused.
 
 Terminal disk receipts always have `accepted: false`. A late write/close failure
 cannot leave a durable accepted-true claim. All terminal writes must finish
@@ -175,6 +195,14 @@ links are counted as links and never followed. After release, the existing helpe
 refuses unsupported leftover TMP entries instead of deleting them speculatively.
 
 ## Remaining gates and inventory
+
+R2-2 remains open: the current shared `capture.ts` cleanup can replace a page
+failure and skip a later cleanup. P1.E14.T15 owns the common lifecycle correction
+in a separate worktree. This checkpoint adds no task-local browser/Vite method
+interception. Adopt the parent's reviewed T15 commit, verify the original
+consumer reproduction through the default loader (including standard cause/errors),
+and refresh bindings before claiming this finding closed. A disabled binding
+audit is not acceptance of the still-pending shared lifecycle.
 
 Parent review and a fresh exact one-use grant are still required; fauna remains
 first in the GPU queue. No native launch or visual acceptance occurred here.

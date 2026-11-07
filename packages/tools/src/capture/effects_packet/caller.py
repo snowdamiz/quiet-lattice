@@ -15,6 +15,10 @@ from evidence import Receipts, failure, publish, raw, ownership, reject_unconsum
 RUNTIME_ENABLED = False
 
 
+class ObservationUnwind(BaseException):
+    """Leave the frozen helper's own deadline catch; the original is already retained."""
+
+
 def native(ready, result):
     from native_ports import NativePorts
     return NativePorts(ready, result)
@@ -57,6 +61,7 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
         result['errors'].append({'phase': 'consume', **failure(error)})
         return publish(result, evidence, output, sink, stderr)
     ports, job, observer = None, None, None
+    first_observation_error = None
     try:
         evidence.mkdir(exist_ok=False)
         output.mkdir(exist_ok=False)
@@ -83,16 +88,30 @@ def execute(ready_path=HERE / 'readiness.json', *, enabled=RUNTIME_ENABLED, auth
             ports.start(job)
             attempted['started'] = True
             def observe():
-                observer.observe()
-                ports.budgets(job)
+                nonlocal first_observation_error
+                for operation, action in (('stage', observer.observe), ('writers', lambda: ports.budgets(job))):
+                    try:
+                        action()
+                    except BaseException as error:
+                        # The frozen wait helper normalizes Exceptions and may then fail saving its receipt.
+                        # Keep the original before crossing that boundary, including deadline/unknown facts.
+                        if first_observation_error is None:
+                            first_observation_error = error
+                        result['errors'].append({'phase': 'capture-observer', 'operation': operation, **failure(error)})
+                        if not isinstance(error, Exception):
+                            raise ObservationUnwind() from error
+                        raise
             status = job.wait(max(.001, capture_end - time.monotonic()), observer=observe)
             result['raw']['wait'] = raw(status)
+            if first_observation_error is not None:
+                raise first_observation_error  # Before post-wait receipt/status I/O can replace the cause.
             result['raw']['execution'] = raw(observer.receipt())
             require(status == 'completed', 'Capture did not complete normally')
             require(job.state.get('exits', {}).get('capture') == 0, 'Capture OS exit was not zero')
             observer.require_browser()
     except BaseException as error:
-        result['errors'].append({'phase': 'admission-allocation-capture', **failure(error)})
+        if error is not first_observation_error and not isinstance(error, ObservationUnwind):
+            result['errors'].append({'phase': 'admission-allocation-capture', **failure(error)})
     finally:
         if job is not None:
             result['jobs'][-1]['stateBeforeCleanup'] = raw(getattr(job, 'state', {}))

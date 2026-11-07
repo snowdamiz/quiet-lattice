@@ -13,6 +13,7 @@ import sysconfig
 import uuid
 import zlib
 import cache_owners
+import cache_io
 
 from bindings import file_binding, git, tree_binding
 from contract import ASSET, ASSET_HEAD, FILE, HERE, ROOT, ledger, plan, read_json, require, sha
@@ -98,6 +99,10 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
         'retainedAssetSourceReview': file_binding(review),
         'freezePredecessor': {'head': git(ROOT, 'rev-parse', 'HEAD'), 'tree': git(ROOT, 'rev-parse', 'HEAD^{tree}'), 'informativeOnly': True},
         'generatedCaches': caches, 'initialCacheBytes': initial,
+        'cacheReadPolicy': {'entryCap': cache_io.ENTRY_CAP, 'allAncestorsNoFollow': True,
+                            'reads': 'Copy, source verification, destination verification: admitted descriptor size plus one byte each.'},
+        'pendingSharedCaptureLifecycle': {'task': 'P1.E14.T15', 'finding': 'R2-2', 'status': 'PENDING_REVIEWED_ADOPTION',
+                                          'capture': file_binding(ROOT / 'packages/tools/src/capture/capture.ts')},
         'cacheOwnerPolicy': {'secondsPerCheck': cache_owners.OWNER_SECONDS, 'commandOutputCap': cache_owners.COMMAND_CAP,
                              'checkOutputCap': cache_owners.CHECK_CAP, 'phases': ['before-consumption-and-snapshot', 'immediately-before-launch'],
                              'scope': 'Exact cache opens and task-local Node/Vite cwd/argv; any owner or uncertainty refuses; observations are not a lock.'},
@@ -108,6 +113,7 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
                   'grant': '/private/tmp/egg-' + nonce + '.json'},
         'budget': ledger(), 'deadlines': {'capture': 600, 'cleanup': 60, 'decode': 45, 'cacheCopy': 30},
         'remainingPrerequisites': ['Both source runtime flags and readiness remain false; enabling changes needs a new source review and freeze.',
+                                  'Adopt reviewed P1.E14.T15 shared capture lifecycle fix and verify actual default-loader reproduction; R2-2 remains open.',
                                   'Parent independent caller review tied to exact clean head/tree and exact readiness bytes.',
                                   'Parent scheduled native slot after fauna and explicit one-use grant; no grant is created here.',
                                   'Parent observed OS exit zero plus exact terminal result and consumption hashes.',

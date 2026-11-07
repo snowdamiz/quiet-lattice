@@ -18,10 +18,12 @@ def png(file, dimensions):
     data = bounded_bytes(path, PNG_CAP)
     require(data[:8] == b'\x89PNG\r\n\x1a\n', 'PNG signature')
     offset, compressed, size, ended, idat_ended = 8, bytearray(), None, False, False
+    idat_seen, palette_seen = False, False
     while offset < len(data):
         require(offset + 12 <= len(data), 'Truncated PNG chunk')
         count = struct.unpack_from('>I', data, offset)[0]
         tag = data[offset + 4:offset + 8]
+        require(all(65 <= b <= 90 or 97 <= b <= 122 for b in tag) and not tag[2] & 32, 'PNG chunk type/reserved bit')
         end = offset + 12 + count
         require(end <= len(data), 'PNG chunk outside file')
         body = data[offset + 8:end - 4]
@@ -38,15 +40,17 @@ def png(file, dimensions):
             raise ValueError('Duplicate IHDR')
         elif tag == b'IDAT':
             require(not idat_ended, 'Noncontiguous IDAT')
+            idat_seen = True
             compressed.extend(body)
         elif tag == b'IEND':
             require(count == 0 and compressed and end == len(data), 'PNG IEND/trailing bytes')
             ended = True
         elif tag == b'PLTE':
-            require(not compressed and count % 3 == 0 and count <= 768, 'PNG palette placement')
+            require(not palette_seen and not idat_seen and 0 < count <= 768 and count % 3 == 0, 'PNG palette count/placement')
+            palette_seen = True
         else:
             require(tag[0] & 32, 'Unknown critical PNG chunk')
-            if compressed:
+            if idat_seen:
                 idat_ended = True
         offset = end
     require(ended and size is not None, 'Incomplete PNG')

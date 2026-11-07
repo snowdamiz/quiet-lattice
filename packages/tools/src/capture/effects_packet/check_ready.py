@@ -38,7 +38,7 @@ def check():
             'bindings': len(r['bindings']), 'dependencyTrees': r['dependencyTrees'],
             'runtimeEnabled': False, 'realGrantCreated': False, 'nativeCaptureStarted': False,
             'assetHead': r['assetHead'], 'budget': r['budget']['admissionBytes'], 'outputCap': r['budget']['outputCapBytes'],
-            'cacheOwnerChecks': cache_owners}
+            'cacheOwnerChecks': cache_owners, 'pendingSharedCaptureLifecycle': r['pendingSharedCaptureLifecycle']}
 
 
 if __name__ == '__main__':
