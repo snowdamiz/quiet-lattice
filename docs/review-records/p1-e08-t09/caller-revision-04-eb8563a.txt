@@ -1,0 +1,144 @@
+TASK: P1.E08.T09 — R4 metadata-admission correction, candidate for independent R5 review
+STATUS: DONE for requested SOURCE/CPU revision. Whole T09 remains pending independent review, runtime capture and visual gates.
+
+SUMMARY
+HEAD: eb8563a58dc1014f0c4d85fc6ddc5b0878d5a54c
+TREE: a48c447bf26449ffdab57764bab2c22a2366d281
+PARENT: e636efbb1900c6426f3a2586724080b6a132e1bb
+BRANCH: task/P1-E08-T09-current-base
+WORKTREE: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+PATCH SHA256: fa42f6eeeca32a939ca03177dfbda337014caaaf9a6d37e167a3d00f600f531d
+DISABLED READINESS SHA256: 5e0d48ce860a0f69e25227044e2ce49f0b47d473bbe5985113a0f890a99a03f0
+REPORT/EVIDENCE: /private/tmp/p1-e08-t09-r5-6le10f9w
+
+Runtime remains DISABLED. No GPU/browser/native job, services, actual runtime grant/output, enablement, push, PR or main changes. Synthetic runtimeEnabled:true/grants exist only inside fresh inert CPU test repositories. This is the local correction candidate, not an independent R5 PASS or whole-task acceptance.
+
+FILES CHANGED
+Only caller.py, controls.py and readiness.json under fauna_packet.
+- Caller: bounded authenticated JSON snapshots, small GrantAdmission value carrying validated predecessor manifests, and reuse of the parsed grant/readiness digests in consumption records.
+- Tests: two actual-consume metadata tests covering29 cases; three existing fixture/API assertions adapted to the typed admission result and real temporary readiness. Existing substantive assertions remain.
+- Readiness: fresh source/dependency/executable/cache bindings and unused identities, still false. No budget/count/order change.
+Entry, inspector, freeze implementation, README, helpers, product/smoke/assets, history and orchestration documents are unchanged. No generic operational framework or new policy/approval flow.
+
+PREMISE / RED BEFORE FIX
+Applied /Users/andreyyurlov/.agents/skills/principle-attack-the-premise/SKILL.md. PREMISE.md was written before edits: a separately hashed pathname and later JSON parse, followed by a manifest-only reread, can represent one bounded authenticated successful receipt. The unchanged reviewer metadata-boundaries.py and sequence helper were copied into fresh red/ with exact e636 packet/helper bytes and executed before caller changes. The premise was FALSIFIED. Actual first child OS exits were0; a failed authenticated result still admitted unit2, and oversized metadata was processed before its size guard. Original reviewer evidence remains immutable.
+
+|Fresh exact-source RED case|Observed bad behavior|GREEN|
+|---|---|---|
+|result oversized|8,413,561 payload bytes read before refusal|0 payload bytes; refused before allocation/dispatch|
+|consumption oversized|8,389,815 payload bytes read before refusal|0 payload bytes; refused before allocation/dispatch|
+|authenticated failed result / separate parse|main returned0 and created second consumption despite bound checksPassed:false|main raises Refused; no second consumption/output/evidence/helper/decoder call|
+
+RED command exit0 means its bad-behavior assertions passed. GREEN keeps the same actual file mutations, first-child execution and read instrumentation, changing the expectations to refusal. In the fixed source the obsolete sha(path) hook is never reached for predecessor JSON. The additional actual-read swap controls below exercise replacement during the new read for BOTH result and consumption. The green repro's v1 incorrectly reused the original result field name secondMainReturn for a caught-exception sentinel; v1 script/results/log are preserved. The final result correctly records secondMainRaised:Refused. No failed capture or harness outcome is promoted to a native PASS.
+
+R4-1 — ROOT CORRECTION
+read_json_snapshot returns the parsed value and digest of the same bounded byte buffer. grant_gate uses its hash-authenticated read_json wrapper for each predecessor result and consumption exactly once. There is no preliminary EOF sha(path) pass and no unauthenticated second parse. All prior transaction/head/readiness/spec/authorization/success/publication/failure checks apply to those exact authenticated objects. Only after these checks does GrantAdmission carry the frozen unit spec and small tuple of predecessor spec/manifest pairs to consume/verify_worktree. Worktree verification uses those validated in-memory manifests and never reopens predecessor metadata. Output files still undergo the existing complete count/path/type/size/hash verification and exact Git-path allowance.
+
+This is a snapshot contract, as requested: semantic validation and artifact-manifest authorization use the same authenticated observation. Later pathname replacement cannot supply different successful fields or a different manifest to this admission. No claim is made that files cannot change after a completed snapshot. The former helper-level contract of reopening metadata in verify_worktree is intentionally removed, not emulated with another late validator. All grant-gate semantic checks and parent-observed OS-exit authority remain in place.
+
+Actual deterministic filesystem controls read failed/incorrect-transaction bytes with the grant's exact hash, replace the real file with success bytes immediately after the actual stream read, then restore the failed bytes after actual JSON parsing. Both result and consumption are refused before second allocation. Each uses one2MiB+1 read request, returns only its actual small receipt bytes, and validates the failed bound object. The first successful capture/transaction remains intact and no later helper starts.
+
+R4-2 — BOUNDED METADATA ADMISSION
+The shared JSON snapshot reader checks lstat regular-file type and maximum size before opening, then checks the actual opened descriptor's type, size and dev/inode before payload reading. It performs one maximum+1 sentinel read, refuses growth, hashes those exact bounded bytes, then parses once. Symlinks/directories/oversized metadata are refused with zero payload reads; growth after the descriptor stat is refused after at most maximum+1. Existing limits remain2MiB for result/consumption/readiness and16KiB for the root grant.
+consume obtains the grant and its digest from one bounded snapshot; consumption.grantSha256 uses that digest rather than a later unbounded reread. It also bounds the readiness snapshot and requires its parsed value to equal main's supplied readiness before using that snapshot's hash. Artifact hash-read caps are unchanged. General executable/source/review-document hashing is unchanged; this correction covers the admission JSON receipt paths.
+
+The29 new cases cover both swaps; grant/result/consumption exact cap, 8MiB excess, growth, invalid UTF8, invalid JSON, unknown nested fields, symlink and directory; wrong hashes for externally referenced result/consumption; and grant growth AFTER its completed validated snapshot. The last case confirms consumption records the exact validated grant digest and makes no late read of the enlarged grant. Unknown fields survive parsing, and consumed/admission equality still covers the full transaction object. All failed cases refuse before second consumption/output/evidence or helper dispatch. Retained metadata-control-read-results-final.json records242 real snapshot calls and their requested/returned byte counts. Test metadata and pixels are explicitly synthetic, never visual qualification.
+
+SEQUENCE / REGRESSION VERIFICATION
+- Full stock Python:30/30 (all28 prior plus2 metadata tests). Full Node:7/7, including original combined-reporting/primary-error protections.
+- Unchanged independent six-process sequence:6 observed OS exits0,82+82+82+82+220+220=768 files, single Git HEAD, all previous receipt bytes unchanged.
+- Unchanged independent26 static mutations: all refuse before helper/decoder dispatch and any second identity allocation, each after a real first OS exit0.
+- Unchanged prior independent tests:8 child-process/publication outcomes,38 real SIGALRM/KeyboardInterrupt boundaries,7 completion/reference mutations,6 raw producer/all-sinks cases and exact metadata cap after close-error all PASS.
+- Original six R1/R2 findings remain FIXED in these local regressions; this report does not reopen or regrade their history and does not substitute for fresh independent R5 review.
+- Static lint/format/removal/diff and actual committed-head disabled readiness check PASS. All proposed actual runtime identities remain absent.
+
+EXACT COMMANDS / EXITS
+All commands from /Users/andreyyurlov/.t3/worktrees/space/t3-06487465; scripts use their own fresh evidence/scratch roots. commands.json is the machine-readable ledger. Earlier successful developmental logs are retained but the final commands below provide the candidate claims.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/red/metadata-boundaries.py`
+  Exit 0: RED: unchanged reviewer script asserts both defects on exact e636 caller; not PASS. Log `red.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/controls.py BoundaryControls.test_actual_admission_uses_one_authenticated_snapshot_for_result_and_consumption BoundaryControls.test_actual_admission_metadata_caps_growth_encoding_hashes_and_unknown_fields`
+  Exit 0: Initial28 new boundary cases pass. Log `boundaries-first.log`.
+
+- `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B -c 'import sys,runpy;sys.path.insert(0,"/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages");runpy.run_path("packages/tools/src/capture/fauna_packet/controls.py",run_name="__main__")'`
+  Exit 0: 30/30: all28 prior tests plus2 new tests with29 metadata cases. Log `python-final.log`.
+
+- `node --test packages/tools/src/capture/fauna_packet/controls.mjs`
+  Exit 0: 7/7, fresh disabled readiness. Log `node-final.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/green/sequence-independent.py`
+  Exit 0: Unchanged reviewer script:6 actual inert caller processes,768 files, one HEAD, all observed OS exits0. Log `six-sequence.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/green/admission-mutations.py`
+  Exit 0: Unchanged reviewer script:26 refusals before allocation/dispatch, each after real first OS exit0. Log `26-mutations.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/green/metadata-green.py`
+  Exit 0: Same R4 injections now require zero oversized payload reads and authenticated failed-result refusal before allocation/dispatch. Log `metadata-green-final.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/green/retain-metadata-controls-final.py`
+  Exit 0: 29 retained metadata cases /242 instrumented snapshot calls; all reads bounded. Log `metadata-final.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/green/independent-boundaries.py`
+  Exit 0: Unchanged independent script:8 process/publication cases,38 signal/cancellation boundaries,7 grant mutations. Log `prior-boundaries.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/green/retained-facts.py`
+  Exit 0: Unchanged independent script:6 producer/all-sink cases and exact metadata cap after close-error. Log `prior-facts.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/controls.py CallerControls.test_actual_disabled_entry_has_no_subprocess_helper_import_or_allocation CallerControls.test_disabled_before_grant_helper_or_allocation`
+  Exit 0: Pinned actual Python,6 disabled screens, zero helper imports/allocations/dispatch. Log `disabled-final.log`.
+
+- `pnpm gate:removed`
+  Exit 0: 10 enforced,15 waiting on replacements. Log `removed.log`.
+
+- `pnpm exec eslint packages/tools/src/capture/fauna_packet/entry.mjs packages/tools/src/capture/fauna_packet/controls.mjs`
+  Exit 0: PASS. Log `eslint.log`.
+
+- `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B packages/tools/src/capture/fauna_packet/freeze.py`
+  Exit 0: Fresh disabled freeze after preserving old readiness; CPU self-identity only. Log `freeze.log`.
+
+- `pnpm exec prettier --write packages/tools/src/capture/fauna_packet/readiness.json`
+  Exit 0: Format generated JSON. Log `prettier-write.log`.
+
+- `pnpm exec prettier --check packages/tools/src/capture/fauna_packet/entry.mjs packages/tools/src/capture/fauna_packet/controls.mjs packages/tools/src/capture/fauna_packet/readiness.json`
+  Exit 0: PASS. Log `format.log`.
+
+- `python3 -I -B -c 'import json,os,subprocess; p="packages/tools/src/capture/fauna_packet/"; r=json.load(open(p+"readiness.json")); subprocess.run([r["python"],"-I","-B",p+"caller.py","--check"],cwd=r["root"],env={**os.environ,"PATH":r["path"]},check=True)'`
+  Exit 0: Committed-head CPU_BINDINGS_ONLY/runtime false. Log `check-final.log`.
+
+- `python3 -I -B /private/tmp/p1-e08-t09-r5-6le10f9w/verify.py`
+  Exit 0: Scope/protected hashes/review history/identities/budgets PASS. Log `verify-final.log`.
+
+- `git diff --check e636efbb1900c6426f3a2586724080b6a132e1bb HEAD`
+  Exit 0: PASS. Log `diff-check.log`.
+
+PROVENANCE / PROTECTED STATE
+Candidate source hashes and binary patch hash are in candidate.json/revision.patch. verified.json confirms all 12575 protected tracked hashes remain unchanged; Git comparison with product d688579ad has only the four previously recovered helpers in those scopes. All four helpers match recovery6245 and their accepted pins. All non-owned packet files remain byte-identical to e636. No accepted assets or .blend files changed/hydrated.
+All 11563 original R4 review files match review-hashes.json. The copied RED scripts are byte-identical to the original review scripts. Historical440 artifacts/Git/LFS binding, failure evidence, spent identities and retained task branch bb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9 remain unchanged. readiness-e636.json preserves the prior disabled readiness at6c14b6cb0b0972ac1e5f80363b83ff5c9bbe910140363fd80a77592c67866705. All48 old/new actual output/evidence/grant/consumption paths remain absent. The bound worktree is clean at the candidate SHA.
+
+READINESS / INVENTORY
+Exact fresh paths and ledger: committed readiness.json and inventory.json. Runtime false, order and budgets unchanged:
+
+|Order|Screen|Files/images|Output cap|One-unit admission|
+|---|---|---|---|---|
+|1|fauna-hit-turn-day-16x9|82/81|1,358,970,880|8,925,528,064|
+|2|fauna-hit-turn-day-21x9|82/81|1,358,970,880|8,925,528,064|
+|3|fauna-hit-turn-night-16x9|82/81|1,358,970,880|8,925,528,064|
+|4|fauna-hit-turn-night-21x9|82/81|1,358,970,880|8,925,528,064|
+|5|fauna-combat|220/219|3,674,226,688|15,871,295,488|
+|6|fauna-combat-night|220/219|3,674,226,688|15,871,295,488|
+
+Total768 files/762 images (60 stills,696 frames,6 sheets,6 readouts). No extra image copies/outputs and no budget increase. Controlled metadata64MiB total (32MiB each), cache snapshot64MiB/30s, capture600s/cleanup60s/decoder45s and native/archive/safety ledger remain unchanged. Each future unit needs fresh admission; no all-six-fit claim.
+Fresh committed-head --check observed 53,649,444,864 free bytes, 8,099,840 frozen task-local cache bytes, no task-local Vite/cache owners, runtimeEnabled:false and allSixQualified:false. These are time-local CPU observations. Both Python launcher and self-observed app-bundle executable hashes remain separately bound; exact fresh CPU probe is in verified.json/readiness.json. Decoder/site bindings remain unchanged.
+
+Full check invocation:
+```sh
+cd /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+python3 -I -B -c 'import json,os,subprocess; p="packages/tools/src/capture/fauna_packet/"; r=json.load(open(p+"readiness.json")); subprocess.run([r["python"],"-I","-B",p+"caller.py","--check"],cwd=r["root"],env={**os.environ,"PATH":r["path"]},check=True)'
+```
+
+OUT OF SCOPE / REMAINING
+Independent R5 source review, actual enablement and one-unit grants after fresh GPU/cache/disk admission, six native captures, capture acceptance, independent visual/animation grading, whole T09 closure and merge. Parent-reported product-source/live-QA PASS is unchanged and not recertified here. No services/DB, native capture, actual grants, push/PR/queue action occurred.
+
+ARTIFACTS
+REPORT.md, PREMISE.md, commands.json, candidate.json, revision.patch, verified.json, review-hashes.json, inventory.json, readiness-e636.json; unchanged RED source/scripts/results; fresh GREEN sequence/mutation/metadata/raw-fact/process evidence and copied scripts/source; metadata-control-read-results-final.json; all logs. Prior candidate/test versions are retained where a final label or added case changed. No failed invocation is hidden; the RED command intentionally exits0 on reproduced bad behavior, and all candidate verification commands listed above exit0.
