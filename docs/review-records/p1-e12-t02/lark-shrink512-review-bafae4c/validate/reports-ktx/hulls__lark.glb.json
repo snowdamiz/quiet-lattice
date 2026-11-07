@@ -1,0 +1,330 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "/private/tmp/lark-density-shrink512-review-doQKWP/validate/hulls/lark.glb",
+  "family": "hulls",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T14:32:11Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "lark",
+      "variants": [
+        {
+          "id": "lark_damaged",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 111862,
+            "1": 33679,
+            "2": 10782,
+            "3": 2784
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.379,
+            4.49
+          ],
+          "materials": [
+            "NavWhite",
+            "Hull",
+            "Dark",
+            "Accent",
+            "Trim",
+            "EngineGlow",
+            "NavRed",
+            "NavGreen",
+            "Glass"
+          ],
+          "gpuTextureMB": 128.0
+        },
+        {
+          "id": "lark_husked",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 117702,
+            "1": 35422,
+            "2": 10648,
+            "3": 2995
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.432,
+            4.286
+          ],
+          "materials": [
+            "Hull",
+            "Dark",
+            "Accent",
+            "Trim",
+            "EngineGlow",
+            "NavRed",
+            "NavGreen",
+            "NavWhite",
+            "Glass"
+          ],
+          "gpuTextureMB": 106.7
+        },
+        {
+          "id": "lark",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 107054,
+            "1": 32229,
+            "2": 10572,
+            "3": 2909
+          },
+          "implicitLods": false,
+          "dims": [
+            13.522,
+            12.379,
+            4.286
+          ],
+          "materials": [
+            "NavWhite",
+            "Hull",
+            "Dark",
+            "Accent",
+            "Trim",
+            "EngineGlow",
+            "NavRed",
+            "NavGreen",
+            "Glass"
+          ],
+          "gpuTextureMB": 64.0
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "lark.glb",
+          "message": "3 variant(s) in 1 asset(s) follow the hulls rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "lark/lark_damaged",
+          "message": "LOD0 111,862 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "lark/lark_husked",
+          "message": "LOD0 117,702 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "lark",
+          "message": "LOD0 107,054 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 5.7 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "lark/lark_damaged",
+          "message": "111,862 > 33,679 > 10,782 > 2,784 triangles; LOD3 2.5% of LOD0"
+        },
+        {
+          "subject": "lark/lark_husked",
+          "message": "117,702 > 35,422 > 10,648 > 2,995 triangles; LOD3 2.5% of LOD0"
+        },
+        {
+          "subject": "lark",
+          "message": "107,054 > 32,229 > 10,572 > 2,909 triangles; LOD3 2.7% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "EngineGlow",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "EngineGlow",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "EngineGlow",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "NavGreen",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavGreen",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "textures",
+          "message": "16 KTX2 map(s) (5 UASTC, 11 ETC1S) with full mip chains, 7.8 MB"
+        },
+        {
+          "subject": "lark/lark_damaged",
+          "message": "textures take 128 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "lark/lark_husked",
+          "message": "textures take 107 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "lark",
+          "message": "textures take 64 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/hulls/lark.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "lark/lark_damaged",
+          "message": "longest side 13.52 m within 6-80 m"
+        },
+        {
+          "subject": "lark/lark_husked",
+          "message": "longest side 13.52 m within 6-80 m"
+        },
+        {
+          "subject": "lark",
+          "message": "longest side 13.52 m within 6-80 m"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "task": "P1.E12.T02",
+  "unit": "SOURCE/CPU density+export private candidate (shrink-512 v12j)",
+  "verdict": "PASS",
+  "at": "2026-11-07T14:33:03.555280+00:00",
+  "scratch": "/private/tmp/lark-density-shrink512-review-doQKWP",
+  "pins": {
+    "author_worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470",
+    "head": "bafae4c86991b9fc9d889beffa5dba9495cc4073",
+    "tree": "5857cc64b3640d137ac8c566e6bfc1b7f9b7eaef",
+    "base_before_shrink": "97db71de9379744da2f1957db91552ad474d0fa1",
+    "author_tree_clean": true
+  },
+  "hashes": {
+    "private_blend_sha256": "68a327711238d437666fb5f76f04f8f4d519c67e44e820c0d7b3199097e825e1",
+    "private_blend_bytes": 35650695,
+    "private_glb_sha256": "e377daea38886af8065006bb5c53fb8e43211a9b55f44681018cf294ad7159e7",
+    "private_glb_bytes": 13792612,
+    "canonical_blend_sha256": "bc08c784ef37413cd3b51c593c4109a340a8d99edc15f5da30e3dcfaba04ff75",
+    "canonical_glb_sha256": "7f11e2bd2818045c1a861d4e959f2a985828bdcc9b60d44ed2fda8ff41300bad",
+    "canonical_unchanged_vs_base": true,
+    "canonical_blob_ids_unchanged": {
+      "assets/blend/hulls/lark.blend": "2fc5889392ae78e5bc82a0133e304102d206bd4e",
+      "packages/client/public/models/hulls/lark.glb": "75fe03416acc0abab03d3b27400c559891266dcd"
+    }
+  },
+  "layout": {
+    "layout_fits": true,
+    "atlas_pages": 1,
+    "method": "Plate ds/dt multi-finish palette sharing with near-palette unique snap (mean \u0394\u22640.20), Cockpit may share, palette_limit=12, pack pad=2 into one 4096 atlas at true 512 px/m; large finish templates reshape to area-preserving strips so leftover fits peer squares; shared islands use flat tangent normal + constant AO; no force-fit scale; no source save.",
+    "states": {
+      "lark": {
+        "force_fit_scale": 1.0,
+        "achieved_target_px_per_m": 512.0,
+        "failed": []
+      },
+      "lark_damaged": {
+        "force_fit_scale": 1.0,
+        "achieved_target_px_per_m": 512.0,
+        "failed": []
+      },
+      "lark_husked": {
+        "force_fit_scale": 1.0,
+        "achieved_target_px_per_m": 512.0,
+        "failed": []
+      }
+    }
+  },
+  "independent_measure": {
+    "blend_uvmap": {
+      "roles": 21,
+      "median_of_medians": 2484.549035523165,
+      "min_median": 618.762214033127,
+      "max_median": 20459.628420509038,
+      "target_px_per_m": 512,
+      "meets_art_bible_512": true,
+      "worst_role_key": "lark_damaged_LOD0/Body_dmg/Accent"
+    },
+    "blend_dual_or_non_uvmap": [],
+    "glb_decoded": {
+      "roles": 21,
+      "median_of_medians": 2572.8334628610646,
+      "min_median": 632.8779958045058,
+      "max_median": 40975.63866049564,
+      "target_px_per_m": 512,
+      "meets_art_bible_512": true,
+      "worst_role_key": "lark/lark_damaged/lark_damaged_LOD0/Body_dmg/Accent"
+    },
+    "glb_decoder": "gltf-transform NodeIO + meshoptimizer MeshoptDecoder (normalized accessors via getElement)",
+    "author_density_medians_match_sealed_uvmap": true
+  },
+  "independent_validate": {
+    "blend_status": "PASS",
+    "blend_checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "glb_status": "PASS",
+    "glb_checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "stock_5_of_5": true,
+    "process": {
+      "stock-validate-ktx_exit": 0,
+      "measure-blend_exit": 0,
+      "measure-glb_exit": 0,
+      "geometry-compare_exit": 0
+    }
+  },
+  "contracts": {
+    "one_atlas_4096": true,
+    "force_fit_scale_1_0": true,
+    "layout_fits": true,
+    "min_median_ge_512": true,
+    "single_uvmap_blend": true,
+    "single_texcoord0_render_meshes": true,
+    "no_dark_dual_uv_split": true,
+    "geometry_silhouette_vs_canonical_unchanged": true,
+    "no_shared_exporter_meshopt_validate_edits": true
+  },
+  "scope_edits_vs_base": [
+    "packages/tools/blender/hulls/lark-round3/density_layout_shrink512.py",
+    "packages/tools/blender/hulls/lark-round3/density_private_apply.py",
+    "packages/tools/blender/hulls/lark-round3/density_private_transfer.py",
+    "packages/tools/blender/hulls/lark-round3/density_shrink_preflight.py",
+    "packages/tools/blender/hulls/lark-round3/density_unique_budget.py",
+    "assets/renders/hulls/lark-round3-current/density-20261107/**"
+  ],
+  "out_of_scope_not_authorized": [
+    "canonical promote",
+    "visual/GPU grade",
+    "push/PR/merge/Trunk",
+    "multi-atlas waiver",
+    "other hulls"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "P3",
+      "title": "Author density receipt binds pre-promote blend hash",
+      "detail": "Author 20261107T142340151034Z-private-density-v12j-private-density.json private_sha256=8b242e\u2026 precedes UVDensity\u2192UVMap promote (sealed 68a327\u2026). Independent UVMap remeasure on sealed bytes matches author medians exactly; not a gate failure."
+    },
+    {
+      "id": "F2",
+      "severity": "info",
+      "title": "COL_* collision primitives have no TEXCOORD",
+      "detail": "5 COL_* meshes lack TEXCOORD; all 139 non-COL render primitives have exactly TEXCOORD_0. Not dual-UV Dark split."
+    },
+    {
+      "id": "F3",
+      "severity": "info",
+      "title": "GLB vs blend median delta after meshopt quantize",
+      "detail": "Sealed blend min_median 618.762; decoded GLB min_median 632.878 (same worst Accent role). Both \u2265512 with normalized accessors decoded via MeshoptDecoder/getElement."
+    }
+  ],
+  "artifact_sha256": {
+    "receipts/independent-blend-uvmap-density.json": "bf87e7fc9afd40be7bc53153ebcdf194ffa72d4ad8799dc0aed0891f52a796f1",
+    "receipts/independent-glb-density.json": "71e138e543fcd047f9235c1ca6de406328db43f763610a1f3dbcf1d41d14930d",
+    "receipts/independent-geometry-silhouette.json": "23a65ec49da106bab0ba2bc753b48fb3c1ad485b4b773b485542677c8861ddb9",
+    "receipts/material-texcoord-contract.json": "0ba020389eb3e86e732e0c13cf2c9249cc8b237357d9be247d4e5042ef7f2ed0",
+    "receipts/texcoord-inspect.json": "5c396e83845d99f9c7cdc751f48abc9b1b3fb52076f90d16c2cd5a19b9de3762",
+    "validate/reports-ktx/hulls__lark.blend.json": "cfe83a1e1a7fe6397fa54c5031ced639be6446f093397b18bf1969322846c4fb",
+    "validate/reports-ktx/hulls__lark.glb.json": "e5fa011d9d5b20f2a573faef79e6f3255df233f518852690f29f3662075e6297",
+    "private-candidate/lark.blend": "68a327711238d437666fb5f76f04f8f4d519c67e44e820c0d7b3199097e825e1",
+    "private-candidate/hulls/lark.glb": "e377daea38886af8065006bb5c53fb8e43211a9b55f44681018cf294ad7159e7"
+  },
+  "process_receipts": {
+    "measure-blend": {
+      "exit_code": 0,
+      "peak_tree_rss_kib": 466272,
+      "elapsed_seconds": 5.1931447079987265,
+      "termination_reason": null
+    },
+    "geometry-compare": {
+      "exit_code": 0,
+      "peak_tree_rss_kib": 505328,
+      "elapsed_seconds": 2.02283804200124,
+      "termination_reason": null
+    },
+    "measure-glb": {
+      "exit_code": 0,
+      "peak_tree_rss_kib": 199152,
+      "elapsed_seconds": 0.4986992920166813,
+      "termination_reason": null
+    },
+    "stock-validate": {
+      "exit_code": 1,
+      "peak_tree_rss_kib": 1543504,
+      "elapsed_seconds": 2.1755027920007706,
+      "termination_reason": null
+    },
+    "stock-validate-ktx": {
+      "exit_code": 0,
+      "peak_tree_rss_kib": 1819680,
+      "elapsed_seconds": 10.319798375014216,
+      "termination_reason": null
+    }
+  }
+}

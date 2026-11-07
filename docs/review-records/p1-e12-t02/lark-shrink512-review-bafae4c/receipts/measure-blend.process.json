@@ -1,0 +1,21 @@
+{
+  "label": "measure-blend",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/private/tmp/lark-density-shrink512-review-doQKWP/scripts/measure_blend_uvmap.py"
+  ],
+  "exit_code": 0,
+  "termination_reason": null,
+  "elapsed_seconds": 5.1931447079987265,
+  "peak_tree_rss_kib": 466272,
+  "rss_limit_mib": 8192,
+  "wall_limit_seconds": 600.0,
+  "log": "/private/tmp/lark-density-shrink512-review-doQKWP/receipts/measure-blend.log"
+}

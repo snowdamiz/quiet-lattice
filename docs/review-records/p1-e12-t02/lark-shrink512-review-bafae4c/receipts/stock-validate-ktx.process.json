@@ -1,0 +1,28 @@
+{
+  "label": "stock-validate-ktx",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/validate.py",
+    "--",
+    "--family",
+    "hulls",
+    "--report-dir",
+    "/private/tmp/lark-density-shrink512-review-doQKWP/validate/reports-ktx",
+    "/private/tmp/lark-density-shrink512-review-doQKWP/validate/hulls/lark.blend",
+    "/private/tmp/lark-density-shrink512-review-doQKWP/validate/hulls/lark.glb"
+  ],
+  "exit_code": 0,
+  "termination_reason": null,
+  "elapsed_seconds": 10.319798375014216,
+  "peak_tree_rss_kib": 1819680,
+  "rss_limit_mib": 8192,
+  "wall_limit_seconds": 900.0,
+  "log": "/private/tmp/lark-density-shrink512-review-doQKWP/receipts/stock-validate-ktx.log"
+}

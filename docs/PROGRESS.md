@@ -1072,3 +1072,9 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 
 - **Lark `bafae4c869`:** sealed shrink-512 private v12j committed clean (tree `5857cc64b`). Private GLB/blend hashes match `e377daea…` / `68a32771…`; canonical `bc08c784…` / `7f11e2bd…` unchanged. Density gate remains SATISFIED (min_median 618.8 ≥512; stock PASS 5/5; true-512 one-atlas).
 - Independent SOURCE/CPU review of the private density/export contract is assigned. Canonical promote stays HELD until that review PASSes. Visual/GPU remain later. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+
+## 2026-11-07 — Lark shrink-512 SOURCE/CPU PASS; canonical promote authorized
+
+- **Lark `bafae4c869`:** independent SOURCE/CPU PASS for private shrink-512 density/export. Blend min_median 618.762 (exact author match); decoded GLB min_median 632.878; geometry vs prior canonical LOD0 unchanged; stock validate PASS 5/5 both. One-atlas true-512 (`force_fit_scale=1.0`); single UVMap/TEXCOORD_0; no shared exporter edits.
+- Seal retained under `docs/review-records/p1-e12-t02/lark-shrink512-review-bafae4c/` (index `20261107-lark-shrink512-review-pass-bafae4c.json`). SEAL SHA256 `1a5ee431b31e01f3f39a0ea6430adf82ea83999d9297b1c215870ba0e86d9606`.
+- **Parent:** canonical promote of sealed private blend/glb onto `assets/blend/hulls/lark.blend` and `packages/client/public/models/hulls/lark.glb` is AUTHORIZED. Visual/GPU remain unassigned until promote commits. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.

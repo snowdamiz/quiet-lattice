@@ -1,0 +1,21 @@
+{
+  "label": "geometry-compare",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/private/tmp/lark-density-shrink512-review-doQKWP/scripts/geometry_silhouette_compare.py"
+  ],
+  "exit_code": 0,
+  "termination_reason": null,
+  "elapsed_seconds": 2.02283804200124,
+  "peak_tree_rss_kib": 505328,
+  "rss_limit_mib": 8192,
+  "wall_limit_seconds": 600.0,
+  "log": "/private/tmp/lark-density-shrink512-review-doQKWP/receipts/geometry-compare.log"
+}
