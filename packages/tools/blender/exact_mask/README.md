@@ -43,7 +43,7 @@ compiler; it writes no compiled files or dependency cache. The test does not loa
 the consumer, Blender or meshopt. An optional positional loader path lets the
 same test demonstrate the old resolver's failure.
 
-## Deferred real boundary (requires parent resource assignment)
+## Real boundary (requires parent resource assignment)
 
 ```sh
 EXACT_MASK_NODE=/absolute/pinned/node \
@@ -80,7 +80,7 @@ output. Props retains its ordinary UINT16 raw colours and quantizing compression
 Format negatives also invoke stock `checks.geometry` (UINT8/UINT16, normalized
 Float32, RGB-only); CPU tests additionally cover missing accessors and every LOD.
 
-No native/consumer PASS exists until this launcher actually succeeds. Existing
+Native/consumer qualification requires this launcher to succeed. Existing
 `meshopt.test.ts`, Blender pipeline selftests, material-mask regressions,
 independent review and parent integration remain separate gates. KTX2/baking,
 full production-class geometry, skinned/morph export and visual equivalence are
@@ -91,9 +91,20 @@ and five format negatives for both exact families, then failed at Node's
 parameter-property import before compression or GLTFLoader ran. Read-only raw
 GLB analysis matched each exact family's 488 triangles (5,856 RGBA channel values)
 to the reopened source across both variants, four LODs and two materials. Props
-and the unadapted RED retained normalized UINT16. The resolver correction passes
-the pure CPU regression above; the actual consumer remains pending a new grant.
+and the unadapted RED retained normalized UINT16. The resolver correction passed
+the pure CPU regression above; this attempt did not reach the actual consumer.
 See `native-attempt1.json` for the retained evidence and resource-release record.
+
+The second separately admitted attempt at `2156fe6` passed the full tiny boundary:
+four serial stock meshopt encodes, actual `Engine.gltfLoader()` decoding, exact
+source triangle comparisons for creatures/flora before and after compression,
+`maskColors`/`recolor` and alpha controls, material/marker preservation, quantizing
+props and compressed stock validation. The unadapted compressed RED still failed
+the Float32 assertion as expected. The slot and all children were released.
+Fifteen packer/format tests, the resolver regression and sixteen existing exporter
+target tests also passed without another Blender or codec invocation. This proves
+the tiny boundary; broader native regressions, independent review and parent
+integration remain pending. See `native-attempt2.json` for the pin and evidence.
 
 ## Retained asset adoption
 

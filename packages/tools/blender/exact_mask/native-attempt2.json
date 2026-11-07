@@ -1,0 +1,56 @@
+{
+  "task": "P1.E14.T16",
+  "status": "PASS: tiny real boundary; broader native regressions, independent review and parent integration pending",
+  "tested_head": "2156fe66bb596f5604a26e4eea9fc88ed0a712c8",
+  "tested_tree": "eb49d23813f0105293b546cfd965b33acebd18cd",
+  "admission": "/private/tmp/space-t16-cpu-admission-r2-9bkbjcik/admission.json",
+  "slot": "parent:t16-tiny-mask-2156fe6-r2-20261107",
+  "evidence": "/private/tmp/space-e14t16-native2-byd4r6ar",
+  "command": "/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native2-byd4r6ar/controller.py",
+  "exit": 0,
+  "stages": {
+    "saved_source_export": "PASS: creatures/flora/props raw stock exports, five format negatives for each exact family",
+    "unadapted_RED": "EXPECTED_FAIL: UINT16 mask persists through stock nonquantizing compression and actual GLTFLoader; strict Float32 assertion rejects it",
+    "compression": "PASS: four serial stock meshopt encodes (RED, creatures, flora, props)",
+    "GLTFLoader": "PASS: creatures/flora raw and compressed compare exactly against saved-source triangle corners; props compressed decodes",
+    "consumer": "PASS: maskColors/recolor equality for two option sets, alpha-occlusion control, rig/geometry/UV/material/marker checks",
+    "compressed_stock_validation": "PASS: all five checks for each of creatures/flora/props"
+  },
+  "fixture": {
+    "source_sha256": "53a63457f654891c9361c7a8acc58e6b0d28c81946d1705e05827d7aa616c263",
+    "domains": ["POINT", "CORNER"],
+    "LODs_per_variant": 4,
+    "objects": 8,
+    "material_primitives_per_family": 16,
+    "triangles_per_exact_comparison": 488,
+    "RGBA_channel_values_per_exact_comparison": 5856,
+    "materials": 4,
+    "max_empty_shift": 0,
+    "quantizing_props": true
+  },
+  "cpu_regressions": {
+    "installed_packer_and_format_tests": 15,
+    "resolver_import": "PASS",
+    "existing_export_target_tests": 16,
+    "maximum_workers": 1,
+    "all_exits": 0,
+    "additional_Blender_or_codec": false
+  },
+  "resource_observations": {
+    "controller_wall_seconds": 2.893954875005875,
+    "peak_sampled_coalition_rss_bytes": 320569344,
+    "sampled_scratch_inode_high_water_bytes": 6413088,
+    "minimum_sampled_free_bytes": 50346291200,
+    "additional_reserved_gpu_bytes": 8925528064,
+    "scratch_limitations": "Sampled per-inode high-water accounting can miss transient deleted writes; 64 MiB per-file RLIMIT_FSIZE also applied."
+  },
+  "release": {
+    "producer_reaped": true,
+    "kernel_coalition_absent": true,
+    "remaining_known_identities": 0,
+    "launchctl_registration_absent": true,
+    "slot_and_guard_locks_reacquired": true
+  },
+  "preservation": "Before/after native and CPU snapshots identical: 17319 dependency entries, 143 file hashes, empty worktree/ignored status. All 110 prior-attempt files verified unchanged. No assets adopted or regenerated.",
+  "limits": "Glass material fixture only; no PBR/KTX2/bake/render/GPU, production assets, full pipeline sweep or new native retry."
+}
