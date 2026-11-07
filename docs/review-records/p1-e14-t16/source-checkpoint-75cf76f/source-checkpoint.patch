@@ -1,0 +1,965 @@
+diff --git a/packages/tools/blender/artlib/checks.py b/packages/tools/blender/artlib/checks.py
+index 65b73b19d..fbe40300c 100644
+--- a/packages/tools/blender/artlib/checks.py
++++ b/packages/tools/blender/artlib/checks.py
+@@ -5,7 +5,7 @@ from pathlib import Path
+ import bpy
+ import numpy as np
+ 
+-from . import ktx, meshopt
++from . import exact_masks, ktx, meshopt
+ from . import materials as M
+ from . import rules as R
+ from . import scene as S
+@@ -521,6 +521,8 @@ def geometry(rules, family, model, report, path, compressed, legacy=False):
+     c = report["triangles"]
+     try:
+         info = meshopt.inspect(path)
++        for subject, message in exact_masks.format_problems(rules, family, path):
++            c.fail(subject, message)
+     except Exception as e:  # a .glb the importer read but whose JSON cannot be parsed
+         c.fail(Path(path).name, f"cannot read its buffers: {e}")
+         return
+diff --git a/packages/tools/blender/artlib/exact_masks.py b/packages/tools/blender/artlib/exact_masks.py
+new file mode 100644
+index 000000000..adab3b9e9
+--- /dev/null
++++ b/packages/tools/blender/artlib/exact_masks.py
+@@ -0,0 +1,77 @@
++"""Preserve COLOR_0 before Blender's RGBA packer rounds it to normalized UINT16.
++
++Blender 5.2 extracts POINT/CORNER colours into Float32 primitive arrays, including
++loop splits and material partitions, but labels RGBA as UnsignedShort. Its
++gather_attribute_change hook runs *after* rounding; gather_attributes_change runs
++before COLOR_0 exists. Scope this adapter to one synchronous exact-family export.
++No installed files, source colours, indices, or non-mask attributes are changed.
++"""
++from contextlib import contextmanager
++
++from . import glb, meshopt
++from . import rules as R
++
++
++def required(rules, family):
++    return bool(rules["families"][family].get("colorMask")) and meshopt.settings(rules, family).get("quantize") is False
++
++
++@contextmanager
++def preserve(enabled):
++    if not enabled:
++        yield
++        return
++
++    import numpy as np
++    from io_scene_gltf2.blender.exp import primitive_attributes
++
++    original = primitive_attributes.gather_primitive_attributes
++
++    def gather(primitive, export_settings):
++        attributes = primitive["attributes"]
++        mask = attributes.get("COLOR_0")
++        if mask is None:
++            return original(primitive, export_settings)
++        data = mask["data"]
++        if (mask["component_type"] not in (5123, 5126) or mask["data_type"] != "VEC4"
++                or mask.get("normalized") or data.dtype != np.float32
++                or data.ndim != 2 or data.shape[1] != 4):
++            raise RuntimeError("exact COLOR_0 requires unpacked Float32 RGBA; refusing an incompatible Blender packing boundary")
++        # Only the descriptor changes. The mapped Float32 bytes reach the ordinary
++        # float accessor writer without the packer's clip/multiply/round step.
++        adapted = dict(primitive, attributes=dict(attributes, COLOR_0=dict(mask, component_type=5126)))
++        return original(adapted, export_settings)
++
++    primitive_attributes.gather_primitive_attributes = gather
++    try:
++        yield
++    finally:
++        primitive_attributes.gather_primitive_attributes = original
++
++
++def format_problems(rules, family, path):
++    """Export accessor failures, independently of Blender's imported colour type.
++
++All render nodes/primitives count, including every LOD and a mesh also instanced
++by a collider. Only nodes named as colliders are outside the mask contract.
++Compression opt-outs and legacy names do not waive the exact-mask format.
++"""
++    if not required(rules, family):
++        return []
++    js, _ = glb.read(path)
++    problems = []
++    accessors = js.get("accessors", [])
++    colliders = [p for m in rules["markers"] if m["role"] == "collider" for p in m["patterns"]]
++    for n, node in enumerate(js.get("nodes", [])):
++        if "mesh" not in node or R.match(R.strip(node.get("name", "")), colliders, ci=True):
++            continue
++        for p, primitive in enumerate(js["meshes"][node["mesh"]].get("primitives", [])):
++            label = f"{node.get('name', n)}/primitive{p}"
++            index = primitive.get("attributes", {}).get("COLOR_0")
++            if type(index) is not int or not 0 <= index < len(accessors):
++                problems.append((label, "missing COLOR_0 accessor for exact RGBA mask"))
++                continue
++            a = accessors[index]
++            if a.get("componentType") != 5126 or a.get("type") != "VEC4" or a.get("normalized", False) is not False:
++                problems.append((label, "COLOR_0 must be FLOAT (5126), VEC4, non-normalized for exact RGBA mask (A occlusion)"))
++    return problems
+diff --git a/packages/tools/blender/artlib/export.py b/packages/tools/blender/artlib/export.py
+index 1527f984a..ed5da9c3b 100644
+--- a/packages/tools/blender/artlib/export.py
++++ b/packages/tools/blender/artlib/export.py
+@@ -19,7 +19,7 @@ from pathlib import Path
+ import bpy
+ from mathutils import Matrix, Vector
+ 
+-from . import bake, core, glb, ktx, lods, meshopt
++from . import bake, core, exact_masks, glb, ktx, lods, meshopt
+ from . import checks as C
+ from . import materials as M
+ from . import rules as R
+@@ -110,7 +110,8 @@ def export_one(rules, family, src, out, args):
+     tmpdir = Path(tempfile.mkdtemp(prefix="art-export-"))
+     try:
+         tmp = tmpdir / out.name
+-        _write(roots, tmp)
++        with exact_masks.preserve(exact_masks.required(rules, family)):
++            _write(roots, tmp)
+         glb.finalize(tmp, names)
+         textures = ktx.settings(rules, family).get("compress", False) if args.compress is None else args.compress
+         geometry = meshopt.settings(rules, family).get("compress", False) if args.compress is None else args.compress
+diff --git a/packages/tools/blender/exact_mask/README.md b/packages/tools/blender/exact_mask/README.md
+new file mode 100644
+index 000000000..52695a705
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/README.md
+@@ -0,0 +1,97 @@
++# P1.E14.T16 exact RGBA regression
++
++The production adapter surrounds the synchronous stock `_write` call only for
++`colorMask` families with effective `geometry.quantize=false` (creatures/flora).
++It changes the extracted `COLOR_0` descriptor before Blender 5.2's UINT16 packing,
++leaves the mapped Float32 array intact, and restores the packer in `finally`.
++Other attributes and families use their original writer. Stock exported-geometry
++validation checks the actual accessor, rather than the imported Blender type.
++It rejects integer, normalized, RGB-only and absent masks on every render
++primitive; compression opt-outs and legacy names do not waive this contract.
++
++The installed `gather_attributes_change` hook precedes colour extraction, and
++`gather_attribute_change` follows the lossy conversion. Neither supports this
++correction. No installed Blender code or preferences are changed. The adapter
++rejects an unfamiliar/non-Float32 boundary instead of casting rounded values.
++
++## CPU checks (authorized source phase)
++
++```sh
++/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13 -B \
++  packages/tools/blender/exact_mask/cpu_test.py \
++  --backend /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2
++```
++
++This uses Blender's bundled **Python interpreter**, NumPy and installed pure
++Python accessor packer; it never starts Blender or loads a codec. Add `--baseline`
++to reproduce the original `5123 != 5126` failure. The add-on registration entry
++point is skipped; Accessor, BinaryData and packing code are real installed modules.
++These tests prove packing, restoration, family scope and JSON format validation.
++They do not prove source mesh extraction, material/loop mapping or compression.
++
++## Deferred real boundary (requires parent resource assignment)
++
++```sh
++EXACT_MASK_NODE=/absolute/pinned/node \
++EXACT_MASK_DEPS=/absolute/existing/dependency-checkout \
++  bash packages/tools/blender/exact_mask/run_boundary.sh /tmp/new-exclusive-e14t16-boundary
++```
++
++The script stops on the first failure and keeps all output. It does not install,
++retry, download, modify dependency directories, or regenerate project assets.
++The dependency resolver uses the task checkout's source and an explicit existing
++checkout's dependencies without creating `node_modules` links. Run serially in
++the assigned lane (Blender at two threads, NumPy at one), with <=256 MiB scratch.
++Snapshot dependency/ignored state before and after execution, as for CPU checks.
++
++`fixture.py export` saves and reopens a small real `.blend`, records every saved
++Float32 triangle corner, then retains the unadapted raw RED and runs stock
++`export_one` for creatures, flora and a quantizing props control. The fixture has
++POINT and CORNER colour variants, four handmade LODs each (160/64/16/4 triangles),
++UV/material splits, two materials per variant, different AO alpha, rig attributes
++and marker transforms. It uses the existing `flora` class override and exempt
++Glass profiles; no budgets are relaxed and no baking/textures are needed.
++
++`consumer.mjs` runs the actual stock `compressGeometry`, actual client
++`Engine.gltfLoader()` with its MeshoptDecoder, and `maskColors`/`recolor`. For both
++exact families it compares oriented triangle multisets including all RGBA bits,
++positions, UVs, normals and rig attributes against the reopened source, before
++and after compression. It checks marker transforms, material definitions and
++separate variant material instances. An alpha=1 control must change consumer
++output. Props retains its ordinary UINT16 raw colours and quantizing compression.
++`fixture.py validate` then invokes stock validation on all three compressed GLBs.
++Format negatives also invoke stock `checks.geometry` (UINT8/UINT16, normalized
++Float32, RGB-only); CPU tests additionally cover missing accessors and every LOD.
++
++No native/consumer PASS exists until this launcher actually succeeds. Existing
++`meshopt.test.ts`, Blender pipeline selftests, material-mask regressions,
++independent review and parent integration remain separate gates. KTX2/baking,
++full production-class geometry, skinned/morph export and visual equivalence are
++outside the tiny fixture; the existing pipeline regressions cover those paths.
++
++## Retained asset adoption
++
++Read-only header audit at the source checkpoint:
++
++- E08.T08 `f9294a466d6223f695f102dc1a13ed526f155e67`: all five creature files
++  (`biped`, `flyer`, `quad_grazer`, `quad_heavy`, `quad_small`) use normalized
++  UINT16/VEC4 across 136 primitives/LOD selections. Their owner must re-export
++  after separate capacity admission. The two constructs have no colour mask and
++  remain on their ordinary quantizing family path.
++- E14.T04 `70f8a164614ad9cf370e448a081603bfc4fa1cf4`: `tree_blob_t04`,
++  `tree_cactus_t04`, `tree_conifer_t04`, `tree_coral_t04`, `tree_mushroom_t04`,
++  `tree_palm_t04`, `tree_round_t04`, `tree_spiral_t04` already contain Float32/VEC4
++  (76 primitive/LOD selections). Their owner uses temporary source-float carriers
++  and `promote_masks.mjs`. Header compatibility is not a new source-value proof.
++- E14.T05 `a46e7c4d444befd6efe6e06b9134b3a41abcb639`: `non_tree_foliage`,
++  `non_tree_resources`, `non_tree_stone` already contain Float32/VEC4 (124
++  primitive/LOD selections), restored by task-local `write_exact`. Its two-argument
++  `_write` wrapper remains compatible. Owners can assess retiring these local
++  carriers only after adopting and validating the shared route.
++- T06 resource formations and future creature/flora exports inherit this contract;
++  no retained T06 artifact was identified in this checkpoint's candidate inventory.
++  Legacy `flora.glb`/`creatures.glb` are also subject to exact accessor validation;
++  compression exemptions are unchanged. Other families' contracts are unchanged.
++
++No candidate, asset, historical receipt, material-validation rule from 515ba1f,
++manifest, plan, or parent checkout is modified by this patch.
+diff --git a/packages/tools/blender/exact_mask/backend_cpu.py b/packages/tools/blender/exact_mask/backend_cpu.py
+new file mode 100644
+index 000000000..f151fa05d
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/backend_cpu.py
+@@ -0,0 +1,18 @@
++"""Load only the installed exporter's pure Python packing modules, without bpy or a codec.
++
++Used by cpu_test.py; this does not exercise Blender mesh extraction or a saved source.
++"""
++import importlib
++import sys
++import types
++from pathlib import Path
++
++
++def load_backend(path):
++    path = Path(path).resolve()
++    # Skip the add-on registration entry point, which requires a running Blender.
++    # All imported submodules (including Accessor/BinaryData) remain the installed code.
++    package = types.ModuleType('io_scene_gltf2')
++    package.__path__ = [str(path)]
++    sys.modules[package.__name__] = package
++    return importlib.import_module('io_scene_gltf2.blender.exp.primitive_attributes')
+diff --git a/packages/tools/blender/exact_mask/consumer.mjs b/packages/tools/blender/exact_mask/consumer.mjs
+new file mode 100644
+index 000000000..d3fb58675
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/consumer.mjs
+@@ -0,0 +1,131 @@
++// Deferred: actual stock meshopt compressor + client GLTFLoader/consumer boundary, no GPU.
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { resolve } from 'node:path';
++import * as THREE from 'three';
++import { compressGeometry } from '../../src/art/meshopt.ts';
++import { gltfLoader } from '../../../client/src/core/Engine.js';
++import { maskColors, recolor } from '../../../client/src/gameplay/modelLibrary.js';
++
++const directory = resolve(process.argv[2]);
++const source = JSON.parse(readFileSync(resolve(directory, 'source.json'), 'utf8'));
++const families = JSON.parse(readFileSync(new URL('../families.json', import.meta.url), 'utf8'));
++const palette = { primary: new THREE.Color(.4, .2, .1), secondary: new THREE.Color(.1, .3, .5), accent: new THREE.Color(.6, .4, .2) };
++const attributes = ['position', 'normal', 'uv', '_limb', '_pivot', '_glow', 'color'];
++const json = (bytes) => JSON.parse(bytes.subarray(20, 20 + bytes.readUInt32LE(12)).toString());
++const tuple = (record) => attributes.map((key) => record[key]);
++const encode = (record) => JSON.stringify(tuple(record));
++function triangle(corners) {
++  const strings = corners.map(encode);
++  return [0, 1, 2].map((i) => JSON.stringify([...strings.slice(i), ...strings.slice(0, i)])).sort()[0];
++}
++function accessor(mesh, key) {
++  const a = mesh.geometry.getAttribute(key);
++  assert(a, `${mesh.name}: missing ${key}`);
++  if (key !== 'uv') assert(a.array instanceof Float32Array, `${mesh.name}: ${key} is not Float32`);
++  assert.equal(a.normalized, false);
++  return a;
++}
++async function decode(bytes) {
++  const gltf = await gltfLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
++  gltf.scene.updateMatrixWorld(true);
++  return gltf.scene;
++}
++function verify(scene) {
++  const observed = {};
++  let meshes = 0;
++  scene.traverse((mesh) => {
++    if (!mesh.isMesh) return;
++    let owner = mesh;
++    while (owner && !source[owner.name]) owner = owner.parent;
++    assert(owner, `unexpected mesh ${mesh.name}`);
++    const expected = source[owner.name];
++    const translation = new THREE.Vector3().setFromMatrixPosition(mesh.matrixWorld).toArray();
++    assert.deepEqual(translation, expected.translation);
++    const attrs = Object.fromEntries(attributes.map((key) => [key, accessor(mesh, key)]));
++    assert.equal(attrs.color.itemSize, 4, 'occlusion alpha must survive');
++    const record = (index) => Object.fromEntries(attributes.map((key) => [key, Array.from({ length: attrs[key].itemSize }, (_, c) => attrs[key].getComponent(index, c))]));
++    const material = mesh.material.name;
++    const expectedRows = expected.triangles[material].flat();
++    const savedByTuple = new Map(expectedRows.map((row) => [encode(row), row]));
++    const sourceColors = new Float32Array(attrs.color.count * 4);
++    for (let v = 0; v < attrs.color.count; v++) {
++      const saved = savedByTuple.get(encode(record(v)));
++      assert(saved, `${owner.name}/${material}: vertex ${v} differs from saved source`);
++      sourceColors.set(saved.color, v * 4);
++    }
++    const oracle = mesh.geometry.clone();
++    oracle.setAttribute('color', new THREE.BufferAttribute(sourceColors, 4));
++    for (const opts of [{ aoFloor: .05, albedoCap: .75 }, { aoFloor: .35, glowAccent: .7 }]) {
++      const wanted = maskColors(oracle, palette, opts);
++      const got = maskColors(mesh.geometry, palette, opts);
++      assert.deepEqual(got, wanted);
++      const recolored = recolor(mesh, palette, opts);
++      assert.deepEqual(recolored.attributes.color.array, wanted.col);
++      assert.deepEqual(recolored.attributes.aGlow.array, wanted.glow);
++      recolored.dispose();
++    }
++    // The non-grid alpha contributes to actual consumer output; an alpha=1 control differs.
++    const opaque = oracle.clone();
++    for (let i = 0; i < opaque.attributes.color.count; i++) opaque.attributes.color.setW(i, 1);
++    assert.notDeepEqual(maskColors(oracle, palette).col, maskColors(opaque, palette).col);
++    opaque.dispose();
++    oracle.dispose();
++    const indices = mesh.geometry.index;
++    const count = indices ? indices.count : attrs.position.count;
++    const gotTriangles = [];
++    for (let i = 0; i < count; i += 3) gotTriangles.push(triangle([0, 1, 2].map((k) => record(indices ? indices.getX(i + k) : i + k))));
++    const key = `${owner.name}/${material}`;
++    assert(!observed[key], `duplicate primitive ${key}`);
++    observed[key] = gotTriangles.sort();
++    assert.deepEqual(observed[key], expected.triangles[material].map(triangle).sort(), key);
++    meshes++;
++  });
++  assert.equal(Object.keys(observed).length, Object.values(source).reduce((n, o) => n + Object.keys(o.triangles).length, 0));
++  for (const name of ['Interact_point', 'Interact_corner']) {
++    const marker = scene.getObjectByName(name);
++    assert(marker);
++    assert.deepEqual(new THREE.Vector3().setFromMatrixPosition(marker.matrixWorld).toArray(), [.25, .75, -.5]);
++  }
++  return { meshes, objects: Object.keys(source).length };
++}
++
++const baseline = readFileSync(resolve(directory, 'stock-red.glb'));
++assert.throws(() => {
++  for (const mesh of json(baseline).meshes) for (const p of mesh.primitives) assert.equal(json(baseline).accessors[p.attributes.COLOR_0].componentType, 5126);
++}, /5123/);
++const redCompressed = Buffer.from((await compressGeometry(baseline, { quantize: false })).glb);
++writeFileSync(resolve(directory, 'stock-red-compressed.glb'), redCompressed, { flag: 'wx' });
++const redScene = await decode(redCompressed);
++assert.throws(() => verify(redScene), /color is not Float32/);
++// Preserve the real-source RED even if a later green step fails.
++writeFileSync(resolve(directory, 'consumer-red.json'), JSON.stringify({ assertion: 'COLOR_0 Float32 before and after stock compression/GLTFLoader', actual: 5123, expected: 5126, status: 'EXPECTED_FAIL' }, null, 2) + '\n', { flag: 'wx' });
++const results = [];
++for (const family of ['creatures', 'flora', 'props']) {
++  const raw = readFileSync(resolve(directory, `${family}-raw.glb`));
++  const exact = family !== 'props';
++  if (exact) verify(await decode(raw));
++  const settings = { ...families.geometry, ...families.families[family].geometry };
++  const { glb, summary } = await compressGeometry(raw, settings);
++  const compressed = Buffer.from(glb);
++  writeFileSync(resolve(directory, `${family}-compressed.glb`), compressed, { flag: 'wx' });
++  assert.deepEqual(json(compressed).materials, json(raw).materials, 'material definitions/order must survive');
++  assert.equal(json(compressed).materials.length, 4, 'variants retain separate material instances');
++  assert.equal(json(compressed).extensionsRequired.includes('KHR_mesh_quantization'), !exact);
++  assert(json(compressed).extensionsRequired.includes('EXT_meshopt_compression'));
++  if (exact) {
++    for (const mesh of json(compressed).meshes) for (const p of mesh.primitives) {
++      const a = json(compressed).accessors[p.attributes.COLOR_0];
++      assert.equal(a.componentType, 5126);
++      assert.equal(a.type, 'VEC4');
++      assert(!a.normalized);
++    }
++    results.push({ family, ...verify(await decode(compressed)), summary });
++  } else {
++    assert(json(raw).accessors.some((a) => a.componentType === 5123 && a.normalized), 'stock other-family color format');
++    await decode(compressed);
++    results.push({ family, summary, quantizingControl: true });
++  }
++}
++writeFileSync(resolve(directory, 'consumer-green.json'), JSON.stringify({ status: 'PASS', results }, null, 2) + '\n', { flag: 'wx' });
++console.log(JSON.stringify(results));
+diff --git a/packages/tools/blender/exact_mask/cpu_test.py b/packages/tools/blender/exact_mask/cpu_test.py
+new file mode 100644
+index 000000000..a1d0a36c9
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/cpu_test.py
+@@ -0,0 +1,177 @@
++"""Bounded packing/format tests. No Blender runtime, codecs, assets or downloads."""
++import argparse
++import copy
++import sys
++import tempfile
++import unittest
++from contextlib import nullcontext
++from pathlib import Path
++
++import numpy as np
++
++sys.dont_write_bytecode = True
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from backend_cpu import load_backend
++from artlib import exact_masks, glb, rules
++
++parser = argparse.ArgumentParser()
++parser.add_argument('--backend', type=Path, required=True)
++parser.add_argument('--baseline', action='store_true')
++args = parser.parse_args()
++backend = load_backend(args.backend)
++SETTINGS = {'gltf_user_extensions': [], 'gltf_meshopt_compression': False}
++RGBA = np.array([[.1234567, .2345678, .6419755, .31415927], [.4567891, .1111111, .4320998, .8765432]], dtype=np.float32)
++
++
++def primitive(values=RGBA):
++    return {'attributes': {'COLOR_0': {'data': values.copy(), 'component_type': 5123, 'data_type': 'VEC4'}}}
++
++
++def preserve():
++    return nullcontext() if args.baseline else exact_masks.preserve(True)
++
++
++class Packing(unittest.TestCase):
++    def test_exact_float_rgba(self):
++        with preserve():
++            out = backend.gather_primitive_attributes(primitive(), SETTINGS)['COLOR_0']
++        self.assertEqual(out.component_type, 5126)
++        self.assertFalse(out.normalized)
++        self.assertEqual(out.type, 'VEC4')
++        self.assertEqual(out.buffer_view.data, RGBA.tobytes())
++
++    def test_ordinary_export_remains_uint16(self):
++        with exact_masks.preserve(False):
++            out = backend.gather_primitive_attributes(primitive(), SETTINGS)['COLOR_0']
++        self.assertEqual(out.component_type, 5123)
++        self.assertTrue(out.normalized)
++        rounded = np.frombuffer(out.buffer_view.data, dtype=np.uint16).astype(np.float32) / 65535
++        self.assertFalse(np.array_equal(rounded, RGBA.flatten()))
++
++    def test_original_descriptors_and_arrays_unchanged(self):
++        p = primitive()
++        with preserve():
++            for _ in range(2):
++                out = backend.gather_primitive_attributes(p, SETTINGS)['COLOR_0']
++                self.assertEqual(out.buffer_view.data, RGBA.tobytes())
++        self.assertEqual(p['attributes']['COLOR_0']['component_type'], 5123)
++        np.testing.assert_array_equal(p['attributes']['COLOR_0']['data'], RGBA)
++
++    def test_other_attributes_unchanged(self):
++        p = primitive()
++        for name, data, kind in [('_LIMB', [[1], [4]], 'SCALAR'), ('_PIVOT', [[.1, .2, .3], [.4, .5, .6]], 'VEC3'),
++                                 ('_GLOW', [[.13], [.79]], 'SCALAR'), ('POSITION', [[0, 1, 2], [3, 4, 5]], 'VEC3'),
++                                 ('NORMAL', [[0, 1, 0], [1, 0, 0]], 'VEC3')]:
++            p['attributes'][name] = {'data': np.array(data, dtype=np.float32), 'component_type': 5126, 'data_type': kind}
++        p['attributes']['COLOR_1'] = copy.deepcopy(p['attributes']['COLOR_0'])
++        before = backend.gather_primitive_attributes(copy.deepcopy(p), SETTINGS)
++        with preserve():
++            after = backend.gather_primitive_attributes(p, SETTINGS)
++        self.assertEqual(set(before), set(after))
++        for name in set(before) - {'COLOR_0'}:
++            for field in ('component_type', 'type', 'normalized', 'count', 'max', 'min'):
++                self.assertEqual(getattr(before[name], field), getattr(after[name], field))
++            self.assertEqual(before[name].buffer_view.data, after[name].buffer_view.data)
++
++    def test_restore_on_success_exception_and_nested_scope(self):
++        original = backend.gather_primitive_attributes
++        with self.assertRaisesRegex(ValueError, 'injected export failure'):
++            with preserve():
++                outer = backend.gather_primitive_attributes
++                with preserve():
++                    self.assertEqual(backend.gather_primitive_attributes(primitive(), SETTINGS)['COLOR_0'].component_type, 5126)
++                self.assertIs(backend.gather_primitive_attributes, outer)
++                raise ValueError('injected export failure')
++        self.assertIs(backend.gather_primitive_attributes, original)
++        self.assertEqual(backend.gather_primitive_attributes(primitive(), SETTINGS)['COLOR_0'].component_type, 5123)
++
++    def test_reject_already_integer_wrong_shape_and_type(self):
++        original = backend.gather_primitive_attributes
++        for change in ({'data': RGBA.astype(np.uint16)}, {'data': RGBA.astype(np.float64)}, {'data_type': 'VEC3'},
++                       {'component_type': 5121}, {'normalized': True}, {'data': RGBA[:, :3]}, {'data': RGBA.flatten()}):
++            with self.subTest(change=tuple(change)):
++                p = primitive()
++                p['attributes']['COLOR_0'].update(change)
++                with self.assertRaisesRegex(RuntimeError, 'unpacked Float32 RGBA'), preserve():
++                    backend.gather_primitive_attributes(p, SETTINGS)
++                self.assertIs(backend.gather_primitive_attributes, original)
++
++    def test_missing_mask_does_not_change_collider(self):
++        with preserve():
++            self.assertEqual(backend.gather_primitive_attributes({'attributes': {}}, SETTINGS), {})
++
++    def test_restore_when_real_packer_extension_raises(self):
++        class BrokenExtension:
++            is_critical = True
++            def gather_attribute_change(self, *args):
++                raise ValueError('injected hook failure')
++        class Log:
++            def error(self, *args, **kwargs):
++                pass
++        original = backend.gather_primitive_attributes
++        with self.assertRaisesRegex(RuntimeError, 'critical extension failure'), preserve():
++            backend.gather_primitive_attributes(primitive(), dict(SETTINGS, gltf_user_extensions=[BrokenExtension()], log=Log()))
++        self.assertIs(backend.gather_primitive_attributes, original)
++
++
++class Formats(unittest.TestCase):
++    def setUp(self):
++        self.rules = rules.load()
++        self.tmp = tempfile.TemporaryDirectory(prefix='exact-mask-cpu-')
++        self.addCleanup(self.tmp.cleanup)
++        self.path = Path(self.tmp.name) / 'control.glb'
++        self.js = {'asset': {'version': '2.0'}, 'nodes': [{'name': 'body_LOD0', 'mesh': 0}],
++                   'meshes': [{'primitives': [{'attributes': {'COLOR_0': 0}}]}],
++                   'accessors': [{'componentType': 5126, 'type': 'VEC4', 'count': 2}]}
++
++    def problems(self, family='creatures'):
++        glb.write(self.path, self.js)
++        return exact_masks.format_problems(self.rules, family, self.path)
++
++    def test_family_scope(self):
++        self.assertEqual([f for f in self.rules['families'] if exact_masks.required(self.rules, f)], ['creatures', 'flora'])
++        self.js['accessors'][0].update(componentType=5123, normalized=True)
++        for family in self.rules['families']:
++            self.assertEqual(bool(self.problems(family)), family in ('creatures', 'flora'))
++
++    def test_float_rgba_and_explicit_false(self):
++        self.assertEqual(self.problems(), [])
++        self.js['accessors'][0]['normalized'] = False
++        self.assertEqual(self.problems('flora'), [])
++
++    def test_incompatible_formats(self):
++        for change in ({'componentType': 5123, 'normalized': True}, {'componentType': 5121, 'normalized': True},
++                       {'componentType': 5123}, {'normalized': True}, {'type': 'VEC3'}, {'type': 'SCALAR'}):
++            with self.subTest(change=change):
++                self.js['accessors'][0] = dict(componentType=5126, type='VEC4', count=2)
++                self.js['accessors'][0].update(change)
++                self.assertEqual(len(self.problems()), 1)
++
++    def test_missing_and_invalid_accessor(self):
++        for index in (None, -1, 99, True):
++            self.js['meshes'][0]['primitives'][0]['attributes'] = {} if index is None else {'COLOR_0': index}
++            self.assertIn('missing COLOR_0', self.problems()[0][1])
++
++    def test_all_primitives_lods_and_materials(self):
++        self.js['nodes'] += [{'name': f'body_LOD{i}', 'mesh': 0} for i in range(1, 4)]
++        self.js['meshes'][0]['primitives'].append({'attributes': {}, 'material': 1})
++        self.assertEqual([p[0] for p in self.problems()], [f'body_LOD{i}/primitive1' for i in range(4)])
++
++    def test_only_collider_node_is_excluded_even_for_shared_mesh(self):
++        self.js['nodes'].append({'name': 'COL_body.001', 'mesh': 0})
++        self.js['accessors'][0]['type'] = 'VEC3'
++        self.assertEqual(len(self.problems()), 1)
++        self.js['nodes'].pop(0)
++        self.assertEqual(self.problems(), [])
++
++    def test_compression_opt_out_does_not_waive_format(self):
++        self.rules['families']['creatures']['geometry']['compress'] = False
++        self.js['accessors'][0]['type'] = 'VEC3'
++        self.assertEqual(len(self.problems()), 1)
++
++
++if __name__ == '__main__':
++    if args.baseline:
++        suite = unittest.TestSuite([Packing('test_exact_float_rgba')])
++        sys.exit(not unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful())
++    unittest.main(argv=[sys.argv[0]], verbosity=2)
+diff --git a/packages/tools/blender/exact_mask/dependencies.mjs b/packages/tools/blender/exact_mask/dependencies.mjs
+new file mode 100644
+index 000000000..f0e744631
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/dependencies.mjs
+@@ -0,0 +1,28 @@
++// Read dependencies from an explicit existing checkout; never install or create node_modules.
++import { registerHooks } from 'node:module';
++import { pathToFileURL } from 'node:url';
++import { resolve } from 'node:path';
++
++const deps = process.env.EXACT_MASK_DEPS;
++if (!deps) throw new Error('EXACT_MASK_DEPS must name an existing dependency checkout');
++registerHooks({
++  resolve(specifier, context, nextResolve) {
++    if (specifier === '@astra/shared' || specifier.startsWith('@astra/shared/')) {
++      const suffix = specifier.slice('@astra/shared'.length);
++      return nextResolve(new URL(`../../../shared/src${suffix || ''}/index.ts`, import.meta.url).href, context);
++    }
++    try {
++      return nextResolve(specifier, context);
++    } catch (error) {
++      if (specifier.startsWith('.') || specifier.startsWith('/') || specifier.includes(':')) throw error;
++      for (const pkg of ['packages/tools', 'packages/client', '.']) {
++        try {
++          return nextResolve(specifier, { ...context, parentURL: pathToFileURL(resolve(deps, pkg, 'package.json')).href });
++        } catch (fallback) {
++          if (!['ERR_MODULE_NOT_FOUND', 'MODULE_NOT_FOUND'].includes(fallback.code)) throw fallback;
++        }
++      }
++      throw error;
++    }
++  },
++});
+diff --git a/packages/tools/blender/exact_mask/fixture.py b/packages/tools/blender/exact_mask/fixture.py
+new file mode 100644
+index 000000000..29e41e83d
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/fixture.py
+@@ -0,0 +1,181 @@
++"""Deferred real-boundary fixture: saved/reopened source -> stock export.
++
++Run ONLY after parent assigns the Blender lane. Outputs go to a new scratch
++folder; no project assets or budgets change. Existing flora class + Glass profile
++keep this geometry regression small, with no bake or texture codec required.
++"""
++import argparse
++import hashlib
++import json
++import sys
++from pathlib import Path
++from types import SimpleNamespace
++
++import bpy
++import numpy as np
++
++sys.dont_write_bytecode = True
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from artlib import checks, core, exact_masks, export, glb, rules
++from artlib.report import Report
++
++
++def coll(name, parent=None):
++    c = bpy.data.collections.new(name)
++    (parent or bpy.context.scene.collection).children.link(c)
++    return c
++
++
++def obj(name, verts, faces, collection, edges=()):
++    me = bpy.data.meshes.new(name)
++    me.from_pydata(verts, edges, faces)
++    me.update()
++    ob = bpy.data.objects.new(name, me)
++    collection.objects.link(ob)
++    return ob
++
++
++def rgba(i):
++    r = np.float32(.1234567 + (i % 7) * .0212345)
++    g = np.float32(.2345678 + (i % 5) * .0123456)
++    return [r, g, np.float32(1 - r - g), np.float32(.31415927 + (i % 9) * .0512345)]
++
++
++def build(path):
++    bpy.ops.wm.read_factory_settings(use_empty=True)
++    bpy.context.scene.unit_settings.system = 'METRIC'
++    bpy.context.scene.unit_settings.scale_length = 1
++    refs = coll('REF')
++    obj('REF_Grid', [(0, 0, 0), (1, 0, 0), (0, 1, 0)], [], refs, [(0, 1), (0, 2)])
++    obj('REF_Biped', [(0, 0, 0), (.5, 0, 0), (0, 0, 1.85)], [(0, 1, 2)], refs)
++    root = coll('fixture')
++    root['asset_class'] = 'flora'
++    for domain in ('POINT', 'CORNER'):
++        variant = 'fixture_' + domain.lower()
++        vc = coll(variant, root)
++        mats = []
++        for name in ('Glass_A', 'Glass_B'):
++            mat = bpy.data.materials.new(name)
++            mat.node_tree.nodes.get('Principled BSDF').inputs['Roughness'].default_value = .375
++            mats.append(mat)
++        for lod, cells in enumerate((80, 32, 8, 2)):
++            lc = coll(f'{variant}_LOD{lod}', vc)
++            cols = min(cells, 8)
++            rows = cells // cols
++            verts = [(x / 8, y / 10, 0) for y in range(rows + 1) for x in range(cols + 1)]
++            faces = []
++            for y in range(rows):
++                for x in range(cols):
++                    a = y * (cols + 1) + x
++                    b, c, d = a + 1, a + cols + 2, a + cols + 1
++                    faces.extend([(a, b, c), (a, c, d)])
++            ob = obj(f'{variant}_surface{lod}', verts, faces, lc)
++            ob.location = (.125, .25, .5)
++            me = ob.data
++            for m in mats:
++                me.materials.append(m)
++            uv = me.uv_layers.new(name='UVMap')
++            for face in me.polygons:
++                face.material_index = face.index % 2
++                for loop in face.loop_indices:
++                    co = me.vertices[me.loops[loop].vertex_index].co
++                    uv.data[loop].uv = (co.x + (face.index % 2) * .125, co.y)
++            ca = me.color_attributes.new('Mask', 'FLOAT_COLOR', domain)
++            ca.data.foreach_set('color', np.array([rgba(i) for i in range(len(ca.data))], np.float32).ravel())
++            me.color_attributes.active_color = ca
++            me.color_attributes.render_color_index = 0
++            for name, typ, field, values in (
++                ('_limb', 'FLOAT', 'value', [i % 5 for i in range(len(verts))]),
++                ('_pivot', 'FLOAT_VECTOR', 'vector', [[.1234567, .2345678, .3456789] for _ in verts]),
++                ('_glow', 'FLOAT', 'value', [.1123456 + (i % 3) * .1 for i in range(len(verts))]),
++            ):
++                me.attributes.new(name, typ, 'POINT').data.foreach_set(field, np.array(values, np.float32).ravel())
++        marker = bpy.data.objects.new('Interact_' + domain.lower(), None)
++        vc.objects.link(marker)
++        marker.location = (.25, .5, .75)
++    bpy.ops.wm.save_as_mainfile(filepath=str(path))
++
++
++def source_manifest():
++    out = {}
++    for ob in bpy.data.objects:
++        if '_surface' not in ob.name:
++            continue
++        me = ob.data
++        ca = me.color_attributes.active_color
++        triangles = {}
++        for face in me.polygons:
++            corners = []
++            for li in face.loop_indices:
++                vi = me.loops[li].vertex_index
++                co = me.vertices[vi].co
++                uv = me.uv_layers.active.data[li].uv
++                mask = ca.data[vi if ca.domain == 'POINT' else li].color
++                corners.append({
++                    'position': [co.x, co.z, -co.y], 'normal': [0, 1, 0],
++                    'uv': [uv.x, float(np.float32(1) - np.float32(uv.y))],
++                    '_limb': [me.attributes['_limb'].data[vi].value],
++                    '_pivot': list(me.attributes['_pivot'].data[vi].vector),
++                    '_glow': [me.attributes['_glow'].data[vi].value], 'color': list(mask),
++                })
++            triangles.setdefault(rules.material_name(me.materials[face.material_index]), []).append(corners)
++        out[ob.name] = {'triangles': triangles, 'translation': [ob.location.x, ob.location.z, -ob.location.y]}
++    return out
++
++
++def export_fixture(directory):
++    directory.mkdir(parents=True, exist_ok=False)
++    src = directory / 'fixture.blend'
++    build(src)
++    source_hash = hashlib.sha256(src.read_bytes()).hexdigest()
++    core.load(src)  # Assertions derive from saved Float32 values, not the builder's Python literals.
++    manifest = source_manifest()
++    (directory / 'source.json').write_text(json.dumps(manifest, indent=2) + '\n')
++    config = rules.load()
++    report = core.validate_path(config, src, family='creatures')
++    assert report.status == 'PASS', report.failures()
++    roots = export._build_nodes(config, report.model)
++    raw = directory / 'stock-red.glb'
++    export._write(roots, raw)  # Unadapted installed writer, retained before corrected exports.
++    assert exact_masks.format_problems(config, 'creatures', raw), 'baseline unexpectedly exact; inspect backend drift'
++    for family in ('creatures', 'flora', 'props'):
++        args = SimpleNamespace(bake_res=None, report_dir=str(directory / 'reports' / family), verbose=True, quiet=False, compress=False)
++        output = directory / f'{family}-raw.glb'
++        assert export.export_one(config, family, src, output, args), family
++    js, binary = glb.read(directory / 'creatures-raw.glb')
++    cases = ({'componentType': 5123, 'normalized': True}, {'componentType': 5121, 'normalized': True},
++             {'componentType': 5123}, {'normalized': True}, {'type': 'VEC3'})
++    for i, change in enumerate(cases):
++        altered = json.loads(json.dumps(js))
++        index = next(p['attributes']['COLOR_0'] for m in altered['meshes'] for p in m['primitives'])
++        altered['accessors'][index].update(change)
++        bad = directory / f'format-negative-{i}.glb'
++        glb.write(bad, altered, binary)
++        for family in ('creatures', 'flora'):
++            report = Report(str(bad), family, 'export')
++            checks.geometry(config, family, None, report, bad, False)
++            assert any('COLOR_0 must be FLOAT' in f['message'] for f in report.failures()), change
++    assert hashlib.sha256(src.read_bytes()).hexdigest() == source_hash
++    (directory / 'export-result.json').write_text(json.dumps({'source_sha256': source_hash, 'objects': len(manifest), 'negative_formats': len(cases)}, indent=2) + '\n')
++
++
++def validate_compressed(directory):
++    config = rules.load()
++    for family in ('creatures', 'flora', 'props'):
++        report = core.validate_path(config, directory / f'{family}-compressed.glb', family=family, source=directory / 'fixture.blend')
++        core.write_and_print(report, directory / f'{family}-compressed-validation.json')
++        assert report.status == 'PASS', report.failures()
++    expected = json.loads((directory / 'export-result.json').read_text())['source_sha256']
++    assert hashlib.sha256((directory / 'fixture.blend').read_bytes()).hexdigest() == expected
++
++
++def main():
++    p = argparse.ArgumentParser(description=__doc__)
++    p.add_argument('phase', choices=('export', 'validate'))
++    p.add_argument('directory', type=Path)
++    args = p.parse_args(sys.argv[sys.argv.index('--') + 1:])
++    (export_fixture if args.phase == 'export' else validate_compressed)(args.directory)
++
++
++if __name__ == '__main__':
++    main()
+diff --git a/packages/tools/blender/exact_mask/run_boundary.sh b/packages/tools/blender/exact_mask/run_boundary.sh
+new file mode 100644
+index 000000000..992040124
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/run_boundary.sh
+@@ -0,0 +1,16 @@
++#!/bin/bash
++# Deferred serial validation. Run only under the parent's explicit Blender/codec assignment.
++set -euo pipefail
++: "${EXACT_MASK_NODE:?Set the absolute pinned Node executable (>=26)}"
++: "${EXACT_MASK_DEPS:?Set an existing checkout with the pinned dependencies}"
++run_dir=${1:?Supply a new exclusive scratch directory}
++script_dir=$(cd -- "$(dirname -- "$0")" && pwd)
++blender=/Applications/Blender.app/Contents/MacOS/Blender
++mkdir -- "$run_dir"
++mkdir -- "$run_dir/tmp"
++run_dir=$(cd -- "$run_dir" && pwd)
++export TMPDIR="$run_dir/tmp" PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
++"$blender" -b -t 2 --factory-startup --python-exit-code 1 -P "$script_dir/fixture.py" -- export "$run_dir/fixture" > "$run_dir/01-export.log" 2>&1
++"$EXACT_MASK_NODE" --import "$script_dir/dependencies.mjs" "$script_dir/consumer.mjs" "$run_dir/fixture" > "$run_dir/02-consumer.log" 2>&1
++"$blender" -b -t 2 --factory-startup --python-exit-code 1 -P "$script_dir/fixture.py" -- validate "$run_dir/fixture" > "$run_dir/03-validate.log" 2>&1
++printf '%s\n' 'PASS: saved-source export, compression, GLTFLoader/consumer and stock validation' > "$run_dir/result.txt"
+diff --git a/packages/tools/blender/exact_mask/source-evidence.json b/packages/tools/blender/exact_mask/source-evidence.json
+new file mode 100644
+index 000000000..ddbd779ec
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/source-evidence.json
+@@ -0,0 +1,141 @@
++{
++  "task": "P1.E14.T16",
++  "status": "SOURCE_CHECKPOINT_NATIVE_PENDING",
++  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++  "branch": "task/P1-E14-T16-exact-masks",
++  "base_head": "3888f189b16bd9ce70d914eebce3260750ca475d",
++  "base_tree": "00909cfc9b45153e3e18eefbca3227b3b00a30b5",
++  "commands": [
++    {
++      "label": "red-packing",
++      "command": [
++        "/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13",
++        "-B",
++        "packages/tools/blender/exact_mask/cpu_test.py",
++        "--backend",
++        "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2",
++        "--baseline"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 1,
++      "seconds": 0.06673312501516193,
++      "output": "test_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... FAIL\n\n======================================================================\nFAIL: test_exact_float_rgba (__main__.Packing.test_exact_float_rgba)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/cpu_test.py\", line 29, in test_exact_float_rgba\n    self.assertEqual(out.component_type, 5126)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 5123 != 5126\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nFAILED (failures=1)\n"
++    },
++    {
++      "label": "green-cpu",
++      "command": [
++        "/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13",
++        "-B",
++        "packages/tools/blender/exact_mask/cpu_test.py",
++        "--backend",
++        "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 0,
++      "seconds": 0.09150354197481647,
++      "output": "test_all_primitives_lods_and_materials (__main__.Formats.test_all_primitives_lods_and_materials) ... ok\ntest_compression_opt_out_does_not_waive_format (__main__.Formats.test_compression_opt_out_does_not_waive_format) ... ok\ntest_family_scope (__main__.Formats.test_family_scope) ... ok\ntest_float_rgba_and_explicit_false (__main__.Formats.test_float_rgba_and_explicit_false) ... ok\ntest_incompatible_formats (__main__.Formats.test_incompatible_formats) ... ok\ntest_missing_and_invalid_accessor (__main__.Formats.test_missing_and_invalid_accessor) ... ok\ntest_only_collider_node_is_excluded_even_for_shared_mesh (__main__.Formats.test_only_collider_node_is_excluded_even_for_shared_mesh) ... ok\ntest_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... ok\ntest_missing_mask_does_not_change_collider (__main__.Packing.test_missing_mask_does_not_change_collider) ... ok\ntest_ordinary_export_remains_uint16 (__main__.Packing.test_ordinary_export_remains_uint16) ... ok\ntest_original_descriptors_and_arrays_unchanged (__main__.Packing.test_original_descriptors_and_arrays_unchanged) ... ok\ntest_other_attributes_unchanged (__main__.Packing.test_other_attributes_unchanged) ... ok\ntest_reject_already_integer_wrong_shape_and_type (__main__.Packing.test_reject_already_integer_wrong_shape_and_type) ... ok\ntest_restore_on_success_exception_and_nested_scope (__main__.Packing.test_restore_on_success_exception_and_nested_scope) ... ok\ntest_restore_when_real_packer_extension_raises (__main__.Packing.test_restore_when_real_packer_extension_raises) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.023s\n\nOK\n"
++    },
++    {
++      "label": "final-static",
++      "command": [
++        "/opt/homebrew/bin/python3",
++        "-B",
++        "/tmp/space-e14t16-source-2wuGqU/static.py"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 0,
++      "seconds": 0.06636920798337087,
++      "output": "{\"python_parsed\": 6, \"material_validation_515ba1f_exact\": true, \"contracts_compressor_consumer_unchanged\": true}\n"
++    },
++    {
++      "label": "final-cpu",
++      "command": [
++        "/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13",
++        "-B",
++        "packages/tools/blender/exact_mask/cpu_test.py",
++        "--backend",
++        "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 0,
++      "seconds": 0.20471129100769758,
++      "output": "test_all_primitives_lods_and_materials (__main__.Formats.test_all_primitives_lods_and_materials) ... ok\ntest_compression_opt_out_does_not_waive_format (__main__.Formats.test_compression_opt_out_does_not_waive_format) ... ok\ntest_family_scope (__main__.Formats.test_family_scope) ... ok\ntest_float_rgba_and_explicit_false (__main__.Formats.test_float_rgba_and_explicit_false) ... ok\ntest_incompatible_formats (__main__.Formats.test_incompatible_formats) ... ok\ntest_missing_and_invalid_accessor (__main__.Formats.test_missing_and_invalid_accessor) ... ok\ntest_only_collider_node_is_excluded_even_for_shared_mesh (__main__.Formats.test_only_collider_node_is_excluded_even_for_shared_mesh) ... ok\ntest_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... ok\ntest_missing_mask_does_not_change_collider (__main__.Packing.test_missing_mask_does_not_change_collider) ... ok\ntest_ordinary_export_remains_uint16 (__main__.Packing.test_ordinary_export_remains_uint16) ... ok\ntest_original_descriptors_and_arrays_unchanged (__main__.Packing.test_original_descriptors_and_arrays_unchanged) ... ok\ntest_other_attributes_unchanged (__main__.Packing.test_other_attributes_unchanged) ... ok\ntest_reject_already_integer_wrong_shape_and_type (__main__.Packing.test_reject_already_integer_wrong_shape_and_type) ... ok\ntest_restore_on_success_exception_and_nested_scope (__main__.Packing.test_restore_on_success_exception_and_nested_scope) ... ok\ntest_restore_when_real_packer_extension_raises (__main__.Packing.test_restore_when_real_packer_extension_raises) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.025s\n\nOK\n"
++    },
++    {
++      "label": "consumer-syntax",
++      "command": [
++        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
++        "--check",
++        "packages/tools/blender/exact_mask/consumer.mjs"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 0,
++      "seconds": 0.022705167008098215,
++      "output": ""
++    },
++    {
++      "label": "resolver-syntax",
++      "command": [
++        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
++        "--check",
++        "packages/tools/blender/exact_mask/dependencies.mjs"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 0,
++      "seconds": 0.020197874982841313,
++      "output": ""
++    },
++    {
++      "label": "launcher-syntax",
++      "command": [
++        "/bin/bash",
++        "-n",
++        "packages/tools/blender/exact_mask/run_boundary.sh"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 0,
++      "seconds": 0.002599624975118786,
++      "output": ""
++    },
++    {
++      "label": "affected-candidates",
++      "command": [
++        "/opt/homebrew/bin/python3",
++        "-B",
++        "/tmp/space-e14t16-source-2wuGqU/audit.py"
++      ],
++      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++      "exit": 0,
++      "seconds": 0.057922666950616986,
++      "output": "biped.glb Counter({\"(5123, 'VEC4', True)\": 36}) f9294a466d6223f695f102dc1a13ed526f155e67\nflyer.glb Counter({\"(5123, 'VEC4', True)\": 36}) f9294a466d6223f695f102dc1a13ed526f155e67\nquad_grazer.glb Counter({\"(5123, 'VEC4', True)\": 16}) f9294a466d6223f695f102dc1a13ed526f155e67\nquad_heavy.glb Counter({\"(5123, 'VEC4', True)\": 24}) f9294a466d6223f695f102dc1a13ed526f155e67\nquad_small.glb Counter({\"(5123, 'VEC4', True)\": 24}) f9294a466d6223f695f102dc1a13ed526f155e67\noutpost_drone.glb Counter() f9294a466d6223f695f102dc1a13ed526f155e67\noutpost_overseer.glb Counter() f9294a466d6223f695f102dc1a13ed526f155e67\ntree_blob_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_cactus_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_conifer_t04.glb Counter({\"(5126, 'VEC4', False)\": 12}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_coral_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_mushroom_t04.glb Counter({\"(5126, 'VEC4', False)\": 12}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_palm_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_round_t04.glb Counter({\"(5126, 'VEC4', False)\": 12}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_spiral_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\nnon_tree_foliage.glb Counter({\"(5126, 'VEC4', False)\": 36}) a46e7c4d444befd6efe6e06b9134b3a41abcb639\nnon_tree_resources.glb Counter({\"(5126, 'VEC4', False)\": 48}) a46e7c4d444befd6efe6e06b9134b3a41abcb639\nnon_tree_stone.glb Counter({\"(5126, 'VEC4', False)\": 40}) a46e7c4d444befd6efe6e06b9134b3a41abcb639\n"
++    }
++  ],
++  "affected_candidates": {
++    "command": [
++      "/opt/homebrew/bin/python3",
++      "-B",
++      "/tmp/space-e14t16-source-2wuGqU/audit.py"
++    ],
++    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
++    "exit": 0,
++    "seconds": 0.057922666950616986
++  },
++  "dependency_snapshot": {
++    "before": "/tmp/space-e14t16-source-2wuGqU/before.json",
++    "after": "/tmp/space-e14t16-source-2wuGqU/after.json",
++    "equal": true,
++    "sha256": "d4c733039f979e9c625efce58b92ab51ddf73ed28a98a2bd778676bc3216b479",
++    "scope": "126 installed backend .py files, local node_modules presence/symlinks, ignored file list, lockfile/root/tools package files; no shared Node dependencies executed",
++    "observed_mutation": false
++  },
++  "red_test_sha256": "0ff4344c0c725fc26954afe02280d1300496f0cd7acc194c8a5d0304f81fa008",
++  "trigger_sha256": "e0f017545582804d4dc1624529388ec63ef4dc83bf5ec2d5f75ebbdd355ce3b5",
++  "pending": [
++    "actual saved-source Blender export",
++    "stock meshopt codec and actual GLTFLoader consumer",
++    "existing pipeline/515ba1f material regressions",
++    "fresh independent review",
++    "parent integration checks"
++  ],
++  "limits": "CPU packer test uses real installed pure Python modules but no bpy runtime, mesh extraction, codecs or loader; no asset regeneration, installs, dependency links, services, GPU, nested agents, push, PR or merge."
++}

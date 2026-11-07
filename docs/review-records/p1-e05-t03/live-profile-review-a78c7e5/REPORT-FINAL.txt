@@ -1,0 +1,83 @@
+TASK: P1.E05.T03 — independent Appendix C.2 review of the live profile/private-TMP correction.
+STATUS: DONE (read-only SOURCE/CPU review).
+VERDICT: PASS for the exact pinned correction. No substantiated reaching blocker or required source revision remains. This is not native, visual, full T03, CI, release or merge qualification.
+SUMMARY: Fresh deterministic filesystem races through native.capture -> StationJob.wait -> the retained observer reproduce the old delete/rename failure and silent subtree-coverage loss. The correction retains bounded partial coverage without claiming atomic or settled completeness. Root/owner/type/I/O/deadline/budget refusals still drain. Actual CPU caller publications retain partial evidence and a subsequent cyclic primary failure; authenticated OS exits and successor gates agree. Cache reads remain before capture/after release and strict copy/hash races refuse. Both original native attempts remain FAILED/SPENT.
+
+FILES CHANGED: None in the candidate, dependencies, shared helpers, assets, readiness, supplied reports, original evidence or real prospective paths. All new scripts, fixtures and results are confined to /private/tmp/lrv-1rcMrgis. No nested agents, branch changes, native jobs, grants for real paths, browser/GPU/Blender/codec/server/DB activity, installs/hydration, source/cache edits, screenshot cleanup, push, PR or merge.
+
+PIN / REVIEW SCOPE
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8
+Branch: task/P1-E05-T03
+Base: 032fe44cd6ebdbeb61c21a89014704f66b194950
+Base tree: c9f595de7b311de57d656053c8e5df93ac617583
+Head: a78c7e5f58e399fcecab0197b65ffe42500cb16a
+Tree: f5901773ce02f57f9bd28fc0ea16bbf2f133c7e0
+Readiness SHA256: 3aa380e3d0d655cf79ba8d565cbb683b873d7b27d694638124274654cbddc1b9
+Inventory SHA256: 5c08f26d1fdd8c2ed074293b2efcd5bed18d410cbe1f2bd3ea14100db996c67e
+Native SHA256: d54f9208808484d71444ac32636988b8ae3eb800d3a4af9c9a7a339badbdead9
+Caller SHA256: fd69f37b97b9bbecdd469d6fe44c73bbe83d56c2f9d9e0a902da150b7a07996c
+Clean branch/HEAD/tree/readiness and prospective absence verified before and after.
+Read Plan 0.3, 0.9.5, C.2/C.4; author APPENDIX-C2.md, POST-COMMIT.json, FINAL-COMMANDS.md, exact RED/GREEN logs/drivers/provenance, failure tails, source-closure/static-reuse proofs; prior independent native-fix REPORT-FINAL.txt and seal. Inspected changed code and real caller/helper/receipt/strict-copy routes. No applicable AGENTS.md was found. No mandatory 0.9.5 REVISE condition was introduced in this scoped delta. The task brief's SOURCE/CPU and no-merge limits govern this review.
+
+FINDINGS / SEVERITY / LOCATION / DISPOSITION
+No new actionable finding; severity: none. No unsubstantiated live generated-cache defect is asserted.
+- Live descendant delete/rename and subtree route loss: FIXED in native.py:49-145, wired at native.py:244-266. Every sample explicitly records atomic=false, settled=false. Descendant ENOENT and replaced directory identities retain losses; coverage=enumerated describes completed enumeration only. It is not a proof of an immutable complete filesystem snapshot or a quota.
+- Root identity/owner/type, entry owner/symlink/unsupported type, unknown I/O and deadline: preserved refusals. Refusal retains the interrupted sample and original callback failure before the wait helper can normalize it; cleanup still executes.
+- Live evidence bounds: constants 100000 entries, 32 losses, depth64, 2-second sample deadline, 2 seconds of repeatedly partial coverage, 128 partial samples and 256KiB partial evidence are present. Partial samples remain in incomplete across later enumerated samples. Failing samples are intentionally retained even when they trigger a limit; the limit triggers refusal, not evidence deletion. Existing 64MiB/16MiB/512MiB/1GiB observed working ceilings remain.
+- Strict release/archive: native.py:275-319 is byte-identical to base (SHA256 6d63779a641297573f8beb583656196b7aca99b31db6e653d42a71be58eeab23). size() and observed_helpers() ASTs are identical. caller.py is AST-identical after replacing only the prospective path identity literal. Cache inventory/content/copy code and helper source are unchanged.
+- Prior native encoding/MTL fixes: FIXED, preserved by exact base provenance, unchanged boundary/bindings/helper/entry/protocol code, current observer/publication controls, and authenticated prior report a60b490b2127b8c8129b8386398603ed4d2ef0b56f7fb89e120cf173c537c706. No fresh executable-signature/native qualification is claimed.
+- Caller R1-R5: FIXED, preserved. StageReceipts schema/error precedence and receipt graph contract cross the actual current observer and seven-process chain. Cyclic/raw failure evidence crosses actual publication. Falsy JS failure, CommonJS Playwright identity, complete PNG zlib/palette checks, raise/timeline invariants, original material readiness/runner cleanup/export receipts retain unchanged source/hash proof and the prior sealed review; their older runtime counts are not fresh results here.
+- T15 adoption: unchanged exact binary patch parity SHA256 febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345. No shared lifecycle or client broad regression rerun.
+
+VERIFY — FRESH CPU RESULTS
+All commands, exact argv/environment, OS exits, durations, logs and SHA256 values are in COMMANDS.txt and commands.jsonl. Python is /opt/homebrew/opt/python@3.14/bin/python3.14 -B; bytecode and Node compile cache disabled, numeric thread caps1, private TMPDIR/VM_REVISION_TMP. run.py wraps verification in sandbox-exec: writes denied outside this exclusive root and /dev/null,/dev/tty, external networking denied. Fixtures execute sequentially; at most two active lightweight CPU contexts (one Python execution plus its deterministic writer, or a parent and one sequential child). Supervisors wait rather than doing parallel CPU work.
+
+1. independent-base: exit0 means expected old failures reproduced, not that old behavior passed. base-native.py is the exact Git blob, SHA256 40faffc819e9cb401233c7281e5c5f7494ac0c538d492bc018dfff20f27c8850. A real writer deletes/renames an enumerated leaf: actual wait returns observer_failed with FileNotFoundError; mandatory inert drain remains. Real subtree deletion makes the old walk return completed with no retained incomplete coverage. A fourth directory-open control has no trigger on the base path and is explicitly not claimed as a reproduction. observer.py + base-*.json retain source inputs, raw facts and trace.
+
+2. independent-head: exit0, sixteen independent actual-observer controls. Delete, rename, silent-directory removal and replacement between stat/open yield partial coverage and completed wait; only the deliberately refused inert drain prevents overall success. Pre-sample and mid-sample root replacement, actual symlink, injected wrong UID, unknown EIO with original byte attribute, loss/entry/partial/fact limits, real depth overflow, expired repeated-partial window and actual unmodified two-second SIGALRM all refuse before require_browser. Primary identity and partial evidence survive; mandatory drain runs. Every tracked descriptor closes, including all68 opens in the depth case. The real-deadline case reports Deadline expired after 2s and leaves no armed timer. Entry/loss/partial/fact limit tests lower constants on tiny fixtures to test refusal; no100k-file or large-memory stress is claimed. Repeated-partial age is seeded deterministically; no two-second busy loop.
+
+3. Supplied seven live-usage methods: all seven reached passing assertions across live-seven and unix-socket-control. Six passed in the initial run; the Unix socket metadata method hit this review's network-bind sandbox restriction (exit1), then passed alone after allowing local Unix socket binding (exit0). The initial failure is retained; no candidate edit. These methods also cover profile/private delete/rename, owner/EACCES/EIO/SIGALRM, FIFO/socket metadata, partial recovery/alias retention, byte limits and final strict size/private archive mutation. The actual strict final size raises FileNotFoundError; preserve_private_tmp after source mutation refuses Temporary namespace copy differs and retains both original and copied fixture bytes.
+
+4. seven-process-chain: exit0, one focused unchanged protocol method, seven real sequential child OSexit0s, actual caller/native/helper bodies with inert native/kernel/start/drain/decoder ports, exactly101 inert files (94 .png names and7 readouts). These are CPU text fixtures, not images. Actual consumption/result writes, parent bounded hash reads, source head, root protocol shape and next-unit admission pass. Each result remains accepted=false, checksPassed=true, released=true, AWAITING_CALLER_COMPLETION. The chain.json under t/ retains per-process heads and receipt hashes. The other17 of the author's18 neighbor methods were not rerun; author final-observer-controls exit0 for25 methods is sealed historical evidence, and unchanged sources were verified.
+
+5. partial-success: actual OSexit0. A real profile-leaf deletion and physical deps_temp_a4ff6522 -> deps cache rename occur inside the live sampler callback. Caller result and consumption are written to real scratch files. authenticate exit0 reconstructs the graph and verifies last is incomplete[0], retained ENOENT/errno2, atomic=false, settled=false, cyclic unknown facts, exact hashes and real successor admission without dispatch. Altering the disposable predecessor result after authentication makes the same successor gate refuse hash mismatch; authenticated original bytes are separately preserved.
+Result SHA256: 7ee3b5689f2171a4255c2e161bc97e1efd8ec64a16545848ecf53e546a155704
+Consumption SHA256: 6da7c5bd39dfdba41cee80abd8d28f6919fb5dbcc371b08788370a98770835bb
+Authenticated original result bytes:106028 (the deliberately altered scratch result has one added byte).
+
+6. partial-primary: intentional actual OSexit1, durable failure result. After the same real profile deletion, an injected EIO at the actual callback boundary remains the primary. Its byte marker00ff, self-cycle and attached partial evidence survive disk publication and authenticated graph reconstruction. Native cleanup/drain completes, caller checksPassed/released remain false, no decoder executes and successor admission refuses nonzero OS exit. No failure is converted into success. The review-only child derives from the supplied CPU fixture; exact original and small independent injection are preserved, with native process ports still inert.
+Result SHA256: d0e283f192cb091f15f5c63f03e006e3f3500838b25ba3a2d1687b25402c3d71
+Consumption SHA256: 80537d7d0efb458e88fcc4bcf9a9cda00375db09f0024d04853acf81f73929ac
+Result bytes:68645.
+
+7. Cache reachability and strict races: the successful actual caller records cache inventory only before-capture and released; strict native.size only released. Live sampler roots are helper scratch, job output and private TMP, never generated caches. The error path never reaches post-capture cache work. strict-cache-races exit0: three-byte source and copied-file substitutions, with size and mtime restored, independently raise Snapshot hash mismatch. Source/copy evidence remains. This tests actual cache copy/reconciliation, not a helper-only assertion of live safety.
+
+8. static exit0:26 current source-closure hashes verified;22 packet source/inventory files byte-identical to base;17 Python sources compiled in memory; caller-only-literal normalization, size/observed_helpers AST equality, strict final segment equality, shared/helper/protected-report hashes, T15 parity and git diff --check pass. Author compressed archive SHA2569dbca6d682882f074d17f44e7045df0ea224b4f299512f67b48e471d32b2ded6 verified over10143459 compressed bytes. Its858501218 logical-byte corpus was neither extracted nor traversed. Older lifecycle100/client110/type/PNG/timeline results remain historical.
+
+9. history exit0: all25 author command log digests verified, including exact callback RED exit1 and silent-subtree RED exit1 and final observer GREEN exit0. The original author intermediate two-subtree GREEN failure, prelaunch executable typo and initial silent-RED SyntaxError remain retained in their logs/failure tails; none is erased or reclassified. The prior independent native-fix report/index match its seal. Seventeen small original evidence/reader files, including the effects envelope and four parts, match historical hashes.
+
+ORIGINAL NATIVE DISPOSITIONS — UNCHANGED
+VM unit at84d7098432de296b1db916849804c912d1558cd3: FAILED/SPENT, OSexit1,14.188107958994806s, zero images, missing full caller result/fallback and accepted=false in retained parent observation. Historical release is not successful capture. No repeated process/namespace/GPU observation or cleanup here.
+Effects pilot2 at4795d01fa0098d0b29310124fdeee06fd5fa4e24: FAILED/SPENT, OSexit1,47.95025125000393s, eleven PNGs/entry checks passed but captureClean=false. Shared Dictionary FileNotFoundError at writers/capture-observer and HelperWorkFailure cleanup remain intact. Envelope SHA256291b242d830b1de6e883b51d57abe4de3b4ae442d0b4973ce57620a835c02f6e. No visual inspection or reclassification.
+
+VERIFY — PRESERVATION AND RESOURCE LIMITS
+before/after both exit0 and complete saved JSON equality: all52 real prospective paths absent; all822 protected entries unchanged in device/inode/mode/uid/gid/size/mtime/ctime/flags/link metadata; dependency metadata unchanged across15378 node_modules entries,20 browser-tree entries and205 Pillow-tree entries;39 source/helper hashes and24 retained input/report hashes unchanged. Candidate remains clean at the exact head/tree. The write sandbox prevents review fixtures from writing those trees. Atime equality is not asserted.
+The author full-content before/after/postcommit audit files are byte-identical and their sealed SHA256 was verified. This review does NOT claim a fresh full content rehash of protected/dependency trees: protected files alone total898263895B and frozen dependency contents total514771267B. A new full hash audit would require at least1413035162B of sequential content reads; it was not run under the quiet-window/no-heavy-I/O instruction. It is not necessary to reproduce the narrow observer defect; no larger runtime/stress test was needed. Likewise no author858MB corpus replay. The largest reported child RSS in completed commands was61587456B (audit), below the256MiB stress restriction; this is a recorded per-child measurement, not an aggregate host-memory claim.
+
+DECISIONS
+- Distinguish non-atomic live usage evidence from final settled release/archive proof. Only bounded descendant disappearance/identity loss is tolerated; owner/type/root/unknown errors still refuse.
+- Cross the actual observer and publication boundaries with deterministic tiny filesystem writers; inject only process/kernel/resource/native ports and named faults. Do not infer native readiness from inert CPU results.
+- Reuse pin/hash proof for unchanged suites and prior findings. No reaching live generated-cache reader was found; no cache implementation change is proposed.
+- Honor the quiet window with metadata before/after and enforced private writes; state the exact unperformed bulk-content audit rather than claiming it ran.
+
+OUT OF SCOPE FOUND
+No new source blocker outside this delta. Full T03/native/visual acceptance, fresh parent capacity/schedule and any real one-use grant remain open. The enabled source remains ENABLED_AWAITING_PARENT_GRANT, nativeQualified=false. No launch authorization, production/CI qualification or merge approval is inferred. Both old authorizations remain spent.
+
+ARTIFACTS
+/private/tmp/lrv-1rcMrgis/REPORT-FINAL.txt
+COMMANDS.txt / commands.jsonl / FAILURE-TAILS.json
+before.json / after.json / base-provenance.json / base-native.py
+observer.py / base-observer-summary.json / head-observer-summary.json / base-*.json / head-*.json
+static-result.json / history-result.json / publication-authenticated.json / cache-races.json
+partial-child-original.py / partial-child.py / publication-fixtures.json / partial-success-authenticated-original.json
+All original review failures and every disposable fixture retained under t/. FINAL-INDEX.json and SEAL.json bind the report and regular artifact bytes; nonregular entries are described without following/opening. Artifacts are made read-only after verification. The seal is integrity bookkeeping, not a native execution receipt.

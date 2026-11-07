@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-07T11:57:00.231437+00:00",
+  "slot": "parent:t13-dd070eb-observer3-20261107",
+  "released": true,
+  "outcome": "FAILED_SPENT",
+  "exit": {
+    "exitCode": 1,
+    "wallSeconds": 35.477066999999806,
+    "finishedAt": "2026-11-07T11:56:12.501365+00:00"
+  },
+  "nativeFailure": "Error: Malformed category receipt",
+  "cleanupErrors": [
+    "probe-drain: Error: page.evaluate: Target page, context or browser has been closed"
+  ],
+  "totals": {
+    "preparations": 0,
+    "warmUpFrames": 0,
+    "frames": 0,
+    "dependentPasses": 0,
+    "preflightFences": 0,
+    "controlFences": 0,
+    "png": 0,
+    "queries": 0,
+    "segments": 0,
+    "bytes": 0,
+    "reads": 0,
+    "events": 0
+  },
+  "summary": null,
+  "physicalSettlement": "DRAINED_ARCHIVED_AUDITED",
+  "knownPids": [
+    84308,
+    84311,
+    84333,
+    84334,
+    84335,
+    84336,
+    84337,
+    84342,
+    84344,
+    84345,
+    84350,
+    84352,
+    84354,
+    84358,
+    84359,
+    84362,
+    84366,
+    84367,
+    84368,
+    84369,
+    84370,
+    84471,
+    84745,
+    96000,
+    96002,
+    96007,
+    96011
+  ],
+  "remaining": [],
+  "launchctl": {
+    "argv": [
+      "/bin/launchctl",
+      "print",
+      "gui/501/local.stations.round4.73f09fc379274b70964f40e5f75076d9"
+    ],
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.73f09fc379274b70964f40e5f75076d9\" in domain for user gui: 501\n"
+  },
+  "pathPresence": {
+    "/private/tmp/sbr-piulowbk/playwright_chromiumdev_profile-dEkDDs": false,
+    "/private/tmp/sbr-piulowbk": false
+  },
+  "resultSha256": "f1d8cd7ce85143b49f5c52d202d39559cb734320986ab123c1cfba12b1742c6b",
+  "packetSha256": "62754edcdb44872b48478c4f097f770ff8c1544224f08c9866c43670ad736271",
+  "sourceClean": true,
+  "scope": "Physical release only; no timing, 16.67ms, visual, or whole-task acceptance"
+}

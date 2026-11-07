@@ -1,0 +1,456 @@
+Exact executed verification commands; cwd/env/log hash/exit included.
+
+{
+  "label": "before",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/audit.py",
+    "before"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.42752391699468717,
+  "log": "/private/tmp/lrv-1rcMrgis/before.log",
+  "sha256": "b2a103b24eca0410b5ff5e8c84408a9eb9ed265dd5d5204dbcc86bbba490e9e0",
+  "childMaxRssBytes": 50511872
+}
+
+{
+  "label": "live-seven",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-m",
+    "unittest",
+    "test_live_usage",
+    "-v"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 1,
+  "seconds": 0.4920472080120817,
+  "log": "/private/tmp/lrv-1rcMrgis/live-seven.log",
+  "sha256": "6dfcf7d56e2af9442a106617f0ea1abb76e0e311594b645d74193d669303731d",
+  "childMaxRssBytes": 41992192
+}
+
+{
+  "label": "unix-socket-control",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-m",
+    "unittest",
+    "test_live_usage.LiveUsageTests.test_byte_budgets_special_metadata_growth_and_fd_closure",
+    "-v"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.08192295802291483,
+  "log": "/private/tmp/lrv-1rcMrgis/unix-socket-control.log",
+  "sha256": "885f66adf657dc3cee58313382e58f82fb40e05d1f6045ca9b1a045c78a54d8c",
+  "childMaxRssBytes": 34340864
+}
+
+{
+  "label": "independent-base",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/observer.py",
+    "base"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.1930579170002602,
+  "log": "/private/tmp/lrv-1rcMrgis/independent-base.log",
+  "sha256": "46d7f8a65ef7d17a0c617bb663dfa6946b913f57cdd457a521d6e07bda1134e9",
+  "childMaxRssBytes": 39616512
+}
+
+{
+  "label": "independent-head",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/observer.py",
+    "head"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 2.408856540976558,
+  "log": "/private/tmp/lrv-1rcMrgis/independent-head.log",
+  "sha256": "bc3bfd13f2ddd669c5a177a17e69453be9d457b6f3a581b32ee4fe5ca1d954db",
+  "childMaxRssBytes": 43728896
+}
+
+{
+  "label": "static",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/static.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.2604077919968404,
+  "log": "/private/tmp/lrv-1rcMrgis/static.log",
+  "sha256": "ac77127f161fe549888b3012123ce37de68fd4dbf16fccea6ef85a1db69f5a81",
+  "childMaxRssBytes": 33275904
+}
+
+{
+  "label": "seven-process-chain",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-m",
+    "unittest",
+    "test_protocol.ProtocolTests.test_seven_actual_helper_processes_publish_admissible_protocol_receipts",
+    "-v"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 1.9250229159952141,
+  "log": "/private/tmp/lrv-1rcMrgis/seven-process-chain.log",
+  "sha256": "367f1e06a6e7da611279f7b5405286bbacdf515fd94f92f1a5478c1cd4efee98",
+  "childMaxRssBytes": 43565056
+}
+
+{
+  "label": "publication-setup",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/publication-setup.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.1938332500285469,
+  "log": "/private/tmp/lrv-1rcMrgis/publication-setup.log",
+  "sha256": "e3a820f0e6db084713fcd83a47e220110ec982d4d36c98ff926f57c04b80524d",
+  "childMaxRssBytes": 34684928
+}
+
+{
+  "label": "partial-success",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/partial-child.py",
+    "--inert-cpu-fixture",
+    "/private/tmp/lrv-1rcMrgis/t/vm-protocol-vu8gv059",
+    "0",
+    "success"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.2601649170392193,
+  "log": "/private/tmp/lrv-1rcMrgis/partial-success.log",
+  "sha256": "0ac730470711fa8230c66cbcb501de15454a6b9a80915d02eee73de4c41188c7",
+  "childMaxRssBytes": 37715968
+}
+
+{
+  "label": "partial-primary",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/partial-child.py",
+    "--inert-cpu-fixture",
+    "/private/tmp/lrv-1rcMrgis/t/vm-protocol-9chixmyi",
+    "0",
+    "primary"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 1,
+  "seconds": 0.18798766599502414,
+  "log": "/private/tmp/lrv-1rcMrgis/partial-primary.log",
+  "sha256": "dae14bb32971940c5f3cc01fd4fdf8adeb0c1607d04a704092bc28683fa122b5",
+  "childMaxRssBytes": 36618240
+}
+
+{
+  "label": "authenticate",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/authenticate.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.19541283301077783,
+  "log": "/private/tmp/lrv-1rcMrgis/authenticate.log",
+  "sha256": "e4f73eb2c3bd06db334eb3342b597ebac5f749be780e5250a08d6fed8958b036",
+  "childMaxRssBytes": 37388288
+}
+
+{
+  "label": "strict-cache-races",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/cache-races.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.13026895903749391,
+  "log": "/private/tmp/lrv-1rcMrgis/strict-cache-races.log",
+  "sha256": "524d875b2c4d10ae968f4fa1380a7938979c52a356828a3f307b66b00605f60e",
+  "childMaxRssBytes": 34373632
+}
+
+{
+  "label": "history",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/history.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.08672191697405651,
+  "log": "/private/tmp/lrv-1rcMrgis/history.log",
+  "sha256": "ca4885b3a8f46f06cdbc66c827cc35e794ba9759eed3c3155bdc2154080d809f",
+  "childMaxRssBytes": 52838400
+}
+
+{
+  "label": "after",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/lrv-1rcMrgis/sandbox.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/lrv-1rcMrgis/audit.py",
+    "after"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "TMPDIR": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_REVISION_TMP": "/private/tmp/lrv-1rcMrgis/t",
+    "VM_PACKET_UNDER_TEST": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "exit": 0,
+  "seconds": 0.4442298330250196,
+  "log": "/private/tmp/lrv-1rcMrgis/after.log",
+  "sha256": "b2a103b24eca0410b5ff5e8c84408a9eb9ed265dd5d5204dbcc86bbba490e9e0",
+  "childMaxRssBytes": 61587456
+}

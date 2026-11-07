@@ -1,0 +1,146 @@
+TASK: P1.E14.T16 Preserve exact colour masks through stock export (deps T12).
+STATUS: BLOCKED — source checkpoint committed; actual-boundary qualification pending the parent's explicit resource assignment. Not full task acceptance.
+
+SUMMARY:
+The stock export now scopes an in-process adapter around _write only for colorMask families whose effective geometry.quantize is false (creatures/flora). It sends the already mapped Float32 RGBA array to Blender's ordinary float accessor writer before the UINT16 clip/multiply/round step. No casts, alternate consumer attributes, source edits or alpha removal. The backend function is restored in finally on success and failure. Stock exported-geometry validation checks every render primitive's actual COLOR_0 accessor for FLOAT/VEC4/non-normalized, including all LODs, with only collider nodes outside the mask contract. Other families, compressor code, materials, geometry/rig paths and markers are untouched. A saved-source fixture and serial launcher are prepared, not executed.
+
+PROVENANCE:
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Initial assigned branch: t3/preserve-exact-colour-masks (clean).
+Task branch: task/P1-E14-T16-exact-masks
+Base HEAD: 3888f189b16bd9ce70d914eebce3260750ca475d
+Base tree: 00909cfc9b45153e3e18eefbca3227b3b00a30b5
+Checkpoint HEAD: 75cf76fd9581d492bdf81de7c385ccd84ecc5eb9
+Checkpoint tree: 381e5246f1559971441f589e2d7f43265688ca03
+Patch SHA256: 2b56c4157eaca05e92ed7cd73a93e4e2ed86b19b871f82de231c7893af714cfd
+Commands: pwd; git status --short; git branch --show-current; git rev-parse HEAD HEAD^{tree} before edits; git branch -m task/P1-E14-T16-exact-masks; git commit -m "P1.E14.T16: preserve exact RGBA masks before Blender packing" (exit 0); git rev-parse HEAD HEAD^{tree}; git status --porcelain=v1 --untracked-files=all --ignored=matching (exit 0, empty); git diff 3888f189b16bd9ce70d914eebce3260750ca475d..HEAD --check (exit 0).
+No extra worktree, push, PR, merge, agent, grant, installation, dependency link or shared-file edit.
+
+FILES CHANGED:
+packages/tools/blender/artlib/checks.py
+packages/tools/blender/artlib/exact_masks.py
+packages/tools/blender/artlib/export.py
+packages/tools/blender/exact_mask/README.md
+packages/tools/blender/exact_mask/backend_cpu.py
+packages/tools/blender/exact_mask/consumer.mjs
+packages/tools/blender/exact_mask/cpu_test.py
+packages/tools/blender/exact_mask/dependencies.mjs
+packages/tools/blender/exact_mask/fixture.py
+packages/tools/blender/exact_mask/run_boundary.sh
+packages/tools/blender/exact_mask/source-evidence.json
+Production change: export.py (+scope around existing two-argument _write), exact_masks.py (77-line scoped adapter and accessor validation), checks.py (+accessor format failures). Everything else is focused task-local test/fixture/evidence code.
+
+VERIFY:
+
+red-packing:
+Command argv: ["/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13", "-B", "packages/tools/blender/exact_mask/cpu_test.py", "--backend", "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2", "--baseline"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 1
+Retained expected RED (before production edit), last 20 lines:
+test_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... FAIL
+
+======================================================================
+FAIL: test_exact_float_rgba (__main__.Packing.test_exact_float_rgba)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/cpu_test.py", line 29, in test_exact_float_rgba
+    self.assertEqual(out.component_type, 5126)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 5123 != 5126
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
+
+green-cpu:
+Command argv: ["/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13", "-B", "packages/tools/blender/exact_mask/cpu_test.py", "--backend", "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 0
+
+final-static:
+Command argv: ["/opt/homebrew/bin/python3", "-B", "/tmp/space-e14t16-source-2wuGqU/static.py"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 0
+
+final-cpu:
+Command argv: ["/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13", "-B", "packages/tools/blender/exact_mask/cpu_test.py", "--backend", "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 0
+
+consumer-syntax:
+Command argv: ["/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node", "--check", "packages/tools/blender/exact_mask/consumer.mjs"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 0
+
+resolver-syntax:
+Command argv: ["/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node", "--check", "packages/tools/blender/exact_mask/dependencies.mjs"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 0
+
+launcher-syntax:
+Command argv: ["/bin/bash", "-n", "packages/tools/blender/exact_mask/run_boundary.sh"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 0
+
+affected-candidates:
+Command argv: ["/opt/homebrew/bin/python3", "-B", "/tmp/space-e14t16-source-2wuGqU/audit.py"]
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Exit: 0
+
+Final CPU result: 15/15 tests PASS. Real installed pure-Python packer and Accessor/BinaryData, with non-grid RGBA; bit-identical float payload, rejection of already integer/wrong shape/type streams, success/failure/nested restoration, ordinary other-family UINT16 behavior, untouched secondary colors/rig/position/normal payloads, exact-family metadata positives and negatives across LODs/material primitives/collider sharing. No bpy runtime, codec, GLTFLoader or saved-source mesh extraction ran. Python interpreter was Blender's bundled python3.13, not the Blender executable. NumPy 2.3.4; Node v26.12.1 used only for syntax checks.
+Syntax: six Python sources ast.parse PASS, both Node scripts --check PASS, shell bash -n PASS. git diff --cached --check and committed diff --check PASS. Exact 515ba1f material section in checks.py and full materials.py are byte-identical; families.json, meshopt.ts and modelLibrary.js equal parent bytes.
+Dependency/ignored audit: before.json == after.json (cmp exit 0), SHA256 d4c733039f979e9c625efce58b92ab51ddf73ed28a98a2bd778676bc3216b479. Snapshot covers 126 installed backend Python sources, missing local node_modules at root/tools/client, empty ignored files, lockfile and root/tools package manifests. No mutation observed within this snapshot. Shared Node dependencies were inspected read-only but not executed. Python used -B; no bytecode writes. Not a whole-machine mutation audit. Evidence scratch measured 128 KiB before this report/patch; task-local files ~52 KiB before evidence JSON; far below 256 MiB.
+Failed discovery attempts (read-only, no runtime qualification claimed): initial ls found no local node_modules directories; backend search named nonexistent exp/mesh.py before correcting to primitives.py; an unquoted t04* shell glob had no matches before locating flora_trees/flora directories with rg --files; inventory found no current-checkout models/flora directory and no root-level shared three link (client-scoped dependency exists). These did not mutate files. The only executed test failure was the preserved expected RED above.
+
+DECISIONS:
+1. Official hook or maintained adapter -> scoped primitive packer adapter. Installed gather_attributes_change executes before COLOR_0 is added; gather_attribute_change after integer rounding. At gather_primitive_attributes the POINT/CORNER and material/loop mapping is already complete and data still np.float32. A type/shape guard fails closed if this private backend boundary changes.
+2. Rebuild mapping or reuse it -> retain the backend's mapped array and change only its descriptor in a copied dictionary. Never cast rounded data or carry a second mask to the consumer. COLOR_1 and all non-mask payloads take their original path.
+3. Family scope -> existing colorMask + effective quantize=false, not a new contract or family budget. Compression opt-outs/legacy names do not exempt incompatible masks.
+4. Preserve owner wrappers -> leave _write(roots,path) unchanged, after finding T05's two-argument wrapper. Parent/owner adoption still needs real tests; no local carrier retirement is included.
+5. Tiny real fixture -> existing flora class override and exempt Glass material profile, 160/64/16/4 triangles per POINT/CORNER variant, four distinct material instances, UV/material splits, rig and markers. No weakened production budget, image, bake or KTX2 need. This isolates geometry qualification; full PBR/skinned/morph/export regressions remain separate.
+
+OUT OF SCOPE FOUND:
+- E08.T08 candidate f9294a466d6223f695f102dc1a13ed526f155e67, tree 5cea052761a4c037d28c2d09bd7d731885f09fda: biped, flyer, quad_grazer, quad_heavy, quad_small all normalized UINT16/VEC4, 136 primitive/LOD selections. Owner re-export is required after separately admitted capacity; stage.py/finalize.py F2 belongs to its author and is untouched. Constructs outpost_drone/outpost_overseer carry no COLOR_0 and keep ordinary quantization.
+- Flora T04 70f8a164614ad9cf370e448a081603bfc4fa1cf4: tree_blob_t04, tree_cactus_t04, tree_conifer_t04, tree_coral_t04, tree_mushroom_t04, tree_palm_t04, tree_round_t04, tree_spiral_t04 already Float32 RGBA, 76 primitive/LOD selections. Task-local source-float carriers and promote_masks.mjs explain the difference; these headers are not a new exact source-value proof.
+- Flora T05 a46e7c4d444befd6efe6e06b9134b3a41abcb639: non_tree_foliage, non_tree_resources, non_tree_stone already Float32 RGBA, 124 primitive/LOD selections, via write_exact temporary float carriers. No assets or owner code changed. Both flora owners should assess adopting shared stock route, independently validate, then consider removing local carrier paths.
+- T06/future creature/flora outputs inherit the same contract; no retained T06 artifact was identified in the enumerated worktree candidates. No silent exception or mass regeneration.
+- Existing asset-consuming material_mask_selftest.py remains unchanged; owner candidate carriers already satisfy the new accessor format. Full material/native regressions still must run.
+
+PENDING RESOURCE REQUEST:
+One short serial Blender/codec slot, up to 5 minutes requested (duration unmeasured), maximum 2 Blender threads / 1 NumPy thread, <=256 MiB scratch; no GPU/browser, baking, texture codec, service/DB or asset regeneration. Two Blender invocations around four tiny serial meshopt encodes (baseline plus creatures/flora/props) and actual Engine.gltfLoader()/maskColors/recolor assertions. No retries. The launcher retains unadapted saved-source RED, exact mapped source comparisons for both exact families, negative accessor controls, other-family quantization control, and stock compressed validation. It has only been syntax checked; any fixture defect must be fixed and reported under the assigned slot, not hidden as qualification.
+Exact deferred command from this checkout:
+EXACT_MASK_NODE=/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node EXACT_MASK_DEPS=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab bash packages/tools/blender/exact_mask/run_boundary.sh /tmp/space-e14t16-boundary-75cf76fd9-01
+This path must not already exist. Parent assignment is required before executing it.
+After tiny-boundary success: existing meshopt.test.ts and Blender pipeline/material regressions, fresh independent review (parent owns; nested agents forbidden here), and parent integration checks remain required. No acceptance, CI, visual, release or asset-adoption PASS is claimed.
+
+ARTIFACTS:
+/tmp/space-e14t16-source-2wuGqU/C2-source-checkpoint.txt
+/tmp/space-e14t16-source-2wuGqU/source-checkpoint.patch
+/tmp/space-e14t16-source-2wuGqU/before.json
+/tmp/space-e14t16-source-2wuGqU/after.json
+/tmp/space-e14t16-source-2wuGqU/red-cpu_test.py
+/tmp/space-e14t16-source-2wuGqU/red-packing.log
+/tmp/space-e14t16-source-2wuGqU/final-cpu.log
+/tmp/space-e14t16-source-2wuGqU/affected-candidates.json
+/tmp/space-e14t16-source-2wuGqU/legacy-audit.json
+packages/tools/blender/exact_mask/source-evidence.json (committed commands/exits/logs and header audit)
+packages/tools/blender/exact_mask/README.md (scope/adoption/launcher)
+Trigger review SHA256 verified unchanged: e0f017545582804d4dc1624529388ec63ef4dc83bf5ec2d5f75ebbdd355ce3b5 in supplied /tmp and retained docs/review-records/p1-e08-t08/source-review-r1-f9294a4/C2-independent-review-final.txt.
+Legacy current-checkout audit: [
+  {
+    "path": "packages/client/public/models/creatures.glb",
+    "exists": true,
+    "color_formats": [
+      "(5123, 'VEC4', True)"
+    ]
+  },
+  {
+    "path": "packages/client/public/models/flora.glb",
+    "exists": true,
+    "color_formats": [
+      "(5123, 'VEC4', True)"
+    ]
+  }
+]
+

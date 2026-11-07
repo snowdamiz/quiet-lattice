@@ -1,0 +1,265 @@
+{
+  "artifactType": "NON_AUTHORIZING_PARENT_PREPARATION_DATA",
+  "execution": "NOT RUN; no real grant file exists",
+  "head": "0922f7fc3df310cbdd624d8fa5846b73a9cfe533",
+  "tree": "baa2cd37e8e767e73612161bca28fc425d87cde1",
+  "readiness": {
+    "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/readiness.json",
+    "sha256": "46b1b713e8026c6daa8ed321ae78752bcf7fd11230c93eae0a1f4026c9ba951f"
+  },
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465",
+  "unitOrder": [
+    "fauna-hit-turn-day-16x9",
+    "fauna-hit-turn-day-21x9",
+    "fauna-hit-turn-night-16x9",
+    "fauna-hit-turn-night-21x9",
+    "fauna-combat",
+    "fauna-combat-night"
+  ],
+  "units": {
+    "fauna-combat": {
+      "aspect": "16x9",
+      "attemptId": "c32d5545b0e747b78a33fd90ea8992ad",
+      "authorizationId": "fauna-c32d5545b0e747b78a33fd90ea8992ad",
+      "budget": {
+        "fileCount": 220,
+        "futureLfsAdditionalBytes": 3674226688,
+        "futureMainHydrationAdditionalBytes": 3674226688,
+        "imageCount": 219,
+        "newOutputCapBytes": 3674226688,
+        "oneUnitAdmissionBytes": 15871295488
+      },
+      "consumption": "/private/tmp/fhc-c32d5545b0e747b78a33fd90ea8992ad.json",
+      "evidence": "/private/tmp/fhp-c32d5545b0e747b78a33fd90ea8992ad",
+      "grant": "/private/tmp/fhg-c32d5545b0e747b78a33fd90ea8992ad.json",
+      "inventory": {
+        "frames": 204,
+        "readouts": 1,
+        "sheets": 1,
+        "stills": 14
+      },
+      "kind": "broad",
+      "light": "day",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-c32d5545b0e747b78a33fd90ea8992ad",
+      "screen": "fauna-combat"
+    },
+    "fauna-combat-night": {
+      "aspect": "16x9",
+      "attemptId": "dd7057238c19429fa2dd6151ef07ac3a",
+      "authorizationId": "fauna-dd7057238c19429fa2dd6151ef07ac3a",
+      "budget": {
+        "fileCount": 220,
+        "futureLfsAdditionalBytes": 3674226688,
+        "futureMainHydrationAdditionalBytes": 3674226688,
+        "imageCount": 219,
+        "newOutputCapBytes": 3674226688,
+        "oneUnitAdmissionBytes": 15871295488
+      },
+      "consumption": "/private/tmp/fhc-dd7057238c19429fa2dd6151ef07ac3a.json",
+      "evidence": "/private/tmp/fhp-dd7057238c19429fa2dd6151ef07ac3a",
+      "grant": "/private/tmp/fhg-dd7057238c19429fa2dd6151ef07ac3a.json",
+      "inventory": {
+        "frames": 204,
+        "readouts": 1,
+        "sheets": 1,
+        "stills": 14
+      },
+      "kind": "broad",
+      "light": "night",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-dd7057238c19429fa2dd6151ef07ac3a",
+      "screen": "fauna-combat-night"
+    },
+    "fauna-hit-turn-day-16x9": {
+      "aspect": "16x9",
+      "attemptId": "db92793dc72740cd92052a098e0c189e",
+      "authorizationId": "fauna-db92793dc72740cd92052a098e0c189e",
+      "budget": {
+        "fileCount": 82,
+        "futureLfsAdditionalBytes": 1358970880,
+        "futureMainHydrationAdditionalBytes": 1358970880,
+        "imageCount": 81,
+        "newOutputCapBytes": 1358970880,
+        "oneUnitAdmissionBytes": 8925528064
+      },
+      "consumption": "/private/tmp/fhc-db92793dc72740cd92052a098e0c189e.json",
+      "evidence": "/private/tmp/fhp-db92793dc72740cd92052a098e0c189e",
+      "grant": "/private/tmp/fhg-db92793dc72740cd92052a098e0c189e.json",
+      "inventory": {
+        "frames": 72,
+        "readouts": 1,
+        "sheets": 1,
+        "stills": 8
+      },
+      "kind": "correction",
+      "light": "day",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-db92793dc72740cd92052a098e0c189e",
+      "screen": "fauna-hit-turn-day-16x9"
+    },
+    "fauna-hit-turn-day-21x9": {
+      "aspect": "21x9",
+      "attemptId": "e2d8b83fb72a4e348804085feeddf8b7",
+      "authorizationId": "fauna-e2d8b83fb72a4e348804085feeddf8b7",
+      "budget": {
+        "fileCount": 82,
+        "futureLfsAdditionalBytes": 1358970880,
+        "futureMainHydrationAdditionalBytes": 1358970880,
+        "imageCount": 81,
+        "newOutputCapBytes": 1358970880,
+        "oneUnitAdmissionBytes": 8925528064
+      },
+      "consumption": "/private/tmp/fhc-e2d8b83fb72a4e348804085feeddf8b7.json",
+      "evidence": "/private/tmp/fhp-e2d8b83fb72a4e348804085feeddf8b7",
+      "grant": "/private/tmp/fhg-e2d8b83fb72a4e348804085feeddf8b7.json",
+      "inventory": {
+        "frames": 72,
+        "readouts": 1,
+        "sheets": 1,
+        "stills": 8
+      },
+      "kind": "correction",
+      "light": "day",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-e2d8b83fb72a4e348804085feeddf8b7",
+      "screen": "fauna-hit-turn-day-21x9"
+    },
+    "fauna-hit-turn-night-16x9": {
+      "aspect": "16x9",
+      "attemptId": "af7b26603a2d4a2889a1bf23ab246da1",
+      "authorizationId": "fauna-af7b26603a2d4a2889a1bf23ab246da1",
+      "budget": {
+        "fileCount": 82,
+        "futureLfsAdditionalBytes": 1358970880,
+        "futureMainHydrationAdditionalBytes": 1358970880,
+        "imageCount": 81,
+        "newOutputCapBytes": 1358970880,
+        "oneUnitAdmissionBytes": 8925528064
+      },
+      "consumption": "/private/tmp/fhc-af7b26603a2d4a2889a1bf23ab246da1.json",
+      "evidence": "/private/tmp/fhp-af7b26603a2d4a2889a1bf23ab246da1",
+      "grant": "/private/tmp/fhg-af7b26603a2d4a2889a1bf23ab246da1.json",
+      "inventory": {
+        "frames": 72,
+        "readouts": 1,
+        "sheets": 1,
+        "stills": 8
+      },
+      "kind": "correction",
+      "light": "night",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-af7b26603a2d4a2889a1bf23ab246da1",
+      "screen": "fauna-hit-turn-night-16x9"
+    },
+    "fauna-hit-turn-night-21x9": {
+      "aspect": "21x9",
+      "attemptId": "4c6c748124724a55837a9dacce6e8d58",
+      "authorizationId": "fauna-4c6c748124724a55837a9dacce6e8d58",
+      "budget": {
+        "fileCount": 82,
+        "futureLfsAdditionalBytes": 1358970880,
+        "futureMainHydrationAdditionalBytes": 1358970880,
+        "imageCount": 81,
+        "newOutputCapBytes": 1358970880,
+        "oneUnitAdmissionBytes": 8925528064
+      },
+      "consumption": "/private/tmp/fhc-4c6c748124724a55837a9dacce6e8d58.json",
+      "evidence": "/private/tmp/fhp-4c6c748124724a55837a9dacce6e8d58",
+      "grant": "/private/tmp/fhg-4c6c748124724a55837a9dacce6e8d58.json",
+      "inventory": {
+        "frames": 72,
+        "readouts": 1,
+        "sheets": 1,
+        "stills": 8
+      },
+      "kind": "correction",
+      "light": "night",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-4c6c748124724a55837a9dacce6e8d58",
+      "screen": "fauna-hit-turn-night-21x9"
+    }
+  },
+  "budget": {
+    "accounting": "Each unit: output + future LFS copy + future main hydration + controlled receipts + bounded cache copy + native working/archive reserves + safety. Existing bytes are reflected in free space; no image staging/archive copy. Fresh admission is required for each unit.",
+    "allSixFitClaimed": false,
+    "cacheSnapshotCapBytes": 67108864,
+    "cacheSnapshotDeadlineSeconds": 30,
+    "controlledImageTemporaryDiskBytes": 0,
+    "controlledMetadataCapBytes": 67108864,
+    "imagePerFileCapBytes": 16777216,
+    "nativeReservesAndObservedThresholds": {
+      "filesystemMetadata": 16777216,
+      "generatedCacheGrowth": 268435456,
+      "helperLogWorkingAndArchivePeak": 134217728,
+      "nativeProfileWorkingAndArchivePeak": 2147483648,
+      "privateTmpWorkingAndArchivePeak": 1073741824,
+      "safetyReserveBytes": 1073741824
+    },
+    "nativeWritersHardBounded": false,
+    "outputCopyStagingBytes": 0,
+    "readoutCapBytes": 16384,
+    "safetyReserveBytes": 1073741824
+  },
+  "scope": {
+    "liveServerQualified": false,
+    "offlineReplayOnly": true,
+    "realTimeQualified": false,
+    "totalProposed": {
+      "files": 768,
+      "frames": 696,
+      "readouts": 6,
+      "sheets": 6,
+      "stills": 60
+    }
+  },
+  "requiredEnvironment": {
+    "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/26454_1794032560708/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin",
+    "NODE_OPTIONS": "",
+    "PYTHONOPTIMIZE": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "FAUNA_CAPTURE_GRANT": "fauna-db92793dc72740cd92052a098e0c189e"
+  },
+  "firstUnitArgv": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-I",
+    "-B",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py",
+    "--execute",
+    "fauna-hit-turn-day-16x9",
+    "--grant",
+    "/private/tmp/fhg-db92793dc72740cd92052a098e0c189e.json"
+  ],
+  "grantExampleOnly": {
+    "purpose": "FAUNA_ONE_SCREEN_VISUAL_REPLAY_ONLY",
+    "oneUse": true,
+    "authorizationId": "fauna-db92793dc72740cd92052a098e0c189e",
+    "readinessSha256": "46b1b713e8026c6daa8ed321ae78752bcf7fd11230c93eae0a1f4026c9ba951f",
+    "authorizedHead": "0922f7fc3df310cbdd624d8fa5846b73a9cfe533",
+    "unit": "fauna-hit-turn-day-16x9",
+    "nativeReservesAccepted": true,
+    "callerReview": {
+      "verdict": "PASS",
+      "path": "<FRESH_COMBINED_REVIEW_ABSOLUTE_PATH>",
+      "sha256": "<FRESH_COMBINED_REVIEW_SHA256>"
+    },
+    "previousUnitsAccepted": [],
+    "previousUnitReceipts": {},
+    "expiresUtc": "<FUTURE_TIMEZONE_AWARE_UTC>"
+  },
+  "parentAcceptance": "Observe the actual completed caller OS exit. Only exit0 plus successful checks/cleanup/inspection and exact receipt binding can authorize a successor. The on-disk result accepted:false/AWAITING_CALLER_COMPLETION is expected; entry accepted:true is producer-only. Any exit1, interruption, indeterminate or failed result stops the sequence; never retry a spent identity.",
+  "successorReceiptExampleOnly": {
+    "<PREVIOUS_UNIT>": {
+      "callerExitCode": 0,
+      "result": {
+        "path": "<FROZEN_PREVIOUS_EVIDENCE>/result.json",
+        "sha256": "<ACTUAL_RESULT_SHA256>"
+      },
+      "consumption": {
+        "path": "<FROZEN_PREVIOUS_CONSUMPTION>",
+        "sha256": "<ACTUAL_CONSUMPTION_SHA256>"
+      }
+    }
+  },
+  "remainingGates": [
+    "fresh independent combined final-pin review",
+    "fresh parent GPU/disk/cache admission and exactly one-use grant",
+    "parent actual native capture and OS-exit/cleanup acceptance",
+    "current-source visual grading",
+    "whole task acceptance"
+  ]
+}

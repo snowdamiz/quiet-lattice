@@ -1,0 +1,2075 @@
+{
+  "head": "daed5c0562e848643fa3d8ec24a4f28062b01391",
+  "tree": "d59119897c1f306a0624d116c0a0a5940e0937d0",
+  "base": "2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4",
+  "verdict": "PASS bounded tooling only",
+  "fullSwiftR4": "REVISE/incomplete",
+  "reportSHA256": "d85fe39e010d11927386901790c6b527afce724da611364f75e487c13508416b",
+  "verifySHA256": "d995908b8ac2667dfca32ec6f1b3ecc9787527ae3afb4dfce29445b7145ff057",
+  "priorSealSHA256": "02c01a222d912e0d9a08a7e08c16cb15e09e252004956ead9257e31e6f8fa898",
+  "files": [
+    {
+      "path": "REPORT.txt",
+      "bytes": 12814,
+      "sha256": "d85fe39e010d11927386901790c6b527afce724da611364f75e487c13508416b"
+    },
+    {
+      "path": "VERIFY.txt",
+      "bytes": 80793,
+      "sha256": "d995908b8ac2667dfca32ec6f1b3ecc9787527ae3afb4dfce29445b7145ff057"
+    },
+    {
+      "path": "actual-handles.json",
+      "bytes": 2095,
+      "sha256": "a69c1920b5be89298948327c041fc17a8a6d6b3f412931a078ae58c89199fe45"
+    },
+    {
+      "path": "base-DENSITY_PLAN.md.log",
+      "bytes": 4494,
+      "sha256": "cc2857cf3a834974e62fa5cd7e06a9a055659fe114cf118d5aa2d0fa7455b42d"
+    },
+    {
+      "path": "base-HEAVY_HOLD.json.log",
+      "bytes": 376,
+      "sha256": "cbc287a290b5afa7462c7f348888300d45f36949409fecb732bf27ccfeb41a12"
+    },
+    {
+      "path": "base-check_guardian.py.log",
+      "bytes": 1928,
+      "sha256": "1694a642d31b2053586dcf2cf10dd80d64b9c6d57d54fed7bc664d6492becc90"
+    },
+    {
+      "path": "base-check_lane.py.log",
+      "bytes": 1955,
+      "sha256": "206de5c775823c08f4dd975ee5903d9582b566f4b7a3e5e1ebf53b66d491f0aa"
+    },
+    {
+      "path": "base-guardian.py.log",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "base-promote.py.log",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "base-supervise.py.log",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "candidate/after-audit-00-before-mask/command.log",
+      "bytes": 1425,
+      "sha256": "de1ee861fc131fbfe3a4b9e8a34aa06374af0bd351d41a34984e3587a9724e5b"
+    },
+    {
+      "path": "candidate/after-audit-00-before-mask/result.json",
+      "bytes": 374,
+      "sha256": "baafb41830e9126b535ef25932d78d184ea5f6fea2b50f79e6a2972ecf5923e5"
+    },
+    {
+      "path": "candidate/after-audit-01-before-mask/command.log",
+      "bytes": 1425,
+      "sha256": "16d9dde1e597690995977e0008a2a5d087b7132c5ff8780678b6b7bf60f2f300"
+    },
+    {
+      "path": "candidate/after-audit-01-before-mask/result.json",
+      "bytes": 374,
+      "sha256": "1e3dc31f854a0c2fa4883026227e2acf6f507f0f9973aca9e0339102cf3a57cb"
+    },
+    {
+      "path": "candidate/after-audit-02-pending/command.log",
+      "bytes": 1421,
+      "sha256": "f35d0f4d4335ae672054c6569b0bb216127cc7386c0705ae8964548bc254f0fd"
+    },
+    {
+      "path": "candidate/after-audit-02-pending/result.json",
+      "bytes": 370,
+      "sha256": "80400d0d611ee0ca757eb50d77ab0ca90ee4a464a077089e5ffbedd162c9c413"
+    },
+    {
+      "path": "candidate/after-audit-03-pending/command.log",
+      "bytes": 1421,
+      "sha256": "b5a8c981878c02cf0a0f179366463bcdbf254950820d82e8a7714c05695ce912"
+    },
+    {
+      "path": "candidate/after-audit-03-pending/result.json",
+      "bytes": 370,
+      "sha256": "1307277283270e01c5ccc6e0071de606b45250f7cc701e0d58b70d8b0e220e55"
+    },
+    {
+      "path": "candidate/after-audit-04-inside/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "candidate/after-audit-04-inside/promotion.json",
+      "bytes": 1955,
+      "sha256": "d8ee419b11176668bad8f8e0e25f5f6f06ccfd171c85f9a040cc2c00d564994d"
+    },
+    {
+      "path": "candidate/after-audit-04-inside/result.json",
+      "bytes": 368,
+      "sha256": "cbaa7a1cfa2fa20bdc313abbb26cb9587d2e55bf5531a05b83b1c9c15203d41a"
+    },
+    {
+      "path": "candidate/after-audit-05-inside/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "candidate/after-audit-05-inside/promotion.json",
+      "bytes": 1955,
+      "sha256": "5af8e479d3f3893a4197f84defb776258200a80754aa079496daee141f57ce2d"
+    },
+    {
+      "path": "candidate/after-audit-05-inside/result.json",
+      "bytes": 368,
+      "sha256": "f7997186787aea381808d5f82fc27dbb431cef442b3aff327cc738751310a9a6"
+    },
+    {
+      "path": "candidate/after-audit-06-after-unlink/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "candidate/after-audit-06-after-unlink/promotion.json",
+      "bytes": 1967,
+      "sha256": "17227582afcb6670200a6d33473139079e90f03d55c61dc267aa9e1d95488e06"
+    },
+    {
+      "path": "candidate/after-audit-06-after-unlink/result.json",
+      "bytes": 374,
+      "sha256": "fe000639e078afe138eca80418a2bdd08c0f04e50dc76434a456a71fdfd6fe7a"
+    },
+    {
+      "path": "candidate/after-audit-07-after-restore/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "candidate/after-audit-07-after-restore/promotion.json",
+      "bytes": 1969,
+      "sha256": "f7af11793c8d2ddfd8112cd3a59b9d45c9c2ace8e76b2ab6e19d8910fd856702"
+    },
+    {
+      "path": "candidate/after-audit-07-after-restore/result.json",
+      "bytes": 375,
+      "sha256": "4fd4f49a80562dce1eb4dcbf9c15bb19be5a24a13a1249c82a11aa45a3433a7c"
+    },
+    {
+      "path": "candidate/after-audit-08-before-mask/command.log",
+      "bytes": 1425,
+      "sha256": "70cb199c4c1e41fecd4829fe8c076a8792ce73c9d3862700d471aaeb0c939f4b"
+    },
+    {
+      "path": "candidate/after-audit-08-before-mask/result.json",
+      "bytes": 374,
+      "sha256": "3d625cb5dc362e414f0e03ac7d004be9086d93ecdf688c7cd394ff6d5a3e900a"
+    },
+    {
+      "path": "candidate/after-audit-09-inside/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "candidate/after-audit-09-inside/promotion.json",
+      "bytes": 1955,
+      "sha256": "8bdcbe93fa55abb8c0977298e9196936e528b422030482939d3209df82e3d922"
+    },
+    {
+      "path": "candidate/after-audit-09-inside/result.json",
+      "bytes": 368,
+      "sha256": "813ee1c151e448cac6b9873cf860c40063f3a4587b8c5e522aea5bd0c8dc19b8"
+    },
+    {
+      "path": "candidate/after-audit-10-inside/command.log",
+      "bytes": 1420,
+      "sha256": "f7a9c784caa423bd58f8e6efcb1eaacd021172752843eff0003985ac55463db9"
+    },
+    {
+      "path": "candidate/after-audit-10-inside/result.json",
+      "bytes": 369,
+      "sha256": "85c279d64c9f0cde430d14e772c5216dc82bb244be7a7b2e9ba61b8124df04dd"
+    },
+    {
+      "path": "candidate/assets/blend/hulls/swift.blend",
+      "bytes": 23,
+      "sha256": "30c910adde36e53a85f8c7b1ff0a93b3eb1a626bfc0c65cb9c2dd84ac7c9d9be"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/.publication-open",
+      "bytes": 58,
+      "sha256": "d32bb8f004d589e05683c3fad33997c98d1c078ba2732227832090fe1093185b"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/cancellation.json",
+      "bytes": 182,
+      "sha256": "7f76f9e622d1030d8def06f99a5a2bd1f5e26731e671014c4718ac9a84cc5012"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/dispatch.json",
+      "bytes": 61,
+      "sha256": "9362de067f943c13d5b0422e51562483594b8d173837542a42829ea35561ebb7"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/guardian.json",
+      "bytes": 633,
+      "sha256": "a32ef659272c2a4e10e080ecc6d367ffb15b58d74a17d5335ba7751261793111"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/launch.json",
+      "bytes": 2918,
+      "sha256": "140f40ea65d1d148597df964e6c00fa9487150bb730fa120b7c959bb9ad6b792"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/process.log",
+      "bytes": 625,
+      "sha256": "559e433ed17c90fd395cdb04b88fa9773892e88102244fd6a39b93d48f488822"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/publication.json",
+      "bytes": 570,
+      "sha256": "df6653ce2c5526efa6f9ddfe3fc8b362230d3f39724d976c3c630ec35071e3d1"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/publisher.json",
+      "bytes": 72,
+      "sha256": "e3b19e003d99b4c34d95e684f3008ada0176eb95ff5404f1c4df1b824f60da9b"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/receipt.json",
+      "bytes": 5205,
+      "sha256": "90a28248f882e8fdc115549f9fba9c15f30fb0693bf5d3567add61d03a2a7882"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-00-before-mask/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "c6d7f82aa74818a6c8d66e51d38f7e5dd3da12e1700b168159e4c6cc88588e77"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/.publication-open",
+      "bytes": 58,
+      "sha256": "6a96101b5111bfc4b34520337b2eca25fe2542367fd583e62e2efc34189d8f06"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/cancellation.json",
+      "bytes": 180,
+      "sha256": "adf7943c8bc1b6330dfa404090420c5b79738d353752617e70cbc62b333de0e4"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/dispatch.json",
+      "bytes": 61,
+      "sha256": "c7f6155ee6e76318a2ea722ca899529b4ab23c8f1d0b56bcf24340ff481b5b3d"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/guardian.json",
+      "bytes": 632,
+      "sha256": "8a8ec7b9091e96903d8ea27b6c12bc0abd27ee95a701a98cbc6f57d34bffbd45"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/launch.json",
+      "bytes": 2918,
+      "sha256": "2f36c468cf7573e6f992a900267159d10ed3d560055ed5bef32bb88ea0595609"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/process.log",
+      "bytes": 624,
+      "sha256": "735f19a48edd8f53106a4ce9ec6d173650d2dc94fb9127a97ce3b13674c1615d"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/publication.json",
+      "bytes": 570,
+      "sha256": "f073b930e565efc47f3b56815ce460edeedac898b18b08279fde78a73c3cd514"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/publisher.json",
+      "bytes": 72,
+      "sha256": "c025533c00d82a72a46c2d369ff9bf82862d13599df52374c7df1a59498d72bc"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/receipt.json",
+      "bytes": 5203,
+      "sha256": "f9a2c361c70b7a652dfa6afede8b21ebb86bd80976751cbc4919a92e5927afc2"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-01-before-mask/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "45b44506bbdfef984cd315d2b5424aa11c3830f24ca45992cebaed8dc2f3c964"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/.publication-open",
+      "bytes": 58,
+      "sha256": "7b1b9f8b0ea559a63a644adc704abd4ee7fc8e153837ec0c85abaa8196bfc14f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/cancellation.json",
+      "bytes": 325,
+      "sha256": "17555048176c008d664aec71362ed8c0c609df007f625173f3b8fb2368356a6a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/dispatch.json",
+      "bytes": 61,
+      "sha256": "fe9972d972d840a4519a2f4c45e40829b887f30d7ef7d660ca764d9876d2c03d"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/guardian.json",
+      "bytes": 633,
+      "sha256": "04da1ec6e6b5b775203f65d3ad9546135e266cac65628da7d140a626a9d52dfc"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/launch.json",
+      "bytes": 2914,
+      "sha256": "ccbd5a4dca63fcc2725c82004bafefe32d9a141c19edacacee1ccaa44f576d17"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/process.log",
+      "bytes": 625,
+      "sha256": "882f2d7d0b51ec8d9b1eb70da156484b303a24c14043dad5d17ccb6656dcd49c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/publication.json",
+      "bytes": 570,
+      "sha256": "83324295207e5ee4a25ba77ddee3f3991e45872b51b9ddc5a96bf1bcb089063f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/publisher.json",
+      "bytes": 72,
+      "sha256": "da024f86613985ab78565588f0d7144776cbaed512637f6292833e649a529c30"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/receipt.json",
+      "bytes": 5200,
+      "sha256": "4563181118978e49f85028c314855f70bcab0c283763189a8e41a87f10fabd45"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-02-pending/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "33d96e079aca7051b689104799ffe8848473f9454ad8b38ac1c437aca222dfb0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/.publication-open",
+      "bytes": 58,
+      "sha256": "160c1051b2c1fc6372dae75cf9d08022af029c5f75442b55e989367692fc2f41"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/cancellation.json",
+      "bytes": 322,
+      "sha256": "76264c0d058cad341f41ec0d24ee616decf1b309cc2e7630faedb6baea335c9f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/dispatch.json",
+      "bytes": 61,
+      "sha256": "3c6beeb48e641ce151049370c5d26f373d13d91e21c69bcd795d76e1d33775c8"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/guardian.json",
+      "bytes": 632,
+      "sha256": "f226944c63ce3bc7003d9e19df092e0e1b4c3091d60db91c020bf5801d9146c6"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/launch.json",
+      "bytes": 2914,
+      "sha256": "9a90d136d5e10cf90568203a49b41ae402f70abffb61f8b4a75391d96488a59a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/process.log",
+      "bytes": 624,
+      "sha256": "9c4ea96092194fd9aa8fb17afc4c8fd5bf1e4baca397766b5cd4339a66b8a48c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/publication.json",
+      "bytes": 570,
+      "sha256": "0cb58d5afa618203f4462d2e237332a96b8d2138ca4330c89a44ad6465a07aea"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/publisher.json",
+      "bytes": 72,
+      "sha256": "c99aedc00b7d7259036d9dab1c463d83545008c6992a8c2d8f90080dcfcddb0b"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/receipt.json",
+      "bytes": 5200,
+      "sha256": "0ffc534fd1896ac29eb77618b083446890ca6dc2aa6958b46ce2707231cf3e2a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-03-pending/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "cf0450c5e1b51365ad3ecbf1e7393eeb3c77445f7cc93c3415b47a1ba122d230"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/dispatch.json",
+      "bytes": 61,
+      "sha256": "bda1214b74b44c0da4c7cf0267f97aacb05fced3ce1a90475ef9233f581cde26"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/guardian.json",
+      "bytes": 632,
+      "sha256": "6cee7ed713e642a01ae6d1512f63a96efb62257273899c7ad7dffa1e4b109e82"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/launch.json",
+      "bytes": 2913,
+      "sha256": "e334c8af677f154226f26bc422caaae6a04dc6c4a21c8da21e8044d8f054d0bb"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/process.log",
+      "bytes": 624,
+      "sha256": "7d82fecdb5ce30bbf57c77fb8477c5660c92680abd52b76cde8c0e3918d9af55"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/publication.json",
+      "bytes": 570,
+      "sha256": "59cfb9237e731831a2b90f9d5c7747c1013d08f5e68c7136dca1a32a842b1205"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/publisher.json",
+      "bytes": 72,
+      "sha256": "0cd60caa27acb7a6ab033afd79f71569df3a438878e908edacbaa3c58d7986e1"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/receipt.json",
+      "bytes": 5199,
+      "sha256": "3f29896d3e941d3e57a6c4cdd4a12523685b2e404d0ead5fa898d1a0c3f7d578"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-04-inside/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "ec786b6e44f8042b7fd7bae6c5b04d327603012c65244c9000b58b6544b1f5a3"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/dispatch.json",
+      "bytes": 61,
+      "sha256": "ff43683d0e7535952ab83c8f8617c139163908295066e5d898023621ab3ebfef"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/guardian.json",
+      "bytes": 632,
+      "sha256": "f7265f1a1e946ec49c04454f6e249f1e27ef671ce6fb49bc37af7ada8bd62c29"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/launch.json",
+      "bytes": 2913,
+      "sha256": "0c3d9b7e000eff5ca594f6b2235253ce442a32fdb441c8fe6b3a0913bc5cf050"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/process.log",
+      "bytes": 624,
+      "sha256": "bc222b0b1c9553220a84c6c239aa7efd7f2e486ab73dc1d8abdf22c71d047e6a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/publication.json",
+      "bytes": 570,
+      "sha256": "043a69d55d2cf65e232349aa46d403607a9132579f8152e4ef5cfd3e5a13227f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/publisher.json",
+      "bytes": 72,
+      "sha256": "1cc1fc7fa7c815c7361013377636ee16855aafab092a5ae1534518284d3c5e7d"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/receipt.json",
+      "bytes": 5198,
+      "sha256": "8f788a6e855727c064ab14137504ae90002f405cbfb4448e0e8ec200a8bf3690"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-05-inside/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "016eccb43b5dcb74015676de5d98d00f5fcf11f988b68cd04f8795d93680b514"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/dispatch.json",
+      "bytes": 61,
+      "sha256": "ba815590a5ff8cb0c076eb68962d9ff91fcbe50599644b1b0d9776fa16e1f060"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/guardian.json",
+      "bytes": 632,
+      "sha256": "075a0e8c0918107c85691412792293e8f851542f29fbf2a1c9e8b4c63bfa76bc"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/launch.json",
+      "bytes": 2919,
+      "sha256": "61083364decb61f2ccd278b6721c5f3afe22ad2f90044bb05f25fe01808f4ad9"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/process.log",
+      "bytes": 624,
+      "sha256": "6ae8245935f6670b79bff66984b82e6d711711ed43d94eb212e0f6f6289f1e39"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/publication.json",
+      "bytes": 570,
+      "sha256": "0a944fa239abf696a25e22a4f5d6988f5ddc499f8eecd5250aa806c9cf1f3652"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/publisher.json",
+      "bytes": 72,
+      "sha256": "08c6dfe2333b3658515383c47d2298cfa18333dcbdbc92c54d447d45b169f815"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/receipt.json",
+      "bytes": 5205,
+      "sha256": "405f0d87311566c67f5f97cdf985fa82dbea554acc4f82301964c9443a44dade"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-06-after-unlink/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "849c8a92c6fca438f71768a37ef9af46170451755f1f1682916dfc840d4273a2"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/dispatch.json",
+      "bytes": 61,
+      "sha256": "41094894a5a4e7ed5f0453e557495636073bcee98f77cfae078aba2006f1d827"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/guardian.json",
+      "bytes": 632,
+      "sha256": "ab3094aaed02d9fcfca4eaf57ac622b0a8524c404a21c556ff056cdd22d16d1c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/launch.json",
+      "bytes": 2920,
+      "sha256": "1c4ee323ef44f8ef7c7fa6af4bee5b76fb69fd98a8103cf5724185d416dc53fe"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/process.log",
+      "bytes": 624,
+      "sha256": "c603b1f07935b334624c25fd0348e80b2fedf56d7ec4b72b1eda08d60ab31999"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/publication.json",
+      "bytes": 570,
+      "sha256": "be2a499b78e0b589e9ef8ff7fd0918fb5a8dd772f4f83914d92fad847853e573"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/publisher.json",
+      "bytes": 72,
+      "sha256": "7253457146f0038c548cf7f8dd3add45b1fc65ddd499f138e88644bf08f3d7e6"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/receipt.json",
+      "bytes": 5206,
+      "sha256": "34471a74ca33bd28f4958580bcdd4198b63a0cf45f7acefe4e517f8a8f0fd541"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-07-after-restore/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "52c6f376c14f8b7c3901d65996a30154c234e20d608590f3d2329e37e30e376f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/.publication-open",
+      "bytes": 58,
+      "sha256": "68def385f6dd2ab5576acc4998390c2c730f90191386ddd1dc00ad8c9c834396"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/cancellation.json",
+      "bytes": 431,
+      "sha256": "607de2b13052de6fce17aec152c7910710346ecdeacb11196fbb34d512163f78"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/dispatch.json",
+      "bytes": 61,
+      "sha256": "bd949842afa53f836266c8407474d76f4742922ec55b30b1c515e6037f5040c5"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/guardian.json",
+      "bytes": 631,
+      "sha256": "4ab8ede70214fa4d8b03eddcbb725e6b6b145b991c696064cd786f147bfef1a3"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/launch.json",
+      "bytes": 2918,
+      "sha256": "5033144f3341b4195feca0860803f8bf373d9d48554840f65a62af0273f5617a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/process.log",
+      "bytes": 623,
+      "sha256": "90843c7b8ca800e4620213d0ec26a2126a570224375b067a3c4463b7c7b76ea7"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/publication.json",
+      "bytes": 570,
+      "sha256": "bd61e53ed0400de50fb86db6e54fe3788f24be7195ad012905a367fa68dbea9c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/publisher.json",
+      "bytes": 72,
+      "sha256": "3b440d15af83794892149ddd59911387d7d48d2975f1a46f4a9a932088810717"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/receipt.json",
+      "bytes": 5204,
+      "sha256": "37a5ffcafe7eb69cf03d4de07f4aaaee753b340f0e5f0774fce6c205db6b0eb8"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-08-before-mask/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "6a4e94ef09d7668e8be663150b306bf90eaae3271b9ee5d49033102aafae84a8"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/dispatch.json",
+      "bytes": 61,
+      "sha256": "4f8fae4477c29b9477eb46c671a949dfed167ecebaf8eb3fe7ce7bb9d2480baa"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/guardian.json",
+      "bytes": 633,
+      "sha256": "f945fbe1d735d80d3ce07c89387951c0375599952c6bce6b1ded5c15cb1e6727"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/launch.json",
+      "bytes": 2913,
+      "sha256": "9aa700b3215c08b81e8a30386b6b2f4792f4f38c8c8c6b93a1f26c5de2abcea0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/process.log",
+      "bytes": 625,
+      "sha256": "8c30edf577dbbb5492deb9273f475bd6dde2820705dcf92b8fb6caeec5cd327c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/publication.json",
+      "bytes": 570,
+      "sha256": "e5f0cbda7dd6a9b9adaf1290b8131192c57b40ed0050a8d172539fdee5309b2b"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/publisher.json",
+      "bytes": 72,
+      "sha256": "76fc94ba3f7fa7ae6a42eabfbd3263f09f00748d38668fd117c0141547b975ae"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/receipt.json",
+      "bytes": 5199,
+      "sha256": "9ded2ae764f933215816b30fe9e820d3b0f296e368e1a7d8783ec708ecff5761"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-09-inside/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "1db900f71028a2dc82a893ba2cd576db7e53eac5541d88b321f35ff2ed3b1268"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/.publication-open",
+      "bytes": 58,
+      "sha256": "f263bb3815ff019ac909e4707ce32fcc94133b22e6fba245d44e123801d551da"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/dispatch.json",
+      "bytes": 61,
+      "sha256": "04f2ac29595f264be3fdcb8e2ea25c180a1f9fbb698e24b994cfb047873d94a8"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/guardian.json",
+      "bytes": 633,
+      "sha256": "79e4cff1f5dee1c07fa33d8fccd11fd924008944ebb34f9d8967e9ab78312946"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/launch.json",
+      "bytes": 2913,
+      "sha256": "8b8e60cd9e56ea4bc2d458bd664cb56c4648230068abd9f15e27fb3ad8466f53"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/process.log",
+      "bytes": 625,
+      "sha256": "ac284607281a188ba6195aa2365f94d37443b0bc81e6ade845dba86989f81fbd"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/publication.json",
+      "bytes": 570,
+      "sha256": "6167ba3a1a0e4fd1b6183c3f6cd455c1841eda7b5ce1397f1d33452fb8d9a11b"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/publisher.json",
+      "bytes": 72,
+      "sha256": "db98d48698a41bbe2e135f487f0a0d025478ccf001e853e4c131ff4b39b7d0e6"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/receipt.json",
+      "bytes": 5199,
+      "sha256": "3a0e9e30b17ef3cedd3c65f3dd2c6d3b5840508fde13461b6c737c8a16b71cde"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-10-inside/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "a879788efd81d6ff7b2368ceba6629cd3e5ac6a872e52948f3e9a50dca2419ae"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/.publication-open",
+      "bytes": 58,
+      "sha256": "b88a22a37585361bde3afbd1e1f95467bf21c322e548205c4db1fa8d2e0a41d0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/.publication.json.writing",
+      "bytes": 570,
+      "sha256": "249e9f92d310714dee32eb27fb0865c16560e6143563b5a18b80fdbf4cb5c580"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/dispatch.json",
+      "bytes": 61,
+      "sha256": "6835f8955336ce6f5b5ea8c14022a789e9fd78a0d51f76e661b9d5b1e1af3d66"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/guardian.json",
+      "bytes": 632,
+      "sha256": "0293b32589c9d77cfc9334ec00cf3edd04fb76bfc25b77e90a8d20e32905635f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/launch.json",
+      "bytes": 2917,
+      "sha256": "3788f68627d4c87dbca827eea1feb9336989d61f9ba92a90b7cba1e0ca702c01"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/process.log",
+      "bytes": 624,
+      "sha256": "ed56bae1f55eb94dc8d647dc99a1505a9067d214f474ff376e02d3d477682083"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/publication.json",
+      "bytes": 570,
+      "sha256": "249e9f92d310714dee32eb27fb0865c16560e6143563b5a18b80fdbf4cb5c580"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/publisher.json",
+      "bytes": 72,
+      "sha256": "713e61fa3ac7cf936dca4bfe434fcb1ab322b7e216b2a24dd74156502688a37a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/receipt.json",
+      "bytes": 5203,
+      "sha256": "0fd27a2763a39ac89cc2c4a0244dd499c673596c9c091679b09423e4ed5d3aa3"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-manifest-sync/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "3a44952a2010d3ff93f8a2bdc3512ceff7ad383771ad13ada8945dd67b14b2ca"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/.publication-open",
+      "bytes": 58,
+      "sha256": "251ea7e90373b285c9b630c9b5d4f09b4aa16087357498481b2bd6973dc1daa4"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/.receipt.json.writing",
+      "bytes": 5203,
+      "sha256": "478aaabf7000f5bdb7bb686df2ea7382f0b639a5ba06108f2202a00d276324b6"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/dispatch.json",
+      "bytes": 61,
+      "sha256": "23fa05d9aa1797ab6c6b61ec2b839d9d32801de9a826bebca780f17815fda408"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/guardian.json",
+      "bytes": 633,
+      "sha256": "920ff0f8c445cb1016eb13cc5263da65a894a994956bf0518ece9822e4564e02"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/launch.json",
+      "bytes": 2917,
+      "sha256": "760d4a7546c211f46a0e04e05ea00a91c1bed5d297731da16676b06439a6e65c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/process.log",
+      "bytes": 625,
+      "sha256": "983581b1db707ff06349283187f5b06be1adc1841972ccda11255e959388a980"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/publisher.json",
+      "bytes": 72,
+      "sha256": "d84f04eaabcae3ce5df1b3123d055c3c2eb79e77453bff02508c68a99c75b381"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "b6f93059feea23fac2d93285993ce516f97465483f2afc6480f5f9d1df5da197"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "c4d4eb440ace80a52641f652dadb12eda1d0423a17039dd845e0fe2827575ac0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/display-fit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "c1cfc9d41941d9dc46fcbce8be6ee4eedd935901d637ae65fd9657e25321ece0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/launch.json",
+      "bytes": 2902,
+      "sha256": "cc7108f803da0f81ab380657c07814ab96c20b261f1317fb51447a56f09e0903"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/process.log",
+      "bytes": 625,
+      "sha256": "be0e92f545ebd7e9e4d69cf63acc30a989e1b4436f906ca68219d82c5ab04a9f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/publication.json",
+      "bytes": 570,
+      "sha256": "fbf307432b1670d1b82e4da2cfdf161ae0c727a8a725cb1583846cae5289280f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/publisher.json",
+      "bytes": 70,
+      "sha256": "70299f2ef44e5d5e475ed6d9a65c5a20e4364ae14990a4e1a59dd5484e5efffa"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/receipt.json",
+      "bytes": 5189,
+      "sha256": "47db0469cbf2c8c1ee1e58359dd28282e4f927eacd6d93b81a6fab9b4d3e0947"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/fit-ok/supervisor-launch.json",
+      "bytes": 655,
+      "sha256": "1f47cb3f5d26119a6feee19c091a4a165049d8db85e793ba0a022e056c98f8b1"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "a86df0998f4af3d47aa646570a3501d8d91795ce4bdecb1724035ee1f72545c1"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "c362256a0c0c2d1fc710031f6d5bb3b4029794009d2dcebf2527f3ebbfd70a55"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/identity.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/launch.json",
+      "bytes": 2912,
+      "sha256": "7c82ee4f7bc294a1a6f16d6fbf072f461bc65005531f3eda00d796feb79769f6"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/process.log",
+      "bytes": 625,
+      "sha256": "da86361338d98ffae4ff557a5adfa768490f1a98a299884bfce62971eb2e1d80"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/publication.json",
+      "bytes": 570,
+      "sha256": "bf147720ab5cdbd593a3f6ca4af86f5f9af2c5ba7cfc104190ca2bf61480842a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/publisher.json",
+      "bytes": 75,
+      "sha256": "a2f20c477dd1f192ff82f44db80dcd985dfbcf0933b4099fab9d2c018995e0a4"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/receipt.json",
+      "bytes": 5199,
+      "sha256": "879c4601c65730ffd77bc84c399a5314df35f71695c4c65953c2fa49533cb6d0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/identity-ok/supervisor-launch.json",
+      "bytes": 660,
+      "sha256": "9af8a7776c6585be213d7878cc845678e22f2b465c795bc4f8251a311dc55d98"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/.publication-open",
+      "bytes": 58,
+      "sha256": "349f2175e33f337a9063120504f7fd769a154afa5ba795512afd1fd9f213acf5"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/dispatch.json",
+      "bytes": 61,
+      "sha256": "d546a01811bb11615e7c09531316dedea71e8e83f0c201109e09ddc4bf395bc7"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/guardian.json",
+      "bytes": 634,
+      "sha256": "51cada4aec6764b5c098d759b17b4dca78eb2b9ca1db2616266b2070b8601cc5"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/launch.json",
+      "bytes": 2911,
+      "sha256": "892a08a356097dce475864eba443d57207f53c78f5b82e93427c2f02f5340059"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/models/hulls/swift.glb",
+      "bytes": 26,
+      "sha256": "430f78b22ec7c2eb5f7f32c7bbb82e0f2e911f015ce4c8123f78e7dc43d4111a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/process.log",
+      "bytes": 626,
+      "sha256": "ca7ee9b7ca46eff39a9526876e4400ace9fb3bfda23e3e6d74f4f115cac05e1e"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/publisher.json",
+      "bytes": 73,
+      "sha256": "97b663a290e8e6b396ff8c1a7ff0287c02a296486dad990cc521bfd3e43f1ef0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/receipt.json",
+      "bytes": 5199,
+      "sha256": "d23ea55f179450e773cd72d50592409af380af1e22f08833a226a68e5ae87d08"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/source-pin.json",
+      "bytes": 188,
+      "sha256": "b3c61da516a50f9d4c5ce6109c4de9bc1800ab4e35854d88f65de954eaedb87c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/supervisor-launch.json",
+      "bytes": 658,
+      "sha256": "f51370a2d95f7903d255531eb3e9a509077fd83d47afb6bc3209b336527aef6b"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/validation/hulls__swift.blend.json",
+      "bytes": 39,
+      "sha256": "a9068b31bd068453204e7d2f50fece4d7cac6d2e16ac94c744e4e734966d51b5"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-exit23/validation/hulls__swift.glb.json",
+      "bytes": 39,
+      "sha256": "a9068b31bd068453204e7d2f50fece4d7cac6d2e16ac94c744e4e734966d51b5"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "3ae1e7827b67d70c615b8efaf7f58345e16bf248ed8e01ee7366b9b75f0ded60"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "cebf0a7f60ff6ab007eedc457d7a1605ce117a86a84fbf0a042e9f15ef72f82f"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/launch.json",
+      "bytes": 2906,
+      "sha256": "7c12b8dffd3f4fbd979f961a24eb9d6d35305afb11719f7da72ef7505e91c734"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/models/hulls/swift.glb",
+      "bytes": 26,
+      "sha256": "430f78b22ec7c2eb5f7f32c7bbb82e0f2e911f015ce4c8123f78e7dc43d4111a"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/process.log",
+      "bytes": 625,
+      "sha256": "88e74b8cf94136aeb62be9f194f7aee97f27c6ba5a47439cb1d6cd4cdaf7b660"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/publication.json",
+      "bytes": 570,
+      "sha256": "6ea2cc1dd3ef7fe838b20ee8e97a3e05cd3560c9e8bc2f9ba4f81e27d9565f68"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/publisher.json",
+      "bytes": 72,
+      "sha256": "2f118e93bbdc93b268866d5ee29b66a4f5ec58f1c2f457bd1f7f756309b8ccb4"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/receipt.json",
+      "bytes": 5193,
+      "sha256": "56132b88ffcf9a4a0e86f2cbc8880f94369ef83a43885ecbf7f5aaadbe71ea9c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/source-pin.json",
+      "bytes": 188,
+      "sha256": "b3c61da516a50f9d4c5ce6109c4de9bc1800ab4e35854d88f65de954eaedb87c"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "af6cfba791fc24d8076d2e68809479a14c25598394385c672e527dedaa4022f0"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.blend.json",
+      "bytes": 39,
+      "sha256": "a9068b31bd068453204e7d2f50fece4d7cac6d2e16ac94c744e4e734966d51b5"
+    },
+    {
+      "path": "candidate/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.glb.json",
+      "bytes": 39,
+      "sha256": "a9068b31bd068453204e7d2f50fece4d7cac6d2e16ac94c744e4e734966d51b5"
+    },
+    {
+      "path": "candidate/audit-00-before-mask-event.json",
+      "bytes": 460,
+      "sha256": "990aa409aa679174913711bd52e4788102d4ecf6659cc324bc96ad89c5ce9635"
+    },
+    {
+      "path": "candidate/audit-00-before-mask-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-00-before-mask-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-00-before-mask.log",
+      "bytes": 194,
+      "sha256": "0f1673dc3462a79ae4e709c5d562e4bd66d79c63988e6d7fffd7b85cd4eefd4c"
+    },
+    {
+      "path": "candidate/audit-01-before-mask-event.json",
+      "bytes": 458,
+      "sha256": "114ff5c089a970d98d63f8471fb771dbf7d6db22986c5445aebc7bdac64d05c9"
+    },
+    {
+      "path": "candidate/audit-01-before-mask-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-01-before-mask-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-01-before-mask.log",
+      "bytes": 191,
+      "sha256": "236ff9691e4af3bc563536d48765860fe0c1190863cd780e5095546e515bc8d5"
+    },
+    {
+      "path": "candidate/audit-02-pending-event.json",
+      "bytes": 369,
+      "sha256": "82a8dbaa300964d06b12f19701f5723ce374a5263698ed41400a9cde895df137"
+    },
+    {
+      "path": "candidate/audit-02-pending-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-02-pending-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-02-pending.log",
+      "bytes": 314,
+      "sha256": "31408ec883fcfc6186bfcea2c6757921753d1f66f8c4834bf02799163a9d8633"
+    },
+    {
+      "path": "candidate/audit-03-pending-event.json",
+      "bytes": 368,
+      "sha256": "707d5f31df2083db0e05b3584c2edbd191a2990e2dd1378cf4c4a8efd6c6164c"
+    },
+    {
+      "path": "candidate/audit-03-pending-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-03-pending-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-03-pending.log",
+      "bytes": 312,
+      "sha256": "74ecbb9301d4c77be3b2d8b458a08cf8a33622a022c006fa9640d48b715ed8c1"
+    },
+    {
+      "path": "candidate/audit-04-inside-event.json",
+      "bytes": 367,
+      "sha256": "811f81c72d3f9efe1669411a14a496592cc66c5724beb77f5ce9ea2ca5516d9d"
+    },
+    {
+      "path": "candidate/audit-04-inside-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-04-inside-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-04-inside.log",
+      "bytes": 197,
+      "sha256": "f2a5fd5ff685189724f0926441ab221ec23c8a160f1e89cf5f45c96a01b9cce3"
+    },
+    {
+      "path": "candidate/audit-05-inside-event.json",
+      "bytes": 366,
+      "sha256": "61c9f9ae2b43611f244f896592ead7d711c0640c30fb610833f11b407e1ee711"
+    },
+    {
+      "path": "candidate/audit-05-inside-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-05-inside-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-05-inside.log",
+      "bytes": 195,
+      "sha256": "2071c8c08a903797f80d8ffd0a6b52f3b72f345d797ac2c99412e5317290404b"
+    },
+    {
+      "path": "candidate/audit-06-after-unlink-event.json",
+      "bytes": 381,
+      "sha256": "9c659ed1b2190f362ce3f92b76b08a456bf98c95e493d4c5c2460b0e935b837e"
+    },
+    {
+      "path": "candidate/audit-06-after-unlink-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-06-after-unlink-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-06-after-unlink.log",
+      "bytes": 197,
+      "sha256": "2c8ac9c289cadb0524cb991ef4267eb0ea57e3286477af05d8d43f73622ceb38"
+    },
+    {
+      "path": "candidate/audit-07-after-restore-event.json",
+      "bytes": 460,
+      "sha256": "159bf5f2b50fcebe201b36f95da1cdca67aa4d62a3b151a2b891b7216f47f4f2"
+    },
+    {
+      "path": "candidate/audit-07-after-restore-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-07-after-restore-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-07-after-restore.log",
+      "bytes": 196,
+      "sha256": "1b1afa1b77bfeddc1a931095024217eb80ec39dc15d8be204b37d34c45f66d9f"
+    },
+    {
+      "path": "candidate/audit-08-before-mask-event.json",
+      "bytes": 641,
+      "sha256": "64270595e1c9791711a386ebc532a62c6fafa829bf5be1906646b7616e8d7450"
+    },
+    {
+      "path": "candidate/audit-08-before-mask-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-08-before-mask-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-08-before-mask.log",
+      "bytes": 399,
+      "sha256": "cfae7417b73d0c2b073b543bf4c010491c29e78e791a9b24775cd23549e0baf3"
+    },
+    {
+      "path": "candidate/audit-09-inside-event.json",
+      "bytes": 365,
+      "sha256": "c48b0e176c5eeeff19eb36bf6c7986edf3ab406204d8bb5e270e3682ea9c227d"
+    },
+    {
+      "path": "candidate/audit-09-inside-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-09-inside-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-09-inside.log",
+      "bytes": 89,
+      "sha256": "7e58a068d572d92da04889ccf1c0286b943df962f59084ecb32c9177e3adad2c"
+    },
+    {
+      "path": "candidate/audit-10-inside-event.json",
+      "bytes": 367,
+      "sha256": "b36f3c57616a8a6f358bb26f18318af6d82f221a02e1f74ba1ba70282eab598f"
+    },
+    {
+      "path": "candidate/audit-10-inside-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-10-inside-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "candidate/audit-10-inside.log",
+      "bytes": 1188,
+      "sha256": "c5b15ce91bc6f905c704589f3e230f7466ffa7039f73c3ba73d53da39328b85d"
+    },
+    {
+      "path": "candidate/audit-manifest-sync-event.json",
+      "bytes": 52,
+      "sha256": "95d659ad9efb7256f3f49af6673a1448eef631f173da4a4eda082ac9fe6a857a"
+    },
+    {
+      "path": "candidate/audit-manifest-sync-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-manifest-sync.log",
+      "bytes": 1502,
+      "sha256": "5489833bda8f718d3e42c70001557968245b14eb4249dffbfd4e6a668c4acd6c"
+    },
+    {
+      "path": "candidate/audit-receipt-fsync-event.json",
+      "bytes": 52,
+      "sha256": "eb084276c1e307c5cc0dcc3c12be31c0227a2e099b7f4ce33a2ba2889ec03ef9"
+    },
+    {
+      "path": "candidate/audit-receipt-fsync-mask.json",
+      "bytes": 32,
+      "sha256": "6bedf0648ed89cc148f6eb9ae5ccde4b8a7b3a135b14149858253b2661224ff8"
+    },
+    {
+      "path": "candidate/audit-receipt-fsync.log",
+      "bytes": 845,
+      "sha256": "efab0078622b41b39e30dd1858d5590c18451049f562e3394fdf916c3155832b"
+    },
+    {
+      "path": "candidate/cleanup-audit-manifest-sync.json",
+      "bytes": 653,
+      "sha256": "d42127995362f417b71e477a77fddf316ec28345aa78c9f2898b7c398f57458b"
+    },
+    {
+      "path": "candidate/cleanup-audit-receipt-fsync.json",
+      "bytes": 620,
+      "sha256": "d401ab8313a4e24781beb19442a97d37546b5b9e90bae38a3d1f8cd4c8e53873"
+    },
+    {
+      "path": "candidate/cleanup-driver-final.json",
+      "bytes": 686,
+      "sha256": "287cd743da8dd3bd2271a2741c443b8eccba710c0e78c22dff937c2d144eb825"
+    },
+    {
+      "path": "candidate/cleanup-final.json",
+      "bytes": 686,
+      "sha256": "287cd743da8dd3bd2271a2741c443b8eccba710c0e78c22dff937c2d144eb825"
+    },
+    {
+      "path": "candidate/code-pins.json",
+      "bytes": 499,
+      "sha256": "b14da9276cbd977926c718fbb98206bbca30d97bd0a353d22c109e3904abfa63"
+    },
+    {
+      "path": "candidate/fit-ok.log",
+      "bytes": 90,
+      "sha256": "f212356f30b8391dc3311e06d56bee0fc8d2170bd239c7fd83cb2090fd84035e"
+    },
+    {
+      "path": "candidate/held-audit-00-before-mask/command.log",
+      "bytes": 1425,
+      "sha256": "de1ee861fc131fbfe3a4b9e8a34aa06374af0bd351d41a34984e3587a9724e5b"
+    },
+    {
+      "path": "candidate/held-audit-00-before-mask/result.json",
+      "bytes": 373,
+      "sha256": "40cb742788bf7fea3d50ba8f28759139583086d7a4880b06678fd15db4636358"
+    },
+    {
+      "path": "candidate/held-audit-01-before-mask/command.log",
+      "bytes": 1425,
+      "sha256": "16d9dde1e597690995977e0008a2a5d087b7132c5ff8780678b6b7bf60f2f300"
+    },
+    {
+      "path": "candidate/held-audit-01-before-mask/result.json",
+      "bytes": 373,
+      "sha256": "5df02835bb3b0729a7f66466570ff34a2a5787035f5c2807a3bcbd1ad223b08a"
+    },
+    {
+      "path": "candidate/held-audit-02-pending/command.log",
+      "bytes": 1421,
+      "sha256": "f35d0f4d4335ae672054c6569b0bb216127cc7386c0705ae8964548bc254f0fd"
+    },
+    {
+      "path": "candidate/held-audit-02-pending/result.json",
+      "bytes": 369,
+      "sha256": "eafe42a4c7bf0792a98573fd74fd36f39ba6d44238af70adc3f30cd470e9f87c"
+    },
+    {
+      "path": "candidate/held-audit-03-pending/command.log",
+      "bytes": 1421,
+      "sha256": "b5a8c981878c02cf0a0f179366463bcdbf254950820d82e8a7714c05695ce912"
+    },
+    {
+      "path": "candidate/held-audit-03-pending/result.json",
+      "bytes": 369,
+      "sha256": "5e1377eb39475e9d403f270bd93fe1ec56909a938235d246eb68dc4d26dcc833"
+    },
+    {
+      "path": "candidate/held-audit-04-inside/command.log",
+      "bytes": 1420,
+      "sha256": "20c7524c9dd402a6010825b5489bfa36b78163b89623db72262951beeec7b719"
+    },
+    {
+      "path": "candidate/held-audit-04-inside/result.json",
+      "bytes": 368,
+      "sha256": "70fa68202e6d5007843d5b4c0f1b8c051ad0af52c3a6dd5ce1cc9863eadce657"
+    },
+    {
+      "path": "candidate/held-audit-05-inside/command.log",
+      "bytes": 1420,
+      "sha256": "6eb1dfc6f4dbc7d156ac9862240124fea6b70816ce4ce53c0ec539e83ca1b406"
+    },
+    {
+      "path": "candidate/held-audit-05-inside/result.json",
+      "bytes": 368,
+      "sha256": "043e1272c8da099d83e260d16383a09fc31d6630c09a211f9d6372cc2f9ac2e7"
+    },
+    {
+      "path": "candidate/held-audit-06-after-unlink/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "candidate/held-audit-06-after-unlink/promotion.json",
+      "bytes": 1967,
+      "sha256": "17227582afcb6670200a6d33473139079e90f03d55c61dc267aa9e1d95488e06"
+    },
+    {
+      "path": "candidate/held-audit-06-after-unlink/result.json",
+      "bytes": 373,
+      "sha256": "c24ec158108ce0aa94f740cb288b8a2b95f48c990027ef90eb918bd875eed629"
+    },
+    {
+      "path": "candidate/held-audit-07-after-restore/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "candidate/held-audit-07-after-restore/promotion.json",
+      "bytes": 1969,
+      "sha256": "f7af11793c8d2ddfd8112cd3a59b9d45c9c2ace8e76b2ab6e19d8910fd856702"
+    },
+    {
+      "path": "candidate/held-audit-07-after-restore/result.json",
+      "bytes": 374,
+      "sha256": "c690722b85c86f2514a833ae298123dcc9ec5ea67fa2ca3cb0834e85ae437ddd"
+    },
+    {
+      "path": "candidate/held-audit-08-before-mask/command.log",
+      "bytes": 1425,
+      "sha256": "70cb199c4c1e41fecd4829fe8c076a8792ce73c9d3862700d471aaeb0c939f4b"
+    },
+    {
+      "path": "candidate/held-audit-08-before-mask/result.json",
+      "bytes": 373,
+      "sha256": "aa276973b5915ddb8ae01bc91ca0211c63ee1053b6827b5e5a2bdea80233b3d7"
+    },
+    {
+      "path": "candidate/held-audit-09-inside/command.log",
+      "bytes": 1420,
+      "sha256": "fd19f78e5d58c56d3d1351c8029873ac30863a286abe0ec890064612e515365a"
+    },
+    {
+      "path": "candidate/held-audit-09-inside/result.json",
+      "bytes": 368,
+      "sha256": "10e59a52390495f1c85c02fa71552e0b48c8b70af17c94bf81c72f3a74f699a0"
+    },
+    {
+      "path": "candidate/held-audit-10-inside/command.log",
+      "bytes": 1420,
+      "sha256": "f7a9c784caa423bd58f8e6efcb1eaacd021172752843eff0003985ac55463db9"
+    },
+    {
+      "path": "candidate/held-audit-10-inside/result.json",
+      "bytes": 368,
+      "sha256": "e4033eed03374e3a35827287e0965352456f293e93cad1ff66148246c392ef6a"
+    },
+    {
+      "path": "candidate/hook/sitecustomize.py",
+      "bytes": 2910,
+      "sha256": "db6d002366667598edb4d516f22481a45b8c33aff08fb96fa1686f936ffb96ad"
+    },
+    {
+      "path": "candidate/identity-ok.log",
+      "bytes": 90,
+      "sha256": "f212356f30b8391dc3311e06d56bee0fc8d2170bd239c7fd83cb2090fd84035e"
+    },
+    {
+      "path": "candidate/packages/client/public/models/hulls/swift.glb",
+      "bytes": 26,
+      "sha256": "430f78b22ec7c2eb5f7f32c7bbb82e0f2e911f015ce4c8123f78e7dc43d4111a"
+    },
+    {
+      "path": "candidate/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "candidate/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 11987,
+      "sha256": "398f58333e68d78922b1ebab807cb039c2424c361894fb0231591bc46e4d9db4"
+    },
+    {
+      "path": "candidate/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "candidate/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "candidate/publish.py",
+      "bytes": 1104,
+      "sha256": "9393f21177fea90a884261354d94cc4cc7c32d0df0dba75ad2282d6c39d98495"
+    },
+    {
+      "path": "candidate/reject-audit-manifest-sync/command.log",
+      "bytes": 1424,
+      "sha256": "8a49125fcbf492239e6ef10c15ff1df3d4b7442b1e6118c14a556b165181df46"
+    },
+    {
+      "path": "candidate/reject-audit-manifest-sync/result.json",
+      "bytes": 374,
+      "sha256": "19549ae4366a19fdff03943c923474b00f84643e14b52dc0d7a5a0696a32cea7"
+    },
+    {
+      "path": "candidate/reject-audit-receipt-fsync/command.log",
+      "bytes": 1585,
+      "sha256": "73cddb81cc93a83f800b524c81dd601e3a121033e41ba348500885c8e57b5a12"
+    },
+    {
+      "path": "candidate/reject-audit-receipt-fsync/result.json",
+      "bytes": 374,
+      "sha256": "3f3494ea981a7f0a5f65845c13d47516d811e3598b5c3fcc1b09fc642ae17bd3"
+    },
+    {
+      "path": "candidate/reject-stock-exit23/command.log",
+      "bytes": 1390,
+      "sha256": "67d6097aa1720c1de326860209d8480d322c9b0a499ca4bcdba244bab85f8344"
+    },
+    {
+      "path": "candidate/reject-stock-exit23/result.json",
+      "bytes": 367,
+      "sha256": "79b54d19bf4f9026619a90642ca527f779850f0bb8f2882a6285c616af468e3e"
+    },
+    {
+      "path": "candidate/retained-lock-audit-manifest-sync/owner.json",
+      "bytes": 121,
+      "sha256": "ef9d5d3a8a6351b387aac0eadd04e2b3af228fe80055343c1283749fa47164db"
+    },
+    {
+      "path": "candidate/retained-lock-audit-receipt-fsync/owner.json",
+      "bytes": 121,
+      "sha256": "f93a387e4896fa32b99116f58504fc7bd0829243a5d1823d61e0dcae1a9832c2"
+    },
+    {
+      "path": "candidate/stock-exit23.log",
+      "bytes": 91,
+      "sha256": "d1ab81a0497bfcfb3388b37aeb8950e4af228748f5b612a7cab09c3ed6cc86be"
+    },
+    {
+      "path": "candidate/stock-ok.log",
+      "bytes": 90,
+      "sha256": "f212356f30b8391dc3311e06d56bee0fc8d2170bd239c7fd83cb2090fd84035e"
+    },
+    {
+      "path": "command-exit-ledger.json",
+      "bytes": 41561,
+      "sha256": "4e658d4170b0907aaf5fdcb47ed55614b766cb8f2615667ff459a854aff3e378"
+    },
+    {
+      "path": "complete.json",
+      "bytes": 82,
+      "sha256": "30ea44de89c55a14e9f6b3405534ef1fe94c61c90cef19b168745571b1401851"
+    },
+    {
+      "path": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "driver-exits.json",
+      "bytes": 1956,
+      "sha256": "cadd6229d6a4485fbc0d311427f68e8a6d75a7cc4d48615992c47e9479882909"
+    },
+    {
+      "path": "driver.log",
+      "bytes": 18752,
+      "sha256": "f4fb7b5d27f7bddc85f2a5ee11c285e8ccd74f5ce6b5557d8566c7e21899e05f"
+    },
+    {
+      "path": "exact-base/after-control/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "exact-base/after-control/promotion.json",
+      "bytes": 1939,
+      "sha256": "9229e3a03ba6bdd577918e1c0953d96fb6261f2a182a928f0f832a50a238a73b"
+    },
+    {
+      "path": "exact-base/after-control/result.json",
+      "bytes": 360,
+      "sha256": "96ae7c960418a9a80e1523e84a2b3f41985c3833f1d138542836d4efba7575c5"
+    },
+    {
+      "path": "exact-base/after-red-term/command.log",
+      "bytes": 77,
+      "sha256": "0b32f29fe5f8d6ca37c89a658301bccecc3b12b87a2db96e7a8ea96a2b896419"
+    },
+    {
+      "path": "exact-base/after-red-term/promotion.json",
+      "bytes": 1941,
+      "sha256": "aed1310b3f4902792926169081c8afff3f09fafae65e29df3e5810e5de1792f1"
+    },
+    {
+      "path": "exact-base/after-red-term/result.json",
+      "bytes": 361,
+      "sha256": "ce7a18be036c8f2cbcadb324eac03537ea0c50580ea36b096fa1e69acddab329"
+    },
+    {
+      "path": "exact-base/assets/blend/hulls/swift.blend",
+      "bytes": 23,
+      "sha256": "30c910adde36e53a85f8c7b1ff0a93b3eb1a626bfc0c65cb9c2dd84ac7c9d9be"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/dispatch.json",
+      "bytes": 61,
+      "sha256": "0a376b0eb599d6e3ed48ef382b20218b68cb0242b1d35018edb9fd67a70f1295"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/guardian.json",
+      "bytes": 632,
+      "sha256": "1d9f3081f40a4bc203e28cf8fd592b2937ec15d0581b8ab0e34e836352594604"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/launch.json",
+      "bytes": 2908,
+      "sha256": "97ceabe376e42ea52fae6e4f1fc2243c22f71bdafe683678b756f9226c8f1367"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/process.log",
+      "bytes": 624,
+      "sha256": "40180e864bf2a7ed299f0a8b60f38b175952588ec6aaf4724305f57a297c6820"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/publication.json",
+      "bytes": 570,
+      "sha256": "828788d068afea7240607985d24ef83f4f23d093ce4e49d39febfb04a8055a9c"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/publisher.json",
+      "bytes": 72,
+      "sha256": "31b94fd5696e51e7206394d8ac0160e50ef24267f317450ddae1cfca09021714"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/receipt.json",
+      "bytes": 5194,
+      "sha256": "6d9727eeb573d26acc5c131d9b5f6b10c0f4abfcf33e7b0e9845df4e61b807b6"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/control/supervisor-launch.json",
+      "bytes": 659,
+      "sha256": "4c728dab1aa78c85b7bf4dfd566c178c418204cec44d9e7b42c23e624baa0817"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "4790e5434cd538e2fa233a846dc709ec29d0453c75d5fec1d79621c7d88144bb"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/display-fit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "42e13022bb17def5c845b3913d23dfb7c659ca286d3539f3a6da562be7c57804"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/launch.json",
+      "bytes": 2905,
+      "sha256": "d8690b0ed7deba71bd788cf8fd8925932e8ecda31984f33d3f77bf6694bf8e6d"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/process.log",
+      "bytes": 625,
+      "sha256": "ec845ca77ed1ccf73a0c04f756a754c83a5a4ab8d2b1b5c92b1a287bded7f763"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/publication.json",
+      "bytes": 570,
+      "sha256": "2d437fe758c1d746be71a9d2670f102274d2e20c79003f09d5e6d081237f082f"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/publisher.json",
+      "bytes": 70,
+      "sha256": "6d56e3ded3adaccc33254290843fddeb4b4d41f18d6fe6b884a77ca0b813772e"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/receipt.json",
+      "bytes": 5192,
+      "sha256": "aaddc9377eac463ddd6aa96a974dd99e196167a805ec1de1d1f4ccae00efd36c"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/fit-ok/supervisor-launch.json",
+      "bytes": 657,
+      "sha256": "65b52c4ae5f3a884d5db3ce34de60f513ea10ab6cfce26fb2516eaa4d1a976fc"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "d7bbf3f837b7bab3d61b7099dccbddcf71bc1a0dd7c310a3e9c6fbaf2f993637"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "fd9bb9bb42f539b3da03b35079d62889c10b5e7c6cb11db07a811a1232bdbc03"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/identity.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/launch.json",
+      "bytes": 2915,
+      "sha256": "6d71579b32d923b76cacc459a5de2f677ab627bffc096fb631f707d0f2bf4cf0"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/process.log",
+      "bytes": 625,
+      "sha256": "5ef3a2ccb5ef6a17d4a28c7799dd15177ea191f25ff7b029de805a1233621638"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/publication.json",
+      "bytes": 570,
+      "sha256": "217c6aadf2864baab932010739dd4abcf0b5e5feb45c4f66a84dcbae1ba1905f"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/publisher.json",
+      "bytes": 75,
+      "sha256": "0f6bacfebe84728ae61b16dfc9b0d5c74c9a9b15a57e64b5557f976c95ae55fb"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/receipt.json",
+      "bytes": 5202,
+      "sha256": "99c32e83b11bf3368cc90cc9bc681d8bfd6c1d90141b78c0fac4a4c2f83236ab"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/identity-ok/supervisor-launch.json",
+      "bytes": 662,
+      "sha256": "4109698e31f16976028a1ddeaeb4ec084ed8b2ae6423429dfaea325e575166e8"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/audit.json",
+      "bytes": 204,
+      "sha256": "e4af566d5e906045029952563296bd7cc973520f84c7575aa100466e48244a27"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/dispatch.json",
+      "bytes": 61,
+      "sha256": "60bfebcf71d1c71cdd299d139d79bc1645569569e6bf32a316a27ddc1e4169c6"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/guardian.json",
+      "bytes": 632,
+      "sha256": "7dd69e5d2e12695760cd7a25cb7c89aa0fdb78581d7478ae244f132fb2f5f057"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/launch.json",
+      "bytes": 2909,
+      "sha256": "ce3594614f50e0ba2cc5312a058b66e5206d302a61b3d1df2d675430277a1da5"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/process.log",
+      "bytes": 624,
+      "sha256": "f72a6d7b973f81ec9d83ad3788286ca101f7224af3d441fe750a2c4516f1fffe"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/publication.json",
+      "bytes": 570,
+      "sha256": "dd4fda4d201e621f7866314a519368f524363caab0b23f993ad8bd06b8c29481"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/publisher.json",
+      "bytes": 72,
+      "sha256": "5b6f728eee0bc5559515246a85d7f0395c8196e0ad369fdffd7d104b9a1c2cbb"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/receipt.json",
+      "bytes": 5195,
+      "sha256": "de9e4110f6abb4b522d0a5baa8d65dbcad2d49dc21ec33b14e9d9549374b446b"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/red-term/supervisor-launch.json",
+      "bytes": 659,
+      "sha256": "098f9479aabb79a487b79f4175d109b524f80cd31b7610b9147dbe3f748a2461"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "2ed996e5cc1edb6d5ec6e6d199634557f8d29b5ef0314c5fdc08e8770ffe950e"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "1c1e44b3111b9b6b2cf9f219ce28d225a1d7845ef0314344fdfa8ccf516c5fd4"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/launch.json",
+      "bytes": 2909,
+      "sha256": "ad7edea01b1f239752b843061e84b15781e082f030eeb4792dd96bce1326860c"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/models/hulls/swift.glb",
+      "bytes": 26,
+      "sha256": "430f78b22ec7c2eb5f7f32c7bbb82e0f2e911f015ce4c8123f78e7dc43d4111a"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/process.log",
+      "bytes": 625,
+      "sha256": "f665c590b42a67e723aea26e5fb446fc02abc0255236223c57cd8041a47ee14f"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/publication.json",
+      "bytes": 570,
+      "sha256": "655f67589f5539341aeedd631443f288131341c67c86c792f9308d6b14c61180"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/publisher.json",
+      "bytes": 72,
+      "sha256": "4467742b67dfc6ad560fb5442819ce14e1708ab9cf58379eedd504234ef5f8eb"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/receipt.json",
+      "bytes": 5196,
+      "sha256": "6c3d1d92b5b6b932f43ca02df3270c66733cc492cadad3c08aa2b7c627e8673b"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/source-pin.json",
+      "bytes": 188,
+      "sha256": "b3c61da516a50f9d4c5ce6109c4de9bc1800ab4e35854d88f65de954eaedb87c"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/supervisor-launch.json",
+      "bytes": 659,
+      "sha256": "5c79c5b684e9db6d9bf03d85c78e72950c9ddeeb48125f2ddbd65a808da347d0"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.blend.json",
+      "bytes": 39,
+      "sha256": "a9068b31bd068453204e7d2f50fece4d7cac6d2e16ac94c744e4e734966d51b5"
+    },
+    {
+      "path": "exact-base/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.glb.json",
+      "bytes": 39,
+      "sha256": "a9068b31bd068453204e7d2f50fece4d7cac6d2e16ac94c744e4e734966d51b5"
+    },
+    {
+      "path": "exact-base/cleanup-driver-final.json",
+      "bytes": 290,
+      "sha256": "c3dedbeecdb6da330851117f92d9fa2cf155049e64900d687ba2a308f9743c53"
+    },
+    {
+      "path": "exact-base/cleanup-final.json",
+      "bytes": 290,
+      "sha256": "c3dedbeecdb6da330851117f92d9fa2cf155049e64900d687ba2a308f9743c53"
+    },
+    {
+      "path": "exact-base/code-pins.json",
+      "bytes": 499,
+      "sha256": "e95e93ccff24662c07b0dfa9668894e0a6f348904a141e1397d8dad9b405a3de"
+    },
+    {
+      "path": "exact-base/control-event.json",
+      "bytes": 225,
+      "sha256": "a389c568e9af24b0d42b75f7e4bd446f4682f085145ac38f16e3783f9261e640"
+    },
+    {
+      "path": "exact-base/control-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "exact-base/control.log",
+      "bytes": 89,
+      "sha256": "ecb9a4ebbb839ed4f37afbed4e234e05609f838f9f6befe0e4081b091246e0ff"
+    },
+    {
+      "path": "exact-base/fit-ok.log",
+      "bytes": 90,
+      "sha256": "8866d112092f2e6674e83360f03540e02a950834e8ce329df1283018f525b463"
+    },
+    {
+      "path": "exact-base/held-control/command.log",
+      "bytes": 1417,
+      "sha256": "1740a4455d8886019944bd7d2049773d65f342fff50be2f2bb1d7b8d9b7f4f78"
+    },
+    {
+      "path": "exact-base/held-control/result.json",
+      "bytes": 360,
+      "sha256": "6fc2f7aa6189e2b6b55d5bd9de1ce9ba169496c054dd8a281799a532a95de039"
+    },
+    {
+      "path": "exact-base/held-red-term/command.log",
+      "bytes": 1418,
+      "sha256": "3a269a5cc11ff592f002b143369d6adacf891094b65eead4a0a4fb6969185188"
+    },
+    {
+      "path": "exact-base/held-red-term/result.json",
+      "bytes": 361,
+      "sha256": "217e5a55469da3802f1b4b5840efee7e5edab02534f00ae0284d362718cfd0be"
+    },
+    {
+      "path": "exact-base/hook/sitecustomize.py",
+      "bytes": 2128,
+      "sha256": "17b43fad8de8d7cfc30c5c5a48a3b7c533fe7ee2c7eeaf545f197387559f7c8b"
+    },
+    {
+      "path": "exact-base/identity-ok.log",
+      "bytes": 90,
+      "sha256": "f212356f30b8391dc3311e06d56bee0fc8d2170bd239c7fd83cb2090fd84035e"
+    },
+    {
+      "path": "exact-base/packages/client/public/models/hulls/swift.glb",
+      "bytes": 26,
+      "sha256": "430f78b22ec7c2eb5f7f32c7bbb82e0f2e911f015ce4c8123f78e7dc43d4111a"
+    },
+    {
+      "path": "exact-base/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "exact-base/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "exact-base/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "exact-base/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "exact-base/publish.py",
+      "bytes": 1104,
+      "sha256": "9393f21177fea90a884261354d94cc4cc7c32d0df0dba75ad2282d6c39d98495"
+    },
+    {
+      "path": "exact-base/red-term-event.json",
+      "bytes": 242,
+      "sha256": "681ae07e71a7fb408ed90e15b62db800f29221224d18554d4a86b69ad06dd80d"
+    },
+    {
+      "path": "exact-base/red-term-resume",
+      "bytes": 7,
+      "sha256": "4000b95869509207496d8cf04e024b7aa6287e9b94eec6ed8773ea7b44ba0389"
+    },
+    {
+      "path": "exact-base/red-term.log",
+      "bytes": 89,
+      "sha256": "ecb9a4ebbb839ed4f37afbed4e234e05609f838f9f6befe0e4081b091246e0ff"
+    },
+    {
+      "path": "exact-base/stock-ok.log",
+      "bytes": 90,
+      "sha256": "f212356f30b8391dc3311e06d56bee0fc8d2170bd239c7fd83cb2090fd84035e"
+    },
+    {
+      "path": "final-checks.json",
+      "bytes": 1424,
+      "sha256": "7989f00e4053523298ab11d066e8b15a096669bf0097a905db57eda473cdaa24"
+    },
+    {
+      "path": "final-checks.log",
+      "bytes": 1338,
+      "sha256": "c18489a5334b0fa9ce974cf909806ea313ac2035f991794684b4803ad563f4d8"
+    },
+    {
+      "path": "final_checks.py",
+      "bytes": 5008,
+      "sha256": "2425c9200fba1ac8d636e31e6db604f10de40771aeebd5cd91d2a24db1a162d1"
+    },
+    {
+      "path": "git-pins.log",
+      "bytes": 123,
+      "sha256": "6826eb3d6ae92413db54acc59b61efdb091a568b394c6f4e7bd740a7932a1296"
+    },
+    {
+      "path": "git-status.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "protect.py",
+      "bytes": 4038,
+      "sha256": "da6ba83e99bd00d80a52a8d98bfd2a74c1d153939a65242f142f701247150cea"
+    },
+    {
+      "path": "protection-after-summary.json",
+      "bytes": 4257,
+      "sha256": "9bee73701fd0cfdc51d264aa874d8702c0c04fa1b78480afb6f11ba3693c7037"
+    },
+    {
+      "path": "protection-after.json",
+      "bytes": 2045087,
+      "sha256": "b20b65c5f0a9e1ffd355f99bd5f099d16d803bb9a2e9bf7589db0587b8298b1f"
+    },
+    {
+      "path": "protection-after.log",
+      "bytes": 4494,
+      "sha256": "18d22787122a7d81ae5d4e77de89254d29b8b21c8bdb93e1be67d0e5f74292e7"
+    },
+    {
+      "path": "protection-before-summary.json",
+      "bytes": 414,
+      "sha256": "658ae131672e91f1fadc9085db518da0f9767c8b50f7bcf83db8c61636a40efe"
+    },
+    {
+      "path": "protection-before.json",
+      "bytes": 2043737,
+      "sha256": "6b5cd92ddeab61cc5fade445dd6f7fd1d64b11b58e7dafa0300176800951f19c"
+    },
+    {
+      "path": "protection-before.log",
+      "bytes": 378,
+      "sha256": "49419435356ce95a3351ba74674e7581e861ffd00085a741938fd9f6afddb392"
+    },
+    {
+      "path": "protection-reconcile.log",
+      "bytes": 96,
+      "sha256": "46fa8290e30eec5b964321571ae00541bf2771f5bed6c04f847e55b216345c32"
+    },
+    {
+      "path": "protection-reconciled.json",
+      "bytes": 7034,
+      "sha256": "a40a59a2a8c1631193c8d2ab0a0d8b271c6828350ddeccfde4d519b615ab52e7"
+    },
+    {
+      "path": "reconcile_protection.py",
+      "bytes": 2094,
+      "sha256": "ea688c4278ee6a9e355dfc8c48fdaab2bc61d859364eaccbab16a2f7a736ebbe"
+    },
+    {
+      "path": "report.py",
+      "bytes": 16310,
+      "sha256": "7c74eaffea95cc8606297ecb6a3f74393a790a5e8fcd0ccfaea80147278cc3e5"
+    },
+    {
+      "path": "results.json",
+      "bytes": 27355,
+      "sha256": "15d122d19976eefcf26b4c42343b5b560db1ae2981eed4d61232e018041f00ab"
+    },
+    {
+      "path": "retained-evidence-pins.json",
+      "bytes": 34071,
+      "sha256": "669515070f6f5943a51f914629ea9d5a5805add8d79f5f915fc31b3c13002660"
+    },
+    {
+      "path": "reviewed-source-diff.log",
+      "bytes": 21832,
+      "sha256": "3cae38fbb12dbda63d6a1dc74ce5d756a0504bd50d17ef6eaf1f2746a4730299"
+    },
+    {
+      "path": "run_review.py",
+      "bytes": 14418,
+      "sha256": "56a2c313953bc13939e55733745bb2066fad06bc7c2a1fbb4ea0a3c2d25796a9"
+    },
+    {
+      "path": "verification-commands.json",
+      "bytes": 3775,
+      "sha256": "6cddba4802dd1b599e2fc6741c40f6521752e42d68031156b0cd7ce63a72c514"
+    }
+  ],
+  "excludes": [
+    "SEAL.json"
+  ]
+}

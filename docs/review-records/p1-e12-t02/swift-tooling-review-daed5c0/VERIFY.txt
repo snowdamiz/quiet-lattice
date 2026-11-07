@@ -1,0 +1,977 @@
+Independent Swift R4 cancellation/commit review: raw commands and actual exits.
+Expected nonzero CLI exits are refusal evidence. The checker exit1 is retained and explained in REPORT.txt.
+No terminal receipt, guardian, manifest, or promotion result was fabricated. Synthetic fixture payloads are explicitly non-asset qualification.
+
+COMMAND: python3 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/protect.py before
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: exec_command/write_stdin observed process exit; private harness only
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/protection-before.log
+
+COMMAND: python3 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/run_review.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: exec_command/write_stdin observed process exit; private harness only
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/driver.log
+
+COMMAND: python3 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/final_checks.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: exec_command/write_stdin observed process exit; private harness only
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/final-checks.log
+
+COMMAND: python3 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/protect.py after
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 1
+EXIT EVIDENCE: exec_command/write_stdin observed process exit; private harness only
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/protection-after.log
+LAST 20 LOG LINES:
+{"phase": "after", "entries": 4832, "freshHashReadBytes": 16866561, "originalProtectedCount": 1477, "originalHashOrMetadataDrift": [], "baselineDrift": [], "PNG": 34, "EXR": 2, "status": "", "pins": ["daed5c0562e848643fa3d8ec24a4f28062b01391", "d59119897c1f306a0624d116c0a0a5940e0937d0"], "priorSealSHA256": "02c01a222d912e0d9a08a7e08c16cb15e09e252004956ead9257e31e6f8fa898", "reviewDrift": ["/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/command-exit-ledger.json", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/exact-2bd-red/assets/blend/hulls/swift.blend", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/docs/DECISIONS.md", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/exact-2bd-red/assets/renders/hulls/swift-round4-current/stock-ok/models/hulls/swift.glb", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-01/commands.jsonl", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/inventory.json", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-01/publication/assets/renders/hulls/swift-round4-current/identity-exit23/identity.json", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/baseline.json", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-01/publication/assets/renders/hulls/swift-round4-current/stock-ok/models/hulls/swift.glb", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/exact-2bd-red/assets/renders/hulls/swift-round4-current/identity-ok/identity.json", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-02-neighbors/extra-publication/assets/renders/hulls/swift-round4-current/stock-ok/models/hulls/swift.glb", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-02-neighbors/extra-publication/packages/client/public/models/hulls/swift.glb", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/VERIFY.txt", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-01/publication/assets/blend/hulls/swift.blend", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-01/publication/packages/client/public/models/hulls/swift.glb", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-02-neighbors/extra-publication/assets/renders/hulls/swift-round4-current/identity-ok/identity.json", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-01/publication/assets/renders/hulls/swift-round4-current/stock-exit23/models/hulls/swift.glb", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-01/publication/assets/renders/hulls/swift-round4-current/identity-ok/identity.json", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/exact-2bd-red/packages/client/public/models/hulls/swift.glb", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/docs/PROGRESS.md", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/89-cancellation-commit/green-02-neighbors/extra-publication/assets/blend/hulls/swift.blend", "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/docs/IMPLEMENTATION_PLAN.md"]}
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/protect.py", line 58, in <module>
+    assert not original_drift and not baseline_drift and not summary['status'] and not summary.get('reviewDrift')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+COMMAND: python3 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/reconcile_protection.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: exec_command/write_stdin observed process exit; private harness only
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/protection-reconcile.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/lane.py --label stock-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/publish.py stock 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79383
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/stock-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/lane.py --label identity-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/publish.py identity 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79393
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/identity-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/lane.py --label fit-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/publish.py fit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79404
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/fit-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/lane.py --label red-term --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79414
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/red-term.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/hook", "FAULT": "cancel-before-commit", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/red-term-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/red-term-resume"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok red-term fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79442
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/held-red-term/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/held-red-term"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: red-term: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok red-term fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79443
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/after-red-term/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/after-red-term"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/lane.py --label control --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79444
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/control.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/hook", "FAULT": "cancel-before-commit", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/control-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/control-resume"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok control fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79458
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/held-control/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/held-control"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: control: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok control fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base
+PID: 79461
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/after-control/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/exact-base/after-control"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label stock-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py stock 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79467
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/stock-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label identity-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py identity 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79480
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/identity-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label fit-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py fit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79497
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/fit-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-00-before-mask --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79510
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-00-before-mask.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "before-mask", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-00-before-mask-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-00-before-mask-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-00-before-mask-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.36, "peakRssKiB": 5920, "childGroupEmpty": true}
+SWIFT_SIGNAL {"signal": 15, "observation": "delivered", "publicationPhase": "open", "committed": false}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-00-before-mask fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79548
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-00-before-mask/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-00-before-mask"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-00-before-mask: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-00-before-mask fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79550
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-00-before-mask/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-00-before-mask"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-00-before-mask: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-01-before-mask --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79552
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-01-before-mask.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "before-mask", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-01-before-mask-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-01-before-mask-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-01-before-mask-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.3, "peakRssKiB": 400, "childGroupEmpty": true}
+SWIFT_SIGNAL {"signal": 2, "observation": "delivered", "publicationPhase": "open", "committed": false}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-01-before-mask fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79566
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-01-before-mask/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-01-before-mask"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-01-before-mask: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-01-before-mask fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79570
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-01-before-mask/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-01-before-mask"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-01-before-mask: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-02-pending --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79574
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-02-pending.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "pending", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-02-pending-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-02-pending-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-02-pending-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.3, "peakRssKiB": 5920, "childGroupEmpty": true}
+SWIFT_SIGNAL {"signal": 15, "observation": "pending-at-decision", "publicationPhase": "deciding", "committed": false}
+SWIFT_SIGNAL {"signal": 15, "observation": "delivered", "publicationPhase": "refused", "committed": false}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-02-pending fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79628
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-02-pending/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-02-pending"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-02-pending: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-02-pending fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79639
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-02-pending/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-02-pending"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-02-pending: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-03-pending --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79645
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-03-pending.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "pending", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-03-pending-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-03-pending-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-03-pending-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.35, "peakRssKiB": 128, "childGroupEmpty": true}
+SWIFT_SIGNAL {"signal": 2, "observation": "pending-at-decision", "publicationPhase": "deciding", "committed": false}
+SWIFT_SIGNAL {"signal": 2, "observation": "delivered", "publicationPhase": "refused", "committed": false}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-03-pending fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79701
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-03-pending/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-03-pending"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-03-pending: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-03-pending fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79712
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-03-pending/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-03-pending"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-03-pending: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-04-inside --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79717
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-04-inside.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "inside", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-04-inside-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-04-inside-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-04-inside-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-04-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79776
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-04-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-04-inside"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-04-inside: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-04-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79785
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-04-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-04-inside"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-05-inside --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79790
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-05-inside.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "inside", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-05-inside-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-05-inside-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-05-inside-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-05-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79848
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-05-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-05-inside"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-05-inside: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-05-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79858
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-05-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-05-inside"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-06-after-unlink --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79864
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-06-after-unlink.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "after-unlink", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-06-after-unlink-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-06-after-unlink-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-06-after-unlink-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-06-after-unlink fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79927
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-06-after-unlink/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-06-after-unlink"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-06-after-unlink fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79939
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-06-after-unlink/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-06-after-unlink"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-07-after-restore --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 79944
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-07-after-restore.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "after-restore", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-07-after-restore-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-07-after-restore-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-07-after-restore-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-07-after-restore fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80004
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-07-after-restore/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-07-after-restore"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-07-after-restore fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80014
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-07-after-restore/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-07-after-restore"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-08-before-mask --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80020
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-08-before-mask.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "before-mask", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-08-before-mask-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-08-before-mask-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-08-before-mask-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.36, "peakRssKiB": 128, "childGroupEmpty": true}
+SWIFT_SIGNAL {"signal": 2, "observation": "delivered", "publicationPhase": "open", "committed": false}
+SWIFT_SIGNAL {"signal": 15, "observation": "delivered", "publicationPhase": "open", "committed": false}
+SWIFT_SIGNAL {"signal": 2, "observation": "delivered", "publicationPhase": "open", "committed": false}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-08-before-mask fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80083
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-08-before-mask/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-08-before-mask"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-08-before-mask: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-08-before-mask fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80101
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-08-before-mask/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-08-before-mask"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-08-before-mask: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-09-inside --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80106
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-09-inside.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "inside", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-09-inside-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-09-inside-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-09-inside-mask.json", "UNLINK_FAIL": "0", "INHERIT_USR1": "1"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-09-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80160
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-09-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-09-inside"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-09-inside: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-09-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80170
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-09-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-09-inside"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-10-inside --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80176
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-10-inside.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "inside", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-10-inside-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-10-inside-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-10-inside-mask.json", "UNLINK_FAIL": "1", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.3, "peakRssKiB": 5920, "childGroupEmpty": true}
+SWIFT_SIGNAL {"signal": 15, "observation": "delivered", "publicationPhase": "refused", "committed": false}
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 232, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 220, in main
+    publication.unlink()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 1042, in unlink
+    os.unlink(self)
+    ~~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook/sitecustomize.py", line 14, in unlink
+    if Path(path).name=='.publication-open':raise OSError(errno.EIO,'review controlled actual unlink boundary EIO')
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 5] review controlled actual unlink boundary EIO
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-10-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80232
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-10-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/held-audit-10-inside"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-10-inside: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-10-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80244
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-10-inside/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/after-audit-10-inside"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-10-inside: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-receipt-fsync --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80250
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-receipt-fsync.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "receipt-fsync", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-receipt-fsync-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-receipt-fsync-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-receipt-fsync-mask.json", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 232, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 194, in main
+    durable_json(job / 'receipt.json', receipt)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 54, in durable_json
+    os.fsync(f.fileno())
+    ^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook/sitecustomize.py", line 35, in trace
+    raise OSError(errno.EIO,'review controlled '+point+' EIO')
+OSError: [Errno 5] review controlled receipt-fsync EIO
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-receipt-fsync fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80315
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/reject-audit-receipt-fsync/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/reject-audit-receipt-fsync"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 31, in terminal
+    receipt = read(stage / 'receipt.json')
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 26, in read
+    require(path.is_file(), f'missing completed-stage evidence: {path}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: missing completed-stage evidence: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/assets/renders/hulls/swift-round4-current/audit-receipt-fsync/receipt.json
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label audit-manifest-sync --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py audit 0
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80327
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-manifest-sync.log
+ENVIRONMENT OVERRIDES: {"PYTHONPATH": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook", "POINT": "manifest-sync", "EVENT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-manifest-sync-event.json", "RESUME": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-manifest-sync-resume", "MASK_OUT": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/audit-manifest-sync-mask.json", "INHERIT_USR1": "1"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 232, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 199, in main
+    durable_json(job / 'publication.json', {'protocol': 'durable-stage-v2',
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 'producerExit': receipt['exit'], 'supervisorExit': receipt['guardianExit'],
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 'runnerPid': os.getpid(), 'files': bindings})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 56, in durable_json
+    sync_directory(path.parent)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py", line 42, in sync_directory
+    os.fsync(fd)
+    ^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/hook/sitecustomize.py", line 35, in trace
+    raise OSError(errno.EIO,'review controlled '+point+' EIO')
+OSError: [Errno 5] review controlled manifest-sync EIO
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-manifest-sync fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80391
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/reject-audit-manifest-sync/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/reject-audit-manifest-sync"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-manifest-sync: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/lane.py --label stock-exit23 --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/publish.py stock 23
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80404
+EXIT: 23
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/stock-exit23.log
+LAST 20 LOG LINES:
+{"exit": 23, "reason": null, "seconds": 0.28, "peakRssKiB": 4624, "childGroupEmpty": true}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py stock-exit23 identity-ok audit-09-inside fit-ok
+CWD: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate
+PID: 80456
+EXIT: 1
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/reject-stock-exit23/command.log
+ENVIRONMENT OVERRIDES: {"SWIFT_JOB": "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/reject-stock-exit23"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+    require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: terminal exit must be zero')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review3-TmBxOMYo/candidate/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: stock-exit23: terminal exit must be zero
+
+COMMAND: git rev-parse HEAD 'HEAD^{tree}' '2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4^{tree}'
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/git-pins.log
+
+COMMAND: git status --porcelain=v1 --untracked-files=all
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/git-status.log
+
+COMMAND: git diff --check 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4 daed5c0562e848643fa3d8ec24a4f28062b01391
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/diff-check.log
+
+COMMAND: git diff 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4 daed5c0562e848643fa3d8ec24a4f28062b01391 -- packages/tools/blender/hulls/swift-round4/lane.py packages/tools/blender/hulls/swift-round4/PUBLICATION_PROTOCOL.md packages/tools/blender/hulls/swift-round4/prove_cancellation_commit.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/reviewed-source-diff.log
+
+COMMAND: git show 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4:packages/tools/blender/hulls/swift-round4/supervise.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/base-supervise.py.log
+
+COMMAND: git show 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4:packages/tools/blender/hulls/swift-round4/guardian.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/base-guardian.py.log
+
+COMMAND: git show 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4:packages/tools/blender/hulls/swift-round4/promote.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/base-promote.py.log
+
+COMMAND: git show 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4:packages/tools/blender/hulls/swift-round4/check_lane.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/base-check_lane.py.log
+
+COMMAND: git show 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4:packages/tools/blender/hulls/swift-round4/check_guardian.py
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/base-check_guardian.py.log
+
+COMMAND: git show 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4:packages/tools/blender/hulls/swift-round4/HEAVY_HOLD.json
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/base-HEAVY_HOLD.json.log
+
+COMMAND: git show 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4:packages/tools/blender/hulls/swift-round4/DENSITY_PLAN.md
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: tool-owned driver / subprocess.run
+EXIT: 0
+EXIT EVIDENCE: actual Popen.wait return or subprocess.run returncode
+LOG: /private/tmp/swift-r4-tooling-review3-TmBxOMYo/base-DENSITY_PLAN.md.log
+

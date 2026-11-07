@@ -1,0 +1,72 @@
+TASK: P1.E12.T02 / Swift R4 independent cancellation/commit tooling review, plan 0.9.5 and C.2
+STATUS: DONE (independent bounded review only)
+VERDICT: PASS for bounded tooling at the exact pins below. Full Swift R4 and density remain REVISE/incomplete. No launch, heavy release, asset/native/visual qualification, push, PR, or merge authorization.
+
+SUMMARY:
+  The original P2 cancellation race is fixed under the explicitly documented pending-signal cutoff. The exact base RED was independently replayed through byte-identical lane/supervisor/promote CLIs, actual OS SIGTERM, real producer/wait receipts, and actual destination replacement. The new head refuses already handled and kernel-pending SIGINT/SIGTERM, defers requests inside an admitted commit, and restores the prior signal mask on success and unlink failure. There are no new substantiated blocking findings in this bounded tooling scope. Source/tooling findings are separate from asset quality.
+
+EXACT PINS:
+  Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+  Branch: task/P1-E12-T02-swift-r4
+  Head: daed5c0562e848643fa3d8ec24a4f28062b01391
+  Head tree: d59119897c1f306a0624d116c0a0a5940e0937d0
+  Base: 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4
+  Base tree: 012a0dfbfd3dd3917bae8c848f686c4f8e4d8238
+  Original reviewer: /private/tmp/swift-r4-tooling-review2-4c8jcnsv
+  Original SEAL.json SHA256: 02c01a222d912e0d9a08a7e08c16cb15e09e252004956ead9257e31e6f8fa898 (freshly verified)
+  lane.py SHA256: 398f58333e68d78922b1ebab807cb039c2424c361894fb0231591bc46e4d9db4
+  supervise.py SHA256: d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1
+  promote.py SHA256: 4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5
+  All tools, protocol, proof driver, helper, hold and density-plan hashes: final-checks.json.
+  New evidence root: /private/tmp/swift-r4-tooling-review3-TmBxOMYo
+  New SEAL.json binds every file except itself; its SHA256 is supplied in the final handoff because a report cannot contain the hash of its own enclosing seal.
+
+PRIOR FINDINGS / DISPOSITION:
+  P2 cancellation after success condition but before commit: FIXED. Base lane 79414 received actual SIGTERM at line198; reasonAfter=cancelled signal 15, committedAfter=false, gateStillExists=true. Actual lane exit0; actual promotion exit0; private destination inode 490131576 -> 490131779. The same held stage refused promotion, and the no-signal neighbor committed. At head, the same physical unlink neighbor has no handled cancellation while provisional: INT/TERM remain kernel-pending, then are delivered with committed=true/phase=committed. This is the specified admitted transaction behavior, not loss of a pre-admission cancellation.
+  Supervisor death between launch and watchdog / ownership gap: PRESERVED FIXED by exact source/evidence pins. supervise.py, guardian.py and protected helpers match base and retained reviewer bytes; the lane lifecycle body from durable owner creation through lock release is byte-identical. Three original startup cuts, raw events, process logs, cleanup and command records were freshly hash-checked against the original seal. No broad startup corpus rerun.
+  Stock actual exit23 promotion: PRESERVED FIXED, independently replayed. Actual tiny publisher exits23, lane returns23, actual promote returns1 and private destination inode/hash remain unchanged.
+  ps failure cleanup skipping termination: PRESERVED FIXED by exact unchanged supervisor/lifecycle source plus freshly verified retained real PATH exit31, timeout and both-observers-fail receipts/logs/cleanup. Unknown cleanup remains charged; no fresh ps-failure injection was necessary for the final signal-only delta.
+  Failed receipt fsync leaving promotable exit0 receipt: PRESERVED FIXED, independently replayed. Controlled EIO at the actual receipt fsync boundary gives lane1/consumer1 and retained refusal/private bytes. Manifest directory-sync and unlink-EIO neighbors also refuse.
+
+SOURCE / CONTRACT ASSESSMENT:
+  lane.py:94-112 records cancellation; before commit it sets reason, after commit it records a late diagnostic only. Cancellation events never rewrite provisional successful-looking receipts.
+  lane.py:209-224 / PUBLICATION_PROTOCOL.md:37-61 define a defensible two-part boundary: pending snapshot admits/refuses cancellation, atomic unlink publishes completed evidence. Delivered reason or pending INT/TERM at the snapshot prevents unlink. During the admitted section both signals are masked; after all required producer/receipt/manifest/cleanup work, only the decision, unlink and local committed assignment remain. There is no unbounded Python polling or new producer/serialization work in the admitted section. A filesystem syscall is not asserted to have a hard real-time upper bound.
+  The finally at :222-224 restores the saved mask even when unlink raises. Actual tests inherited a blocked unrelated SIGUSR1 and observed exactly that mask at process exit after success, cancellation and unlink failure; INT/TERM did not stay accidentally blocked. Handlers remain installed through CLI finalization so deferred signals cannot replace the original unlink OSError with KeyboardInterrupt/default termination. main is CLI-only; importing lane helpers in supervise.py executes no mask operation. This does not qualify embedding repeated main calls in a long-lived process.
+  Failure to unlink preserves .publication-open. The actual queued-TERM/unlink-EIO run retains errno5/raw original traceback and a refused signal event; it exits1, and consumer exits1 with unchanged destination. There is no claim that cancellation.json must be written after an earlier finalization exception: refusal plus raw diagnostics/error are the documented failure evidence.
+  promote.py:30-71 and :75-101 enforce absence of refusal, exact file hashes, real successful producer/supervisor outcomes, empty group/reaped-child facts and source/payload identity before copying. The gate is observable immediately after unlink, even before the runner's local committed assignment/exit; fresh after-unlink consumer acceptance confirms the documented publication point. The earlier success JSON on stdout is provisional, not the CLI result or eligibility guarantee.
+  No new severity/location/reachability/remedy finding remains. The original P2's concrete remedy was the coordinated decision/mask/unlink transition; it is present and tested. No every-signal-before-physical-unlink cancellation guarantee is imposed. No mandatory 0.9.5 finding is introduced by this narrow task-local Python delta.
+
+VERIFY:
+  python3 -B run_review.py -> actual exit0. 51 actual lane/promote CLI commands; exits {"0": 22, "1": 28, "23": 1}. 16 case rows are scenarios, not a claim of 51 independent tests. Exact argv/cwd/PID/injection parameters/actual exits and every nonzero last20-line tail are retained in VERIFY.txt and command-exit-ledger.json.
+  Exact-base RED and no-signal control, with consumer while held and after exit.
+  Head actual SIGTERM and SIGINT before masking and kernel-pending before snapshot: lane1/consumer1, refusal retained, cancellation facts saved, provisional receipt bytes identical.
+  Head actual SIGTERM and SIGINT inside admission, TERM after unlink, INT after mask restoration: documented lane0/consumer0, actual private inode replacement, late committed diagnostics. Repeated INT/TERM/INT before admission refuses; no-signal inside control accepts.
+  Queued TERM plus actual os.unlink boundary EIO: lane1/consumer1, original error retained, refusal retained, mask restored, no replacement.
+  Receipt fsync and manifest directory-sync EIO, actual stock publisher exit23: all refused by real consumer with unchanged private destination.
+  python3 -B final_checks.py -> exit0. Exact Git pins, clean status, diff --check, AST parsing, private fixture source identity, unchanged helper/hold/lifecycle pins, 161 selected original sealed evidence files freshly hash/size checked (25515129 bytes). No full-suite, native or asset validation ran.
+  python3 -B protect.py before -> exit0. python3 -B protect.py after -> exit1 (RETAINED REVIEWER-CHECKER FAILURE). This compared an absent optional SHA256 field with explicit null on 22 un-rehashed large files. It was not a content/metadata difference: the original1477 and author-baseline checks passed and Git remained clean. Failed stdout, traceback, script and both snapshots are preserved unchanged.
+  python3 -B reconcile_protection.py -> exit0. It compares each existing hash without relaxing any known-hash comparison, treats missing/null as the same unknown value, and independently re-stats all protected identities. All22 differences were exactly that representation error; actual snapshot drift0 and live metadata drift0. No test or source failure was discarded.
+
+PROTECTION / RESOURCES / CLEANUP:
+  4832 file/directory/symlink entries checked before/after; all1477 original protected files match their retained identities/hashes. Canonical blend/GLB plus all34 PNG/2EXR were freshly hashed before the review and preserve inode/size/mtime/ctime/mode afterward. Small files were freshly hashed both times. Larger historical blobs reuse prior hashes only with matching inode/size/mtime/mode, followed by before/after ctime checks. The new author's larger copied blobs are metadata-protected only; they were not copied or rehashed to stay within the I/O bound. These distinctions are explicit in protection snapshots.
+  Canonical blend: 42,959,316 bytes, SHA256 7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480.
+  Canonical GLB: 24,721,524 bytes, SHA256 5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d.
+  34 PNG + 2 old EXR: 68,708,456 bytes; viewed/generated/copied/removed0. Dependency symlink/manifests/lock sentinels and protected check_lane/check_guardian/HEAVY_HOLD/DENSITY_PLAN unchanged.
+  Hash-read accounting: before 153255857 bytes + after 16866561 bytes + selected prior evidence 25515129 bytes = 195637547 bytes. Other work was small source/text reads and a few MiB of new evidence. No >256MiB operation, asset-set copy, hydration or heavy workload. Ordinary fixture publishers ran serially; controller plus one producer/consumer context, no nested agents.
+  Every lane/promote actual Popen handle waited. 66 recorded runner/supervisor/producer identities independently absent at cleanup; no remaining aliases, no manual kill actions. Failed locks retained/renamed only in owned private fixtures after empty-process proof. No repository lane/light-proof lock created; HEAVY_HOLD remains present.
+
+FILES CHANGED:
+  Candidate checkout and all original reports: NONE. Only new private review evidence/scripts/tiny fixtures under /private/tmp/swift-r4-tooling-review3-TmBxOMYo. No asset regeneration, branch switch, dependency write, Blender/codec/bake/render/export/native/browser/service/DB/install/pnpm/fullsuite/LFS hydration/fetch/screenshot cleanup/other checkout edit/push/PR/merge.
+
+DECISIONS:
+  Documented cutoff -> assess admission and publication separately -> preserves a finite cancellation boundary and permits the specified atomic transaction.
+  Real boundary proof -> byte-identical CLIs and actual OS signals with bounded barriers -> no helper-only promotability claim. Barriers observe execution without changing reasons/receipts/outcomes. IO faults are explicit controlled exceptions at real operation boundaries, not natural disk-fault proof.
+  Resource hold -> 23-byte source and 26-byte candidate fixtures, actual publishers and receipts -> tests process/publication/consumer eligibility without native assets or validation. Payload PASS fields describe synthetic fixture data only.
+  Prior fixed cases -> replay stock/fsync and pin unchanged lifecycle plus original sealed startup/observer evidence -> avoid broad123-command corpus.
+  Checker failure -> preserve raw failure and reconcile exact representation mismatch -> distinguish reviewer implementation error from candidate behavior.
+
+OUT OF SCOPE FOUND / REMAINING:
+  Density remains REVISE: supplied/retained 60.5-79.6px/m versus512. No new density decoding or measurement. Full Swift R4, native/visual/whole-scene/device performance and launch remain incomplete. Parent T13 quiet window, heavy hold and screenshot-cleanup stop remain intact. No production crash-recovery/natural IO fault or adversarial process escape qualification is implied.
+
+ARTIFACTS:
+  REPORT.txt; VERIFY.txt; SEAL.json; command-exit-ledger.json; driver-exits.json; results.json; actual-handles.json; final-checks.json; retained-evidence-pins.json; reviewed-source-diff.log; protection-before/after.json and summaries; protection-reconciled.json; exact-base/; candidate/; raw original-error logs, signals, mask facts, cancellation facts, receipts, manifests, promotion results and cleanup proof.

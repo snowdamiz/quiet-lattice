@@ -1,0 +1,54 @@
+{
+  "at": "2026-11-07T11:45:15.738489+00:00",
+  "hold": "assets/renders/hulls/lark-round3-current/density-20261107/resource-controls/20261107T114515651346Z-hold.json",
+  "stage_receipt": "assets/renders/hulls/lark-round3-current/density-20261107/20261107T114056088875Z-registered-paint-budget.json",
+  "supervisor_pid": 25459,
+  "blender_pid": 25494,
+  "process_group": 25494,
+  "stage_exit_code": -15,
+  "supervisor_exit_code": 124,
+  "reason": "RSS limit",
+  "elapsed_seconds": 23.863,
+  "peak_sampled_rss_kib": 9817888,
+  "rss_limit_mib": 8192,
+  "guardian_receipt": "assets/renders/hulls/lark-round3-current/density-20261107/20261107T114056088875Z-registered-paint-budget.watchdog.json",
+  "guardian_terminal": {
+    "owner_pid": 25459,
+    "process_group": 25494,
+    "first_members": [
+      {
+        "pid": 25494,
+        "ppid": 25459,
+        "pgid": 25494,
+        "command": "/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/density_registered_budget.py"
+      }
+    ],
+    "termination_reason": null,
+    "remaining_members": [],
+    "elapsed_seconds": 23.796594291983638
+  },
+  "guardian_pid_recorded": false,
+  "fresh_owned_group_members": [],
+  "fresh_matching_guardians": [],
+  "other_live_blender_codec_processes": [],
+  "lock_probe": {
+    "acquired_exclusive_nonblocking": true,
+    "released": true,
+    "path": "assets/renders/hulls/lark-round3-current/.lane.lock",
+    "inode": 479124639
+  },
+  "canonical_assets_unchanged": [
+    {
+      "path": "assets/blend/hulls/lark.blend",
+      "bytes": 65357176,
+      "sha256": "bc08c784ef37413cd3b51c593c4109a340a8d99edc15f5da30e3dcfaba04ff75"
+    },
+    {
+      "path": "packages/client/public/models/hulls/lark.glb",
+      "bytes": 25633924,
+      "sha256": "7f11e2bd2818045c1a861d4e959f2a985828bdcc9b60d44ed2fda8ff41300bad"
+    }
+  ],
+  "heavy_admissions": "HELD",
+  "asset_promotion": false
+}

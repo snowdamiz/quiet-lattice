@@ -1,0 +1,70 @@
+{
+  "status": "CLEAN_SOURCE_CPU_COMPLETE_AWAITING_PARENT_REVIEW",
+  "head": "ff497e5525f8e93c71df67827446d7e426bbc20d",
+  "tree": "5eccd017f148fbedc6b1fc751fb16ea7fcc1c660",
+  "base": "ddce6731b1fd465a1160d2f1e49813ff6f8c626c",
+  "baseTree": "48da9aed7d28ed5901676496d7cc2ee0db6d7809",
+  "branch": "codex/task/P1-E05-T02-thalune-reel-candidate",
+  "clean": true,
+  "cpuControls": 142,
+  "breakdown": {
+    "new": 54,
+    "retained": 66,
+    "admission": 22
+  },
+  "expectedCLIRefusals": 3,
+  "exactBaseRed": {
+    "exitCode": 1,
+    "reproduced": 4,
+    "negativePass": 1
+  },
+  "manifestRows": 1433,
+  "protectedPriorRows": 1368,
+  "retainedAttempt2Rows": 50,
+  "prospectivePathsAbsent": 11,
+  "runtimeAuthorization": false,
+  "nativeFixtureAuthorization": true,
+  "nativeJobs": 0,
+  "codecProbes": 0,
+  "originalCleanupActions": 0,
+  "harmlessChildrenTerminalAbsent": 29,
+  "requiredReserveBytes": 22066626560,
+  "rssBytes": 8589934592,
+  "currentCapacityAdmission": false,
+  "postcommitVerification": {
+    "exitCode": 0,
+    "initialCommandExit": 1,
+    "initialFailure": "AssertionError at native189.py:36: verifier command used ambient PATH instead of pinned readiness.pathEnvironment; rerun uses the unchanged pinned PATH",
+    "sourceOrSoftwareRetarget": false
+  },
+  "files": {
+    "report": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/REPORT.md",
+      "sha256": "a1b8a6d6ef43685e1ecab6de86778a02e7b090b97a139b7b56b1e189bb9c3e3a"
+    },
+    "manifest": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/combined-hash-manifest.json",
+      "sha256": "a7520126b436d4d9bf73027ec11d942d25703be8e24a68a62e0cf1d437545b47"
+    },
+    "readiness": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
+      "sha256": "53d312273f618f040ddc4829fa6e1820895bcbab3a38b1b192dc350f8f3ac001"
+    },
+    "candidateIndex": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/candidate-index.json",
+      "sha256": "be393382a2461152ae76058baa313e56e1a9713d246ff3c948b551d9776c6c1e"
+    },
+    "plan": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189-plan.json",
+      "sha256": "3586236af42894a4a36c88361db4049abb0990f86ce2327ead482552ebf8ad70"
+    },
+    "sourceAudit": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/source-audit.json",
+      "sha256": "86e84828dd0b38d59c042546b52976e667287dd07d052c31b1a0cc6e4d6c658c"
+    },
+    "commands": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/commands.json",
+      "sha256": "dacef358639293884e3c3f557de2a4614f6945311992c749e3fafba5a79784b5"
+    }
+  }
+}
