@@ -57,8 +57,39 @@ export async function startVite(root = ROOT): Promise<{ url: string; stop(): Pro
     logLevel: 'error',
     server: { port, strictPort: true, host: '127.0.0.1', hmr: false, watch: null },
   });
-  await server.listen();
+  try {
+    await server.listen();
+  } catch (error) {
+    const errors: unknown[] = [error];
+    try {
+      await server.close();
+    } catch (cleanupError) {
+      errors.push(cleanupError);
+    }
+    if (errors.length > 1) throw new AggregateError(errors, 'Vite listen and cleanup failed', { cause: error });
+    throw error;
+  }
   return { url: `http://127.0.0.1:${port}`, stop: () => server.close() };
+}
+
+type CaptureOutcome = { kind: 'success' } | { kind: 'failure'; error: unknown };
+
+async function finishCapture(outcome: CaptureOutcome, vite: Awaited<ReturnType<typeof startVite>>, browser: Browser | undefined): Promise<void> {
+  const errors: unknown[] = outcome.kind === 'failure' ? [outcome.error] : [];
+  if (browser) {
+    try {
+      await browser.close();
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+  try {
+    await vite.stop();
+  } catch (error) {
+    errors.push(error);
+  }
+  if (errors.length === 1) throw errors[0];
+  if (errors.length > 1) throw new AggregateError(errors, 'Capture encountered multiple failures', { cause: errors[0] });
 }
 
 function dataUrlToBuffer(d: string): Buffer {
@@ -194,10 +225,12 @@ export async function openReview(
 export async function captureReview(file: string, opts: ReviewOptions = {}): Promise<string[]> {
   const base = opts.outDir ?? join(ROOT, 'assets/renders/review', file);
   const vite = await startVite();
-  const { args, gl } = glArgs();
-  const browser = await chromium.launch({ args });
+  let browser: Browser | undefined;
+  let outcome: CaptureOutcome = { kind: 'success' };
   const written: string[] = [];
   try {
+    const { args, gl } = glArgs();
+    browser = await chromium.launch({ args });
     const spec = file + (opts.asset ? `:${opts.asset}${opts.variant ? `/${opts.variant}` : ''}` : '');
     const { page, errors } = await openReview(browser, vite.url, spec);
     const all = await page.evaluate(() => window.review.targets());
@@ -311,9 +344,10 @@ export async function captureReview(file: string, opts: ReviewOptions = {}): Pro
       written.push(sp);
     }
     if (errors.length) throw new Error(`review page logged errors:\n${errors.join('\n')}`);
+  } catch (error) {
+    outcome = { kind: 'failure', error };
   } finally {
-    await browser.close();
-    await vite.stop();
+    await finishCapture(outcome, vite, browser);
   }
   return written;
 }
@@ -337,12 +371,14 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
   rmSync(join(outDir, '_frames'), { recursive: true, force: true });
   mkdirSync(join(outDir, '_frames'), { recursive: true });
   const vite = await startVite();
-  const { args } = glArgs();
-  // headless Chromium hides scrollbars unless asked not to
-  const browser = await chromium.launch({ args, ignoreDefaultArgs: def.showScrollbars ? ['--hide-scrollbars'] : [] });
+  let browser: Browser | undefined;
+  let outcome: CaptureOutcome = { kind: 'success' };
   const written: string[] = [];
   const errors: string[] = [];
   try {
+    const { args } = glArgs();
+    // headless Chromium hides scrollbars unless asked not to
+    browser = await chromium.launch({ args, ignoreDefaultArgs: def.showScrollbars ? ['--hide-scrollbars'] : [] });
     for (const [tag, width] of [
       ['16x9', 1920],
       ['21x9', 2520],
@@ -366,11 +402,12 @@ export async function captureUi(screen: string, outDir = join(ROOT, 'assets/rend
       errors.push(...pageErrors.filter((e) => !def.expectedErrors?.some((r) => r.test(e))).map((e) => `${tag}: ${e}`));
       await page.close();
     }
+    if (errors.length) throw new Error(`${screen} logged errors:\n${errors.join('\n')}`);
+  } catch (error) {
+    outcome = { kind: 'failure', error };
   } finally {
-    await browser.close();
-    await vite.stop();
+    await finishCapture(outcome, vite, browser);
   }
-  if (errors.length) throw new Error(`${screen} logged errors:\n${errors.join('\n')}`);
   return written;
 }
 
