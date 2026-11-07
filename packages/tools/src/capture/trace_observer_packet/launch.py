@@ -189,9 +189,14 @@ def _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, read_
             result['secondary'].append(failure(error))
             raise
     def observe_body():
-        ledger(ready['frozenRoot'], count=LIMITS['frozenFiles'], cap=LIMITS['frozenBytes'], hash_files=False, live=True)
-        for location in [job.scratch, out, private_tmp]:
-            ledger(location, count=LIMITS['outputFiles'], cap=LIMITS['outputBytes'], hash_files=False, live=location == private_tmp)
+        for location, count, cap in [(ready['frozenRoot'], LIMITS['frozenFiles'], LIMITS['frozenBytes']),
+                                     *[(p, LIMITS['outputFiles'], LIMITS['outputBytes']) for p in (job.scratch, out, private_tmp)]]:
+            sample = ledger(location, count=count, cap=cap, hash_files=False, live=True)
+            # Latest resource sample only; never a settled ledger or a complete sampling history.
+            result.setdefault('latestLiveResourceSamples', {})[str(location)] = {
+                **{k: v for k, v in sample.items() if k not in ('files', 'directories')},
+                'stableEntryDetailsRetained': False,
+                'transitions': [row for row in sample['files'] if row['observation'] != 'sampled']}
         log = job.scratch / 'capture_stdout.txt'
         if log.exists() and log.lstat().st_size > LIMITS['logBytes']:
             raise Refused('Native log cap exceeded')

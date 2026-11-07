@@ -422,7 +422,99 @@ def file_hash(path, cap, *, expected_stamp=None, budget=None, owners=None):
     return read_content(path, cap, expected_stamp=expected_stamp, budget=budget, owners=owners)['sha256']
 
 
+def sample_inventory(root, *, count, cap):
+    """Metadata-only interval sample of owned live writers, never a complete content ledger."""
+    root = Path(root)
+    rows, directories, enumerated, total = [], [], 0, 0
+    started = time.monotonic()
+    def vanished(row, operation, error):
+        row.update(observation='vanished', operation=operation, failure=failure(error))
+    def visit(fd, relative):
+        nonlocal enumerated, total
+        before = os.fstat(fd)
+        names = []
+        directory = {'path': relative, 'stamp': stamp(before), 'names': names}
+        directories.append(directory)
+        # Enumeration errors are fatal. Only ENOENT at an already enumerated child
+        # lookup/open is a recorded live transition; root/ancestor errors never qualify.
+        with os.scandir(fd) as entries:
+            for entry in entries:
+                enumerated += 1
+                if enumerated > count:
+                    raise Refused('Live sample count ceiling')
+                names.append(entry.name)
+        for name in sorted(names):
+            row = {'path': str(Path(relative) / name)}
+            rows.append(row)
+            try:
+                info = os.stat(name, dir_fd=fd, follow_symlinks=False)
+            except FileNotFoundError as error:
+                vanished(row, 'stat-enumerated-child', error)
+                continue
+            kind = ('file' if stat.S_ISREG(info.st_mode) else 'directory' if stat.S_ISDIR(info.st_mode) else
+                    'symlink-not-followed' if stat.S_ISLNK(info.st_mode) else 'socket' if stat.S_ISSOCK(info.st_mode) else
+                    'fifo' if stat.S_ISFIFO(info.st_mode) else 'unknown-type')
+            size = 0 if kind == 'directory' else info.st_size
+            row.update(stamp=stamp(info), kind=kind, bytes=size, observation='sampled')
+            if info.st_uid != os.getuid() or kind == 'unknown-type' or size < 0:
+                raise Refused('Live sample entry type/owner/size refused')
+            total += size
+            if total > cap:
+                raise Refused('Live sample byte ceiling')
+            if kind == 'symlink-not-followed':
+                try:
+                    row['link'] = os.readlink(name, dir_fd=fd)
+                    row['linkBytes'] = len(os.fsencode(row['link']))
+                    total += max(0, row['linkBytes'] - size)
+                    if total > cap:
+                        raise Refused('Live sample byte ceiling')
+                except FileNotFoundError as error:
+                    vanished(row, 'readlink-enumerated-child', error)
+            if kind == 'directory':
+                try:
+                    child = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=fd)
+                except FileNotFoundError as error:
+                    vanished(row, 'open-enumerated-directory', error)
+                    continue
+                primary = None
+                try:
+                    opened = os.fstat(child)
+                    row['openedStamp'] = stamp(opened)
+                    if not stat.S_ISDIR(opened.st_mode) or opened.st_uid != os.getuid():
+                        raise Refused('Live sample directory type/owner refused')
+                    if directory_identity(opened) != directory_identity(info):
+                        row['observation'] = 'replaced-before-open-not-traversed'
+                    else:
+                        visit(child, row['path'])
+                except BaseException as error:
+                    primary = error
+                    raise
+                finally:
+                    close_owned(child, primary)
+        if directory_identity(os.fstat(fd)) != directory_identity(before):
+            raise Refused('Held live directory identity changed')
+    try:
+        with Directory(root) as directory:
+            visit(directory.fd, '')
+            directory.verify()
+        return {'kind': 'T13_LIVE_RESOURCE_SAMPLE_V1', 'files': rows, 'directories': directories,
+                'count': enumerated, 'bytes': total, 'complete': False, 'sampleComplete': True,
+                'liveObservationOnly': True, 'quotaGuaranteed': False, 'contentBytesRead': 0,
+                'startedMonotonic': started, 'finishedMonotonic': time.monotonic(),
+                'scope': 'Per-entry metadata samples across an interval; paths may move and sizes may grow. No content or point-in-time completeness proof.'}
+    except BaseException as error:
+        facts = {'root': str(root), 'files': rows, 'directories': directories, 'count': enumerated,
+                 'bytes': total, 'complete': False, 'sampleComplete': False, 'liveObservationOnly': True,
+                 'contentBytesRead': 0, 'original': failure(error)}
+        if not isinstance(error, Exception):
+            error.facts = facts
+            raise
+        raise Refused('Incomplete live sample: ' + str(error), facts) from error
+
+
 def ledger(root, *, count=20000, cap=512 * 1024 * 1024, hash_files=True, live=False):
+    if live and not hash_files:
+        return sample_inventory(root, count=count, cap=cap)
     admitted = inventory(root, count=count, cap=cap, live=live)
     budget = ReadBudget(cap)
     try:

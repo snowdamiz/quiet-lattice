@@ -1,5 +1,5 @@
 """Fixed R1 whole-controller cases from independent review; native command ports remain inert."""
-import sys, pathlib, json, os, subprocess, copy, time
+import sys, pathlib, json, os, subprocess, copy, time, threading
 from unittest.mock import patch
 OUT=pathlib.Path(sys.argv[1]).resolve() if len(sys.argv)>1 else pathlib.Path(__import__('tempfile').mkdtemp(prefix='t13-r1-controller-')).resolve()
 OUT.mkdir(parents=True,exist_ok=True)
@@ -8,7 +8,7 @@ sys.path.insert(0,str(ROOT/'packages/tools/src/capture/trace_observer_packet'))
 import launch, freeze, metadata
 boundary,proof,stages=launch.native_helpers(ROOT)
 allresults=[]
-cases = ['namespace-cache','namespace-mode-error','namespace-mode-ignored','helper-read-failure','helper-ancestor','bootstrap-timeout','bootstrap-decode','bootstrap-bootout-error','predrain-stall','positive','bootstrap17-write','bootstrap0-write','partial-constructor','observer-raw','observer-save','terminal-audit','ledger-growth','ledger-unreadable','terminal-ledger','terminal-publish','terminal-all-sinks']
+cases = ['live-writer-private','live-writer-output','live-writer-frozen','namespace-cache','namespace-mode-error','namespace-mode-ignored','helper-read-failure','helper-ancestor','bootstrap-timeout','bootstrap-decode','bootstrap-bootout-error','predrain-stall','positive','bootstrap17-write','bootstrap0-write','partial-constructor','observer-raw','observer-save','terminal-audit','ledger-growth','ledger-unreadable','terminal-ledger','terminal-publish','terminal-all-sinks']
 selected=sys.argv[2:] or cases
 assert all(case in cases for case in selected)
 for fault in selected:
@@ -21,7 +21,7 @@ for fault in selected:
  bridge=json.loads((freeze.HERE/'local-binding.json').read_text())
  bridge_kernel=bridge['pythonKernel']
  ready['binding']['binaries'].append(next(row for row in bridge['binaries'] if row['path']==bridge_kernel))
- observed=[];created=[];writes=[];native=[];terminalTimers=[];owned_child=[];read_fds=[];payload_reads=[];pre_timers=[];ancestor_swapped=[]
+ observed=[];created=[];writes=[];native=[];terminalTimers=[];owned_child=[];read_fds=[];payload_reads=[];pre_timers=[];ancestor_swapped=[];live_writes=[]
  rows=[{'pid':624240+i,'uid':os.getuid(),'birth':[1,i],'status':2,'pgid':624240+i} for i in range(6)]
  class Job(boundary.StationJob):
   def __init__(self,*a,**k):
@@ -34,6 +34,10 @@ for fault in selected:
     owned_child.append(child);assert child.stdout.readline()==b'ready\n'
    self.root=rows[0];self.coalition_id=123;self.known={str(r['pid']):r for r in rows}
    private=pathlib.Path(self.env['TMPDIR']);profile=private/'playwright_chromiumdev_profile-fixture';profile.mkdir()
+   if fault.startswith('live-writer-'):
+    target={'live-writer-private':private,'live-writer-output':self.out.parent,'live-writer-frozen':frozen}[fault]
+    (target/'writing').write_bytes(b'')
+    transient=target/'deps_temp';transient.mkdir();(transient/'entry').write_bytes(b'cache')
    if fault.startswith('namespace-'):
     # Actual native failure shape: an unrelated tsx cache survives profile/scratch archival.
     cache=private/'tsx-501';cache.mkdir(mode=0o755);cache.chmod(0o755)
@@ -110,6 +114,26 @@ for fault in selected:
   if fault=='ledger-growth' and path.parent==frozen:path.write_bytes(b'12345678')
   return realhash(path,cap,**kwargs)
  def ledger(path,*a,**k):
+  target=({'live-writer-private':pathlib.Path(created[-1].env['TMPDIR']),'live-writer-output':case/'out','live-writer-frozen':frozen}.get(fault) if created else None)
+  if target is not None and pathlib.Path(path)==target and k.get('hash_files') is False and not live_writes:
+   go,done=threading.Event(),threading.Event();errors=[];stat=os.stat
+   def writer():
+    try:
+     assert go.wait(3)
+     if fault=='live-writer-output':(target/'deps_temp').rename(target/'deps')
+     else:(target/'writing').write_bytes(b'ordinary owned live bytes')
+    except BaseException as error:errors.append(error)
+    finally:done.set()
+   def observe_stat(name,*args,**kwargs):
+    match=kwargs.get('dir_fd') is not None and str(name)==('deps_temp' if fault=='live-writer-output' else 'writing') and not live_writes
+    if match and fault=='live-writer-output':live_writes.append(str(target));go.set();assert done.wait(3)
+    info=stat(name,*args,**kwargs)
+    if match and fault!='live-writer-output':live_writes.append(str(target));go.set();assert done.wait(3)
+    return info
+   worker=threading.Thread(target=writer);worker.start()
+   try:
+    with patch.object(os,'stat',observe_stat):return realledger(path,*a,**k)
+   finally:go.set();worker.join(3);assert not worker.is_alive() and not errors
   if pathlib.Path(path)==frozen and k.get('hash_files',True):
    import signal
    terminalTimers.append(signal.getitimer(signal.ITIMER_REAL))
@@ -165,7 +189,13 @@ for fault in selected:
  row['preDrainTimers']=pre_timers
  row['ownedCPUChildren']=[{'pid':child.pid,'argv':child.args,'observedExit':child.returncode,'waited':child.returncode is not None} for child in owned_child]
  allresults.append(row)
- if fault=='namespace-cache':
+ if fault.startswith('live-writer-'):
+  assert live_writes and result['candidate'] is True,result['failure']
+  assert result['frozenTerminalLedger']['complete'] and result['outputLedger']['complete']
+  assert len(result['latestLiveResourceSamples'])==4
+  assert all(s['sampleComplete'] and not s['complete'] and not s['quotaGuaranteed'] and s['contentBytesRead']==0 for s in result['latestLiveResourceSamples'].values())
+  if fault=='live-writer-output':assert any(s['transitions'] for s in result['latestLiveResourceSamples'].values())
+ elif fault=='namespace-cache':
   assert result['candidate'] is True and result['physicalSettlement']=='DRAINED_ARCHIVED_AUDITED',result['secondary']
   assert not pathlib.Path(created[-1].env['TMPDIR']).exists()
   cache=case/'out/preserved-private-tmp/tsx-501'
