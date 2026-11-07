@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-11-07T04:15:32Z",
+  "mode": "dehydrate-archived-frames",
+  "allowlist": 8778,
+  "unique_git_blobs": 8775,
+  "unique_lfs_objects_hashed": 8775,
+  "archive_refs": [
+    {
+      "ref": "refs/archive/development-screenshots/2026-11-06-before-cleanup",
+      "commit": "45c172a102f1944ff00be0b6e5006eef13fd793b"
+    },
+    {
+      "ref": "refs/archive/development-screenshots/2026-11-06-before-cleanup-batch2",
+      "commit": "634c51d2378748c6a514af2a792ee4500b912643"
+    }
+  ],
+  "df_before": "Filesystem   1024-blocks      Used Available Capacity  iused      ifree %iused  Mounted on\n/dev/disk3s5   971298980 828781304 108471440    89% 20028806 1084714400    2%   /System/Volumes/Data",
+  "df_after": "Filesystem   1024-blocks      Used Available Capacity  iused      ifree %iused  Mounted on\n/dev/disk3s5   971298980 825085232 112167512    89% 20028839 1121675120    2%   /System/Volumes/Data",
+  "results": [
+    {
+      "id": "T16",
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-3625b176",
+      "head_before": "7a3c9f51108eb8d453b1b6cd98cd240742092985",
+      "tree_before": "3624176280cf1af542bd9d8a020caeb799cfe29e",
+      "branch": "t3/P1-E07-T16-live-skill-eligibility",
+      "verify_problems": [],
+      "verify_problem_count": 0,
+      "mutated": true,
+      "skipped_screens": [],
+      "write": {
+        "replaced": 8778,
+        "preserved_pointer": 0,
+        "skipped_open": 0,
+        "before_apparent_replaced": 1915648260,
+        "before_allocated_replaced": 1933033472,
+        "errors": []
+      },
+      "head_after": "7a3c9f51108eb8d453b1b6cd98cd240742092985",
+      "tree_after": "3624176280cf1af542bd9d8a020caeb799cfe29e",
+      "status_after_empty": false,
+      "head_unchanged": true,
+      "tree_unchanged": true,
+      "end_problems": [
+        "dirty:  M assets/renders/ui/account-flow/_frames/000.jpg\n M assets/renders/ui/account-flow/_frames/001.jpg\n M assets/renders/ui/account-flow/_frames/002.jpg\n M assets/renders/ui/account-flow/_frames/003.jpg\n M assets/renders/ui/account-flow/_frames/004.jpg\n M assets/renders/ui/account-flow/_frames/005.jpg\n M assets/renders/ui/account-flow/_frames/006.jpg\n M assets/renders/ui/account-flow/_frames/007.jpg\n M assets/renders/ui/account-flow/_frames/008.jpg\n M assets/renders/ui/account-flow/_frames/009.jpg\n"
+      ],
+      "end_problem_count": 1,
+      "pointer_mismatches": 0,
+      "leftover_temps": [],
+      "lfs_missing_after": 0
+    },
+    {
+      "id": "T10",
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa",
+      "head_before": "1ac686beaef4c87584d47659718b41d35fac8d62",
+      "tree_before": "db4f4c52cda4b197ef0eedc14fcd4be4712d534c",
+      "branch": "task/P1-E16-T10-gateway-persistence-fixture",
+      "verify_problems": [],
+      "verify_problem_count": 0,
+      "mutated": true,
+      "skipped_screens": [],
+      "write": {
+        "replaced": 8778,
+        "preserved_pointer": 0,
+        "skipped_open": 0,
+        "before_apparent_replaced": 1915648260,
+        "before_allocated_replaced": 1933033472,
+        "errors": []
+      },
+      "head_after": "1ac686beaef4c87584d47659718b41d35fac8d62",
+      "tree_after": "db4f4c52cda4b197ef0eedc14fcd4be4712d534c",
+      "status_after_empty": false,
+      "head_unchanged": true,
+      "tree_unchanged": true,
+      "end_problems": [
+        "dirty:  M assets/renders/ui/account-flow/_frames/000.jpg\n M assets/renders/ui/account-flow/_frames/001.jpg\n M assets/renders/ui/account-flow/_frames/002.jpg\n M assets/renders/ui/account-flow/_frames/003.jpg\n M assets/renders/ui/account-flow/_frames/004.jpg\n M assets/renders/ui/account-flow/_frames/005.jpg\n M assets/renders/ui/account-flow/_frames/006.jpg\n M assets/renders/ui/account-flow/_frames/007.jpg\n M assets/renders/ui/account-flow/_frames/008.jpg\n M assets/renders/ui/account-flow/_frames/009.jpg\n"
+      ],
+      "end_problem_count": 1,
+      "pointer_mismatches": 0,
+      "leftover_temps": [],
+      "lfs_missing_after": 0
+    }
+  ],
+  "ledger": "/tmp/space-screenshot-dehydrate-47308/ledger.jsonl",
+  "limits": [
+    "Only T16 and T10 working-tree copies of the 8778 manifest paths were eligible.",
+    "Logical payload bytes are not claimed as physical free space.",
+    "Other workers were active, so the df delta is not attributed to this dehydration.",
+    "LFS objects, git refs, the index tree, and other checkouts were not modified."
+  ],
+  "status_note": {
+    "git_status_porcelain_lines_per_worktree": 8778,
+    "git_diff_name_only": 0,
+    "git_diff_cached_name_only": 0,
+    "sample_hash_object_matches_head_blob": true,
+    "sample_worktree_bytes_match_cat_file": true,
+    "index_content_unchanged": true,
+    "t16_index_bytes": 1498287,
+    "t16_index_mtime": 1794021077,
+    "explanation": "git status lists the 8778 paths as worktree-modified because the index stat cache still records the hydrated file sizes. git diff is empty, hash-object --path equals the HEAD blob, and the worktree bytes match git cat-file. The real index was not refreshed or rewritten. update-index --refresh, tested only against a copy of the index, reports 'needs update' for these pointer files; cacheinfo of the same blob on that copy clears status. Doing that on the real index was not allowed."
+  }
+}

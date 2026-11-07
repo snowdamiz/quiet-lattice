@@ -39,3 +39,11 @@ A further 6,354 frames from 33 completed-review directories are archived at comm
 Use the restoration commands above with the second commit and desired directory to recover these sequences. This batch contains 1,556,390,321 bytes of logical image payload; the parent checkout held 404,833,968 bytes because many files were LFS pointers. These figures are not physical disk-space savings.
 
 Together the two batches remove 8,778 raw frames from the current tree. Open reviews, body/station evidence, remote-pilot motion, unresolved auxiliary captures, current development outputs and golden-test fixtures remain untouched. Other active task worktrees retain their own copies until their work can safely adopt the cleanup.
+
+## Completed task worktrees
+
+The inactive T16 (`t3-3625b176`) and T10 (`t3-3787edfa`) worktrees each held another copy of these 8,778 archived frames. After verifying their content hashes, retained LFS objects, archive refs and open-file state, those copies were replaced with their exact committed LFS pointer bytes. All 8,775 unique payload objects remain recoverable locally. No active checkout, still, sheet, readout, source asset or Git ref changed.
+
+Git's cached metadata initially still described the hydrated files. Re-recording the same mode/blob/path index entries cleared that stale status without changing index content. Both worktrees are clean at their original heads, `7a3c9f51108eb8d453b1b6cd98cd240742092985` and `1ac686beaef4c87584d47659718b41d35fac8d62`. The original [dehydration report](inactive-copies/dehydration-report.txt) and subsequent [index verification](inactive-copies/index-refresh-proof.json) preserve both stages; [provenance](inactive-copies/provenance.json) records their hashes and the per-file ledger location.
+
+Each checkout had 1,915,648,260 apparent bytes in these files before replacement. This is not a physical-space reclamation claim: other workers were active during the disk readings. Recover individual frames in either old checkout with `git lfs checkout` on the required paths.

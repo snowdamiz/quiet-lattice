@@ -1,0 +1,33 @@
+Dehydration proof
+Generated 2026-11-07T04:15:32Z
+Allowlist 8778 files. Unique LFS objects hashed 8775.
+Archive refs resolved to the summary source commits before any write.
+
+T16 /Users/andreyyurlov/.t3/worktrees/space/t3-3625b176
+  HEAD 7a3c9f51108eb8d453b1b6cd98cd240742092985 tree 3624176280cf1af542bd9d8a020caeb799cfe29e
+  replaced 8778 preserved_pointer 0 skipped_open 0
+  before apparent 1915648260 allocated 1933033472
+  HEAD unchanged True tree unchanged True status empty False
+  pointer mismatches 0 leftover temps [] lfs missing 0
+T10 /Users/andreyyurlov/.t3/worktrees/space/t3-3787edfa
+  HEAD 1ac686beaef4c87584d47659718b41d35fac8d62 tree db4f4c52cda4b197ef0eedc14fcd4be4712d534c
+  replaced 8778 preserved_pointer 0 skipped_open 0
+  before apparent 1915648260 allocated 1933033472
+  HEAD unchanged True tree unchanged True status empty False
+  pointer mismatches 0 leftover temps [] lfs missing 0
+
+df before
+Filesystem   1024-blocks      Used Available Capacity  iused      ifree %iused  Mounted on
+/dev/disk3s5   971298980 828781304 108471440    89% 20028806 1084714400    2%   /System/Volumes/Data
+df after
+Filesystem   1024-blocks      Used Available Capacity  iused      ifree %iused  Mounted on
+/dev/disk3s5   971298980 825085232 112167512    89% 20028839 1121675120    2%   /System/Volumes/Data
+No physical reclaim is claimed. Other workers were active.
+
+Status check
+  git status --porcelain lists exactly these 8778 paths in each worktree as " M".
+  git diff --name-only and git diff --cached --name-only are empty in both worktrees.
+  A sampled frame's git hash-object equals its HEAD blob, and the worktree bytes match git cat-file.
+  The index still records the old hydrated sizes in its stat cache. That is why status is not empty.
+  The T16 index file was not rewritten (1498287 bytes, mtime unchanged). No update-index was run on the real index.
+  Stills and contact sheets sampled after the write are still PNGs. LFS object 437ef8bd63e1 remains, size 110607.

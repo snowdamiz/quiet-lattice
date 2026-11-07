@@ -1296,3 +1296,21 @@ Format: task id, question → choice → why.
 - Companion combat is part of T07. Use the existing server combat and threat paths and prove target health loss; do not defer fighting to E08.T02 or count an attack-phase snapshot as damage. A valid Bond owns one companion and replaces the old one only after validation. Companion death, owner death/disconnect or departure from its zone/world/phase dismisses it. Tier III riding, copies and level scaling remain out of scope.
 - Server implementation can proceed while E08.T09 is under review. Whole-task acceptance still requires drawn-companion and picking evidence using that renderer after it merges; the server tests alone cannot establish visible play.
 - DESIGN describes shield regeneration after six seconds unhit but gives no baseline rate. Use 5 shield points/s, capped at maximum: a depleted 100-point shield takes 20 seconds to refill after that delay. Symbiont Hull raises the rate to 7.5 points/s and maximum shield by 25%. Repair Drones remains its separate 1 hull/s in-flight effect; docked repair remains 20 hull/s. Further unspecified effect magnitudes must be reported and recorded before acceptance.
+
+
+## P1.E05.T03 — First-person source contract (2026-11-06)
+
+- Select people through existing `game.build.people`; undefined offline selection uses Thalune. A missing or failed real export remains absent, with errors reported, rather than substituting the retired demo model. Preserve existing mining and heat authority.
+- Use separate 35-joint viewmodel bind profiles with the existing shared-rig adapter. Body profiles cannot be applied directly; T04 must select matching authored clips. One LOD follows the viewmodel budget, so review must not describe a second LOD as distinct geometry.
+- Derive new arm anatomy and skin maps from the accepted bodies without editing their source/export bytes. These choices remain subject to independent source review and actual view-pass visual acceptance.
+
+## P1.E07.T14 — Effect asset scope (2026-11-06)
+
+- Use existing art-bible palette families: Gravitic violet/lilac, Thermal oxide/red-orange, Resonance indigo/gold, Symbiotic amber/spore green and Void gunmetal/patch yellow. Reserve monolith white-cyan for Recall. Visual grading determines whether the authored cues communicate those branches adequately.
+- Map every Tier I–II node explicitly. Passive stat, eligibility and existing HUD feedback require no invented aura; augments may reuse their base cue. Recall uses the canonical 23 letters plus divider, arranged without rotating individual signs.
+- Keep meshes and particle sheets separate from playback ownership. The worker's suggested particle/draw caps and effect timing are integration proposals, not enforced runtime guarantees or accepted performance evidence. Body dissolve masking, UV stepping, lifetime and batching must be implemented and verified by the consumers.
+
+## P1.E14.T13 — Test observer cost before another optimization (2026-11-06)
+
+- The retained cloud comparison has unstable completion envelopes and no repeatable benefit. Compare tracing enabled and disabled on the unchanged reference frame under a recorded controlled load before selecting a renderer change. Five paired frames plus fence-only controls can distinguish observer cost from persistent measurement instability; neither outcome proves exclusive GPU attribution or the 16.67 ms budget.
+- Preserve both existing diagnostic protocols and the original failed packets. Implement the fixed bounded source protocol with runtime disabled; fresh source review, bindings, capacity and an unused authorization are required before its native run.
