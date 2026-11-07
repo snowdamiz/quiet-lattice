@@ -6,6 +6,7 @@ if not __debug__ or sys.flags.optimize != 0 or os.environ.get('PYTHONOPTIMIZE', 
 sys.dont_write_bytecode = True
 
 import argparse
+import base64
 import copy
 import datetime
 import hashlib
@@ -64,13 +65,19 @@ def persist(path, value):
     data = (json.dumps(value, sort_keys=True, indent=2) + '\n').encode()
     require(len(data) <= 1024 * 1024, 'Controlled receipt exceeds 1 MiB')
     require(_receipt_bytes + len(data) <= 32 * 1024 * 1024, 'Python controlled receipts exceed aggregate 32 MiB cap')
+    _receipt_bytes += len(data)  # Reserve even if close reports failure after bytes were written.
     with Path(path).open('xb') as stream:
         stream.write(data)
-    _receipt_bytes += len(data)
 
 
 def failure(error):
-    return {'type': type(error).__name__, 'message': str(error)}
+    facts = dict(vars(error))
+    # TimeoutExpired.stdout aliases output; retain both public observations.
+    if isinstance(error, subprocess.TimeoutExpired):
+        facts['stdout'] = error.stdout
+        facts['stderr'] = error.stderr
+    return {'type': type(error).__name__, 'message': str(error),
+            'args': raw_value(error.args), 'attributes': raw_value(facts)}
 
 
 def raw_value(value):
@@ -81,6 +88,10 @@ def raw_value(value):
         return [raw_value(v) for v in value]
     if isinstance(value, Path):
         return str(value)
+    if isinstance(value, (bytes, bytearray, memoryview)):
+        data = bytes(value)
+        return {'type': type(value).__name__, 'base64': base64.b64encode(data).decode('ascii'),
+                'preview': data[:512].decode('utf-8', errors='backslashreplace')}
     if hasattr(value, '__dict__'):
         return raw_value(vars(value))
     return copy.deepcopy(value)
@@ -91,19 +102,23 @@ def observed_release(result, evidence, name, function, job, *args, **kwargs):
     attempt = {'observations': [], 'returned': None, 'failure': None,
                'jobState': raw_value(job.state), 'known': raw_value(getattr(job, 'known', {}))}
     result['raw'].setdefault('releaseAttempts', {})[name] = attempt
-    def record(label, value):
+    def record(label, value, write=True):
         row = {'probe': label, 'raw': raw_value(value)}
         attempt['observations'].append(row)
+        if not write:
+            return
         try:
             persist(evidence / ('release-%s-%02d.json' % (name, len(attempt['observations']))), row)
         except BaseException as error:
             result['persistenceFailures'].append({'receipt': name + '/' + label, **failure(error)})
+            if not isinstance(error, Exception):
+                raise
     def observed(label, call):
         def invoke(*a, **kw):
             try:
                 value = call(*a, **kw)
             except BaseException as error:
-                record(label, {'args': a, 'kwargs': kw, 'failure': failure(error)})
+                record(label, {'args': a, 'kwargs': kw, 'failure': failure(error)}, write=isinstance(error, Exception))
                 raise
             record(label, {'args': a, 'kwargs': kw, 'returned': value})
             return value
@@ -115,6 +130,7 @@ def observed_release(result, evidence, name, function, job, *args, **kwargs):
     record('initial-state', attempt['jobState'])
     paths = [job.scratch, *([args[0], *args[1]] if name == 'terminal' else [kwargs['profile_namespace']])]
     record('paths', [{'path': str(p), 'exists': Path(p).exists(), 'symlink': Path(p).is_symlink()} for p in paths])
+    interrupted = False
     try:
         for key in ('kernel_tasks', 'identity', '_archive_profile_paths'):
             if key in namespace:
@@ -130,6 +146,7 @@ def observed_release(result, evidence, name, function, job, *args, **kwargs):
         attempt['returned'] = raw_value(returned)
         return returned
     except BaseException as error:
+        interrupted = not isinstance(error, Exception)
         trace = error.__traceback__
         while trace.tb_next:
             trace = trace.tb_next
@@ -142,10 +159,13 @@ def observed_release(result, evidence, name, function, job, *args, **kwargs):
             job.members = original_members
         else:
             del job.members
-        try:
-            persist(evidence / ('release-' + name + '-result.json'), attempt)
-        except BaseException as error:
-            result['persistenceFailures'].append({'receipt': name + '/result', **failure(error)})
+        if not interrupted:
+            try:
+                persist(evidence / ('release-' + name + '-result.json'), attempt)
+            except BaseException as error:
+                result['persistenceFailures'].append({'receipt': name + '/result', **failure(error)})
+                if not isinstance(error, Exception):
+                    raise
 
 
 def inventory(root):
@@ -258,8 +278,31 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
     review = grant.get('callerReview', {})
     require(review.get('verdict') == 'PASS' and Path(review.get('path', '')).is_file() and sha(review['path']) == review.get('sha256'), 'Independent caller review missing/drifted')
     require(grant.get('previousUnitsAccepted') == ready['unitOrder'][:ready['unitOrder'].index(unit)], 'Units must be admitted sequentially; no retry or continuation after failure')
+    completions = grant.get('previousUnitReceipts', {})
+    require(set(completions) == set(grant['previousUnitsAccepted']), 'Parent-observed caller completion receipts required for every predecessor')
     for previous in grant['previousUnitsAccepted']:
-        require(read_json(Path(ready['units'][previous]['evidence']) / 'result.json')['accepted'] is True, 'Previous unit was not accepted')
+        prior = ready['units'][previous]
+        completion = completions[previous]
+        result_path = Path(prior['evidence']) / 'result.json'
+        consumption_path = Path(prior['consumption'])
+        require(completion.get('callerExitCode') == 0 and type(completion.get('callerExitCode')) is int,
+                'Parent did not observe a successful predecessor caller exit')
+        for key, path in (('result', result_path), ('consumption', consumption_path)):
+            reference = completion.get(key, {})
+            require(reference.get('path') == str(path) and path.is_file() and not path.is_symlink()
+                    and reference.get('sha256') == sha(path), 'Predecessor receipt missing/drifted: ' + key)
+        failed_path = result_path.parent / 'failed-result.json'
+        require(not failed_path.exists() and not failed_path.is_symlink(), 'Predecessor has failed publication evidence')
+        prior_result = read_json(result_path)
+        consumed = read_json(consumption_path)
+        require(consumed['unit'] == previous and consumed['head'] == current_head
+                and consumed['readinessSha256'] == readiness_sha and consumed['spec'] == prior
+                and consumed['authorizationId'] == prior['authorizationId'], 'Predecessor transaction binding changed')
+        require(prior_result.get('admission') == consumed and prior_result.get('checksPassed') is True
+                and prior_result.get('accepted') is False
+                and prior_result.get('publication') == {'status': 'AWAITING_CALLER_COMPLETION', 'completeReceipt': None}
+                and prior_result.get('primaryFailure') is None and prior_result.get('cleanupFailures') == []
+                and prior_result.get('persistenceFailures') == [], 'Predecessor result is failed/indeterminate')
     expiry = datetime.datetime.fromisoformat(grant['expiresUtc'])
     require(expiry.tzinfo is not None and expiry > datetime.datetime.now(datetime.timezone.utc), 'Grant expired')
     return ready['units'][unit]
@@ -376,12 +419,15 @@ def accept_outcome(raw):
 
 def run_unit(ready, spec, record):
     evidence = Path(spec['evidence'])
-    result = {'accepted': False, 'primaryFailure': None, 'cleanupFailures': [], 'persistenceFailures': [], 'raw': {}}
+    result = {'accepted': False, 'checksPassed': False, 'admission': raw_value(record),
+              'primaryFailure': None, 'cleanupFailures': [], 'persistenceFailures': [], 'raw': {}}
     def receipt(name, value):
         try:
             persist(evidence / name, value)
         except BaseException as error:
             result['persistenceFailures'].append({'receipt': name, **failure(error)})
+            if not isinstance(error, Exception):
+                raise
     job = private = admission = None
     try:
         snapshot_caches(ready, evidence)
@@ -416,6 +462,13 @@ def run_unit(ready, spec, record):
             observer.require_browser()
     except BaseException as error:
         result['primaryFailure'] = failure(error)
+        allocation = getattr(error, 'private_tmp_allocation', None)
+        if allocation is not None:
+            result['raw']['privateTmpAllocation'] = raw_value(allocation)
+            if allocation.get('released') is not True:
+                result['cleanupFailures'].append({'type': 'RetainedAllocation',
+                    'message': 'Allocation failed before returning; helper recovery ownership retained',
+                    'allocation': raw_value(allocation)})
     finally:
         if job is not None:
             try:
@@ -467,15 +520,18 @@ def run_unit(ready, spec, record):
         verify_legacy(ready)
         receipt('accepted-evidence.json', result['raw'])
         require(not result['persistenceFailures'], 'Evidence persistence failed')
-        result['accepted'] = True
+        result['checksPassed'] = True
     except BaseException as error:
         if result['primaryFailure'] is None:
             result['primaryFailure'] = failure(error)
-    result['publication'] = {'status': 'WRITE_ATTEMPTED', 'completeReceipt': None}
+    # Even a complete write can raise after closing. Disk bytes never assert caller
+    # success: the parent must bind the observed CLI exit to these exact receipts.
+    result['publication'] = {'status': 'AWAITING_CALLER_COMPLETION', 'completeReceipt': None}
     for name in ('result.json', 'failed-result.json'):
         try:
             persist(evidence / name, result)
             result['publication'].update(status='COMPLETE_RESULT_WRITTEN', completeReceipt=name)
+            result['accepted'] = result['checksPassed'] and not result['persistenceFailures']
             break
         except BaseException as error:
             result['accepted'] = False
