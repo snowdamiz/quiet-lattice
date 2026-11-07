@@ -1,0 +1,178 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521[39m
+
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mkeeps the exact preclaimed namespace and Redis8
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mrefuses missing, default or differently owned routes: {}
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mrefuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mrefuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:55432/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mrefuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra","REDIS_URL":"redis://127.0.0.1:53058/8"}
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mrefuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521?host=elsewhere","REDIS_URL":"redis://127.0.0.1:53058/8"}
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mrefuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/7"}
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mSymbiotic smoke private routes (no connections)[2m > [22mrefuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:56379/8"}
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mpasses borrowed routes to migration and never creates/drops them
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mpreserves the primary setup failure when server termination fails
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mcloses the created handle after listen fails and preserves listen error identity
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mretains listen failure plus both owned stop errors
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mattempts all owned cleanup after Vite close fails (synchronous=false)
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mattempts all owned cleanup after Vite close fails (synchronous=true)
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mcleans only its own scratch database after migration fails
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 online lifecycle[2m > [22mretains both bounded close failures and attempts KILL after TERM timeout
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22maccepts only the fresh identified live observer/enemy control
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects corpse plus missing observer
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects missing observer
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects dead observer
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects different observer identity
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects different observer frame
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects different observer kind
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects dead enemy
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects enemy corpse mode
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects different enemy species
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects different enemy frame
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects different enemy kind
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects stale snapshot
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects disconnected observer
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects owner retained
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects companion snapshot retained
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects companion remote retained
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects companion instance retained
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22maccepts a living target with actual source-attributed health loss
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects health loss with no companion hit
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects attack phase without health loss
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mR1 live lifecycle predicates[2m > [22mrejects a corpse after a credited killing hit
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mlive arena setup respects owned ship authority[2m > [22mreproduces the live cross-system foot rejection at the real persistence pose check
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mlive arena setup respects owned ship authority[2m > [22mmoves owner across systems in a restorable ship pose
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mlive arena setup respects owned ship authority[2m > [22mmoves observer across systems in a restorable ship pose
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mlive arena setup respects owned ship authority[2m > [22mlands owner with an owned ship that remains restorable after disembarking
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mlive arena setup respects owned ship authority[2m > [22mlands observer with an owned ship that remains restorable after disembarking
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mlive arena setup respects owned ship authority[2m > [22mdoes not hide a refused admin placement
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mreal UI admission before fixture keyboard input[2m > [22mresumes initially unlocked owner through the actual UI before F
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mreal UI admission before fixture keyboard input[2m > [22mresumes initially unlocked observer through the actual UI before F
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mreal UI admission before fixture keyboard input[2m > [22mstill rejects a failed gesture without sending F
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mreal UI admission before fixture keyboard input[2m > [22mstill rejects missing focus or a lock event without sending F
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mreal UI admission before fixture keyboard input[2m > [22mreleases F and rejects if admitted input never reaches foot
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mreal UI admission before fixture keyboard input[2m > [22mreacquires owner input after observer F, sends S, and still rejects missing server movement
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mreal UI admission before fixture keyboard input[2m > [22mrejects failed owner reacquisition before sending S
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mcompanion picker sightline through real camera and instances[2m > [22mreproduces the historical nearer enemy using rendered positions
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mcompanion picker sightline through real camera and instances[2m > [22mplaces the observer with a clear companion sightline using rendered positions
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mcompanion picker sightline through real camera and instances[2m > [22mreproduces the historical nearer enemy using wire positions
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-private.test.ts[2m > [22mcompanion picker sightline through real camera and instances[2m > [22mplaces the observer with a clear companion sightline using wire positions
+[90mstdout[2m | packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22m[2mactual walk/event/replication/freeze order with 0s freeze latency
+[22m[39mCONCURRENT_COMBAT_CPU {"delay":0,"hitAt":1001.8999999999983,"eventToFreeze":0.049999999999954525,"stages":[{"kind":"thaw","time":1000.1499999999999,"tick":3},{"kind":"walk-wait","time":1000.6999999999994,"tick":14},{"kind":"walk-wait","time":1001.099999999999,"tick":22},{"kind":"event-hp-0","time":1001.8999999999983,"tick":38},{"kind":"event-hp-1","time":1001.9499999999982,"tick":39},{"kind":"freeze-request","time":1001.9499999999982,"tick":39},{"kind":"freeze-effective","time":1001.9499999999982,"tick":39}],"views":[{"role":"owner","result":"PASS","detail":{"bounds":[{"id":3,"min":[-0.2684617852378322,-0.4338996736545194,0.951731276573824],"max":[-0.07186683208155586,0.40843866768346426,0.9710722175199753],"centre":[-77304.63601762852,31556.87335095277,-43148.312871466165],"species":0,"size":1.3059523050673307},{"id":4,"min":[0.03579564125200797,-0.35682753644556997,0.9623985515674265],"max":[0.1918633638079878,0.2892819430935994,0.9779680781390439],"centre":[-77306.01893985247,31556.27002196761,-43146.089066618435],"species":4,"size":1.7251082592643798}],"surroundings":{"clientId":1,"ships":[{"distance":57.773910275316226,"angle":148.16176036947445},{"distance":53.492889129752875,"angle":164.11727747708656}],"paving":1}}},{"role":"observer","result":"PASS","detail":{"bounds":[{"id":3,"min":[-0.18435366296465522,-0.23794075716901317,0.9775863866417558],"max":[-0.039926618040884015,0.23508519618165707,0.9824603831912877],"centre":[-77304.63601762852,31556.87335095277,-43148.312871466165],"species":0,"size":1.3059523050673307},{"id":4,"min":[0.02536085661730374,-0.2298721763397707,0.9786259104771018],"max":[0.14909074054656443,0.1963175366859434,0.9842624681484872],"centre":[-77306.01893985247,31556.27002196761,-43146.089066618435],"species":4,"size":1.7251082592643798}],"surroundings":{"clientId":2,"ships":[{"distance":56.8779366821913,"angle":123.22345200238952},{"distance":51.24603956431902,"angle":139.18559138290522}],"paving":1}}}]}
+
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mvisibility staging on the actual eligible world[2m > [22mkeeps the previously proved species and selects a real open plaza
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mvisibility staging on the actual eligible world[2m > [22mparks owner through real placement and disembark authority
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mvisibility staging on the actual eligible world[2m > [22mparks observer through real placement and disembark authority
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mvisibility staging on the actual eligible world[2m > [22mkeeps staging and the bounded procession on existing flora-free paving, outside buildings
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22macquires input and converges through actual mouse events and Player.update
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mrejects ignored mouse motion instead of directly writing a look transform
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mreleases W when a real-source walk wait rejects
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mframes the whole actual procedural instance from ownerMark without parked ships in view
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mframes the whole actual procedural instance from observerMark without parked ships in view
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mrejects the old near-body cropping through real instance projection
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mrejects an observer too far away to distinguish the body
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mrejects overlapping combatants instead of equating drawn with visible
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual input, instances and camera framing[2m > [22mrejects a foreground ship even when the body geometry projects inside the image
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mper-image provenance and fixed observer camera[2m > [22mbinds actual entity, frame, projection and renderer samples to exact attachment bytes
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mper-image provenance and fixed observer camera[2m > [22mrejects actual position drift
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mper-image provenance and fixed observer camera[2m > [22mrejects actual rotation drift
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mper-image provenance and fixed observer camera[2m > [22mrejects actual projection drift
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mper-image provenance and fixed observer camera[2m > [22mrejects actual client drift
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mper-image provenance and fixed observer camera[2m > [22mrejects actual bob drift
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mper-image provenance and fixed observer camera[2m > [22maccepts unchanged camera across newer actual store ticks and equivalent quaternion sign
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mbounded active-follow capture from the real motion producer[2m > [22mgets newer moving follow samples before freezing and capturing
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mbounded active-follow capture from the real motion producer[2m > [22mrejects idle evidence with keys released and no capture
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mbounded active-follow capture from the real motion producer[2m > [22mrejects stunned evidence with keys released and no capture
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mbounded active-follow capture from the real motion producer[2m > [22mrejects owner evidence with keys released and no capture
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mbounded active-follow capture from the real motion producer[2m > [22mretains a screenshot failure instead of claiming an active follow picture
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mframes actual companion approach across the hostile lane for owner
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mframes actual companion approach across the hostile lane for observer
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: none
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: before
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: during
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: camera
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: observer-before
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: observer-during
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: undrawn-before
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mreal post-retirement caller capture interval: undrawn-during
+[90mstdout[2m | packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22m[2mactual walk/event/replication/freeze order with 0.2s freeze latency
+[22m[39mCONCURRENT_COMBAT_CPU {"delay":0.2,"hitAt":1001.8999999999983,"eventToFreeze":0.24999999999977263,"stages":[{"kind":"thaw","time":1000.1499999999999,"tick":3},{"kind":"walk-wait","time":1000.6999999999994,"tick":14},{"kind":"walk-wait","time":1001.099999999999,"tick":22},{"kind":"event-hp-0","time":1001.8999999999983,"tick":38},{"kind":"event-hp-1","time":1001.9499999999982,"tick":39},{"kind":"freeze-request","time":1001.9499999999982,"tick":39},{"kind":"freeze-effective","time":1002.149999999998,"tick":43}],"views":[{"role":"owner","result":"PASS","detail":{"bounds":[{"id":3,"min":[-0.23121204037553705,-0.4312478579526621,0.952299272747971],"max":[-0.0377002528569307,0.4066318738285299,0.971195128678555],"centre":[-77304.63608518972,31556.87332425511,-43148.312769948905],"species":0,"size":1.3059523050673307},{"id":4,"min":[0.0070831472899692514,-0.38911012551896496,0.9583654152509649],"max":[0.17496524111569978,0.3097749420483524,0.9765695467633824],"centre":[-77305.63437757816,31556.378585303908,-43146.698689863944],"species":4,"size":1.7251082592643798}],"surroundings":{"clientId":1,"ships":[{"distance":57.77391027771198,"angle":145.74106892921074},{"distance":53.4928891305291,"angle":161.69664727946005}],"paving":1}}},{"role":"observer","result":"REJECT","detail":"AssertionError: full projected combatant bodies must be separated: expected 4.404890588496145 to be greater than 8"}]}
+
+[90mstdout[2m | packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22m[2mactual walk/event/replication/freeze order with 0.5s freeze latency
+[22m[39mCONCURRENT_COMBAT_CPU {"delay":0.5,"hitAt":1001.8999999999983,"eventToFreeze":0.5499999999994998,"stages":[{"kind":"thaw","time":1000.1499999999999,"tick":3},{"kind":"walk-wait","time":1000.6999999999994,"tick":14},{"kind":"walk-wait","time":1001.099999999999,"tick":22},{"kind":"event-hp-0","time":1001.8999999999983,"tick":38},{"kind":"event-hp-1","time":1001.9499999999982,"tick":39},{"kind":"freeze-request","time":1001.9499999999982,"tick":39},{"kind":"freeze-effective","time":1002.4499999999978,"tick":49}],"views":[{"role":"owner","result":"REJECT","detail":"AssertionError: full projected combatant bodies must be separated: expected -1.25745565498954 to be greater than 8"},{"role":"observer","result":"REJECT","detail":"AssertionError: full projected combatant bodies must be separated: expected -20.383170812664545 to be greater than 8"}]}
+
+[90mstdout[2m | packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22m[2mactual walk/event/replication/freeze order with 1s freeze latency
+[22m[39mCONCURRENT_COMBAT_CPU {"delay":1,"hitAt":1001.8999999999983,"eventToFreeze":1.049999999999045,"stages":[{"kind":"thaw","time":1000.1499999999999,"tick":3},{"kind":"walk-wait","time":1000.6999999999994,"tick":14},{"kind":"walk-wait","time":1001.099999999999,"tick":22},{"kind":"event-hp-0","time":1001.8999999999983,"tick":38},{"kind":"event-hp-1","time":1001.9499999999982,"tick":39},{"kind":"freeze-request","time":1001.9499999999982,"tick":39},{"kind":"freeze-effective","time":1002.9499999999973,"tick":59}],"views":[{"role":"owner","result":"REJECT","detail":"AssertionError: full projected combatant bodies must be separated: expected -4.234986922898446 to be greater than 8"},{"role":"observer","result":"REJECT","detail":"AssertionError: full projected combatant bodies must be separated: expected -22.779191792664072 to be greater than 8"}]}
+
+ [32m✓[39m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual walk/event/replication/freeze order with 0s freeze latency[32m 102[2mms[22m[39m
+ [31m×[39m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual walk/event/replication/freeze order with 0.2s freeze latency[32m 55[2mms[22m[39m
+[31m   → expected [ 'PASS', 'REJECT' ] to deeply equal [ 'PASS', 'PASS' ][39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual walk/event/replication/freeze order with 0.5s freeze latency[32m 41[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual walk/event/replication/freeze order with 1s freeze latency[32m 39[2mms[22m[39m
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: joining[2m > [22msends hello with the protocol version and the token, then join, as soon as the socket opens
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: joining[2m > [22mis in the world on welcome: the entity, the zone, a ping, and the inventory after it marked as the first
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: joining[2m > [22mkeeps the season's state and the character's season awards as the server sends them
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: joining[2m > [22mestimates the server clock from welcome, then from pongs, the shortest round trip winning
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: input[2m > [22msends input at most every 50 ms of real time, numbered from 1 and stamped with the server time
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: input[2m > [22mstamps each input with the time the game sampled it at, never going back
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: input[2m > [22mpings every 2 s of real time
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: input[2m > [22msends nothing the schema refuses, and nothing at all until joined
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: input[2m > [22mhas no input to send when the game gives none (out of the zone, on the title)
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: combat[2m > [22masks the server to resolve each shot, numbered from 1 on each connection, and never says what it did
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: combat[2m > [22mkeeps the server's word on its own hits, the blows it took and a kill's rewards for the HUD, until taken
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: snapshots[2m > [22mapplies a full snapshot and deltas on their baselines, acknowledging the newest applied tick once a tick
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: snapshots[2m > [22mneither stores nor acknowledges a delta whose baseline it does not hold, nor a tick with an entity it refused
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: snapshots[2m > [22macknowledges a backlog of snapshots (a stalled page catching up) once, for the newest tick
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: snapshots[2m > [22mignores snapshots that arrive before the welcome
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: snapshots[2m > [22mkeeps a creature's fields as sent, the attack's progress included, until a delta clears it
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mreconnects with a doubling backoff after a drop, and rejoins as the same session would
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mspreads the reconnects: each delay is scaled by 50–100% at random
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mstarts the snapshot store over on a new session: a restarted server counts its ticks from 0 again
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mretries a socket closed as invalid (a stalled page flooding the gateway) once, and gives up on a second within a minute
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mcaps the backoff at 30 s
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mgives up on a refusal another try would repeat, and says why
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mdoes not retry a connection that never got in: the player is still at the door
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mcloses for good on close(), even while waiting to reconnect
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mClockSync[2m > [22mkeeps the offset of the shortest of its recent round trips
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mSnapshotStore[2m > [22mdrops ticks older than it keeps, and ignores a repeated or old tick
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mSnapshotStore[2m > [22mrefuses a delta that names an entity it never sent whole, and strips clear from a new one
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mzone handoff[2m > [22mresets entity snapshots at a handoff without resetting session request or input sequences
+ [2m[90m↓[39m[22m packages/client/src/net/Net.test.js[2m > [22mzone handoff[2m > [22mmakes world tiers available before the first welcome listener builds a system
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mreproduces Net.close -> Game reload -> missing game -> online dev rejoin
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mdispatches target close before thaw, without executing Net.close or rejoining
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mwaits for the closed receipt, not just command acceptance
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mrejects a failed close without thawing or claiming retirement
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mretains a capture failure before closing the owner
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mcaptures post-retirement pixels from the surviving observer only
+ [2m[90m↓[39m[22m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mdoes not evaluate the closed owner again during existing final cleanup
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m packages/tools/src/smoke/symbiotic-visibility.test.ts[2m > [22mactual walk/event/replication/freeze order with 0.2s freeze latency
+[31m[1mAssertionError[22m: expected [ 'PASS', 'REJECT' ] to deeply equal [ 'PASS', 'PASS' ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  [[22m
+[2m    "PASS",[22m
+[32m-   "PASS",[39m
+[31m+   "REJECT",[39m
+[2m  ][22m
+
+[36m [2m❯[22m packages/tools/src/smoke/symbiotic-visibility.test.ts:[2m774:38[22m[39m
+    [90m772|[39m     }
+    [90m773|[39m     console.log('CONCURRENT_COMBAT_CPU', JSON.stringify({ delay, hitAt…
+    [90m774|[39m     expect(views.map(v => v.result)).toEqual(delay < 0.5 ? ['PASS', 'P…
+    [90m   |[39m                                      [31m^[39m
+    [90m775|[39m   } finally { s.close(); }
+    [90m776|[39m });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[33m3 skipped[39m[90m (4)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[2m | [22m[33m126 skipped[39m[90m (130)[39m
+[2m   Start at [22m 07:24:27
+[2m   Duration [22m 1.66s[2m (import 73%, tests 16%, transform 11%)[22m
+
+JSON report written to /private/tmp/symbiotic-r7-fix-4z__e8gq/timing-measure.json
