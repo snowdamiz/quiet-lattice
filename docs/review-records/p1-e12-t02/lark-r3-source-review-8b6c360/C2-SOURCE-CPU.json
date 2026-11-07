@@ -1,0 +1,30 @@
+{
+  "verdict": "PASS",
+  "scope": "SOURCE/CPU only",
+  "commit": "8b6c3604bb842019c899956a1b57d6a01385d6f3",
+  "tree": "765b8b28265d0da6af0a16a568c33a365178d748",
+  "density": {
+    "blend": 590.6459274927377,
+    "glb": 590.6403370883208,
+    "atlas": 4096,
+    "force_fit_scale": 1.0,
+    "force_fit_evidence": "committed task-local density/fix scripts; no corresponding blend custom property"
+  },
+  "validate": "PASS 5/5 blend and GLB, stock source matched commit; retry with existing KTX binary",
+  "contracts": {
+    "density": "PASS",
+    "validate": "PASS",
+    "materials": "PASS",
+    "topology": "PASS CPU statistics only",
+    "fitness": "PASS markers and hinge transform",
+    "process": "PASS",
+    "bounds": "PASS"
+  },
+  "base_pixel_preservation": true,
+  "limitations": [
+    "Topology edge statistics do not certify visual absence of holes or canopy motion clearance.",
+    "Visual/GPU recapture and blind grade remain parent-owned. No merge/Trunk authorization."
+  ],
+  "cpu_gaps": [],
+  "max_sampled_rss_kib": 2795824
+}

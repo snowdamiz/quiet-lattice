@@ -1,0 +1,145 @@
+00:00.252  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/assets/blend/hulls/lark.blend"
+
+validate assets/blend/hulls/lark.blend  (family hulls, source .blend)
+  lark / lark [hero]  tris LOD0 107,054, LOD1 32,111, LOD2 21,406, LOD3 3,741  size 13.52 x 12.38 x 4.29 m
+  lark / lark_damaged [hero]  tris LOD0 111,862, LOD1 33,553, LOD2 22,368, LOD3 3,910  size 13.52 x 12.38 x 4.49 m
+  lark / lark_husked [hero]  tris LOD0 112,746, LOD1 33,818, LOD2 22,546, LOD3 4,370  size 13.52 x 12.43 x 4.29 m
+  PASS  naming  (0 failed, 135 warnings)
+        warn  Body.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  Blink_Strobes.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  Lens_Strobes.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  Light_Landing.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  Canopy.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  CanopyGlass.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  CanopyFrame.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  LandingMechanismMesh.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  CockpitInterior.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  ScreenLeft.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  ScreenCenter.001: object name carries Blender's duplicate suffix; give it a real name
+        warn  ScreenRight.001: object name carries Blender's duplicate suffix; give it a real name
+        ... and 123 more (see the JSON report)
+  PASS  triangle budget
+        ok    lark: LOD0 107,054 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    lark/lark_damaged: LOD0 111,862 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    lark/lark_husked: LOD0 112,746 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    lark: 107,054 > 32,111 > 21,406 > 3,741 triangles; LOD3 3.5% of LOD0
+        ok    lark/lark_damaged: 111,862 > 33,553 > 22,368 > 3,910 triangles; LOD3 3.5% of LOD0
+        ok    lark/lark_husked: 112,746 > 33,818 > 22,546 > 4,370 triangles; LOD3 3.9% of LOD0
+  PASS  materials
+        ok    NavGreen (LIB_NavGreen): signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    NavRed (LIB_NavRed): signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    NavWhite (LIB_NavWhite): signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    ... 21 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    lark: longest side 13.52 m within 6-80 m
+        ok    ... 2 more
+RESULT: PASS (5 of 5 checks passed)
+  report: /private/tmp/lark-r3-revise-source-review-sdwwytxg/validation/hulls__lark.blend.json
+10:55:26 | INFO: Data are loaded, start creating Blender stuff
+10:55:26 | INFO: Blender create Mesh node COL_Body
+10:55:26 | INFO: Blender create Mesh node COL_NacelleL
+10:55:26 | INFO: Blender create Mesh node COL_NacelleR
+10:55:26 | INFO: Blender create Mesh node COL_WingL
+10:55:26 | INFO: Blender create Mesh node COL_WingR
+10:55:26 | INFO: Blender create Mesh node Lens_Strobes_dmg
+10:55:26 | INFO: Blender create Mesh node Body_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyGlass_dmg
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_dmg
+10:55:27 | INFO: Blender create Mesh node Lens_Strobes_dmg
+10:55:27 | INFO: Blender create Mesh node Body_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyGlass_dmg
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_dmg
+10:55:27 | INFO: Blender create Mesh node Lens_Strobes_dmg
+10:55:27 | INFO: Blender create Mesh node Body_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyGlass_dmg
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_dmg
+10:55:27 | INFO: Blender create Mesh node Lens_Strobes_dmg
+10:55:27 | INFO: Blender create Mesh node Body_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_dmg
+10:55:27 | INFO: Blender create Mesh node CanopyGlass_dmg
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_dmg
+10:55:27 | INFO: Blender create Mesh node Body_husk
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_husk
+10:55:27 | INFO: Blender create Mesh node CanopyGlass_husk
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_husk
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_husk
+10:55:27 | INFO: Blender create Mesh node Body_husk
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_husk
+10:55:27 | INFO: Blender create Mesh node CanopyGlass_husk
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_husk
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_husk
+10:55:27 | INFO: Blender create Mesh node Body_husk
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_husk
+10:55:27 | INFO: Blender create Mesh node CanopyGlass_husk
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_husk
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_husk
+10:55:27 | INFO: Blender create Mesh node Body_husk
+10:55:27 | INFO: Blender create Mesh node CanopyFrame_husk
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh_husk
+10:55:27 | INFO: Blender create Mesh node GearFront_leg_husk
+10:55:27 | INFO: Blender create Mesh node Lens_Strobes
+10:55:27 | INFO: Blender create Mesh node Body
+10:55:27 | INFO: Blender create Mesh node CanopyFrame
+10:55:27 | INFO: Blender create Mesh node CanopyGlass
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh
+10:55:27 | INFO: Blender create Mesh node GearFront_leg
+10:55:27 | INFO: Blender create Mesh node Lens_Strobes
+10:55:27 | INFO: Blender create Mesh node Body
+10:55:27 | INFO: Blender create Mesh node CanopyFrame
+10:55:27 | INFO: Blender create Mesh node CanopyGlass
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh
+10:55:27 | INFO: Blender create Mesh node GearFront_leg
+10:55:27 | INFO: Blender create Mesh node Lens_Strobes
+10:55:27 | INFO: Blender create Mesh node Body
+10:55:27 | INFO: Blender create Mesh node CanopyFrame
+10:55:27 | INFO: Blender create Mesh node CanopyGlass
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh
+10:55:27 | INFO: Blender create Mesh node GearFront_leg
+10:55:27 | INFO: Blender create Mesh node Lens_Strobes
+10:55:27 | INFO: Blender create Mesh node Body
+10:55:27 | INFO: Blender create Mesh node CanopyFrame
+10:55:27 | INFO: Blender create Mesh node CanopyGlass
+10:55:27 | INFO: Blender create Mesh node CockpitInteriorMesh
+10:55:27 | INFO: Blender create Mesh node GearFront_leg
+10:55:27 | INFO: glTF import finished in 0.86s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/hulls/lark.glb  (family hulls, export .glb)
+  lark / lark_damaged [hero]  tris LOD0 111,862, LOD1 33,547, LOD2 22,260, LOD3 3,260  size 13.52 x 12.38 x 4.49 m
+  lark / lark_husked [hero]  tris LOD0 112,746, LOD1 33,812, LOD2 21,953, LOD3 2,984  size 13.52 x 12.43 x 4.29 m
+  lark / lark [hero]  tris LOD0 107,054, LOD1 32,105, LOD2 21,358, LOD3 3,368  size 13.52 x 12.38 x 4.29 m
+  PASS  naming
+        ok    lark.glb: 3 variant(s) in 1 asset(s) follow the hulls rules
+  PASS  triangle budget
+        ok    lark/lark_damaged: LOD0 111,862 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    lark/lark_husked: LOD0 112,746 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    lark: LOD0 107,054 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 1 more
+  PASS  LODs
+        ok    lark/lark_damaged: 111,862 > 33,547 > 22,260 > 3,260 triangles; LOD3 2.9% of LOD0
+        ok    lark/lark_husked: 112,746 > 33,812 > 21,953 > 2,984 triangles; LOD3 2.6% of LOD0
+        ok    lark: 107,054 > 32,105 > 21,358 > 3,368 triangles; LOD3 3.1% of LOD0
+  PASS  materials
+        ok    Accent: pbr: base colour, roughness, metallic, normal, AO
+        ok    Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    Accent: pbr: base colour, roughness, metallic, normal, AO
+        ok    ... 25 more
+  PASS  scale references
+        ok    source: assets/blend/hulls/lark.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    lark/lark_damaged: longest side 13.52 m within 6-80 m
+        ok    lark/lark_husked: longest side 13.52 m within 6-80 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: /private/tmp/lark-r3-revise-source-review-sdwwytxg/validation/hulls__lark.glb.json
+
+2 of 2 file(s) passed validation
