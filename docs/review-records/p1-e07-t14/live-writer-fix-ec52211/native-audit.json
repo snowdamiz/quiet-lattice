@@ -1,0 +1,270 @@
+{
+  "resultOuterSha256": "291b242d830b1de6e883b51d57abe4de3b4ae442d0b4973ce57620a835c02f6e",
+  "errors": [
+    {
+      "args": [
+        2,
+        "No such file or directory"
+      ],
+      "attributes": {
+        "errno": 2,
+        "filename": "/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary",
+        "filename2": null,
+        "strerror": "No such file or directory"
+      },
+      "message": "[Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'",
+      "operation": "writers",
+      "phase": "capture-observer",
+      "type": "FileNotFoundError"
+    },
+    {
+      "attributes": {
+        "clean": false,
+        "errors": [
+          "FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'"
+        ]
+      },
+      "message": "Helper work/cleanup is not clean; resource release cannot accept capture",
+      "phase": "cleanup-work-status",
+      "type": "HelperWorkFailure"
+    }
+  ],
+  "jobs": [
+    {
+      "stateAfterCleanup": {
+        "exits": {
+          "caffeinate": -15,
+          "capture": -15
+        },
+        "clean": false,
+        "drained": true,
+        "errors": [
+          "FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'"
+        ],
+        "remaining": [],
+        "kernel_terminal": {
+          "coalition_absent": true,
+          "live": 0
+        },
+        "elapsed_cleanup_seconds": 0.07443491701269522
+      },
+      "stateBeforeCleanup": {
+        "exits": {},
+        "clean": false,
+        "drained": false,
+        "errors": [
+          "FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'"
+        ],
+        "remaining": null,
+        "kernel_terminal": null,
+        "elapsed_cleanup_seconds": null
+      }
+    }
+  ],
+  "wait": "observer_failed",
+  "executionPartial": {
+    "all_ever_lived_processes_observed": false,
+    "external_native_XPC_ownership": "UNQUALIFIED",
+    "launch": {
+      "angle_metal_requested": true,
+      "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "pid": 33538,
+      "profile": "/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB"
+    },
+    "scope": "OBSERVED_STATION_CHROMIUM_COHORT",
+    "utc": "2026-11-07T11:23:10.088529+00:00"
+  },
+  "entry": {
+    "sha256": "07c32204170b553c26f06fccd1b8971d3071dea64ac82a87e28d5012ccbfcad7",
+    "checksPassed": true,
+    "errors": [],
+    "files": 12,
+    "bytes": 48028456
+  },
+  "writerFailures": [
+    {
+      "cacheBytes": 0,
+      "complete": false,
+      "failure": {
+        "args": [
+          2,
+          "No such file or directory"
+        ],
+        "attributes": {
+          "errno": 2,
+          "filename": "/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary",
+          "filename2": null,
+          "strerror": "No such file or directory"
+        },
+        "message": "[Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'",
+        "type": "FileNotFoundError"
+      },
+      "forArchive": false,
+      "free": null,
+      "helperBytes": 0,
+      "privateTmpNonprofileBytes": 0,
+      "probes": [
+        {
+          "bytes": null,
+          "failure": {
+            "args": [
+              2,
+              "No such file or directory"
+            ],
+            "attributes": {
+              "errno": 2,
+              "filename": "/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary",
+              "filename2": null,
+              "strerror": "No such file or directory"
+            },
+            "message": "[Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'",
+            "type": "FileNotFoundError"
+          },
+          "kind": "profileBytes",
+          "path": "/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB"
+        }
+      ],
+      "profileBytes": 0
+    }
+  ],
+  "releaseSummary": {
+    "released": true,
+    "captureClean": false,
+    "terminal": {
+      "captureClean": false,
+      "kernel_terminal": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "namespace_absent": true,
+      "owned_listeners_absent_via_no_live_owned_task": true,
+      "probes": [
+        {
+          "probe": "kernel_tasks",
+          "returned": {
+            "coalition_absent": true,
+            "live": 0
+          }
+        },
+        {
+          "probe": "members",
+          "returned": []
+        },
+        {
+          "probe": "identity:33528",
+          "returned": null
+        },
+        {
+          "probe": "identity:33531",
+          "returned": null
+        },
+        {
+          "probe": "identity:33530",
+          "returned": null
+        },
+        {
+          "probe": "identity:33535",
+          "returned": null
+        },
+        {
+          "probe": "identity:33538",
+          "returned": null
+        },
+        {
+          "probe": "identity:33541",
+          "returned": null
+        },
+        {
+          "probe": "identity:33540",
+          "returned": null
+        },
+        {
+          "probe": "identity:33539",
+          "returned": null
+        },
+        {
+          "probe": "identity:33547",
+          "returned": null
+        },
+        {
+          "probe": "identity:33550",
+          "returned": null
+        },
+        {
+          "probe": "identity:33553",
+          "returned": null
+        },
+        {
+          "probe": "exists:/tmp/stations-round4-owned-q1y5jyb6",
+          "returned": false
+        },
+        {
+          "probe": "exists:/private/tmp/sbr-_lymht1r",
+          "returned": false
+        },
+        {
+          "probe": "exists:/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB",
+          "returned": false
+        },
+        {
+          "probe": "registration",
+          "returned": {
+            "args": [
+              "/bin/launchctl",
+              "print",
+              "gui/501/local.stations.round4.fa822f380a2b4bc9a50931e41be222a0"
+            ],
+            "returncode": 113,
+            "stderr": "Bad request.\nCould not find service \"local.stations.round4.fa822f380a2b4bc9a50931e41be222a0\" in domain for user gui: 501\n",
+            "stdout": ""
+          }
+        }
+      ],
+      "profiles_absent": [
+        "/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB"
+      ],
+      "registration_absent": true,
+      "scratch_absent": true
+    }
+  },
+  "boundary": {
+    "exits": {
+      "capture": -15,
+      "caffeinate": -15
+    },
+    "clean": false,
+    "drained": true,
+    "errors": [
+      "FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/sbr-_lymht1r/playwright_chromiumdev_profile-NQNsQB/Default/Shared Dictionary'"
+    ],
+    "remaining": [],
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "elapsed_cleanup_seconds": 0.07443491701269522
+  },
+  "timesUtc": {
+    "/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb/entry.json": "2026-11-07T11:23:10.091747+00:00",
+    "/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb/result.json": "2026-11-07T11:23:10.302791+00:00",
+    "/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb/terminal.json": "2026-11-07T11:23:10.253947+00:00",
+    "/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb/job/boundary.json": "2026-11-07T11:23:10.163219+00:00",
+    "/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb/job/capture_stdout.txt": "2026-11-07T11:23:10.176364+00:00",
+    "/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb/job/observed_execution.json": "2026-11-07T11:23:09.913828+00:00"
+  },
+  "rawKeys": [
+    "cacheOwnerChecks",
+    "cacheSnapshot",
+    "cleanup",
+    "decodeSkipped",
+    "executionPartial",
+    "lastCaptureObservation",
+    "lastWriterObservation",
+    "profileReleaseSnapshot",
+    "releaseAudit",
+    "start",
+    "tmpAdmission",
+    "wait",
+    "writerObservationFailures"
+  ]
+}

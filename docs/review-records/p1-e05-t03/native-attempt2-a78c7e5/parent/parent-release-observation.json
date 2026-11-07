@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-07T12:05:46.705734+00:00",
+  "slot": "parent:vm-a78c7e5-review-thalune2-20261107",
+  "outcome": "FAILED_SPENT",
+  "released": true,
+  "exit": {
+    "exitCode": 1,
+    "wallSeconds": 18.485242416034453,
+    "finishedAt": "2026-11-07T12:04:42.140965+00:00"
+  },
+  "helperErrors": [
+    "ValueError: Raw helper observation ceiling exceeded"
+  ],
+  "captureClean": false,
+  "processDrain": true,
+  "fullResultDurable": false,
+  "publicationSummary": {
+    "schema": "viewmodel-publication-failure/1",
+    "accepted": false,
+    "completeRecordDurable": false,
+    "completeFacts": "retained-in-memory-only-unless-full-sink-succeeded",
+    "primaryFailure": {
+      "type": "ValueError",
+      "messagePrefix": "Capture did not complete: observer_failed"
+    },
+    "secondaryFailureCount": 1,
+    "secondaryFailurePrefixes": [
+      {
+        "type": "AssertionError",
+        "messagePrefix": ""
+      }
+    ],
+    "persistenceErrorCount": 2,
+    "persistenceErrorPrefixes": [
+      {
+        "type": "ValueError",
+        "messagePrefix": "Raw observation node ceiling"
+      },
+      {
+        "type": "ValueError",
+        "messagePrefix": "Raw observation node ceiling"
+      }
+    ]
+  },
+  "observedPids": [
+    41345,
+    41348,
+    41627,
+    41628,
+    41629,
+    41647,
+    41650,
+    41652,
+    41653,
+    41655,
+    41702,
+    41714
+  ],
+  "remaining": [],
+  "launchctl": {
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.5811b502db314adcafe90421e5b9e398\" in domain for user gui: 501\n"
+  },
+  "ownedPathsPresent": {
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-lz6t2qt9": false,
+    "/private/tmp/sbr-cqe3ciuy": false,
+    "/private/tmp/sbr-cqe3ciuy/playwright_chromiumdev_profile-ZzT8q4": false
+  },
+  "outputFiles": [],
+  "sourceStatus": "",
+  "scope": "Physical ownership release only; primary helper ceiling and receipt loss remain failure, not native acceptance."
+}

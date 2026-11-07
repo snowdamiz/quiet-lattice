@@ -1,0 +1,273 @@
+{
+  "scope": "CPU_CANDIDATE_BOUNDARY",
+  "exits": {
+    "caffeinate": -15,
+    "capture": 143
+  },
+  "errors": [
+    "ValueError: Raw helper observation ceiling exceeded"
+  ],
+  "signals": [
+    {
+      "pid": 41714,
+      "birth": [
+        1794053075,
+        372352
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41702,
+      "birth": [
+        1794053074,
+        956006
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41655,
+      "birth": [
+        1794053073,
+        532659
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41653,
+      "birth": [
+        1794053073,
+        499764
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41652,
+      "birth": [
+        1794053073,
+        496780
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41650,
+      "birth": [
+        1794053073,
+        439707
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41647,
+      "birth": [
+        1794053073,
+        61580
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41629,
+      "birth": [
+        1794053072,
+        696852
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 41628,
+      "birth": [
+        1794053072,
+        694911
+      ],
+      "signal": "SIGTERM"
+    }
+  ],
+  "drained": true,
+  "clean": false,
+  "kernel_before_launch": {
+    "coalition_absent": false,
+    "started": 3,
+    "exited": 2,
+    "live": 1
+  },
+  "profiles": [
+    "/private/tmp/sbr-cqe3ciuy/playwright_chromiumdev_profile-ZzT8q4"
+  ],
+  "kernel_before_root_release": {
+    "coalition_absent": false,
+    "started": 21,
+    "exited": 20,
+    "live": 1
+  },
+  "kernel_terminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "remaining": [],
+  "elapsed_cleanup_seconds": 0.33594654098851606,
+  "target": "gui/501/local.stations.round4.5811b502db314adcafe90421e5b9e398",
+  "scratch": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-lz6t2qt9",
+  "root": {
+    "pid": 41627,
+    "ppid": 1,
+    "pgid": 41627,
+    "birth": [
+      1794053072,
+      587162
+    ],
+    "status": 2,
+    "uid": 501
+  },
+  "coalition_id": 43446,
+  "identities": {
+    "41627": {
+      "pid": 41627,
+      "ppid": 1,
+      "pgid": 41627,
+      "birth": [
+        1794053072,
+        587162
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41629": {
+      "pid": 41629,
+      "ppid": 41627,
+      "pgid": 41629,
+      "birth": [
+        1794053072,
+        696852
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41628": {
+      "pid": 41628,
+      "ppid": 41627,
+      "pgid": 41628,
+      "birth": [
+        1794053072,
+        694911
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41647": {
+      "pid": 41647,
+      "ppid": 41628,
+      "pgid": 41628,
+      "birth": [
+        1794053073,
+        61580
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41650": {
+      "pid": 41650,
+      "ppid": 41628,
+      "pgid": 41650,
+      "birth": [
+        1794053073,
+        439707
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41653": {
+      "pid": 41653,
+      "ppid": 41650,
+      "pgid": 41650,
+      "birth": [
+        1794053073,
+        499764
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41652": {
+      "pid": 41652,
+      "ppid": 41650,
+      "pgid": 41650,
+      "birth": [
+        1794053073,
+        496780
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41655": {
+      "pid": 41655,
+      "ppid": 41650,
+      "pgid": 41650,
+      "birth": [
+        1794053073,
+        532659
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41702": {
+      "pid": 41702,
+      "ppid": 41650,
+      "pgid": 41650,
+      "birth": [
+        1794053074,
+        956006
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    },
+    "41714": {
+      "pid": 41714,
+      "ppid": 1,
+      "pgid": 41714,
+      "birth": [
+        1794053075,
+        372352
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43446,
+        43447
+      ]
+    }
+  }
+}
