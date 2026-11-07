@@ -81,7 +81,15 @@ class ProcessWatch:
     def send(self, sig):
         if self.exited():
             return
-        if identity(self.pid) != self.birth:
+        current = identity(self.pid)
+        if current is None:
+            self.ended = True
+            return
+        if current != self.birth:
+            # Darwin clears BSD start fields on a zombie before NOTE_EXIT is
+            # drained. Re-check the watch; only then is identity loss a defect.
+            if self.exited():
+                return
             raise RuntimeError('owned process identity changed; refusing signal')
         try:
             os.kill(self.pid, sig)
@@ -169,7 +177,17 @@ class OwnedProcesses:
             raise RuntimeError('; '.join(errors))
 
     def all_exited(self):
-        return self.leader_exited() and all(w.exited() for w in self.watches.values())
+        # self.last is the most recent observation. A descendant forked after that
+        # snapshot is invisible here; drain must re-observe before reaping and
+        # must re-check the former process group after wait().
+        return (self.leader_exited()
+                and all(w.exited() for w in self.watches.values())
+                and all(row['pid'] == self.child.pid for row in self.last))
+
+    def same_group_leftovers(self):
+        """Live processes still bearing the unreaped/reaped leader's pgid."""
+        leader = self.child.pid
+        return [row for row in snapshot() if row['pgid'] == leader and row['pid'] != leader]
 
     def evidence(self):
         return dict(directChild=dict(pid=self.child.pid, birth=self.birth, waiterLost=self.waiter_lost),

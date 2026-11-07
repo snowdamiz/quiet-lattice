@@ -1,0 +1,128 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/constructs/outpost_drone.glb",
+  "family": "constructs",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T11:16:26Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "outpost_drone",
+      "variants": [
+        {
+          "id": "outpost_drone",
+          "class": "creature",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 32964,
+            "1": 9888,
+            "2": 3296,
+            "3": 1151
+          },
+          "implicitLods": false,
+          "dims": [
+            2.542,
+            2.15,
+            0.817
+          ],
+          "materials": [
+            "CompactPaint"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_drone.glb",
+          "message": "1 variant(s) in 1 asset(s) follow the constructs rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_drone",
+          "message": "LOD0 32,964 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.3 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_drone",
+          "message": "32,964 > 9,888 > 3,296 > 1,151 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "CompactPaint",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "textures",
+          "message": "3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB"
+        },
+        {
+          "subject": "outpost_drone",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/constructs/outpost_drone.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "outpost_drone",
+          "message": "longest side 2.54 m within 0.2-80 m"
+        }
+      ]
+    }
+  ]
+}

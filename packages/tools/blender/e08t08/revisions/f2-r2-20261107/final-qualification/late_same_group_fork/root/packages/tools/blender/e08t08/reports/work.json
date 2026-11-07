@@ -1,0 +1,76 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "b160a83eb1e6491baef4ae8203c8bb52",
+  "supervisorPID": 71997,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/late_same_group_fork",
+    "late-leader"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/late_same_group_fork/root",
+  "beforeFree": 47136133120,
+  "beforePayload": 1540580,
+  "start": 1794056012.5000582,
+  "samples": [
+    {
+      "time": 1794056012.546761,
+      "rss": 6062080,
+      "free": 47136112640,
+      "processes": [
+        {
+          "pid": 71998,
+          "ppid": 71997,
+          "pgid": 71998,
+          "rss": 6062080,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [
+    "cleanup signal: RuntimeError(\"RuntimeError('owned process identity changed; refusing signal')\")"
+  ],
+  "cancelSignals": [
+    15
+  ],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "unknown",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 71998,
+  "ownership": {
+    "directChild": {
+      "pid": 71998,
+      "birth": [
+        1794056012,
+        500321
+      ],
+      "waiterLost": false
+    },
+    "knownDescendants": [
+      {
+        "pid": 72004,
+        "birth": [
+          1794056012,
+          699732
+        ],
+        "exitObserved": true
+      }
+    ]
+  },
+  "end": 1794056014.982087,
+  "maxRSS": 6062080,
+  "afterFree": 47131938816,
+  "afterPayload": 1541192,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "uncertain"
+}

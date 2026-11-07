@@ -1,0 +1,72 @@
+{
+  "stage": "validate-biped-source-01",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "pnpm",
+    "art:validate",
+    "--",
+    "assets/blend/creatures/biped.blend",
+    "--report-dir",
+    "packages/tools/blender/e08t08/reports/source-first"
+  ],
+  "beforeFree": 20065275904,
+  "beforePayload": 33130978,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "34423d27d27b0746af62ec8002d65a47d5f3082760e86ddd0cae8ff625c697b4",
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/flyer.blend": "eb4269f69fb593361852b55491c12c559719a20d581676b6ac99b45e3d3b178c",
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4"
+  },
+  "start": 1794047861.2632692,
+  "samples": [
+    {
+      "time": 1794047861.307682,
+      "rss": 245760,
+      "free": 20065263616,
+      "processes": [
+        {
+          "pid": 20020,
+          "ppid": 20017,
+          "rss": 245760,
+          "command": "node"
+        }
+      ]
+    },
+    {
+      "time": 1794047861.8548338,
+      "rss": 89653248,
+      "free": 20064165888,
+      "processes": [
+        {
+          "pid": 20020,
+          "ppid": 20017,
+          "rss": 64176128,
+          "command": "node"
+        },
+        {
+          "pid": 20022,
+          "ppid": 20020,
+          "rss": 25477120,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 20020,
+  "exit": 1,
+  "end": 1794047862.365025,
+  "afterFree": 20064272384,
+  "afterPayload": 33143996,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "34423d27d27b0746af62ec8002d65a47d5f3082760e86ddd0cae8ff625c697b4",
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/flyer.blend": "eb4269f69fb593361852b55491c12c559719a20d581676b6ac99b45e3d3b178c",
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "maxRSS": 89653248
+}

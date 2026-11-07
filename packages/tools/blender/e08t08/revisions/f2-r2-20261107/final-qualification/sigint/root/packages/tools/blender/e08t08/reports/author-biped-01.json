@@ -1,0 +1,92 @@
+{
+  "stage": "author-biped-01",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "packages/tools/blender/e08t08/bin/blender",
+    "-b",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/e08t08/author.py",
+    "--",
+    "biped"
+  ],
+  "beforeFree": 20088111104,
+  "beforePayload": 20419455,
+  "beforeSources": {
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4"
+  },
+  "start": 1794047807.269239,
+  "samples": [
+    {
+      "time": 1794047807.3113348,
+      "rss": 655360,
+      "free": 20088090624,
+      "processes": [
+        {
+          "pid": 17640,
+          "ppid": 17637,
+          "rss": 655360,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794047807.857318,
+      "rss": 478740480,
+      "free": 20088053760,
+      "processes": [
+        {
+          "pid": 17640,
+          "ppid": 17637,
+          "rss": 478740480,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794047808.408677,
+      "rss": 1115734016,
+      "free": 20088221696,
+      "processes": [
+        {
+          "pid": 17640,
+          "ppid": 17637,
+          "rss": 1115734016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794047808.95859,
+      "rss": 1162117120,
+      "free": 20088156160,
+      "processes": [
+        {
+          "pid": 17640,
+          "ppid": 17637,
+          "rss": 1162117120,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 17640,
+  "exit": 0,
+  "end": 1794047809.468288,
+  "afterFree": 20080226304,
+  "afterPayload": 27230772,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "34423d27d27b0746af62ec8002d65a47d5f3082760e86ddd0cae8ff625c697b4",
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "maxRSS": 1162117120
+}

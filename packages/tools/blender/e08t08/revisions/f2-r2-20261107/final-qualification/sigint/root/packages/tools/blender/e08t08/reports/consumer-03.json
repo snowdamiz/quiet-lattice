@@ -1,0 +1,79 @@
+{
+  "stage": "consumer-03",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "packages/tools/blender/e08t08/vitest.config.mjs"
+  ],
+  "beforeFree": 38001848320,
+  "beforePayload": 285350359,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "e1954891ed883c713654342b28f5bd3e9ada18877d0fbbbaa9d8a17000c499cf",
+    "assets/blend/creatures/quad_grazer.blend": "2fc5e6d50e273222cd6b1eb7c979d2cc899c62c8b281e65b5e82fd46bbe542e2",
+    "assets/blend/creatures/quad_small.blend": "8eac64a84dfd7e2b9161310dceeb98a868a86a5f36133d804dad6837234dc8b9",
+    "assets/blend/creatures/flyer.blend": "c2768b64d3075960fb4a1f573ddbe53506be4150b51cc7f64240c0ae0f751139",
+    "assets/blend/creatures/quad_heavy.blend": "3da8eec8cce432ee6c9c065b5b2b35ef26dc233859b804ff5314c6ecba1a6ba2",
+    "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+    "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+  },
+  "start": 1794049735.9980102,
+  "samples": [
+    {
+      "time": 1794049736.047733,
+      "rss": 737280,
+      "free": 38001819648,
+      "processes": [
+        {
+          "pid": 77975,
+          "ppid": 77970,
+          "pgid": 77975,
+          "rss": 737280,
+          "command": "node"
+        }
+      ]
+    },
+    {
+      "time": 1794049736.6030788,
+      "rss": 333889536,
+      "free": 38001565696,
+      "processes": [
+        {
+          "pid": 77975,
+          "ppid": 77970,
+          "pgid": 77975,
+          "rss": 151568384,
+          "command": "(node)"
+        },
+        {
+          "pid": 77977,
+          "ppid": 77975,
+          "pgid": 77975,
+          "rss": 182321152,
+          "command": "(node)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 77975,
+  "exit": 1,
+  "end": 1794049737.109893,
+  "afterFree": 38001541120,
+  "afterPayload": 285351260,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "e1954891ed883c713654342b28f5bd3e9ada18877d0fbbbaa9d8a17000c499cf",
+    "assets/blend/creatures/quad_grazer.blend": "2fc5e6d50e273222cd6b1eb7c979d2cc899c62c8b281e65b5e82fd46bbe542e2",
+    "assets/blend/creatures/quad_small.blend": "8eac64a84dfd7e2b9161310dceeb98a868a86a5f36133d804dad6837234dc8b9",
+    "assets/blend/creatures/flyer.blend": "c2768b64d3075960fb4a1f573ddbe53506be4150b51cc7f64240c0ae0f751139",
+    "assets/blend/creatures/quad_heavy.blend": "3da8eec8cce432ee6c9c065b5b2b35ef26dc233859b804ff5314c6ecba1a6ba2",
+    "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+    "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "sampling": "process group and descendant closure",
+  "maxRSS": 333889536
+}

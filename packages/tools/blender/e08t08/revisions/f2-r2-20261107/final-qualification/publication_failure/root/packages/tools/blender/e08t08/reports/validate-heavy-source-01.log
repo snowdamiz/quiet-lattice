@@ -1,0 +1,42 @@
+Scope: all 5 workspace projects
+✓ Lockfile passes supply-chain policies (verified 6d ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+Update available! 12.15.0 → 12.18.0.
+Changelog: https://pnpm.io/v/12.18.0
+To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -
+Done in 249ms using pnpm v12.15.0
+$ tsx packages/tools/src/art/cli.ts validate -- assets/blend/creatures/quad_heavy.blend --report-dir packages/tools/blender/e08t08/reports/source-first
+00:00.269  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/quad_heavy.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate assets/blend/creatures/quad_heavy.blend  (family creatures, source .blend)
+  quad_heavy / quad_heavy_0 [creature]  tris LOD0 38,096  size 3.17 x 9.29 x 4.06 m
+  quad_heavy / quad_heavy_0_charge [creature]  tris LOD0 38,096  size 3.17 x 9.55 x 3.61 m
+  quad_heavy / quad_heavy_0_stomp [creature]  tris LOD0 38,096  size 3.17 x 9.29 x 4.06 m
+  quad_heavy / quad_heavy_1 [creature]  tris LOD0 38,096  size 3.81 x 8.17 x 5.11 m
+  quad_heavy / quad_heavy_1_charge [creature]  tris LOD0 38,096  size 3.81 x 8.43 x 4.54 m
+  quad_heavy / quad_heavy_1_stomp [creature]  tris LOD0 38,096  size 3.81 x 8.17 x 5.11 m
+  PASS  naming
+        ok    quad_heavy.blend: 6 variant(s) in 1 asset(s) follow the creatures rules
+  PASS  triangle budget
+        ok    quad_heavy/quad_heavy_0: LOD0 38,096 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_heavy/quad_heavy_0_charge: LOD0 38,096 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    quad_heavy/quad_heavy_0_stomp: LOD0 38,096 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 3 more
+  PASS  LODs
+        ok    quad_heavy/quad_heavy_0: LOD1-LOD3 generated at export
+        ok    quad_heavy/quad_heavy_0_charge: LOD1-LOD3 generated at export
+        ok    quad_heavy/quad_heavy_0_stomp: LOD1-LOD3 generated at export
+        ok    ... 3 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    quad_heavy/quad_heavy_0: longest side 9.29 m within 0.2-80 m
+        ok    ... 5 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/source-first/creatures__quad_heavy.blend.json
+
+1 of 1 file(s) passed validation

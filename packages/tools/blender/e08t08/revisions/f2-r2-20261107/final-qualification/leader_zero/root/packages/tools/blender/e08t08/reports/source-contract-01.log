@@ -1,0 +1,11 @@
+00:00.252  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/quad_heavy.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/source_contract.py", line 35, in <module>
+    assert any(Path(lib.filepath).name=='_library.blend' for lib in bpy.data.libraries),'linked library'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: linked library
+
+Error: script failed, file: 'packages/tools/blender/e08t08/source_contract.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

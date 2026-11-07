@@ -1,0 +1,211 @@
+{
+  "mode": "uncertain_cleanup",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup",
+    "uncertain_cleanup",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup",
+    "leader"
+  ],
+  "start": 1794055998.86958,
+  "assertions": {
+    "retry rejected while descendant alive": true,
+    "actual finalizer rejects active/uncertain ownership": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "uncertainty survives manual fixture cleanup": true,
+    "finalizer still rejects unresolved ownership": true
+  },
+  "workerPIDs": [
+    71579,
+    71581
+  ],
+  "supervisorPID": 71578,
+  "beforeAction": [
+    "71579 71578 71579 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup leader",
+    "71581 71579 71581 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup leaf"
+  ],
+  "leafDuringRetry": "71581 71579 71581 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup leaf",
+  "retryWhileOwned": 1,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [
+    "71579     1 71579 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup leader",
+    "71581 71579 71581 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup leaf"
+  ],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "9e84110901c245fb88ecc31ca3826efe",
+    "supervisorPID": 71578,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup",
+      "leader"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup/root",
+    "beforeFree": 47244107776,
+    "beforePayload": 1540580,
+    "start": 1794055998.912972,
+    "samples": [
+      {
+        "time": 1794055998.95975,
+        "rss": 6062080,
+        "free": 47244070912,
+        "processes": [
+          {
+            "pid": 71579,
+            "ppid": 71578,
+            "pgid": 71579,
+            "rss": 6062080,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      },
+      {
+        "time": 1794055999.1145952,
+        "rss": 34455552,
+        "free": 47244038144,
+        "processes": [
+          {
+            "pid": 71579,
+            "ppid": 71578,
+            "pgid": 71579,
+            "rss": 17072128,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          },
+          {
+            "pid": 71581,
+            "ppid": 71579,
+            "pgid": 71581,
+            "rss": 17383424,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')",
+      "cleanup signal: PermissionError(1, 'injected termination refusal')"
+    ],
+    "cancelSignals": [
+      15
+    ],
+    "stopReason": null,
+    "exit": null,
+    "directChildReaped": false,
+    "cleanup": "unknown",
+    "remainingProcesses": [
+      {
+        "pid": 71579,
+        "ppid": 71578,
+        "pgid": 71579,
+        "rss": 17072128,
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 71581,
+        "ppid": 71579,
+        "pgid": 71581,
+        "rss": 17383424,
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      }
+    ],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 71579,
+    "ownership": {
+      "directChild": {
+        "pid": 71579,
+        "birth": [
+          1794055998,
+          913291
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": [
+        {
+          "pid": 71581,
+          "birth": [
+            1794055998,
+            935057
+          ],
+          "exitObserved": false
+        }
+      ]
+    },
+    "end": 1794056003.481188,
+    "maxRSS": 34455552,
+    "afterFree": 47237578752,
+    "afterPayload": 114807600,
+    "afterSources": {
+      "assets/blend/creatures/biped.blend": "bc486b2d4084e25e4d42ddb6b71ba51cbf42df7d6923db73d64108643081022e",
+      "assets/blend/creatures/quad_grazer.blend": "0600f84627e042e7a2e80c5a6ce7837bddb52cd6c6a0ee89134b3dbde8f2e619",
+      "assets/blend/creatures/quad_small.blend": "e265bee1b997cede003f58d89b8e7f9c9cffc540e8c1eaafab5b78f250b0966d",
+      "assets/blend/creatures/flyer.blend": "efa3752ff7bb7f19dd7e58474ca65d52ccb17a74f232fc60f52df10c9b087f84",
+      "assets/blend/creatures/quad_heavy.blend": "879d9ac53ed14da1005b179adc5617c4f7ba2873bb00828c0f644e0a2df00e6c",
+      "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+      "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+    },
+    "afterExports": {
+      "packages/client/public/models/creatures/quad_heavy.glb": "2a76d8d75d722167dbc8f7e654bd8b102e0d597943c82afab7d3c638719e0f04",
+      "packages/client/public/models/creatures/quad_small.glb": "06a1a3442303b35ef65837b5e698674787f8ac47385c665c2fd15bb5cc619ffb",
+      "packages/client/public/models/creatures/biped.glb": "7a6bd58cb7cad053c090660d15daf024911799a0d09b1186cb8e2070210525ad",
+      "packages/client/public/models/creatures/flyer.glb": "41f8e4ba6091eefc01013ef1e9f98890eb72d9a7937368409b294390bdc73450",
+      "packages/client/public/models/creatures/quad_grazer.glb": "c4662bc612a5db3d0d7a296f3f34fce87387d0114ac1396d885c8895b9c0f026",
+      "packages/client/public/models/constructs/outpost_overseer.glb": "9dc1a40d72875cc42eb966fb35cc6eae4cf4cfd0229abbc37086acab3b7a89c8",
+      "packages/client/public/models/constructs/outpost_drone.glb": "aac406aeb15e230b5f2122b8ee154bfc9657208cebf38689ed67bba3670437d5"
+    },
+    "outcome": "uncertain"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 1,
+  "workersDuringRetryAfterExit": [
+    "71579     1 71579 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup leader",
+    "71581 71579 71581 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/uncertain_cleanup leaf"
+  ],
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794056003.767335,
+  "passed": true
+}

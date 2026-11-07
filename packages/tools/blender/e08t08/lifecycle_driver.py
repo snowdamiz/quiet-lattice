@@ -38,8 +38,10 @@ if mode == 'finalize_publication':
     finalize.main()
     sys.exit(0)
 
-if base:
+if base and mode != 'late_same_group_fork':
     # Inject at the real OS/persistence boundaries; execute byte-identical base.
+    # late_same_group_fork always uses the import path below so the one-shot
+    # stale drain snapshot can run against either base or candidate stage bytes.
     original_ps = subprocess.check_output
     original_write = Path.write_text
     def ps(*args, **kwargs):
@@ -64,11 +66,13 @@ else:
     import stage_processes
     original_progress = stage.progress
     original_snapshot = stage_processes.snapshot
+    original_drain = stage.drain
     original_publish = stage.publish_terminal
     original_write = stage.write_json
     original_settle = stage.settle
     original_journal_write = stage_ownership.write_json
     original_sync = stage_ownership.sync_directory
+    late_phase = {'drain': False, 'injected': False, 'owned': None}
     def obstruct(path):
         path.mkdir()
         (path / 'obstruction.txt').write_text('Exclusive fixture: reject real atomic publication.\n')
@@ -79,10 +83,25 @@ else:
         if mode == 'waiter_loss' and (folder / 'inject').exists():
             os.kill(owned.child.pid, signal.SIGKILL)
             os.waitpid(owned.child.pid, 0)  # Real competing reap, not a fake handle.
+    def drain(owned, record):
+        late_phase.update(drain=True, owned=owned)
+        return original_drain(owned, record)
     def snapshot():
         if mode == 'observation_failure' and (folder / 'inject').exists():
             raise OSError(errno.EIO, 'injected process observation failure')
-        return original_snapshot()
+        rows = original_snapshot()
+        if mode == 'late_same_group_fork' and late_phase['drain'] and not late_phase['injected']:
+            # One-shot stale drain snapshot: the real leaf forks after this view.
+            late_phase['injected'] = True
+            (folder / 'real-pre-fork-snapshot.json').write_text(json.dumps(rows, indent=2) + '\n')
+            (folder / 'fork-now').touch()
+            until = time.monotonic() + 4
+            while not (folder / 'leaf.json').exists() or not late_phase['owned'].leader_exited():
+                if time.monotonic() > until:
+                    raise TimeoutError('leader exit and real leaf startup')
+                time.sleep(.005)
+            return rows
+        return rows
     def publish(directory, record, cancellation):
         if mode == 'publication_before':
             barrier('publishing')
@@ -124,6 +143,7 @@ else:
             raise RuntimeError('injected watch acquisition failure after Popen')
         stage.OwnedProcesses = fail_watch
     stage.progress = progress
+    stage.drain = drain
     stage_processes.snapshot = snapshot
     stage.publish_terminal = publish
     stage.write_json = write

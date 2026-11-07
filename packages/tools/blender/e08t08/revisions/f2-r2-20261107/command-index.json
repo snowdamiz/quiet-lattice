@@ -1,0 +1,15 @@
+{
+  "red": {
+    "cmd": "python3.14 packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence packages/tools/blender/e08t08/revisions/f2-r2-20261107/red-late-fork-03 --base --cases late_same_group_fork",
+    "exit": 1
+  },
+  "green_late": {
+    "cmd": "python3.14 packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork-v2 --cases late_same_group_fork",
+    "exit": 0
+  },
+  "matrix": {
+    "cmd": "python3.14 packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2",
+    "exit": 0,
+    "passed": "23/23"
+  }
+}

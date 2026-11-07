@@ -1,0 +1,27 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js (1 test | 1 failed) 28ms
+   × P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers 27ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+Error: integer limb contract
+ ❯ checkRig packages/tools/blender/e08t08/consumer.test.js:79:58
+     77|   for (let i = 0; i < position.count; i++) {
+     78|     const id = limb.getX(i);
+     79|     if (!Number.isInteger(id) || id < 0 || id > 8) throw new Error('in…
+       |                                                          ^
+     80|     if (![0, 1].includes(glow.getX(i))) throw new Error('binary glow c…
+     81|     glowCount += glow.getX(i);
+ ❯ packages/tools/blender/e08t08/consumer.test.js:144:44
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  06:09:38
+   Duration  221ms (import 61%, transform 22%, tests 16%, worker 1%)
+

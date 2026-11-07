@@ -1,0 +1,83 @@
+{
+  "mode": "watch_failure",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/watch_failure/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/watch_failure",
+    "watch_failure",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/watch_failure/command-ran').touch(); import time; time.sleep(10)"
+  ],
+  "start": 1794056007.096907,
+  "assertions": {
+    "Popen handle survives watcher exception": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "uncertainty survives manual fixture cleanup": true,
+    "finalizer still rejects unresolved ownership": true
+  },
+  "workerPIDs": [
+    71764
+  ],
+  "supervisorPID": 71762,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [
+    ""
+  ],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "994a12f507574519b98489c9759e740e",
+    "supervisorPID": 71762,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/watch_failure/command-ran').touch(); import time; time.sleep(10)"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/watch_failure/root",
+    "beforeFree": 47190589440,
+    "beforePayload": 1540580,
+    "start": 1794056007.141417,
+    "samples": [],
+    "limitSeconds": 2700,
+    "errors": [
+      "RuntimeError('injected watch acquisition failure after Popen')"
+    ],
+    "cancelSignals": [],
+    "stopReason": null,
+    "exit": -9,
+    "directChildReaped": true,
+    "cleanup": "unknown",
+    "remainingProcesses": [],
+    "observationUncertain": true,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 71764,
+    "end": 1794056007.1716638,
+    "maxRSS": 0,
+    "afterFree": 47190691840,
+    "afterPayload": 1541002,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "uncertain"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 1,
+  "workersDuringRetryAfterExit": [
+    ""
+  ],
+  "cleanupRemaining": [
+    ""
+  ],
+  "end": 1794056007.504628,
+  "passed": true
+}

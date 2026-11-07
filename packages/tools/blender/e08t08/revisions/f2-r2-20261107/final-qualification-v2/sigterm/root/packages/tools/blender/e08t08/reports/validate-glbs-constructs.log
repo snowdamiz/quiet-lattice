@@ -1,0 +1,77 @@
+$ tsx packages/tools/src/art/cli.ts validate -- packages/client/public/models/constructs/outpost_drone.glb packages/client/public/models/constructs/outpost_overseer.glb --report-dir packages/tools/blender/e08t08/reports/validate-final
+06:04:58 | INFO: Data are loaded, start creating Blender stuff
+06:04:58 | INFO: Blender create Mesh node COL_Body_mesh
+06:04:58 | INFO: Blender create Mesh node Assembly_closed_editable
+06:04:58 | INFO: Blender create Mesh node Assembly_closed_detail1_mesh
+06:04:58 | INFO: Blender create Mesh node Assembly_closed_detail2_mesh
+06:04:58 | INFO: Blender create Mesh node Assembly_closed_detail3_mesh
+06:04:58 | INFO: glTF import finished in 0.05s
+
+validate packages/client/public/models/constructs/outpost_drone.glb  (family constructs, export .glb)
+  outpost_drone / outpost_drone [creature]  tris LOD0 32,964, LOD1 9,888, LOD2 3,296, LOD3 1,151  size 2.54 x 2.15 x 0.82 m
+  PASS  naming
+        ok    outpost_drone.glb: 1 variant(s) in 1 asset(s) follow the constructs rules
+  PASS  triangle budget
+        ok    outpost_drone: LOD0 32,964 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    geometry: meshopt-compressed: 0.3 MB of streams
+  PASS  LODs
+        ok    outpost_drone: 32,964 > 9,888 > 3,296 > 1,151 triangles; LOD3 3.5% of LOD0
+  PASS  materials
+        ok    CompactPaint: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB
+        ok    outpost_drone: textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the creature budget of 128 MB
+  PASS  scale references
+        ok    source: assets/blend/constructs/outpost_drone.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    outpost_drone: longest side 2.54 m within 0.2-80 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/validate-final/constructs__outpost_drone.glb.json
+06:04:59 | INFO: Data are loaded, start creating Blender stuff
+06:04:59 | INFO: Blender create Mesh node COL_Body_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_core_editable
+06:04:59 | INFO: Blender create Mesh node Assembly_core_detail1_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_core_detail2_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_core_detail3_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_dome_editable
+06:04:59 | INFO: Blender create Mesh node Shield_optical_surface_editable
+06:04:59 | INFO: Blender create Mesh node Assembly_dome_detail1_mesh
+06:04:59 | INFO: Blender create Mesh node Shield_optical_surface_detail1_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_dome_detail2_mesh
+06:04:59 | INFO: Blender create Mesh node Shield_optical_surface_detail2_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_dome_detail3_mesh
+06:04:59 | INFO: Blender create Mesh node Shield_optical_surface_detail3_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_closed_editable
+06:04:59 | INFO: Blender create Mesh node Assembly_closed_detail1_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_closed_detail2_mesh
+06:04:59 | INFO: Blender create Mesh node Assembly_closed_detail3_mesh
+06:04:59 | INFO: glTF import finished in 0.10s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/constructs/outpost_overseer.glb  (family constructs, export .glb)
+  outpost_overseer / outpost_overseer_core [creature]  tris LOD0 31,784, LOD1 9,534, LOD2 3,178, LOD3 1,072  size 24.09 x 24.09 x 5.27 m
+  outpost_overseer / outpost_overseer_dome [creature]  tris LOD0 39,960, LOD1 11,988, LOD2 3,996, LOD3 1,356  size 24.09 x 24.09 x 8.51 m
+  outpost_overseer / outpost_overseer [creature]  tris LOD0 29,228, LOD1 8,768, LOD2 2,922, LOD3 980  size 24.09 x 24.09 x 3.24 m
+  PASS  naming
+        ok    outpost_overseer.glb: 3 variant(s) in 1 asset(s) follow the constructs rules
+  PASS  triangle budget
+        ok    outpost_overseer/outpost_overseer_core: LOD0 31,784 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    outpost_overseer/outpost_overseer_dome: LOD0 39,960 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    outpost_overseer: LOD0 29,228 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    ... 1 more
+  PASS  LODs
+        ok    outpost_overseer/outpost_overseer_core: 31,784 > 9,534 > 3,178 > 1,072 triangles; LOD3 3.4% of LOD0
+        ok    outpost_overseer/outpost_overseer_dome: 39,960 > 11,988 > 3,996 > 1,356 triangles; LOD3 3.4% of LOD0
+        ok    outpost_overseer: 29,228 > 8,768 > 2,922 > 980 triangles; LOD3 3.4% of LOD0
+  PASS  materials
+        ok    CompactPaint: pbr: base colour, roughness, metallic, normal, AO
+        ok    Glass: glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB
+        ok    ... 3 more
+  PASS  scale references
+        ok    source: assets/blend/constructs/outpost_overseer.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    outpost_overseer/outpost_overseer_core: longest side 24.09 m within 0.2-80 m
+        ok    outpost_overseer/outpost_overseer_dome: longest side 24.09 m within 0.2-80 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/validate-final/constructs__outpost_overseer.glb.json
+
+2 of 2 file(s) passed validation

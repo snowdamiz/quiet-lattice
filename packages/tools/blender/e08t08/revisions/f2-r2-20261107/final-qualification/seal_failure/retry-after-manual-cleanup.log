@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/seal_failure/root/packages/tools/blender/e08t08/stage.py", line 287, in main
+    return run(args[0], args[1:], cancellation)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/seal_failure/root/packages/tools/blender/e08t08/stage.py", line 174, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 109, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/seal_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work

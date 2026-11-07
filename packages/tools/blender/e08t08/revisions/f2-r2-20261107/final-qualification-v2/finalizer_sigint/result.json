@@ -1,0 +1,29 @@
+{
+  "mode": "finalizer_sigint",
+  "assertions": {
+    "interrupted actual finalizer cannot publish": true,
+    "retry publishes a new generation": true,
+    "partial evidence preserved": true
+  },
+  "workerPIDs": [],
+  "start": 1794056090.052332,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2/finalizer_sigint/root/packages/tools/blender/e08t08/finalize.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2/finalizer_sigint",
+    "finalize_publication",
+    "candidate"
+  ],
+  "exit": -2,
+  "partialFiles": {
+    "1794056090598910000/C2-report.txt": "c1781d23f997e12b9944e803357f5fa94e670f6a09517c4bb9554c0bb37a883f",
+    "1794056090598910000/native-pending.json": "41fd9e96f7a6e14892f378c3efb144f21472e71e53d7fc4cceed535238086aa9",
+    "1794056090598910000/asset-hash-inventory.json": "fccc2fe15e8332b5737921849ee1448d3c2092493b855f84d46d03ecd22590f5",
+    "1794056090598910000/export-mask-limit.json": "bbc4074c2763816b2a245770307f56d0b741b3d8e5ea16bceff1da75161830ce"
+  },
+  "retryExit": 0,
+  "end": 1794056090.965983,
+  "cleanupRemaining": [],
+  "passed": true
+}

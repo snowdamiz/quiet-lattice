@@ -1,0 +1,44 @@
+{
+  "stage": "author-heavy-01",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "packages/tools/blender/e08t08/bin/blender",
+    "-b",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/e08t08/author.py",
+    "--",
+    "quad_heavy"
+  ],
+  "beforeFree": 20182130688,
+  "beforePayload": 38345,
+  "beforeSources": {},
+  "start": 1794047582.2172658,
+  "samples": [
+    {
+      "time": 1794047582.2586281,
+      "rss": 32768,
+      "free": 20182126592,
+      "processes": [
+        {
+          "pid": 99404,
+          "ppid": 99401,
+          "rss": 32768,
+          "command": "/bin/sh"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 99404,
+  "exit": 1,
+  "end": 1794047584.26443,
+  "afterFree": 20182065152,
+  "afterPayload": 40495,
+  "afterSources": {},
+  "remainingProcesses": [],
+  "stopReason": null,
+  "maxRSS": 32768
+}

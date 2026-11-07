@@ -1,0 +1,33 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js (1 test | 1 failed) 355ms
+   × P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers 354ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js:187:79
+    185|       expect(object, marker.name).toBeDefined();
+    186|       const actual = object.getWorldPosition(new THREE.Vector3()).toAr…
+    187|       expect(actual.every((x, k) => Math.abs(x - marker.position[k]) <…
+       |                                                                               ^
+    188|       if (marker.type === 'EMPTY') expect(object.isMesh).not.toBe(true…
+    189|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  06:13:23
+   Duration  539ms (tests 72%, import 20%, transform 8%)
+

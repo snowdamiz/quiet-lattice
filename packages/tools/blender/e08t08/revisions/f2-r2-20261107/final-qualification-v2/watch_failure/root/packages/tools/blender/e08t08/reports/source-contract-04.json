@@ -1,0 +1,74 @@
+{
+  "stage": "source-contract-04",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "packages/tools/blender/e08t08/bin/blender",
+    "-b",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/e08t08/source_contract.py"
+  ],
+  "beforeFree": 19239469056,
+  "beforePayload": 234620430,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "417c5efc401cf0012d0d4afd7cc8d5d1c6d01807f42c2619cf53add17297a23d",
+    "assets/blend/creatures/quad_grazer.blend": "5023deae761d823f692f30aa7d35e7c4fd0f5b99bbcd49d72df840306977a69a",
+    "assets/blend/creatures/quad_small.blend": "bb006e6710b04eea3547230cf9706009b6274c02af4310827cf93136070ad754",
+    "assets/blend/creatures/flyer.blend": "09e53b27b1b86031772477750179119bac98e36a61f3283f5c17e5ab902eefda",
+    "assets/blend/creatures/quad_heavy.blend": "1ebbdfe55b1ccbde5920e90a36842beaa82f133231f2c8cf9fa086b102ebe96c",
+    "assets/blend/constructs/outpost_drone.blend": "ad0c237954990e384ba98f428652acf03d41f285aac946d2fd17c5dbfdf3d7ee",
+    "assets/blend/constructs/outpost_overseer.blend": "70d5b25f63b9db8e2b911840326d40938464fadaa6f0c8e323ad19ef3bda78c9"
+  },
+  "start": 1794048953.341328,
+  "samples": [
+    {
+      "time": 1794048953.3838432,
+      "rss": 2424832,
+      "free": 19239452672,
+      "processes": [
+        {
+          "pid": 12490,
+          "ppid": 12471,
+          "pgid": 12490,
+          "rss": 2424832,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048953.9248362,
+      "rss": 0,
+      "free": 19239325696,
+      "processes": [
+        {
+          "pid": 12490,
+          "ppid": 12471,
+          "pgid": 12490,
+          "rss": 0,
+          "command": "<defunct>"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 12490,
+  "exit": 1,
+  "end": 1794048954.430851,
+  "afterFree": 19239321600,
+  "afterPayload": 234621457,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "417c5efc401cf0012d0d4afd7cc8d5d1c6d01807f42c2619cf53add17297a23d",
+    "assets/blend/creatures/quad_grazer.blend": "5023deae761d823f692f30aa7d35e7c4fd0f5b99bbcd49d72df840306977a69a",
+    "assets/blend/creatures/quad_small.blend": "bb006e6710b04eea3547230cf9706009b6274c02af4310827cf93136070ad754",
+    "assets/blend/creatures/flyer.blend": "09e53b27b1b86031772477750179119bac98e36a61f3283f5c17e5ab902eefda",
+    "assets/blend/creatures/quad_heavy.blend": "1ebbdfe55b1ccbde5920e90a36842beaa82f133231f2c8cf9fa086b102ebe96c",
+    "assets/blend/constructs/outpost_drone.blend": "ad0c237954990e384ba98f428652acf03d41f285aac946d2fd17c5dbfdf3d7ee",
+    "assets/blend/constructs/outpost_overseer.blend": "70d5b25f63b9db8e2b911840326d40938464fadaa6f0c8e323ad19ef3bda78c9"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "sampling": "process group and descendant closure",
+  "maxRSS": 2424832
+}

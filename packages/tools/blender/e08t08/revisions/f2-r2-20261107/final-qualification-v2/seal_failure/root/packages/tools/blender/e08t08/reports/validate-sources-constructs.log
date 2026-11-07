@@ -1,0 +1,50 @@
+$ tsx packages/tools/src/art/cli.ts validate -- assets/blend/constructs/outpost_drone.blend assets/blend/constructs/outpost_overseer.blend --report-dir packages/tools/blender/e08t08/reports/validate-final
+00:00.606  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/constructs/outpost_drone.blend"
+00:00.844  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/constructs/outpost_overseer.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '//../_library.blend', parent '<direct>'
+
+validate assets/blend/constructs/outpost_drone.blend  (family constructs, source .blend)
+  outpost_drone / outpost_drone [creature]  tris LOD0 32,964, LOD1 9,888, LOD2 3,296, LOD3 1,151  size 2.54 x 2.15 x 0.82 m
+  PASS  naming
+        ok    outpost_drone.blend: 1 variant(s) in 1 asset(s) follow the constructs rules
+  PASS  triangle budget
+        ok    outpost_drone: LOD0 32,964 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    outpost_drone: 32,964 > 9,888 > 3,296 > 1,151 triangles; LOD3 3.5% of LOD0
+  PASS  materials
+        ok    CompactPaint: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_drone: longest side 2.54 m within 0.2-80 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/validate-final/constructs__outpost_drone.blend.json
+Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '//../_library.blend', parent '<direct>'
+
+validate assets/blend/constructs/outpost_overseer.blend  (family constructs, source .blend)
+  outpost_overseer / outpost_overseer [creature]  tris LOD0 29,228, LOD1 8,768, LOD2 2,922, LOD3 980  size 24.09 x 24.09 x 3.24 m
+  outpost_overseer / outpost_overseer_dome [creature]  tris LOD0 39,960, LOD1 11,988, LOD2 3,996, LOD3 1,356  size 24.09 x 24.09 x 8.51 m
+  outpost_overseer / outpost_overseer_core [creature]  tris LOD0 31,784, LOD1 9,534, LOD2 3,178, LOD3 1,072  size 24.09 x 24.09 x 5.27 m
+  PASS  naming
+        ok    outpost_overseer.blend: 3 variant(s) in 1 asset(s) follow the constructs rules
+  PASS  triangle budget
+        ok    outpost_overseer: LOD0 29,228 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    outpost_overseer/outpost_overseer_dome: LOD0 39,960 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+        ok    outpost_overseer/outpost_overseer_core: LOD0 31,784 triangles within the creature budget 15,000-40,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    outpost_overseer: 29,228 > 8,768 > 2,922 > 980 triangles; LOD3 3.4% of LOD0
+        ok    outpost_overseer/outpost_overseer_dome: 39,960 > 11,988 > 3,996 > 1,356 triangles; LOD3 3.4% of LOD0
+        ok    outpost_overseer/outpost_overseer_core: 31,784 > 9,534 > 3,178 > 1,072 triangles; LOD3 3.4% of LOD0
+  PASS  materials
+        ok    CompactPaint: pbr: base colour, roughness, metallic, normal, AO
+        ok    Glass: glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_overseer: longest side 24.09 m within 0.2-80 m
+        ok    ... 2 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/validate-final/constructs__outpost_overseer.blend.json
+
+2 of 2 file(s) passed validation

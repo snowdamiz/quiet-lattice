@@ -77,11 +77,40 @@ def drain(owned, record):
             record['errors'].append('cleanup observation: ' + repr(error))
         try:
             if owned.all_exited():
-                # Observed group/descendants are gone; only now reap the leader.
-                record['exit'] = owned.child.wait(timeout=.2)
-                record['directChildReaped'] = True
-                record['remainingProcesses'] = []
-                return verified
+                # A same-pgid child can appear after the snapshot that made
+                # all_exited true and before wait(). Re-observe first.
+                try:
+                    owned.observe()
+                except BaseException as error:
+                    verified = False
+                    record['errors'].append('cleanup confirmation: ' + repr(error))
+                    raise
+                if not owned.all_exited():
+                    pass
+                else:
+                    record['exit'] = owned.child.wait(timeout=.2)
+                    record['directChildReaped'] = True
+                    # Darwin keeps the reaped leader's pgid on orphans. killpg is
+                    # unsafe after reap (PID reuse); charge leftovers instead.
+                    try:
+                        leftovers = owned.same_group_leftovers()
+                    except BaseException as error:
+                        verified = False
+                        record['errors'].append('cleanup post-reap observation: ' + repr(error))
+                        record['remainingProcesses'] = owned.last
+                        return False
+                    if leftovers:
+                        record['remainingProcesses'] = leftovers
+                        for row in leftovers:
+                            try:
+                                os.kill(row['pid'], signal.SIGKILL)
+                            except ProcessLookupError:
+                                pass
+                            except OSError as error:
+                                record['errors'].append('post-reap signal: ' + repr(error))
+                        return False
+                    record['remainingProcesses'] = []
+                    return verified
         except BaseException as error:
             verified = False
             record['errors'].append('cleanup ownership: ' + repr(error))
@@ -98,7 +127,13 @@ def drain(owned, record):
             record['directChildReaped'] = True
     except subprocess.TimeoutExpired:
         pass
-    record['remainingProcesses'] = owned.last
+    try:
+        leftovers = owned.same_group_leftovers()
+        record['remainingProcesses'] = leftovers or owned.last
+    except BaseException as error:
+        verified = False
+        record['errors'].append('cleanup final observation: ' + repr(error))
+        record['remainingProcesses'] = owned.last
     return False
 
 

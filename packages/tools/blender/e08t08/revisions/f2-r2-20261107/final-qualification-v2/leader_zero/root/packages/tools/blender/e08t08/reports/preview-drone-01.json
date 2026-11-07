@@ -1,0 +1,191 @@
+{
+  "stage": "preview-drone-01",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "packages/tools/blender/e08t08/bin/blender",
+    "-b",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/e08t08/preview.py",
+    "--",
+    "outpost_drone",
+    "r01"
+  ],
+  "beforeFree": 19799859200,
+  "beforePayload": 61459330,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "d63b91ae15a16ff9ac4aff107b2b29e6f2688d2859dbd28373f5d30b23748fbf",
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/flyer.blend": "eb4269f69fb593361852b55491c12c559719a20d581676b6ac99b45e3d3b178c",
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4",
+    "assets/blend/constructs/outpost_drone.blend": "08cb7e399b740431d5b4fb073f8cc7139f0998f75b9f0d04d0b87493782e69df",
+    "assets/blend/constructs/outpost_overseer.blend": "38649c866305a9b7eb12b2416497233f4ebf0e1f473a2817267b48b9c8285fb6"
+  },
+  "start": 1794048217.48783,
+  "samples": [
+    {
+      "time": 1794048217.533655,
+      "rss": 2408448,
+      "free": 19799695360,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 2408448,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048218.090511,
+      "rss": 321912832,
+      "free": 19797417984,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 321912832,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048218.643359,
+      "rss": 427606016,
+      "free": 19794591744,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 427606016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048219.188034,
+      "rss": 427606016,
+      "free": 19795030016,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 427606016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048219.740635,
+      "rss": 427606016,
+      "free": 19794870272,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 427606016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048220.290978,
+      "rss": 427606016,
+      "free": 19794333696,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 427606016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048220.837245,
+      "rss": 427606016,
+      "free": 19794112512,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 427606016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048221.3886342,
+      "rss": 427606016,
+      "free": 19793862656,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 427606016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048221.936524,
+      "rss": 427606016,
+      "free": 19793801216,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 427606016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048222.488356,
+      "rss": 607191040,
+      "free": 19793547264,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 607191040,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048223.036834,
+      "rss": 1108312064,
+      "free": 19792154624,
+      "processes": [
+        {
+          "pid": 44539,
+          "ppid": 44536,
+          "rss": 1108312064,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 44539,
+  "exit": 0,
+  "end": 1794048223.54493,
+  "afterFree": 19788107776,
+  "afterPayload": 62005041,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "d63b91ae15a16ff9ac4aff107b2b29e6f2688d2859dbd28373f5d30b23748fbf",
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/flyer.blend": "eb4269f69fb593361852b55491c12c559719a20d581676b6ac99b45e3d3b178c",
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4",
+    "assets/blend/constructs/outpost_drone.blend": "08cb7e399b740431d5b4fb073f8cc7139f0998f75b9f0d04d0b87493782e69df",
+    "assets/blend/constructs/outpost_overseer.blend": "38649c866305a9b7eb12b2416497233f4ebf0e1f473a2817267b48b9c8285fb6"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "maxRSS": 1108312064
+}

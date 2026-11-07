@@ -1,0 +1,22 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js (1 test | 1 failed) 26ms
+   × P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+Error: mask sum contract at 817: 0.7000076295109483,0,0.30000762951094834; Uint16Array; normalized=true
+ ❯ checkRig packages/tools/blender/e08t08/consumer.test.js:76:83
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js:138:44
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  06:08:56
+   Duration  389ms (import 58%, transform 33%, tests 8%, worker 1%)
+

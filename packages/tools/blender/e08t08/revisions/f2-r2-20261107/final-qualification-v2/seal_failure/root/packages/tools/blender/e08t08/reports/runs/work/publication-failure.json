@@ -1,0 +1,64 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "dce06e2b09df4b909f1e9be31c4e09f4",
+  "supervisorPID": 77214,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2/seal_failure/command-ran').touch(); print(\"finite success\")"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2/seal_failure/root",
+  "beforeFree": 42299166720,
+  "beforePayload": 1540893,
+  "start": 1794056084.41435,
+  "samples": [
+    {
+      "time": 1794056084.456894,
+      "rss": 5980160,
+      "free": 42299150336,
+      "processes": [
+        {
+          "pid": 77215,
+          "ppid": 77214,
+          "pgid": 77215,
+          "rss": 5980160,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [
+    "terminal publication failed: FileExistsError(17, 'File exists')"
+  ],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 77215,
+  "ownership": {
+    "directChild": {
+      "pid": 77215,
+      "birth": [
+        1794056084,
+        414610
+      ],
+      "waiterLost": false
+    },
+    "knownDescendants": []
+  },
+  "end": 1794056084.575455,
+  "maxRSS": 5980160,
+  "afterFree": 42299121664,
+  "afterPayload": 1541478,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "publication-failed"
+}

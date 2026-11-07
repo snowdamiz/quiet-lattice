@@ -1,0 +1,343 @@
+{
+  "stage": "validate-sources-creatures",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "pnpm",
+    "art:validate",
+    "--",
+    "assets/blend/creatures/quad_heavy.blend",
+    "assets/blend/creatures/quad_grazer.blend",
+    "assets/blend/creatures/quad_small.blend",
+    "assets/blend/creatures/biped.blend",
+    "assets/blend/creatures/flyer.blend",
+    "--report-dir",
+    "packages/tools/blender/e08t08/reports/validate-final"
+  ],
+  "beforeFree": 18511024128,
+  "beforePayload": 284800394,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "e1954891ed883c713654342b28f5bd3e9ada18877d0fbbbaa9d8a17000c499cf",
+    "assets/blend/creatures/quad_grazer.blend": "2fc5e6d50e273222cd6b1eb7c979d2cc899c62c8b281e65b5e82fd46bbe542e2",
+    "assets/blend/creatures/quad_small.blend": "8eac64a84dfd7e2b9161310dceeb98a868a86a5f36133d804dad6837234dc8b9",
+    "assets/blend/creatures/flyer.blend": "c2768b64d3075960fb4a1f573ddbe53506be4150b51cc7f64240c0ae0f751139",
+    "assets/blend/creatures/quad_heavy.blend": "3da8eec8cce432ee6c9c065b5b2b35ef26dc233859b804ff5314c6ecba1a6ba2",
+    "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+    "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+  },
+  "start": 1794049265.927616,
+  "samples": [
+    {
+      "time": 1794049265.978702,
+      "rss": 32768,
+      "free": 18511015936,
+      "processes": [
+        {
+          "pid": 49247,
+          "ppid": 49243,
+          "pgid": 49247,
+          "rss": 32768,
+          "command": "node"
+        }
+      ]
+    },
+    {
+      "time": 1794049266.5266151,
+      "rss": 268255232,
+      "free": 18511073280,
+      "processes": [
+        {
+          "pid": 49247,
+          "ppid": 49243,
+          "pgid": 49247,
+          "rss": 64258048,
+          "command": "node"
+        },
+        {
+          "pid": 49250,
+          "ppid": 49247,
+          "pgid": 49247,
+          "rss": 25329664,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 49252,
+          "ppid": 49250,
+          "pgid": 49252,
+          "rss": 2457600,
+          "command": "sh"
+        },
+        {
+          "pid": 49263,
+          "ppid": 49250,
+          "pgid": 49263,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 49264,
+          "ppid": 49252,
+          "pgid": 49252,
+          "rss": 61603840,
+          "command": "node"
+        },
+        {
+          "pid": 49273,
+          "ppid": 49264,
+          "pgid": 49252,
+          "rss": 67534848,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 49275,
+          "ppid": 49273,
+          "pgid": 49252,
+          "rss": 44630016,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049267.1101062,
+      "rss": 437403648,
+      "free": 18510462976,
+      "processes": [
+        {
+          "pid": 49247,
+          "ppid": 49243,
+          "pgid": 49247,
+          "rss": 64258048,
+          "command": "node"
+        },
+        {
+          "pid": 49250,
+          "ppid": 49247,
+          "pgid": 49247,
+          "rss": 25329664,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 49252,
+          "ppid": 49250,
+          "pgid": 49252,
+          "rss": 2457600,
+          "command": "sh"
+        },
+        {
+          "pid": 49263,
+          "ppid": 49250,
+          "pgid": 49263,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 49264,
+          "ppid": 49252,
+          "pgid": 49252,
+          "rss": 61603840,
+          "command": "node"
+        },
+        {
+          "pid": 49273,
+          "ppid": 49264,
+          "pgid": 49252,
+          "rss": 67534848,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 49275,
+          "ppid": 49273,
+          "pgid": 49252,
+          "rss": 213778432,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049267.6689532,
+      "rss": 646823936,
+      "free": 18521018368,
+      "processes": [
+        {
+          "pid": 49247,
+          "ppid": 49243,
+          "pgid": 49247,
+          "rss": 64258048,
+          "command": "node"
+        },
+        {
+          "pid": 49250,
+          "ppid": 49247,
+          "pgid": 49247,
+          "rss": 25329664,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 49252,
+          "ppid": 49250,
+          "pgid": 49252,
+          "rss": 2457600,
+          "command": "sh"
+        },
+        {
+          "pid": 49263,
+          "ppid": 49250,
+          "pgid": 49263,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 49264,
+          "ppid": 49252,
+          "pgid": 49252,
+          "rss": 61603840,
+          "command": "node"
+        },
+        {
+          "pid": 49273,
+          "ppid": 49264,
+          "pgid": 49252,
+          "rss": 67551232,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 49275,
+          "ppid": 49273,
+          "pgid": 49252,
+          "rss": 423182336,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049268.214087,
+      "rss": 828440576,
+      "free": 18520748032,
+      "processes": [
+        {
+          "pid": 49247,
+          "ppid": 49243,
+          "pgid": 49247,
+          "rss": 64258048,
+          "command": "node"
+        },
+        {
+          "pid": 49250,
+          "ppid": 49247,
+          "pgid": 49247,
+          "rss": 25329664,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 49252,
+          "ppid": 49250,
+          "pgid": 49252,
+          "rss": 2457600,
+          "command": "sh"
+        },
+        {
+          "pid": 49263,
+          "ppid": 49250,
+          "pgid": 49263,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 49264,
+          "ppid": 49252,
+          "pgid": 49252,
+          "rss": 61603840,
+          "command": "node"
+        },
+        {
+          "pid": 49273,
+          "ppid": 49264,
+          "pgid": 49252,
+          "rss": 67616768,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 49275,
+          "ppid": 49273,
+          "pgid": 49252,
+          "rss": 604733440,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794049268.772968,
+      "rss": 901513216,
+      "free": 18520674304,
+      "processes": [
+        {
+          "pid": 49247,
+          "ppid": 49243,
+          "pgid": 49247,
+          "rss": 64258048,
+          "command": "node"
+        },
+        {
+          "pid": 49250,
+          "ppid": 49247,
+          "pgid": 49247,
+          "rss": 25329664,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        },
+        {
+          "pid": 49252,
+          "ppid": 49250,
+          "pgid": 49252,
+          "rss": 2457600,
+          "command": "sh"
+        },
+        {
+          "pid": 49263,
+          "ppid": 49250,
+          "pgid": 49263,
+          "rss": 2441216,
+          "command": "sh"
+        },
+        {
+          "pid": 49264,
+          "ppid": 49252,
+          "pgid": 49252,
+          "rss": 61603840,
+          "command": "node"
+        },
+        {
+          "pid": 49273,
+          "ppid": 49264,
+          "pgid": 49252,
+          "rss": 67616768,
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 49275,
+          "ppid": 49273,
+          "pgid": 49252,
+          "rss": 677806080,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 49247,
+  "exit": 0,
+  "end": 1794049269.278395,
+  "afterFree": 18520526848,
+  "afterPayload": 284854535,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "e1954891ed883c713654342b28f5bd3e9ada18877d0fbbbaa9d8a17000c499cf",
+    "assets/blend/creatures/quad_grazer.blend": "2fc5e6d50e273222cd6b1eb7c979d2cc899c62c8b281e65b5e82fd46bbe542e2",
+    "assets/blend/creatures/quad_small.blend": "8eac64a84dfd7e2b9161310dceeb98a868a86a5f36133d804dad6837234dc8b9",
+    "assets/blend/creatures/flyer.blend": "c2768b64d3075960fb4a1f573ddbe53506be4150b51cc7f64240c0ae0f751139",
+    "assets/blend/creatures/quad_heavy.blend": "3da8eec8cce432ee6c9c065b5b2b35ef26dc233859b804ff5314c6ecba1a6ba2",
+    "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+    "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "sampling": "process group and descendant closure",
+  "maxRSS": 901513216
+}

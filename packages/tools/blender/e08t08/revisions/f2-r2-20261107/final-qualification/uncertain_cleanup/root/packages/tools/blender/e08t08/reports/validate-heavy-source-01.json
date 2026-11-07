@@ -1,0 +1,45 @@
+{
+  "stage": "validate-heavy-source-01",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "pnpm",
+    "art:validate",
+    "--",
+    "assets/blend/creatures/quad_heavy.blend",
+    "--report-dir",
+    "packages/tools/blender/e08t08/reports/source-first"
+  ],
+  "beforeFree": 20132511744,
+  "beforePayload": 12724753,
+  "beforeSources": {
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4"
+  },
+  "start": 1794047743.754852,
+  "samples": [
+    {
+      "time": 1794047743.800756,
+      "rss": 32768,
+      "free": 20132499456,
+      "processes": [
+        {
+          "pid": 15309,
+          "ppid": 15306,
+          "rss": 32768,
+          "command": "node"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 15309,
+  "exit": 0,
+  "end": 1794047745.8103878,
+  "afterFree": 20136415232,
+  "afterPayload": 12735121,
+  "afterSources": {
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "maxRSS": 32768
+}

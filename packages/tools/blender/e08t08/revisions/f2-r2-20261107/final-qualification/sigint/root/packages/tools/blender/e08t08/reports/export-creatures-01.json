@@ -1,0 +1,2396 @@
+{
+  "stage": "export-creatures-01",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "pnpm",
+    "art:export",
+    "--",
+    "creatures",
+    "--only",
+    "quad_heavy,quad_grazer,quad_small,biped,flyer",
+    "--report-dir",
+    "packages/tools/blender/e08t08/reports/export"
+  ],
+  "beforeFree": 19533246464,
+  "beforePayload": 133145151,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "ba6cddcf6e86d23780eab293a010213194094e8c7288d631327d5caac8af68d5",
+    "assets/blend/creatures/quad_grazer.blend": "ade3e0dbf97e0ac4ccf475f53b6511acc27d265ab0d622a46203cc39439db05c",
+    "assets/blend/creatures/quad_small.blend": "4090262684468691f5bf1f9e2da88883b803637f56344f3f72ef3377fd62f969",
+    "assets/blend/creatures/flyer.blend": "97db8b3d5862ef268c927e1782c81c1b33d6b9cb90ce91123872728ce037e466",
+    "assets/blend/creatures/quad_heavy.blend": "2d6df44aa0281521382ad2deb081ce386a9712d8eee057ab9d3bd04dd32346cc",
+    "assets/blend/constructs/outpost_drone.blend": "0eabbf492c29609e7575a3c664a545074e9e135a645e83d276ae4648f1362979",
+    "assets/blend/constructs/outpost_overseer.blend": "56fc8d5e7ad9f1d43bbb6fcbfe602baf2af27e1ba47bf7cfa330d41a7c1852fc"
+  },
+  "start": 1794048645.632926,
+  "samples": [
+    {
+      "time": 1794048645.6767218,
+      "rss": 32768,
+      "free": 19533197312,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 32768,
+          "command": "node"
+        }
+      ]
+    },
+    {
+      "time": 1794048646.228192,
+      "rss": 89669632,
+      "free": 19533176832,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048646.780482,
+      "rss": 89669632,
+      "free": 19532242944,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048647.334046,
+      "rss": 89669632,
+      "free": 19532328960,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048647.886061,
+      "rss": 89669632,
+      "free": 19532292096,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048648.442475,
+      "rss": 89669632,
+      "free": 19532374016,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048648.992639,
+      "rss": 89669632,
+      "free": 19532685312,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048649.5429041,
+      "rss": 89669632,
+      "free": 19512811520,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048650.09215,
+      "rss": 89669632,
+      "free": 19512844288,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048650.637881,
+      "rss": 89669632,
+      "free": 19512750080,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048651.1842592,
+      "rss": 89669632,
+      "free": 19512688640,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048651.7285151,
+      "rss": 89669632,
+      "free": 19511676928,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048652.2755682,
+      "rss": 89669632,
+      "free": 19511652352,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048652.819602,
+      "rss": 89669632,
+      "free": 19511664640,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048653.3716428,
+      "rss": 89669632,
+      "free": 19511648256,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048653.918109,
+      "rss": 89669632,
+      "free": 19511631872,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048654.468066,
+      "rss": 89669632,
+      "free": 19511136256,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048655.012741,
+      "rss": 89669632,
+      "free": 19511156736,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048655.5560288,
+      "rss": 89669632,
+      "free": 19510554624,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048656.113645,
+      "rss": 89669632,
+      "free": 19509035008,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048656.670488,
+      "rss": 89669632,
+      "free": 19508776960,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048657.2166011,
+      "rss": 89669632,
+      "free": 19509112832,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048657.7659688,
+      "rss": 89669632,
+      "free": 19509043200,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048658.310845,
+      "rss": 89669632,
+      "free": 19511205888,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048658.852314,
+      "rss": 89669632,
+      "free": 19532865536,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048659.3972638,
+      "rss": 89669632,
+      "free": 19532632064,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048659.944511,
+      "rss": 89669632,
+      "free": 19532877824,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048660.489323,
+      "rss": 89669632,
+      "free": 19532939264,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048661.034764,
+      "rss": 89669632,
+      "free": 19532800000,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048661.5786781,
+      "rss": 89669632,
+      "free": 19531857920,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048662.129079,
+      "rss": 89669632,
+      "free": 19531730944,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048662.678686,
+      "rss": 89669632,
+      "free": 19531710464,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048663.232355,
+      "rss": 89669632,
+      "free": 19531550720,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048663.7813509,
+      "rss": 89669632,
+      "free": 19531395072,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048664.327063,
+      "rss": 89669632,
+      "free": 19531448320,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048664.878069,
+      "rss": 89669632,
+      "free": 19531231232,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048665.4221811,
+      "rss": 89669632,
+      "free": 19531350016,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048665.976821,
+      "rss": 89669632,
+      "free": 19531161600,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048666.522971,
+      "rss": 89669632,
+      "free": 19530784768,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048667.067905,
+      "rss": 89669632,
+      "free": 19513036800,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048667.6205041,
+      "rss": 89669632,
+      "free": 19512946688,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048668.1623218,
+      "rss": 89669632,
+      "free": 19512909824,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048668.713582,
+      "rss": 89669632,
+      "free": 19511787520,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048669.26125,
+      "rss": 89669632,
+      "free": 19509653504,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048669.8029928,
+      "rss": 89669632,
+      "free": 19506552832,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048670.3567538,
+      "rss": 89669632,
+      "free": 19503370240,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048670.899093,
+      "rss": 89669632,
+      "free": 19503353856,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048671.442772,
+      "rss": 89669632,
+      "free": 19503333376,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048671.9889338,
+      "rss": 89669632,
+      "free": 19502927872,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048672.538887,
+      "rss": 89669632,
+      "free": 19502911488,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048673.088002,
+      "rss": 89669632,
+      "free": 19502419968,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048673.644289,
+      "rss": 89669632,
+      "free": 19502149632,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048674.194614,
+      "rss": 89669632,
+      "free": 19502084096,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048674.740293,
+      "rss": 89669632,
+      "free": 19502055424,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048675.288316,
+      "rss": 89669632,
+      "free": 19502010368,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048675.840886,
+      "rss": 89669632,
+      "free": 19524599808,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048676.3846998,
+      "rss": 89669632,
+      "free": 19524210688,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048676.937422,
+      "rss": 89669632,
+      "free": 19524562944,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048677.486304,
+      "rss": 89669632,
+      "free": 19524878336,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048678.040187,
+      "rss": 89669632,
+      "free": 19524792320,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048678.586284,
+      "rss": 89669632,
+      "free": 19516194816,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048679.137909,
+      "rss": 89669632,
+      "free": 19515662336,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048679.68391,
+      "rss": 89669632,
+      "free": 19515899904,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048680.234997,
+      "rss": 89669632,
+      "free": 19515441152,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048680.7787259,
+      "rss": 89669632,
+      "free": 19515432960,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048681.327731,
+      "rss": 89669632,
+      "free": 19515621376,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048681.871933,
+      "rss": 89669632,
+      "free": 19515449344,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048682.420299,
+      "rss": 89669632,
+      "free": 19514712064,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048682.9705338,
+      "rss": 89669632,
+      "free": 19514085376,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048683.517097,
+      "rss": 89669632,
+      "free": 19514089472,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048684.0692558,
+      "rss": 89669632,
+      "free": 19512512512,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048684.614458,
+      "rss": 89669632,
+      "free": 19511894016,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048685.1631129,
+      "rss": 89669632,
+      "free": 19512061952,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048685.707198,
+      "rss": 89669632,
+      "free": 19511578624,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048686.2586591,
+      "rss": 89669632,
+      "free": 19510886400,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048686.802254,
+      "rss": 89669632,
+      "free": 19510444032,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048687.348772,
+      "rss": 89669632,
+      "free": 19512877056,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048687.896013,
+      "rss": 89669632,
+      "free": 19517001728,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048688.441311,
+      "rss": 89669632,
+      "free": 19514277888,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048688.992604,
+      "rss": 89669632,
+      "free": 19526930432,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048689.546224,
+      "rss": 89669632,
+      "free": 19527245824,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048690.0917702,
+      "rss": 89669632,
+      "free": 19526926336,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048690.645198,
+      "rss": 89669632,
+      "free": 19526881280,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048691.1883252,
+      "rss": 89669632,
+      "free": 19514601472,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048691.7346501,
+      "rss": 89669632,
+      "free": 19514195968,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048692.28328,
+      "rss": 89669632,
+      "free": 19514511360,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048692.833297,
+      "rss": 89669632,
+      "free": 19514159104,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048693.3787048,
+      "rss": 89669632,
+      "free": 19514777600,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048693.9295099,
+      "rss": 89669632,
+      "free": 19514728448,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048694.4773161,
+      "rss": 89669632,
+      "free": 19513643008,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048695.022227,
+      "rss": 89669632,
+      "free": 19513696256,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048695.5634172,
+      "rss": 89669632,
+      "free": 19513622528,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048696.1034932,
+      "rss": 89669632,
+      "free": 19513257984,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048696.6461189,
+      "rss": 89669632,
+      "free": 19512946688,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048697.19645,
+      "rss": 89669632,
+      "free": 19512348672,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048697.7408571,
+      "rss": 89669632,
+      "free": 19512549376,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048698.285964,
+      "rss": 89669632,
+      "free": 19512180736,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048698.834112,
+      "rss": 89669632,
+      "free": 19512303616,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048699.385931,
+      "rss": 89669632,
+      "free": 19512205312,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048699.9282482,
+      "rss": 89669632,
+      "free": 19521507328,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048700.4740028,
+      "rss": 89669632,
+      "free": 19516833792,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048701.021363,
+      "rss": 89669632,
+      "free": 19520086016,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048701.569324,
+      "rss": 89669632,
+      "free": 19519557632,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048702.1237,
+      "rss": 89669632,
+      "free": 19518947328,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048702.673964,
+      "rss": 89669632,
+      "free": 19505520640,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048703.226395,
+      "rss": 89669632,
+      "free": 19504709632,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048703.776578,
+      "rss": 89669632,
+      "free": 19503681536,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048704.329037,
+      "rss": 89669632,
+      "free": 19501608960,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048704.871765,
+      "rss": 89669632,
+      "free": 19500908544,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048705.418776,
+      "rss": 89669632,
+      "free": 19500077056,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048705.964545,
+      "rss": 89669632,
+      "free": 19499126784,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048706.515841,
+      "rss": 89669632,
+      "free": 19498274816,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048707.062345,
+      "rss": 89669632,
+      "free": 19497578496,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048707.610807,
+      "rss": 89669632,
+      "free": 19496955904,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048708.1577191,
+      "rss": 89669632,
+      "free": 19496513536,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048708.709731,
+      "rss": 89669632,
+      "free": 19495960576,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048709.264163,
+      "rss": 89669632,
+      "free": 19495706624,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048709.816694,
+      "rss": 89669632,
+      "free": 19495292928,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048710.360289,
+      "rss": 89669632,
+      "free": 19491627008,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048710.913561,
+      "rss": 89669632,
+      "free": 19491602432,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048711.470298,
+      "rss": 89669632,
+      "free": 19490492416,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048712.020743,
+      "rss": 89669632,
+      "free": 19493474304,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048712.574311,
+      "rss": 89669632,
+      "free": 19488997376,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "node"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "/Users/andreyyurlov/.cache/node/corepack/v1/pnpm/12.15.0/pnpm-native"
+        }
+      ]
+    },
+    {
+      "time": 1794048713.124278,
+      "rss": 89669632,
+      "free": 19493416960,
+      "processes": [
+        {
+          "pid": 87536,
+          "ppid": 87529,
+          "rss": 64208896,
+          "command": "(node)"
+        },
+        {
+          "pid": 87539,
+          "ppid": 87536,
+          "rss": 25460736,
+          "command": "(pnpm-native)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 87536,
+  "exit": 0,
+  "end": 1794048713.633854,
+  "afterFree": 19493392384,
+  "afterPayload": 157464724,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "ba6cddcf6e86d23780eab293a010213194094e8c7288d631327d5caac8af68d5",
+    "assets/blend/creatures/quad_grazer.blend": "ade3e0dbf97e0ac4ccf475f53b6511acc27d265ab0d622a46203cc39439db05c",
+    "assets/blend/creatures/quad_small.blend": "4090262684468691f5bf1f9e2da88883b803637f56344f3f72ef3377fd62f969",
+    "assets/blend/creatures/flyer.blend": "97db8b3d5862ef268c927e1782c81c1b33d6b9cb90ce91123872728ce037e466",
+    "assets/blend/creatures/quad_heavy.blend": "2d6df44aa0281521382ad2deb081ce386a9712d8eee057ab9d3bd04dd32346cc",
+    "assets/blend/constructs/outpost_drone.blend": "0eabbf492c29609e7575a3c664a545074e9e135a645e83d276ae4648f1362979",
+    "assets/blend/constructs/outpost_overseer.blend": "56fc8d5e7ad9f1d43bbb6fcbfe602baf2af27e1ba47bf7cfa330d41a7c1852fc"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "maxRSS": 89669632
+}

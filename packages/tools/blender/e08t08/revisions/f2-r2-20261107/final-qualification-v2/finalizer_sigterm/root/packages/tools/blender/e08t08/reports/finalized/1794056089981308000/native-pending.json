@@ -1,0 +1,260 @@
+{
+  "status": "NOT RUN; parent admission required",
+  "files": [
+    {
+      "family": "creatures",
+      "stem": "quad_heavy",
+      "asset": "quad_heavy",
+      "variants": [
+        {
+          "id": "quad_heavy_0",
+          "review": "#review:creatures/quad_heavy:quad_heavy/quad_heavy_0"
+        },
+        {
+          "id": "quad_heavy_0_charge",
+          "review": "#review:creatures/quad_heavy:quad_heavy/quad_heavy_0_charge"
+        },
+        {
+          "id": "quad_heavy_0_stomp",
+          "review": "#review:creatures/quad_heavy:quad_heavy/quad_heavy_0_stomp"
+        },
+        {
+          "id": "quad_heavy_1",
+          "review": "#review:creatures/quad_heavy:quad_heavy/quad_heavy_1"
+        },
+        {
+          "id": "quad_heavy_1_charge",
+          "review": "#review:creatures/quad_heavy:quad_heavy/quad_heavy_1_charge"
+        },
+        {
+          "id": "quad_heavy_1_stomp",
+          "review": "#review:creatures/quad_heavy:quad_heavy/quad_heavy_1_stomp"
+        }
+      ],
+      "captureCommand": "pnpm capture -- --review creatures/quad_heavy",
+      "turntableCommand": "pnpm turntable -- packages/client/public/models/creatures/quad_heavy.glb",
+      "familyCommand": "pnpm turntable -- packages/client/public/models/creatures/quad_heavy.glb --family",
+      "familySheets": 1
+    },
+    {
+      "family": "creatures",
+      "stem": "quad_grazer",
+      "asset": "quad_grazer",
+      "variants": [
+        {
+          "id": "quad_grazer_0",
+          "review": "#review:creatures/quad_grazer:quad_grazer/quad_grazer_0"
+        },
+        {
+          "id": "quad_grazer_0_kick",
+          "review": "#review:creatures/quad_grazer:quad_grazer/quad_grazer_0_kick"
+        },
+        {
+          "id": "quad_grazer_1",
+          "review": "#review:creatures/quad_grazer:quad_grazer/quad_grazer_1"
+        },
+        {
+          "id": "quad_grazer_1_kick",
+          "review": "#review:creatures/quad_grazer:quad_grazer/quad_grazer_1_kick"
+        }
+      ],
+      "captureCommand": "pnpm capture -- --review creatures/quad_grazer",
+      "turntableCommand": "pnpm turntable -- packages/client/public/models/creatures/quad_grazer.glb",
+      "familyCommand": "pnpm turntable -- packages/client/public/models/creatures/quad_grazer.glb --family",
+      "familySheets": 1
+    },
+    {
+      "family": "creatures",
+      "stem": "quad_small",
+      "asset": "quad_small",
+      "variants": [
+        {
+          "id": "quad_small_0",
+          "review": "#review:creatures/quad_small:quad_small/quad_small_0"
+        },
+        {
+          "id": "quad_small_0_bite_swarm",
+          "review": "#review:creatures/quad_small:quad_small/quad_small_0_bite_swarm"
+        },
+        {
+          "id": "quad_small_1",
+          "review": "#review:creatures/quad_small:quad_small/quad_small_1"
+        },
+        {
+          "id": "quad_small_1_bite_swarm",
+          "review": "#review:creatures/quad_small:quad_small/quad_small_1_bite_swarm"
+        },
+        {
+          "id": "quad_small_predator",
+          "review": "#review:creatures/quad_small:quad_small/quad_small_predator"
+        },
+        {
+          "id": "quad_small_predator_bite_swarm",
+          "review": "#review:creatures/quad_small:quad_small/quad_small_predator_bite_swarm"
+        }
+      ],
+      "captureCommand": "pnpm capture -- --review creatures/quad_small",
+      "turntableCommand": "pnpm turntable -- packages/client/public/models/creatures/quad_small.glb",
+      "familyCommand": "pnpm turntable -- packages/client/public/models/creatures/quad_small.glb --family",
+      "familySheets": 1
+    },
+    {
+      "family": "creatures",
+      "stem": "biped",
+      "asset": "biped",
+      "variants": [
+        {
+          "id": "biped_0",
+          "review": "#review:creatures/biped:biped/biped_0"
+        },
+        {
+          "id": "biped_0_leap",
+          "review": "#review:creatures/biped:biped/biped_0_leap"
+        },
+        {
+          "id": "biped_0_claw_combo",
+          "review": "#review:creatures/biped:biped/biped_0_claw_combo"
+        },
+        {
+          "id": "biped_1",
+          "review": "#review:creatures/biped:biped/biped_1"
+        },
+        {
+          "id": "biped_1_leap",
+          "review": "#review:creatures/biped:biped/biped_1_leap"
+        },
+        {
+          "id": "biped_1_claw_combo",
+          "review": "#review:creatures/biped:biped/biped_1_claw_combo"
+        },
+        {
+          "id": "biped_predator",
+          "review": "#review:creatures/biped:biped/biped_predator"
+        },
+        {
+          "id": "biped_predator_leap",
+          "review": "#review:creatures/biped:biped/biped_predator_leap"
+        },
+        {
+          "id": "biped_predator_claw_combo",
+          "review": "#review:creatures/biped:biped/biped_predator_claw_combo"
+        }
+      ],
+      "captureCommand": "pnpm capture -- --review creatures/biped",
+      "turntableCommand": "pnpm turntable -- packages/client/public/models/creatures/biped.glb",
+      "familyCommand": "pnpm turntable -- packages/client/public/models/creatures/biped.glb --family",
+      "familySheets": 2
+    },
+    {
+      "family": "creatures",
+      "stem": "flyer",
+      "asset": "flyer",
+      "variants": [
+        {
+          "id": "flyer_0",
+          "review": "#review:creatures/flyer:flyer/flyer_0"
+        },
+        {
+          "id": "flyer_0_dive",
+          "review": "#review:creatures/flyer:flyer/flyer_0_dive"
+        },
+        {
+          "id": "flyer_0_screech",
+          "review": "#review:creatures/flyer:flyer/flyer_0_screech"
+        },
+        {
+          "id": "flyer_1",
+          "review": "#review:creatures/flyer:flyer/flyer_1"
+        },
+        {
+          "id": "flyer_1_dive",
+          "review": "#review:creatures/flyer:flyer/flyer_1_dive"
+        },
+        {
+          "id": "flyer_1_screech",
+          "review": "#review:creatures/flyer:flyer/flyer_1_screech"
+        },
+        {
+          "id": "flyer_predator",
+          "review": "#review:creatures/flyer:flyer/flyer_predator"
+        },
+        {
+          "id": "flyer_predator_dive",
+          "review": "#review:creatures/flyer:flyer/flyer_predator_dive"
+        },
+        {
+          "id": "flyer_predator_screech",
+          "review": "#review:creatures/flyer:flyer/flyer_predator_screech"
+        }
+      ],
+      "captureCommand": "pnpm capture -- --review creatures/flyer",
+      "turntableCommand": "pnpm turntable -- packages/client/public/models/creatures/flyer.glb",
+      "familyCommand": "pnpm turntable -- packages/client/public/models/creatures/flyer.glb --family",
+      "familySheets": 2
+    },
+    {
+      "family": "constructs",
+      "stem": "outpost_drone",
+      "asset": "outpost_drone",
+      "variants": [
+        {
+          "id": "outpost_drone",
+          "review": "#review:constructs/outpost_drone:outpost_drone/outpost_drone"
+        }
+      ],
+      "captureCommand": "pnpm capture -- --review constructs/outpost_drone",
+      "turntableCommand": "pnpm turntable -- packages/client/public/models/constructs/outpost_drone.glb",
+      "familyCommand": "pnpm turntable -- packages/client/public/models/constructs/outpost_drone.glb --family",
+      "familySheets": 1
+    },
+    {
+      "family": "constructs",
+      "stem": "outpost_overseer",
+      "asset": "outpost_overseer",
+      "variants": [
+        {
+          "id": "outpost_overseer",
+          "review": "#review:constructs/outpost_overseer:outpost_overseer/outpost_overseer"
+        },
+        {
+          "id": "outpost_overseer_dome",
+          "review": "#review:constructs/outpost_overseer:outpost_overseer/outpost_overseer_dome"
+        },
+        {
+          "id": "outpost_overseer_core",
+          "review": "#review:constructs/outpost_overseer:outpost_overseer/outpost_overseer_core"
+        }
+      ],
+      "captureCommand": "pnpm capture -- --review constructs/outpost_overseer",
+      "turntableCommand": "pnpm turntable -- packages/client/public/models/constructs/outpost_overseer.glb",
+      "familyCommand": "pnpm turntable -- packages/client/public/models/constructs/outpost_overseer.glb --family",
+      "familySheets": 1
+    }
+  ],
+  "targets": 38,
+  "reviewImagesPerTarget": [
+    "noon-lush_lod0.png",
+    "noon-lush_lod2.png",
+    "night-exotic_lod0.png",
+    "night-exotic_lod2.png",
+    "open-space_lod0.png",
+    "open-space_lod2.png",
+    "wireframe_lod0.png",
+    "wireframe_lod2.png",
+    "overlay.png",
+    "far_lod2.png"
+  ],
+  "reviewPNGs": 380,
+  "reviewContactSheets": 38,
+  "perfReports": 38,
+  "perfLightingMeasurements": 114,
+  "turntableSheets": 38,
+  "materialCloseupSheets": 38,
+  "siblingSheets": 9,
+  "additionalGates": [
+    "fresh independent code review",
+    "fresh blind rubric grade",
+    "separate native frame-budget qualification; no CPU timing substitution"
+  ],
+  "animationLimit": "Stock Review selects posed meshes; it does not play the Fauna vertex gait or attack phases."
+}

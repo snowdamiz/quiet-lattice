@@ -1,0 +1,112 @@
+{
+  "stage": "author-heavy-04",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13",
+  "command": [
+    "packages/tools/blender/e08t08/bin/blender",
+    "-b",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/e08t08/author.py",
+    "--",
+    "quad_heavy"
+  ],
+  "beforeFree": 19735650304,
+  "beforePayload": 78586085,
+  "beforeSources": {
+    "assets/blend/creatures/biped.blend": "d63b91ae15a16ff9ac4aff107b2b29e6f2688d2859dbd28373f5d30b23748fbf",
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/flyer.blend": "eb4269f69fb593361852b55491c12c559719a20d581676b6ac99b45e3d3b178c",
+    "assets/blend/creatures/quad_heavy.blend": "8f0d112a6c0a4af8e1b13f71fcf6722e7cc362bb1c5d58a52b10e7c01c6909e4",
+    "assets/blend/constructs/outpost_drone.blend": "08cb7e399b740431d5b4fb073f8cc7139f0998f75b9f0d04d0b87493782e69df",
+    "assets/blend/constructs/outpost_overseer.blend": "38649c866305a9b7eb12b2416497233f4ebf0e1f473a2817267b48b9c8285fb6"
+  },
+  "start": 1794048284.506319,
+  "samples": [
+    {
+      "time": 1794048284.556363,
+      "rss": 311296,
+      "free": 19735625728,
+      "processes": [
+        {
+          "pid": 57989,
+          "ppid": 57983,
+          "rss": 311296,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048285.108789,
+      "rss": 131170304,
+      "free": 19732586496,
+      "processes": [
+        {
+          "pid": 57989,
+          "ppid": 57983,
+          "rss": 131170304,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048285.6624,
+      "rss": 377978880,
+      "free": 19728302080,
+      "processes": [
+        {
+          "pid": 57989,
+          "ppid": 57983,
+          "rss": 377978880,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048286.2249348,
+      "rss": 1070366720,
+      "free": 19727872000,
+      "processes": [
+        {
+          "pid": 57989,
+          "ppid": 57983,
+          "rss": 1070366720,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    },
+    {
+      "time": 1794048286.774494,
+      "rss": 1140752384,
+      "free": 19729190912,
+      "processes": [
+        {
+          "pid": 57989,
+          "ppid": 57983,
+          "rss": 1140752384,
+          "command": "/Applications/Blender.app/Contents/MacOS/Blender"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 57989,
+  "exit": 0,
+  "end": 1794048287.28259,
+  "afterFree": 19729059840,
+  "afterPayload": 78679937,
+  "afterSources": {
+    "assets/blend/creatures/biped.blend": "d63b91ae15a16ff9ac4aff107b2b29e6f2688d2859dbd28373f5d30b23748fbf",
+    "assets/blend/creatures/quad_grazer.blend": "5da7ce0570beaed79d7df53c800b003d002881e5df85baaf5cc84ae110cf718f",
+    "assets/blend/creatures/quad_small.blend": "e0cb21d9de0f29123246e50c9f52b4042651ab34628882c00f979cf2bb1e615d",
+    "assets/blend/creatures/flyer.blend": "eb4269f69fb593361852b55491c12c559719a20d581676b6ac99b45e3d3b178c",
+    "assets/blend/creatures/quad_heavy.blend": "fc35e871b2ce7bab1d2e732169f14417c0f21a29f01b8c810d38c59e1a4076da",
+    "assets/blend/constructs/outpost_drone.blend": "08cb7e399b740431d5b4fb073f8cc7139f0998f75b9f0d04d0b87493782e69df",
+    "assets/blend/constructs/outpost_overseer.blend": "38649c866305a9b7eb12b2416497233f4ebf0e1f473a2817267b48b9c8285fb6"
+  },
+  "remainingProcesses": [],
+  "stopReason": null,
+  "maxRSS": 1140752384
+}

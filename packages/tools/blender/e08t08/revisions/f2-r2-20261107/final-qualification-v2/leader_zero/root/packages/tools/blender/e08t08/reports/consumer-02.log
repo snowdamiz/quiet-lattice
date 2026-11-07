@@ -1,0 +1,27 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js (1 test | 1 failed) 19ms
+   × P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+Error: mask sum contract
+ ❯ checkRig packages/tools/blender/e08t08/consumer.test.js:76:83
+     74|     if (![0, 1].includes(glow.getX(i))) throw new Error('binary glow c…
+     75|     glowCount += glow.getX(i);
+     76|     if (Math.abs(color.getX(i) + color.getY(i) + color.getZ(i) - 1) > …
+       |                                                                                   ^
+     77|     if (walker && id >= 1 && id <= 4 && pivot.getZ(i) <= 0) throw new …
+     78|   }
+ ❯ packages/tools/blender/e08t08/consumer.test.js:138:44
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  06:05:52
+   Duration  524ms (transform 63%, import 32%, tests 4%, worker 1%)
+

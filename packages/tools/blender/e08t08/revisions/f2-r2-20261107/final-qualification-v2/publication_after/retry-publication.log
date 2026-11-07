@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2/publication_after/root/packages/tools/blender/e08t08/stage.py", line 287, in main
+    return run(args[0], args[1:], cancellation)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2/publication_after/root/packages/tools/blender/e08t08/stage.py", line 170, in run
+    with lane_lock(REPORTS):
+         ~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification-v2/publication_after/root/packages/tools/blender/e08t08/stage_ownership.py", line 52, in lane_lock
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+BlockingIOError: [Errno 35] Resource temporarily unavailable

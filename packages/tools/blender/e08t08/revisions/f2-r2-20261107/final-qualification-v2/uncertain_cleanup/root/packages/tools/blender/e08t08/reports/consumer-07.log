@@ -1,0 +1,33 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js (1 test | 1 failed) 343ms
+   × P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers 342ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+AssertionError: outpost_drone COL_Body: 0,0.05642937123775482,0.26500001549720764 vs 0,0,0: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ packages/tools/blender/e08t08/consumer.test.js:187:143
+    185|       expect(object, marker.name).toBeDefined();
+    186|       const actual = object.getWorldPosition(new THREE.Vector3()).toAr…
+    187|       expect(actual.every((x, k) => Math.abs(x - marker.position[k]) <…
+       |                                                                                                                                               ^
+    188|       if (marker.type === 'EMPTY') expect(object.isMesh).not.toBe(true…
+    189|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  06:13:44
+   Duration  533ms (tests 71%, import 21%, transform 8%)
+

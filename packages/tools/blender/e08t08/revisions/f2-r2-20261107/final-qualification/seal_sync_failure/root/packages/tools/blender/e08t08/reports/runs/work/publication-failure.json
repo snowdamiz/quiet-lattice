@@ -1,0 +1,64 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "b415a52b66264e998c64294912f80dd0",
+  "supervisorPID": 71728,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/seal_sync_failure/command-ran').touch(); print(\"finite success\")"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/final-qualification/seal_sync_failure/root",
+  "beforeFree": 47205437440,
+  "beforePayload": 1540580,
+  "start": 1794056006.222301,
+  "samples": [
+    {
+      "time": 1794056006.268696,
+      "rss": 5947392,
+      "free": 47205396480,
+      "processes": [
+        {
+          "pid": 71734,
+          "ppid": 71728,
+          "pgid": 71734,
+          "rss": 5947392,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [
+    "terminal publication failed: ValueError('file descriptor cannot be a negative integer (-1)')"
+  ],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 71734,
+  "ownership": {
+    "directChild": {
+      "pid": 71734,
+      "birth": [
+        1794056006,
+        222631
+      ],
+      "waiterLost": false
+    },
+    "knownDescendants": []
+  },
+  "end": 1794056006.401077,
+  "maxRSS": 5947392,
+  "afterFree": 47205380096,
+  "afterPayload": 1541167,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "publication-failed"
+}

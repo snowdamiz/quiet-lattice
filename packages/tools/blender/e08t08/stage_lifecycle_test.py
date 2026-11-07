@@ -18,7 +18,8 @@ sys.dont_write_bytecode = True
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
-BASE = 'f9294a466d6223f695f102dc1a13ed526f155e67'
+# Exact F2 commit under revision for F2-R2 late-observation RED.
+BASE = 'ccdcb1b6079c4f6d6a64506e889f4a6e170464ba'
 ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', OMP_NUM_THREADS='1',
            OPENBLAS_NUM_THREADS='1', VECLIB_MAXIMUM_THREADS='1')
 
@@ -52,7 +53,7 @@ def fixture(parent, name, base):
     task = root / 'packages/tools/blender/e08t08'
     (task / 'reports').mkdir(parents=True)
     for name in ['stage.py', 'finalize.py', 'stage_ownership.py', 'stage_processes.py', 'legacy-stages.json']:
-        if base and name in ('stage.py', 'finalize.py'):
+        if base and name in ('stage.py', 'finalize.py', 'stage_processes.py'):
             data = subprocess.check_output(['git', 'show', BASE + ':packages/tools/blender/e08t08/' + name], cwd=ROOT)
             (task / name).write_bytes(data)
         else:
@@ -130,9 +131,77 @@ def finalizer_cancellation(parent, mode):
     return result
 
 
+def late_same_group_fork(parent, base):
+    """Stale final ps snapshot vs same-pgid child forked before leader reap."""
+    folder, root, task = fixture(parent, 'late_same_group_fork', base)
+    result = dict(mode='late_same_group_fork', base=base, start=time.time(), assertions={}, workerPIDs=[])
+    wrapper = None
+    leaf = None
+
+    def check(name, ok):
+        result['assertions'][name] = bool(ok)
+
+    try:
+        command = [sys.executable, str(HERE / 'lifecycle_driver.py'), str(task / 'stage.py'),
+                   str(folder), 'late_same_group_fork', 'base' if base else 'candidate',
+                   sys.executable, str(HERE / 'lifecycle_worker.py'), str(folder), 'late-leader']
+        result['command'] = command
+        with (folder / 'supervisor.log').open('x') as log:
+            wrapper = subprocess.Popen(command, cwd=root, env=ENV, stdout=log, stderr=subprocess.STDOUT)
+            wait_for(lambda: (folder / 'leader.json').exists())
+            wrapper.send_signal(signal.SIGTERM)
+            result['supervisorExit'] = wrapper.wait(timeout=12)
+        spawned = json.loads((folder / 'spawned.json').read_text())
+        leaf = spawned['leaf']
+        result['spawned'] = spawned
+        result['workerPIDs'] = [spawned['leader'], leaf]
+        result['leafAfterSupervisor'] = process(leaf)
+        receipt = task / 'reports/work.json'
+        result['terminal'] = json.loads(receipt.read_text()) if receipt.is_file() else None
+        settled = task / 'reports/runs/work/settled.json'
+        result['settled'] = json.loads(settled.read_text()) if settled.is_file() else None
+        result['retryExit'] = call(folder, 'retry', [sys.executable, str(task / 'stage.py'),
+                                                     'retry', sys.executable, '-c', 'pass'], root)
+        result['leafAfterRetry'] = process(leaf)
+        result['finalizerExit'] = finalize_fixture(folder, root, task, 'finalize')
+        terminal = result['terminal'] or {}
+        defect = (bool(result['leafAfterSupervisor']) and bool(result['leafAfterRetry'])
+                  and result['retryExit'] == 0 and terminal.get('cleanup') == 'verified'
+                  and not terminal.get('remainingProcesses') and terminal.get('directChildReaped'))
+        result['defectReproduced'] = defect
+        check('late same-group fork cannot seal verified cleanup while leaf lives', not defect)
+        check('late leaf drained before admission opens', not result['leafAfterSupervisor'])
+        check('cancelled/uncertain run still refused by finalizer', result['finalizerExit'] != 0)
+        check('supervisor did not claim success', result['supervisorExit'] != 0)
+    except BaseException as error:
+        result['harnessError'] = repr(error)
+        check('harness completed', False)
+    finally:
+        if wrapper and wrapper.poll() is None:
+            wrapper.kill()
+            wrapper.wait(timeout=3)
+        for pid in result['workerPIDs']:
+            row = process(pid)
+            if row and str(folder) in row:
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        if result['workerPIDs']:
+            wait_for(lambda: all(not process(pid) for pid in result['workerPIDs']), 4)
+        result['cleanupRemaining'] = [process(pid) for pid in result['workerPIDs']]
+        result['end'] = time.time()
+        result['passed'] = all(result['assertions'].values())
+        save(folder / 'result.json', result)
+    print(json.dumps({k: result[k] for k in ('mode', 'passed', 'assertions') if k in result}), flush=True)
+    return result
+
+
 def exercise(parent, mode, base):
     if mode.startswith('finalizer_'):
         return finalizer_cancellation(parent, mode)
+    if mode == 'late_same_group_fork':
+        return late_same_group_fork(parent, base)
     folder, root, task = fixture(parent, mode, base)
     busy = mode in ('sigterm', 'sigint', 'exception', 'observation_failure', 'leader_loss',
                     'leader_zero', 'supervisor_loss', 'uncertain_cleanup', 'waiter_loss')
@@ -267,7 +336,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--base', action='store_true')
-    parser.add_argument('--cases', default='valid,sigterm,sigint,exception,observation_failure,leader_loss,leader_zero,waiter_loss,uncertain_cleanup,supervisor_loss,failed,receipt_failure,seal_failure,seal_sync_failure,admission_failure,watch_failure,publication_before,publication_during,publication_after,publication_failure,finalizer_sigterm,finalizer_sigint')
+    parser.add_argument('--cases', default='valid,sigterm,sigint,exception,observation_failure,leader_loss,leader_zero,waiter_loss,uncertain_cleanup,supervisor_loss,failed,receipt_failure,seal_failure,seal_sync_failure,admission_failure,watch_failure,publication_before,publication_during,publication_after,publication_failure,finalizer_sigterm,finalizer_sigint,late_same_group_fork')
     args = parser.parse_args()
     args.evidence.mkdir(parents=True, exist_ok=False)
     inputs = args.evidence / 'inputs'

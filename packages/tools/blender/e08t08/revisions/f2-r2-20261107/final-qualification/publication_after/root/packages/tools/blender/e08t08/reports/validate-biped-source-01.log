@@ -1,0 +1,36 @@
+$ tsx packages/tools/src/art/cli.ts validate -- assets/blend/creatures/biped.blend --report-dir packages/tools/blender/e08t08/reports/source-first
+00:00.262  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/biped.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate assets/blend/creatures/biped.blend  (family creatures, source .blend)
+  biped / biped_0 [creature]  tris LOD0 37,540  size 1.00 x 1.67 x 1.90 m
+  biped / biped_0_leap [creature]  tris LOD0 38,400  size 1.25 x 2.48 x 1.90 m
+  biped / biped_0_claw_combo [creature]  tris LOD0 38,400  size 1.13 x 2.48 x 1.90 m
+  biped / biped_1 [creature]  tris LOD0 38,784  size 1.59 x 1.85 x 2.46 m
+  biped / biped_1_leap [creature]  tris LOD0 39,644  size 1.95 x 2.84 x 2.46 m
+  biped / biped_1_claw_combo [creature]  tris LOD0 39,644  size 1.77 x 2.84 x 2.46 m
+  biped / biped_predator [creature]  tris LOD0 39,300  size 1.18 x 2.82 x 2.23 m
+  biped / biped_predator_leap [creature]  tris LOD0 40,160  size 1.46 x 3.84 x 2.23 m
+  biped / biped_predator_claw_combo [creature]  tris LOD0 40,160  size 1.32 x 3.84 x 2.23 m
+  PASS  naming
+        ok    biped.blend: 9 variant(s) in 1 asset(s) follow the creatures rules
+  FAIL  triangle budget  (2 failed, 0 warnings)
+        fail  biped/biped_predator_leap: LOD0 has 40,160 triangles, over the creature budget 15,000-40,000 (DESIGN 19.2)
+        fail  biped/biped_predator_claw_combo: LOD0 has 40,160 triangles, over the creature budget 15,000-40,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    biped/biped_0: LOD1-LOD3 generated at export
+        ok    biped/biped_0_leap: LOD1-LOD3 generated at export
+        ok    biped/biped_0_claw_combo: LOD1-LOD3 generated at export
+        ok    ... 6 more
+  PASS  materials
+        ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    biped/biped_0: longest side 1.90 m within 0.2-80 m
+        ok    ... 8 more
+RESULT: FAIL (4 of 5 checks passed)
+  report: packages/tools/blender/e08t08/reports/source-first/creatures__biped.blend.json
+
+0 of 1 file(s) passed validation
+[ELIFECYCLE] Command failed with exit code 1.
