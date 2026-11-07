@@ -1,0 +1,86 @@
+{
+  "status": "PASS",
+  "base": "07768bf14fce30c1e78db6750f44d8fbd561f4b5",
+  "baseTree": "8a7c8ffb2e4a0d8cb029eb4c828f159ed48189ea",
+  "red": {
+    "runnerExitCode": 1,
+    "exporterSha256": "7093f24a97088e399d8145239e941b92e2ad63bbd413ad51a3b03167111bd98c",
+    "cases": [
+      {
+        "case": "existing-empty",
+        "exporterExitCode": 0,
+        "passed": false
+      },
+      {
+        "case": "existing-nonempty",
+        "exporterExitCode": 0,
+        "passed": false
+      },
+      {
+        "case": "existing-prior-receipts",
+        "exporterExitCode": 0,
+        "passed": false
+      }
+    ]
+  },
+  "green": {
+    "runnerExitCode": 0,
+    "exporterSha256": "da384ecd0c2080c29cc940ff831c3f4b7635c25b636f6498a6e16962910c9525",
+    "cases": [
+      {
+        "case": "existing-empty",
+        "exporterExitCode": 2,
+        "passed": true
+      },
+      {
+        "case": "existing-nonempty",
+        "exporterExitCode": 2,
+        "passed": true
+      },
+      {
+        "case": "existing-prior-receipts",
+        "exporterExitCode": 2,
+        "passed": true
+      },
+      {
+        "case": "fresh-validate-selftest",
+        "exporterExitCode": 0,
+        "passed": true
+      },
+      {
+        "case": "reuse-fresh-receipts",
+        "exporterExitCode": 2,
+        "passed": true
+      }
+    ]
+  },
+  "testHarnessSha256": "6d631426ca0ad7efe94d65e596bc9f522f9bd74579bd27b0ca6f0b92cadd5512",
+  "unchangedFunctionAsts": [
+    "sha",
+    "curves",
+    "validate",
+    "export",
+    "selftest"
+  ],
+  "protectedFilesUnchanged": 47,
+  "protectedAssetsUnchanged": 10,
+  "priorPacketFilesUnchanged": 29,
+  "freshSavedActions": 42,
+  "freshExportBoundaryNegativeControls": 10,
+  "maximumConcurrentBlenderProcesses": 1,
+  "blenderThreads": 2,
+  "redCommand": [
+    "python3",
+    "packages/tools/blender/characters/animations/test_receipt_directory.py",
+    "--output",
+    "packages/tools/blender/characters/animations/library-current-validation/20261107T040126Z-receipt-ownership/red",
+    "--negative-only"
+  ],
+  "greenCommand": [
+    "python3",
+    "packages/tools/blender/characters/animations/test_receipt_directory.py",
+    "--output",
+    "packages/tools/blender/characters/animations/library-current-validation/20261107T040126Z-receipt-ownership/green"
+  ],
+  "freshReceiptsEqualPriorPassJson": true
+}

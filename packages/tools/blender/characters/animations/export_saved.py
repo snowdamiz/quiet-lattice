@@ -1,6 +1,6 @@
 """Validate/export only saved shared-motion actions. Never authors, renders or bakes.
 
-Blender -b -t 2 --factory-startup --python-exit-code 1 -P .../export_saved.py -- [--validate-only]
+Blender -b -t 2 --factory-startup --python-exit-code 1 -P .../export_saved.py -- --report-dir <new-directory> [--validate-only]
 The animation-only GLB intentionally carries no meshes/materials/skins: the frozen
 T01 exports supply them. Node-local tracks use their exact canonical source bind.
 """
@@ -228,9 +228,13 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--validate-only',action='store_true')
     parser.add_argument('--selftest',action='store_true',help='RAM-only negative controls; no export or save')
-    parser.add_argument('--report-dir',type=Path,default=Path(__file__).parent,
-        help='Directory for validation receipts; use a fresh directory to retain historical evidence')
+    parser.add_argument('--report-dir',type=Path,required=True,
+        help='New directory for validation receipts; must not already exist')
     args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
+    try:
+        args.report_dir.mkdir(parents=True,exist_ok=False)
+    except FileExistsError:
+        parser.error(f'Report directory already exists: {args.report_dir}; choose a fresh path')
     before=sha(SOURCE)
     binding=json.loads((DEST/'source-bind.json').read_text())
     assert sha(ROOT/binding['capturedFrom'])==binding['exportSha256']
@@ -263,10 +267,11 @@ def main():
         'exportBoundaryRejectsInvalidComponentsBeforeWriting':bool(controls),
         'componentControlObservations':observations,
         'sourceUnchanged':True,'negativeControls':controls,'rendered':False,'baked':False}
-    args.report_dir.mkdir(parents=True,exist_ok=True)
-    (args.report_dir/'source-validation.json').write_text(json.dumps(report,indent=2)+'\n')
+    with (args.report_dir/'source-validation.json').open('x') as receipt:
+        receipt.write(json.dumps(report,indent=2)+'\n')
     if args.selftest:
-        (args.report_dir/'component-validation.json').write_text(json.dumps(report,indent=2)+'\n')
+        with (args.report_dir/'component-validation.json').open('x') as receipt:
+            receipt.write(json.dumps(report,indent=2)+'\n')
     print('ANIMATION_SOURCE_VALIDATION_PASS',len(inventory),'saved actions; no render/bake/source mutation',flush=True)
 
 
