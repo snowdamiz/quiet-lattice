@@ -20,3 +20,22 @@ git lfs checkout 'assets/renders/ui/account-flow/_frames/*'
 ```
 
 Use `social` or `cutscene-test` in place of `account-flow` for the other sequences. Restoration changes working-tree state; use an isolated checkout when reviewing historical motion. The archive is local and has not been pushed.
+
+## Second batch
+
+A further 6,354 frames from 33 completed-review directories are archived at commit `634c51d2378748c6a514af2a792ee4500b912643` and local ref `refs/archive/development-screenshots/2026-11-06-before-cleanup-batch2`. [The second manifest](batch-2/manifest.jsonl) lists every path and payload; [its summary](batch-2/summary.json) maps directories to completed tasks. Every local LFS payload was verified by SHA256 before removal. Existing sibling stills, contact sheets and readouts remain.
+
+| Completed task | Archived frames |
+|---|---:|
+| P2.E21.T01 event banners | 1,740 |
+| P1.E07.T03 ability HUD | 732 |
+| P1.E07.T02 Heat and Charge HUD | 546 |
+| P1.E04.T05 login/character screens | 1,320 |
+| P1.E15.T04 social motion follow-ups | 912 |
+| P2.E22.T02 Edge views | 540 |
+| P1.E13.T05 fabricator | 504 |
+| P1.E06.T04 inventory, also used by P1.E13.T02 icon review | 60 |
+
+Use the restoration commands above with the second commit and desired directory to recover these sequences. This batch contains 1,556,390,321 bytes of logical image payload; the parent checkout held 404,833,968 bytes because many files were LFS pointers. These figures are not physical disk-space savings.
+
+Together the two batches remove 8,778 raw frames from the current tree. Open reviews, body/station evidence, remote-pilot motion, unresolved auxiliary captures, current development outputs and golden-test fixtures remain untouched. Other active task worktrees retain their own copies until their work can safely adopt the cleanup.

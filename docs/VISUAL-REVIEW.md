@@ -4,7 +4,7 @@ Every graded visual deliverable's verdicts, in order, with the artifacts each gr
 A fresh grader subagent writes each verdict with the C.3 brief; the orchestrator appends it here unchanged in substance.
 A human may spot-check any PASS and reopen it.
 
-The owner's 2026-11-06 screenshot cleanup archived the completed account-flow, social and cutscene-test raw motion sequences. Their original frames remain recoverable from the [archive manifest and Git/LFS instructions](artifact-archives/development-screenshots-2026-11-06/README.md); final stills, contact sheets and the verdicts below remain unchanged.
+The owner's 2026-11-06 screenshot cleanup archived 8,778 raw motion frames from completed UI reviews. Their original frames remain recoverable from the [archive manifests and Git/LFS instructions](artifact-archives/development-screenshots-2026-11-06/README.md); final stills, contact sheets, existing readouts and the verdicts below remain unchanged. Open reviews and unresolved auxiliary captures remain in place.
 
 ## Calibration baseline (P1.E14.T09, 2026-10-26)
 
