@@ -6,8 +6,8 @@ ROOT = Path(__file__).resolve().parents[5]
 EVIDENCE = ROOT / 'assets/renders/hulls/swift-round4-current'
 LOCK = Path(__file__).with_name('.lane-lock')
 
-def processes():
-    rows = subprocess.check_output(['ps','-axo','pid=,ppid=,pgid=,rss=,stat='], text=True, timeout=5)
+def processes(timeout=5, executable='ps'):
+    rows = subprocess.check_output([executable,'-axo','pid=,ppid=,pgid=,rss=,stat='], text=True, stderr=subprocess.PIPE, timeout=timeout)
     return [line.split() for line in rows.splitlines() if line.strip()]
 
 def resources():
@@ -36,11 +36,33 @@ def output_usage():
                 count+=1;image_bytes+=size
     return total,count,image_bytes
 
+def sync_directory(path):
+    fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
 def durable_json(path, value):
-    with path.open('x') as f:
+    # Never expose a partially flushed/fsynced document under its final name.
+    # Retain the private bytes on failure; final names never overwrite evidence.
+    private = path.with_name('.' + path.name + '.writing')
+    with private.open('x') as f:
         json.dump(value, f, indent=2)
         f.flush()
         os.fsync(f.fileno())
+    os.link(private, path)
+    sync_directory(path.parent)
+    private.unlink()
+
+
+def error_fact(operation, exc):
+    def text(value):
+        return value.decode(errors='replace') if isinstance(value, bytes) else value
+    return {'operation': operation, 'type': type(exc).__name__, 'message': str(exc),
+            'errno': getattr(exc, 'errno', None), 'returncode': getattr(exc, 'returncode', None),
+            'stdout': text(getattr(exc, 'stdout', None)), 'stderr': text(getattr(exc, 'stderr', None))}
 
 
 def main():
@@ -59,26 +81,33 @@ def main():
     read_fd = write_fd = None
     temp_alias = job = receipt = None
     reason = None
+    committed = False
+    owner_ready = False
+    publication = None
     group_empty = True
     code = 1
     started = time.monotonic()
 
     def cancel(sig, frame):
         nonlocal reason
-        reason = reason or f'cancelled signal {sig}'
+        if not committed:
+            reason = reason or f'cancelled signal {sig}'
 
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, cancel)
     try:
         durable_json(LOCK / 'owner.json', {'pid': os.getpid(), 'cwd': str(ROOT), 'label': a.label})
+        owner_ready = True
         job = EVIDENCE / a.label
         job.mkdir(parents=True, exist_ok=False)
+        publication = job / '.publication-open'
+        durable_json(publication, {'protocol': 'durable-stage-v2', 'runnerPid': os.getpid()})
         inputs = {}
         for path in [ROOT / 'assets/blend/hulls/swift.blend', ROOT / 'packages/client/public/models/hulls/swift.glb']:
             if path.exists():
                 with path.open('rb') as f:
                     inputs[str(path.relative_to(ROOT))] = {'sha256': hashlib.file_digest(f, 'sha256').hexdigest(), 'bytes': path.stat().st_size}
-        receipt = {'format': 2, 'inputs': inputs, 'command': command, 'cwd': str(ROOT),
+        receipt = {'format': 3, 'publicationProtocol': 'durable-stage-v2', 'inputs': inputs, 'command': command, 'cwd': str(ROOT),
                    'runnerPid': os.getpid(), 'preflight': resources(), 'timeout': a.timeout, 'rssLimitMiB': a.rss_mib}
         if receipt['preflight']['diskFree'] < 8 * 1024**3 or receipt['preflight']['memoryFreeInactive'] < 2 * 1024**3:
             raise RuntimeError('preflight resource floor')
@@ -121,12 +150,11 @@ def main():
         reason = reason or f'{type(exc).__name__}: {exc}'
         traceback.print_exc()
     finally:
-        for sig in (signal.SIGTERM, signal.SIGINT):
-            signal.signal(sig, signal.SIG_IGN)
+        # Signal handlers only record cancellation; repeated signals cannot unwind drain.
         if read_fd is not None:
             os.close(read_fd)
         if write_fd is not None:
-            os.close(write_fd)  # EOF makes the independent owner cancel and reap.
+            os.close(write_fd)
         if supervisor is not None:
             supervisor.wait(timeout=a.timeout + 35)
             proof = job / 'guardian.json'
@@ -134,18 +162,42 @@ def main():
         if group_empty and temp_alias is not None and temp_alias.is_symlink():
             assert os.readlink(temp_alias) == str(job / 'scratch')
             temp_alias.unlink()
+        publication_errors = []
         if receipt:
+            try:
+                postflight = resources()
+            except Exception as exc:
+                postflight = None
+                publication_errors.append(error_fact('postflight resources', exc))
+                reason = reason or 'postflight observation failed'
             receipt.update(exit=code if not reason and group_empty else 1, reason=reason,
                            seconds=round(time.monotonic() - started, 2),
-                           peakRssKiB=receipt.get('peakRssKiB', 0), childGroupEmpty=group_empty, postflight=resources())
+                           peakRssKiB=receipt.get('peakRssKiB', 0), childGroupEmpty=group_empty,
+                           postflight=postflight, publicationErrors=publication_errors)
+            # All these documents remain provisional while .publication-open exists.
+            # In particular, a failed final directory fsync must not open the gate.
             durable_json(job / 'receipt.json', receipt)
             print(json.dumps({k: receipt[k] for k in ['exit', 'reason', 'seconds', 'peakRssKiB', 'childGroupEmpty']}), flush=True)
-        if group_empty:
+            if code == 0 and not reason and group_empty:
+                bindings = {name: hashlib.sha256((job / name).read_bytes()).hexdigest()
+                            for name in ['launch.json', 'supervisor-launch.json', 'dispatch.json', 'guardian.json', 'receipt.json']}
+                durable_json(job / 'publication.json', {'protocol': 'durable-stage-v2',
+                             'producerExit': receipt['exit'], 'supervisorExit': receipt['guardianExit'],
+                             'runnerPid': os.getpid(), 'files': bindings})
+        if group_empty and owner_ready:
             (LOCK / 'owner.json').unlink(missing_ok=True)
+            # The retained private ownership file is evidence, not an active claim.
+            (LOCK / '.owner.json.writing').unlink(missing_ok=True)
             LOCK.rmdir()
         else:
             print('CLEANUP UNPROVEN: LOCK RETAINED', file=sys.stderr)
-    return code if not reason and group_empty else 1
+        if receipt and code == 0 and not reason and group_empty:
+            # Commit point: every required file/dir sync and fallible operation above
+            # has finished. No required write follows this atomic gate removal.
+            # Crash rollback can restore the gate (a refusal), never unsync its inputs.
+            publication.unlink()
+            committed = True
+    return 0 if committed else code if not reason and group_empty and code != 0 else 1
 
 
 if __name__ == '__main__':

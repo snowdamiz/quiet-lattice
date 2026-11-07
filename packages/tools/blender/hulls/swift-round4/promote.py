@@ -46,23 +46,30 @@ def terminal(stage, source_pin):
             f'{stage.name}: guardian did not prove normal completion and empty group')
     require(Path(launch.get('temporaryAlias', {}).get('path', '')).name == f"swift-r4-{guardian.get('parentPid')}",
             f'{stage.name}: guardian owner mismatch')
-    if receipt.get('format') == 2:
-        require(receipt.get('guardianExit') == 0 and receipt.get('guardianSha256') == sha(stage / 'guardian.json')
-                and guardian.get('supervisorPid') == receipt.get('guardianPid')
-                and guardian.get('failureReason') is None and guardian.get('commandExit') == 0,
-                f'{stage.name}: supervisor terminal outcome mismatch')
-        owned = read(stage / 'supervisor-launch.json')
-        dispatched = read(stage / 'dispatch.json')
-        require(owned.get('pid') == receipt['guardianPid'] and owned.get('inputs') == launch['inputs']
-                and owned.get('command') == launch['command'] and owned.get('parentPid') == receipt['runnerPid']
-                and dispatched == {'pid': receipt['pid'], 'pgid': receipt['pid'], 'supervisorPid': receipt['guardianPid']},
-                f'{stage.name}: durable dispatch ownership mismatch')
-    else:
-        # Original lane.py only set childGroupEmpty true after guardian.wait() == 0.
-        # Its immutable legacy receipt has no separate guardianExit field.
-        require('format' not in receipt and 'format' not in guardian and type(receipt.get('guardianPid')) is int,
-                f'{stage.name}: unsupported terminal receipt format')
-    return {name: sha(stage / name) for name in ['launch.json', 'receipt.json', 'guardian.json']}
+    require(receipt.get('format') == 3 and guardian.get('format') == 3
+            and receipt.get('publicationProtocol') == 'durable-stage-v2',
+            f'{stage.name}: historical/provisional receipt is not a completed publication')
+    require(not os.path.lexists(stage / '.publication-open'),
+            f'{stage.name}: publication remains provisional or failed')
+    publication = read(stage / 'publication.json')
+    bindings = {name: sha(stage / name) for name in ['launch.json', 'supervisor-launch.json', 'dispatch.json', 'guardian.json', 'receipt.json']}
+    require(publication.get('protocol') == 'durable-stage-v2'
+            and publication.get('files') == bindings and publication.get('producerExit') == 0
+            and publication.get('supervisorExit') == 0 and publication.get('runnerPid') == receipt.get('runnerPid'),
+            f'{stage.name}: completed publication binding mismatch')
+    require(receipt.get('guardianExit') == 0 and receipt.get('guardianSha256') == sha(stage / 'guardian.json')
+            and guardian.get('supervisorPid') == receipt.get('guardianPid')
+            and guardian.get('failureReason') is None and guardian.get('commandExit') == 0
+            and guardian.get('ownedChildReaped') is True and guardian.get('observationErrors') == []
+            and guardian.get('drainErrors') == [],
+            f'{stage.name}: supervisor terminal outcome mismatch')
+    owned = read(stage / 'supervisor-launch.json')
+    dispatched = read(stage / 'dispatch.json')
+    require(owned.get('pid') == receipt['guardianPid'] and owned.get('inputs') == launch['inputs']
+            and owned.get('command') == launch['command'] and owned.get('parentPid') == receipt['runnerPid']
+            and dispatched == {'pid': receipt['pid'], 'pgid': receipt['pid'], 'supervisorPid': receipt['guardianPid']},
+            f'{stage.name}: durable dispatch ownership mismatch')
+    return {name: sha(stage / name) for name in ['launch.json', 'receipt.json', 'guardian.json', 'publication.json']}
 
 
 def validate(jobs):
