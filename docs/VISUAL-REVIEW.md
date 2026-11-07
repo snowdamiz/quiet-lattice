@@ -1188,3 +1188,19 @@ All 440 originals were rehashed after inspection: zero changes. No source edits 
 
 
 Verbatim verdict and complete viewing record are retained under `docs/review-records/p1-e08-t09-da01f7c6c/`, with the original-artifact manifest.
+
+
+## P1.E12.T02 — retained Swift and Mule, round three (2026-11-07)
+
+Fresh independent artifact-only graders inspected all 51 images and 61 indexed payloads for each component. No new capture occurred. The recovered packets retain their qualified captions, later cockpit/lineup stills and unreliable performance rows. Exact verdicts and viewing paths are retained in [Swift round three](review-records/p1-e12-t02/swift-visual-round3.txt) and [Mule round three](review-records/p1-e12-t02/mule-visual-round3.txt); source/artifact identities are in [the recovery record](review-records/p1-e12-t02/round3-packet-recovery.txt).
+
+| Round | Component | Verdict | Design | Silhouette | Proportion | Materials | Detail | Topology | Consistency | Fitness | No placeholder | Performance | Mean |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3 | Swift | REVISE | 4 | 4 | 4 | 3 | 3 | 3 | 4 | 4 | 3 | 3 | 3.5 |
+| 3 | Mule | REVISE | 4 | 4 | 4 | 3 | 3 | 2 | 4 | 4 | 4 | 2 | 3.4 |
+
+Swift: localize wear to actual contact/leading edges and distinguish cloudy crystal from stone; replace repeated lifted damage plates with selected fractured edges, torn attachments and exposed structure. Preserve canopy facet normals, rear crystal tip and landing feet at LOD2. Finish cockpit housings, displays, controls and seat/restraints. The recognizable Ixari silhouette, scale, liveries and static play arrangement scored 4.
+
+Mule: replace broad streaky wear and uniform canopy cracks with contact wear and identifiable impact origins. Finish the main instrument fascia, bezels, grouped controls and markings. Rebuild lower-LOD panels to preserve normals, UVs, overlaps and damage openings: LOD2 visibly changes smooth surfaces into dark/gold bands and warped highlights. Its Thalune language, silhouette, scale, liveries and static arrangement scored 4.
+
+Both retained packets fail to establish 16.67 ms whole-scene performance in all lights. Several measurements are unreliable; device model and native traversal/temporal transition proof are absent. Those limits do not identify either asset as the scene bottleneck. Scene diagnosis remains P1.E14.T13; appearance/LOD corrections are dispatched as component round four. These are third REVISE verdicts, not fifth-grade dispositions.

@@ -1,0 +1,103 @@
+VERDICT REVISE  
+TASK P1.E12.T02/mule
+
+SCORES  
+Design language 4; silhouette/read 4; proportion/scale 4; materials 3; surface detail 3; topology/LODs 2; consistency 4; fitness 4; no placeholder tell 4; performance 2.  
+Arithmetic mean: **34 ÷ 10 = 3.40/5**.
+
+NOTES
+
+- **Design language — 4:** Broad scalloped shell, radiating ribs, overlapping plates, pearl/sea-green palette and spiral fittings clearly express Thalune construction.
+- **Silhouette/read — 4:** The broad, low carrier shape remains recognizable at 100 m and 200 m LOD2. Its substantial footprint distinguishes Mule from the narrower comparison hulls.
+- **Proportion/scale — 4:** The standing and seated bipeds make the cockpit, ladder and overall hull scale plausible. The seated reference fits between the side consoles. The lineup caption records 19.0 m length, within the specified band.
+- **Materials — 3:** Cockpit frames, ladder rails and hardpoint trim show broad, streaky pale wear; the damaged canopy has a conspicuously uniform crack network. **Action:** repaint localized wear around grips, rungs, joints and exposed edges, and give canopy fractures identifiable impact origins with varied crack density.
+- **Surface detail — 3:** Overlapping shell geometry, maintenance plates and exposed damage framing are present. The cockpit’s broad blank front fascia and minimally differentiated console blocks remain below the exterior’s finish. **Action:** resolve the main instrument panel with defined bezels, recessed instruments, control groupings and readable markings at seated viewing distance.
+- **Topology/LODs — 2:** Across all three lighting cases, LOD2 introduces strong dark/gold bands and warped highlights across panels that look smooth at LOD0. Damaged panels lose their curled forms and become substantially larger dark openings; husked gaps and exposed framing also change markedly. Wireframes show the corresponding coarse panel triangulation. **Action:** rebuild the lower-LOD panel surfaces and preserve their normals, UVs, overlap edges and damage openings before verifying transitions at the intended distances.
+- **Consistency — 4:** Mule shares the lineup’s dark glazing, framed panels and mechanical accents while retaining its own shell language. All three liveries are visually distinguishable. Damage and husk remain recognizably Mule.
+- **Fitness — 4:** The stills show a boarding ladder, an open canopy, a fitted seat, landing supports and two outward-facing hardpoint mounts. Overlays locate four bays, four gear pivots, two hardpoints and three colliders. This supports static placement, with operational limits below.
+- **No placeholder tell — 4:** The layered shell, fitted cockpit enclosure, mount hardware and modeled panel-loss states read as a developed asset. The unfinished console treatment is addressed under surface detail.
+- **Performance — 2:** Recorded geometry and per-variant texture allocations meet the stated budgets: LOD0 **141,922 / 148,688 / 138,478** triangles; LOD3 **4.55% / 4.86% / 4.72%**; exported texture allocations **277.3 / 293.3 / 352.0 MB** for base/damaged/husked. However, whole-scene settling times are **69.5/112.1 ms**, **32.2/44.8 ms**, and **30.4/48.0 ms** for noon/night respectively. Every noon/night scene is over budget. Base noon is also unstable; base noon/night and both other night paired estimates are unreliable. Open-space settling is under budget, but husked open-space GPU P95 is **20.935 ms**. **Action:** diagnose the whole-scene bottleneck and supply stable, device-identified measurements meeting the 16.67 ms target across all three cases; establish asset attribution separately.
+
+ARTIFACTS
+
+Index SHA256 verified: `e8188d834610a7e2dbe5c57edc3baf03ee7180d2b53d6fa0cc03b717aaa79e56`. All **61 indexed payloads**, including the shared files, match their listed hashes and sizes. All **51 PNGs** below were actually viewed through `view_image` at original resolution.
+
+```text
+/tmp/hull-r3-packets/mule/artifacts/mule_boarding_board.png
+/tmp/hull-r3-packets/mule/artifacts/mule_cockpit_closed_side.png
+/tmp/hull-r3-packets/mule/artifacts/mule_cockpit_open_q.png
+/tmp/hull-r3-packets/mule/artifacts/mule_cockpit_open_side.png
+/tmp/hull-r3-packets/mule/artifacts/mule_cockpit_open_top.png
+/tmp/hull-r3-packets/mule/artifacts/mule_hardpoint_HP_M_1.png
+/tmp/hull-r3-packets/mule/artifacts/mule_hardpoint_HP_S_1.png
+/tmp/hull-r3-packets/mule/artifacts/mule_liveries.png
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_materials.png
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_turntable.png
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_mule_damaged_materials.png
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_mule_damaged_turntable.png
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_mule_husked_materials.png
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_mule_husked_turntable.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/noon-lush_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/noon-lush_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/night-exotic_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/night-exotic_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/open-space_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/open-space_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/wireframe_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/wireframe_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/far_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/far200_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/overlay.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/sheet.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/noon-lush_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/noon-lush_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/night-exotic_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/night-exotic_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/open-space_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/open-space_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/wireframe_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/wireframe_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/far_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/far200_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/overlay.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/sheet.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/noon-lush_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/noon-lush_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/night-exotic_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/night-exotic_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/open-space_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/open-space_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/wireframe_lod0.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/wireframe_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/far_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/far200_lod2.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/overlay.png
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/sheet.png
+/tmp/hull-r3-packets/shared/hulls_lineup.png
+```
+
+Readouts and captions inspected:
+
+```text
+/tmp/hull-r3-packets/mule/INDEX.md
+/tmp/hull-r3-packets/mule/artifacts/mule_liveries.txt
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_materials.txt
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_mule_damaged_materials.txt
+/tmp/hull-r3-packets/mule/artifacts/mule_mule_mule_husked_materials.txt
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/perf.json
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_damaged/perf.json
+/tmp/hull-r3-packets/mule/artifacts/review/hulls/mule/mule/mule_husked/perf.json
+/tmp/hull-r3-packets/mule/artifacts/validate/hulls__mule.blend.json
+/tmp/hull-r3-packets/mule/artifacts/validate/hulls__mule.glb.json
+/tmp/hull-r3-packets/shared/hulls_lineup.txt
+```
+
+Normative references: only DESIGN §§10.2, 19.2–19.4 and relevant art-bible hull language, scale, materials, husking, liveries and budgets.
+
+LIMITS
+
+- Retained evidence only. Cockpit open-top and shared lineup have the later provenance qualified in INDEX; the livery caption was carried forward. No new capture or source inspection occurred.
+- Stills do not establish collision traversal, boarding execution, articulation through its full range, mounted-weapon clearance or transition behavior at runtime. `CockpitInterior` is not established by the recorded marker lists.
+- A 1 m grid is reported by validation but is not visibly available for direct measurement in these renders.
+- Performance records identify `gl: metal`, 1920×1080 and timer-query GPU timing, but no specific device model. Errors are empty and disjoint counts are zero; reliability and whole-scene failures still apply. Paired deltas establish neither sustained 60 fps nor that Mule causes the scene bottleneck.
+- Only Mule was graded. Siblings served solely as visual comparison references.

@@ -1,0 +1,102 @@
+VERDICT REVISE  
+TASK P1.E12.T02/swift
+
+SCORES: design language 4; silhouette/read 4; proportion/scale 4; materials 3; surface detail 3; topology/LODs 3; consistency 4; fitness 4; no placeholder tell 3; performance 3.  
+Arithmetic mean: (4+4+4+3+3+3+4+4+3+3)/10 = **3.50/5**.
+
+NOTES:
+
+- **Design language — 4:** Prismatic fuselage, clustered crystal spires, dark socket collars, and lilac seams clearly identify Ixari construction. The language survives all three liveries.
+- **Silhouette/read — 4:** Narrow body, swept wings, and prominent dorsal crystal distinguish the small scout in the lineup and at 100 m. At 200 m, its outline remains identifiable but internal features merge.
+- **Proportion/scale — 4:** Standing and seated references support a plausible single-person cockpit and ladder scale. Recorded 11.521 m maximum dimension fits the Swift length band.
+- **Materials — 3:** Cockpit rim, ladder, and fittings share conspicuously similar pale edge chips; crystal often reads as pale solid material rather than cloudy crystal. Damaged wings carry broad, soft purple/black patches. **Change:** author localized wear around rungs, grips, leading edges, and sockets, with distinct stone roughness and crystal clouding.
+- **Surface detail — 3:** Panel seams have actual depth, and damaged/husked variants visibly alter geometry. However, repeated rectangular plates and clean lifted panel edges make destruction look assembled rather than fractured. **Change:** add localized broken crystal edges, torn attachment points, and exposed structure beneath selected missing plates.
+- **Topology/LODs — 3:** Major outline survives reduction, but LOD2 changes canopy highlights markedly, collapses the rear crystal tip, and substantially erodes landing-foot shapes. **Change:** preserve canopy facet normals and those small silhouette features during reduction, then demonstrate transitions at intended distances.
+- **Consistency — 4:** Swift occupies the smallest, lightest position in the lineup while retaining the shared material treatment. Three liveries are visibly distinct. Husk black, cyan seams, extinguished navigation lights, and panel loss remain recognizably Swift.
+- **Fitness — 4:** Stills show three deployed gear assemblies, open/closed canopy, seated occupant, boarding ladder, and two underside mounts with forward axes. Overlay volumes broadly follow the hull. This score covers visible arrangement only.
+- **No placeholder tell — 3:** The cockpit’s blank rectangular display slab, repeated button rows, and block-like seat/console construction remain conspicuously schematic at close range. **Change:** finish the cockpit with fitted instrument housings, readable display graphics, differentiated controls, and a shaped seat/restraint assembly.
+- **Performance — 3:** Recorded LOD0 counts of 66,365–68,411, four LODs, LOD3 ratios of 2.47–2.85%, and per-variant texture estimates of 298.7–368 MB satisfy the supplied budgets. Whole-scene timing does not satisfy the review requirement: base/damaged/husked settle times are **33.2/42.2/43.1 ms at noon**, **58.1/50.6/53.0 ms at night**, and **7.6/7.8/7.7 ms in space**. Five of nine paired measurements are marked unreliable. **Change:** obtain identified-device, reliable whole-scene evidence meeting 16.67 ms across all required cases; investigate the scene bottleneck before attributing it to Swift.
+
+ARTIFACTS:
+
+Index SHA256 verified: `5c2e85988bfa37e03a60ab91f3b5de815630680d8d3ef07cc9ba6a795f34fd66`. All 61 indexed payload hashes match. All 51 indexed images were viewed through `view_image`.
+
+Exact paths below are relative to `/tmp/hull-r3-packets/swift/`:
+
+```text
+INDEX.md
+artifacts/swift_boarding_board.png
+artifacts/swift_cockpit_closed_side.png
+artifacts/swift_cockpit_open_q.png
+artifacts/swift_cockpit_open_side.png
+artifacts/swift_cockpit_open_top.png
+artifacts/swift_hardpoint_HP_S_1.png
+artifacts/swift_hardpoint_HP_S_2.png
+artifacts/swift_liveries.png
+artifacts/swift_liveries.txt
+artifacts/swift_swift_materials.png
+artifacts/swift_swift_materials.txt
+artifacts/swift_swift_turntable.png
+artifacts/swift_swift_swift_damaged_materials.png
+artifacts/swift_swift_swift_damaged_materials.txt
+artifacts/swift_swift_swift_damaged_turntable.png
+artifacts/swift_swift_swift_husked_materials.png
+artifacts/swift_swift_swift_husked_materials.txt
+artifacts/swift_swift_swift_husked_turntable.png
+artifacts/validate/hulls__swift.blend.json
+artifacts/validate/hulls__swift.glb.json
+artifacts/review/hulls/swift/swift/noon-lush_lod0.png
+artifacts/review/hulls/swift/swift/noon-lush_lod2.png
+artifacts/review/hulls/swift/swift/night-exotic_lod0.png
+artifacts/review/hulls/swift/swift/night-exotic_lod2.png
+artifacts/review/hulls/swift/swift/open-space_lod0.png
+artifacts/review/hulls/swift/swift/open-space_lod2.png
+artifacts/review/hulls/swift/swift/wireframe_lod0.png
+artifacts/review/hulls/swift/swift/wireframe_lod2.png
+artifacts/review/hulls/swift/swift/far_lod2.png
+artifacts/review/hulls/swift/swift/far200_lod2.png
+artifacts/review/hulls/swift/swift/overlay.png
+artifacts/review/hulls/swift/swift/sheet.png
+artifacts/review/hulls/swift/swift/perf.json
+artifacts/review/hulls/swift/swift/swift_damaged/noon-lush_lod0.png
+artifacts/review/hulls/swift/swift/swift_damaged/noon-lush_lod2.png
+artifacts/review/hulls/swift/swift/swift_damaged/night-exotic_lod0.png
+artifacts/review/hulls/swift/swift/swift_damaged/night-exotic_lod2.png
+artifacts/review/hulls/swift/swift/swift_damaged/open-space_lod0.png
+artifacts/review/hulls/swift/swift/swift_damaged/open-space_lod2.png
+artifacts/review/hulls/swift/swift/swift_damaged/wireframe_lod0.png
+artifacts/review/hulls/swift/swift/swift_damaged/wireframe_lod2.png
+artifacts/review/hulls/swift/swift/swift_damaged/far_lod2.png
+artifacts/review/hulls/swift/swift/swift_damaged/far200_lod2.png
+artifacts/review/hulls/swift/swift/swift_damaged/overlay.png
+artifacts/review/hulls/swift/swift/swift_damaged/sheet.png
+artifacts/review/hulls/swift/swift/swift_damaged/perf.json
+artifacts/review/hulls/swift/swift/swift_husked/noon-lush_lod0.png
+artifacts/review/hulls/swift/swift/swift_husked/noon-lush_lod2.png
+artifacts/review/hulls/swift/swift/swift_husked/night-exotic_lod0.png
+artifacts/review/hulls/swift/swift/swift_husked/night-exotic_lod2.png
+artifacts/review/hulls/swift/swift/swift_husked/open-space_lod0.png
+artifacts/review/hulls/swift/swift/swift_husked/open-space_lod2.png
+artifacts/review/hulls/swift/swift/swift_husked/wireframe_lod0.png
+artifacts/review/hulls/swift/swift/swift_husked/wireframe_lod2.png
+artifacts/review/hulls/swift/swift/swift_husked/far_lod2.png
+artifacts/review/hulls/swift/swift/swift_husked/far200_lod2.png
+artifacts/review/hulls/swift/swift/swift_husked/overlay.png
+artifacts/review/hulls/swift/swift/swift_husked/sheet.png
+artifacts/review/hulls/swift/swift/swift_husked/perf.json
+```
+
+Shared comparison artifacts:
+
+```text
+/tmp/hull-r3-packets/shared/hulls_lineup.png
+/tmp/hull-r3-packets/shared/hulls_lineup.txt
+```
+
+Normative references: [DESIGN.md](/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/DESIGN.md), sections 10.2 and 19.2–19.4; [art-bible.md](/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/art-bible.md), relevant hull language, scale, materials, liveries, husking, and conventions.
+
+LIMITS:
+
+- Retained evidence only. The index qualifies cockpit open-top and shared lineup as later stills; the livery caption was carried forward. Hash matching establishes packet integrity, not a new capture or independently verified source provenance.
+- Stills do not establish collision traversal, boarding animation, articulation clearance, temporal LOD popping, or seam flicker. `CockpitInterior` is not recorded in the supplied marker lists; cockpit geometry is nevertheless visible. No `BAY_*` entry is recorded.
+- Performance records identify `gl: metal`, 1920×1080, timer-query GPU timing, and empty error lists, but no specific hardware model. Base noon/night GPU medians are 29.712/47.111 ms; without Swift they remain 28.471/45.302 ms. These records neither establish whole-scene 60 fps across cases nor establish Swift as the cause of the slowdown.

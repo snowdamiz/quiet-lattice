@@ -1,0 +1,98 @@
+VERDICT: REVISE
+
+TASK: P1.E05.T03 — fresh independent SOURCE/CPU R2 review
+
+Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8`
+Branch: `task/P1-E05-T03`
+HEAD: `326b3532de05474afe632275bb178bc6c5fbd3c9`
+Tree: `fcb526c3dffdaa3f9db249572e9d56c5303eaeb8`
+Revision base: `2e4feb5d437b9535637f5338ab6162069f0b75f1`
+Full task base: `45c172a102f1944ff00be0b6e5006eef13fd793b`
+Evidence: `/tmp/p1-e05-t03-r2.f3fApA`
+
+The four original R1 failures are FIXED in the replayed cases. One new P2 blocks the source/CPU gate: fresh validation can approve an export belonging to another people, publish a byte-bound PASS receipt for that mismatched pair, and pass inventory even though the production consumer rejects it. No allegation is made that the currently committed assets are mismatched; all three current pairs passed independent validation.
+
+**New P2 — Validate the exported viewmodel's identity and consumer contract before issuing its receipt.**
+
+Location: `packages/tools/blender/characters/viewmodels/export.py:37–41`, reached by `main()` at 74–77. Related receipt publication: `packages/tools/blender/characters/viewmodels/evidence.py:91–97`.
+
+`validate_pair()` runs the viewmodel-specific checks on the source at line 36, but applies only the generic characters-family checks to the exported GLB. Those generic checks accept any valid `fp_*` asset; their `source=` check establishes that the named source exists, not that this export is that source's selected people. `publish_receipt()` then binds these passing generic reports to the actual mismatched bytes. Hash validation cannot detect this once the wrong bytes have received a new PASS.
+
+Executed end-to-end reproduction, using actual saved files and no generated asset:
+
+1. Create a scratch layout containing byte-identical copies of all current sources, exports and receipts. Replace only scratch `fp_thalune.glb` with the actual committed Ixari GLB. Leave the Thalune source unchanged.
+2. In the single CPU Blender process, invoke the actual wrapper with `ROOT` set to the scratch layout and argv `['export.py', '--', '--validate-only', 'thalune']`. The wrapper exits **0** and writes a **PASS** Thalune receipt. Its export report itself names asset/variant **`fp_ixari`** while reporting PASS.
+3. Run a byte-identical relocated `inventory.py`, using the production evidence module and read-only Git identity queries against the pinned checkout. Inventory accepts the fresh receipt and emits **`CPU_CANDIDATE_REVIEW_PENDING`** with Thalune source SHA `46d483c8cc0b10f555dc35f60008d64f7b883d392daa4bf4e87abb91da97b1db` and Ixari export SHA `78f90acfc0087b63e97c3ae50cb7c1f5e045e447e12975b6ec21a0dd5f038abc`.
+4. Deliver those same scratch export bytes at the Thalune URL through the actual `Multitool` → Engine `gltfLoader()` → Three GLTFLoader/Meshopt/KTX2/Basis path. Complete material decoding succeeds, but the production publication check rejects `VM_ixari_Tool`: **`Viewmodel has an unexpected material`**. No model attaches and one warning toast appears. Its owned resources are disposed.
+
+Impact: an accidental copied or misrouted export can receive fresh, apparently consistent validation evidence and pass the inventory gate while leaving that selected character without first-person arms/tool at runtime. This is separate from reusing an old receipt, which the revision correctly prevents.
+
+Correction: make saved-export validation assert the requested people's asset/variant/material identity and the viewmodel contract consumed at runtime before issuing a receipt. Apply it to both `--validate-only` and post-export validation. Preserve the failure quarantine/history semantics. Add this actual Thalune-source/Ixari-export substitution as a negative control; it must fail validation and leave no current PASS/inventory. A valid matching pair must still pass.
+
+Evidence: `blender_review.py`, `blender-child.log`, `blender-results.json` (`cross_pair`); `cross-pair/assets/renders/characters/viewmodels/validation/characters__fp_thalune.glb.json`; `cross-pair/assets/renders/characters/viewmodels/validation/thalune-receipt.json`; `cross-pair/assets/renders/characters/viewmodels/inventory.json`; `inventory_review.py`, `inventory-review.json`; `material_review.mjs`, `material-review.json` (`crossPair`). Harness exits 0 mean the assertions and the reported false acceptance were reproduced; they do not turn this product defect into a passing gate.
+
+**R1 finding dispositions**
+
+1. **FIXED — production Basis 503 publishes a mapless model.** Replayed the original reviewer's actual-consumer script with only its output directory and expected fixed outcome changed. The two Basis requests fail with 503; `attached=false`, a model-load error is retained, and exactly one warning toast is emitted. Independently removed each required material JSON slot in RAM across all three actual GLBs: 37 cases covering Tool/Skin/Bio base colour, normal, metallic-roughness, AO, and required emissive slots. Every incomplete scene was rejected and its loaded geometry/materials/maps/skeletons retired exactly once. A delayed incomplete Thalune completion did not change active Ixari's error/toast/resource state. A subsequent valid Ulgani load succeeded on the same shared loader; Multitool never disposed that loader. Evidence: `material-failure.json`, `material-review.json`, plus the committed real-consumer tests rerun here.
+
+2. **FIXED — interrupt releases the runner lock before the separate child group is reaped.** Used byte-identical runner copies at the same directory depth in scratch, with harmless Python executables named Blender. File barriers established a ready child and observed TERM handling before checking lock ownership. SIGINT and SIGTERM retained the lock and blocked a replacement invocation while the child was alive, including a second signal during cleanup. TERM-resistant children were killed after approximately 2.05/2.09 seconds and were absent before lock acquisition succeeded; exits were 130/143. Deadline exit was 124 after approximately 3.07 seconds including its one-second work budget. An unrelated witness process stayed alive. Killing the wrapper itself also left the child-held lock and unclean marker effective; after harness cleanup of the owned child, the replacement still refused the unconfirmed lane. The supplied natural-exit/leftover-descendant tests passed too. Evidence: `independent_runner.py`, `independent-runner.json`, per-case `runner-*/runner.log`, `python-pipeline.log`.
+
+3. **FIXED — validation/codec-wrapper exceptions leave a stale runtime GLB.** In actual Blender, saved only a scratch copy of the source with Muzzle removed, then invoked the production wrapper against its previous scratch export. It returned 1, removed only that destination, wrote FAIL, and retained the previous exact GLB/reports/receipt/inventory in history. Independently injected an exception at the delegated exporter boundary after actual source loading/validation: same correct outcome. A different failed destination containing explicit invalid bytes was retained as `failed-fp_thalune.glb` without overwriting the historical prior GLB. An unreadable scratch source kept its prior destination but retired current PASS/inventory and recorded `source_opened=false`. Peer source/export files remained unchanged. No production exporter or codec compression was run: the delegated-exporter exception is a controlled boundary injection, consistent with the original R1 reasoning and the no-regeneration constraint. Evidence: `blender-results.json` (`wrapper_failures`), `wrapper-failures/.../validation/history/`, `python-pipeline.log`.
+
+4. **FIXED — nine invalid bytes accepted alongside old PASS evidence.** Ran the actual inventory entry point in fresh scratch layouts over real inputs. The nine bytes `not a GLB`, a different actual export, a different actual source, the revision-base PASS export report, a copied other-people receipt, and a missing receipt were all rejected. In each case the previously current inventory was archived and no current inventory survived. Matching current real inputs passed. This disposition covers the original stale-evidence failure; the distinct fresh-validation false positive is the new P2 above. Evidence: `inventory-review.json`, `inventory-*/.../validation/history/`, `python-inventory.log`.
+
+**Independent positive evidence and scope**
+
+- Read plan 0.3, 0.4, 0.9.5, T01/T03/T04, relevant DESIGN 5/19/20 and art-bible anatomy, material and viewmodel-budget rules; full revision source changes, the worker response, original R1 report, runtime caller/loader/disposal/shared-rig boundaries, and shared art validation/export boundaries. Retained both source diffs as `revision.diff` and `full-task.diff`.
+- The focused suite passed **8 files / 101 tests**, using one Vitest worker with file parallelism and cache disabled. The real material fixtures use one CPU transcoder Worker. This includes actual compressed geometry/skin behavior, wrist/digit articulation, neutral sampled skin preservation and intended wrist translation across the nine viewmodel source/target pairs through existing `sharedRig.js`, plus existing meter/game tests. No T04 playback/state-machine work was added or claimed.
+- The two Python suites passed **14 + 6 tests**. Independent scratch controls were additional to those tests.
+- Exactly **one Blender 5.2.3 LTS process**, factory startup, background, `-t 2`, ran through the byte-identical copied runner with a 600-second deadline and one codec job. It completed in approximately 27.87 seconds. The wrapper's `--validate-only` path passed all three actual saved source/export pairs, with scratch reports/receipts only. Source checks exercised rig/axes/weights/packed-map/clearance constraints; missing Muzzle and wrong axes metadata were rejected for every actual source. The GLBs were decoded for generic export validation using the existing local KTX tool. No new production GLB, bake, LOD, render, or source save occurred.
+- Actual-byte inspection confirmed each current export has **48,000 triangles**, 35-joint skins, Muzzle/Grip_R/Grip_L, meshopt and quantization requirements, and embedded 2048×2048 KTX2 maps with 12 mip levels. Image counts are Thalune 11, Ixari 11, Ulgani 7. All file hashes/lengths match inventory and committed LFS identities.
+- Replayed the original full-consumer harness using real maps and rigs. `Multitool.update()` with sway/bob/kick, view FOV 66, world FOV 64/70/80 and 16:9/21:9 kept the actual muzzle, projected beam origin and view light aligned. Maximum observed projected error was **1.1102230246251565e-16 NDC**. Meter stepping was stubbed only in this geometry harness; the focused suite separately exercises meter behavior.
+- Exact disposal counts on successive valid loads remained Thalune 31 geometry/material/texture resources plus 16 skeletons; Ixari 33 plus 18; Ulgani 40 plus 35. The original delayed real A→B→A test passed, including simultaneous same-URL loads, with no active resource disposed or shared with retired scenes.
+- Selection still derives from `game.build.people`; the old runtime `multitool.glb` and load path are removed. No new gameplay authority or T04 clip-state machine is introduced. The remaining old authoring generator is in the explicitly deferred E14.T07 scope.
+
+**Integrity and provenance**
+
+Before and after checks independently verified the exact branch/HEAD/tree and a clean `git status --porcelain=v1`. SHA256 plus byte length for **all 12,855 tracked working files** matched exactly before versus after (`before.json`, `after.json`). An independent Git-object/LFS comparison also verified **763 protected files** against the revision base: six accepted body files, six viewmodel files, six previews, and 745 prior character review-packet files. Accepted bodies also remain unchanged against the full task base; changes under character renders are confined to the viewmodels directory. Current actual assets/previews are hydrated, not LFS pointers.
+
+The retained protection manifest agrees with the live bytes. All **36 original R1 reviewer evidence files** still match their retained hashes and archive contents (`retained-evidence-audit.json`). This review wrote only under the new `/tmp/p1-e05-t03-r2.f3fApA` directory. No repository source, documentation, asset, report, history or commit was changed. Scratch runner lock files/one intentionally retained unclean marker describe completed harmless controls, not a live Blender job.
+
+**Exact verification commands and exits**
+
+All commands below used cwd `/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8` unless the script explicitly redirects to its scratch layout. `commands.jsonl` records exact argv, cwd, environment, exit and elapsed time. Each line below was launched through `python3 /tmp/p1-e05-t03-r2.f3fApA/run.py LABEL ...`, which only captures its output and sets:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1
+OMP_NUM_THREADS=2
+OPENBLAS_NUM_THREADS=2
+VECLIB_MAXIMUM_THREADS=2
+ART_KTX_JOBS=1
+TMPDIR=/tmp/p1-e05-t03-r2.f3fApA/tmp
+```
+
+All thirteen recorded outer commands exited **0**:
+
+```sh
+python3 /tmp/p1-e05-t03-r2.f3fApA/audit.py before
+pnpm exec vitest run packages/client/src/entities packages/client/src/exosuit.test.js packages/client/src/Game.test.js --maxWorkers=1 --no-file-parallelism --no-cache
+python3 packages/tools/blender/characters/viewmodels/test_pipeline.py
+env KTX=/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx python3 /tmp/p1-e05-t03-r2.f3fApA/runner-copy/packages/tools/blender/characters/viewmodels/run_cpu.py /tmp/p1-e05-t03-r2.f3fApA/blender-child.log 600 /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -t 2 --python-exit-code 1 -P /tmp/p1-e05-t03-r2.f3fApA/blender_review.py
+python3 /tmp/p1-e05-t03-r2.f3fApA/independent_runner.py
+python3 /tmp/p1-e05-t03-r2.f3fApA/inventory_review.py
+pnpm exec tsx /tmp/p1-e05-t03-r2.f3fApA/material_review.mjs
+pnpm exec tsx /tmp/p1-e05-t03-r2.f3fApA/material_failure.mjs
+pnpm exec tsx /tmp/p1-e05-t03-r2.f3fApA/full_consumer.mjs
+pnpm exec tsx /tmp/p1-e05-t03-r2.f3fApA/actual_stale.mjs
+python3 /tmp/p1-e05-t03-r2.f3fApA/artifact_audit.py
+python3 packages/tools/blender/characters/viewmodels/test_inventory.py
+python3 /tmp/p1-e05-t03-r2.f3fApA/audit.py after
+```
+
+Also exit 0: `git status --porcelain=v1`, `git branch --show-current`, `git rev-parse HEAD 'HEAD^{tree}'`, and `git diff --check 45c172a102f1944ff00be0b6e5006eef13fd793b HEAD`. Expected inner wrapper failures returned 1; runner interruption/deadline codes and the intentional killed-wrapper -9 are recorded in the JSON evidence. The mismatched-pair validator and inventory wrongly returned success as detailed above. No unexpected test failure was suppressed or converted into a passing result.
+
+The scratch fixture scripts deliberately use new directories and should be replayed with a fresh output root, not over this retained evidence. Original R1 scripts were copied, never edited in their original directory. For the Basis failure reproduction only, its final assertion was updated to the required fixed outcome; the original production-loader failure mechanism was retained.
+
+**Limits and parent gates**
+
+This verdict covers source and CPU behavior only. CPU decoding, source validation, sampled animation math and disposal do not prove GPU upload, appearance, performance or actual browser/native rendering. No visual acceptance is inferred from the retained CPU previews. No browser, native capture, GPU workload, render, service, database, grant, asset regeneration, push, PR or merge was run. No independent full-project typecheck/lint/full smoke was performed; worker reports for those are not promoted into this review's evidence. The codec exception was injected at the delegated-exporter boundary; actual compression execution was not rerun. T04 clip playback/state machine, parent-owned full smoke, native visual review/blind grading, and merged verification remain outstanding parent gates. No merge is authorized.

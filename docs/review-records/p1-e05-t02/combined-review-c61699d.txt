@@ -1,0 +1,84 @@
+VERDICT: **PASS — bounded SOURCE/CPU integration and binding review**
+
+Task: P1.E05.T02. No new blocking finding or severity is substantiated. Both authorization flags remain false. This review grants no launch, merge, native qualification, whole-animation visual acceptance, or E05.T04 gameplay acceptance.
+
+Reviewed worktree: `/Users/andreyyurlov/.t3/worktrees/space/t3-11167406`
+
+- Branch: `codex/task/P1-E05-T02-thalune-reel-candidate`
+- HEAD: `c61699dcde61ff9dee699be7e0b7d42ae06ff326`
+- HEAD tree: `1b67a7289191a8dde2f28e68808e704dc51ee0b4`
+- Review base: `c8f2103ae22af6f3479cfa81716e343831ec7065`
+- Base tree: `2f498ab6a5f6ca146b14aa8620eb682a2116aefd`
+- Library donors: `07768bf14fce30c1e78db6750f44d8fbd561f4b5`, `83b145e9d6dc845aa6c7706ada69019fc813b202`
+- Integrated commits: `ebdcf455096a1d74e0df204e3c96a702e58b6891`, `afb3921ae59616ab5b555b771cd9dc1a914d78f2`
+- Combined library tree: `ac859db599e124c7d91d462e329deae5b9d91e37`
+- Independent evidence directory: `/tmp/p1-e05-t02-integration-review-FD0KTqwT`
+
+Below, A means `packages/tools/blender/characters/animations/` and C means `A/thalune-run-candidate/`. Read plan 0.3, 0.4, 0.9.5 and E05.T01/T02/T04; the combined report, manifests, provenance and proposal; the supplied capture R3, library R2 and fauna R2 reports; the changed binding/control code and relevant unchanged caller, receipt, scheduling and helper boundaries. None of plan 0.9.5's mandatory REVISE conditions applies to this bounded source unit. Whole-task art and merged runtime verification remain outside it.
+
+**Fresh verification results**
+
+- 180 supplied candidate controls PASS: 18 Node, 108 Python, 20 evidence, 30 terminal and four actual disabled CLI refusals.
+- 15 cross-lane controls PASS: 12 Python controls using real retained helper bodies and three Node after-bytes publication controls. The Node report was freshly produced before the Python dispatcher consumed its exit result; no retained worker report was substituted for this run.
+- The prior independently authored R3 matrix passes all 29 cases against current byte-identical source. Only its scratch import path changed. These are replayed prior-independent cases, not 29 newly authored cases or native tests.
+- Actual library: 28/28 tests, two files, one Vitest worker, 126 clip/people pairs across the three accepted body exports and four LODs. Fresh `animation-proof.json` and `shared-rig-proof.json` contain the CPU measurements.
+- Exactly one factory-background Blender process, `-t 2`, autoexec disabled, validates 42 saved actions and ten export-boundary negative controls. Nine receipt-ownership scenarios pass within that same process. No render, bake, source save or successful export. Wall time 14.756 s; sampled root-process peak RSS 559,349,760 bytes. Limits: 300 s CPU/wall, 64 MiB per file, 8 GiB sampled root RSS stop threshold; this is not a cohort RSS qualification or OS memory quota.
+- Fresh route and browser-resolution outputs exactly equal the frozen records. Actual `caller.verify()` passes under blocked Popen and import_module, with zero calls and no lifecycle-helper imports. Actual `caller.py --preflight` also passes: 378 motion frames, eight stills, five planned jobs, zero runtime jobs.
+- `git diff --check c8f2103ae22af6f3479cfa81716e343831ec7065..HEAD` passes. Git status is empty before and after; HEAD/tree/branch are unchanged. All 1,014 tracked files in the recorded source/library/body/review/plan boundary retain their bytes, sizes and mtimes.
+
+**Integration, identities and preservation**
+
+Independently derived the donor file set from the donor commits, rather than trusting the preservation list: all 65 files have identical donor/current Git blobs. Both cherry-pick messages retain their donor provenance. The four animation data blobs are identical at the capture base, donor and current head. The two animation binary payloads are already hydrated locally and match the committed LFS SHA256/size identities; this review performs no hydration or LFS download. Seven readiness asset identities, including the three actual body exports, match current bytes.
+
+Verified all 30 candidate-index entries, 189 source-audit file entries and 260 combined-manifest entries, including sizes. Verified all 2,342 readiness source/data bindings and ten software bindings. The installed manifest's 2,308 rows, 25 package roots and 58 reported optional/peer absences match an independent installed dependency traversal. The absent entries are explicitly optional-or-peer observations, not a claim that they were installed or that native execution is qualified.
+
+All 26 source files collected by the freezer are covered. The actual Node, tsx import, esbuild binary, Playwright bundle and selected headless browser, Python launcher/kernel executable, Pillow code/native libraries, ffmpeg/ffprobe, caffeinate, launchctl, ps and kernel identities match. Seven distinct executable paths appear in the cohort map; the Python launcher and kernel roles share one binary. A fresh isolated invocation of the bound Python 3.12.14 reports the same launcher and `ps comm` kernel executable. Neither media binary nor browser is launched. The no-execution resolver's process-call arrays remain empty. The logical libproc dyld-cache identity is accurately described as lacking a standalone file/hash qualification.
+
+All 21 original recovery rows and both additional recoveries match their source Git content; exact-mode destinations match their source/payload hashes. All 119 retained candidate/body hashes match. Protected source/export/review tree identities equal the base; 756 protected working files match base bytes or their base LFS payload identity. The only modifications to pre-existing candidate files are freeze.py, readiness.json, candidate-index.json and source-audit.json. Caller, entry, playback, work schedule, inspectors/budgets and four lifecycle helpers have no base-to-head changes. Outside A, the client source delta is limited to the reviewed library test and clip fixture; server, shared, capture/screens and plan/progress/decisions have no delta.
+
+`bind-local.py` and `freeze.py` were inspected but not rerun: they write frozen artifacts. Their output closure was independently recomputed/read and hashed, and the pure resolvers were actually rerun. No review step regenerated the pinned readiness/index/audit, source or assets. All prior failure/spent evidence remains unchanged.
+
+**Disposition of prior findings and cross-lane evidence**
+
+Capture R1 P2, masking the original primary error / losing raw release observations: **FIXED, remains fixed**. Fresh evidence and terminal suites plus the 29-case replay exercise actual main → dispatcher → adapter paths with inert native boundaries. Original primary, separate cleanup/persistence failures, returned observations, audit observations and exception-attached details survive. `C/inspector.py:35` preserves structured error details; the caller's registered handle retains the receipt even if its final write fails. The prior tests' fake timing is not used as evidence of deadline behavior.
+
+Capture R2 combined terminal proof-write failure skipping fallback: **FIXED, remains fixed**. `C/release_accounting.py:86` attempts proof and packet delivery independently. Small proof failures retain full observations in the available packet. Oversized failures keep full observations in memory and a bounded partial envelope without claiming complete persisted proof. Both file and both stream failures retain the complete in-memory result on TerminalDeliveryError; they do not claim durability. Fresh terminal controls and the R3 matrix cover those outcomes. Earlier file/stream snapshots can precede their own write outcome; the returned result/exception and exit remain the final qualification.
+
+Library R1 P2, overwriting existing evidence: **FIXED, remains fixed**. `A/export_saved.py:235` reserves a fresh directory before source hashing/opening; `:270` and `:273` use exclusive `open('x')`. The real main rejects omitted report-dir, existing empty/nonempty/prior-receipt directories, directory symlink, dangling symlink and regular file. A source-read sentinel confirms these refusals precede source access. Inodes/modes/mtimes/link targets/file hashes remain unchanged. Fresh validation/selftest succeeds; reuse refuses before a source read and preserves both receipts. The R2 late-write race cases were inspected, not rerun here. The current usage note supplies a unique parent plus nonexisting child and finite validation bounds, resolving the historical README command advisory without editing it.
+
+Fauna R2-A, swallowed cleanup deadline: **not reproduced in this caller**. Fresh SIGALRM fires inside blocking capture-receipt, observer-receipt, archive-observation write and private-TMP copy calls, using actual retained deadline/wait/archive/allocation/preservation bodies. `C/caller.py:153` records and rethrows persistence errors. A capture deadline can enter a separately armed cleanup phase, as intended. A cleanup deadline is recorded at `:227` and unwinds that phase: no subsequent archive/TMP release or later capture/validator dispatch occurs. After-expiry `launchctl print` events are read-only final audit observations, not resumed release work. All timers are disarmed at test exit. No nullcontext is used for these four timed cases.
+
+Fauna R2-B, successful snapshot authorizing a successor after publication failure: **not reproduced; that predecessor-file grant consumer is absent here**. Three actual Node runEntryStage cases write bytes and then fail at entry-result, sequence-index or artifact-index. Each returns HOLD/accepted=false and the entry exit decision is 1. The fresh result is fed into the actual Python dispatcher, which stops after one job. A final adapter receipt after-bytes failure likewise stops after one job. Terminal proof after-bytes failure leaves an earlier successful snapshot but final HOLD/exit 1, and the independent packet fallback is attempted. This is not relabeled as native CLI end-to-end qualification: Node uses the actual stage result/exit expression with an inert runtime; Python uses actual main/dispatcher with an inert StationJob boundary.
+
+Fauna R2-C, loss of exception-carried partial bytes/unknown allocation facts: **not reproduced**. Actual TimeoutExpired objects carry non-UTF8 output/stderr and nested unknown fields; retained Python repr strings round-trip through literal_eval to the exact original bytes. Real create_private_tmp admission-write failure plus failed rollback retains path, inode/UID, released=false and cleanup error on the exception, even when the local allocation call never returns. The allocation stays intact. Both terminal files and both streams failing preserve those details on TerminalDeliveryError.result. All native command/process boundaries are inert; no real release/unload operation occurs.
+
+The source R1/R2 failure state was not reconstructed on historical commits in this round. The supplied reports and immutable source/provenance were checked, and the corrected current paths were freshly exercised. No production RED→GREEN claim is made for the cross-lane tests.
+
+**Proposal coherence and limits**
+
+The ordered work is exactly two Thalune run_forward reels at LOD0/LOD2, 189 frames each: 15 lead-in + three 48-frame loops + 30 end-pose frames, at 60 Hz. Eight stills remain at 0.4 seconds under noon-lush, night-exotic, open-space and noon-lush wireframe for both LODs. All three capture releases precede both independent validators; failures stop later dispatch. Media, inspection, native-log and release-receipt paths are distinct. One source frame remains in flight until its ACK. Full observations, render/pose correspondence, order/count/PTS, RGB/RGBA hashes, opaque alpha and surplus-frame refusal remain covered by source controls, not by actual native media in this review.
+
+Independently reconstructed 437 successful packet paths and matched the proposal exactly, without duplicates. Fresh synthetic entry/inspector controls produce the same 436 pre-terminal paths; integration-result.json is the remaining terminal record. Proposal configs agree on video, 189 count, 39,354,368-byte reel limit, ffmpeg/ffprobe identity and separate output/raw directories. Still limit is 12,582,912 bytes; observation limit 262,144; metadata 361,234,432; total file cap 512; failure/terminal reserves 131,072 each. Atomic replacement peaks remain counted. Capture/cleanup limits remain 600/60 s; probe 30 s and RGB/RGBA decode 120 s each; media threads remain one. Archive caps are post-release acceptance bounds.
+
+The capture unit is 540,606,464 bytes. Existing capture/historical accounting reconciles to 19,493,289,984 bytes. The proposed new fixture is 106,463,232 bytes per copy (one reel ceiling plus 64 MiB), four copies plus two 1 GiB archive slots: another 2,573,336,576 bytes, giving 22,066,626,560 combined. Existing historical allowances and capture admission are retained. At 2026-11-07T05:12:14.378426Z, fresh free space was 103,796,805,632 bytes, an arithmetic margin of 81,730,179,072. This is a timestamped observation, not future admission or an enforced quota.
+
+Unimplemented prerequisites are explicitly and coherently disclosed at `C/revision-03/NATIVE_PROPOSAL.md:55`, `:61` and `:65`: the native-only 189-frame producer/owned grant runner, whole-cohort 8 GiB RSS measurement/stop mechanism, and exclusive Vite-cache ownership/retention. The historical 132-frame runner is not offered as a substitute. These are future implementation/admission gates, not failures of a current executable claim. Actual native inheritance/helper behavior, lossless encode/dual decode, current resource checks, explicit parent authorization and later visual grading remain required. Source hashes and the Blender root RSS sample do not satisfy them. All six prospective paths and the capture future-attempt/grant/consumption identities remain absent.
+
+**Commands and evidence**
+
+These review drivers retain full argv, exit codes, stdout/stderr or dedicated logs. They are one-shot scripts whose fresh paths must not be reused to overwrite evidence; use a new scratch parent for another review.
+
+```sh
+python3 -B /tmp/p1-e05-t02-integration-review-FD0KTqwT/verify.py initial
+python3 -B /tmp/p1-e05-t02-integration-review-FD0KTqwT/run-controls.py
+python3 -B /tmp/p1-e05-t02-integration-review-FD0KTqwT/run-blender.py
+python3 -B /tmp/p1-e05-t02-integration-review-FD0KTqwT/run-library.py
+python3 -B /tmp/p1-e05-t02-integration-review-FD0KTqwT/binding-proposal.py
+python3 -B /tmp/p1-e05-t02-integration-review-FD0KTqwT/verify.py final
+```
+
+`control-commands.json` records each exact pinned Node/Python control command. `scratch-source-identities.json` identifies the source snapshot. `timed12.json`, `publication3.json`, `terminal30.json`, `evidence20.json`, `independent-results.json` and corresponding logs retain the boundary results and fresh scratch-root locations. The supplied timed fixture uses its own unique `/tmp/t02-time-*` directories; those remain preserved, and copies are retained under `timed-fixtures/`. All other review outputs are within this report root. `blender-command.json`, `receipt-ownership.json`, `blender.log`, `library-command.json`, both fresh library proofs, `integrity.json`, `binding-proposal.json`, resolver outputs, Python identity and `before.json`/`final.json` provide the remaining evidence.
+
+Vitest used an external plain-JS configuration, `--configLoader native`, a scratch cacheDir and one worker so cache/config output did not target the reviewed checkout. Maximum concurrent test workers was two; no delegated worker was started. Native/browser/media/grant/service/database execution, hydration, export/regeneration, push, PR and merge were not performed. Full lint/typecheck/build/smoke, merged verification and visual grading were not rerun; the worker's retained records do not become fresh reviewer results.
+
+PASS applies only to the pinned integration/binding unit and its CPU evidence. Keep both flags false; this review cannot grant launch.

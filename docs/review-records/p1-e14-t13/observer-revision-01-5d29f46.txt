@@ -1,0 +1,98 @@
+TASK: P1.E14.T13 — source-only response to independent REVISE at 07a3220bb
+STATUS: DONE for this bounded revision. Independent re-review and all runtime/performance authorization remain with the parent.
+
+SUMMARY: Fixed all five independent source-review findings and the reviewed late-reply mutability limit. The observer cannot publish observed after an empty rejection or abort; completion requires the full fixed work/receipt packet. Raw counter, enum and temporal contradictions now fail before subsequent controls. History parity is checked across warm-ups. The gap rule now uses the parent's additive 5ms tolerance. Returned host facts are retained during cancellation/drain. Published packets and report copies are detached, with an explicit unsettled-port cutoff rather than a final settlement claim.
+
+EXACT PINS:
+- Worktree: `/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8`.
+- Branch: `codex/task/P1-E14-T13-trace-observer`.
+- Base: `07a3220bb5c46114006322a45503b9dcb79affce`; base tree: `9bf4e042307c06cadf5aa590f9963016e15cfaf6`.
+- New HEAD: `5d29f46f4bc3a29e027bcca192fbff3d61259176`; tree: `bcc5e0361d7e6111f30fc811d236d6c87963bdba`.
+- Exactly one new commit: `P1.E14.T13: close observer review failure boundaries`.
+- The checked source tree equals the committed tree; SHA-256/Git blobs for all changed files are in `checked-source.json` and `revision-results.json`. Final worktree status is clean.
+- Prior recovery remains `293a87dff4abf7b4e7a6ac3ce65eae5c6d539ea5`. Retained task branch remains `7fb34e4eeeb320cb591982d524a80abe1842dfc8`. Retained reviewed checkpoint remains `1479d0ebaa79cd546eddfa1e0d6f029c77064af8` and implementation `907439e9c5984f756a42eb32d0a69631885a84b7`.
+
+FINDING DISPOSITION:
+- **R1 P1 — FIXED:** Failure flag independent of message; null-specific reply errors; full ordered packet/receipt/work invariants required before observed. RED: 4 false-complete cases resolve observed, including zero work. GREEN: 4 supplied cases reject failed; new actual dispatcher tests cover empty abort/reject/deadline/reply failures.
+- **R2 P2 — FIXED:** Fence-only work counters remain equal; raw WebGL2 enums match their status labels; every temporal field has its actual numeric/string/vector/history-target shape. RED: Fence draw increment, WAIT_FAILED mislabeled success, malformed history/blend observed. GREEN: All supplied adverse records fail before next preparation; matching ALREADY_SIGNALED succeeds.
+- **R3 P2 — FIXED:** Both frameIdx and histIdx parity checked across warm-up boundaries. Positive fixtures now advance natural history. RED: Step 3 resets histIdx despite correct frameIdx and 90 warm-ups. GREEN: Reset fails at step 3; 90/91/600 warm-ups per preparation accepted with correct parity.
+- **R4 P2 — FIXED:** Each same-sign gap must exceed max(onRange, offRange) + 5ms; fixed source comment and disabled-proposal prose match parent decision. RED: on=[36..40], off=[30..34], 8ms fences falsely observer-cost-issue. GREEN: Supplied example inconclusive; both signs tested below, at and above 9ms threshold; neither outcome qualifies budget.
+- **R5 P2 — FIXED:** Before/after host replies retained inside owned operation before cancellation checks, including drain-time replies. RED: Returned after-host facts discarded by concurrent cancellation. GREEN: Both before/after replies retained for concurrent abort and deadline/drain cases.
+- **Late-reply limit — inspected and corrected:** the supplied adverse probe reproduced `packetChangedAfterReturn:true` and disagreement with the persisted snapshot. It now reports `packetChangedAfterReturn:false`, `reportMatchesLateEvidence:true`, and no post-cutoff sink writes. New barrier-driven prepare and host tests explicitly assert `ports-unsettled`, `finishedMs:null`, `requiresController:true`, stable returned/report snapshots, and no late sink mutation. Replies arriving during the finite drain remain retained. Replies arriving after cutoff are excluded from the snapshot; unresolved port work remains the external controller's obligation.
+
+FILES CHANGED:
+- `packages/tools/src/capture/browser-work-probe.ts`
+- `packages/tools/src/capture/browser-work-trace.ts`
+- `packages/tools/src/capture/trace-observer-report.ts`
+- `packages/tools/src/capture/trace-observer.test.ts`
+- `packages/tools/src/capture/trace-observer.ts`
+
+VERIFY:
+- PASS: original 283-test set plus 49 new actual-boundary controls, **332 tests / 15 files**, with `--maxWorkers=2 --no-cache --fsModuleCachePath /tmp/p1-e14-t13-revision.cxw1puf2/vitest-cache --configLoader runner`. Full command and exit status are in `revision-results.json`; output is `full-tests.log`. The observer/entry subset is 99 tests.
+- PASS: `pnpm exec tsc -p packages/tools --noEmit --incremental false` and equivalent client check (`tools-typecheck.log`, `client-typecheck.log`).
+- PASS: scoped ESLint and Prettier check of the five changed files; uncommitted and committed `git diff --check` (`scoped-checks.json` and corresponding logs).
+- PASS: disabled `trace-observer.ts --proposal` command; metadata retains readiness disabled, runtimeAuthorized false, null binding/grant and historical FAILED/accepted:false (`disabled-proposal.log`).
+- RED before source fixes: copied `false-complete.mts` exited 1 and all four empty-failure cases resolved observed; copied `contract-regressions.mts` exited 1 with six failed assertions. The adverse probe independently reproduced the late evidence mutation. Raw output is under `red/`.
+- GREEN: both supplied assertion scripts exit 0 with the same assertions/fault mutations; all six contract checks pass. The positive external fixture's two histIdx expressions were corrected to natural 90-frame warm-up parity so the threshold example can complete valid work after R3. The in-repository positive fixture was corrected the same way and also covers odd warm-up parity. Output-path redirects and this fixture-only correction are documented in `reproduction-provenance.json` and `green-reproduction-provenance.json`. Originals are preserved byte-for-byte at their original path and as copies in this evidence directory.
+- PASS source isolation: old trace/probe prefixes are byte-identical to the reviewed base; every other recovered source is unchanged, including entire Review, renderer, native probe, standard perf/warm-up and recovery manifest. No orchestration docs changed. `unchanged-proof.json` records the checks.
+- No browser, native recorder, GPU, render, Blender, services, DB, capture, source-asset hydration or large historical trace reads occurred. Tests use CPU fake ports and the previously authorized Node/VM serialization fixture. No grant, push, PR, merge or new runtime controller was created.
+
+DECISIONS:
+- Failure → use an independent flag; keep the original possibly empty message as evidence → a message's content can never decide success. Full work/receipt/summary invariants gate observed.
+- WebGL raw statuses → reconcile 37146/37147/37148/37149 against already-signaled/timeout-expired/condition-satisfied/wait-failed → local TypeScript DOM declarations confirm the WebGL2 constants; the existing gpu-completion source remains unchanged.
+- Temporal shape → require literal binary histIdx/history-valid uniform, finite scalar blend, finite jitter pair, typed key/planet observations and two 960x540 history-target pairs → the unchanged standard 1920x1080 AtmospherePass uses half-resolution history targets. Warm-up/control toggles must preserve parity.
+- Parent-resolved threshold → **every same-sign paired gap must satisfy abs(gap) > max(onRange, offRange) + 5ms**. Equality fails the observer-cost criterion. Existing stable-similar, unstable and long-empty-fence criteria remain; the [36..40]/[30..34] example is inconclusive. The old max-based worker prose is superseded by this report and the corrected disabled-proposal/source prose; old evidence reports were not rewritten. Parent owns the orchestration decision log.
+- Port settlement → finite source-port waiting cannot prove physical process/native settlement. A pending port yields a failed, detached cutoff snapshot with no finished time and an explicit external-controller requirement. Even `ports-settled` means owned promises settled, not that a native process was verified. No source code here grants or starts runtime capacity.
+
+OUT OF SCOPE FOUND:
+- No blocker remains for this source revision.
+- Parent independently re-reviews this new head before any separate disabled binding, fresh grant, controlled load/capacity, GPU reservation or native/runtime authorization. Existing callers and consumed grants are not made usable.
+- Historical cloud03 remains FAILED / accepted:false. Offline reclassification remains offline evidence, not a fresh performance run. Full P1.E14.T13 limiter/optimization and unprofiled three-light 16.67ms qualification remain INCONCLUSIVE.
+
+ARTIFACTS:
+- Appendix C.2 report: `/tmp/p1-e14-t13-revision.cxw1puf2/report.md`.
+- Machine-readable result and exact checks/pins: `/tmp/p1-e14-t13-revision.cxw1puf2/revision-results.json`.
+- Original review/commands/reproductions: this directory; original user directory untouched.
+- RED and GREEN outputs: `/tmp/p1-e14-t13-revision.cxw1puf2/red/` and `/tmp/p1-e14-t13-revision.cxw1puf2/green/`.
+- Checked source and preservation proof: `checked-source.json`, `unchanged-proof.json`.
+- Final hashes: `delivery-manifest.json`. No runtime or visual artifact is claimed.
+
+Expected false-complete RED, last 20 lines:
+```text
+  }
+]
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Aborted/failed dispatcher must never resolve observed
+
+4 !== 0
+
+    at <anonymous> (/private/tmp/p1-e14-t13-revision.cxw1puf2/red/false-complete.mts:18:8) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 4,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.12.1
+```
+
+Expected contract RED, last 20 lines:
+```text
+FAIL fence-draw AssertionError [ERR_ASSERTION]: Missing expected rejection (ObserverError).
+FAIL poll-wait-failed AssertionError [ERR_ASSERTION]: Missing expected rejection (ObserverError).
+FAIL malformed-history AssertionError [ERR_ASSERTION]: Missing expected rejection (ObserverError).
+FAIL history-reset AssertionError [ERR_ASSERTION]: Missing expected rejection (ObserverError).
+FAIL range-plus-five-ms AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'observer-cost-issue'
+- 'inconclusive'
+
+FAIL retain-returned-host-on-abort AssertionError [ERR_ASSERTION]: returned raw host must be retained
+6 contract failures: fence-draw, poll-wait-failed, malformed-history, history-reset, range-plus-five-ms, retain-returned-host-on-abort
+```

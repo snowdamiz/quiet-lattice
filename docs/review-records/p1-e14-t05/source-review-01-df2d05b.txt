@@ -1,0 +1,131 @@
+P1.E14.T05 — fresh independent SOURCE/CPU review
+VERDICT: REVISE (six reproduced findings). No visual grade.
+
+TARGET / PROVENANCE
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f
+Branch: task/P1-E14-T05
+HEAD: df2d05b1cc263c04599ab67334187dd807ebe186
+Tree: 4f806e4b131d8330289e678fef9c26655b9ace9c
+Base: f7f1347d1ba36b702000471d462dd7e9475dbb8d
+Base tree: 5cca39d788ed51aca8ebed574dc3c3756e9e7517
+Review evidence: /tmp/t05-sourcecpu-df2d05b-ppaimxws/
+Helper's independent report: /tmp/t05-helper-review-df2d05b1-NrUoxel7/REPORT.md
+
+Read plan 0.3, 0.4, 0.9.5 and T05, DESIGN 19, and art-bible. Reviewed the complete 177-path base-to-HEAD diff, all 14 added Python/JS sources/tests, hydrated manifests/validation records/logs, and the actual existing source/export bytes. All 177 working files match their committed content, including the LFS OID and size for every pointer-backed entry. No new LFS hydration. Binary previews were hash-inventoried, not visually graded. No shared artlib/families/library/export_flora/client-runtime changes exist in this diff.
+
+The worker preserved the stock FAIL honestly. The submitted source/export bytes pass the bounded content checks below. REVISE concerns task-local validation, failure cleanup and evidence durability, not a claim that the submitted GLBs currently have corrupt masks or wrong geometry.
+
+FINDINGS
+
+R1 — P1 — CPU cancellation releases the lane before its child is reaped.
+packages/tools/blender/flora/run_cpu.py:64-78 (especially 66 and 75).
+SIGTERM has no handler; process termination skips finally. The child was started in a new session and survives, while the kernel releases the wrapper's flock. A second SIGINT during the cleanup wait also escapes it; that wait catches only TimeoutExpired.
+Actual repro, independently rerun with real processes and a fake Python workload in place of Blender:
+  single SIGINT: exit 124, child dead, lock reusable, EXIT receipt present;
+  timeout: exit 124, child dead, lock reusable, EXIT receipt present;
+  SIGTERM: exit -15, child ALIVE, lock reusable, no EXIT receipt;
+  second SIGINT after child acknowledges cleanup TERM: exit -2, child ALIVE, lock reusable, no EXIT receipt.
+Impact: a second CPU run can start while the previous owned workload still runs/writes.
+Minimal fix: handle catchable termination signals, defer repeated interruption during process-group terminate/escalate/reap, write a terminal result, then release ownership. Do not claim SIGKILL can be caught. Cover both failure cases alongside the passing single-interrupt/timeout controls.
+Evidence: helper-repro/runner_results.json; helper-repro/sigterm/driver.log; helper-repro/double_sigint/driver.log. All fake process groups were cleaned up by the harness.
+
+R2 — P2 — a rejected lock contender destroys the incumbent's log.
+packages/tools/blender/flora/run_cpu.py:52-53.
+The compound with opens log.open("w") before flock(...LOCK_NB). A contender with the same --log truncates the file before it learns that it does not own the lane.
+Actual repro: incumbent alive, private lock held, log 171 bytes; contender exits 1 with BlockingIOError, log becomes zero bytes, incumbent remains alive and retains its lock. (The helper's first run measured 172 bytes; the PID text differs.)
+Minimal fix: acquire lane ownership before touching the log, then exclusively create a unique attempt log or reject an existing destination. Preserve older completed logs as well.
+Evidence: helper-repro/runner_results.json and helper-repro/lock_contention/contender.log.
+
+R3 — P2 — missing/unreadable sources can retain stale runtime bytes; missing input can report success.
+packages/tools/blender/flora/export_saved.py:119-126.
+The wrapper discovers only existing files and inherits the shared exporter's handling unchanged. artlib/export.py:99-103 intentionally does not drop stale output for report.error, and :62-64 returns zero for no sources. These are unchanged dependencies, but the new task-local entry point does not enforce the task's requested cleanup contract.
+Actual exact-wrapper/real-orchestration repros, Blender operations substituted at their boundary:
+  actual LFS-pointer source fixture: exit 1, seeded stale runtime bytes survive;
+  corrupt source load failure: exit 1, seeded stale bytes survive;
+  absent source: exit 0, seeded stale bytes survive.
+Positive controls: ordinary failed source checks, export exception, failed export checks all exit 1 and remove stale runtime bytes.
+Minimal fix within task ownership: preflight the complete expected three-source set, fail for absent/unreadable input and remove/quarantine that input's owned runtime result, including discovery and exception paths. No global family/core repair is required for this guard.
+Evidence: helper-repro/export_results.json and export_lfs_pointer/export_corrupt_source/export_missing_source run logs.
+
+R4 — P2 — failed export retries overwrite earlier proof.
+packages/tools/blender/flora/export_saved.py:125-126; dependency artlib/export.py:98,132,136.
+The adapter forwards a fixed --report-dir. JSON writers truncate fixed filenames and rejected-GLB copyfile replaces the earlier rejected bytes.
+Actual repro: all five failed export paths overwrite a seeded prior source PASS receipt. The failed exported-artifact validation path also replaces the previous .rejected.glb bytes. This is distinct from retaining stale runtime output: failure evidence itself must remain attributable to its original attempt.
+Minimal fix: allocate/refuse a per-attempt evidence directory before export, use immutable log/report/rejected-artifact paths and record their digests in the ledger. Apply the same rule to fixed final validation reports; do not overwrite older evidence during a failed retry.
+Evidence: helper-repro/export_results.json; helper-repro/export_export_check_fail/run.log and receipts/.
+
+R5 — P2 — PASS inventories do not establish the validated source/export pair and can remain stale after failure.
+packages/tools/blender/flora/validate_exports.py:23-35,71-73.
+assets/renders/flora/t05/export_manifest.json:4-7 describes only export path/hash/bytes/status. The script hashes the source before validation, the export after validation, and never records a source hash or immutable receipt identity in the export PASS entry. The source argument in core.validate_path supplies scale-reference validation; it is not a source/export content-equivalence check.
+Real-asset repro using a byte-identical copy of validate_exports.py, existing assets only, and scratch paths:
+  all three real .blend inputs and the real source_manifest remain unchanged;
+  the scratch non_tree_foliage.glb pathname points to the existing non_tree_stone.glb;
+  the task validator returns exit 0 and EXPORT_VALIDATION_PASS 3 files;
+  its new manifest labels the foliage path PASS with stone SHA a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9.
+No source or asset was regenerated. Production assets were only read. This is a real full-validator false pair acceptance, not a mocked geometry pass.
+Additional deterministic boundary repros, independently rerun:
+  a failed revalidation overwrites final receipt to FAIL but leaves prior manifest PASS intact, with hash still matching current bytes;
+  replacing the export after the validator reads it causes PASS to contain the replacement's unvalidated hash;
+  replacing the source during validation is not caught by a post-validation source check.
+The 66-entry SHA inventory matches current bytes but covers none of the source/export manifests, verification ledger, validation receipts, or logs. The ledger contains command/exit/path and failure text; the reports contain path/time/status without content hashes. These separate current-byte inventories cannot bind an earlier PASS to an actual source/export pair after replacement/retry.
+Minimal fix: snapshot both inputs, prove their source-to-export naming/geometry/mask relationship through the actual loader, verify both hashes unchanged afterwards, and publish one successful record with source digest, export digest, tool/run identity and immutable report/test receipt digests. Preserve past evidence while updating current/latest status on failure. The fresh loader test must consume the audited source manifest from the same run; self-hashing current files is insufficient.
+Evidence: pair-fixture-proof.json; pair-blender-run.json; pair-blender.log; pair-fixture/assets/renders/flora/t05/export_manifest.json; helper-repro/provenance_results.json.
+Current submitted files are correctly paired in this review's fresh content checks. The failure is in the durable qualification mechanism.
+
+R6 — P2 — the task-local material recognition is broader than the exact map-times-validated-mask graph.
+packages/tools/blender/flora/material_trace.py:14-35.
+The predicate examines the upstream Mix node without validating the connected result socket, and accepts an explicit layer named Color without proving it is the mask separately checked on every material user.
+Actual Blender 5.2.3 in-memory mutations of the imported shipped stone GLB, with full artlib checks:
+  (a) wire the RGBA Mix's disabled VALUE result output to Principled Base Color: original trace is procedural, task trace is image, full task-local report is PASS;
+  (b) retain the original valid active mask under VerifiedMask, add a black CORNER Color layer, point the vertex-colour node explicitly at Color: active-mask naming checks pass, task trace is image, full task-local report is PASS. This is an unvalidated, zero-weight material multiplier.
+The shipped graphs themselves use the expected active colour mask and enabled colour result; their task-local reports pass legitimately for these bytes. The existing partial-factor/wrong-name/missing-image controls reject as intended. Nevertheless the helper weakens the material acceptance contract for the two real malformed controls above.
+Minimal fix: require the enabled RGBA result actually connected to Base Color and establish that the referenced named/active colour attribute is the validated/exported COLOR_0 on each material user. Do not equate a string name with that identity. Retain full image, UV, PBR, mask, compression and mip checks. Add both full-validator regressions.
+Evidence: cpu-results.json controls; wrong_mix_output.json; inactive_named_mask.json; audit_cpu.py.
+
+STOCK CLASSIFIER DISPOSITION / PARENT FOLLOW-UP
+The current imported image multiplied by active COLOR_0 at factor 1 is a legitimate glTF importer pattern. Fresh unpatched artlib validation reproduced exactly 3/6 PASS overall: all three sources PASS, all three exports FAIL only for base colour (procedural), 4/6/3 material failures in foliage/resources/stone respectively. No other stock failure was suppressed. The local predicate produces 3/3 export PASS but has R6's over-acceptance.
+A minimal separate parent-owned shared-pipeline unit can add context-aware recognition of this exact importer pattern to materials validation, including enabled RGBA output, full unlinked factor, actual image route, and mask identity checks. Preserve image variation/missing maps and every other material/geometry rule. Add positives for current three GLBs plus partial factor, linked factor, wrong output, wrong/absent/inactive named mask, absent/constant image and invalid mask negatives. Then rerun the unchanged stock six-input gate and relevant existing pipeline tests on that separate unit. Until that lands and passes, full stock-gate qualification remains FAIL, not PASS. T05 need not edit shared core or families in this lane.
+
+BOUNDED POSITIVE EVIDENCE
+1. All 177 changed paths match committed/LFS bytes. No unhydrated changed LFS assets. Current sha256_manifest: 66/66 entries match. Current source_manifest/export_manifest and 31 next_gpu_inventory pairs match actual bytes. 34 verification ledger entries retain five failures; those failures were not relabelled. Shared forbidden paths unchanged.
+2. Fresh stock source validation: 3/3 PASS, no warnings. Read actual saved .blend geometry; no save/export/generation step. All 124 meshes valid, finite, nondegenerate; unit object scale, zero location; POINT FLOAT_COLOR RGBA masks in [0,1], RGB sum within 2e-6; _glow matches accent weights. Newly calculated mask-bit and position-association hashes match all 124 source manifest entries. Source positions are keyed to five decimal places for association only; mask bytes are exact float32. No claim of bitwise world-transform position equality is made.
+3. 31 distinct normalized coordinate/topology fingerprints at LOD0, 13 kinds; none of all 124 new source fingerprints equals any of the 78 existing demo meshes. Source authoring/revision code never imports demo geometry. Existing 21 non-tree basenames are all retained; ten added. Kind mapping: bush 3, fern 2, plant 2, grass 2, rock 4, boulder 3, crystal 3, copper 2, cobalt 2, gold 2, dihydrogen 2, sodium 2, oxygen 2. Four saved decreasing LODs each. LOD0 range 952-5714; LOD3/LOD0 range 1.809%-3.443%, all strictly below 5%.
+4. Metric source scale 1; all three have actual T02 REF_Grid 20x20m and REF_Biped height 1.8500000238m. Stock source/scale checks pass; refs do not leak to exports. No new fake colliders are claimed. Kind/glow metadata, root/variant/LOD names survive actual loader tests. No flora-required structure markers were silently removed; stock naming checks pass.
+5. Sources contain 52 packed 1024x1024 images (four per kind; used/exported/deduplicated images differ). Actual GLBs have 32 KTX2 maps total: foliage 7, resources 18, stone 7; four UASTC normals and 28 ETC1S maps. Every image is 1024x1024 with 11 mip levels. Stock texture checks verify codecs, transfer semantics, no PNG fallback, full mips and required extensions; 5.3MB budget estimate per variant versus 32MB flora limit. Meshopt required and present; no KHR_mesh_quantization; COLOR_0 FLOAT VEC4 unnormalized; temporary carrier semantics absent. CPU transcoding and full reimport validation ran on existing compressed GLBs.
+6. Fresh production consumer test: 130/130 PASS in packages/client/test/floraAssets.test.js. Uses production gltfLoader()/Meshopt parser, node transforms, extras, actual library indexing, recolor/maskColors and floraModels. Texture upload alone is replaced with a null texture promise. Tests cover all 124 source-manifest geometry/mask associations with exact float mask bytes, 31 variants/13 kinds/legacy names, Review parseSpec/collectLods/showLod at LOD0/2, every four-level budget, existing floraModels consumers at exposed LODs, AO/accent math, and missing/quantized/misweighted/detached/nonfinite negatives.
+7. Saved-source-only export behavior confirmed from the complete call path: export_saved imports no authoring module, modifies only loaded in-memory masks/carriers, delegates saved-file export, and never saves .blend. All four LODs already exist. No export/asset regeneration was executed by this review. Existing geometry/source pair was independently revalidated; all source bytes remain unchanged. Failure-safety qualifications are R1-R5.
+
+SOURCE AND EXPORT SHA-256
+foliage source:   5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456
+resources source: 03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9
+stone source:     436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15
+foliage export:   925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d
+resources export: 7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725
+stone export:     a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9
+
+COMMANDS EXECUTED / REPRO LOCATIONS
+In the pinned worktree:
+  git status --porcelain=v1
+  git rev-parse HEAD HEAD^{tree}
+  git diff --binary f7f1347d1ba36b702000471d462dd7e9475dbb8d HEAD
+  git diff --check f7f1347d1ba36b702000471d462dd7e9475dbb8d HEAD
+  node node_modules/vitest/vitest.mjs run --config /tmp/t05-sourcecpu-df2d05b-ppaimxws/vitest.config.mjs --configLoader runner
+  PYTHONDONTWRITEBYTECODE=1 python3 /tmp/t05-sourcecpu-df2d05b-ppaimxws/launch_cpu.py
+  PYTHONDONTWRITEBYTECODE=1 python3 /tmp/t05-sourcecpu-df2d05b-ppaimxws/launch_pair.py
+  python3 -B /tmp/t05-sourcecpu-df2d05b-ppaimxws/helper-repro/repro_runner.py
+  python3 -B /tmp/t05-sourcecpu-df2d05b-ppaimxws/helper-repro/repro_export.py
+  python3 -B /tmp/t05-sourcecpu-df2d05b-ppaimxws/helper-repro/repro_provenance.py
+
+Blender invocation (two sequential runs, never concurrent):
+  /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /tmp/t05-sourcecpu-df2d05b-ppaimxws/audit_cpu.py
+  same flags with pair_cpu.py for the wrong-pair real-asset control.
+Both exit 0, under a 600s finite wrapper that handles termination and owns cleanup. Each mathematical-library thread variable set to 2, ART_KTX_JOBS=1, CUDA_VISIBLE_DEVICES empty, local KTX 4.4.2 path pinned. No GPU/render called. Blender 5.2.3 LTS, hash e13b728c6880. Vitest 5.0.5, one worker, no file parallelism, cache in scratch. Detailed commands/PIDs in blender-run.json and pair-blender-run.json. New runs should use a new scratch evidence directory; the Blender launchers use exclusive log creation to avoid overwriting this proof.
+
+Diff: diff.patch. Before content inventory: before.json. Fresh CPU reports: *.stock.json and *.local.json. Structural GLB proof: glb-structural.json. Source/graph/control proof: cpu-results.json. Asset test output: vitest.log. Helper tests were inspected and independently rerun in helper-repro/ so the helper's earlier proof was not overwritten. Fake-child tests substitute only the expensive process/Blender boundary; they prove lifecycle/error/evidence behavior, not material correctness. The wrong-pair and material-graph controls ran actual Blender validators.
+
+LIMITS / HANDOFF
+No GPU, browser, native capture, render/grading, services, DB, new grants, LFS fetch, asset regeneration, production edit, push, PR or merge. One helper maximum (two reviewers total); only parent ran Blender, serially with factory startup and -t 2. No timing claims or native performance qualification. The user/parent owns interpretation recording; no missing worker DECISIONS edit is filed as a defect.
+Whole visual acceptance and T07 runtime integration are UNQUALIFIED. The live startup still uses legacy flora.glb and procedural fallbacks; makeDeposit pools deposit_* without resource identity; live consumers expose fewer LODs, retain procedural reference scaling, and recolor/Review replace or discard authored PBR/UV data. Current resource selection, final authored material appearance, GPU texture upload, three lighting cases, 100m silhouettes, LOD popping, collision behavior and 60fps are not established here. Those known integration boundaries are not newly invented T05 ownership defects.
+No full stock-gate PASS is claimed. Required disposition is REVISE for R1-R6; the separate shared classifier repair must retain the honest stock FAIL until a fresh stock run is green.
+
+FINAL CLEANUP: final HEAD/tree/branch unchanged; git status empty; every one of 177 changed-file hashes unchanged since review start. Both owned Blender PIDs exited 0 and no longer exist. Fake child harnesses assert all their owned children dead. See after.json.
