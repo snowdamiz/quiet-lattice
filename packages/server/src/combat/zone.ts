@@ -35,7 +35,7 @@ import {
 } from '@astra/shared/combat';
 import type { Resistance, StatMod } from '@astra/shared/data';
 import { encodeServerMessage, type EntityField, type GameEvent } from '@astra/shared/protocol';
-import { DOCK_HULL_REPAIR_PER_S, hazardDamagePerS, reentryDamagePerS, shipStats, type ShipLoadout, type ShipStats } from '@astra/shared/ships';
+import { DOCK_HULL_REPAIR_PER_S, SHIP_BASELINE, hazardDamagePerS, reentryDamagePerS, shipStats, type ShipLoadout, type ShipStats } from '@astra/shared/ships';
 import { tierOfGalaxySystem, type FaunaSpecies, type SystemDescription } from '@astra/shared/world';
 import type { CombatCreature } from '../fauna/sim.ts';
 import { groundPlanner, type GroundSource } from '../fauna/terrain.ts';
@@ -156,6 +156,8 @@ export interface CombatZone {
     creature(id: number): CombatCreature | null;
     hurt(creature: number, attacker: number, amount: number): boolean;
     kill(id: number): boolean;
+    ownerOf?(id: number): number | null;
+    dismissOwner?(id: number): void;
   } | null;
   entity(id: number): ZoneEntity | undefined;
   patch(id: number, set: Partial<EntityFields>, clear?: readonly EntityField[]): void;
@@ -194,6 +196,8 @@ interface PlayerVitals {
   shield: number;
   shieldMax: number;
   ship: ShipStats | null;
+  regen: { at: number; hitAt: number };
+  life: number;
   /** The server clock and storm countdown; preserved through a retune, with no elapsed time charged across a transfer. */
   hazards: { at: number | null; strike: number; serviced: boolean; resting: boolean };
   /** Earned by each validated motion interval, including bunched inputs; applied by the next tick, even after a transfer. */
@@ -229,6 +233,7 @@ export interface CombatStats {
 }
 
 export class ZoneCombat {
+  private steppedAt = 0;
   private readonly vitals = new Map<number, Vitals>();
   private readonly profiles = new Map<number, CombatProfile>();
   /** creatures whose health is scaled (an event's presence scaling) and are not hurt yet */
@@ -283,6 +288,7 @@ export class ZoneCombat {
       if (vitals.kind === 'player') {
         vitals.hazards.at = null;
         vitals.hazards.resting = false;
+        vitals.regen.at = target.zone.time;
       }
       target.vitals.set(nextEntity, vitals);
     }
@@ -301,7 +307,21 @@ export class ZoneCombat {
 
   /** The character a player entity belongs to, or null. */
   characterOf(entity: number): string | null {
-    return this.profiles.get(entity)?.characterId ?? null;
+    const owner = this.zone.fauna?.ownerOf?.(entity);
+    return this.profiles.get(owner ?? entity)?.characterId ?? null;
+  }
+
+  /** Changes on every death, including the suit's immediate recovery. Delayed effects cannot cross a life. */
+  lifeOf(entity: number): number {
+    const v = this.vitalsOf(entity);
+    return v?.kind === 'player' ? v.life : 0;
+  }
+
+  repairHull(entity: number, amount: number): void {
+    const v = this.vitalsOf(entity);
+    if (v?.kind !== 'player' || v.down !== null || this.zone.entity(entity)?.fields.mode !== 'ship' || !(amount > 0) || !Number.isFinite(amount)) return;
+    v.hull = Math.min(v.hullMax, v.hull + amount);
+    this.show(entity, v);
   }
 
   /** What a player entered with (its ship and nodes), or undefined for an entity that is not a player's. */
@@ -412,7 +432,15 @@ export class ZoneCombat {
    * The one way damage is dealt (see the header): `source` the attacker's entity (null for none), `target` the one hit.
    * Null when the target is no combatant (not a creature or player, dead, down, gone); otherwise what it took.
    */
-  applyDamage(source: number | null, target: number, packet: DamagePacket, now = this.zone.time): DamageOutcome | null {
+  applyDamage(source: number | null, target: number, packet: DamagePacket, now = Math.max(this.zone.time, this.steppedAt)): DamageOutcome | null {
+    const sourceOwner = source === null ? null : this.zone.fauna?.ownerOf?.(source);
+    const targetOwner = this.zone.fauna?.ownerOf?.(target);
+    // Companions are player-owned combatants: neither side opens a route around the current no-PvP policy.
+    if (
+      (sourceOwner != null && (targetOwner != null || this.zone.entity(target)?.fields.kind === 'player')) ||
+      (targetOwner != null && source !== null && this.zone.entity(source)?.fields.kind === 'player')
+    )
+      return null;
     const v = this.vitalsOf(target);
     if (!v || (v.kind === 'creature' ? v.dead : v.down !== null)) return null;
     const src = source === null ? undefined : this.zone.entity(source);
@@ -445,6 +473,7 @@ export class ZoneCombat {
       this.zone.patch(target, { hp });
     } else {
       dealt = amount;
+      if (amount > 0 && (packet.pool === 'ship' || !this.onFoot(target))) v.regen.hitAt = now;
       hp = this.takePlayer(v, target, amount, packet.pool);
       killed = v.down !== null;
     }
@@ -467,6 +496,7 @@ export class ZoneCombat {
   /** Applies ship hazards from the accepted pose on the server clock, despawns corpses, and keeps the pool in use on the
    * entity. The zone calls this each tick after its fauna, before snapshots. Silent clients still take sky damage. */
   step(time: number): void {
+    this.steppedAt = Math.max(this.steppedAt, time);
     while (this.corpses.length && this.corpses[0]!.until <= time) {
       const { id } = this.corpses.shift()!;
       this.zone.despawn(id);
@@ -475,6 +505,12 @@ export class ZoneCombat {
       const v = this.vitalsOf(id);
       if (v?.kind !== 'player') continue;
       this.shipHazards(id, v, time);
+      const from = v.regen.at;
+      v.regen.at = Math.max(from, time);
+      if (v.down === null && v.ship) {
+        const seconds = Math.max(0, time - Math.max(from, v.regen.hitAt + SHIP_BASELINE.shieldRegenDelayS));
+        v.shield = Math.min(v.shieldMax, v.shield + v.ship.shieldRegenPerS * seconds);
+      }
       this.show(id, v);
     }
   }
@@ -601,6 +637,8 @@ export class ZoneCombat {
       shield: shieldMax,
       shieldMax,
       ship,
+      regen: { at: this.zone.time, hitAt: this.zone.time },
+      life: 0,
       hazards: { at: null, strike: 3, serviced: false, resting: false },
       reentry: 0,
       mods,
@@ -698,6 +736,8 @@ export class ZoneCombat {
   }
 
   private goDown(id: number, v: PlayerVitals, source: number | null, now: number, hooks: CombatHooks | null): void {
+    v.life++;
+    this.zone.fauna?.dismissOwner?.(id);
     this.counts.downed++;
     const report: DownedReport = { zone: this.zone.id, entity: id, characterId: v.characterId, cause: v.down!, source, at: now };
     this.opts.log?.info({ zone: this.zone.id, entity: id, character: v.characterId, cause: v.down, source }, 'player down');

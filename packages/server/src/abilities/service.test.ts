@@ -626,13 +626,13 @@ describe('what an effect is given beyond the cast', () => {
     expect(ctx.pose()!.aim).toEqual([0, 0, -1]);
   });
 
-  it('has no pose once its caster is gone or in another frame', () => {
+  it('retires a cast after departure even if the caster returns to its frame', () => {
     cast('pulse', 0);
     const ctx = casts[0]!.ctx;
     w.zone.patch(w.player, { frame: w.zone.stationFrame });
     expect(ctx.pose()).toBeNull();
     w.zone.patch(w.player, { frame: w.frame });
-    expect(ctx.pose()).not.toBeNull();
+    expect(ctx.pose()).toBeNull();
     w.zone.leave(viewer);
     expect(ctx.pose()).toBeNull();
     expect(ctx.sight([0, 0, 0])).toBe(false);
@@ -720,15 +720,18 @@ describe('harm', () => {
     expect(mayHarm(w.zone, w.player, theirs)).toBe(false);
     expect(ctx.damage(theirs, 50)).toBeNull();
     expect(w.zone.combat.playerHealth(theirs)).toMatchObject({ suit: 100, suitMax: 100 });
+    expect(ctx.damage(c.id, 5)?.amount).toBeGreaterThan(0);
+    const hp = w.zone.combat.creatureHealth(c.id)!.hp;
     w.zone.patch(w.player, { frame: w.zone.stationFrame });
     expect(mayHarm(w.zone, w.player, c.id)).toBe(false);
     expect(ctx.damage(c.id, 5)).toBeNull();
-    expect(w.zone.combat.creatureHealth(c.id)!.hp).toBe(w.zone.combat.creatureHealth(c.id)!.max);
+    expect(w.zone.combat.creatureHealth(c.id)!.hp).toBe(hp);
     w.zone.patch(w.player, { frame: w.frame });
     w.zone.patch(c.id, { frame: w.zone.stationFrame });
     expect(mayHarm(w.zone, w.player, c.id)).toBe(false);
     w.zone.patch(c.id, { frame: w.frame });
-    expect(ctx.damage(c.id, 5)?.amount).toBeGreaterThan(0);
+    expect(mayHarm(w.zone, w.player, c.id)).toBe(true);
+    expect(ctx.damage(c.id, 5)).toBeNull();
   });
 });
 

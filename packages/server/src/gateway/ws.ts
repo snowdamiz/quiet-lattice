@@ -395,6 +395,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const casts = new CastService({
     zones: deps.zones,
     skills,
+    codex,
     meets: (characterId, req) => skills.hooks.meets(characterId, req),
     meters,
     deposits: {

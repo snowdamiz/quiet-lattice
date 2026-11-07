@@ -24,7 +24,7 @@
 // longer holds is ended on `step` (which `start` calls every STEP_MS, beside the effects' own timers, `after`), on a
 // change to the character's skills and before the character's next cast, and the gateway is told (`subscribe`) so the
 // player's bar is too; `state` never reports one that no longer holds. Effects harm only what `mayHarm` allows.
-import { barOfMode, castCost, cooldownOf, reachOf } from '@astra/shared/abilities';
+import { barOfMode, castCost, cooldownOf, reachOf, SYMBIOTIC_NUMBERS } from '@astra/shared/abilities';
 import { creatureSphere, modsOfNodes, type ResistanceResult } from '@astra/shared/combat';
 import { getSkillNode, type Requirement } from '@astra/shared/data';
 import type { HeatDump } from '@astra/shared/meters';
@@ -41,6 +41,7 @@ import { MOVEMENT } from '../sim/movement/rules.ts';
 import type { Zone, ZoneEntity, ZoneLog, ZoneViewer } from '../zones/zone.ts';
 import { abilityBook, type AbilityBook, type BookEntry, type CastContext } from './book.ts';
 import { Statuses } from './statuses.ts';
+import type { CodexService } from '../codex/service.ts';
 
 type CastRequest = Extract<ClientMessage, { t: 'cast' }>;
 type CastState = Extract<ServerMessage, { t: 'cast' }>;
@@ -79,6 +80,7 @@ export interface CastServiceOptions {
   zones: CastZones;
   /** each character's place on the skill web: its bars and owned nodes (`get`) and the hull's working ship slots */
   skills: { get(characterId: string): SkillState | null; shipSlots(characterId: string): number };
+  codex?: Pick<CodexService, 'holds' | 'canBond'>;
   /** Live standing gates. Without a reader, gated nodes cannot cast; ungated fixture books still work. */
   meets?: (characterId: string, req: Requirement) => boolean;
   /** heat and Charge: what a cast pays, and what an effect reads and spends beyond it (`CastContext.meters`) */
@@ -139,6 +141,9 @@ interface Timer {
 export class CastService {
   private readonly zones: CastZones;
   private readonly skills: CastServiceOptions['skills'];
+  private readonly codex: CastServiceOptions['codex'];
+  private readonly epochs = new Map<string, object>();
+  private readonly companions = new Map<string, { zone: CastZone; owner: number }>();
   private readonly meets: NonNullable<CastServiceOptions['meets']>;
   private readonly meters: CastServiceOptions['meters'];
   private readonly now: () => number;
@@ -163,6 +168,7 @@ export class CastService {
   constructor(opts: CastServiceOptions) {
     this.zones = opts.zones;
     this.skills = opts.skills;
+    this.codex = opts.codex;
     this.meets = opts.meets ?? (() => false);
     this.meters = opts.meters;
     this.now = opts.now;
@@ -256,7 +262,7 @@ export class CastService {
     if (readyAt !== undefined && readyAt > now) return refuse('cooldown', readyAt);
 
     if (entry.ability.target === 'entity') {
-      const why = this.reach(zone, self, me, ctx, msg.target);
+      const why = this.reach(zone, self, me, ctx, ctx.target ?? undefined);
       if (why) return refuse(why);
     }
     const why = entry.effect.check?.(ctx) ?? null;
@@ -285,9 +291,9 @@ export class CastService {
 
   /** Runs the effects' timers that are due, and ends the toggles that no longer hold (see the header). */
   step(now: number): void {
-    if (this.timers.length && this.timers[0]!.at <= now) {
-      const due = this.timers.filter((t) => t.at <= now);
-      this.timers = this.timers.filter((t) => t.at > now);
+    if (this.timers.length && this.timers[0]!.at <= now + 1e-9) {
+      const due = this.timers.filter((t) => t.at <= now + 1e-9);
+      this.timers = this.timers.filter((t) => t.at > now + 1e-9);
       for (const t of due) this.run(t.fn, t.characterId, 'timer');
     }
     for (const characterId of [...this.on.keys()]) if (this.settle(characterId)) this.notify(characterId);
@@ -300,6 +306,10 @@ export class CastService {
 
   /** A character out of play: its toggles end and its effects' timers are dropped. Its cooldowns stay for its return. */
   left(characterId: string): void {
+    this.epochs.delete(characterId);
+    const companion = this.companions.get(characterId);
+    companion?.zone.fauna?.dismissOwner(companion.owner);
+    this.companions.delete(characterId);
     const lit = this.on.get(characterId);
     for (const node of [...(lit?.keys() ?? [])]) this.end(characterId, node);
     this.timers = this.timers.filter((t) => t.characterId !== characterId);
@@ -312,19 +322,74 @@ export class CastService {
   private context(characterId: string, zone: CastZone, self: number, me: ZoneEntity, bar: Bar, entry: BookEntry, msg: CastRequest, now: number): CastContext {
     const f = me.fields;
     const frame = f.frame;
+    const phase = zone.phases.phaseOf(self);
+    const presence = me.presence;
+    const life = zone.combat.lifeOf(self);
+    let epoch = this.epochs.get(characterId);
+    if (!epoch) this.epochs.set(characterId, (epoch = {}));
+    let ended = false;
+    const live = (): boolean => {
+      if (!ended)
+        ended =
+          this.epochs.get(characterId) !== epoch ||
+          zone.entity(self) !== me ||
+          me.presence !== presence ||
+          f.frame !== frame ||
+          zone.phases.phaseOf(self) !== phase ||
+          zone.combat.lifeOf(self) !== life ||
+          zone.combat.isDown(self) ||
+          barOfMode(f.mode) !== bar ||
+          !this.skills.get(characterId)?.bought.includes(msg.node);
+      return !ended;
+    };
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);
     const origin: Vec3 = bar === 'ground' ? lift(f.pos, EYE_M) : [f.pos[0], f.pos[1], f.pos[2]];
     const aim: Vec3 = [msg.aim[0] / al, msg.aim[1] / al, msg.aim[2] / al];
     // (the phase rule holds for as long as an effect runs on, as for a burn's ticks: a creature the caster can no longer see is
     // not harmed)
-    const harmable = (target: number): boolean => this.mayHarm(zone, self, target) && zone.phases.canSee(self, target);
+    const harmable = (target: number): boolean =>
+      live() && zone.entity(target)?.fields.frame === frame && this.mayHarm(zone, self, target) && zone.phases.canSee(self, target);
+    const recipients = new Map<number, { presence: number; life: number }>();
+    const canHeal = (target: number): boolean => {
+      const t = zone.entity(target);
+      if (!t) return false;
+      let recipient = recipients.get(target);
+      if (!recipient) recipients.set(target, (recipient = { presence: t.presence, life: zone.combat.lifeOf(target) }));
+      return (
+        live() &&
+        recipient.presence === t.presence &&
+        recipient.life === zone.combat.lifeOf(target) &&
+        t.fields.kind === 'player' &&
+        t.fields.mode === 'foot' &&
+        t.fields.frame === frame &&
+        !zone.combat.isDown(target) &&
+        zone.phases.canSee(self, target) &&
+        (target === self || (me.party !== null && me.party === t.party))
+      );
+    };
+    const canBond = (target: number): boolean => {
+      const c = zone.fauna?.creature(target);
+      return (
+        harmable(target) &&
+        !!c &&
+        !zone.combat.creatureHealth(target)?.dead &&
+        zone.fauna?.ownerOf(target) === null &&
+        !!this.codex?.holds(characterId) &&
+        this.codex.canBond(characterId, c.frame, c.species.index)
+      );
+    };
+    const callPoint: Vec3 = [
+      origin[0] + aim[0] * SYMBIOTIC_NUMBERS.call.rangeM,
+      origin[1] + aim[1] * SYMBIOTIC_NUMBERS.call.rangeM,
+      origin[2] + aim[2] * SYMBIOTIC_NUMBERS.call.rangeM,
+    ];
     const shared = new Set<number>();
     const resistance = (target: number): ResistanceResult | null =>
       zone.phases.canSee(self, target) ? zone.combat.resistanceOf(target, { node: msg.node }) : null;
     // (a creature the caster sees and that does not shrug the node off)
     const steerable = (target: number): boolean => {
       const r = resistance(target);
-      return r !== null && !r.immune;
+      return harmable(target) && r !== null && !r.immune;
     };
     const ctx: CastContext = {
       characterId,
@@ -336,7 +401,7 @@ export class CastService {
       frame,
       origin,
       aim,
-      target: entry.ability.target === 'entity' ? (msg.target ?? null) : null,
+      target: entry.ability.target === 'entity' ? (msg.target ?? (entry.ability.selfWhenUntargeted ? self : null)) : null,
       creatures: (reach, at) => (f.frame === null ? [] : creatureTargets(zone, self, f.frame, reach === undefined ? undefined : { at: at ?? origin, reach })),
       // (with the caster's power and augments: the nodes it owns now, as `owns` reads them, so a refunded one stops counting
       // in a toggle that is still on)
@@ -351,20 +416,51 @@ export class CastService {
           attackerMods: modsOfNodes(owned),
         });
       },
-      after: (delayS, fn) => this.after(characterId, delayS, fn),
+      after: (delayS, fn) =>
+        this.after(characterId, delayS, () => {
+          if (live()) fn();
+        }),
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
-      pose: () => this.poseOf(zone, self, frame, bar, origin, aim),
+      pose: () => (live() ? this.poseOf(zone, self, frame, bar, origin, aim) : null),
       onWorld: () => {
         const body = this.bodyOf(zone, frame);
         return body !== undefined && body.type !== 'gas';
       },
       groundReady: () => this.groundOf(zone, frame) !== 'busy',
-      sight: (to) => {
+      sight: (to, from) => {
         const eye = this.poseOf(zone, self, frame, bar, origin, aim)?.origin;
-        return eye === undefined ? false : this.inSight(zone, frame, eye, to);
+        return !live() || eye === undefined ? false : this.inSight(zone, frame, from ?? eye, to);
       },
       canHarm: harmable,
+      canHeal,
+      heal: (target, amount) => {
+        if (canHeal(target)) zone.combat.suitHealth(target, amount);
+      },
+      repairHull: (amount) => {
+        if (live()) zone.combat.repairHull(self, amount);
+      },
+      bond: {
+        eligible: canBond,
+        tame: (target) => {
+          if (!canBond(target)) return;
+          const c = zone.fauna?.creature(target);
+          const eligibleOwner = () => live() && !!c && !!this.codex?.holds(characterId) && this.codex.canBond(characterId, c.frame, c.species.index);
+          if (!zone.fauna?.bond(self, target, eligibleOwner)) return;
+          const old = this.companions.get(characterId);
+          if (old && (old.zone !== zone || old.owner !== self)) old.zone.fauna?.dismissOwner(old.owner);
+          this.companions.set(characterId, { zone, owner: self });
+        },
+      },
+      stampede: {
+        ready: () => live() && this.inSight(zone, frame, origin, callPoint) === true && !!zone.fauna?.callHerd(self, origin),
+        start: () => {
+          if (live())
+            zone.fauna?.stampede(self, origin, callPoint, live, (target) => {
+              ctx.damage(target, SYMBIOTIC_NUMBERS.call.contactDamage);
+            });
+        },
+      },
       meters: {
         beamTime: () => this.meters.beamTime(characterId, this.now()),
         dumpHeat: () => {
@@ -384,7 +480,7 @@ export class CastService {
         calm: (creature, durationS) => steerable(creature) && !!zone.fauna?.calm(creature, durationS),
       },
       conceal: (durationS) => zone.fauna?.veil(self, durationS),
-      party: (radiusM) => this.partyOf(zone, self, frame, radiusM),
+      party: (radiusM, at) => (live() ? this.partyOf(zone, self, frame, radiusM, at) : []),
       share: (entities) => {
         for (const e of entities) shared.add(e);
       },
@@ -406,7 +502,7 @@ export class CastService {
   }
 
   /** The caster's party members within `radiusM` on foot and up on its world (see `CastContext.party`). */
-  private partyOf(zone: CastZone, self: number, frame: FrameId, radiusM: number): { id: number; pos: Readonly<Vec3> }[] {
+  private partyOf(zone: CastZone, self: number, frame: FrameId, radiusM: number, at?: Readonly<Vec3>): { id: number; pos: Readonly<Vec3> }[] {
     const me = zone.entity(self);
     const out: { id: number; pos: Readonly<Vec3> }[] = [];
     if (!me || me.party === null) return out;
@@ -415,7 +511,8 @@ export class CastService {
       if (!m || m.fields.kind !== 'player' || m.fields.mode !== 'foot' || m.fields.frame !== frame || zone.combat.isDown(id) || !zone.phases.canSee(self, id))
         continue;
       const p = m.fields.pos;
-      if (Math.hypot(p[0] - me.fields.pos[0], p[1] - me.fields.pos[1], p[2] - me.fields.pos[2]) <= radiusM) out.push({ id, pos: [p[0], p[1], p[2]] });
+      const center = at ?? me.fields.pos;
+      if (Math.hypot(p[0] - center[0], p[1] - center[1], p[2] - center[2]) <= radiusM) out.push({ id, pos: [p[0], p[1], p[2]] });
     }
     return out;
   }
@@ -604,7 +701,7 @@ export class CastService {
  * caster or target (the Waystation's sphere, its frame; a capital's arrives with P1.E10.T02). */
 export function mayHarm(zone: Pick<CastZone, 'entity' | 'stationFrame'>, caster: number, target: number): boolean {
   const t = zone.entity(target);
-  if (!t || t.fields.kind === 'player') return false;
+  if (!t || t.fields.kind === 'player' || t.fields.owner !== undefined) return false;
   const safe = (e: ZoneEntity | undefined) => !e || e.fields.frame === zone.stationFrame;
   return !safe(t) && !safe(zone.entity(caster));
 }

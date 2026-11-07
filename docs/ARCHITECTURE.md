@@ -437,6 +437,17 @@ each step, at the zone's tier: the zone manager passes the world service's tier 
 - **Analysis** (§22) reads a creature as its entity has it (kind `mob`, `species`, `frame`, `pos`, `hp`: a corpse, hp 0,
   is refused `dead`) and its species from the world's whole list (`faunaSpecies` at `FAUNA_MAX_TIER`, so an index is the same species at every
   tier); line of sight is over the ground this zone's fauna walks on (`FaunaSim.grounds` at its tier).
+- **Companions and stampedes** (P1.E07.T07) stay in this sim. Bond detaches one living creature from its herd into an
+  owner-held herd, preserving species, size, level and health. It survives its old cell unloading and follows with the
+  same terrain, turning and speed rules. `fauna/symbiotic.ts` chooses follow or attack; `FaunaSim.strike` resolves actual
+  companion strikes and wild retaliation through `ZoneCombat.applyDamage`. Hits use the shared creature sphere, add
+  threat and taunt through the existing threat table, and credit the owner's combat/kill hooks. Ordinary fauna attacks
+  on players remain disabled until E08.T02. Neither players nor other companions are valid companion victims; player
+  abilities also reject owned companions for damage and control, including Pulse and Harmonic.
+  Call drives the nearest eligible herd along paths through the aimed point for six seconds. Swept contact deals one
+  hit per target across the entire herd, through the same combat/resistance path, with no player or companion damage.
+  Both controls stop on owner departure, death or lost eligibility; strikes reject hidden or different-world targets. Companions also
+  dismiss on their own death; dismissal removes the actor rather than returning an owned creature to wild AI.
 
 ## 7. Authority
 
@@ -1675,6 +1686,13 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   and then the hull. On the wire, an entity's `hp` is the fraction left of the pool in use (and aboard, `shield`), patched
   as it changes and as a player's mode changes which pool is shown. Suit meters restore health (§19), and station crews
   repair a docked ship below. Health is not saved. The Recall (P1.E06.T03) owns recovery after a ship loss.
+- **Shield regeneration** runs in `ZoneCombat.step` after hazards: five points per second after six seconds without a
+  positive ship hit, capped at maximum, including a parked ship while its owner is on foot. A downed player receives no
+  regeneration. Ship hits reset the delay; suit damage does not reset the parked ship's timer.
+  `shipStats.shieldRegenPerS` consumes `ship.shield_regen`; Symbiont Hull makes this 7.5/s and multiplies capacity by 1.25.
+  A new zone starts on the world clock; transfers preserve the last hit and start the elapsed interval in the new zone,
+  so first ticks and handoffs grant no catch-up repair. Repair Drones adds one hull/s for 20 seconds in flight (`ship`),
+  ending on leaving that mode; station crews still repair 20 hull/s. Retuning preserves each pool's fraction.
 - **Ship hazards** (P1.E06.T07) run in `ZoneCombat.step` before snapshots. `combat/environment.ts` reads the accepted
   pose's frame and generated body. A rocky world's altitude is above its exact planned ground, or the sea over it, minus
   `SHIP_GEAR_HEIGHT` (1.95 m). A gas giant's altitude is above its cloud-deck radius. `hazardDepth` and
@@ -2295,7 +2313,7 @@ effects; this runtime casts them all.
 - **The book** (`book.ts`): each ability paired with its effect, the server's code for it, `{check?, cast, end?}`.
   `abilityBook()` refuses to build (the server does not start) an ability without an effect or the reverse, one filed
   under another node, a node that is always on, an `entity` ability that takes no kind, or a cooldown casts cannot run.
-  This build's book holds the branches that have landed (Thermal I–II and Resonance I–II so far, P1.E07.T05 and T06; every other slotted node is
+  This build's book holds the branches that have landed (Thermal, Resonance and Symbiotic I–II, P1.E07.T05–T07; every other slotted node is
   refused `unknown`); each branch adds its abilities from `@astra/shared/abilities/<branch>.ts` and its effects from
   `abilities/<branch>.ts`, one line apiece in `ABILITIES` and `EFFECTS`. Tests and the integration test cast a fixture book
   (`test/abilityFixture.ts`) over real nodes, never shipped.
@@ -2395,6 +2413,24 @@ effects; this runtime casts them all.
   client's too: `beaconsOnMap(skills)` (`@astra/shared/exosuit`) reads the node's flag, and a planet's Signal Beacon sites are
   then known at once and draw as the HUD's site markers (within 9 km of the surface and 12 km of the camera; no planet map
   exists yet); beacons already shown stay after a respec until the planet's sites reload.
+- **Symbiotic I–II** (P1.E07.T07) registers Bond, Repair Drones, Regrow, Spore and Call in the shipped book. Bond checks
+  `CodexService.canBond` before spending or replacing the owner's single companion; Big Game expands that predicate to
+  analysed heavy quadrupeds and flyers and remains required while such a companion is kept. Regrow defaults an omitted
+  target to self and heals an up, visible party ally or self by 40 over six seconds, capped at suit maximum. Spore is a
+  stationary eight-metre cloud for ten seconds, applying four poison damage/s to wild creatures and four healing/s to
+  self/party within it, with terrain sight and phase checks. Damage uses the existing node resistances. Both integrate
+  elapsed time in quarter-second callbacks, clamped to their end time. Second Lung and Thick Hide continue to consume
+  their ×0.7 suit-drain modifiers in meters; Symbiont Hull consumes ship capacity and regeneration modifiers in combat.
+  Unspecified tuning is shared in `SYMBIOTIC_NUMBERS`: Bond reach 60 m, follow distance 4 m (three metres extra for flyers
+  at one metre altitude), defend radius 20 m and leash 40 m; Regrow reach 30 m; Call aim 30 m, herd search 40 m, six-second
+  run and 12 damage per target within a swept two-metre contact radius plus the existing hit sphere. Companion attacks
+  use the species' first body-plan attack, its native level and the existing one-second AI attack clock, never owner
+  level scaling. Riding, splitting and Tier III effects are not implemented here.
+  Each cast captures its session epoch, entity, presence generation and life generation. Frame/mode/phase transitions
+  increment presence synchronously; combat increments life even on automatic suit recovery. A departure and return
+  between ticks cannot revive delayed callbacks, companion orders or healing on an old recipient. The gateway supplies
+  codex authority and calls `left` on session cleanup; phase placement notifies the zone directly, so dismissal does not
+  depend on an ability timer observing the transient state. No companion or active effect is persisted across reconnect.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds

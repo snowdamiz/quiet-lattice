@@ -32,8 +32,9 @@
 // combat/zone.ts) reads a creature (`creature`, `creaturesIn`), adds threat with `hurt` and takes a dead one out of its
 // herd with `kill`, then despawns its corpse after the death beat; setTier follows the Edge (the zone manager calls it).
 import { performance } from 'node:perf_hooks';
-import { addThreat, harmonicReset } from '@astra/shared/combat';
-import { PACK_RULES } from '@astra/shared/data';
+import { addThreat, creatureSphere, emptyThreat, harmonicReset, taunt } from '@astra/shared/combat';
+import { getBodyPlan, PACK_RULES } from '@astra/shared/data';
+import { SYMBIOTIC_NUMBERS as N } from '@astra/shared/abilities';
 import { isNight } from '@astra/shared/meters';
 import type { EntityField } from '@astra/shared/protocol';
 import {
@@ -73,6 +74,9 @@ import {
 import { animal, HERD_SPREAD_M, levelFor, offsetDir, planCellHerd, planNightHerd, tangents, type HerdPlan } from './herds.ts';
 import { starsAt } from './sky.ts';
 import { groundOf, groundPlanner, type Ground, type GroundSource } from './terrain.ts';
+import type { ZoneCombat } from '../combat/zone.ts';
+import { companionStep, distance, segmentDistance } from './symbiotic.ts';
+import { reach, stunned } from './ai.ts';
 
 /** Players within this height above a world's ground keep herds about them, m (the demo's 1,500 m, which it measured
  * from sea level: a mountain top kept none); a pose more than SURFACE_DEPTH_M below sea level is inside the world, not
@@ -107,9 +111,17 @@ const MAX_DT = 0.25;
 
 /** The zone, as the sim uses it. */
 export interface FaunaZone {
+  readonly time: number;
   readonly systemIndex: number;
   readonly system: SystemDescription;
-  readonly phases: { hiddenFromShared(id: number): boolean; phaseOf(id: number): number | null };
+  readonly phases: {
+    hiddenFromShared(id: number): boolean;
+    phaseOf(id: number): number | null;
+    canSee(viewer: number, id: number): boolean;
+    adopt(phase: number, id: number): void;
+  };
+  readonly combat: ZoneCombat;
+  readonly stationFrame: string;
   spawn(init: EntityInit): number;
   patch(id: number, set: Partial<EntityFields>, clear?: readonly EntityField[]): void;
   despawn(id: number): boolean;
@@ -290,7 +302,7 @@ class WorldFauna {
   }
 
   get empty(): boolean {
-    return this.cells.size === 0;
+    return this.cells.size === 0 && this.creatures.size === 0;
   }
 
   /** The ground now, planned on this thread if it is not ready (for spawnHerd). */
@@ -334,14 +346,32 @@ class WorldFauna {
         for (const m of h.members) world.creatures.set(m.id, m);
       }
     }
+    for (const c of this.sim.companionsIn(this.frame)) {
+      const phase = this.sim.zone.phases.phaseOf(c.id);
+      let world = apart.get(phase);
+      if (!world) apart.set(phase, (world = { herds: [], creatures: new Map() }));
+      world.herds.push(c.herd);
+      world.creatures.set(c.id, c);
+    }
     for (const [phase, world] of apart) {
       const seen = phase === null ? players : players.flatMap((p) => (p.phase === phase ? [{ ...p, hidden: false }] : []));
-      const ctx: Ctx = { dt, now, ground: this.ground, rng: this.sim.rng, players: new Map(seen.map((p) => [p.id, p])), creatures: world.creatures };
+      const ctx: Ctx = {
+        dt,
+        now,
+        ground: this.ground,
+        rng: this.sim.rng,
+        players: new Map(seen.map((p) => [p.id, p])),
+        creatures: world.creatures,
+        strike: (c, target) => this.sim.strike(c, target),
+      };
       for (const h of world.herds) {
         herdTick(h, ctx);
-        for (const m of h.members) {
-          think(m, ctx);
-          move(m, ctx);
+        for (const m of [...h.members]) {
+          if (!this.creatures.has(m.id)) continue;
+          if (!this.sim.direct(m, ctx)) {
+            think(m, ctx);
+            move(m, ctx);
+          }
           this.sync(m);
         }
       }
@@ -491,7 +521,7 @@ class WorldFauna {
       if (idleDen(st, this.sim.now)) this.sim.forgetDen(this.body.index, site.index);
     }
     for (const h of cell.herds) {
-      for (const m of h.members) {
+      for (const m of [...h.members]) {
         this.sim.zone.despawn(m.id);
         this.forget(m);
       }
@@ -697,7 +727,7 @@ class WorldFauna {
 
   /** Takes a herd out of its cell, despawning whatever is left of it. Returns null (for the slot it held). */
   private dropHerd(cell: Cell, herd: Herd): null {
-    for (const m of herd.members) {
+    for (const m of [...herd.members]) {
       this.sim.zone.despawn(m.id);
       this.forget(m);
     }
@@ -814,6 +844,20 @@ export class FaunaSim {
   /** the star in each body's frame at a time (sky.ts), worked out once per scan */
   private stars: { time: number; at: Vec3[] } | null = null;
   private lastTime: number | null = null;
+  private readonly companions = new Map<number, { creature: Creature; frame: string; phase: number | null; valid: () => boolean }>();
+  private readonly calls = new Map<
+    number,
+    {
+      owner: number;
+      frame: string;
+      phase: number | null;
+      until: number;
+      valid: () => boolean;
+      damage: (target: number) => void;
+      paths: Map<number, Vec3>;
+      hit: Set<number>;
+    }
+  >();
 
   constructor(
     readonly zone: FaunaZone,
@@ -836,6 +880,14 @@ export class FaunaSim {
   step(time: number): void {
     const dt = this.lastTime === null ? 0 : Math.min(MAX_DT, Math.max(0, time - this.lastTime));
     this.lastTime = time;
+    for (const [owner, b] of this.companions) {
+      const f = this.zone.entity(owner)?.fields;
+      if (!b.valid() || !f || f.frame !== b.frame || this.zone.phases.phaseOf(owner) !== b.phase || this.zone.combat.isDown(owner) || !this.find(b.creature.id))
+        this.dismissOwner(owner);
+    }
+    for (const [herd, c] of this.calls)
+      if (!c.valid() || time >= c.until || this.zone.entity(c.owner)?.fields.frame !== c.frame || this.zone.phases.phaseOf(c.owner) !== c.phase)
+        this.calls.delete(herd);
     // the players in each world's frame: its ground is wanted, and those near it keep herds about them
     const byBody = new Map<number, Actor[]>();
     for (const id of this.zone.entityIds()) {
@@ -900,7 +952,7 @@ export class FaunaSim {
 
   /** World time at the last step. */
   get now(): number {
-    return this.lastTime ?? 0;
+    return this.lastTime ?? this.zone.time;
   }
 
   /** The star in body `body`'s frame at world time `time` (sky.ts). */
@@ -960,7 +1012,7 @@ export class FaunaSim {
     const l = Math.hypot(req.at[0], req.at[1], req.at[2]);
     if (!(l > 0)) throw new RangeError('a herd needs a place');
     const center: Vec3 = [req.at[0] / l, req.at[1] / l, req.at[2] / l];
-    const now = this.lastTime ?? 0;
+    const now = this.now;
     const cell = w.cellAt(center, now);
     const rng = this.rng;
     const count = req.count ?? rng.int(sp.herd.min, sp.herd.max);
@@ -993,11 +1045,12 @@ export class FaunaSim {
   /** Damage (or anything worth threat) done to a creature by an attacker (seam for combat, P1.E06.T02): hostile creatures
    * take the threat and turn on whoever hurts them most; grazers bolt. */
   hurt(creature: number, attacker: number, amount: number): boolean {
-    const now = this.lastTime ?? 0;
+    const now = this.now;
     for (const w of this.worlds.values()) {
       const c = w.creatures.get(creature);
       if (!c) continue;
       c.threat = addThreat(c.threat, attacker, amount, now);
+      if (this.ownerOf(attacker) !== null) c.threat = taunt(c.threat, attacker, now);
       if (c.species.tier === 0 && c.species.kind !== 'flyer') {
         const from = this.zone.entity(attacker)?.fields.pos;
         if (from) {
@@ -1019,7 +1072,7 @@ export class FaunaSim {
   stun(creature: number, durationS: number): boolean {
     const c = this.find(creature);
     if (!c) return false;
-    c.stunUntil = Math.max(c.stunUntil, (this.lastTime ?? 0) + durationS);
+    c.stunUntil = Math.max(c.stunUntil, this.now + durationS);
     c.speed = 0;
     return true;
   }
@@ -1029,14 +1082,14 @@ export class FaunaSim {
   calm(creature: number, durationS: number): boolean {
     const c = this.find(creature);
     if (!c) return false;
-    c.threat = harmonicReset(c.threat, this.lastTime ?? 0, durationS);
+    c.threat = harmonicReset(c.threat, this.now, durationS);
     c.target = null;
     return true;
   }
 
   /** Veil: no creature notices the player on this entity for `durationS` from now (a later veil extends it). */
   veil(player: number, durationS: number): void {
-    this.veiled.set(player, Math.max(this.veiled.get(player) ?? 0, (this.lastTime ?? 0) + durationS));
+    this.veiled.set(player, Math.max(this.veiled.get(player) ?? 0, this.now + durationS));
   }
 
   /** The living creature on an entity, in whichever world keeps it. */
@@ -1067,8 +1120,153 @@ export class FaunaSim {
 
   /** A creature dies (combat's seam, P1.E06.T02): see WorldFauna.kill. False when it is not a living creature here. */
   kill(id: number): boolean {
+    for (const [owner, b] of this.companions) if (b.creature.id === id) this.companions.delete(owner);
     for (const w of this.worlds.values()) if (w.kill(id)) return true;
     return false;
+  }
+
+  ownerOf(id: number): number | null {
+    for (const [owner, b] of this.companions) if (b.creature.id === id) return owner;
+    return null;
+  }
+
+  companionsIn(frame: string): Creature[] {
+    return [...this.companions.values()].filter((b) => b.frame === frame).map((b) => b.creature);
+  }
+
+  dismissOwner(owner: number): void {
+    const b = this.companions.get(owner);
+    if (!b) return;
+    this.companions.delete(owner);
+    this.kill(b.creature.id);
+    this.zone.despawn(b.creature.id);
+  }
+
+  /** Target checks and codex eligibility precede this synchronous ownership change. */
+  bond(owner: number, target: number, valid: () => boolean): boolean {
+    const c = this.find(target);
+    const f = this.zone.entity(owner)?.fields;
+    const info = this.creature(target);
+    if (!c || !f || !info || !valid() || f.frame !== info.frame || this.ownerOf(target) !== null || this.zone.combat.creatureHealth(target)?.dead) return false;
+    const phase = this.zone.phases.phaseOf(owner);
+    if (!this.zone.phases.canSee(owner, target)) return false;
+    if (phase !== null && this.zone.phases.phaseOf(target) === null) this.zone.phases.adopt(phase, target);
+    const herd: Herd = { ...c.herd, id: this.nextHerdId++, home: [...c.pos], members: [], intrusion: new Map(), apex: false };
+    const bound: Creature = { ...c, herd, target: null, attack: null, threat: emptyThreat(), state: 'follow' };
+    c.herd.members.splice(c.herd.members.indexOf(c), 1);
+    herd.members.push(bound);
+    this.worlds.get(info.body)!.creatures.set(target, bound);
+    this.calls.delete(c.herd.id);
+    this.dismissOwner(owner);
+    this.companions.set(owner, { creature: bound, frame: info.frame, phase, valid });
+    this.zone.patch(target, { owner, mode: 'follow' }, ['attack']);
+    return true;
+  }
+
+  /** Nearest herd on this world and phase, never a companion or somebody else's running Call. */
+  callHerd(owner: number, from: Readonly<Vec3>): Herd | null {
+    const f = this.zone.entity(owner)?.fields;
+    if (!f || f.frame === this.zone.stationFrame) return null;
+    let best: { herd: Herd; distance: number } | null = null;
+    for (const w of this.worlds.values())
+      for (const c of w.creatures.values()) {
+        if (w.frame !== f.frame || this.ownerOf(c.id) !== null || this.calls.has(c.herd.id) || !this.zone.phases.canSee(owner, c.id)) continue;
+        const d = distance(from, c.pos);
+        if (d <= N.call.herdRadiusM && (!best || d < best.distance)) best = { herd: c.herd, distance: d };
+      }
+    return best?.herd ?? null;
+  }
+
+  stampede(owner: number, from: Readonly<Vec3>, point: Readonly<Vec3>, valid: () => boolean, damage: (target: number) => void): boolean {
+    const herd = this.callHerd(owner, from);
+    const f = this.zone.entity(owner)?.fields;
+    if (!herd || !f?.frame || !valid()) return false;
+    const paths = new Map<number, Vec3>();
+    for (const c of herd.members) {
+      const d = distance(c.pos, point) || 1;
+      const extend = 1 + (c.species.run * N.call.durationS) / d;
+      paths.set(c.id, [c.pos[0] + (point[0] - c.pos[0]) * extend, c.pos[1] + (point[1] - c.pos[1]) * extend, c.pos[2] + (point[2] - c.pos[2]) * extend]);
+    }
+    this.calls.set(herd.id, {
+      owner,
+      frame: f.frame,
+      phase: this.zone.phases.phaseOf(owner),
+      until: this.now + N.call.durationS,
+      valid,
+      damage,
+      paths,
+      hit: new Set(),
+    });
+    return true;
+  }
+
+  direct(c: Creature, ctx: Ctx): boolean {
+    const owner = this.ownerOf(c.id);
+    if (owner !== null) {
+      const at = this.zone.entity(owner)?.fields.pos;
+      if (!at) return true;
+      const p: Vec3 = [at[0], at[1], at[2]];
+      const enemy =
+        distance(c.pos, p) > N.bond.leashM
+          ? undefined
+          : [...ctx.creatures.values()]
+              .filter(
+                (t) =>
+                  t.id !== c.id &&
+                  this.ownerOf(t.id) === null &&
+                  (t.species.tier > 0 || c.threat.entries.some((e) => e.id === t.id)) &&
+                  distance(t.pos, p) <= N.bond.defendM &&
+                  this.mayStrike(owner, t.id),
+              )
+              .sort((a, b) => distance(a.pos, c.pos) - distance(b.pos, c.pos))[0];
+      companionStep(c, ctx, p, enemy);
+      return true;
+    }
+    const call = this.calls.get(c.herd.id);
+    const to = call?.paths.get(c.id);
+    if (!call || !to) return false;
+    c.target = null;
+    c.attack = null;
+    c.state = 'charge';
+    const from: Vec3 = [...c.pos];
+    move(c, ctx, { to, speed: c.species.run, altitude: N.bond.flyerAltitudeM });
+    if (!stunned(c, ctx.now))
+      for (const target of ctx.creatures.values()) {
+        if (target.herd === c.herd || call.hit.has(target.id) || !this.mayStrike(call.owner, target.id)) continue;
+        const sphere = creatureSphere(target);
+        if (segmentDistance(sphere.pos, from, c.pos) > N.call.contactRadiusM + sphere.radius) continue;
+        call.hit.add(target.id);
+        call.damage(target.id);
+      }
+    return true;
+  }
+
+  private mayStrike(source: number, target: number): boolean {
+    const a = this.zone.entity(source)?.fields;
+    const b = this.zone.entity(target)?.fields;
+    return (
+      !!a &&
+      !!b &&
+      b.kind === 'mob' &&
+      this.ownerOf(target) === null &&
+      a.frame === b.frame &&
+      a.frame !== this.zone.stationFrame &&
+      this.zone.phases.canSee(source, target)
+    );
+  }
+
+  /** Only companion fights are enabled here; ordinary fauna attacks on players remain E08.T02. */
+  strike(c: Creature, target: number): void {
+    const owner = this.ownerOf(c.id);
+    const defended = this.ownerOf(target);
+    if (owner === null && defended === null) return;
+    const other = this.find(target);
+    if (!other || !this.zone.phases.canSee(c.id, target)) return;
+    const sphere = creatureSphere(other);
+    if (distance(c.pos, sphere.pos) > reach(c) * 1.5 + sphere.radius) return;
+    if (owner !== null ? !this.companions.get(owner)?.valid() || !this.mayStrike(owner, target) : !this.mayStrike(defended!, c.id)) return;
+    const attack = getBodyPlan(c.species.bodyPlan).attacks[0];
+    if (attack) this.zone.combat.applyDamage(c.id, target, { base: attack.damage, kind: 'attack', what: attack.id });
   }
 
   /** Every creature being kept, on every world. */

@@ -10,6 +10,7 @@ import type { CreatureTarget } from '../combat/targets.ts';
 import type { DamageOutcome } from '../combat/zone.ts';
 import { RESONANCE_EFFECTS } from './resonance.ts';
 import { THERMAL_EFFECTS } from './thermal.ts';
+import { SYMBIOTIC_EFFECTS } from './symbiotic.ts';
 
 type Vec3 = [number, number, number];
 
@@ -53,9 +54,15 @@ export interface CastContext {
   groundReady(): boolean;
   /** Whether the ground leaves a clear line from the caster's eye to `to`; 'busy' while the world's ground is still being
    * planned (a `check` refuses `busy`, a held beam tries again next tick). False too once the caster is gone. */
-  sight(to: Readonly<Vec3>): boolean | 'busy';
+  sight(to: Readonly<Vec3>, from?: Readonly<Vec3>): boolean | 'busy';
   /** Whether the caster may harm `target` at all (`mayHarm`): for an effect that marks it and deals no damage itself. */
   canHarm(target: number): boolean;
+  /** Symbiotic effects use current ally, codex and lifecycle authority on every operation. */
+  canHeal(target: number): boolean;
+  heal(target: number, amount: number): void;
+  repairHull(amount: number): void;
+  bond: { eligible(target: number): boolean; tame(target: number): void };
+  stampede: { ready(): boolean; start(): void };
   /** The caster's meters, as an effect reads and spends them beyond the cost the runtime took. */
   readonly meters: {
     /** Seconds the beam has fired in all, as the meters judged it; the difference between two readings is what it did. */
@@ -78,7 +85,7 @@ export interface CastContext {
   conceal(durationS: number): void;
   /** The caster's party members on foot, up and in play on its world within `radiusM` of it, with where they stand in the
    * cast's frame (the caster itself is not among them). */
-  party(radiusM: number): { id: number; pos: Readonly<Vec3> }[];
+  party(radiusM: number, at?: Readonly<Vec3>): { id: number; pos: Readonly<Vec3> }[];
   /** Tells these entities' sessions that the cast is theirs too (a party's shared Pulse): the cast event they are sent carries
    * `shared`, so their client plays the effect as its own player's. Only those who would see the cast are sent it. */
   share(entities: readonly number[]): void;
@@ -126,7 +133,7 @@ export interface AbilityEffect {
 }
 
 /** The server's effects, by node. Each branch's task adds its own list here, from its own file (thermal.ts). */
-export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([...THERMAL_EFFECTS, ...RESONANCE_EFFECTS]);
+export const EFFECTS: ReadonlyMap<string, AbilityEffect> = new Map<string, AbilityEffect>([...THERMAL_EFFECTS, ...RESONANCE_EFFECTS, ...SYMBIOTIC_EFFECTS]);
 
 export interface BookEntry {
   readonly ability: Ability;

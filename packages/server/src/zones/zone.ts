@@ -128,6 +128,8 @@ export type InputResult = 'ok' | 'stale' | 'frame' | 'unknown' | MovementRefusal
 
 /** A read-only look at an entity. */
 export interface ZoneEntity {
+  /** Changes on frame, mode or phase departure, even if it returns before the next tick. */
+  readonly presence: number;
   readonly id: number;
   readonly fields: Readonly<EntityInit>;
   /** world position (the system's inertial frame) at the last tick's time */
@@ -141,6 +143,8 @@ export interface ZoneEntity {
 }
 
 class Entity implements ZoneEntity {
+  presence = 0;
+  location: { frame: FrameId; mode: string | undefined };
   world: Vec3 = [0, 0, 0];
   /** the class it keeps whatever its kind and mode (EntityInit.interest) */
   fixedCls: InterestClass | null = null;
@@ -160,7 +164,9 @@ class Entity implements ZoneEntity {
     public fields: EntityInit,
     public cls: InterestClass,
     public party: string | null,
-  ) {}
+  ) {
+    this.location = { frame: fields.frame, mode: fields.mode };
+  }
 }
 
 interface View {
@@ -189,6 +195,8 @@ export interface ZoneMetrics {
 }
 
 export interface ZoneOptions {
+  /** Initial world time, before the first tick or player placement. */
+  time?: number;
   id: string;
   /** galaxy system index */
   systemIndex: number;
@@ -247,6 +255,7 @@ export class Zone {
   private scratch = new Uint32Array(1024);
 
   constructor(opts: ZoneOptions) {
+    this.time = opts.time ?? 0;
     this.id = opts.id;
     this.systemIndex = opts.systemIndex;
     this.system = opts.system;
@@ -263,7 +272,7 @@ export class Zone {
     // (its worlds' ground is the one fauna walks on: planned in the worker, for the system's tier)
     const tier = () => this.fauna?.tier ?? tierOfGalaxySystem(opts.systemIndex);
     this.movement = opts.movement ? new MovementAuthority({ zone: opts.id, system: opts.system, log: opts.log, tier, meters: opts.meters }) : null;
-    this.placeFrames(0);
+    this.placeFrames(this.time);
     this.phases = new PhaseManager(this, opts.log);
     this.fauna = opts.fauna === false ? null : new FaunaSim(this, opts.fauna);
     this.combat = new ZoneCombat(this, { hooks: opts.combat, log: opts.log });
@@ -322,6 +331,8 @@ export class Zone {
     this.hashes[e.cls].remove(id);
     if (e.party !== null) this.leaveParty(id, e.party);
     this.entities.delete(id);
+    this.fauna?.dismissOwner(id);
+    this.fauna?.kill(id);
     this.movement?.remove(id);
     this.phases.removed(id);
     this.combat.removed(id);
@@ -704,6 +715,7 @@ export class Zone {
     f.quat = local.quat;
     f.vel = local.vel;
     for (const k of POSE_FIELDS) e.changed.add(k);
+    this.touch(e);
     return w;
   }
 
@@ -712,7 +724,18 @@ export class Zone {
    * the one the server believes (a client claiming 'foot' while it flies is corrected, and keeps its ship's 50 km); in a
    * zone without, it is the mode the client sent.
    */
+  phaseChanged(id: number): void {
+    const e = this.entities.get(id);
+    if (!e) return;
+    e.presence++;
+    if (e.fields.kind === 'player') this.fauna?.dismissOwner(id);
+  }
+
   private touch(e: Entity): void {
+    if (e.location.frame !== e.fields.frame || e.location.mode !== e.fields.mode) {
+      e.location = { frame: e.fields.frame, mode: e.fields.mode };
+      this.phaseChanged(e.id);
+    }
     const cls = e.fixedCls ?? interestClass(e.fields.kind, e.fields.mode);
     if (cls !== e.cls) {
       this.hashes[e.cls].remove(e.id);
