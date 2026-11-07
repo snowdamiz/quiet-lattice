@@ -16,7 +16,7 @@ await window.review.ready;
 window.review.hold();
 window.review.overlay(false);
 window.review.lod(0);
-const diag = await import('/@fs/Users/andreyyurlov/.t3/worktrees/space/t3-92cb10ba/packages/tools/src/diagnostics/review-performance/index.mjs');
+const diag = await import('/@fs/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/index.mjs');
 const rv = window.review;
 // Fill only independently verified identity/host observations before measuring.
 const host = { sourceRevision: 'REPLACE', assetSha256: 'REPLACE', runtimeBuild: 'REPLACE' };
@@ -39,11 +39,19 @@ try {
 6. Coordinated 75% renderer/composer dimensions, both-target MSAA recreation, terrain material and asset LOD/material experiments remain pending adapters. Each adapter must save/restore every affected value, verify effective dimensions/sample counts, preserve camera/frustum/inventory, and rewarm both arms. Do not reduce shipping quality. Pass profiling remains explicitly pending: `passTimerPlan` specifies a separate exclusive lease interface and nonoverlapping queries; this module creates no GPU queries and never wraps review.perf with one.
 7. Analyze scene and withoutAsset separately, preserving median/p95, paired asset CI, disjoint fields, settle state and raw result. Aggregate-only output cannot prove complete queries: review.perf does not export raw frames, pending/lost counts, or runtime error collection. Unknowns are not zeros. Collect console/GL errors separately in the admitted harness. Do not interpret asset reliability as scene compliance. Report repetition medians/ranges only after checking consistent configs and work; this module deliberately computes no speedup or causal verdict. Repeat acceptance runs without diagnostic instrumentation.
 
-`capture` records exposed hardware/backend strings (possibly masked), viewport, composer targets and pass settings. Inaccessible values carry explicit unknown reasons. Root visibility and intervention controls are restored; caller-owned hold/overlay/LOD choices in the recipe must be restored manually when leaving the review session.
+`capture` records exposed hardware/backend strings (possibly masked), viewport, composer targets and pass settings. Inaccessible values carry explicit unknown reasons. `marchPlanet` calls `atmoPass.marchPlanet()` with the pass as its receiver: `-1` means no selected planet, and a nonnegative index identifies the current selection. `marchPlanetEvidence` labels this as current selection with pass execution unproven. It does not read the potentially stale last-render uniform or prove that an enabled pass executed during any measured frame.
+
+Completion does not certify comparable runtime configurations. The runner checks intervention observations but does not compare snapshots or cross-row configurations, and camera/time/inventory can change without appearing in snapshots. Host revision/hash/build fields are caller declarations, not verified loaded-runtime identities. The external state and identity records in the admission recipe remain required before accepting comparisons.
+
+On failure, a writable receipt retains both the primary error and subsequent cleanup errors. `failures` contains JSON-compatible `{id, repetition, arm, phase, error}` records; setup/save contexts use null repetition/arm when no arm has started. `errors` retains readable strings with the same context. Measurement rows also retain their own failures, including failed after-observations. A single failure rethrows its original error; multiple failures throw an `AggregateError` containing the original errors in occurrence order. An unwritable receipt may prevent persistence; its write failure is included in the thrown error.
+
+Control restoration, its verification, root restoration and root verification are attempted separately, so a failed cleanup step cannot skip the remaining steps. The matrix guard is always released, including when setup fails. A rejecting or ineffective adapter/root setter can still leave state unrestored; inspect the receipt before reusing the runtime. Caller-owned hold/overlay/LOD choices in the recipe must be restored manually when leaving the review session.
 
 ## Local verification
 
-`node --test packages/tools/src/diagnostics/review-performance/index.test.mjs`
+`node --test packages/tools/src/diagnostics/review-performance/*.test.mjs`
+
+This runs the five supplied tests, the 13 independent adversarial cases (retained with only their import made local), and focused regressions for simultaneous primary/cleanup failures, guard release and selector binding.
 
 Only tiny fake-runtime tests are authorized/executed for this preparation. No browser,
 native, GPU, render, full-suite or shipping qualification is included.
