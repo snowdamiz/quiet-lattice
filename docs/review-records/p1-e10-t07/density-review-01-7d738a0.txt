@@ -1,0 +1,94 @@
+P1.E10.T07 — fresh independent SOURCE/CPU review of the Ulgani density correction
+VERDICT: PASS for the source/CPU contract that can be checked without a new Blender, codec, render, or full-suite launch.
+This does not grade appearance, native filtering, LOD2 cap faceting, floor-wear boundaries, runtime performance, or the whole task. No merge.
+The per-triangle texel Jacobian was not recomputed. Meshopt decode and KTX sampling stay held for the parent release. The export inventory, class budgets, quantization contract, and density reader were checked directly.
+
+PIN
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d
+Branch: task/P1-E10-T07-ulgani-belost
+HEAD: 7d738a0f6eb1b71275bed05da3bb31a2bbc52b0a
+Tree: b640970455006ca21ee41c9fc57b8b923dae9aef
+Parent: fdc456bf9057102099dcfde2bfbbce056f6ef801 (artifact commit)
+Report commit subject: P1.E10.T07: record density correction evidence and review boundaries
+Baseline candidate: a8a4e142828de25fff9235e49d25e17b50d1f047
+Baseline tree: efdc9c74d703ab0c3e2740fb129cdb1dbd102868
+Baseline is an ancestor of HEAD. Working tree porcelain, including untracked, was empty before and after this review.
+Evidence: /tmp/ulgani-t07-review-7d738a0f
+Host: macOS, Darwin arm64. memory_pressure free percentage 82%. Load at the hold check about 2.2. Disk about 33 GiB free. No Blender, ktx, or vitest process was running. This review started no heavy stage.
+
+WHAT WAS REVIEWED
+Plan 0.3, 0.4, 0.9.5, Appendix C.2 and C.4. Task line P1.E10.T07. DESIGN 5.4, 19.2, 19.3, 19.4. Art bible 2.3, palette, texture budgets. Original assets/blend/cities/ulgani/WORKER_REPORT.md and density-revision/WORKER_REPORT.md. density.py, decode_meshopt.mjs, audit.py raw_geometry, run.py, pipeline.py, preservation.py, patch_walk_wear.py, families.json cities rules, artlib/scene.py world_coords, meshopt.ts and gltf-transform quantize.ts. Cities.js consumer left byte-identical to the baseline. Eight GLB JSON chunks, KTX2 headers, and the sixteen source/export SHA-256 values.
+
+0.9.5
+No client authority over server-owned state. Cities.js, export_cities.py, families.json, validate.py, and artlib/export.py are the same blobs as a8a4e142. No new game system. The city renderer is still the procedural consumer and remains T01. No demo path was replaced by this kit. This is not a perf-tagged task. Spec choices below are in the worker DECISIONS. No mandatory REVISE condition is present.
+
+RESOURCE HOLD
+No Blender, meshopt decode, KTX decode, bake, render, or Vitest suite was started. The three task-local unittest cases were run. They do not open a blend or a codec. Future heavy admissions stay held until the parent releases them.
+
+INVENTORY, INDEPENDENT OF THE WORKER TABLES
+JSON index and position accessor counts on the eight GLBs:
+LOD0 triangles 980,765; vertices 928,276
+LOD1 triangles 294,188; vertices 814,217
+LOD2 triangles 98,042; vertices 275,304
+LOD3 triangles 34,279; vertices 89,439
+Export triangle total 1,407,274. These match the density-revision report. Source triangle total 1,407,284 is the worker figure; the blends were hashed and not opened, so the source count was not recounted. The export LOD3 count is 10 below a 34,289 source LOD3. Those ten are dropped indices, separate from the zero-area set.
+39 asset roots, each with LOD0–LOD3. Classes from node extras: 19 building, 12 kit, 6 prop, 2 hero. Every LOD0 triangle count sits inside families.json: building 8–60k, kit 0.5–15k, prop 2–10k, hero 60–150k. Tallest measured LOD0 is ulgani_tall_3 at 59,800. Hero LOD0 counts are 108,800 and 74,272. LOD3/LOD0 is 3.474% to 3.500%, all under 5%.
+1,340 mesh nodes named COL_. Every asset has at least one. 12 empty Interact nodes and 72 empty Light nodes. No non-COL mesh sits outside a *_LOD[0-3] ancestor. No LOD mesh lacks TEXCOORD_0.
+Map headers are KTX2: props 1024, buildings and kits 2048, anchor and landmarks 4096, four images each. Extensions required on every GLB: EXT_meshopt_compression, KHR_mesh_quantization, KHR_texture_basisu. No KHR_texture_transform and no non-zero texCoord index on the texture infos that exist.
+Sixteen blend and GLB SHA-256 values match density-revision/WORKER_REPORT.md. file-hashes.json in this evidence directory.
+
+QUANTIZATION AND THE FALSE DENSITY METHOD
+All 2,539 POSITION accessors are signed short (5122), normalized true. Sampled node scales are uniform. The anchor blade node scale is 24 and its raw short span is the full −32767..32767 axis, so a normalized read is 48 m on that axis. That matches the reported 48 m blade. Treating those shorts as floats and then applying the same node scale stretches that axis by 32,767, to about 786 km. That is the discarded Lark/Props failure mode.
+decode_meshopt.mjs reads positions, normals, and UVs with accessor.getElement. gltf-transform 4.5.1 getElement decodes normalized integers (short / 32767, unsigned short / 65535) and returns floats unchanged. density.py then multiplies by the node world matrix from getWorldMatrix. The matrix algebra matches a column-major glTF matrix times the local point. Y-up is left unconverted there; a pure axis swap does not change the Jacobian singular values. audit.py raw_geometry uses the same dequantized positions and then the Blender Z-up map (x, −z, y).
+Render LOD rows in density-all-d10.json record UV type [5126, false] on all 156 asset/LOD rows. That is float, unnormalized. The 1,311 normalized unsigned-short UV accessors are the collider primitives (1,340 COL meshes minus 29 COL meshes with no UV). The density walker never enters those nodes, because their ancestors are not LOD nodes. Collider UVs are outside this density result.
+gltf-transform quantize skips TEXCOORD when any value lies outside [0,1] and leaves it float. Charts shifted by a whole integer therefore stay float. In-range charts become normalized unsigned short. getElement handles both. The render set measured here is the float set.
+
+DENSITY NUMBERS TAKEN FROM THE PRESERVED D10 DOCUMENT, NOT RECOMPUTED
+density-all-d10.json status PASS, 312 rows (39 assets × 4 LODs × source and export). Source undersampled 0. Export undersampled 0. Source zero-area 0. Export zero-area 4,649. Source triangles 1,407,284. Export triangles 1,407,274. The export triangle total matches the independent index count above.
+Claimed minima: source at least 304.495 px/m for building/kit/hero (target 256) and 612.755 for props (target 512). Tightest export margin in the TSV is ulgani_root_island_landmark LOD1 at 268.808 px/m, 12.808 above 256. The same figure is in the d10 row, status PASS, undersampled 0.
+Baseline density-all document status FAIL, same triangle totals, same 4,649 export zero-area triangles, 1,275,456 source and 1,271,588 export undersampled measurable triangles. The UV/material revision did not change the degenerate count.
+
+DEGENERATE TRIANGLES — CLASSIFICATION
+These 4,649 are export triangles whose world area fails the reader's valid test, area > 1e-14 m² and first-edge length > 1e-14 m. They remain in the index buffers. They are not dropped from the 1,407,274 count. They are excluded only from the measurable texel set. The threshold is a numerical floor, not a loosened pass band.
+Distribution from d10 export rows:
+LOD0 4,620; LOD1 27; LOD2 2; LOD3 0.
+Building 3,395; hero 1,031; kit 133; prop 90.
+Largest LOD0 shares: plaza 1,146 / 54,040 (2.12%); root island 860 / 108,800 (0.79%); tall_1 354 / 55,937; tall_2 309 / 53,859; tall_3 204 / 59,800; great cap 158 / 74,272. Props: planter 81, stall 9. Twelve assets have zero.
+They sit on LOD render meshes. Colliders are a separate node set and are not in these rows. LOD2 and LOD3 are effectively free of them. Source rows report zero. The collapse is the unchanged 14-bit position quantizer: about 1/16384 of a mesh's longest side, roughly 2 cm on a 300 m building. Each counted triangle now has no measurable world area, so it covers no pixels. The lost area is the pre-quantization thickness of those faces. This review did not integrate that source area. It does not call the compressed topology valid, and it does not treat the exclusion as a hidden undersample waiver.
+Ten additional LOD3 triangles are absent from the index count rather than present and degenerate.
+
+CONTRACTS CHECKED IN JSON AND SOURCE
+Palette sample: one anchor material baseColorFactor [0.694, 0.305, 0.024, 1], the linear form of amber #D9962B, extras naming LIB_Chitin, LIB_Membrane, LIB_CapFlesh, LIB_Basalt. metallicFactor and roughnessFactor are omitted on all 76 materials. glTF then uses factor 1 multiplied by the ORM texture. The blue channel was not resampled, because that is a KTX decode. Specular factor on the sampled material is 0.56.
+Cities.js still builds three procedural variants with key % 3, stretches footprints, and collides as cylinders. That file is unchanged. T01 owns consumption of the four variants, metric scale, authored COL, markers, streaming, and cap clearance. The 34/95 m planner bands are not a kit defect.
+patch_walk_wear.py moves WalkWorn back to Walk when any world-X vertex lies outside ±1.4 m. That is the logged 2.8 m strip. Radial floor polygons that sit wholly inside the strip can still show angular boundaries. LOD2 cap faceting is inherited with the preserved geometry. Neither is given a native or blind grade. The final CPU sheet is a real PNG, 4608×4224, 23,168,197 bytes, and was not graded.
+Production loader and stock exporter provenance: blob hashes of Cities.js, export_cities.py, families.json, validate.py, and artlib/export.py match between a8a4e142 and HEAD.
+
+RUNNER
+run.py is the bounded lane: one lock, factory Blender is the caller's argv, thread caps 2, ART_KTX_JOBS 1, private /tmp, TERM then KILL, process.json after the child exits. pipeline.py passes --stale only for packages/client/public/models/cities/ulgani_<group>.glb, which is inside the removal guard. The illegal-stale raise is not reachable from that caller. unittest with Python 3.14.8, -B, PYTHONDONTWRITEBYTECODE=1, from the worktree:
+test_export_is_stock_and_cannot_import_author ok
+test_owned_group_drains_descendant ok
+test_thread_environment_and_root ok
+3 tests, 5.584 s, exit 0.
+export_cities.py still imports only artlib.export and does not reference ulgani.
+
+SPEC CHOICES ALREADY IN THE WORKER REPORT
+Low-density atlas versus fixed map budgets: periodic microtexture, metric trims, existing repair geometry. Logged.
+Weakest singular value on every measurable triangle, all four LODs, source and decoded export. Logged.
+Hero and landmark target 256 px/m, with 4k maps, same numeric bar as buildings. The art bible states 256 px/m for buildings and 4k for capital landmarks; it does not state a separate landmark px/m. Logged in the density table.
+Floor wear kept only on polygons wholly inside the central strip. Logged. Visual remainder left open.
+4,649 zero-area export triangles disclosed and excluded from measurable area. Logged. Not accepted as valid topology.
+asset_class on collections because ulgani_ names miss the wall* / prop_* globs. Logged. The GLB extras match the budgets above.
+
+FINDINGS
+None at P1 or P2 in the contract checked here.
+
+ADVISORY
+None.
+
+NOT ESTABLISHED
+Fresh singular-value recount of the 1,407,274 export triangles and the source blends. Held with meshopt decode and Blender.
+ORM blue-channel metallic sample. Held with KTX decode.
+World-axis height bands, route clearance, and collider fit inside Blender. Held.
+Floor-wear boundaries and LOD2 cap faceting. Native grade unqualified. The existing PNG was not graded.
+Runtime city rendering, streaming, 60 fps, and whole-task acceptance. T01 and the visual gate still own those.
+No screenshot cleanup, hydration, package install, GPU, browser, service, database, push, PR, or merge.
