@@ -1,5 +1,7 @@
 # Astra Nullius: Implementation Plan
 
+> **Paused by the user on 2026-11-07.** No development, review or runtime work may resume without explicit instruction. See [pause checkpoint](PAUSED-2026-11-07.md).
+
 **Spec:** [DESIGN.md](DESIGN.md) (design v1.0). **Plan version:** 1.1, November 2026.
 **Purpose:** a task graph an autonomous agent loop can execute end to end, from today's demo to the Phase 3 game. Every task has dependencies, a "done when" and a "verify" an agent can run.
 

@@ -1,0 +1,55 @@
+{
+  "id": 9,
+  "name": "candidate failed phase",
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "src/capture/playthrough-run.ts",
+    "leave",
+    "mine"
+  ],
+  "scenario": {
+    "phaseResults": {
+      "leave": "fail"
+    }
+  },
+  "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+  "exitCode": 1,
+  "stdout": "[leave] (0s) fail\n[mine] (0s) mine ok\n",
+  "stderr": "",
+  "meta": {
+    "code": 1,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+      "leave",
+      "mine"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "ready",
+      "initialize",
+      "phase:leave",
+      "phase:mine",
+      "close",
+      "close:done",
+      "stop",
+      "stop:done"
+    ]
+  }
+}

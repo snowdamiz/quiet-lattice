@@ -1,0 +1,37 @@
+{
+  "id": 16,
+  "name": "failure startVite/abort",
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+    "leave"
+  ],
+  "scenario": {
+    "faults": {
+      "startVite": "abort"
+    }
+  },
+  "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "node:internal/per_context/domexception:76\n    const self = new Error();\n                 ^\n\nDOMException [AbortError]: cancelled\n    at new DOMException (node:internal/per_context/domexception:76:18)\n    at decode (file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs:28:31)\n    at Object.step (file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs:20:62)\n    at step (file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/ports.mjs:3:32)\n    at startVite (file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/ports.mjs:5:3)\n    at runPlaythrough (/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts:13:22)\n    at <anonymous> (/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts:90:28)\n    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)\n\nNode.js v22.23.3\n",
+  "meta": {
+    "code": 1,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": [
+      "startVite"
+    ]
+  }
+}

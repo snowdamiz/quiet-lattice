@@ -1,0 +1,39 @@
+PASS: module import is inert and exports runPlaythrough
+PASS: CLI compatibility: default
+PASS: CLI compatibility: custom phases and separators
+PASS: CLI compatibility: dock output
+PASS: CLI compatibility: failed phase
+PASS: CLI compatibility: page and console errors
+PASS: CLI nonzero with cleanup: startVite/undefined
+PASS: CLI nonzero with cleanup: startVite/null
+PASS: CLI nonzero with cleanup: startVite/false
+PASS: CLI nonzero with cleanup: startVite/zero
+PASS: CLI nonzero with cleanup: startVite/abort
+PASS: CLI nonzero with cleanup: glArgs/undefined
+PASS: CLI nonzero with cleanup: glArgs/null
+PASS: CLI nonzero with cleanup: glArgs/false
+PASS: CLI nonzero with cleanup: glArgs/zero
+PASS: CLI nonzero with cleanup: glArgs/abort
+PASS: CLI nonzero with cleanup: launch/undefined
+PASS: CLI nonzero with cleanup: launch/null
+PASS: CLI nonzero with cleanup: launch/false
+PASS: CLI nonzero with cleanup: launch/zero
+PASS: CLI nonzero with cleanup: launch/abort
+PASS: CLI nonzero with cleanup: goto/undefined
+PASS: CLI nonzero with cleanup: goto/null
+PASS: CLI nonzero with cleanup: goto/false
+PASS: CLI nonzero with cleanup: goto/zero
+PASS: CLI nonzero with cleanup: goto/abort
+PASS: CLI nonzero with cleanup: close/undefined
+PASS: CLI nonzero with cleanup: close/null
+PASS: CLI nonzero with cleanup: close/false
+PASS: CLI nonzero with cleanup: close/zero
+PASS: CLI nonzero with cleanup: close/abort
+PASS: CLI nonzero with cleanup: stop/undefined
+PASS: CLI nonzero with cleanup: stop/null
+PASS: CLI nonzero with cleanup: stop/false
+PASS: CLI nonzero with cleanup: stop/zero
+PASS: CLI nonzero with cleanup: stop/abort
+PASS: CLI retains aggregate diagnostics after cleanup
+PASS: symlink CLI entry executes phases instead of silently succeeding
+{"passed": 38, "failed": 0, "subprocess_runs": 44}

@@ -1,0 +1,49 @@
+{
+  "id": 42,
+  "name": "triple failure",
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+    "leave"
+  ],
+  "scenario": {
+    "faults": {
+      "goto": "undefined",
+      "close": "null",
+      "stop": "zero"
+    }
+  },
+  "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts:74\n  if (failures.length > 1) throw new AggregateError(failures, 'Playthrough and/or cleanup failed', { cause: failures[0] });\n                                 ^\n\nAggregateError: Playthrough and/or cleanup failed\n    at runPlaythrough (/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts:74:34)\n    at async <anonymous> (/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts:90:22) {\n  [cause]: undefined,\n  [errors]: [ undefined, null, 0 ]\n}\n\nNode.js v22.23.3\n",
+  "meta": {
+    "code": 1,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "close",
+      "stop"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "phase": "red",
+  "runtime": "tsx",
+  "name": "baseline-symlink",
+  "cmd": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline-alias.ts",
+    "leave"
+  ],
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "tsx": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "(node:65410) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\nnode:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\n\nError: Transform failed with 10 errors:\n/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts:8:13: ERROR: Top-level await is currently not supported with the \"cjs\" output format\n/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts:9:16: ERROR: Top-level await is currently not supported with the \"cjs\" output format\n/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts:12:15: ERROR: Top-level await is currently not supported with the \"cjs\" output format\n/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts:16:2: ERROR: Top-level await is currently not supported with the \"cjs\" output format\n/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts:17:2: ERROR: Top-level await is currently not supported with the \"cjs\" output format\n...\n    at failureErrorWithLog \u001b[90m(/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/\u001b[39mnode_modules/\u001b[4m.pnpm\u001b[24m/esbuild@0.28.2/node_modules/\u001b[4mesbuild\u001b[24m/lib/main.js:1752:15\u001b[90m)\u001b[39m\n    at \u001b[90m/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/\u001b[39mnode_modules/\u001b[4m.pnpm\u001b[24m/esbuild@0.28.2/node_modules/\u001b[4mesbuild\u001b[24m/lib/main.js:1019:50\n    at responseCallbacks.<computed> \u001b[90m(/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/\u001b[39mnode_modules/\u001b[4m.pnpm\u001b[24m/esbuild@0.28.2/node_modules/\u001b[4mesbuild\u001b[24m/lib/main.js:886:9\u001b[90m)\u001b[39m\n    at handleIncomingPacket \u001b[90m(/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/\u001b[39mnode_modules/\u001b[4m.pnpm\u001b[24m/esbuild@0.28.2/node_modules/\u001b[4mesbuild\u001b[24m/lib/main.js:941:12\u001b[90m)\u001b[39m\n    at Socket.readFromStdout \u001b[90m(/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/\u001b[39mnode_modules/\u001b[4m.pnpm\u001b[24m/esbuild@0.28.2/node_modules/\u001b[4mesbuild\u001b[24m/lib/main.js:864:7\u001b[90m)\u001b[39m\n\u001b[90m    at Socket.emit (node:events:519:28)\u001b[39m\n\u001b[90m    at addChunk (node:internal/streams/readable:561:12)\u001b[39m\n\u001b[90m    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\u001b[39m\n\u001b[90m    at Readable.push (node:internal/streams/readable:392:5)\u001b[39m\n\u001b[90m    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)\u001b[39m {\n  name: \u001b[32m'TransformError'\u001b[39m\n}\n\nNode.js v22.23.3\n",
+  "meta": {
+    "code": 1,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline-alias.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts"
+    ],
+    "trace": []
+  }
+}

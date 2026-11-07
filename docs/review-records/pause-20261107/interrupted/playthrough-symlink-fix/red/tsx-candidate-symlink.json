@@ -1,0 +1,32 @@
+{
+  "phase": "red",
+  "runtime": "tsx",
+  "name": "candidate-symlink",
+  "cmd": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/entry-alias.ts",
+    "leave"
+  ],
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "tsx": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+  "exitCode": 0,
+  "stdout": "",
+  "stderr": "(node:88903) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:88904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+  "meta": {
+    "code": 0,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/entry-alias.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": []
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": 12,
+  "name": "failure startVite/undefined",
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+    "leave"
+  ],
+  "scenario": {
+    "faults": {
+      "startVite": "undefined"
+    }
+  },
+  "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "\nnode:internal/modules/run_main:123\n    triggerUncaughtException(\n    ^\nundefined\n(Use `node --trace-uncaught ...` to show where the exception was thrown)\n\nNode.js v22.23.3\n",
+  "meta": {
+    "code": 1,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": [
+      "startVite"
+    ]
+  }
+}

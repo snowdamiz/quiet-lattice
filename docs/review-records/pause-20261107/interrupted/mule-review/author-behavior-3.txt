@@ -1,0 +1,11 @@
+PASS eight success scenarios (16 stock/wrapped executions)
+PASS 20 paired exception scenarios = 40 stock/wrapped executions
+PASS SIGKILL: baseColor observed return, roughness uniquely lacks terminal; publication unconfirmed
+test_eight_success_scenarios_preserve_all_observable_state_and_todo (__main__.CandidateBehavior.test_eight_success_scenarios_preserve_all_observable_state_and_todo) ... ok
+test_forty_exception_executions_preserve_identity_cleanup_and_stop_order (__main__.CandidateBehavior.test_forty_exception_executions_preserve_identity_cleanup_and_stop_order) ... ok
+test_sigkill_leaves_only_roughness_without_an_observed_terminal (__main__.CandidateBehavior.test_sigkill_leaves_only_roughness_without_an_observed_terminal) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.220s
+
+OK

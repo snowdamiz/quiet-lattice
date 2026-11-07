@@ -1,0 +1,22 @@
+test_channel_exception_keeps_the_earlier_success_and_stops (__main__.InstallTests.test_channel_exception_keeps_the_earlier_success_and_stops) ... ok
+test_channel_interrupt_stops_without_a_success_record (__main__.InstallTests.test_channel_interrupt_stops_without_a_success_record) ... ok
+test_direct_channel_call_without_a_frame_does_not_bake (__main__.InstallTests.test_direct_channel_call_without_a_frame_does_not_bake) ... ok
+test_each_channel_is_a_separate_successful_call (__main__.InstallTests.test_each_channel_is_a_separate_successful_call) ... ok
+test_uninstall_restores_the_original_functions (__main__.InstallTests.test_uninstall_restores_the_original_functions) ... ok
+test_unknown_variant_does_not_bake (__main__.InstallTests.test_unknown_variant_does_not_bake) ... ok
+test_variant_match_prefers_the_longest_id (__main__.InstallTests.test_variant_match_prefers_the_longest_id) ... ok
+test_bad_identity_does_not_call_the_bake_or_write (__main__.PhaseLogTests.test_bad_identity_does_not_call_the_bake_or_write) ... ok
+test_default_clock_is_monotonic (__main__.PhaseLogTests.test_default_clock_is_monotonic) ... ok
+test_exception_is_recorded_and_reraised (__main__.PhaseLogTests.test_exception_is_recorded_and_reraised) ... ok
+test_keyboard_interrupt_is_not_stored_as_error (__main__.PhaseLogTests.test_keyboard_interrupt_is_not_stored_as_error) ... ok
+test_log_failure_after_bake_error_does_not_replace_the_bake_exception (__main__.PhaseLogTests.test_log_failure_after_bake_error_does_not_replace_the_bake_exception) ... ok
+test_log_failure_after_successful_bake_does_not_record_success (__main__.PhaseLogTests.test_log_failure_after_successful_bake_does_not_record_success) ... ok
+test_success_records_start_then_success_and_returns_the_bake (__main__.PhaseLogTests.test_success_records_start_then_success_and_returns_the_bake) ... ok
+test_system_exit_is_an_interrupt (__main__.PhaseLogTests.test_system_exit_is_an_interrupt) ... ok
+test_truncated_tail_is_not_a_success (__main__.PhaseLogTests.test_truncated_tail_is_not_a_success) ... ok
+test_unfinished_start_stays_after_the_writer_is_killed (__main__.PhaseLogTests.test_unfinished_start_stays_after_the_writer_is_killed) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.025s
+
+OK

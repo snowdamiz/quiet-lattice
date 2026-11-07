@@ -1,0 +1,29 @@
+{
+  "phase": "red",
+  "runtime": "node",
+  "name": "import-only",
+  "cmd": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "--import",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/import-check.mjs"
+  ],
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "tsx": null,
+  "exitCode": 0,
+  "stdout": "import is inert\n",
+  "stderr": "",
+  "meta": {
+    "code": 0,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/import-check.mjs"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": []
+  }
+}

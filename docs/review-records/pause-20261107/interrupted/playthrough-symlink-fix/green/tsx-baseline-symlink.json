@@ -1,0 +1,49 @@
+{
+  "phase": "green",
+  "runtime": "tsx",
+  "name": "baseline-symlink",
+  "cmd": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline-alias.ts",
+    "leave"
+  ],
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "tsx": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+  "exitCode": 0,
+  "stdout": "[leave] (0s) leave ok\n",
+  "stderr": "(node:3954) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+  "meta": {
+    "code": 0,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline-alias.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "ready",
+      "initialize",
+      "phase:leave",
+      "close",
+      "close:done",
+      "stop",
+      "stop:done"
+    ]
+  }
+}

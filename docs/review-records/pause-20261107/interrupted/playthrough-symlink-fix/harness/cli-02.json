@@ -1,0 +1,55 @@
+{
+  "id": 2,
+  "name": "baseline default",
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/node_modules/tsx/dist/cli.mjs",
+    "--import",
+    "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/preload.mjs",
+    "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts"
+  ],
+  "scenario": {},
+  "source": "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts",
+  "exitCode": 0,
+  "stdout": "[leave] (0s) leave ok\n[descend] (0s) descend ok\n[land] (0s) land ok\n[disembark] (0s) disembark ok\n[mine] (0s) mine ok\n[analyze] (0s) analyze ok\n[board] (0s) board ok\n[climb] (0s) climb ok\n[dock] (0s) dock ok\n  dock state: {\"mode\":\"docked\",\"pads\":[\"player\",\"npc\",\"free\"],\"hud\":\"Docked\"}\n",
+  "stderr": "",
+  "meta": {
+    "code": 0,
+    "version": "v22.23.3",
+    "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts"
+    ],
+    "loaded": [
+      "file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "ready",
+      "initialize",
+      "phase:leave",
+      "phase:descend",
+      "phase:land",
+      "phase:disembark",
+      "phase:mine",
+      "phase:analyze",
+      "phase:board",
+      "phase:climb",
+      "phase:dock",
+      "dockState",
+      "close",
+      "close:done",
+      "stop",
+      "stop:done"
+    ]
+  }
+}

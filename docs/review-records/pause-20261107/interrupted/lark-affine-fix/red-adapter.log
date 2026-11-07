@@ -1,0 +1,104 @@
+test_active_dependencies_refused_for_dirty_unpacked_movie_and_zero_size (__main__.AdapterTests.test_active_dependencies_refused_for_dirty_unpacked_movie_and_zero_size) ... ok
+test_active_output_ignores_disconnected_dirty_image_and_refuses_groups (__main__.AdapterTests.test_active_output_ignores_disconnected_dirty_image_and_refuses_groups) ... ok
+test_actual_collection_walk_refuses_multilod_object_and_shared_collection (__main__.AdapterTests.test_actual_collection_walk_refuses_multilod_object_and_shared_collection) ... ok
+test_ambiguous_outputs_fail_closed (__main__.AdapterTests.test_ambiguous_outputs_fail_closed) ... ok
+test_cpu_gate_precedes_each_render_and_disables_gpu_paths (__main__.AdapterTests.test_cpu_gate_precedes_each_render_and_disables_gpu_paths) ... ok
+test_evaluated_geometry_world_parent_and_material_indices (__main__.AdapterTests.test_evaluated_geometry_world_parent_and_material_indices) ... ok
+test_flags_and_attestations_cannot_enable_unsupported_proofs (__main__.AdapterTests.test_flags_and_attestations_cannot_enable_unsupported_proofs) ... ok
+test_lineup_three_cells_preserve_settings_and_restore_on_midrun_failure (__main__.AdapterTests.test_lineup_three_cells_preserve_settings_and_restore_on_midrun_failure) ... ok
+test_livery_identity_uses_bytes_and_interpretation (__main__.AdapterTests.test_livery_identity_uses_bytes_and_interpretation) ... ok
+test_missing_exact_reference_has_no_duplicate_fallback (__main__.AdapterTests.test_missing_exact_reference_has_no_duplicate_fallback) ... ok
+test_observe_boundary_contracts_without_claiming_asset_failure (__main__.AdapterTests.test_observe_boundary_contracts_without_claiming_asset_failure) ... ok
+test_receipts_success_exception_interrupt_and_source_change_or_disappearance (__main__.AdapterTests.test_receipts_success_exception_interrupt_and_source_change_or_disappearance) ... ok
+test_required_material_must_be_on_evaluated_faces (__main__.AdapterTests.test_required_material_must_be_on_evaluated_faces) ... ok
+test_shared_mesh_users_are_copied_without_source_or_cross_copy_mutation (__main__.AdapterTests.test_shared_mesh_users_are_copied_without_source_or_cross_copy_mutation) ... ok
+test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) ... 
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='body') ... FAIL
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='collider') ... FAIL
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='biped') ... FAIL
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='grid') ... FAIL
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='body') ... FAIL
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='collider') ... FAIL
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='biped') ... FAIL
+  test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='grid') ... FAIL
+test_units_refusal_and_nonfinite_evaluated_reference (__main__.AdapterTests.test_units_refusal_and_nonfinite_evaluated_reference) ... ok
+test_variant_and_wip_meshes_do_not_leak_into_base (__main__.AdapterTests.test_variant_and_wip_meshes_do_not_leak_into_base) ... ok
+test_wrong_source_and_existing_outputs_never_reach_capture (__main__.AdapterTests.test_wrong_source_and_existing_outputs_never_reach_capture) ... ok
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='body')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='collider')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='biped')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1, 1, 0, 4], [0, 1, 0, 5], [0, 0, 1, 6], [0, 0, 0, 1]], selected='grid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='body')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='collider')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='biped')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_shear_and_rotated_child_of_nonuniform_parent_refused (__main__.AdapterTests.test_shear_and_rotated_child_of_nonuniform_parent_refused) (world=[[1.4142135623730951, -1.4142135623730951, 0, 4], [0.7071067811865476, 0.7071067811865476, 0, 5], [0.0, 0.0, 3, 6], [0.0, 0.0, 0, 1]], selected='grid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-7b246f29/packages/tools/blender/hulls/lark-evidence-prep/capture_adapter_selftest.py", line 353, in test_shear_and_rotated_child_of_nonuniform_parent_refused
+    with self.assertRaisesRegex(ValueError, 'shear'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.138s
+
+FAILED (failures=8)
+PORT_OUTPUT /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/lark-adapter-ports-0q413wky

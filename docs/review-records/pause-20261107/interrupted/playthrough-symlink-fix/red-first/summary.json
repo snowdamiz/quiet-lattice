@@ -1,0 +1,160 @@
+{
+  "phase": "red",
+  "records": [
+    {
+      "runtime": "node",
+      "name": "candidate-direct",
+      "exitCode": 0,
+      "stdout": "[leave] (0s) leave ok\n",
+      "trace": [
+        "startVite",
+        "glArgs",
+        "glArgs.args",
+        "launch",
+        "newPage",
+        "on:pageerror",
+        "on:console",
+        "url",
+        "goto",
+        "ready",
+        "initialize",
+        "phase:leave",
+        "close",
+        "close:done",
+        "stop",
+        "stop:done"
+      ],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+      "loaded": [
+        "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+      ]
+    },
+    {
+      "runtime": "node",
+      "name": "baseline-symlink",
+      "exitCode": 0,
+      "stdout": "[leave] (0s) leave ok\n",
+      "trace": [
+        "startVite",
+        "glArgs",
+        "glArgs.args",
+        "launch",
+        "newPage",
+        "on:pageerror",
+        "on:console",
+        "url",
+        "goto",
+        "ready",
+        "initialize",
+        "phase:leave",
+        "close",
+        "close:done",
+        "stop",
+        "stop:done"
+      ],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline-alias.ts",
+      "loaded": [
+        "file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts"
+      ]
+    },
+    {
+      "runtime": "node",
+      "name": "candidate-symlink",
+      "exitCode": 0,
+      "stdout": "",
+      "trace": [],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/entry-alias.ts",
+      "loaded": [
+        "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+      ]
+    },
+    {
+      "runtime": "node",
+      "name": "import-only",
+      "exitCode": 0,
+      "stdout": "import is inert\n",
+      "trace": [],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/import-check.mjs",
+      "loaded": [
+        "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+      ]
+    },
+    {
+      "runtime": "tsx",
+      "name": "candidate-direct",
+      "exitCode": 0,
+      "stdout": "[leave] (0s) leave ok\n",
+      "trace": [
+        "startVite",
+        "glArgs",
+        "glArgs.args",
+        "launch",
+        "newPage",
+        "on:pageerror",
+        "on:console",
+        "url",
+        "goto",
+        "ready",
+        "initialize",
+        "phase:leave",
+        "close",
+        "close:done",
+        "stop",
+        "stop:done"
+      ],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts",
+      "loaded": [
+        "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+      ]
+    },
+    {
+      "runtime": "tsx",
+      "name": "baseline-symlink",
+      "exitCode": 1,
+      "stdout": "",
+      "trace": [],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline-alias.ts",
+      "loaded": [
+        "file:///private/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/baseline.ts"
+      ]
+    },
+    {
+      "runtime": "tsx",
+      "name": "candidate-symlink",
+      "exitCode": 0,
+      "stdout": "",
+      "trace": [],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/entry-alias.ts",
+      "loaded": [
+        "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+      ]
+    },
+    {
+      "runtime": "tsx",
+      "name": "import-only",
+      "exitCode": 0,
+      "stdout": "import is inert\n",
+      "trace": [],
+      "version": "v22.23.3",
+      "execPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "argv1": "/tmp/space-playthrough-symlink-fix-20261107-t3-08e12f47/harness/import-check.mjs",
+      "loaded": [
+        "file:///Users/andreyyurlov/.t3/worktrees/space/t3-08e12f47/packages/tools/src/capture/playthrough-run.ts"
+      ]
+    }
+  ]
+}

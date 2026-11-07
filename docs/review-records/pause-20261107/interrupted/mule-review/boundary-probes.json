@@ -1,0 +1,259 @@
+{
+  "syntactically_valid_invalid_limits": [
+    {
+      "case": "null_wall",
+      "input": {
+        "wall_seconds": null,
+        "rss_mib": 8192
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": 8388608,
+        "wall_limit_s": null
+      }
+    },
+    {
+      "case": "string_wall",
+      "input": {
+        "wall_seconds": "not-a-number",
+        "rss_mib": 8192
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": 8388608,
+        "wall_limit_s": "not-a-number"
+      }
+    },
+    {
+      "case": "boolean_wall",
+      "input": {
+        "wall_seconds": true,
+        "rss_mib": 8192
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": 8388608,
+        "wall_limit_s": true
+      }
+    },
+    {
+      "case": "zero_wall",
+      "input": {
+        "wall_seconds": 0,
+        "rss_mib": 8192
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": 8388608,
+        "wall_limit_s": 0
+      }
+    },
+    {
+      "case": "negative_wall",
+      "input": {
+        "wall_seconds": -1,
+        "rss_mib": 8192
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": 8388608,
+        "wall_limit_s": -1
+      }
+    },
+    {
+      "case": "empty_rss",
+      "input": {
+        "wall_seconds": 5400,
+        "rss_mib": ""
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": "",
+        "wall_limit_s": 5400
+      }
+    },
+    {
+      "case": "boolean_rss",
+      "input": {
+        "wall_seconds": 5400,
+        "rss_mib": true
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": 1024,
+        "wall_limit_s": 5400
+      }
+    },
+    {
+      "case": "negative_rss",
+      "input": {
+        "wall_seconds": 5400,
+        "rss_mib": -1
+      },
+      "error": null,
+      "channel_calls": [
+        "baseColor",
+        "roughness",
+        "metallic",
+        "normal",
+        "emissive",
+        "occlusion"
+      ],
+      "recorded_resources": {
+        "disk_free": 500,
+        "group_rss_kib": 12,
+        "rss_limit_kib": -1024,
+        "wall_limit_s": 5400
+      }
+    },
+    {
+      "case": "null_rss",
+      "input": {
+        "wall_seconds": 5400,
+        "rss_mib": null
+      },
+      "error": "TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'",
+      "channel_calls": [],
+      "recorded_resources": null
+    }
+  ],
+  "external_log_replacement_same_phase_id": {
+    "before": [
+      {
+        "material": "Mule_Accent.001",
+        "variant": "mule",
+        "channel": "baseColor",
+        "resolution": 4096,
+        "object_count": 1,
+        "triangle_count": 2,
+        "phase_id": "128c5cc3e9ed40ce96ebab85a61c35af",
+        "resources": {
+          "group_rss_kib": 123,
+          "rss_limit_kib": 8388608,
+          "wall_limit_s": 5400
+        },
+        "started_monotonic_s": 315174.725971833,
+        "ended_monotonic_s": 315174.7261005,
+        "error": "RuntimeError('channel failed')",
+        "observed_outcome": "error",
+        "publication": "acknowledged",
+        "status": "error"
+      }
+    ],
+    "after": [
+      {
+        "material": "ReplacedMaterial",
+        "variant": "mule",
+        "channel": "normal",
+        "resolution": 4096,
+        "object_count": 1,
+        "triangle_count": 2,
+        "phase_id": "128c5cc3e9ed40ce96ebab85a61c35af",
+        "resources": {
+          "group_rss_kib": 123,
+          "rss_limit_kib": 8388608,
+          "wall_limit_s": 5400
+        },
+        "started_monotonic_s": 315174.725971833,
+        "ended_monotonic_s": 315174.7261005,
+        "error": null,
+        "observed_outcome": "success",
+        "publication": "acknowledged",
+        "status": "success"
+      }
+    ],
+    "disk": [
+      {
+        "material": "ReplacedMaterial",
+        "variant": "mule",
+        "channel": "normal",
+        "resolution": 4096,
+        "object_count": 1,
+        "triangle_count": 2,
+        "phase_id": "128c5cc3e9ed40ce96ebab85a61c35af",
+        "resources": {
+          "group_rss_kib": 123,
+          "rss_limit_kib": 8388608,
+          "wall_limit_s": 5400
+        },
+        "started_monotonic_s": 315174.725971833,
+        "ended_monotonic_s": 315174.7261005,
+        "error": null,
+        "observed_outcome": "success",
+        "publication": "unconfirmed",
+        "status": "unfinished"
+      }
+    ],
+    "precondition": "External rewrite/replacement of the documented append-only log; no UUID collision or append-only caller can produce this."
+  }
+}
