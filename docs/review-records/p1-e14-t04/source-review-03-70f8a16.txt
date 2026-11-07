@@ -1,0 +1,321 @@
+VERDICT: SOURCE PASS — bounded SOURCE/CPU R3 only
+TASK: P1.E14.T04 (art) Flora rebuild: trees — publication ownership correction
+STATUS: DONE (independent source review only; not whole-task acceptance)
+
+SUMMARY
+F-E is fixed in the actual exporter/supervisor call graph. The exact baseline
+reproduces post-failure canonical publication. With the same paired CPU fixture
+bytes and original validation barrier, the corrected producer can finish only
+inside its attempt after the supervisor returns FAIL/130; the canonical GLB stays
+absent, the failure receipt is unchanged, and retry75 leaves that state intact.
+Fresh supplied publication controls pass23/23 and runner controls pass28/28.
+The ten prior additional failure contracts hold: nine replay unchanged; the
+postlink receipt fault passes with the exact production exporter in place of its
+obsolete canonical-writing success stub. The original failed stub replay is kept.
+The real receipt consumer accepts both fresh successful promotions and rejects
+all21 publication failures. No new blocking finding was substantiated.
+
+PIN AND REVIEW CONTRACT
+Workspace: /Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975
+Branch: task/P1-E14-T04-trees
+HEAD: 70f8a164614ad9cf370e448a081603bfc4fa1cf4
+Tree: 6500288a5b99ab7d7d80bc617bfcead009f672cc
+Review base: 36861a31e752164469e847a916e0ea21a2e54686
+Base tree: edf62091d81857d5bf3171523b23028b64490573
+Original parent: 55a8d58c27db35782b89142fc8a4f8d25f52f379
+Shared pin: 515ba1f00810a50b499970b5468ef7bf0af84c32
+Final HEAD/tree/branch and clean status were independently checked before/after.
+
+Read docs/IMPLEMENTATION_PLAN.md 0.3, 0.4, 0.9.5, T04 and its19-name amendment,
+C.2 and C.4; the R2 REPORT.txt, adverse.py and exporter_boundary.py; the worker's
+revision2_20261107/REPORT.md and external handoff. No ancestor AGENTS.md was found.
+The scope is the R2-to-R3 source correction, publication ownership, prior failure
+contracts and preservation. No requirement under the five mandatory 0.9.5
+categories is newly violated: no client authority change, untested new system,
+T07 generator-removal adoption, perf-tagged budget change or new spec choice.
+
+Exact SHA-256:
+baseline run.py: 6f8e0088d3b5db9d5e46c0cddd30257d1b41ad94b8acb26b693148352ec7aa1c
+baseline export_saved.py: 491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5
+reviewed run.py: 5b2fc40d26c906457bebd786e75b2ecebb2dc2d73adb9b1bb80db27b229ef1b4
+reviewed export_saved.py: 04f7db0b43e6790e468a260b8cceca16c17776f808a5916e4b49679af3a364a6
+reviewed test_runner.py: 24b63360980759fd4d63f0aceb73201b4d9d4b3f848dc6f826a4617394f910e4
+reviewed test_publication.py: f59df3c6d9e3e4a8bb6900088f72daaf1fe18f0dd52997034e58408a1fa3edc5
+unchanged manifest.py: 8e2ede8e16531327c4ad6d2e18fe6b9d08c79d64d04d4c27685e5d7c25f27548
+worker report: 99fd8e8ef4c9ea1745b1ef2d55b308d2463f84654d439df2a1fb4ef8077165b5
+prior R2 review: 31ded0c1c4b04a3c06cd5fa990efbfa351a23a03b17131f5ae2c1400402c7d7a
+
+FILES CHANGED
+None in the reviewed checkout, linked dependencies, assets or prior evidence.
+No ref, index, branch, commit, PR or remote changed. The reviewed diff changes
+run.py, export_saved.py, test_runner.py, adds test_publication.py and adds only
+revision2_20261107 evidence. No orchestration document changed.
+Fresh review scripts, fixtures, logs, inventories and this report exist only in:
+/tmp/t04-r3-70f8a1646-review-q16m4gr7/
+
+PRIOR FINDINGS
+F-A / P2: FIXED. Fresh unreadable/directory-source controls retire both removable
+current names, launch no child, retain the real read error and null source_before,
+and return a nonzero matching receipt. No source digest is fabricated.
+
+F-B / P2: FIXED. Fresh symlink/hardlink/relative/chained-alias controls preserve
+detached regular archives; subsequent backing mutation does not change history.
+Unreadable/raw quarantine retains error facts without claiming a verified digest.
+
+F-C / P2: FIXED. The original child0/source-mutation reproduction preserves actual
+child_exit0, but returns/records failure, clears export_sha256 and retires current
+outputs. The exact-exporter controls also reject source changes during validation,
+after readiness, and during canonical publication.
+
+F-D / P2: FIXED. Injected killpg EPERM does not escape or invent successful cleanup.
+FAIL/130 retains child_exit=null, child_reaped=false, nonterminal group/error facts
+and the persistent blocked guard. Denied-but-exited and primary-exit7 controls
+preserve the distinct actual outcomes. Later harness group disappearance does not
+retroactively change a prior receipt.
+
+F-E / P2: FIXED for the production publisher. Three relevant fresh observations:
+1. exact-red/exporter_boundary.py reproduces the original failure through exact
+   baseline run.py/export_saved.py. Only its ROOT points to baseline copies. All
+   original CPU dependency strings, barrier and fault remain unchanged. Exit1 is
+   the expected red safety assertion: after supervisor130, canonical becomes
+   LATE-EXACT-EXPORTER-GLB, receipt hash is unchanged, retry75 leaves it present.
+2. paired_boundary.py baseline reproduces that failure again (exit1).
+3. paired_boundary.py current passes (exit0) with the identical fixture hashes:
+   supervisor130 precedes release; producer finishes ready.json and private GLB;
+   group becomes absent; canonical remains absent; receipt unchanged; retry75.
+   The paired current receipt hash before/after is
+   5cdcedd8db6bd22d93e736c77b3a7c81b78f1b82eac92dd68f948ffad0d56914.
+   The private output hash is
+   401155db001948a67992d447d27ef6f2c207f48824dfa3a5db4a81559678d776.
+
+Fixture fidelity: the old stock stub hardcodes the canonical path even when given
+--out-dir, so running it unchanged against the new contract would test a different
+publisher. The paired stock fixture honors --out-dir, with the real old default
+when absent. Both revisions use exactly the same revised stock fixture. The old
+core validation barrier and CLI fixture are byte-identical to R2. The exact-old
+RED is retained separately. fixture-provenance.json records this distinction.
+The supplied exact-exporter suite independently passes barriers inside stock
+generation and final validation. No sleeps determine the release ordering: the
+harness writes the release file only after the failed supervisor has returned.
+
+PUBLICATION OWNER AND REAL CALLERS
+All paths below are under packages/tools/ unless otherwise indicated.
+- blender/flora_trees/run.py:264-289 selects the exact exporter, creates a fresh
+  producer/tmp, passes private TMPDIR, and starts the producer in its own group.
+- blender/flora_trees/export_saved.py:20-37 supplies --out-dir producer/stock and
+  --report-dir producer/stock-reports. The mask promoter receives only private
+  raw/output/precision paths. No canonical output name or canonical rename is
+  computed in this exporter. Importing run.py invokes only read_bound/write_json;
+  its CLI main remains guarded by __name__.
+- blender/artlib/export.py:65-80 constructs out from the explicit output root;
+  families.json:22 is {family}/{stem}.glb. export_one:110-146 writes through TMPDIR,
+  compression destinations, explicit report-dir and that private out. Failure
+  deletion/rejected-file preservation also targets those supplied paths.
+- blender/artlib/core.py:42 and artlib/ktx.py:439,499 create temporary directories;
+  the new TMPDIR contains them. core report_path:136-140 honors report-dir.
+- blender/artlib/meshopt.py:56-65 forwards src/dst; src/art/meshopt.ts:150-157 writes
+  only its dst argument. flora_trees/promote_masks.mjs:45-51 writes its supplied
+  dst/report. The codec shim only coordinates the existing evidence lock and
+  execs the supplied codec args; it has no canonical promotion path.
+- export_saved.py:38-55 binds source, validated private bytes, stock bytes and
+  reports into exclusive private ready.json. It rechecks source/candidate bytes
+  around final validation; only PASS can prepare readiness.
+- run.py:310-365 observes cleanup, requires child_exit0 and a terminal group,
+  checks the exact attempt/kind/source/report/payload bindings, detaches a fsynced
+  supervisor copy, then alone creates canonical via exclusive os.link at353.
+  Source/canonical checks and signal checks precede final receipt sealing.
+  Failures at publication, history or receipt commit retire the current outputs.
+- manifest.py:17-23 is the unchanged latest-receipt reader. main:36-37 binds
+  source/export hashes to audit, export and validation receipts. Its file paths
+  remain canonical and do not depend on the retired exporter-internal raw path.
+
+This proves ownership for the shipped call graph and actual configured arguments.
+It is not an OS sandbox: same-user processes still have filesystem permissions.
+An arbitrary injected producer that deliberately computes a public path remains
+able to write it; the old generic late-writer fixture is not the corrected
+production exporter. No hostile-code/OS-permission isolation is claimed or
+required by the accepted F-E correction. Real Blender/codec execution is unrun.
+
+SUCCESS AND CONSUMER BINDING
+Fresh actual supervisor promotion succeeds after terminal child0. The canonical
+fixture SHA is 079835f2a44165b5cca5d1994bc5b94f955939bf95d9d7d02aac4cf8d3f2a873,
+equal to validated/ready/publication/receipt hashes. It has nlink1 and an inode
+independent of producer storage. Mutating private bytes after the supervisor copy
+does not change canonical validated bytes. No candidate.json is fabricated.
+consumer_binding.py invokes the unchanged real manifest.latest and sha functions:
+both successful promotions are accepted with matching source/canonical/ready/
+receipt bindings; all21 publication failures are rejected. The paired failure
+receipts are also rejected on both refs. This is receipt-consumer binding, not a
+fresh full manifest.main, art audit, GLTF loader or renderer claim.
+
+PRIOR ADDITIONAL FAILURE CONTRACTS
+Nine exact prior adverse cases pass: candidate rename denial; archive fsync error;
+failed-output fsync error preserving exit7; source becoming a directory; identical
+bytes retargeted to another source path; exit7 plus mutation; child SIGTERM/143;
+group observation uncertainty; unreadable source on read-only audit action.
+
+The tenth original replay is retained as exit1/REVISE in prior-ten.log and
+adverse-results.json. Its former success stub writes directly to canonical without
+ready.json. The new runner correctly fails first with reason 'export after'; the
+injected receipt postlink unlink also fails, but cannot replace that primary
+reason. It leaves no current output/PASS receipt. This is an obsolete success
+precondition, not an escaped failure boundary.
+prior_receipt_boundary.py repeats the exact original syscall injection and
+predicate with exact current export_saved.py and the existing CPU dependencies:
+child0 and terminal, promotion happens, pending unlink fails, runner/receipt1 with
+reason 'receipt write', canonical and PASS receipt absent, fallback FAIL present,
+promoted bytes retained as unsealed-historical.glb. Exit0. The supplied publication
+suite independently passes this same exact-exporter failure contract.
+
+VERIFY
+All process controls ran serially; at most two tiny producer workers (exporter and
+its short CPU mask-copy child), no delegated test workers. run_command.py caps each
+invocation at90s. Actual supervisors have finite deadlines; harness waits cap at25s.
+Each command below ran through that wrapper from the pinned workspace with
+PYTHONDONTWRITEBYTECODE=1, NODE_DISABLE_COMPILE_CACHE=1, GIT_OPTIONAL_LOCKS=0.
+O denotes /tmp/t04-r3-70f8a1646-review-q16m4gr7. Full argv/cwd/env/exit/timing/log
+records are in commands.json and the individual *-command.json files.
+
+1. python3 -B O/snapshot.py before — exit0; 6,407 protected entries.
+2. python3 -B O/exact-red/exporter_boundary.py — expected exit1; exact old F-E RED.
+3. python3 -B O/paired_boundary.py baseline — expected exit1; paired RED.
+4. python3 -B O/paired_boundary.py current — exit0; paired GREEN.
+5. python3 -B packages/tools/blender/flora_trees/test_publication.py
+   --evidence O/publication — exit0; 23/23, 19.699s.
+6. python3 -B packages/tools/blender/flora_trees/test_runner.py
+   --reviewer assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py
+   --evidence O/regression --expect green — exit0; 28/28, 20.636s.
+7. python3 -B O/prior-ten.py — exit1; 9/10 original predicates; obsolete success
+   precondition explained above, retained without rewriting the result.
+8. python3 -B O/prior_receipt_boundary.py — exit0; original receipt contract holds.
+9. python3 -B O/consumer_binding.py — exit0; 2 successful/21 failed receipt reads.
+10. python3 -B assets/blend/flora/trees/revision2_20261107/verify_preserved.py
+    --out O/verification.json — exit0; 2632/2635 historical rows exact, only the
+    three already-authorized tooling deltas; twelve Python sources compile without
+    pyc. 8 blends/8 GLBs/46 PNGs/shared515/prior evidence unchanged.
+11. python3 -B O/reuse_proof.py — exit0; independently rehashes old census/payloads,
+    source proof, report seals, shared code and retained consumer results.
+12. python3 -B O/terminal_check.py — exit0; 53 recorded groups, no observed members.
+13. git diff --check 36861a31e752164469e847a916e0ea21a2e54686..70f8a164614ad9cf370e448a081603bfc4fa1cf4
+    — exit0.
+14. python3 -B O/snapshot.py after — exit0; all6,407 rows exactly equal to before.
+15. python3 -B O/source_provenance.py — exit1; read-only Git ignored-path query
+    rejects traversal through linked node_modules. Diagnostic retained below.
+16. python3 -B O/source_provenance_v2.py — exit0; queries the linked root instead;
+    31 tracked consumer/source files exactly match base/current Git blobs and hashes.
+
+No Node/Vitest run was needed: unchanged actual-consumer29/29 evidence is reused.
+Its prior recorded execution used direct Node22.23.3/Vitest5.0.5 with one worker.
+No linked dependency or cache write occurred in this review. Scratch node_modules
+directories contain only the explicitly marked harmless CPU fixture files.
+
+PRESERVATION AND REUSED EVIDENCE
+before.json SHA-256: e949bc82dc71c37b3fb2247f591690c75ffe094b9db22b059a17fb6592273fbb
+after.json SHA-256: 69e8434f8bcc96f38066b77cd19c506ec307904fd3057c4de98ecdf1ada0cd45
+Their6,407 protection rows are identical in bytes/hash, mode, mtime or exact
+unreadable-file error facts; the before document additionally records host facts.
+Nominal protected bytes: 218,808,330. Coverage:696 tracked workspace entries,
+6 ignored workspace entries (including linked dependency roots/protected entries),
+5,705 external old-evidence entries. No original unreadable file was chmodded.
+The original642-row census has only the two already-authorized original tooling
+deltas run.py/export_saved.py; all640 other entries match. R2's2635-row protection
+list has only its three known deltas including test_runner.py. This review changed
+none of them. Full preservation rows and eight source/export hash pairs are in
+verification.json, before.json, after.json and provenance.json.
+
+All8 .blend sources,8 GLBs,46 PNGs/54,805,448 bytes, current candidate, historical
+reports/receipts, stock exporter and shared515 bytes are exact. Consumer tests,
+modelLibrary, floraModels, Engine, world code, manifests and lockfile match the
+review base by exact Git blob and SHA-256; their31-file inventory is in provenance.
+
+Reused observations only:76 mesh-cloud checks across19 variants/four LODs,
+16 stock PASS validations, historical preview-surface equivalence, and29 actual
+consumer tests. No new art quality, generation, native or full-stock result.
+Original census SHA: cf1de7295699534e32ad0753a89c556011dfc9eea6081af9f182418ed2e17630
+Prior consumer JSON SHA: 41f43bbe01a9bb67c049e087a62635af34bda5489afa220abccc0db5b0a9326d
+Prior review seal SHA: 51ddb45dd097dc2cc5ac5b912991341bd059b7a86d830ced9b69cc376355fe16
+Old task report SHA: 5851c713428219d06d5fcc88f6c887a2883e34b4382e6079ca714efbcaaa660e
+Installed dependency contents beyond the protected entries are not newly certified;
+the historical test result is not represented as a fresh test of today's runtime.
+
+DECISIONS
+Publication proof needs the production rename/ready path → exact runner/exporter,
+CPU-only dependencies and file barriers → tests ownership without prohibited art work.
+Old stock stub ignores a new real argument → preserve exact old RED plus identical
+contract-aware paired fixtures → isolates code change from fixture differences.
+Old success stub violates the new producer protocol → retain its failure, repeat
+the original fault/predicate with exact producer → preserves original failure intent.
+No payload/consumer source changes → exact-hash reuse and real receipt-reader check
+→ keeps the T13 CPU window quiet and does not re-run unchanged asset checks.
+No new product/spec interpretation was made.
+
+OUT OF SCOPE FOUND / LIMITS
+No new out-of-scope finding. SOURCE PASS does not accept the art or whole task.
+Native/GPU captures, blind visual grading, native smoke/performance, T07 adoption,
+CI/main integration and merge remain outside this review and parent-owned.
+No Blender, codec, GPU, browser, server, DB, install, hydration, source/asset edit,
+full test suite, typecheck, push, PR, merge or screenshot cleanup ran. No peer
+process was signalled. CPU dependency fixtures are not valid art payloads or
+evidence of stock Blender validation. Arbitrary hostile processes and privileged
+filesystem isolation are outside this production-call-graph review.
+
+ARTIFACTS
+REPORT.txt; commands.json and individual command/log files; baseline exact files;
+exact-red/; paired_boundary.py, paired-fixtures/, paired-baseline/, paired-current/;
+publication/, regression/, adverse/ and prior-receipt/ actual process evidence;
+consumer-binding.json; before.json/after.json; provenance.json; verification.json;
+reuse-proof.json; terminal-process-check.json; fixture-provenance.json;
+failure-tails.txt; SHA256SUMS.json and seal validation record.
+All prior evidence remains in its original location unchanged. This fresh report
+and readable evidence are sealed read-only and hashed; original unreadable scratch
+entries retain their error facts rather than invented content hashes.
+
+RETAINED FAILURE TAILS (C.2)
+exact-red — exit 1
+{
+  "defect_reproduced": true,
+  "exporter_exact": true,
+  "before": {
+    "current_absent": true,
+    "receipt_sha256": "9a1fa12d06546d91e3f079fc8cd17715778d66a902d42e2cdc86a11cf6150783",
+    "blocked": true
+  },
+  "after": {
+    "current_exists": true,
+    "bytes": "LATE-EXACT-EXPORTER-GLB",
+    "receipt_sha256": "9a1fa12d06546d91e3f079fc8cd17715778d66a902d42e2cdc86a11cf6150783",
+    "blocked": true,
+    "active_group": [],
+    "producer_log": "child-ready\nT04_FINAL /private/tmp/t04-r3-70f8a1646-review-q16m4gr7/exact-red/exporter-boundary/scratch/exact-exporter-late-publication/packages/client/public/models/flora/tree_round_t04.glb 401155db001948a67992d447d27ef6f2c207f48824dfa3a5db4a81559678d776\n"
+  }
+}
+
+paired-red — exit 1
+{"revision": "baseline", "safe_boundary": false, "before": {"current_absent": true, "receipt_sha256": "9e180718ee716c4fe2d18b39055dff17778eed48d12986267cd9d50a278b6faa", "blocked": true}, "after": {"current_absent": false, "bytes": "LATE-EXACT-EXPORTER-GLB", "receipt_sha256": "9e180718ee716c4fe2d18b39055dff17778eed48d12986267cd9d50a278b6faa", "group": [], "private_ready": false, "producer_log": "child-ready\nT04_FINAL /private/tmp/t04-r3-70f8a1646-review-q16m4gr7/paired-baseline/scratch/exact-exporter-late-publication/packages/client/public/models/flora/tree_round_t04.glb 401155db001948a67992d447d27ef6f2c207f48824dfa3a5db4a81559678d776\n"}, "consumer_rejects_failed_receipt": true}
+
+prior-ten — exit 1
+candidate-rename-denied True
+candidate-detach-fsync-fails True
+failed-output-detach-fsync-fails True
+source-directory-after True
+source-retarget-same-bytes True
+exit7-mutation True
+child-signal-exit True
+group-observation-fails True
+read-action-source-failure True
+receipt-postlink-unlink-fails False
+{"status": "REVISE", "cases": 10, "failed": ["receipt-postlink-unlink-fails"]}
+
+provenance — exit 1
+Traceback (most recent call last):
+  File "/tmp/t04-r3-70f8a1646-review-q16m4gr7/source_provenance.py", line 33, in <module>
+    assert query.returncode in (0,1)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+Read-only source probe: exit2; incorrect families.json path. Corrected to packages/tools/blender/families.json.
+rg: packages/tools/blender/rules/families.json: IO error for operation on packages/tools/blender/rules/families.json: No such file or directory (os error 2)
+
+Read-only ignored-path inventory diagnostic:
+fatal: pathspec 'node_modules/vitest/package.json' is beyond a symbolic link
+

@@ -1,0 +1,213 @@
+# P1.E10.T06 Ixari city kit — independent SOURCE/CPU R2
+
+**Verdict: SOURCE PASS**
+
+This is a source and CPU review of the saved Ixari edit. It is not a native acceptance, not a whole-task acceptance, and not a visual grade. GPU review, blind visual grade, performance, and E10.T01 runtime integration stay pending.
+
+## Pins
+
+| Item | Value |
+| --- | --- |
+| Worktree | `/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78` |
+| Branch | `task/P1-E10-T06-ixari-quavel` |
+| HEAD | `ec2857d0cf112d77c54b2b10ad871248b4c38340` |
+| Tree | `b7401a8afbff113bd27daf1e11090e1bd3f9c199` |
+| Base | `2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00` |
+| Base tree | `30ac4e907dbaebb537b9b87fa83aa40424c370e8` |
+| Re-checked after the last tool | same HEAD, same tree, `git status --porcelain` count 0 |
+
+Current qualification pointer `assets/blend/cities/ixari/reports/CURRENT.json`:
+
+- status `PASS`, attempt `revision-r1-publication-01`, exit 0
+- `scriptSha256` `826d9072f2bd9b6d2dcd155adc98cd620c273ab86611d1e9c5fc8949532c8edf` matches on-disk `build_report.py`
+- directory `assets/blend/cities/ixari/reports/revision-r1-publication-01`
+- manifest `ec3c2fd8d7912f86665f8cd358e1faa2f5e118982a590102c5fa64f178b62e86`
+- APPENDIX-C2 `406243d72881057b15ca1c7cf7c013e453a44afc7b51195fc160e90f023dd89a`
+- SHA256SUMS `3651ae550e40640e3fae039b4ff4cb19979a06e08c4609d572cc0ba4fea689cb`
+- 279 of 279 sums match. Qualification inside that attempt: source / stock / compressed artifact PASS; consumers `68 tests PASS`; `gpuReview` PENDING_PARENT; `blindVisualGrade` PENDING_PARENT; `performance` NOT_MEASURED; `cityRuntimeIntegration` E10.T01_PENDING.
+
+Legacy root `assets/blend/cities/ixari/manifest.json` is still `6ec560887baf884b0b54ef2ddb67b78e9110f948e05f95fd43d052262a50a560`, equal to baseline.
+
+GPU handoff `assets/blend/cities/ixari/revision-r1/preparation-r2/GPU_HANDOFF.json`: `plannedOnly` true, `gpuExecutionAuthorized` false, `noGPUClaim` true, status `PENDING_PARENT_AFTER_CALLER_READY`, 8 jobs all `NOT_EXECUTED`, 399 expected paths. Not executed. This review does not accept it.
+
+## Prior R1 dispositions
+
+R1 (`/tmp/p1-e10-t06-r1-2d23ecb3/REPORT.md`) was REVISE against base `2d23ecb3`, when that commit was HEAD.
+
+1. **Noncanonical ribbons on reserved glyph cyan — fixed.** Parent decision stands: E10.T08 owns the canonical 7-node / V-cut alphabet. T06 removes the fake alphabet and the reserved cyan, and authors crystal growth instead of renaming the ribbons. Evidence is in "Geometry" and "Surfaces" below.
+2. **Publisher could expose PASS before the final asserts and could leave an old PASS in place — fixed.** `publish()` writes `IN_PROGRESS` to `CURRENT.json` before collection, which revokes a previous PASS pointer and does not delete the previous attempt directory. The PASS pointer is `os.replace`'d only after `collect`, a full re-hash, `SHA256SUMS`, and `stage.rename`. Failure strips `sha256`, `summary`, and `directory`, then writes `FAILED`. The staging `manifest.json` still contains the internal `qualification.*.PASS` strings before the git-whitespace assert. That file is not the current pointer and is not renamed into the attempt directory unless the later checks pass.
+
+R1 advisories, classified and not upgraded:
+
+- **`author.py` still contains the old ribbon generator and `#D8F6FF`.** No Python module under `packages/tools` imports it. The stock exporter does not load it. The publication decision text records it as a sculpt-session record. Advisory only.
+- **Detached `setsid` descendants are outside the supervisor.** `run_cpu.py` uses `start_new_session=True` and reaps that process group only. `build_report.py` records `detachedDescendantsCovered=False`. The limitation is stated, not fixed. Advisory only.
+- **Four old preview sheets were missing from the earlier inventory.** They are now classified `HISTORICAL_STALE_SOURCE`: `anchor-shape-r2`, `landmarks-shape-r2`, `low-shape-r1`, `low-shape-r2`. That is classification, not a claim that those sheets show the current sources. Night and other CPU sheets are `CURRENT_CPU_ITERATION` or `HISTORICAL_SUPERSEDED`. None of them is a visual acceptance.
+- **Curved-deck AABB limits** on `bridge_ixari`, `kit_ixari_spiral`, and `ixari_landmark_summit` still print `LEGACY AABB LIMIT` during the consumer run. Those bundles are byte-identical to baseline. The tests pass and the messages say E10.T01 traversal remains unproven. Not a new defect.
+
+## Geometry
+
+Changed files are only the anchor pair and the props pair. The six other families (`civic`, `kit`, `landmarks`, `low`, `mid`, `tall`: 12 blend/GLB files) match baseline bytes. Of 39 hashed bundle paths, 35 match baseline and 4 are the changed pair. `changedBundleStillBaseline` is empty.
+
+Factory Blender 5.2.3 LTS (`e13b728c6880`, built 2026-10-22), `--factory-startup -t 2`, `open_mainfile` only, no save, no render, no codec. One process. It read the baseline extracts, then HEAD. Probe exit line `EXIT:0`. stderr empty. `PROBE_DONE 4`.
+
+Reserved Blender cell is `int(u*4)==2` and `int(v*2)==1` (palette index 6).
+
+| Source | Reserved faces | Reserved area | Old groups | Growth groups | `LIB_GlyphLight` |
+| --- | --- | --- | --- | --- | --- |
+| base anchor `e0458a91…` 7,995,129 | 4,305 (LOD0 Facets 1,110 / 3.564033 m²) | 9.173709 m² | 740 | 0 | present |
+| head anchor `d72c741e…` 7,675,535 | 0 | 0 | 0 | 108 | absent |
+| base props `3b21e602…` 2,128,740 | 192 (terminal and board LOD0 each 48 / 0.193756 m²) | 0.827216 m² | 64 | 0 | present |
+| head props `133ff3ef…` 2,098,064 | 0 | 0 | 0 | 48 | absent |
+
+LOD0 growth is the construction, not a renamed box. Anchor LOD0: 9 sockets at 12 vertices and 18 prisms at 24 vertices (9 prism + 9 fracture). All 27 first rings have four distinct edge lengths. Sample `FaultColony0Socket` edges `[0.37143, 0.46386, 0.3404, 0.47122]`, z span 0.71206. Props LOD0, terminal and board together: 6 sockets at 12 vertices and 6 prisms at 24 vertices. All 12 first rings have four distinct edge lengths. Sample `PressureFacet0Socket` edges `[0.10714, 0.13381, 0.09819, 0.13592]`, z span 0.2054. Boxy rings (two or fewer distinct lengths): 0.
+
+Across every LOD, growth groups that still have a 4-vertex ring are unequal: anchor 68/68, props 27/27, each with four distinct lengths. Anchor has 40 further growth groups and props 21 with fewer than 4 vertices, so no ring was measured. Those are decimated LODs. LOD1+ vertex counts of 3, 4, 5, 6, and 13 are that decimation. They are not evidence that LOD0 was a box.
+
+Exported GLBs, meshopt-decoded. Positions are normalized `SHORT` (`5122`). Extensions on both revisions of both files: `EXT_meshopt_compression`, `KHR_mesh_quantization`, `KHR_texture_basisu`. Material factors did not drift: one material each, `IxariAtlas4096` / `IxariAtlas1024`, emissive factor `[1,1,1]`, `KHR_materials_emissive_strength`. Forbidden node names (`Glyph`, `RecordedStroke`, `GlyphLight`): 0. `FaultColony` / `PressureFacet` are vertex groups on the joined Facets meshes, so their absence as glTF node names is expected.
+
+glTF V is flipped relative to Blender. The reserved glyph cell appears as glTF UV cell `2:0`. glTF cell `2:1` is a crystal/architecture tile. `decode.json` fields `reservedBase` / `reservedNext` sum cell `2:1` and must not be read as leftover glyph. On every changed LOD, cell `2:0` area went to exactly 0.
+
+| Mesh | Triangles base → head | glTF cell `2:0` |
+| --- | --- | --- |
+| `anchor_quavel_Facets` | 78,124 → 76,876 (−1,248) | 0.0053 → 0 |
+| `anchor_quavel_Facets_L1` | 23,331 → 23,062 (−269) | 0.0028 → 0 |
+| `anchor_quavel_Facets_L2` | 7,649 → 7,617 (−32) | 0.0027 → 0 |
+| `anchor_quavel_Facets_L3` | 2,493 → 2,576 (+83) | 0.0028 → 0 |
+| `prop_ixari_board_Facets` | 9,044 → 9,140 (+96) | 0.098 → 0 |
+| board L1 / L2 / L3 | +30 / +14 / +4 | each → 0 |
+| `prop_ixari_terminal_Facets` | 6,164 → 6,260 (+96) | 0.2103 → 0 |
+| terminal L1 / L2 / L3 | +30 / +13 / +6 | each → 0 |
+
+LOD0 arithmetic matches the replacement, in triangles: anchor −1,248 = −185×12 + 9×(20+44+44). Each of terminal and board +96 = −8×12 + 3×(20+44). The 185 and 8 removed groups are the old ribbons (each 6 quads, 12 triangles), matching the Blender reserved-face counts 1,110 and 48. LOD1–3 deltas are after decimation and were not reduced to that formula. LOD3 anchor gains 83 triangles while its glyph cell area is 0: the replacement crystals survive decimation with more triangles than the thin ribbons they replaced.
+
+Stable decoded meshes: anchor 34, props 49, including the colliders. Signed world-position keys for `COL_`, `REF_`, basin, seat, and stall: anchor 36 keys, props 51 keys, 0 mismatches. Seat, stall, and basin Facets polygon counts are identical between base and head.
+
+## Surfaces
+
+Packed source images, read in the factory probe. `tile6EqualsTile3` is a byte compare of Blender cell 2:1 against cell 3:0.
+
+| Image | Base cell 2:1 | Head cell 2:1 | Head equals cell 3:0 |
+| --- | --- | --- | --- |
+| anchor baseColor | [156, 180, 185] | [83, 54, 140] | yes |
+| anchor emissive | [101, 115, 119] | [0, 0, 0] | yes |
+| anchor ORM | [242, 163, 0] | [242, 44, 0] | yes |
+| props baseColor | [158, 179, 186] | [83, 54, 141] | yes |
+| props emissive | [101, 115, 119] | [0, 0, 0] | yes |
+| props ORM | [240, 165, 0] | [240, 43, 0] | yes |
+
+Head baseColor is violet, near `#53368C` / the crystal violet, not `#D8F6FF` or `#7FD8FF`. Head emissive of that cell is black. Biolume emissive on the other cell stays about [47, 106, 119] (`#64E3FF` darkened). Anchor normal cell 2:1 was already the flat normal [127, 127, 255] on the base and stayed equal to cell 3:0. Props normal was [128, 128, 255] on both cells. Exported normal KTX was not transcoded; the distinguishing channels are baseColor, emissive, and ORM.
+
+Exported KTX2, `ktx extract --transcode rgba8 --raw --level 0`, one image at a time, thread caps at 2. Binary realpath `/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx` (the worktree link target). Its mtime did not change. Raw files were deleted after sampling. Tile index uses glTF V (bottom origin), so key `2:1` here is the reserved cell, the same window as the Blender probe. Full-pixel means, 2,097,152 pixels on the 4096 atlas and 131,072 on the 1024 atlas. All 12 extracts exited 0.
+
+| Export | Base reserved mean | Head reserved mean | Head minus tile 3 | Head pixels near `#D8F6FF` / `#7FD8FF` |
+| --- | --- | --- | --- | --- |
+| anchor baseColor | [156.939, 179.647, 186.387] | [82.230, 53.692, 140.788] | [0, 0, 0] | 0 / 0 |
+| anchor emissive | [100.936, 115.026, 119.460] | [0.024, 0.064, 0.067] | [0, 0, 0] | 0 / 0 |
+| anchor ORM | [240.293, 165.754, 0.004] | [239.859, 43.520, 0.010] | [0, 0, 0] | 0 / 0 |
+| props baseColor | [156.904, 179.642, 186.581] | [82.673, 53.562, 141.165] | [−0.001, 0, −0.001] | 0 / 0 |
+| props emissive | [100.869, 114.967, 119.281] | [0.013, 0.064, 0.064] | [0, 0, 0] | 0 / 0 |
+| props ORM | [239.976, 165.442, 0.012] | [239.645, 43.649, 0.030] | [−0.011, −0.012, −0.007] | 0 / 0 |
+
+UASTC is lossy, so the exported cell is not byte-identical to the packed source. The means land on the violet/black/ORM-tile-3 values, and the head max in the reserved baseColor cell is [100, 67, 174], still violet. Biolume cell `0:1` did not move: anchor and props baseColor stayed [73, 166, 187] and emissive stayed [47, 106, 119] from base to head. The KTX blobs themselves changed (`ktxChanged` true on all six slots).
+
+`Light_Anchor_anchor_quavel` moved in color only: `#D8F6FF` → `#B9A6FF`, intensity 1.1, distance 12, location `[−3.78, −2.45, 22]` unchanged in both the blend and the GLB extras. Props lights did not change: memory terminal and board `[0, −0.1, 1.6]` `#B9A6FF`, basin colony `[0, 0, 0.7]` `#64E3FF`.
+
+## Routes, collision, interaction
+
+Interact empties are identical base to head, including `Interact_Anchor_anchor_quavel` `[0, −3.9, 1.1]`, terminal and board `[0, −0.9, 1.1]`, seat, stall, and basin. Props marker extras did not drift.
+
+Growth vertices inside the declared anchor approach box (`|x|≤1.5`, y in `[−9.2, −3.7]`, z in `[0, 3.2]`): 0 on head anchor and 0 on head props. That is a box test of the declared corridor, not a walked traversal. Summit, spiral, and bridge routes live in the byte-identical bundles; the consumer still reports them as unqualified for E10.T01.
+
+Collider and reference signatures: 0 mismatches, as counted above.
+
+## Publication fail-closed
+
+Independent unittest of `test_publication.py`, evidence redirected to `/tmp/p1-e10-t06-r2-ec2857d0/publication-tests`. It did not publish the worktree. 15 tests, 0 failures, 0 errors, 11.031s, unittest `OK`, wrapper `EXIT:0`.
+
+19 publisher invocations, 17 nonzero on purpose:
+
+| Invocation | Exit | Tail |
+| --- | --- | --- |
+| changed source still carrying the baseline GLB | 1 | `ValueError: changed source still has baseline GLB` |
+| complete publication | 0 | success path |
+| duplicate of that attempt | 1 | `ValueError: attempt output already exists` |
+| concurrent loser | 1 | `REJECTED_BUSY` / `another publisher owns the lock` |
+| consumer false pass | 1 | `ValueError: consumer must pass all 68 tests` |
+| early inventory hash | 1 | `ValueError: inventory sourceSha256 mismatch` |
+| receipt input changed during or after execution | 1 | `ValueError: receipt input changed during or after execution: assets/blend/cities/ixari_anchor.blend` |
+| fresh 4 plus reused 12 and revised image paths | 0 | success path |
+| historical `anchor-shape-r2/sheet.png` byte | 1 | `ValueError: hash mismatch: assets/renders/cities/ixari/anchor-shape-r2/sheet.png` |
+| late eslint | 1 | `ValueError: failed process receipt: …/eslint-final/process.json` |
+| missing / malformed inputs | 1 ×4 | `SystemExit: 2`, `SystemExit: 2`, `FileNotFoundError`, `JSONDecodeError` |
+| audit file coverage | 1 | `ValueError: audit file coverage` |
+| local LFS storage object | 1 | `ValueError: local LFS storage object mismatch` |
+| revision image cap | 1 | `ValueError: revision image cap` |
+| stale export GLB | 1 | `ValueError: hash mismatch: packages/client/public/models/cities/ixari_anchor.glb` |
+| partial pair write | 1 | `OSError: [Errno 27] File too large` |
+
+A failed publication does not keep the previous PASS pointer. It keeps the previous attempt directory. The live `CURRENT.json` in the worktree was not rewritten by these tests.
+
+Image classes in the published attempt: `HISTORICAL_STALE_SOURCE` 9, `CURRENT_CPU_ITERATION` 20, `HISTORICAL_SUPERSEDED` 4. Original 23 PNGs match baseline (68,151,800 bytes). Ten new CPU PNGs are 17,982,629 bytes (17.15 MiB). Protected provenance paths: 19 checked, 0 mismatches.
+
+Stock: four fresh `revise-r1-stock` reports for the changed blend/GLB pair are PASS, fail 0, warn 0, Blender 5.2.3, and `evaluatedInputsBefore` equals the current file hash. Twelve `stock-validate-final` reports for the unchanged families are PASS, fail 0, warn 0, and the files match baseline. Those twelve receipts have no `evaluatedInputsBefore`, so a binder flag `receiptAgrees: false` is the missing field, not a failed validation. They were not re-run.
+
+## Consumers
+
+Node `v22.23.3` at `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node`. Vitest 5.0.5 via `node node_modules/vitest/vitest.mjs`, config `consumer.revision.config.mjs`, `--maxWorkers=2 --no-file-parallelism`, cache `IXARI_TEST_CACHE_DIR` under `/tmp`. `success` true. 10 suites passed. 68 passed, 0 failed, 0 pending. Wrapper `EXIT:0`. stderr is the `NO_COLOR`/`FORCE_COLOR` warning and the six `LEGACY AABB LIMIT` lines quoted above.
+
+## Commands
+
+Worktree for every command: `/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78`. Outputs under `/tmp/p1-e10-t06-r2-ec2857d0/`. No pnpm. No product writes.
+
+1. Hash bind of CURRENT, SHA256SUMS, bundles, PNG classes, stock receipts, GPU handoff, and dependency mtimes. Artifact `hashbind.json`. Porcelain was empty at that read.
+2. `decode.mjs` (meshopt via the worktree's `@gltf-transform` / `meshoptimizer`, no install). Wrote `decode.json`, then printed a complete JSON brief. stderr 0 bytes. The capture has no `EXIT:` line; the brief is printed only after the file write, and it parsed.
+3. Publication unittest, `EVIDENCE` under `/tmp`. stdout `{"status":"PASS","tests":15,"failures":0,"errors":0}` then `EXIT:0`. stderr is the 15 `ok` lines and `Ran 15 tests in 11.031s` / `OK`.
+4. Vitest as above. stdout `v22.23.3`, JSON report path, `EXIT:0`.
+5. Blender probe:
+
+```
+TMPDIR=/tmp/p1-e10-t06-r2-ec2857d0/blender-tmp \
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 NUMEXPR_NUM_THREADS=2 \
+VECLIB_MAXIMUM_THREADS=2 BLIS_NUM_THREADS=2 TBB_NUM_THREADS=2 RAYON_NUM_THREADS=2 UV_THREADPOOL_SIZE=2 \
+/Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -t 2 --python-exit-code 1 \
+  -P /tmp/p1-e10-t06-r2-ec2857d0/probe.py
+```
+
+stdout ends `PROBE_DONE 4`, Blender 5.2.3 LTS, `Blender quit`, `EXIT:0`. stderr empty.
+
+6. `python3 /tmp/p1-e10-t06-r2-ec2857d0/ktx_tiles.py`. Exit 0. Twelve `ktx extract` calls, each exit 0. Wrote `ktx-tiles.json`. No files left in the ktx temp directory.
+
+## Protected tree, before and after
+
+Dependency mtimes recorded before the tests equal the mtimes after the KTX extracts:
+
+| Path | mtime | bytes |
+| --- | --- | --- |
+| `node_modules/vitest/vitest.mjs` | 1794010575 | 43 |
+| `node_modules/vitest/package.json` | 1794010575 | 5,737 |
+| `node_modules/.bin/vitest` | 1794028836 | 4,845 |
+| `node_modules/.cache/ktx-software-4.4.2/bin/ktx` | 1793102880 | 2,041,776 |
+| `assets/blend/cities/ixari_anchor.blend` | 1794039013 | 7,675,535 |
+| `assets/blend/cities/ixari_props.blend` | 1794039014 | 2,098,064 |
+| `packages/client/public/models/cities/ixari_anchor.glb` | 1794039077 | 3,323,312 |
+| `packages/client/public/models/cities/ixari_props.glb` | 1794039082 | 1,472,232 |
+
+`git status --porcelain` count was 0 before and 0 after. One ignored side effect: `packages/tools/blender/cities/ixari/__pycache__/test_publication.cpython-314.pyc` (mtime 1794041201, 42,707 bytes) from importing the publication module. It is not a source edit. No orchestration file was edited.
+
+## Limitations
+
+- No GPU run, no screenshot grade, no browser, no server, no database. Performance is `NOT_MEASURED`. City runtime integration is not claimed.
+- glTF positions are normalized shorts. Triangle areas in `decode.json` are quantized exported areas. The Blender square-metre figures are the source-face areas and are a different number.
+- `decode.json` `reservedNext` is glTF cell `2:1`, which grew slightly because that cell received crystal UV. The glyph cell is `2:0`, and it is 0.
+- Exported normals were not KTX-decoded. Source normals of the reserved cell were already flat and already equal to tile 3.
+- The approach test is an axis-aligned box around the declared anchor walk segment. It is not a character traversal.
+- Higher-LOD growth groups below 4 vertices have no ring measurement.
+- The twelve unchanged stock validations were hash-reused, not re-executed.
+- `author.py` can still sculpt the old ribbons if someone runs it by hand. The export path does not.
+- A deliberately detached `setsid` grandchild is still outside `run_cpu.py`'s reaper.
+
+## Result
+
+Both R1 revise findings are fixed in the saved sources and in the exported meshes and atlases. Architecture, collision, route markers, and interaction points of the unchanged meshes are the same. The publisher fails closed, and the previous attempt bytes stay while a failed run does not leave a PASS pointer. Advisories stay advisories.
+
+**SOURCE PASS**

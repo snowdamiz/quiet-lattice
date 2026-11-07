@@ -1,0 +1,1043 @@
+{
+  "out": "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced",
+  "result": {
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "packages/tools/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "packages/tools/src/smoke/symbiotic.config.ts",
+      "--workers=1",
+      "--retries=0",
+      "--repeat-each=1",
+      "--max-failures=1",
+      "--global-timeout=420000",
+      "--trace=off",
+      "--reporter=list,json",
+      "--output",
+      "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/results"
+    ],
+    "wrappedCommand": [
+      "/usr/bin/sandbox-exec",
+      "-f",
+      "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/live.sb",
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "packages/tools/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "packages/tools/src/smoke/symbiotic.config.ts",
+      "--workers=1",
+      "--retries=0",
+      "--repeat-each=1",
+      "--max-failures=1",
+      "--global-timeout=420000",
+      "--trace=off",
+      "--reporter=list,json",
+      "--output",
+      "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/results"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "exit": 1,
+    "timedOut": false,
+    "primaryError": null,
+    "cleanupErrors": [],
+    "wallSeconds": 45.823,
+    "drainSeconds": 0.129,
+    "tracked": [
+      {
+        "pid": 29416,
+        "ppid": 28543,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042354,
+          964167
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+          "packages/tools/node_modules/@playwright/test/cli.js",
+          "test",
+          "--config",
+          "packages/tools/src/smoke/symbiotic.config.ts",
+          "--workers=1",
+          "--retries=0",
+          "--repeat-each=1",
+          "--max-failures=1",
+          "--global-timeout=420000",
+          "--trace=off",
+          "--reporter=list,json",
+          "--output",
+          "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/results"
+        ]
+      },
+      {
+        "pid": 29431,
+        "ppid": 29416,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042355,
+          789537
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+        ]
+      },
+      {
+        "pid": 29442,
+        "ppid": 29431,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042356,
+          99637
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+          "--input-type=module",
+          "-e",
+          "\n    import postgres from 'postgres';\n    import Redis from 'ioredis';\n    const sql = postgres(process.env.DATABASE_URL, { max: 1, connect_timeout: 5, idle_timeout: 1 });\n    const redis = new Redis(process.env.REDIS_URL, { lazyConnect: true, connectTimeout: 5000, maxRetriesPerRequest: 0, retryStrategy: () => null });\n    try {\n      const [r] = await sql`select current_database() as db, current_user as usr, inet_server_port() as port`;\n      if (r.db !== process.env.QA_DATABASE || r.usr !== 'astra' || r.port !== 5432) throw Error('SQL identity mismatch');\n      const tables = await sql`select tablename from pg_tables where schemaname = 'public'`;\n      if (tables.length) throw Error('Claimed database is not fresh');\n      await redis.connect();\n      const info = await redis.call('CLIENT', 'INFO');\n      if (!/(?:^| )db=8(?: |$)/.test(info)) throw Error('Redis DB mismatch');\n      const owned = await redis.eval(\"if redis.call('DBSIZE') == 1 and redis.call('GET', KEYS[1]) == ARGV[1] then return 1 else return 0 end\", 1, process.env.QA_MARKER, process.env.QA_CLAIM);\n      if (owned !== 1) throw Error('Redis8 is not exclusively freshly claimed');\n    } finally { redis.disconnect(); await sql.end({ timeout: 2 }); }\n  "
+        ]
+      },
+      {
+        "pid": 29447,
+        "ppid": 29431,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042356,
+          226087
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+          "--import",
+          "tsx",
+          "src/db/migrate.ts"
+        ]
+      },
+      {
+        "pid": 29453,
+        "ppid": 29447,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042356,
+          388566
+        ],
+        "argv": [
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+          "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+          "29431"
+        ]
+      },
+      {
+        "pid": 29455,
+        "ppid": 29447,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042356,
+          449760
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+          "--service=0.28.2",
+          "--ping"
+        ]
+      },
+      {
+        "pid": 29461,
+        "ppid": 29431,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042356,
+          747054
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+          "--import",
+          "tsx",
+          "test/steppedServer.ts"
+        ]
+      },
+      {
+        "pid": 29462,
+        "ppid": 29431,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042356,
+          747581
+        ],
+        "argv": [
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+          "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+          "29461"
+        ]
+      },
+      {
+        "pid": 29469,
+        "ppid": 29461,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042356,
+          962677
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+          "--service=0.28.2",
+          "--ping"
+        ]
+      },
+      {
+        "pid": 29539,
+        "ppid": 29431,
+        "pgid": 29539,
+        "uid": 501,
+        "birth": [
+          1794042358,
+          9000
+        ],
+        "argv": [
+          "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+          "--disable-field-trial-config",
+          "--disable-background-networking",
+          "--disable-background-timer-throttling",
+          "--disable-backgrounding-occluded-windows",
+          "--disable-back-forward-cache",
+          "--disable-breakpad",
+          "--disable-client-side-phishing-detection",
+          "--disable-component-extensions-with-background-pages",
+          "--disable-component-update",
+          "--no-default-browser-check",
+          "--disable-default-apps",
+          "--disable-dev-shm-usage",
+          "--disable-edgeupdater",
+          "--disable-extensions",
+          "--disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion",
+          "--enable-features=CDPScreenshotNewSurface",
+          "--allow-pre-commit-input",
+          "--disable-hang-monitor",
+          "--disable-ipc-flooding-protection",
+          "--disable-popup-blocking",
+          "--disable-prompt-on-repost",
+          "--disable-renderer-backgrounding",
+          "--disable-updater-scheduler",
+          "--force-color-profile=srgb",
+          "--metrics-recording-only",
+          "--no-first-run",
+          "--password-store=basic",
+          "--use-mock-keychain",
+          "--no-service-autorun",
+          "--export-tagged-pdf",
+          "--disable-search-engine-choice-screen",
+          "--unsafely-disable-devtools-self-xss-warnings",
+          "--edge-skip-compat-layer-relaunch",
+          "--disable-infobars",
+          "--disable-search-engine-choice-screen",
+          "--disable-sync",
+          "--enable-unsafe-swiftshader",
+          "--headless",
+          "--hide-scrollbars",
+          "--mute-audio",
+          "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+          "--no-sandbox",
+          "--use-angle=metal",
+          "--enable-gpu",
+          "--ignore-gpu-blocklist",
+          "--user-data-dir=/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/tmp/playwright_chromiumdev_profile-QW7aDM",
+          "--remote-debugging-pipe",
+          "--no-startup-window"
+        ]
+      },
+      {
+        "pid": 29540,
+        "ppid": 29431,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042358,
+          11001
+        ],
+        "argv": [
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+          "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+          "29539"
+        ]
+      },
+      {
+        "pid": 29544,
+        "ppid": 29539,
+        "pgid": 29539,
+        "uid": 501,
+        "birth": [
+          1794042358,
+          73593
+        ],
+        "argv": [
+          "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+          "--type=gpu-process",
+          "--gpu-recent-crash-count=0",
+          "--no-sandbox",
+          "--disable-breakpad",
+          "--headless",
+          "--use-angle=metal",
+          "--enable-unsafe-swiftshader",
+          "--enable-gpu",
+          "--gpu-preferences=WAAAAAAAAAAgAAAMAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA=",
+          "--shared-files",
+          "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+          "--enable-features=CDPScreenshotNewSurface",
+          "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+          "--variations-seed-version",
+          "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+          "--trace-process-track-uuid=3190708988185955192"
+        ]
+      },
+      {
+        "pid": 29545,
+        "ppid": 29539,
+        "pgid": 29539,
+        "uid": 501,
+        "birth": [
+          1794042358,
+          76551
+        ],
+        "argv": [
+          "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+          "--type=utility",
+          "--utility-sub-type=network.mojom.NetworkService",
+          "--lang=en-US",
+          "--service-sandbox-type=none",
+          "--no-sandbox",
+          "--use-angle=metal",
+          "--mute-audio",
+          "--headless=old",
+          "--shared-files",
+          "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+          "--enable-features=CDPScreenshotNewSurface",
+          "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+          "--variations-seed-version",
+          "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+          "--trace-process-track-uuid=3190708989122997041"
+        ]
+      },
+      {
+        "pid": 29547,
+        "ppid": 29431,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042358,
+          134616
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+          "--input-type=module",
+          "-e",
+          "import postgres from 'postgres';\nconst sql = postgres(process.env.ADMIN_URL, { max: 1, onnotice: () => {} });\ntry { await sql.unsafe(process.env.STATEMENT); } finally { await sql.end({ timeout: 5 }); }"
+        ]
+      },
+      {
+        "pid": 29550,
+        "ppid": 29547,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042358,
+          182849
+        ],
+        "argv": [
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+          "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+          "29431"
+        ]
+      },
+      {
+        "pid": 29553,
+        "ppid": 29539,
+        "pgid": 29539,
+        "uid": 501,
+        "birth": [
+          1794042358,
+          266476
+        ],
+        "argv": [
+          "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+          "--type=renderer",
+          "--headless=old",
+          "--no-sandbox",
+          "--disable-back-forward-cache",
+          "--disable-background-timer-throttling",
+          "--disable-breakpad",
+          "--force-color-profile=srgb",
+          "--remote-debugging-pipe",
+          "--allow-pre-commit-input",
+          "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+          "--lang=en-US",
+          "--num-raster-threads=4",
+          "--enable-zero-copy",
+          "--enable-gpu-memory-buffer-compositor-resources",
+          "--enable-main-frame-before-activation",
+          "--renderer-client-id=4",
+          "--launch-time-ticks=274964824743",
+          "--shared-files",
+          "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+          "--enable-features=CDPScreenshotNewSurface",
+          "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+          "--variations-seed-version",
+          "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+          "--trace-process-track-uuid=3190708990060038890"
+        ]
+      },
+      {
+        "pid": 29750,
+        "ppid": 29539,
+        "pgid": 29539,
+        "uid": 501,
+        "birth": [
+          1794042365,
+          371527
+        ],
+        "argv": [
+          "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+          "--type=utility",
+          "--utility-sub-type=audio.mojom.AudioService",
+          "--lang=en-US",
+          "--service-sandbox-type=audio",
+          "--no-sandbox",
+          "--use-angle=metal",
+          "--mute-audio",
+          "--message-loop-type-ui",
+          "--headless=old",
+          "--shared-files",
+          "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+          "--enable-features=CDPScreenshotNewSurface",
+          "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+          "--variations-seed-version",
+          "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+          "--trace-process-track-uuid=3190708990997080739"
+        ]
+      },
+      {
+        "pid": 29787,
+        "ppid": 29539,
+        "pgid": 29539,
+        "uid": 501,
+        "birth": [
+          1794042368,
+          405527
+        ],
+        "argv": [
+          "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+          "--type=renderer",
+          "--headless=old",
+          "--no-sandbox",
+          "--disable-back-forward-cache",
+          "--disable-background-timer-throttling",
+          "--disable-breakpad",
+          "--force-color-profile=srgb",
+          "--remote-debugging-pipe",
+          "--allow-pre-commit-input",
+          "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+          "--lang=en-US",
+          "--num-raster-threads=4",
+          "--enable-zero-copy",
+          "--enable-gpu-memory-buffer-compositor-resources",
+          "--enable-main-frame-before-activation",
+          "--renderer-client-id=6",
+          "--launch-time-ticks=274974963773",
+          "--shared-files",
+          "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+          "--enable-features=CDPScreenshotNewSurface",
+          "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+          "--variations-seed-version",
+          "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+          "--trace-process-track-uuid=3190708991934122588"
+        ]
+      },
+      {
+        "pid": 30121,
+        "ppid": 29461,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042376,
+          27071
+        ],
+        "argv": [
+          "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+          "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+          "29461"
+        ]
+      },
+      {
+        "pid": 30127,
+        "ppid": 29461,
+        "pgid": 29416,
+        "uid": 501,
+        "birth": [
+          1794042376,
+          247589
+        ],
+        "argv": [
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+          "--service=0.28.2",
+          "--ping"
+        ]
+      }
+    ],
+    "history": [
+      {
+        "reason": "owned Popen handle",
+        "identity": {
+          "pid": 29416,
+          "ppid": 28543,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042354,
+            964167
+          ],
+          "argv": [
+            "/usr/bin/sandbox-exec",
+            "-f",
+            "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/live.sb",
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "packages/tools/node_modules/@playwright/test/cli.js",
+            "test",
+            "--config",
+            "packages/tools/src/smoke/symbiotic.config.ts",
+            "--workers=1",
+            "--retries=0",
+            "--repeat-each=1",
+            "--max-failures=1",
+            "--global-timeout=420000",
+            "--trace=off",
+            "--reporter=list,json",
+            "--output",
+            "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/results"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29416,
+          "ppid": 28543,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042354,
+            964167
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "packages/tools/node_modules/@playwright/test/cli.js",
+            "test",
+            "--config",
+            "packages/tools/src/smoke/symbiotic.config.ts",
+            "--workers=1",
+            "--retries=0",
+            "--repeat-each=1",
+            "--max-failures=1",
+            "--global-timeout=420000",
+            "--trace=off",
+            "--reporter=list,json",
+            "--output",
+            "/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/results"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29431,
+          "ppid": 29416,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042355,
+            789537
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29442,
+          "ppid": 29431,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042356,
+            99637
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "--input-type=module",
+            "-e",
+            "\n    import postgres from 'postgres';\n    import Redis from 'ioredis';\n    const sql = postgres(process.env.DATABASE_URL, { max: 1, connect_timeout: 5, idle_timeout: 1 });\n    const redis = new Redis(process.env.REDIS_URL, { lazyConnect: true, connectTimeout: 5000, maxRetriesPerRequest: 0, retryStrategy: () => null });\n    try {\n      const [r] = await sql`select current_database() as db, current_user as usr, inet_server_port() as port`;\n      if (r.db !== process.env.QA_DATABASE || r.usr !== 'astra' || r.port !== 5432) throw Error('SQL identity mismatch');\n      const tables = await sql`select tablename from pg_tables where schemaname = 'public'`;\n      if (tables.length) throw Error('Claimed database is not fresh');\n      await redis.connect();\n      const info = await redis.call('CLIENT', 'INFO');\n      if (!/(?:^| )db=8(?: |$)/.test(info)) throw Error('Redis DB mismatch');\n      const owned = await redis.eval(\"if redis.call('DBSIZE') == 1 and redis.call('GET', KEYS[1]) == ARGV[1] then return 1 else return 0 end\", 1, process.env.QA_MARKER, process.env.QA_CLAIM);\n      if (owned !== 1) throw Error('Redis8 is not exclusively freshly claimed');\n    } finally { redis.disconnect(); await sql.end({ timeout: 2 }); }\n  "
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29447,
+          "ppid": 29431,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042356,
+            226087
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "--import",
+            "tsx",
+            "src/db/migrate.ts"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29453,
+          "ppid": 29447,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042356,
+            388566
+          ],
+          "argv": [
+            "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+            "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+            "29431"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29455,
+          "ppid": 29447,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042356,
+            449760
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+            "--service=0.28.2",
+            "--ping"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29461,
+          "ppid": 29431,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042356,
+            747054
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "--import",
+            "tsx",
+            "test/steppedServer.ts"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29462,
+          "ppid": 29431,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042356,
+            747581
+          ],
+          "argv": [
+            "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+            "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+            "29461"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29469,
+          "ppid": 29461,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042356,
+            962677
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+            "--service=0.28.2",
+            "--ping"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29539,
+          "ppid": 29431,
+          "pgid": 29539,
+          "uid": 501,
+          "birth": [
+            1794042358,
+            9000
+          ],
+          "argv": [
+            "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "--disable-field-trial-config",
+            "--disable-background-networking",
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows",
+            "--disable-back-forward-cache",
+            "--disable-breakpad",
+            "--disable-client-side-phishing-detection",
+            "--disable-component-extensions-with-background-pages",
+            "--disable-component-update",
+            "--no-default-browser-check",
+            "--disable-default-apps",
+            "--disable-dev-shm-usage",
+            "--disable-edgeupdater",
+            "--disable-extensions",
+            "--disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion",
+            "--enable-features=CDPScreenshotNewSurface",
+            "--allow-pre-commit-input",
+            "--disable-hang-monitor",
+            "--disable-ipc-flooding-protection",
+            "--disable-popup-blocking",
+            "--disable-prompt-on-repost",
+            "--disable-renderer-backgrounding",
+            "--disable-updater-scheduler",
+            "--force-color-profile=srgb",
+            "--metrics-recording-only",
+            "--no-first-run",
+            "--password-store=basic",
+            "--use-mock-keychain",
+            "--no-service-autorun",
+            "--export-tagged-pdf",
+            "--disable-search-engine-choice-screen",
+            "--unsafely-disable-devtools-self-xss-warnings",
+            "--edge-skip-compat-layer-relaunch",
+            "--disable-infobars",
+            "--disable-search-engine-choice-screen",
+            "--disable-sync",
+            "--enable-unsafe-swiftshader",
+            "--headless",
+            "--hide-scrollbars",
+            "--mute-audio",
+            "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+            "--no-sandbox",
+            "--use-angle=metal",
+            "--enable-gpu",
+            "--ignore-gpu-blocklist",
+            "--user-data-dir=/private/tmp/space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/tmp/playwright_chromiumdev_profile-QW7aDM",
+            "--remote-debugging-pipe",
+            "--no-startup-window"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29540,
+          "ppid": 29431,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042358,
+            11001
+          ],
+          "argv": [
+            "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+            "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+            "29539"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29544,
+          "ppid": 29539,
+          "pgid": 29539,
+          "uid": 501,
+          "birth": [
+            1794042358,
+            73593
+          ],
+          "argv": [
+            "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "--type=gpu-process",
+            "--gpu-recent-crash-count=0",
+            "--no-sandbox",
+            "--disable-breakpad",
+            "--headless",
+            "--use-angle=metal",
+            "--enable-unsafe-swiftshader",
+            "--enable-gpu",
+            "--gpu-preferences=WAAAAAAAAAAgAAAMAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA=",
+            "--shared-files",
+            "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+            "--enable-features=CDPScreenshotNewSurface",
+            "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+            "--variations-seed-version",
+            "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+            "--trace-process-track-uuid=3190708988185955192"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29545,
+          "ppid": 29539,
+          "pgid": 29539,
+          "uid": 501,
+          "birth": [
+            1794042358,
+            76551
+          ],
+          "argv": [
+            "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "--type=utility",
+            "--utility-sub-type=network.mojom.NetworkService",
+            "--lang=en-US",
+            "--service-sandbox-type=none",
+            "--no-sandbox",
+            "--use-angle=metal",
+            "--mute-audio",
+            "--headless=old",
+            "--shared-files",
+            "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+            "--enable-features=CDPScreenshotNewSurface",
+            "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+            "--variations-seed-version",
+            "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+            "--trace-process-track-uuid=3190708989122997041"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29547,
+          "ppid": 29431,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042358,
+            134616
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "--input-type=module",
+            "-e",
+            "import postgres from 'postgres';\nconst sql = postgres(process.env.ADMIN_URL, { max: 1, onnotice: () => {} });\ntry { await sql.unsafe(process.env.STATEMENT); } finally { await sql.end({ timeout: 5 }); }"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29550,
+          "ppid": 29547,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042358,
+            182849
+          ],
+          "argv": [
+            "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+            "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+            "29431"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29553,
+          "ppid": 29539,
+          "pgid": 29539,
+          "uid": 501,
+          "birth": [
+            1794042358,
+            266476
+          ],
+          "argv": [
+            "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "--type=renderer",
+            "--headless=old",
+            "--no-sandbox",
+            "--disable-back-forward-cache",
+            "--disable-background-timer-throttling",
+            "--disable-breakpad",
+            "--force-color-profile=srgb",
+            "--remote-debugging-pipe",
+            "--allow-pre-commit-input",
+            "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+            "--lang=en-US",
+            "--num-raster-threads=4",
+            "--enable-zero-copy",
+            "--enable-gpu-memory-buffer-compositor-resources",
+            "--enable-main-frame-before-activation",
+            "--renderer-client-id=4",
+            "--launch-time-ticks=274964824743",
+            "--shared-files",
+            "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+            "--enable-features=CDPScreenshotNewSurface",
+            "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+            "--variations-seed-version",
+            "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+            "--trace-process-track-uuid=3190708990060038890"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29750,
+          "ppid": 29539,
+          "pgid": 29539,
+          "uid": 501,
+          "birth": [
+            1794042365,
+            371527
+          ],
+          "argv": [
+            "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "--type=utility",
+            "--utility-sub-type=audio.mojom.AudioService",
+            "--lang=en-US",
+            "--service-sandbox-type=audio",
+            "--no-sandbox",
+            "--use-angle=metal",
+            "--mute-audio",
+            "--message-loop-type-ui",
+            "--headless=old",
+            "--shared-files",
+            "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+            "--enable-features=CDPScreenshotNewSurface",
+            "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+            "--variations-seed-version",
+            "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+            "--trace-process-track-uuid=3190708990997080739"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 29787,
+          "ppid": 29539,
+          "pgid": 29539,
+          "uid": 501,
+          "birth": [
+            1794042368,
+            405527
+          ],
+          "argv": [
+            "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "--type=renderer",
+            "--headless=old",
+            "--no-sandbox",
+            "--disable-back-forward-cache",
+            "--disable-background-timer-throttling",
+            "--disable-breakpad",
+            "--force-color-profile=srgb",
+            "--remote-debugging-pipe",
+            "--allow-pre-commit-input",
+            "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+            "--lang=en-US",
+            "--num-raster-threads=4",
+            "--enable-zero-copy",
+            "--enable-gpu-memory-buffer-compositor-resources",
+            "--enable-main-frame-before-activation",
+            "--renderer-client-id=6",
+            "--launch-time-ticks=274974963773",
+            "--shared-files",
+            "--field-trial-handle=1718379636,r,2198130889134257283,5594024684826470542,262144",
+            "--enable-features=CDPScreenshotNewSurface",
+            "--disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn",
+            "--variations-seed-version",
+            "--pseudonymization-salt-handle=1935764596,r,16235448402150979279,6668399658533808460,4",
+            "--trace-process-track-uuid=3190708991934122588"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 30121,
+          "ppid": 29461,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042376,
+            27071
+          ],
+          "argv": [
+            "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+            "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/identity.py",
+            "29461"
+          ]
+        }
+      },
+      {
+        "reason": "registered child or observed descendant",
+        "identity": {
+          "pid": 30127,
+          "ppid": 29461,
+          "pgid": 29416,
+          "uid": 501,
+          "birth": [
+            1794042376,
+            247589
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+            "--service=0.28.2",
+            "--ping"
+          ]
+        }
+      }
+    ],
+    "signals": [],
+    "remaining": [],
+    "remainingRegistered": [],
+    "remainingUnknown": false,
+    "outerSeconds": 450,
+    "drainLimitSeconds": 20
+  },
+  "errors": [],
+  "retryPerformed": false,
+  "cleanupCompleted": true,
+  "gpuReleased": true
+}

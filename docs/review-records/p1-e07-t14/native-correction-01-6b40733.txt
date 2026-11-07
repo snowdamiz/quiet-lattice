@@ -1,0 +1,200 @@
+# Appendix C.2 — failed native pilot audit and disabled correction
+
+Actual pilot verdict: **FAILED**, permanently spent identity. Correction status: implemented and CPU-verified, clean committed disabled candidate; **independent correction review pending**. No new native/browser/GPU/Vite/application-server/DB/Blender run, grant, push, PR, merge, parent-doc edit or screenshot cleanup occurred. No source/CPU test result promotes the failed native capture to PASS.
+
+## Exact pins and provenance
+
+- Worktree `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`; branch `task/P1-E07-T14-effects`.
+- Failed enabled base HEAD `6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8`, tree `fc1488aa0fae0727d4998205d24f914d3a32c482`.
+- Final disabled HEAD `6b4073305af21efe5c6cf5ecc09f78406b637a42`, tree `4ffe285721b1949a3fc887e444e2661a72656412`; clean all-untracked Git status.
+- Readiness SHA256 `6d19a71ee899bc639abc3c7f8882a6925a23f23698c2d1bd836f5b4e008bd6b1`; 417 file bindings and six dependency trees.
+- Patch SHA256 `a529c92dae96f46c5b2ce7cffccc722c418b94e0b6837a006b24cbae6ec96572` at `/private/tmp/p1-e07-t14-native-failure-3pevk0mk/source.patch`; exactly11 task-local effects_packet files changed. No helper, asset or shared T15 change.
+- Old enabled readiness SHA256 `073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee` is preserved in base Git and baseline-source/readiness.json. Previous source, activation and art reports remain historical evidence for their exact old pins, not a review of this correction.
+- Asset source `2643aca9d8b85a45498d85eb637d20260ebf06d1`; original art base `634c51d2378748c6a514af2a792ee4500b912643`; helper recovery `22506166571d4045eeb4902b1f278bdcafa2ad19` from `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9`; exact shared T15 adoption `18add9e19f65260d4201be1b23344ead827dd32e` of `38b6c4b58db43146df20cd760808d1461d7a667b` unchanged.
+
+## Original run: observed facts, not inferred acceptance
+
+Parent observed caller PID91075 OS exit1 at 2026-11-07T08:31:00.446083+00:00. Both parent stdout/stderr files are zero bytes. No original result.json, terminal.json, entry.json or image exists. Original output still contains no files. Chromium and Vite really launched; entry-consumed.json and bootstrap/boundary/observed_execution receipts remain. Capture exited143 and caffeinate -15 after owned cleanup. These are failed execution facts, not a completed packet or visual grade.
+
+First recorded error: unbound owned executable `/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService`. PID91794 had UID501, birth `[1794040260,209486]`, and coalition41959/41960. Its recorded role was apple-video-encoder-xpc and admitted=false. Browser/GPU/utilities, Node, esbuild, caffeinate and Python were admitted. Current-kernel identity/coalition checks precede this executable lookup; the PPID1 XPC process is not admitted merely by its name or parentage.
+
+Boundary records drained=true, clean=false, kernel terminal coalition_absent=true/live0 and remaining[]. Its clean=false reflects the retained work error. Parent's 08:32:37 observation shows exact launchctl target absent(exit113), all ten recorded PIDs absent(ps exit1), and profile absent. Parent released the GPU. This correction made fresh scoped read-only owner observations for recovery; it did not replay capture.
+
+Spent authorization `effects-b61233fdf3564205bd01d9566f306430` MUST NEVER be reused or retried.
+- Original grant `/private/tmp/egg-b61233fdf3564205bd01d9566f306430.json` SHA256 `b7e64b1165ad45ec6471b4bc29cbd2ce9b9cf2409a6954a44f0be1f3ef068eae`.
+- Original consumption `/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json` SHA256 `c4a4cf7fe2f0611f15eaa4270d44a79822be7865c883711df42de6ca79ffc0d3`.
+- Original evidence `/private/tmp/egp-b61233fdf3564205bd01d9566f306430`.
+- Parent evidence `/private/tmp/space-effects-parent-pilot-mfigba7u`.
+- Original empty output `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430`.
+
+## Silent exit and cleanup cause
+
+Two task-local defects compounded the legitimate fail-closed executable refusal. First, NativePorts.cleanup required helper clean=true before archival even though the kernel had proved the failed cohort drained. Work error and resource release were conflated, so scratch and private TMP remained. A repeated ordinary observer failure at drain entry could also prevent the helper's ownership-checked termination; the corrected adapter retains that failure while allowing drain, without accepting the work. BaseException deadlines still unwind.
+
+Second, observe_call records the actual helper's coalition probes. The helper scans the current user's PID population through those ports. With1,214 retained PID numbers, the actual start/wait/drain and StageReceipts bodies produce12,299 probe calls in the controlled replay, plus ownership and raw argument/return facts. The old result is2,781,868 bytes with the receipt writer's pretty serialization and1,129,913 with compact serialization. Every file write and then the stderr fallback exceeds its1MiB per-record cap. publish records these failures only in its returned memory, sets accepted=false, and the CLI exit branch exits1 without printing that returned result. No direct os._exit or helper-induced parent termination is needed to reproduce the observed absence of all terminal evidence.
+
+Original in-memory observations were discarded and cannot be recovered. The exact original serialized size and last caught exception therefore remain unknown. This is a demonstrated reachable explanation using retained native-shaped facts and actual adapter/helper bodies, not a fabricated recovery of the missing memory. The smaller initial replay omitted actual start observations and emitted672,503 stderr bytes; adding full readiness and actual start crosses the compact cap and reproduces silence. Those intermediate results are retained rather than hidden.
+
+RED: `/private/tmp/p1-e07-t14-native-failure-3pevk0mk/RED-actual-start.json` and RED-os-replay.json. The deep archived baseline replay uses byte-identical old package sources, actual helper bodies, inert kernel/launch ports and one real harmless Python stdin-holder. No original PID is signalled. The dedicated CPU wrapper follows the caller's accepted-result exit rule; parent subprocess observation confirms OSexit1, stdout0, stderr0. It is not a second native run or a real StationJob launch.
+
+GREEN: `/private/tmp/p1-e07-t14-native-failure-3pevk0mk/GREEN-release.json` plus final committed native_failure_controls.py. The same primary unbound error remains first, accepted=false remains, the harmless child exits-15, unchanged helper archive/private-TMP ports preserve bytes and remove only control-owned paths, release is positively rechecked, and terminal/result files now exist. Ten regressions exercise large observations, repeated cleanup refusal, real SIGALRM, archive receipt failure, combined/all-sink publication failures, exact reserve edge, late successful-looking write failure, same-snapshot part replacement/FIFO/size/tamper refusal, and exact encoder binding/ownership rejection.
+
+## Correction design and accounting
+
+Both runtime flags and fresh readiness are false. Only the exact observed Apple executable is added to process bindings:167,280 bytes, SHA256 `a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5`. CPU `/usr/bin/codesign --verify --strict -R '=identifier "com.apple.coremedia.videoencoder" and anchor apple'` and display checks both exit0. Canonical root-owned non-writable regular file, Apple identifier, platform identifier26, designated requirement and CDHash are checked; file binding is rechecked after signature observation. Codesign itself is bound. The existing helper's current UID/birth/coalition and executable rules are unchanged. Missing binding, wrong coalition and another executable still refuse. No broad allowlist or external XPC ownership claim is introduced; external native XPC ownership remains UNQUALIFIED.
+
+Cleanup no longer equates helper clean with resource release and never rewrites helper clean/errors. Original capture and later observation/helper/archive failures remain in order. A normal observer failure during cleanup is recorded and prevents acceptance, while the helper still performs its exact kernel-owned drain. After positive drained/live0/empty-members state, the existing archive and preserve_private_tmp ports run. A task-local fresh release audit records kernel/member/known-birth/path/registration observations independently of work success. Any uncertainty refuses release; capture errors prevent decoding regardless of release. Helpers and shared capture source are untouched.
+
+For oversized terminal/result/fallback records, write_capture_record stores the complete compact JSON in exclusive512KiB payload parts, each base64 JSON file below1MiB, then writes the small hash-bound envelope. No field or unknown value is dropped. Partial parts are retained on failure; attempted parts, envelopes, duplicates at fallback and stderr are charged before writes inside the existing32MiB Python allowance.64KiB is reserved inside that allowance for a small explicit failure-only stderr summary. A failure summary may truncate its displayed primary message prefix but says summaryOnly; full raw facts remain in memory and any completed parts. If stderr also fails, there is no durable claim; complete memory and all errors remain available to the caller. A physical I/O failure cannot be described as guaranteed durable evidence.
+
+capture_snapshot reads each envelope/part exactly once through the existing regular-file/type/size/no-follow bounded snapshot. Hash, parse, index and content checks share those same bytes; total part reads are capped. It reconstructs the full JSON, retaining snapshots, and parent_acceptance still requires parent-observed OSexit0 and exact outer result and consumption hashes. A manifest's hashes bind every part. A file alone, a cached accepted flag, or a late-close complete-looking envelope does not accept. No successful return precedes all terminal writes.
+
+Runtime successful output inventory stays exactly11 PNGs + perf.json; metadata parts live under evidence, or only under output for a failed packet fallback. No success packet gains extra images, motion, atlas or renderer code. Forensics and source controls are outside the prospective runtime packet.
+
+## Recovery and leftover paths
+
+Before removal, recover.py inventoried regular files/directories with no-follow descriptors, ownership/type/size admission and bounded reads. It wrote a before manifest, made fresh exclusive copies, checked every copied hash and source identity/content again, then made fresh exact launchctl/ps and scoped lsof checks. Bounds:45s overall inventory/copy,16MiB per file,64MiB total,4096 entries per root; probes10s each. Actual copied total2,081,256 bytes. This is every existing byte in the enumerated pilot/parent/scratch/private-TMP/grant/consumption sets at recovery, not the browser profile already removed before this audit.
+
+`/private/tmp/p1-e07-t14-native-failure-3pevk0mk/before-inventory.json`, recovery-proof-before-removal.json and recovery-closure.json preserve full hashes and actual probe outputs. Only `/private/tmp/sbr-fbnx3i_z` was removed after proof. Its byte-identical copy is `/private/tmp/p1-e07-t14-native-failure-3pevk0mk/recovered/private-tmp`. Original `/private/tmp/stations-round4-owned-iy1s1opo` is intentionally retained with an exclusive verified copy at recovered/scratch; fresh lsof found no owners. Grant, consumption, original evidence/parent receipts and empty output remain unchanged. Final protection rechecked every original file hash and every recovery copy. No old screenshot or unrelated private directory was removed.
+
+## Verification and honest limits
+
+Final green controls:79 top-level cases = prior47 (Python26 + boundary12 + Node9) + revision9 + actual-entry13 + new10. Real harmless processes are bounded and reaped; original/native identities are never reused. Existing R1 constructor/bootstrap/owner and R2 observer/cache/PNG/shared cleanup controls remain green. This is source/CPU verification, not independent review or native acceptance. Earlier independent R3's131-case verdict remains at587989af; those independent extra cases were not all rerun here.
+
+Final exact-HEAD check_ready:PASS_SOURCE_ONLY_DISABLED; both actual CLIs exit78 before native imports/allocation. Source bindings417, dependency trees6; owner guard CLEAR at the audit instant only. New grant/consumption/evidence/output paths absent. Scoped ESLint/Prettier,15 Python source compilations without bytecode, staged diff check and clean status pass. No current source audit is a future GPU/disk/owner admission.
+
+All recorded commands, argv, environments, logs, OS exits and durations are in `/private/tmp/p1-e07-t14-native-failure-3pevk0mk/COMMANDS.md` and commands.json. Earlier forensic scripts are listed there. Every non-green development attempt is retained:
+- Initial stock26 run: one direct-adapter control raised KeyError(errors) because the new bookkeeping assumed the full caller result. Corrected with explicit error-list initialization; all26 now pass. The prior control was not weakened.
+- First expanded control run after ledger wording changed used the old readiness's budget description; six fixture admission errors. Fixture now keeps its current ledger while copying realistic binding/source shape; all10 pass, including after final freeze.
+- First archived baseline replay was placed too shallow for contract.HERE.parents[4] and failed import (exit1 with756 stderr bytes). That is NOT the silent RED proof. A new correctly shaped byte-identical old tree reproduces the expected exit1 with both streams0 and measured result facts.
+- First green recovery replay reset its synthetic root after archive removed the release-marker file, so production code correctly refused release. The fixture was corrected to retain its already-observed terminal root state; full-chain release then passes. Original script/log remain.
+
+- `stock-python-26`: exit1 (expected 0), 4.481s.
+- `stock-boundary-12`: exit0 (expected 0), 4.179s.
+- `stock-revision-9`: exit0 (expected 0), 1.618s.
+- `stock-python-26-final`: exit0 (expected 0), 4.764s.
+- `node-9`: exit0 (expected 0), 0.208s.
+- `actual-entry-13`: exit0 (expected 0), 0.145s.
+- `native-failure-10-final`: exit1 (expected 0), 0.636s.
+- `red-os-exit-1`: exit1 (expected 1), 0.142s.
+- `native-failure-10-current-ledger`: exit0 (expected 0), 1.565s.
+- `red-os-exit-confirmed`: exit1 (expected 1), 0.321s.
+- `format-source`: exit0 (expected 0), 0.094s.
+- `freeze-disabled-correction`: exit0 (expected 0), 2.843s.
+- `format-readiness`: exit0 (expected 0), 0.133s.
+- `lint`: exit0 (expected 0), 0.315s.
+- `diff-check`: exit0 (expected 0), 0.066s.
+- `protection`: exit0 (expected 0), 0.16s.
+- `format-check`: exit0 (expected 0), 0.146s.
+- `disabled-python`: exit78 (expected 78), 0.035s.
+- `disabled-node`: exit78 (expected 78), 0.026s.
+- `native-failure-final-freeze`: exit0 (expected 0), 1.678s.
+- `stage-correction`: exit0 (expected 0), 0.027s.
+- `staged-diff-check`: exit0 (expected 0), 0.017s.
+- `commit-correction`: exit0 (expected 0), 0.15s.
+- `final-disabled-readiness`: exit0 (expected 0), 3.606s.
+
+## Next proposal and exact budget
+
+`/private/tmp/p1-e07-t14-native-failure-3pevk0mk/NEXT-PROPOSAL-DATA.json` is disabled proposal DATA, not a grant or review receipt. Parent already has native authority. Next: fresh independent correction review at this pin; separate minimal enabled/rebound checkpoint and activation review; then parent-issued distinct one-use grant, serialized slot, current owner and5,402,312,704-byte admission; one actual gravitic pilot; independent visual grading. No retry of the spent identity.
+
+Prospective unused identity `effects-a3e0beee56da47bf8a678ab6188dad79` (not authorized):
+- grant `/private/tmp/egg-a3e0beee56da47bf8a678ab6188dad79.json`
+- consumption `/private/tmp/egc-a3e0beee56da47bf8a678ab6188dad79.json`
+- evidence `/private/tmp/egp-a3e0beee56da47bf8a678ab6188dad79`
+- output `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a3e0beee56da47bf8a678ab6188dad79`
+
+Only effects/gravitic, asset gravitic_pull,1920x1080 native Metal is proposed. The single authored LOD0 remains selected for requestedLOD2; shown0/lods[0],576 triangles,LIB_FX_Gravitic and nonzero gravitic_filament compressed textures remain required. No actual preview/image was generated by this correction; old CPU art previews remain unchanged. All59 roots still need applicable actual/static visual acceptance; remaining58 and all32 proposed motion/playback records remain out of scope.
+
+| Writer/reserve | Bytes | Semantics |
+| --- | ---: | --- |
+| capture_outputs | 184,565,760 | 11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root |
+| future_lfs_copy | 184,565,760 | Reserved for later Git LFS adoption; this pilot performs no git add or LFS write |
+| future_main_hydration | 184,565,760 | Reserved for later parent hydration; this pilot makes no main-worktree copy |
+| controlled_metadata | 67,108,864 | 32 MiB each for Node and Python, all attempted writes/copies charged; Python terminal JSON parts stay inside its allowance with 64 KiB reserved for failure stderr |
+| cache_snapshot | 67,108,864 | One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained |
+| profile_work_and_archive | 2,147,483,648 | StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive |
+| private_tmp_work_and_archive | 1,073,741,824 | preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles |
+| helper_logs_work_and_archive | 134,217,728 | StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job |
+| generated_cache_growth | 268,435,456 | Observed additional Vite cache growth; original cache bytes already reduce free space |
+| filesystem_metadata | 16,777,216 | Directory and filesystem overhead reserve |
+| safety | 1,073,741,824 | Fresh disk safety reserve, checked at admission and while observing |
+
+Output cap184,565,760; admission5,402,312,704, unchanged. Python ordinary metadata cap33,488,896 plus65,536 failure-summary reserve totals33,554,432; Node remains33,554,432. No OS quota is claimed. Initial current generated-cache bytes8,099,054; cache snapshot64MiB/30s. Capture600s; cleanup60s with drain45s inside; decode45s only after positive error-free release. Owner checks10s,256KiB per command/384KiB total and0.5s owned-probe reap. Future fallback parts/copies are charged to metadata, not added to image allowance.
+
+## Protected manifest
+
+All64 assets, four helpers and two shared T15 files are byte-identical. Full protection SHA256 `e14ffa1788202600f8fa074211e3fe967b8bfa15c36968eefe836729fb8c3e7a`. Unchanged assets/blend/effects/manifest.json retains every node/palette/material mapping and asset hashes; no art or loader contract changed.
+
+| Path | Bytes | SHA256 |
+| --- | ---: | --- |
+| `assets/blend/effects/evidence/audit.json` | 52922 | `ef76bb691c3d8ecf4b9f17b48021d011039a895e74eaae6c8bfeda8e13c19673` |
+| `assets/blend/effects/evidence/command-tails.json` | 9127 | `f959e73bf963f36dc146553e97ed88a1365f2e2d59ef0694ef79a26ab2b45e6f` |
+| `assets/blend/effects/evidence/commands.json` | 1648 | `cab232c2a26ce1d0405f130dd0a9a45dab35d89113bee1ab249fd53c87fa5a49` |
+| `assets/blend/effects/evidence/gpu-inventory.json` | 28540 | `d01c4e6ed9bd988fec8785c8baecfc9a77a164addac73466f1f7cb67b2f2c849` |
+| `assets/blend/effects/evidence/hashes.json` | 7030 | `7dec124ab6d24738270422751dee8f1c87a6c2bbe26c0ac972c94c50eeda1a01` |
+| `assets/blend/effects/evidence/previews/gravitic_eight_views.png` | 647379 | `f61ff6622fb5b492128b59b8f68e61d6cff6c0dc1a4139843d8a54ba4cc0df08` |
+| `assets/blend/effects/evidence/previews/inventory.json` | 5311 | `8899c1a0ffe48e4870f6b4da3d33912f51540c5f3fb4554e61590da4f1e33d13` |
+| `assets/blend/effects/evidence/previews/materials_and_particle_decay.png` | 537606 | `e905ab87631110c474160fc35dae0ede2b22f16c2a46466366d8b636a9e6cbdf` |
+| `assets/blend/effects/evidence/previews/recall_eight_views.png` | 146420 | `86437784830f082a5b8c5893f560537ce456a6d0fe02414ba275f96795d1f89d` |
+| `assets/blend/effects/evidence/previews/recall_glyphs_front.png` | 337389 | `bd766f785129aee1fca3c7afbdefdb19084fd42bbc3c08f45d4486f4b67ef551` |
+| `assets/blend/effects/evidence/previews/recall_glyphs_oblique.png` | 312215 | `cf98decf7ffa76ef58c5bd9fb02652f692537909f9ec1bee14b616f3cb4a26e0` |
+| `assets/blend/effects/evidence/previews/resonance_eight_views.png` | 774058 | `2f85d0a2dc2b9163c03b4e594c4f46d9abdfdcea7852bb68bfb16d8f9af6c1d7` |
+| `assets/blend/effects/evidence/previews/symbiotic_eight_views.png` | 691126 | `19a65e2a1b829fa16c4fd944d7296b42de0a542d1f72539b6c0b66857d67eaf3` |
+| `assets/blend/effects/evidence/previews/thermal_eight_views.png` | 649994 | `3aeedf2d797e12dc369aa213b58cba39f0bfda567c9920419a88ff81d939de20` |
+| `assets/blend/effects/evidence/previews/void_eight_views.png` | 689616 | `98ab345bde20e78c6924d24665258216bec7a33a2453aacc3b002e7123051af9` |
+| `assets/blend/effects/evidence/report.json` | 4107 | `9d71e62715c697f80cc26014bebe3a5142aca096994f29ac065260b5b544b685` |
+| `assets/blend/effects/evidence/source-before-export.json` | 651 | `45e527f15c0b54866783f7cb39c1a039090f6d941a2f1386649a5aec763fdf48` |
+| `assets/blend/effects/evidence/spore-initial-fail.json` | 7417 | `0424272b0f1d47b159c4445d68c2364e0da8da6632cae3799d3b6500e1f5e507` |
+| `assets/blend/effects/evidence/validation/effects__gravitic.blend.json` | 7369 | `101a911f86775e96778b11f9e10c66e0cf662095aceb05b85babbc46563c4ff1` |
+| `assets/blend/effects/evidence/validation/effects__gravitic.glb.json` | 9156 | `0c8f7d06509ff9f21691576bd168726bd4ae03503fefddb2e282674fefc25f34` |
+| `assets/blend/effects/evidence/validation/effects__recall.blend.json` | 27497 | `7f90d690cfc4d142ebb5441878c3da867cc44872eecc513f8e802dc50f39d0e1` |
+| `assets/blend/effects/evidence/validation/effects__recall.glb.json` | 34690 | `68cddefcd558c3c426ed7e63e877d8a3d1f63bd092e8d8162ee27ce7d5a2c953` |
+| `assets/blend/effects/evidence/validation/effects__resonance.blend.json` | 8335 | `fe1d21e4d0fd9a5df98d50d79266e50f0341a139a9c640e2bdfd20d4307f5209` |
+| `assets/blend/effects/evidence/validation/effects__resonance.glb.json` | 10385 | `19215d6dc62a1e868311c22c0052210c6ff685bffaa8ed2c12d7c6d34bcd87dd` |
+| `assets/blend/effects/evidence/validation/effects__symbiotic.blend.json` | 7381 | `6a884185c58fb6c199677a6da1afd9c8a4ae9e418ae8ea61ee5b0df574a7bb3a` |
+| `assets/blend/effects/evidence/validation/effects__symbiotic.glb.json` | 9169 | `08dad9d2845a83932aeb61925d40668d1730340734c0590dad6665069f676e00` |
+| `assets/blend/effects/evidence/validation/effects__thermal.blend.json` | 6309 | `08693cd923af03bb5d31cd8c467d839184e1c531749d6a816a35e557124e3cb8` |
+| `assets/blend/effects/evidence/validation/effects__thermal.glb.json` | 7817 | `21edb2de9003abe54d5960710b74562308ec6492a32710f8e76aa28ae7267cdc` |
+| `assets/blend/effects/evidence/validation/effects__void.blend.json` | 9047 | `3c92a8728cd4d20a5a813688d137c120a02fe5b3c370533b18d7e20f5ff6968c` |
+| `assets/blend/effects/evidence/validation/effects__void.glb.json` | 11314 | `407f134a90a0353e947d864a25386e1d4ecd35425e910bf39046c4dd370dbff9` |
+| `assets/blend/effects/gravitic.blend` | 737106 | `d3855d5d6d41726ccdff4cb2101711fbec40491b7ea339a87abfdfec30fe58de` |
+| `assets/blend/effects/manifest.json` | 78106 | `4fd74de92e47d75af47d6da235663574b8a3bc1cc9592adbb1e8e6167b5c89ae` |
+| `assets/blend/effects/recall.blend` | 530671 | `19ed201b201b175aff621e7a0cde4eae6e03da1b5a0f5c97d197dc8591b22cc4` |
+| `assets/blend/effects/resonance.blend` | 977830 | `530dd29a82eb90dd9dcec45db9217ce768f71c9910784af43c995a2903f5f90e` |
+| `assets/blend/effects/symbiotic.blend` | 688644 | `42e33e2449f4992040efaf7f97e97b53b7386266258d643bb27d6ec1dd4443d8` |
+| `assets/blend/effects/thermal.blend` | 824716 | `6759ffc7cf1cc44811837ee11359f0e9f040a5905cf872eaf4662c68543defcc` |
+| `assets/blend/effects/void.blend` | 654778 | `47c36a6dd7d18139ed209fe3004d2ba5f21667a91467fb2c429a8a8be956ba5b` |
+| `packages/client/public/models/effects/gravitic.glb` | 264032 | `ebcd9cc0876887547298108facb390b73ab97134359e9970f985bc95b331a610` |
+| `packages/client/public/models/effects/recall.glb` | 231960 | `f138cba75959be8dda6c7a532745fd99ed4f35449998550a8ddf8faca640beb5` |
+| `packages/client/public/models/effects/resonance.glb` | 273208 | `d9622d3ed81ed4a7b0b8df5e8311c58334b269c10b08fe9050fc65c008a53fd5` |
+| `packages/client/public/models/effects/symbiotic.glb` | 282328 | `36059151b368c6d5b5d5de510488991d5340690a352af7be5334773409ea0ecb` |
+| `packages/client/public/models/effects/thermal.glb` | 239208 | `30a7ee9e483ad4d28f208256e9b9586e9f63c0df66041ffd442f3ca1e6a13143` |
+| `packages/client/public/models/effects/void.glb` | 162284 | `8a11ec3e42f91ae32a3d05889f04af8974b0cd8ffdae885896e240b755443f66` |
+| `packages/client/public/particles/effects/gravitic_filament.png` | 318123 | `26ac4f5a1a9adaff58b966d163e76204ee0c466042c981af85b82317c4a7e9ec` |
+| `packages/client/public/particles/effects/gravitic_particles.png` | 239871 | `ae26657306fc1b028753de0f000f4d6777444df38fa9320462c2392712d6631c` |
+| `packages/client/public/particles/effects/recall_filament.png` | 278310 | `ab275c2064ed7a4fce25689d4b70a9123f7d5edd0434e56ff9abdf12924aab3a` |
+| `packages/client/public/particles/effects/recall_particles.png` | 145384 | `449eeee79168b6323b1b352c25410acd607523f9517493df212aa82efecb1c2b` |
+| `packages/client/public/particles/effects/resonance_filament.png` | 442362 | `79980c96ba1f7de54d2cc3980d2e518a6e7538b05a40f1248e3f63b4b89229fe` |
+| `packages/client/public/particles/effects/resonance_particles.png` | 340115 | `f630b650af80cb4129e33a5f7d012de0b055c4e65acaaecee5aee4a0551f8323` |
+| `packages/client/public/particles/effects/symbiotic_filament.png` | 305999 | `134ef04827118b23286ac0fd84a03457e55082eadd1d9c60b939ab7b40d044ed` |
+| `packages/client/public/particles/effects/symbiotic_particles.png` | 155598 | `2bb92a5c08a38bf25449704d7e630f00bf5a1e6c6541cad423a98db0b652d751` |
+| `packages/client/public/particles/effects/thermal_filament.png` | 320558 | `7ae07adda6dd11ad26f25d3b93effe3f8e39824c49ebe2d7f97d666c86574ed3` |
+| `packages/client/public/particles/effects/thermal_particles.png` | 301840 | `3d0c64b01a4052cfcc288bc2746133e0388383f360e2b822e2247674d9c969c9` |
+| `packages/client/public/particles/effects/void_filament.png` | 391907 | `fe864222f3a566e561ddc850f977cae07c43f83c239cf0774cd10b432d289a9e` |
+| `packages/client/public/particles/effects/void_particles.png` | 147882 | `0e986835d4d8b99cc1c9f0017196011c256c771cff86c3c313c8674c8c124a48` |
+| `packages/tools/blender/effects/audit.py` | 12515 | `dd676083e29d018451c04304c6af3268997da739e56a5b35529497e59ee80d63` |
+| `packages/tools/blender/effects/author.py` | 20792 | `ce683e40005d41dfc3ce95b836634d3f8d3996c8ea40d6bf9f532e7185845a4a` |
+| `packages/tools/blender/effects/catalog.py` | 8194 | `d35de7826945e12bfb8989760d2696f054c0262d1f10455dcff0d02150aa7965` |
+| `packages/tools/blender/effects/ktx_cpu.py` | 275 | `c9287811d0613f5dc45f71af66f381ddc0791a821d3e8eb0852cc3a14b845d60` |
+| `packages/tools/blender/effects/package_evidence.py` | 8719 | `489a5670567909724c8f3db99e2bf6d5ba8aa66583735da9c7819e162054fe43` |
+| `packages/tools/blender/effects/preview.py` | 7491 | `254a8339ae78b016649f27f93691d6cc9cb65a7c9600ddecb81ff4033f5ff108` |
+| `packages/tools/blender/effects/refine_textures.py` | 1329 | `e27786410c12f5cb23200427a1dbffaea3b8ff7b224563c83fce275ff1a5bd73` |
+| `packages/tools/blender/effects/revise_spore.py` | 1140 | `f12c9524a4af2056f4228677e8263c7ff396e662f9e01f2f4dfa38439e82c778` |
+| `packages/tools/blender/effects/run.py` | 2222 | `23466e381713b513969fdba1f8575b2fbbd4831aa59ce0071c294c16ff732b08` |
+| `assets/blend/stations/_authoring/round4_job_boundary.py` | 23061 | `3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c` |
+| `assets/blend/stations/_authoring/round4_capture_children.py` | 2132 | `e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07` |
+| `assets/blend/stations/_authoring/run_round4_browser_proof.py` | 23711 | `f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab` |
+| `assets/blend/stations/_authoring/run_round4_remaining8.py` | 31906 | `4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8` |
+| `packages/tools/src/capture/capture.lifecycle.test.ts` | 15585 | `ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18` |
+| `packages/tools/src/capture/capture.ts` | 22007 | `42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d` |
