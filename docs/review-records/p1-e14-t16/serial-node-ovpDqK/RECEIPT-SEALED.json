@@ -1,0 +1,247 @@
+{
+  "task": "P1.E14.T16",
+  "unit": "e14t16-serial-node-consumer-meshopt-unit",
+  "attempt": 3,
+  "status": "PASS",
+  "admission": "parent: exact-mask serial node consumer/meshopt unit ADMITTED",
+  "scratch": "/private/tmp/space-e14t16-serial-node-ovpDqK",
+  "prior_attempts_retained": [
+    "/private/tmp/space-e14t16-serial-node-Uuc4u6",
+    "/private/tmp/space-e14t16-serial-node-5lvjw8"
+  ],
+  "pins": {
+    "worktree_head": "d7430f7a4604ab0535cc5f064f4190ea708c7364",
+    "worktree_tree": "d85202d1ab952a31ce484829e464f345ead2ceaa",
+    "source_head_pin": "e11acd393201115e5fa682325fc19a463c0d539a",
+    "source_tree_pin": "3ffe09045b4d0673b7921018fb7f8a435a79b941",
+    "executable_parity_base": "2156fe66bb596f5604a26e4eea9fc88ed0a712c8",
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+    "deps": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab",
+    "vitest": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+    "prep_sha256": "a85e71943366ffff70583d34d2f2222b3bc43ec9cfdb7118a926f14be29b1864",
+    "scratch_config": "/private/tmp/space-e14t16-serial-node-ovpDqK/vitest.config.mjs"
+  },
+  "guardian": {
+    "attempt": 3,
+    "attempt1": "/private/tmp/space-e14t16-serial-node-Uuc4u6",
+    "attempt2": "/private/tmp/space-e14t16-serial-node-5lvjw8",
+    "attempt1_fail": "vitest unknown --minWorkers",
+    "attempt2_fail": "task root vitest.config.ts cannot resolve vitest without node_modules",
+    "correction": "scratch vitest.config.mjs with absolute vitest/config import + resolve aliases for three/addons, @astra/shared, meshopt stack; drop --minWorkers; no-cache into scratch",
+    "same_parent_allocation": true,
+    "prep_sha256": "a85e71943366ffff70583d34d2f2222b3bc43ec9cfdb7118a926f14be29b1864",
+    "config_sha256": "d9dbf80c5a7f51609618497bf379d763242ae756f3930de214015facf2ae3c54",
+    "real_blender_toktx": [],
+    "node_version": "v26.12.1"
+  },
+  "dependency_before": {
+    "label": "before",
+    "ts": 1794059981.0649889,
+    "task_node_modules": {
+      "exists": false,
+      "entries": 0,
+      "symlink": false
+    },
+    "deps_node_modules": {
+      "exists": true,
+      "symlink": false,
+      "entries": 17
+    },
+    "deps_client_nm": {
+      "exists": true,
+      "symlink": false,
+      "entries": 6
+    },
+    "deps_tools_nm": {
+      "exists": true,
+      "symlink": false,
+      "entries": 7
+    },
+    "task_lock": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "deps_lock": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "task_status": "",
+    "head": "d7430f7a4604ab0535cc5f064f4190ea708c7364",
+    "tree": "d85202d1ab952a31ce484829e464f345ead2ceaa"
+  },
+  "dependency_after": {
+    "label": "after",
+    "ts": 1794059981.748799,
+    "task_node_modules": {
+      "exists": false,
+      "entries": 0,
+      "symlink": false
+    },
+    "deps_node_modules": {
+      "exists": true,
+      "symlink": false,
+      "entries": 17
+    },
+    "deps_client_nm": {
+      "exists": true,
+      "symlink": false,
+      "entries": 6
+    },
+    "deps_tools_nm": {
+      "exists": true,
+      "symlink": false,
+      "entries": 7
+    },
+    "task_lock": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "deps_lock": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "task_status": "",
+    "head": "d7430f7a4604ab0535cc5f064f4190ea708c7364",
+    "tree": "d85202d1ab952a31ce484829e464f345ead2ceaa"
+  },
+  "dependency_parity": {
+    "task_nm_unchanged": true,
+    "deps_nm_unchanged": true,
+    "deps_client_unchanged": true,
+    "deps_tools_unchanged": true,
+    "locks_unchanged": true,
+    "worktree_clean": true,
+    "no_task_vitest_pollution": true,
+    "task_pollution_paths": []
+  },
+  "steps": [
+    {
+      "label": "modelLibrary-6",
+      "cmd_prep": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+        "--pool",
+        "threads",
+        "--maxWorkers",
+        "1",
+        "--minWorkers",
+        "1",
+        "--no-file-parallelism",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/client/src/gameplay/modelLibrary.test.js"
+      ],
+      "cmd_executed": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "/private/tmp/space-e14t16-serial-node-ovpDqK/vitest.config.mjs",
+        "--pool",
+        "threads",
+        "--maxWorkers",
+        "1",
+        "--no-file-parallelism",
+        "--maxConcurrency",
+        "1",
+        "--no-cache",
+        "--no-fsModuleCache",
+        "--fsModuleCachePath",
+        "/private/tmp/space-e14t16-serial-node-ovpDqK/vitest-cache",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/client/src/gameplay/modelLibrary.test.js"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "wall_seconds": 0.3343746670288965,
+      "peak_rss_mib": 192.328125,
+      "rss_sample_count": 4,
+      "stdout_path": "/private/tmp/space-e14t16-serial-node-ovpDqK/logs/modelLibrary-6.stdout.txt",
+      "stderr_path": "/private/tmp/space-e14t16-serial-node-ovpDqK/logs/modelLibrary-6.stderr.txt",
+      "stdout_tail": "\n RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187\n\n\n Test Files  1 passed (1)\n      Tests  6 passed (6)\n   Start at  08:59:41\n   Duration  142ms (transform 65%, import 28%, tests 6%, worker 1%)\n\n",
+      "stderr_tail": "",
+      "process_alive_after": false,
+      "bounds": {
+        "wall_s": 30,
+        "rss_mib": 256,
+        "scratch_growth_mib": 16
+      },
+      "within_wall": true,
+      "within_rss": true,
+      "stdout_sha256": "03ea2a52f4e10808ff7718e2df538bd023cc8aff43484f9f4d30053f72b77628",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "vitest_summary": [
+        "Test Files  1 passed (1)",
+        "Tests  6 passed (6)"
+      ]
+    },
+    {
+      "label": "meshopt-4",
+      "cmd_prep": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+        "run",
+        "--root",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+        "--pool",
+        "threads",
+        "--maxWorkers",
+        "1",
+        "--minWorkers",
+        "1",
+        "--no-file-parallelism",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/src/art/meshopt.test.ts"
+      ],
+      "cmd_executed": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "/private/tmp/space-e14t16-serial-node-ovpDqK/vitest.config.mjs",
+        "--pool",
+        "threads",
+        "--maxWorkers",
+        "1",
+        "--no-file-parallelism",
+        "--maxConcurrency",
+        "1",
+        "--no-cache",
+        "--no-fsModuleCache",
+        "--fsModuleCachePath",
+        "/private/tmp/space-e14t16-serial-node-ovpDqK/vitest-cache",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/src/art/meshopt.test.ts"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "wall_seconds": 0.3190627910080366,
+      "peak_rss_mib": 161.28125,
+      "rss_sample_count": 4,
+      "stdout_path": "/private/tmp/space-e14t16-serial-node-ovpDqK/logs/meshopt-4.stdout.txt",
+      "stderr_path": "/private/tmp/space-e14t16-serial-node-ovpDqK/logs/meshopt-4.stderr.txt",
+      "stdout_tail": "\n RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187\n\n\n Test Files  1 passed (1)\n      Tests  4 passed (4)\n   Start at  08:59:41\n   Duration  163ms (import 75%, tests 12%, transform 12%, worker 1%)\n\n",
+      "stderr_tail": "",
+      "process_alive_after": false,
+      "bounds": {
+        "wall_s": 30,
+        "rss_mib": 256,
+        "scratch_growth_mib": 32
+      },
+      "within_wall": true,
+      "within_rss": true,
+      "stdout_sha256": "bf6fe7eca08feed353707ae7d91800cf9cbcc8ec5a706eb62ee8b6739c339b82",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "vitest_summary": [
+        "Test Files  1 passed (1)",
+        "Tests  4 passed (4)"
+      ]
+    }
+  ],
+  "aggregate": {
+    "wall_seconds": 0.6537222919869237,
+    "peak_rss_mib": 192.328125,
+    "scratch_bytes_before": 3142,
+    "scratch_bytes_after": 8121,
+    "scratch_growth_mib": 0.004748344421386719,
+    "bounds": {
+      "wall_seconds": 90,
+      "peak_rss_mib": 256,
+      "scratch_mib": 64,
+      "workers": 1,
+      "disk_growth_mib_excluding_logs": 64
+    },
+    "within_wall": true,
+    "within_rss": true,
+    "within_scratch": true
+  },
+  "suites_pass": true,
+  "broader_native_integration_claim": false,
+  "receipt_sha256_canonical": "2a41e5e72bb3794ed7b13a739f9bf67d699ad081ef36b4c90883ed3114cc0b86"
+}

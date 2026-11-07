@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-07T14:00:51.798311+00:00",
+  "slot": "parent:lark-density-shrink-512-20261107",
+  "task": "P1.E12.T02",
+  "purpose": "unique-paint shrink toward >=512 px/m under one-atlas; private-candidate only",
+  "priorExactMaskSerial": {
+    "status": "PASS",
+    "receiptSha256": "ce755a1122c339ed8aa5a28ec494a330d53e06313c4d95d345070efe6caa52fd",
+    "released": true
+  },
+  "capacity": {
+    "tmpFreeBytes": 34556809216,
+    "tmpFreeGiB": 32.18,
+    "minimumFreeGiB": 12,
+    "blenderProcessesObserved": 0,
+    "ok": true
+  },
+  "bounds": {
+    "blender": 1,
+    "threads": 2,
+    "codec": 1,
+    "sampledRssMiB": 8192,
+    "stageWallMinutes": 45,
+    "growthGiB": 6,
+    "freeSpaceFloorGiB": 12
+  },
+  "constraints": [
+    "canonical promote held",
+    "force-fit reject",
+    "no multi-atlas waiver",
+    "single UVMap export contract",
+    "private-candidate only until parent review",
+    "screenshot cleanup STOPPED",
+    "no push/PR/merge/Trunk"
+  ]
+}

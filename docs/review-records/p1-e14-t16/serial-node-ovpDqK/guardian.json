@@ -1,0 +1,13 @@
+{
+  "attempt": 3,
+  "attempt1": "/private/tmp/space-e14t16-serial-node-Uuc4u6",
+  "attempt2": "/private/tmp/space-e14t16-serial-node-5lvjw8",
+  "attempt1_fail": "vitest unknown --minWorkers",
+  "attempt2_fail": "task root vitest.config.ts cannot resolve vitest without node_modules",
+  "correction": "scratch vitest.config.mjs with absolute vitest/config import + resolve aliases for three/addons, @astra/shared, meshopt stack; drop --minWorkers; no-cache into scratch",
+  "same_parent_allocation": true,
+  "prep_sha256": "a85e71943366ffff70583d34d2f2222b3bc43ec9cfdb7118a926f14be29b1864",
+  "config_sha256": "d9dbf80c5a7f51609618497bf379d763242ae756f3930de214015facf2ae3c54",
+  "real_blender_toktx": [],
+  "node_version": "v26.12.1"
+}
