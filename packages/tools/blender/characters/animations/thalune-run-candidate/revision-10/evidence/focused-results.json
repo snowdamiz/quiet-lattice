@@ -1,0 +1,3641 @@
+{
+  "status": "PASS",
+  "count": 22,
+  "cases": [
+    {
+      "name": "actual adapter dispatcher primary",
+      "status": "PASS",
+      "facts": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "AssertionError",
+            "message": "Encoder exited before frame write",
+            "details": {
+              "encoderTerminal": {
+                "returncodeKnown": true,
+                "observations": [
+                  {
+                    "operation": "before-frame-write",
+                    "framesAcknowledged": 0,
+                    "returncode": -25
+                  }
+                ],
+                "observationFailures": [],
+                "returncode": -25,
+                "exitStatus": null,
+                "signalNumber": 25,
+                "signalName": "SIGXFSZ"
+              },
+              "mediaFailure": {
+                "schema": "t02-lossless-rgb-primary/v1",
+                "accepted": false,
+                "frames": 0,
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "primaryFailure": {
+                  "type": "AssertionError",
+                  "message": "Encoder exited before frame write",
+                  "details": {
+                    "encoderTerminal": {
+                      "returncodeKnown": true,
+                      "observations": [
+                        {
+                          "operation": "before-frame-write",
+                          "framesAcknowledged": 0,
+                          "returncode": -25
+                        }
+                      ],
+                      "observationFailures": [],
+                      "returncode": -25,
+                      "exitStatus": null,
+                      "signalNumber": 25,
+                      "signalName": "SIGXFSZ"
+                    },
+                    "args": [
+                      "Encoder exited before frame write"
+                    ]
+                  }
+                },
+                "persistenceFailures": []
+              },
+              "unknown": {
+                "keep": 77
+              },
+              "args": [
+                "Encoder exited before frame write"
+              ]
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.0033033749787136912,
+          "outputInventory": {
+            "normalBytes": 0,
+            "reservedBytes": 0,
+            "files": 0,
+            "reservedFiles": 0,
+            "paths": [],
+            "totalBytes": 0,
+            "complete": true,
+            "enumeration": {
+              "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/packet",
+              "complete": true,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/packet",
+                  "directories": [],
+                  "files": [],
+                  "entries": [],
+                  "enumerated": true
+                }
+              ]
+            }
+          },
+          "outputBytes": 0,
+          "freeBytesAfter": 25688092672,
+          "terminalReleaseProved": true,
+          "receiptFallbacks": [],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "897742855696f6507d21334734699777f5d8cce17b1695f726d8b33ef552df65"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/result.json",
+              "status": "written",
+              "sha256": "39743cf4902327d44892f335c54667d04ccbbe426e9a552d4dbe7db4bc9edb6d",
+              "bytes": 4346
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "0d790be5dfffda8e65709ab5d50fdf4ab2bcacf7a547a8ed9d224ab53eda44db",
+              "bytes": 4444
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "Encoder exited before frame write",
+              "details": {
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "mediaFailure": {
+                  "schema": "t02-lossless-rgb-primary/v1",
+                  "accepted": false,
+                  "frames": 0,
+                  "encoderTerminal": {
+                    "returncodeKnown": true,
+                    "observations": [
+                      {
+                        "operation": "before-frame-write",
+                        "framesAcknowledged": 0,
+                        "returncode": -25
+                      }
+                    ],
+                    "observationFailures": [],
+                    "returncode": -25,
+                    "exitStatus": null,
+                    "signalNumber": 25,
+                    "signalName": "SIGXFSZ"
+                  },
+                  "primaryFailure": {
+                    "type": "AssertionError",
+                    "message": "Encoder exited before frame write",
+                    "details": {
+                      "encoderTerminal": {
+                        "returncodeKnown": true,
+                        "observations": [
+                          {
+                            "operation": "before-frame-write",
+                            "framesAcknowledged": 0,
+                            "returncode": -25
+                          }
+                        ],
+                        "observationFailures": [],
+                        "returncode": -25,
+                        "exitStatus": null,
+                        "signalNumber": 25,
+                        "signalName": "SIGXFSZ"
+                      },
+                      "args": [
+                        "Encoder exited before frame write"
+                      ]
+                    }
+                  },
+                  "persistenceFailures": []
+                },
+                "unknown": {
+                  "keep": 77
+                },
+                "args": [
+                  "Encoder exited before frame write"
+                ]
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "bootstrapPortRestored": true,
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "inventoryObservations": [],
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveInventory": {
+              "bytes": 2780,
+              "entries": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/native",
+                  "mode": 16877,
+                  "bytes": 64
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/owned-job",
+                  "mode": 16877,
+                  "bytes": 96
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/worker-config.json",
+                  "mode": 33188,
+                  "bytes": 1882
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+                  "mode": 33188,
+                  "bytes": 856
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                  "mode": 33188,
+                  "bytes": 42
+                }
+              ],
+              "enumeration": {
+                "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode",
+                "complete": true,
+                "directories": [
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode",
+                    "directories": [
+                      "native",
+                      "owned-job"
+                    ],
+                    "files": [
+                      "worker-config.json",
+                      "receipt.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/worker-config.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852866,
+                        "bytes": 1882,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/native",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852865,
+                        "bytes": 64,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/owned-job",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852870,
+                        "bytes": 96,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852872,
+                        "bytes": 856,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/native",
+                    "directories": [],
+                    "files": [],
+                    "entries": [],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/owned-job",
+                    "directories": [],
+                    "files": [
+                      "profile_release.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852873,
+                        "bytes": 42,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  }
+                ]
+              },
+              "complete": true
+            },
+            "archiveBytesObservedAfterRelease": 2780,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual adapter dispatcher all-sinks",
+      "status": "PASS",
+      "facts": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "AssertionError",
+            "message": "Encoder exited before frame write",
+            "details": {
+              "encoderTerminal": {
+                "returncodeKnown": true,
+                "observations": [
+                  {
+                    "operation": "before-frame-write",
+                    "framesAcknowledged": 0,
+                    "returncode": -25
+                  }
+                ],
+                "observationFailures": [],
+                "returncode": -25,
+                "exitStatus": null,
+                "signalNumber": 25,
+                "signalName": "SIGXFSZ"
+              },
+              "mediaFailure": {
+                "schema": "t02-lossless-rgb-primary/v1",
+                "accepted": false,
+                "frames": 0,
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "primaryFailure": {
+                  "type": "AssertionError",
+                  "message": "Encoder exited before frame write",
+                  "details": {
+                    "encoderTerminal": {
+                      "returncodeKnown": true,
+                      "observations": [
+                        {
+                          "operation": "before-frame-write",
+                          "framesAcknowledged": 0,
+                          "returncode": -25
+                        }
+                      ],
+                      "observationFailures": [],
+                      "returncode": -25,
+                      "exitStatus": null,
+                      "signalNumber": 25,
+                      "signalName": "SIGXFSZ"
+                    },
+                    "args": [
+                      "Encoder exited before frame write"
+                    ]
+                  }
+                },
+                "persistenceFailures": []
+              },
+              "unknown": {
+                "keep": 77
+              },
+              "args": [
+                "Encoder exited before frame write"
+              ]
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [
+            {
+              "type": "AssertionError",
+              "message": "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "details": {
+                "args": [
+                  "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json"
+                ]
+              },
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json"
+            }
+          ],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.0022494170116260648,
+          "outputInventory": {
+            "normalBytes": 0,
+            "reservedBytes": 0,
+            "files": 0,
+            "reservedFiles": 0,
+            "paths": [],
+            "totalBytes": 0,
+            "complete": true,
+            "enumeration": {
+              "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/packet",
+              "complete": true,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/packet",
+                  "directories": [],
+                  "files": [],
+                  "entries": [],
+                  "enumerated": true
+                }
+              ]
+            }
+          },
+          "outputBytes": 0,
+          "freeBytesAfter": 25688010752,
+          "terminalReleaseProved": false,
+          "receiptFallbacks": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "receipt": {
+                "name": "native-189-encode",
+                "primaryFailure": {
+                  "type": "AssertionError",
+                  "message": "Encoder exited before frame write",
+                  "details": {
+                    "encoderTerminal": {
+                      "returncodeKnown": true,
+                      "observations": [
+                        {
+                          "operation": "before-frame-write",
+                          "framesAcknowledged": 0,
+                          "returncode": -25
+                        }
+                      ],
+                      "observationFailures": [],
+                      "returncode": -25,
+                      "exitStatus": null,
+                      "signalNumber": 25,
+                      "signalName": "SIGXFSZ"
+                    },
+                    "mediaFailure": {
+                      "schema": "t02-lossless-rgb-primary/v1",
+                      "accepted": false,
+                      "frames": 0,
+                      "encoderTerminal": {
+                        "returncodeKnown": true,
+                        "observations": [
+                          {
+                            "operation": "before-frame-write",
+                            "framesAcknowledged": 0,
+                            "returncode": -25
+                          }
+                        ],
+                        "observationFailures": [],
+                        "returncode": -25,
+                        "exitStatus": null,
+                        "signalNumber": 25,
+                        "signalName": "SIGXFSZ"
+                      },
+                      "primaryFailure": {
+                        "type": "AssertionError",
+                        "message": "Encoder exited before frame write",
+                        "details": {
+                          "encoderTerminal": {
+                            "returncodeKnown": true,
+                            "observations": [
+                              {
+                                "operation": "before-frame-write",
+                                "framesAcknowledged": 0,
+                                "returncode": -25
+                              }
+                            ],
+                            "observationFailures": [],
+                            "returncode": -25,
+                            "exitStatus": null,
+                            "signalNumber": 25,
+                            "signalName": "SIGXFSZ"
+                          },
+                          "args": [
+                            "Encoder exited before frame write"
+                          ]
+                        }
+                      },
+                      "persistenceFailures": []
+                    },
+                    "unknown": {
+                      "keep": 77
+                    },
+                    "args": [
+                      "Encoder exited before frame write"
+                    ]
+                  }
+                },
+                "cleanupFailure": null,
+                "persistenceFailures": [
+                  {
+                    "type": "OSError",
+                    "message": "FINAL_RECEIPT_FAILURE",
+                    "details": {
+                      "args": [
+                        "FINAL_RECEIPT_FAILURE"
+                      ],
+                      "errno": null,
+                      "filename": null,
+                      "filename2": null
+                    }
+                  }
+                ],
+                "terminal": {
+                  "kernel": {
+                    "live": 0,
+                    "coalition_absent": true,
+                    "unknownKernel": {
+                      "retained": 42
+                    }
+                  },
+                  "registrationAbsent": true,
+                  "scratchAndTmpAbsent": true,
+                  "audit": {
+                    "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                },
+                "argv": [
+                  "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                  "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                  "encode",
+                  "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json"
+                ],
+                "phase": "start",
+                "privateTmp": {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/private",
+                  "admission": {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/private",
+                    "rawUnknown": 8
+                  }
+                },
+                "bootstrapPortRestored": true,
+                "ownedAllocation": {
+                  "out": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                  "scratch": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/scratch",
+                  "target": "inert",
+                  "coalition_id": "123"
+                },
+                "drain": {
+                  "drained": true,
+                  "clean": true,
+                  "rawUnknown": {
+                    "drain": 87
+                  }
+                },
+                "drainMembers": [],
+                "drainKernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "inventoryObservations": [],
+                "profiles": {
+                  "all_absent": true,
+                  "unknown": 91
+                },
+                "cache": {
+                  "all_bytes_preserved": true,
+                  "namespace_removed": true,
+                  "unknown": 71
+                },
+                "taskRelease": null,
+                "archiveInventory": {
+                  "bytes": 2802,
+                  "entries": [
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/native",
+                      "mode": 16877,
+                      "bytes": 64
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                      "mode": 16877,
+                      "bytes": 96
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                      "mode": 33188,
+                      "bytes": 1898
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                      "mode": 33188,
+                      "bytes": 862
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                      "mode": 33188,
+                      "bytes": 42
+                    }
+                  ],
+                  "enumeration": {
+                    "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode",
+                    "complete": true,
+                    "directories": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode",
+                        "directories": [
+                          "native",
+                          "owned-job"
+                        ],
+                        "files": [
+                          "worker-config.json",
+                          "receipt.json"
+                        ],
+                        "entries": [
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852888,
+                            "bytes": 1898,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/native",
+                            "mode": 16877,
+                            "dev": 16777232,
+                            "ino": 489852887,
+                            "bytes": 64,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                            "mode": 16877,
+                            "dev": 16777232,
+                            "ino": 489852892,
+                            "bytes": 96,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852894,
+                            "bytes": 862,
+                            "uid": 501
+                          }
+                        ],
+                        "enumerated": true
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/native",
+                        "directories": [],
+                        "files": [],
+                        "entries": [],
+                        "enumerated": true
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                        "directories": [],
+                        "files": [
+                          "profile_release.json"
+                        ],
+                        "entries": [
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852895,
+                            "bytes": 42,
+                            "uid": 501
+                          }
+                        ],
+                        "enumerated": true
+                      }
+                    ]
+                  },
+                  "complete": true
+                },
+                "archiveBytesObservedAfterRelease": 2802,
+                "releaseAudits": [
+                  {
+                    "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                ]
+              }
+            }
+          ],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "aa077f3dfd7422204b1a8ad69277a955911a0b5343c97b4090d49d7cd2889c96"
+            }
+          ],
+          "terminalPersistenceFailures": [
+            {
+              "type": "OSError",
+              "message": "PROOF_FAILURE",
+              "details": {
+                "args": [
+                  "PROOF_FAILURE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              },
+              "sink": "proof"
+            }
+          ],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/result.json",
+              "status": "failed"
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "9d137d6a1b5291702e94e80642d01166ab8e50ed2ea7f005a22f60889efcf9d6",
+              "bytes": 16217
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "Encoder exited before frame write",
+              "details": {
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "mediaFailure": {
+                  "schema": "t02-lossless-rgb-primary/v1",
+                  "accepted": false,
+                  "frames": 0,
+                  "encoderTerminal": {
+                    "returncodeKnown": true,
+                    "observations": [
+                      {
+                        "operation": "before-frame-write",
+                        "framesAcknowledged": 0,
+                        "returncode": -25
+                      }
+                    ],
+                    "observationFailures": [],
+                    "returncode": -25,
+                    "exitStatus": null,
+                    "signalNumber": 25,
+                    "signalName": "SIGXFSZ"
+                  },
+                  "primaryFailure": {
+                    "type": "AssertionError",
+                    "message": "Encoder exited before frame write",
+                    "details": {
+                      "encoderTerminal": {
+                        "returncodeKnown": true,
+                        "observations": [
+                          {
+                            "operation": "before-frame-write",
+                            "framesAcknowledged": 0,
+                            "returncode": -25
+                          }
+                        ],
+                        "observationFailures": [],
+                        "returncode": -25,
+                        "exitStatus": null,
+                        "signalNumber": 25,
+                        "signalName": "SIGXFSZ"
+                      },
+                      "args": [
+                        "Encoder exited before frame write"
+                      ]
+                    }
+                  },
+                  "persistenceFailures": []
+                },
+                "unknown": {
+                  "keep": 77
+                },
+                "args": [
+                  "Encoder exited before frame write"
+                ]
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "FINAL_RECEIPT_FAILURE",
+                "details": {
+                  "args": [
+                    "FINAL_RECEIPT_FAILURE"
+                  ],
+                  "errno": null,
+                  "filename": null,
+                  "filename2": null
+                }
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "bootstrapPortRestored": true,
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "inventoryObservations": [],
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveInventory": {
+              "bytes": 2802,
+              "entries": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/native",
+                  "mode": 16877,
+                  "bytes": 64
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                  "mode": 16877,
+                  "bytes": 96
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                  "mode": 33188,
+                  "bytes": 1898
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                  "mode": 33188,
+                  "bytes": 862
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                  "mode": 33188,
+                  "bytes": 42
+                }
+              ],
+              "enumeration": {
+                "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode",
+                "complete": true,
+                "directories": [
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode",
+                    "directories": [
+                      "native",
+                      "owned-job"
+                    ],
+                    "files": [
+                      "worker-config.json",
+                      "receipt.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852888,
+                        "bytes": 1898,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/native",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852887,
+                        "bytes": 64,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852892,
+                        "bytes": 96,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852894,
+                        "bytes": 862,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/native",
+                    "directories": [],
+                    "files": [],
+                    "entries": [],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                    "directories": [],
+                    "files": [
+                      "profile_release.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852895,
+                        "bytes": 42,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  }
+                ]
+              },
+              "complete": true
+            },
+            "archiveBytesObservedAfterRelease": 2802,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual adapter dispatcher all-files",
+      "status": "PASS",
+      "facts": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "AssertionError",
+            "message": "Encoder exited before frame write",
+            "details": {
+              "encoderTerminal": {
+                "returncodeKnown": true,
+                "observations": [
+                  {
+                    "operation": "before-frame-write",
+                    "framesAcknowledged": 0,
+                    "returncode": -25
+                  }
+                ],
+                "observationFailures": [],
+                "returncode": -25,
+                "exitStatus": null,
+                "signalNumber": 25,
+                "signalName": "SIGXFSZ"
+              },
+              "mediaFailure": {
+                "schema": "t02-lossless-rgb-primary/v1",
+                "accepted": false,
+                "frames": 0,
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "primaryFailure": {
+                  "type": "AssertionError",
+                  "message": "Encoder exited before frame write",
+                  "details": {
+                    "encoderTerminal": {
+                      "returncodeKnown": true,
+                      "observations": [
+                        {
+                          "operation": "before-frame-write",
+                          "framesAcknowledged": 0,
+                          "returncode": -25
+                        }
+                      ],
+                      "observationFailures": [],
+                      "returncode": -25,
+                      "exitStatus": null,
+                      "signalNumber": 25,
+                      "signalName": "SIGXFSZ"
+                    },
+                    "args": [
+                      "Encoder exited before frame write"
+                    ]
+                  }
+                },
+                "persistenceFailures": []
+              },
+              "unknown": {
+                "keep": 77
+              },
+              "args": [
+                "Encoder exited before frame write"
+              ]
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [
+            {
+              "type": "AssertionError",
+              "message": "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+              "details": {
+                "args": [
+                  "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json"
+                ]
+              },
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json"
+            }
+          ],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.0022273340146057308,
+          "outputInventory": {
+            "normalBytes": 0,
+            "reservedBytes": 0,
+            "files": 0,
+            "reservedFiles": 0,
+            "paths": [],
+            "totalBytes": 0,
+            "complete": true,
+            "enumeration": {
+              "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/packet",
+              "complete": true,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/packet",
+                  "directories": [],
+                  "files": [],
+                  "entries": [],
+                  "enumerated": true
+                }
+              ]
+            }
+          },
+          "outputBytes": 0,
+          "freeBytesAfter": 25687924736,
+          "terminalReleaseProved": false,
+          "receiptFallbacks": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+              "receipt": {
+                "name": "native-189-encode",
+                "primaryFailure": {
+                  "type": "AssertionError",
+                  "message": "Encoder exited before frame write",
+                  "details": {
+                    "encoderTerminal": {
+                      "returncodeKnown": true,
+                      "observations": [
+                        {
+                          "operation": "before-frame-write",
+                          "framesAcknowledged": 0,
+                          "returncode": -25
+                        }
+                      ],
+                      "observationFailures": [],
+                      "returncode": -25,
+                      "exitStatus": null,
+                      "signalNumber": 25,
+                      "signalName": "SIGXFSZ"
+                    },
+                    "mediaFailure": {
+                      "schema": "t02-lossless-rgb-primary/v1",
+                      "accepted": false,
+                      "frames": 0,
+                      "encoderTerminal": {
+                        "returncodeKnown": true,
+                        "observations": [
+                          {
+                            "operation": "before-frame-write",
+                            "framesAcknowledged": 0,
+                            "returncode": -25
+                          }
+                        ],
+                        "observationFailures": [],
+                        "returncode": -25,
+                        "exitStatus": null,
+                        "signalNumber": 25,
+                        "signalName": "SIGXFSZ"
+                      },
+                      "primaryFailure": {
+                        "type": "AssertionError",
+                        "message": "Encoder exited before frame write",
+                        "details": {
+                          "encoderTerminal": {
+                            "returncodeKnown": true,
+                            "observations": [
+                              {
+                                "operation": "before-frame-write",
+                                "framesAcknowledged": 0,
+                                "returncode": -25
+                              }
+                            ],
+                            "observationFailures": [],
+                            "returncode": -25,
+                            "exitStatus": null,
+                            "signalNumber": 25,
+                            "signalName": "SIGXFSZ"
+                          },
+                          "args": [
+                            "Encoder exited before frame write"
+                          ]
+                        }
+                      },
+                      "persistenceFailures": []
+                    },
+                    "unknown": {
+                      "keep": 77
+                    },
+                    "args": [
+                      "Encoder exited before frame write"
+                    ]
+                  }
+                },
+                "cleanupFailure": null,
+                "persistenceFailures": [
+                  {
+                    "type": "OSError",
+                    "message": "FINAL_RECEIPT_FAILURE",
+                    "details": {
+                      "args": [
+                        "FINAL_RECEIPT_FAILURE"
+                      ],
+                      "errno": null,
+                      "filename": null,
+                      "filename2": null
+                    }
+                  }
+                ],
+                "terminal": {
+                  "kernel": {
+                    "live": 0,
+                    "coalition_absent": true,
+                    "unknownKernel": {
+                      "retained": 42
+                    }
+                  },
+                  "registrationAbsent": true,
+                  "scratchAndTmpAbsent": true,
+                  "audit": {
+                    "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                },
+                "argv": [
+                  "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                  "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                  "encode",
+                  "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/worker-config.json"
+                ],
+                "phase": "start",
+                "privateTmp": {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/private",
+                  "admission": {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/private",
+                    "rawUnknown": 8
+                  }
+                },
+                "bootstrapPortRestored": true,
+                "ownedAllocation": {
+                  "out": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+                  "scratch": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job/scratch",
+                  "target": "inert",
+                  "coalition_id": "123"
+                },
+                "drain": {
+                  "drained": true,
+                  "clean": true,
+                  "rawUnknown": {
+                    "drain": 87
+                  }
+                },
+                "drainMembers": [],
+                "drainKernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "inventoryObservations": [],
+                "profiles": {
+                  "all_absent": true,
+                  "unknown": 91
+                },
+                "cache": {
+                  "all_bytes_preserved": true,
+                  "namespace_removed": true,
+                  "unknown": 71
+                },
+                "taskRelease": null,
+                "archiveInventory": {
+                  "bytes": 2802,
+                  "entries": [
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/native",
+                      "mode": 16877,
+                      "bytes": 64
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+                      "mode": 16877,
+                      "bytes": 96
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/worker-config.json",
+                      "mode": 33188,
+                      "bytes": 1898
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                      "mode": 33188,
+                      "bytes": 862
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                      "mode": 33188,
+                      "bytes": 42
+                    }
+                  ],
+                  "enumeration": {
+                    "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode",
+                    "complete": true,
+                    "directories": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode",
+                        "directories": [
+                          "native",
+                          "owned-job"
+                        ],
+                        "files": [
+                          "worker-config.json",
+                          "receipt.json"
+                        ],
+                        "entries": [
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/worker-config.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852907,
+                            "bytes": 1898,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/native",
+                            "mode": 16877,
+                            "dev": 16777232,
+                            "ino": 489852906,
+                            "bytes": 64,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+                            "mode": 16877,
+                            "dev": 16777232,
+                            "ino": 489852911,
+                            "bytes": 96,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852913,
+                            "bytes": 862,
+                            "uid": 501
+                          }
+                        ],
+                        "enumerated": true
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/native",
+                        "directories": [],
+                        "files": [],
+                        "entries": [],
+                        "enumerated": true
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+                        "directories": [],
+                        "files": [
+                          "profile_release.json"
+                        ],
+                        "entries": [
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852914,
+                            "bytes": 42,
+                            "uid": 501
+                          }
+                        ],
+                        "enumerated": true
+                      }
+                    ]
+                  },
+                  "complete": true
+                },
+                "archiveBytesObservedAfterRelease": 2802,
+                "releaseAudits": [
+                  {
+                    "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                ]
+              }
+            }
+          ],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "3789169fc807b45bea48a54ea4dea47f83860fc9246e3ecf770e4ef6c85e5177"
+            }
+          ],
+          "terminalPersistenceFailures": [
+            {
+              "type": "OSError",
+              "message": "PROOF_FAILURE",
+              "details": {
+                "args": [
+                  "PROOF_FAILURE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              },
+              "sink": "proof"
+            },
+            {
+              "type": "OSError",
+              "message": "PACKET_FAILURE",
+              "details": {
+                "args": [
+                  "PACKET_FAILURE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              },
+              "sink": "packet"
+            }
+          ],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/result.json",
+              "status": "failed"
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/packet/integration-result.json",
+              "status": "failed"
+            },
+            "completeObservationsPersisted": false,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "Encoder exited before frame write",
+              "details": {
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "mediaFailure": {
+                  "schema": "t02-lossless-rgb-primary/v1",
+                  "accepted": false,
+                  "frames": 0,
+                  "encoderTerminal": {
+                    "returncodeKnown": true,
+                    "observations": [
+                      {
+                        "operation": "before-frame-write",
+                        "framesAcknowledged": 0,
+                        "returncode": -25
+                      }
+                    ],
+                    "observationFailures": [],
+                    "returncode": -25,
+                    "exitStatus": null,
+                    "signalNumber": 25,
+                    "signalName": "SIGXFSZ"
+                  },
+                  "primaryFailure": {
+                    "type": "AssertionError",
+                    "message": "Encoder exited before frame write",
+                    "details": {
+                      "encoderTerminal": {
+                        "returncodeKnown": true,
+                        "observations": [
+                          {
+                            "operation": "before-frame-write",
+                            "framesAcknowledged": 0,
+                            "returncode": -25
+                          }
+                        ],
+                        "observationFailures": [],
+                        "returncode": -25,
+                        "exitStatus": null,
+                        "signalNumber": 25,
+                        "signalName": "SIGXFSZ"
+                      },
+                      "args": [
+                        "Encoder exited before frame write"
+                      ]
+                    }
+                  },
+                  "persistenceFailures": []
+                },
+                "unknown": {
+                  "keep": 77
+                },
+                "args": [
+                  "Encoder exited before frame write"
+                ]
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "FINAL_RECEIPT_FAILURE",
+                "details": {
+                  "args": [
+                    "FINAL_RECEIPT_FAILURE"
+                  ],
+                  "errno": null,
+                  "filename": null,
+                  "filename2": null
+                }
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "bootstrapPortRestored": true,
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "inventoryObservations": [],
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveInventory": {
+              "bytes": 2802,
+              "entries": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/native",
+                  "mode": 16877,
+                  "bytes": 64
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+                  "mode": 16877,
+                  "bytes": 96
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/worker-config.json",
+                  "mode": 33188,
+                  "bytes": 1898
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                  "mode": 33188,
+                  "bytes": 862
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                  "mode": 33188,
+                  "bytes": 42
+                }
+              ],
+              "enumeration": {
+                "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode",
+                "complete": true,
+                "directories": [
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode",
+                    "directories": [
+                      "native",
+                      "owned-job"
+                    ],
+                    "files": [
+                      "worker-config.json",
+                      "receipt.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/worker-config.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852907,
+                        "bytes": 1898,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/native",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852906,
+                        "bytes": 64,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852911,
+                        "bytes": 96,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852913,
+                        "bytes": 862,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/native",
+                    "directories": [],
+                    "files": [],
+                    "entries": [],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job",
+                    "directories": [],
+                    "files": [
+                      "profile_release.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852914,
+                        "bytes": 42,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  }
+                ]
+              },
+              "complete": true
+            },
+            "archiveBytesObservedAfterRelease": 2802,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-all-files/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual adapter dispatcher cli-all-sinks",
+      "status": "PASS",
+      "facts": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "AssertionError",
+            "message": "Encoder exited before frame write",
+            "details": {
+              "encoderTerminal": {
+                "returncodeKnown": true,
+                "observations": [
+                  {
+                    "operation": "before-frame-write",
+                    "framesAcknowledged": 0,
+                    "returncode": -25
+                  }
+                ],
+                "observationFailures": [],
+                "returncode": -25,
+                "exitStatus": null,
+                "signalNumber": 25,
+                "signalName": "SIGXFSZ"
+              },
+              "mediaFailure": {
+                "schema": "t02-lossless-rgb-primary/v1",
+                "accepted": false,
+                "frames": 0,
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "primaryFailure": {
+                  "type": "AssertionError",
+                  "message": "Encoder exited before frame write",
+                  "details": {
+                    "encoderTerminal": {
+                      "returncodeKnown": true,
+                      "observations": [
+                        {
+                          "operation": "before-frame-write",
+                          "framesAcknowledged": 0,
+                          "returncode": -25
+                        }
+                      ],
+                      "observationFailures": [],
+                      "returncode": -25,
+                      "exitStatus": null,
+                      "signalNumber": 25,
+                      "signalName": "SIGXFSZ"
+                    },
+                    "args": [
+                      "Encoder exited before frame write"
+                    ]
+                  }
+                },
+                "persistenceFailures": []
+              },
+              "unknown": {
+                "keep": 77
+              },
+              "args": [
+                "Encoder exited before frame write"
+              ]
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [
+            {
+              "type": "AssertionError",
+              "message": "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "details": {
+                "args": [
+                  "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json"
+                ]
+              },
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json"
+            }
+          ],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.0021867920295335352,
+          "outputInventory": {
+            "normalBytes": 0,
+            "reservedBytes": 0,
+            "files": 0,
+            "reservedFiles": 0,
+            "paths": [],
+            "totalBytes": 0,
+            "complete": true,
+            "enumeration": {
+              "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/packet",
+              "complete": true,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/packet",
+                  "directories": [],
+                  "files": [],
+                  "entries": [],
+                  "enumerated": true
+                }
+              ]
+            }
+          },
+          "outputBytes": 0,
+          "freeBytesAfter": 25687855104,
+          "terminalReleaseProved": false,
+          "receiptFallbacks": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "receipt": {
+                "name": "native-189-encode",
+                "primaryFailure": {
+                  "type": "AssertionError",
+                  "message": "Encoder exited before frame write",
+                  "details": {
+                    "encoderTerminal": {
+                      "returncodeKnown": true,
+                      "observations": [
+                        {
+                          "operation": "before-frame-write",
+                          "framesAcknowledged": 0,
+                          "returncode": -25
+                        }
+                      ],
+                      "observationFailures": [],
+                      "returncode": -25,
+                      "exitStatus": null,
+                      "signalNumber": 25,
+                      "signalName": "SIGXFSZ"
+                    },
+                    "mediaFailure": {
+                      "schema": "t02-lossless-rgb-primary/v1",
+                      "accepted": false,
+                      "frames": 0,
+                      "encoderTerminal": {
+                        "returncodeKnown": true,
+                        "observations": [
+                          {
+                            "operation": "before-frame-write",
+                            "framesAcknowledged": 0,
+                            "returncode": -25
+                          }
+                        ],
+                        "observationFailures": [],
+                        "returncode": -25,
+                        "exitStatus": null,
+                        "signalNumber": 25,
+                        "signalName": "SIGXFSZ"
+                      },
+                      "primaryFailure": {
+                        "type": "AssertionError",
+                        "message": "Encoder exited before frame write",
+                        "details": {
+                          "encoderTerminal": {
+                            "returncodeKnown": true,
+                            "observations": [
+                              {
+                                "operation": "before-frame-write",
+                                "framesAcknowledged": 0,
+                                "returncode": -25
+                              }
+                            ],
+                            "observationFailures": [],
+                            "returncode": -25,
+                            "exitStatus": null,
+                            "signalNumber": 25,
+                            "signalName": "SIGXFSZ"
+                          },
+                          "args": [
+                            "Encoder exited before frame write"
+                          ]
+                        }
+                      },
+                      "persistenceFailures": []
+                    },
+                    "unknown": {
+                      "keep": 77
+                    },
+                    "args": [
+                      "Encoder exited before frame write"
+                    ]
+                  }
+                },
+                "cleanupFailure": null,
+                "persistenceFailures": [
+                  {
+                    "type": "OSError",
+                    "message": "FINAL_RECEIPT_FAILURE",
+                    "details": {
+                      "args": [
+                        "FINAL_RECEIPT_FAILURE"
+                      ],
+                      "errno": null,
+                      "filename": null,
+                      "filename2": null
+                    }
+                  }
+                ],
+                "terminal": {
+                  "kernel": {
+                    "live": 0,
+                    "coalition_absent": true,
+                    "unknownKernel": {
+                      "retained": 42
+                    }
+                  },
+                  "registrationAbsent": true,
+                  "scratchAndTmpAbsent": true,
+                  "audit": {
+                    "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                },
+                "argv": [
+                  "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                  "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                  "encode",
+                  "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/worker-config.json"
+                ],
+                "phase": "start",
+                "privateTmp": {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/private",
+                  "admission": {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/private",
+                    "rawUnknown": 8
+                  }
+                },
+                "bootstrapPortRestored": true,
+                "ownedAllocation": {
+                  "out": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+                  "scratch": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job/scratch",
+                  "target": "inert",
+                  "coalition_id": "123"
+                },
+                "drain": {
+                  "drained": true,
+                  "clean": true,
+                  "rawUnknown": {
+                    "drain": 87
+                  }
+                },
+                "drainMembers": [],
+                "drainKernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "inventoryObservations": [],
+                "profiles": {
+                  "all_absent": true,
+                  "unknown": 91
+                },
+                "cache": {
+                  "all_bytes_preserved": true,
+                  "namespace_removed": true,
+                  "unknown": 71
+                },
+                "taskRelease": null,
+                "archiveInventory": {
+                  "bytes": 2846,
+                  "entries": [
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/native",
+                      "mode": 16877,
+                      "bytes": 64
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+                      "mode": 16877,
+                      "bytes": 96
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                      "mode": 33188,
+                      "bytes": 1930
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                      "mode": 33188,
+                      "bytes": 874
+                    },
+                    {
+                      "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                      "mode": 33188,
+                      "bytes": 42
+                    }
+                  ],
+                  "enumeration": {
+                    "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode",
+                    "complete": true,
+                    "directories": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode",
+                        "directories": [
+                          "native",
+                          "owned-job"
+                        ],
+                        "files": [
+                          "worker-config.json",
+                          "receipt.json"
+                        ],
+                        "entries": [
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852925,
+                            "bytes": 1930,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/native",
+                            "mode": 16877,
+                            "dev": 16777232,
+                            "ino": 489852924,
+                            "bytes": 64,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+                            "mode": 16877,
+                            "dev": 16777232,
+                            "ino": 489852929,
+                            "bytes": 96,
+                            "uid": 501
+                          },
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852931,
+                            "bytes": 874,
+                            "uid": 501
+                          }
+                        ],
+                        "enumerated": true
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/native",
+                        "directories": [],
+                        "files": [],
+                        "entries": [],
+                        "enumerated": true
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+                        "directories": [],
+                        "files": [
+                          "profile_release.json"
+                        ],
+                        "entries": [
+                          {
+                            "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                            "mode": 33188,
+                            "dev": 16777232,
+                            "ino": 489852932,
+                            "bytes": 42,
+                            "uid": 501
+                          }
+                        ],
+                        "enumerated": true
+                      }
+                    ]
+                  },
+                  "complete": true
+                },
+                "archiveBytesObservedAfterRelease": 2846,
+                "releaseAudits": [
+                  {
+                    "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                ]
+              }
+            }
+          ],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "74f16bc8a6018b2e54d8ee2e5085c8d7e69b95dfe42a163492e8095932dc7a83"
+            }
+          ],
+          "terminalPersistenceFailures": [
+            {
+              "type": "OSError",
+              "message": "PROOF_FAILURE",
+              "details": {
+                "args": [
+                  "PROOF_FAILURE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              },
+              "sink": "proof"
+            },
+            {
+              "type": "OSError",
+              "message": "PACKET_FAILURE",
+              "details": {
+                "args": [
+                  "PACKET_FAILURE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              },
+              "sink": "packet"
+            },
+            {
+              "type": "OSError",
+              "message": "STREAM_FAILURE",
+              "details": {
+                "args": [
+                  "STREAM_FAILURE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              },
+              "sink": "stdout"
+            },
+            {
+              "type": "OSError",
+              "message": "STREAM_FAILURE",
+              "details": {
+                "args": [
+                  "STREAM_FAILURE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              },
+              "sink": "stderr"
+            }
+          ],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/result.json",
+              "status": "failed"
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/packet/integration-result.json",
+              "status": "failed"
+            },
+            "completeObservationsPersisted": false,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result",
+            "stdout": {
+              "status": "failed"
+            },
+            "stderr": {
+              "status": "failed"
+            }
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "Encoder exited before frame write",
+              "details": {
+                "encoderTerminal": {
+                  "returncodeKnown": true,
+                  "observations": [
+                    {
+                      "operation": "before-frame-write",
+                      "framesAcknowledged": 0,
+                      "returncode": -25
+                    }
+                  ],
+                  "observationFailures": [],
+                  "returncode": -25,
+                  "exitStatus": null,
+                  "signalNumber": 25,
+                  "signalName": "SIGXFSZ"
+                },
+                "mediaFailure": {
+                  "schema": "t02-lossless-rgb-primary/v1",
+                  "accepted": false,
+                  "frames": 0,
+                  "encoderTerminal": {
+                    "returncodeKnown": true,
+                    "observations": [
+                      {
+                        "operation": "before-frame-write",
+                        "framesAcknowledged": 0,
+                        "returncode": -25
+                      }
+                    ],
+                    "observationFailures": [],
+                    "returncode": -25,
+                    "exitStatus": null,
+                    "signalNumber": 25,
+                    "signalName": "SIGXFSZ"
+                  },
+                  "primaryFailure": {
+                    "type": "AssertionError",
+                    "message": "Encoder exited before frame write",
+                    "details": {
+                      "encoderTerminal": {
+                        "returncodeKnown": true,
+                        "observations": [
+                          {
+                            "operation": "before-frame-write",
+                            "framesAcknowledged": 0,
+                            "returncode": -25
+                          }
+                        ],
+                        "observationFailures": [],
+                        "returncode": -25,
+                        "exitStatus": null,
+                        "signalNumber": 25,
+                        "signalName": "SIGXFSZ"
+                      },
+                      "args": [
+                        "Encoder exited before frame write"
+                      ]
+                    }
+                  },
+                  "persistenceFailures": []
+                },
+                "unknown": {
+                  "keep": 77
+                },
+                "args": [
+                  "Encoder exited before frame write"
+                ]
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "FINAL_RECEIPT_FAILURE",
+                "details": {
+                  "args": [
+                    "FINAL_RECEIPT_FAILURE"
+                  ],
+                  "errno": null,
+                  "filename": null,
+                  "filename2": null
+                }
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "bootstrapPortRestored": true,
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "inventoryObservations": [],
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveInventory": {
+              "bytes": 2846,
+              "entries": [
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/native",
+                  "mode": 16877,
+                  "bytes": 64
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+                  "mode": 16877,
+                  "bytes": 96
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                  "mode": 33188,
+                  "bytes": 1930
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                  "mode": 33188,
+                  "bytes": 874
+                },
+                {
+                  "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                  "mode": 33188,
+                  "bytes": 42
+                }
+              ],
+              "enumeration": {
+                "root": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode",
+                "complete": true,
+                "directories": [
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode",
+                    "directories": [
+                      "native",
+                      "owned-job"
+                    ],
+                    "files": [
+                      "worker-config.json",
+                      "receipt.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/worker-config.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852925,
+                        "bytes": 1930,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/native",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852924,
+                        "bytes": 64,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+                        "mode": 16877,
+                        "dev": 16777232,
+                        "ino": 489852929,
+                        "bytes": 96,
+                        "uid": 501
+                      },
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852931,
+                        "bytes": 874,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/native",
+                    "directories": [],
+                    "files": [],
+                    "entries": [],
+                    "enumerated": true
+                  },
+                  {
+                    "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job",
+                    "directories": [],
+                    "files": [
+                      "profile_release.json"
+                    ],
+                    "entries": [
+                      {
+                        "path": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                        "mode": 33188,
+                        "dev": 16777232,
+                        "ino": 489852932,
+                        "bytes": 42,
+                        "uid": 501
+                      }
+                    ],
+                    "enumerated": true
+                  }
+                ]
+              },
+              "complete": true
+            },
+            "archiveBytesObservedAfterRelease": 2846,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-5w6c5eu6/sequence-cli-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "real one-shot SIGALRM media boundary",
+      "status": "PASS",
+      "facts": {
+        "type": "DeadlineExpired",
+        "message": "station phase deadline expired",
+        "details": {
+          "encoderTerminal": {
+            "returncodeKnown": false,
+            "observations": [
+              {
+                "operation": "failure-poll",
+                "framesAcknowledged": 0,
+                "returncode": null
+              }
+            ],
+            "observationFailures": []
+          },
+          "mediaFailure": {
+            "schema": "t02-lossless-rgb-primary/v1",
+            "accepted": false,
+            "frames": 0,
+            "encoderTerminal": {
+              "returncodeKnown": false,
+              "observations": [
+                {
+                  "operation": "failure-poll",
+                  "framesAcknowledged": 0,
+                  "returncode": null
+                }
+              ],
+              "observationFailures": []
+            },
+            "primaryFailure": {
+              "type": "DeadlineExpired",
+              "message": "station phase deadline expired",
+              "details": {
+                "encoderTerminal": {
+                  "returncodeKnown": false,
+                  "observations": [
+                    {
+                      "operation": "failure-poll",
+                      "framesAcknowledged": 0,
+                      "returncode": null
+                    }
+                  ],
+                  "observationFailures": []
+                },
+                "args": [
+                  "station phase deadline expired"
+                ]
+              }
+            },
+            "persistenceFailures": []
+          },
+          "args": [
+            "station phase deadline expired"
+          ]
+        }
+      }
+    },
+    {
+      "name": "original entropy exact small pixels",
+      "status": "PASS",
+      "facts": [
+        {
+          "sourcePngSha256": "3bc4a707b43c1a7607e11c896bf7dafe117058980fffff5b3803dbe2c0a826ce",
+          "rgbSha256": "428027eff19869a4a59be3e4d43d0022f1daa95f58e3ebda740effd7cabae244",
+          "rgbaSha256": "669081504c9d751ec4596115ce964149ed9f30f554dac4f843684c3e47830ac1"
+        },
+        {
+          "sourcePngSha256": "0d9815d6b2924fcd4f0d24f34bea71b314a6b3e5c46938094b435f6c1ee93d1a",
+          "rgbSha256": "8370a800284d280d005027d79175bed4f5277cac3b754a4ca7519a9351cf97a8",
+          "rgbaSha256": "12c9a7960e584063da5842f7a228e5f62639eecc160018082faa5d13ce153d5c"
+        },
+        {
+          "sourcePngSha256": "9909e7851e7a3bf2721edb892827346e025cdbc36c53bb93575ec1e2b0098aa8",
+          "rgbSha256": "3579dc8cdb2b4b71cd2cec864ba4005cd341c4b8d4795fa59eb28cc1e96c3902",
+          "rgbaSha256": "fe12b0ef959d9c1757ec4d4ee77a3a2f16ac2b7632e970dfb8b48c05b8f91a8c"
+        }
+      ]
+    },
+    {
+      "name": "189 stream happy",
+      "status": "PASS",
+      "facts": {
+        "frames": 189,
+        "inFlight": 1,
+        "last": {
+          "schema": "t02-lossless-rgb-primary/v1",
+          "workId": "native-189/diagnostic/0188",
+          "mediaFrameOrdinal": 188,
+          "sourcePngSha256": "d6c07980697c1b3d613aa526a0e5c11d757b7f930e4dc1ebadbec059b3bc877a",
+          "rgbSha256": "58ff636e7c649e89cd38d63a1009516988ccf6e6180118882073bf278998e0d0",
+          "rgbaSha256": "bd2adff2b80ae35eefffbf1a367b6a670479de89636f1889d9551293fd95d852",
+          "width": 1920,
+          "height": 1080,
+          "alphaPolicy": "verified-opaque255",
+          "sourcePngRetained": false,
+          "mediaPts": 188000,
+          "mediaTimeBase": "1/60000"
+        }
+      }
+    },
+    {
+      "name": "189 stream backpressure",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "A frame is still awaiting ACK",
+        "details": {
+          "args": [
+            "A frame is still awaiting ACK"
+          ]
+        }
+      }
+    },
+    {
+      "name": "189 stream bad-ack",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "ACK mismatch: rgbSha256",
+        "details": {
+          "args": [
+            "ACK mismatch: rgbSha256"
+          ]
+        }
+      }
+    },
+    {
+      "name": "prior primary persistence True",
+      "status": "PASS",
+      "facts": {
+        "legacyRed": true,
+        "escaped": {
+          "type": "OSError",
+          "message": "RESULT_PERSISTENCE_FAILURE",
+          "details": {
+            "args": [
+              "RESULT_PERSISTENCE_FAILURE"
+            ],
+            "errno": null,
+            "filename": null,
+            "filename2": null
+          }
+        },
+        "nativeLaunches": 0
+      }
+    },
+    {
+      "name": "prior primary persistence False",
+      "status": "PASS",
+      "facts": {
+        "legacyRed": false,
+        "escaped": {
+          "type": "TimeoutExpired",
+          "message": "Command '['inert-source']' timed out after 3 seconds",
+          "details": {
+            "cmd": [
+              "inert-source"
+            ],
+            "timeout": 3,
+            "output": "b'partial\\x00\\xff'",
+            "stderr": "b'err\\x80'",
+            "unknown": {
+              "retain": 17
+            },
+            "encoderTerminal": {
+              "returncodeKnown": false,
+              "observations": [
+                {
+                  "operation": "failure-poll",
+                  "framesAcknowledged": 0,
+                  "failure": {
+                    "type": "AttributeError",
+                    "message": "'types.SimpleNamespace' object has no attribute 'poll'",
+                    "details": {
+                      "args": [
+                        "'types.SimpleNamespace' object has no attribute 'poll'"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "observationFailures": [
+                {
+                  "type": "AttributeError",
+                  "message": "'types.SimpleNamespace' object has no attribute 'poll'",
+                  "details": {
+                    "args": [
+                      "'types.SimpleNamespace' object has no attribute 'poll'"
+                    ]
+                  }
+                }
+              ]
+            },
+            "mediaFailure": {
+              "schema": "t02-lossless-rgb-primary/v1",
+              "accepted": false,
+              "frames": 0,
+              "encoderTerminal": {
+                "returncodeKnown": false,
+                "observations": [
+                  {
+                    "operation": "failure-poll",
+                    "framesAcknowledged": 0,
+                    "failure": {
+                      "type": "AttributeError",
+                      "message": "'types.SimpleNamespace' object has no attribute 'poll'",
+                      "details": {
+                        "args": [
+                          "'types.SimpleNamespace' object has no attribute 'poll'"
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "observationFailures": [
+                  {
+                    "type": "AttributeError",
+                    "message": "'types.SimpleNamespace' object has no attribute 'poll'",
+                    "details": {
+                      "args": [
+                        "'types.SimpleNamespace' object has no attribute 'poll'"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "primaryFailure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-source']' timed out after 3 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-source"
+                  ],
+                  "timeout": 3,
+                  "output": "b'partial\\x00\\xff'",
+                  "stderr": "b'err\\x80'",
+                  "unknown": {
+                    "retain": 17
+                  },
+                  "encoderTerminal": {
+                    "returncodeKnown": false,
+                    "observations": [
+                      {
+                        "operation": "failure-poll",
+                        "framesAcknowledged": 0,
+                        "failure": {
+                          "type": "AttributeError",
+                          "message": "'types.SimpleNamespace' object has no attribute 'poll'",
+                          "details": {
+                            "args": [
+                              "'types.SimpleNamespace' object has no attribute 'poll'"
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    "observationFailures": [
+                      {
+                        "type": "AttributeError",
+                        "message": "'types.SimpleNamespace' object has no attribute 'poll'",
+                        "details": {
+                          "args": [
+                            "'types.SimpleNamespace' object has no attribute 'poll'"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "args": [
+                    [
+                      "inert-source"
+                    ],
+                    3
+                  ]
+                }
+              },
+              "persistenceFailures": [
+                {
+                  "type": "OSError",
+                  "message": "RESULT_PERSISTENCE_FAILURE",
+                  "details": {
+                    "args": [
+                      "RESULT_PERSISTENCE_FAILURE"
+                    ],
+                    "errno": null,
+                    "filename": null,
+                    "filename2": null
+                  }
+                }
+              ]
+            },
+            "args": [
+              [
+                "inert-source"
+              ],
+              3
+            ]
+          }
+        },
+        "nativeLaunches": 0
+      }
+    },
+    {
+      "name": "prior RGB surplus 189",
+      "status": "PASS",
+      "facts": {
+        "argv": [
+          [
+            "/INERT/ffmpeg",
+            "-n",
+            "-hide_banner",
+            "-nostdin",
+            "-loglevel",
+            "error",
+            "-xerror",
+            "-hwaccel",
+            "none",
+            "-threads",
+            "1",
+            "-filter_threads",
+            "1",
+            "-filter_complex_threads",
+            "1",
+            "-stream_loop",
+            "1",
+            "-i",
+            "/private/tmp/t02-native189-controls-5w6c5eu6/surplus-189/packet/primary.mp4",
+            "-map",
+            "0:v:0",
+            "-fps_mode",
+            "passthrough",
+            "-frames:v",
+            "190",
+            "-an",
+            "-c:v",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-threads",
+            "1",
+            "-f",
+            "framehash",
+            "-hash",
+            "sha256",
+            "pipe:1"
+          ]
+        ],
+        "decodedFrames": 189,
+        "realNativeCalls": 0
+      }
+    },
+    {
+      "name": "prior RGB surplus 190",
+      "status": "PASS",
+      "facts": {
+        "argv": [
+          [
+            "/INERT/ffmpeg",
+            "-n",
+            "-hide_banner",
+            "-nostdin",
+            "-loglevel",
+            "error",
+            "-xerror",
+            "-hwaccel",
+            "none",
+            "-threads",
+            "1",
+            "-filter_threads",
+            "1",
+            "-filter_complex_threads",
+            "1",
+            "-stream_loop",
+            "1",
+            "-i",
+            "/private/tmp/t02-native189-controls-5w6c5eu6/surplus-190/packet/primary.mp4",
+            "-map",
+            "0:v:0",
+            "-fps_mode",
+            "passthrough",
+            "-frames:v",
+            "190",
+            "-an",
+            "-c:v",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-threads",
+            "1",
+            "-f",
+            "framehash",
+            "-hash",
+            "sha256",
+            "pipe:1"
+          ]
+        ],
+        "decodedFrames": 190,
+        "realNativeCalls": 0
+      }
+    },
+    {
+      "name": "reserve boundary",
+      "status": "PASS",
+      "facts": {
+        "reserveBytes": 22066626560,
+        "freeBytes": 22066626560,
+        "marginBytes": 0,
+        "inventory": {
+          "bytes": 1,
+          "fileCount": 1
+        },
+        "copySlots": [
+          "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet",
+          "/private/tmp/t02-native189-r10-review-copy",
+          "/private/tmp/t02-native189-r10-archive-copy",
+          "/private/tmp/t02-native189-r10-handoff-copy"
+        ],
+        "archiveSlots": [
+          "historical132-0",
+          "historical132-1",
+          "historical132-2",
+          "historical132-3",
+          "motion-thalune-run-lod0",
+          "motion-thalune-run-lod2",
+          "stills-thalune-run",
+          "validate-thalune-run-lod0",
+          "validate-thalune-run-lod2",
+          "native-189-encode",
+          "native-189-validate"
+        ],
+        "quota": false
+      }
+    },
+    {
+      "name": "reserve copies",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      }
+    },
+    {
+      "name": "reserve archives",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      }
+    },
+    {
+      "name": "reserve retained-excess",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      }
+    },
+    {
+      "name": "reserve capacity",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "Current combined reserve refused",
+        "details": {
+          "args": [
+            "Current combined reserve refused"
+          ]
+        }
+      }
+    },
+    {
+      "name": "localized full dimensions exact pixels hashes and original entropy unchanged",
+      "status": "PASS",
+      "facts": {
+        "frames": [
+          {
+            "frame": 0,
+            "sourcePngSha256": "2d200f143ce50ae3829f701c2423b2df3f969d601fb81f1690c87408916f83bc",
+            "rgbSha256": "966ddadb9aa413fcd18ae16af1fc0311d023efd67413fa762519979c4546e663",
+            "rgbaSha256": "705b2c62fe7ea86c0cef21d70efddb88d061e229b67f3301f5d1872c0f6991a3",
+            "pngBytes": 88503
+          },
+          {
+            "frame": 1,
+            "sourcePngSha256": "038089dfcce8a5cdffa0302e88b37c6f6761927fd625bbf8c94befd18c4285c5",
+            "rgbSha256": "5eec3082de45e0521cd333604bb90014c48ddd0b18319ccb425379d92c69cb57",
+            "rgbaSha256": "888236261a49459f3fe13d3f0b32ba07e708a313ca79e2edc200731488cd6d49",
+            "pngBytes": 88296
+          },
+          {
+            "frame": 2,
+            "sourcePngSha256": "b905eabd9855e20d67eb497ecc6a53e3846e153c3a03c820eef9e59ab7c04d04",
+            "rgbSha256": "4d47d3bac32ba07e6da5c953ce531a1e1a404eb42eefd2bcbd5e03a3dfc3bf51",
+            "rgbaSha256": "e157c4bb41e19b668d4a0a07281232fb53119225f88b2da497951ba1a1f73898",
+            "pngBytes": 89305
+          },
+          {
+            "frame": 3,
+            "sourcePngSha256": "95c8688e34205d723536d074a13e0251410b3326ce0319fe378788850a05e3ae",
+            "rgbSha256": "ec0e06deda61d8364713f11ed7068ce5977ec629fbfc5c0700ca5a4b27b960a1",
+            "rgbaSha256": "601e385ea79f06575485f9e60fa0b5e3f7cff23be8fee922859f18e0d9a8b708",
+            "pngBytes": 89409
+          },
+          {
+            "frame": 4,
+            "sourcePngSha256": "c76678413d66a96ea41229fcdf002a571e33dc216be86ab50d87cc593e193c85",
+            "rgbSha256": "25bd8cf94afcfc2d3cc281d388f46ccecbce475f16e1df6b53e68f7a88cce6b4",
+            "rgbaSha256": "198d1cfd74656aff079d63fa6d862ff0b9c8027d73d08f8fb295e5ed920cbf2c",
+            "pngBytes": 89405
+          },
+          {
+            "frame": 5,
+            "sourcePngSha256": "aea44f8ffda854e7874cb028a2c2759ad11ad31d9b5a17c1e76404d6f0572819",
+            "rgbSha256": "8956d43863d5384227399400772cadea3527c712aef6d7930eae974c89682ec9",
+            "rgbaSha256": "71b913992b07c4e062d061a63b31a35b76f327406a541711fd676991dedb8f18",
+            "pngBytes": 89395
+          },
+          {
+            "frame": 6,
+            "sourcePngSha256": "be6e1553bee667bfcbb071570e482641642beca65e1514bdaabf362b0e0f0bc8",
+            "rgbSha256": "773ff97e67da116722d72d4631277a2a0517f78001afcfa3963b7ba357f7c9ab",
+            "rgbaSha256": "31595ef02e4cd42fb1cad5d6ba0a326fceab98c3e72a75486e48cf1dff74aab8",
+            "pngBytes": 90033
+          },
+          {
+            "frame": 7,
+            "sourcePngSha256": "9b53bbf07af4c9705d74b44ae8953d9d5a92301f600473b5cd73ca7dd01b9af8",
+            "rgbSha256": "45f79e16719618e411259217aface0da2d3e217b709bae4f76858c725ed5e536",
+            "rgbaSha256": "42c8b112a89f1b768b05880263c588aa5931943865af4891e752af35714e2fd6",
+            "pngBytes": 89634
+          },
+          {
+            "frame": 8,
+            "sourcePngSha256": "8fa0f43f5cf08fe46f1b7b5cb490d3a3be1cb38795a722d95663df23568287d6",
+            "rgbSha256": "5972d980f9d461e5cf266988fdbb9565f05658416224003c2347454d1e7c2f5b",
+            "rgbaSha256": "eed261d1f5d5db7419a3a043d0d2c0df9029443089310f4aa7d16b226fae9da0",
+            "pngBytes": 89110
+          },
+          {
+            "frame": 9,
+            "sourcePngSha256": "c10d93f36d04d7c22a226dd0e0f14372ed17c452e6cb1db9c89fe7a776ab9c2f",
+            "rgbSha256": "aea21ed8bb3104f743cb75bcc41c1a1dc368b3b654a1088d921b4be1e7f491ee",
+            "rgbaSha256": "e0b9329e62ad9fab07d0bc1eb51cf52b7aedbdf8f18f83b741f1bbd7d0897205",
+            "pngBytes": 89528
+          },
+          {
+            "frame": 10,
+            "sourcePngSha256": "2d21a3f4cfbd1168498b3a242ee0ef7255fdd58d83d485e2b2d254c73b35891f",
+            "rgbSha256": "af1172b4318e21cc10762ac05e5aa5d2eb5ccd19e6e0e58795bf1dfdf7f18d45",
+            "rgbaSha256": "a828872eee1a5d435b4d13086925ecc5f7917e684fe680e62324e987091e3971",
+            "pngBytes": 89528
+          },
+          {
+            "frame": 11,
+            "sourcePngSha256": "4066858ec4a8c0468c3a56a8859739f5ce44559e22d4ff28d4e95fbbbf67be80",
+            "rgbSha256": "bf996c6d1859666db3c95fdefb4e445f8bda738fba8ad5ff08c0c6893abbf564",
+            "rgbaSha256": "b18a99cdcea794ab3e90cb7c40b7db71b09160cc83352988d7673159e1d2b768",
+            "pngBytes": 89636
+          },
+          {
+            "frame": 12,
+            "sourcePngSha256": "0408f46d70db5eae01d423b362aae2eaec767c17eddad7bd0783a587ccd10fbe",
+            "rgbSha256": "1d388fbe1c68245b2b24ffa987de975d1e47d2ad3869d592db11c655b0646292",
+            "rgbaSha256": "0903634abc8b8d985583fcd792d0c6e4d3804664719a76a56f36ac9896fe289c",
+            "pngBytes": 89388
+          },
+          {
+            "frame": 13,
+            "sourcePngSha256": "839663f1a0bf2c53e533d0ae8ea88834f5acb9824e36e43320d78cab4dec6c08",
+            "rgbSha256": "5687b8ad12a66de845545873ffdcb71ccf9b3ef05aeca2e4b89c22ab62fb50d6",
+            "rgbaSha256": "4b983b78971a667a1f1e4f394aad1ff1aef0d15938384b57e3bd3f6b92d50075",
+            "pngBytes": 89570
+          },
+          {
+            "frame": 14,
+            "sourcePngSha256": "360b79c2ae005fd87ae6517e1e272616be77f2d50e00f033a38afb9cc8ee1df2",
+            "rgbSha256": "763151d8eb37cfe331c97d29b383192bc7e05bc0fcea32c1865c117ed7e5e1c0",
+            "rgbaSha256": "ae371601d8270e433f35523f04f6a78f8a9c920122722ce079da6bf71aa96223",
+            "pngBytes": 89032
+          },
+          {
+            "frame": 15,
+            "sourcePngSha256": "9888007a3f6b02224d4a936f862ef83f7b686a98e8c1891fa67ba7b4ea33a429",
+            "rgbSha256": "ba333b695d98b4e4cf7ecd82515190612fe398016eb32ec0e92f467bd3d07904",
+            "rgbaSha256": "e396f6bd41ab9a4b9afff21fd42067d73b154b1de8930780322f4ab707ece91c",
+            "pngBytes": 88565
+          },
+          {
+            "frame": 60,
+            "sourcePngSha256": "4496e2fa63412a37501e172f31499e30974370195506f989041928d8a9642584",
+            "rgbSha256": "f160b564406b68c6103f906b5f3f8e10faae2ee622d435384a6eee7ee9f560ae",
+            "rgbaSha256": "405bb93fc6fb606a6e720d2faa818635f6ebb7e5f9aa7133c119de3c6ad08da7",
+            "pngBytes": 89510
+          },
+          {
+            "frame": 120,
+            "sourcePngSha256": "ea7a7951b7cc8cac9050dcabba0d79a9e0b887a46c3f380f7c1d501e3e575c64",
+            "rgbSha256": "d22770fab02b807a3d3f6433d5bbba2a06556499b329b83a06794d4e5a51297a",
+            "rgbaSha256": "58b4403f9a43c0c673c131b11193c4017df28b2091166f509d3f581420d28367",
+            "pngBytes": 89579
+          },
+          {
+            "frame": 180,
+            "sourcePngSha256": "026e7de916772c7d7ca0190847332e7602d3a44f3c172a3198a81168fd55ab6d",
+            "rgbSha256": "1155591586e4a5a472ff988fe10a05325b7aea6862d3d6a31a1703b3ddae37e4",
+            "rgbaSha256": "280ea601b4c14a572084f6521d1997b164e45f4eb8bf860105c76e3874526e2a",
+            "pngBytes": 89569
+          },
+          {
+            "frame": 188,
+            "sourcePngSha256": "4b7946e600db524f0885b40e5acd6f0b77e0b95078c0edd47532d0b0c877450b",
+            "rgbSha256": "f44534d5615660465c58c15cb73172bffb50abaddf568309bba5ce19da747f72",
+            "rgbaSha256": "536d9ad7c6d516364e246b8b6bc61fb2a74de761f2b114c0a3eb2760af8f4183",
+            "pngBytes": 89606
+          }
+        ],
+        "entropyAlgorithmUnchanged": true,
+        "probeFrameHashesMatch": 16,
+        "full189CodecQualification": false
+      }
+    },
+    {
+      "name": "localized ACK transport happy",
+      "status": "PASS",
+      "facts": {
+        "frames": 189,
+        "oneAck": true
+      }
+    },
+    {
+      "name": "localized ACK transport backpressure",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "A frame is still awaiting ACK",
+        "details": {
+          "args": [
+            "A frame is still awaiting ACK"
+          ]
+        }
+      }
+    },
+    {
+      "name": "localized ACK transport bad-ack",
+      "status": "PASS",
+      "facts": {
+        "type": "AssertionError",
+        "message": "ACK mismatch: rgbaSha256",
+        "details": {
+          "args": [
+            "ACK mismatch: rgbaSha256"
+          ]
+        }
+      }
+    }
+  ]
+}

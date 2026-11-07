@@ -1,0 +1,55 @@
+{
+  "status": "COMPLETE_SLOT_RELEASED_WITH_FIRST_DRIVER_OBSERVER_FAILURE_RETAINED",
+  "probes": 2,
+  "allOwnedReleased": true,
+  "outputsBytes": 2374433,
+  "native189Run": false,
+  "results": [
+    {
+      "name": "entropy-cap-negative",
+      "returncode": -25,
+      "signal": "SIGXFSZ",
+      "seconds": 0.9626195840537548,
+      "writerErrors": [
+        {
+          "type": "BrokenPipeError",
+          "message": "[Errno 32] Broken pipe",
+          "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/t02-native189-diagnosis-ok6396d2/probes.py\", line 46, in write_frames\n    p.stdin.write(rgb);p.stdin.flush();frames[-1]['writeCompleted']=True\n    ^^^^^^^^^^^^^^^^^^\nBrokenPipeError: [Errno 32] Broken pipe\n"
+        }
+      ],
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/t02-native189-diagnosis-ok6396d2/probes.py\", line 61, in <module>\n    assert subject[0]['birth']==birth and subject[0]['ppid']==os.getpid() and subject[0]['command']==FF\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+      },
+      "ownedPid": 32810,
+      "ownedPgid": 32810,
+      "writerAlive": false,
+      "remainingOwned": [],
+      "releaseProved": true,
+      "peakSampledAggregateRSS": 206700544,
+      "mediaBytes": 1048576,
+      "mediaSha256": "dbfcb6758b72f4a0e3f4f41ef5252993bd768719cc495288dd459e09094ad7a9",
+      "rawLogBytes": 0,
+      "rawLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "localized-motion-candidate",
+      "returncode": 0,
+      "signal": null,
+      "seconds": 3.248575375007931,
+      "writerErrors": [],
+      "primaryFailure": null,
+      "ownedPid": 33711,
+      "ownedPgid": 33711,
+      "writerAlive": false,
+      "remainingOwned": [],
+      "releaseProved": true,
+      "peakSampledAggregateRSS": 257687552,
+      "mediaBytes": 1269603,
+      "mediaSha256": "64909c0abe7b29c0a013efbf9000fcef6f24b0f71235a54155ed673bd38d53f4",
+      "rawLogBytes": 0,
+      "rawLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import sys
 sys.dont_write_bytecode=True
 from assertion_guard import require_assertions
 require_assertions(__debug__)
-import argparse,hashlib,io,json,os,resource,struct,subprocess,sys
+import argparse,hashlib,io,json,os,resource,signal,struct,subprocess,sys
 from pathlib import Path
 import packet_budget as budget
 from inspector import error_receipt
@@ -78,7 +78,24 @@ def encode(config,source=sys.stdin.buffer,ack=sys.stdout):
         '-an','-c:v','libx264rgb','-preset','medium','-crf','0','-pix_fmt','rgb24','-threads','1','-filter_threads','1',
         '-filter_complex_threads','1','-g','60','-bf','0','-sc_threshold','0','-video_track_timescale','60000','-movflags','+faststart',str(out)]
     save(config['command'],{'argv':argv,'rawCombinedStdoutStderr':str(raw),'fileLimitBytes':VIDEO_LIMIT,'singleInFlight':True})
-    child=None;seen=set();failure=None
+    child=None;seen=set()
+    terminal=dict(returncodeKnown=False,observations=[],observationFailures=[])
+    def observe(operation,call):
+        observation=dict(operation=operation,framesAcknowledged=len(seen))
+        terminal['observations'].append(observation)
+        try:code=call()
+        except BaseException as error:
+            observation['failure']=error_receipt(error)
+            terminal['observationFailures'].append(observation['failure'])
+            raise
+        observation['returncode']=code
+        if code is not None:
+            terminal.update(returncodeKnown=True,returncode=code,
+                exitStatus=code if code>=0 else None,signalNumber=-code if code<0 else None)
+            if code<0:
+                try:terminal['signalName']=signal.Signals(-code).name
+                except ValueError:terminal['signalName']='UNKNOWN_SIGNAL'
+        return code
     try:
         with raw.open('xb',buffering=0) as log:
             child=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=log,stderr=subprocess.STDOUT)
@@ -87,16 +104,22 @@ def encode(config,source=sys.stdin.buffer,ack=sys.stdout):
                 assert 1<=head_count<=4096 and 1<=png_count<=PNG_LIMIT,'Framing byte ceiling'
                 header=json.loads(read_exact(source,head_count));check_header(header,index,seen)
                 png=read_exact(source,png_count);rgb,row=pixels(png)
-                assert child.poll() is None,'Encoder exited before frame write'
+                assert observe('before-frame-write',lambda:child.poll()) is None,'Encoder exited before frame write'
                 child.stdin.write(rgb);child.stdin.flush() # blocking write is the only queue; no next frame before ACK
                 seen.add(header['workId']);print(json.dumps({'schema':SCHEMA,**header,**row}),file=ack,flush=True)
             assert not source.read(1),'Unexpected extra source frame'
-            child.stdin.close();code=child.wait();assert code==0,f'Encoder exit {code}'
+            child.stdin.close();code=observe('final-wait',lambda:child.wait());assert code==0,f'Encoder exit {code}'
             assert 0<out.stat().st_size<=VIDEO_LIMIT
         save(config['result'],{'schema':SCHEMA,'accepted':True,'frames':len(seen),'videoBytes':out.stat().st_size,
-            'videoSha256':digest(out.read_bytes()),'rawLogSha256':digest(raw.read_bytes())})
+            'videoSha256':digest(out.read_bytes()),'rawLogSha256':digest(raw.read_bytes()),'encoderTerminal':terminal})
     except BaseException as e:
-        retain_failure(e,config['result'],{'schema':SCHEMA,'accepted':False,'frames':len(seen)})
+        # One nonblocking observation can catch an exit racing a broken pipe. Never
+        # retry a failed observer or replace the primary exception with its failure.
+        e.encoderTerminal=terminal
+        if child is not None and not terminal['returncodeKnown'] and not terminal['observationFailures']:
+            try:observe('failure-poll',lambda:child.poll())
+            except BaseException:pass  # observe retained the raw failure above.
+        retain_failure(e,config['result'],{'schema':SCHEMA,'accepted':False,'frames':len(seen),'encoderTerminal':terminal})
         # Do not kill/retry/wait under a fresh timeout. StationJob drains any surviving child.
         raise
 

@@ -1,0 +1,10 @@
+{
+  "exitCode": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 17, in <module>\nAssertionError: /Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-10/evidence/entropy-cap-negative/encoder.raw.log\n",
+  "cause": "Two empty diagnostic raw logs matched Git ignore rules and were absent from the index",
+  "correction": "Added only those two zero-byte evidence files explicitly with git add -f",
+  "files": [
+    "packages/tools/blender/characters/animations/thalune-run-candidate/revision-10/evidence/entropy-cap-negative/encoder.raw.log",
+    "packages/tools/blender/characters/animations/thalune-run-candidate/revision-10/evidence/localized-motion-candidate/encoder.raw.log"
+  ]
+}

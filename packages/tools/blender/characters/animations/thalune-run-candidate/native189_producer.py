@@ -9,6 +9,7 @@ from inspector import error_receipt
 import contract, packet_budget as budget
 
 PATTERN = 'R=(x+3*i)%256; G=(y+5*i)%256; B=((x//32)^(y//32)^i)&255'
+LOCAL_PATTERN = 'static entropy-pattern i=0 background; 384x576 entropy-pattern i patch at (640+4*(i%61),220+i%31)'
 
 
 def diagnostic(i, width=1920, height=1080):
@@ -28,9 +29,23 @@ def diagnostic(i, width=1920, height=1080):
         rgbSha256=hashlib.sha256(rgb).hexdigest(), rgbaSha256=hashlib.sha256(image.tobytes()).hexdigest())
 
 
+def localized_diagnostic(i, width=1920, height=1080):
+    """Localized motion transport fixture, not a rendered-scene size estimate."""
+    from PIL import Image
+    background,_=diagnostic(0,width,height)
+    patch_width,patch_height=min(384,width),min(576,height)
+    foreground,_=diagnostic(i,patch_width,patch_height)
+    with Image.open(io.BytesIO(background)) as image,Image.open(io.BytesIO(foreground)) as patch:
+        image.load();patch.load()
+        image.paste(patch,(min(640+4*(i%61),width-patch_width),min(220+i%31,height-patch_height)))
+        rgba=image.tobytes();rgb=image.convert('RGB').tobytes()
+        output=io.BytesIO();image.save(output,format='PNG',compress_level=1);png=output.getvalue()
+    return png,dict(sourcePngSha256=hashlib.sha256(png).hexdigest(),rgbSha256=hashlib.sha256(rgb).hexdigest(),rgbaSha256=hashlib.sha256(rgba).hexdigest())
+
+
 class DiagnosticStream:
-    def __init__(self, spec, produce=diagnostic):
-        assert spec==dict(frames=189,width=1920,height=1080,fps=60,alpha=255,pattern=PATTERN)
+    def __init__(self, spec, produce=localized_diagnostic):
+        assert spec==dict(frames=189,width=1920,height=1080,fps=60,alpha=255,pattern=LOCAL_PATTERN)
         self.produce=produce;self.ordinal=0;self.pending=None;self.buffer=b'';self.rows=[];self.ack_text=''
 
     def read(self, count):

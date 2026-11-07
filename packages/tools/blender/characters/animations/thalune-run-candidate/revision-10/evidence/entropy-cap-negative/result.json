@@ -1,0 +1,182 @@
+{
+  "name": "entropy-cap-negative",
+  "returncode": -25,
+  "signal": "SIGXFSZ",
+  "seconds": 0.9626195840537548,
+  "frames": [
+    {
+      "ordinal": 0,
+      "rgbSha256": "ed70e70a6a72f89393ff1bfaf8d9bebcd34dd19350261dec2acea56ac3f984ab",
+      "bytes": 6220800,
+      "writeCompleted": true
+    },
+    {
+      "ordinal": 1,
+      "rgbSha256": "7e64f348b1f0c9a813da06fef8b0c00f9b62de7e6d42424353faec0abea409bb",
+      "bytes": 6220800,
+      "writeCompleted": true
+    },
+    {
+      "ordinal": 2,
+      "rgbSha256": "c067b626f8f87e8eaec88a72dad9f8690c813aaea7d93a8794aff4e756dbdd6f",
+      "bytes": 6220800,
+      "writeCompleted": true
+    },
+    {
+      "ordinal": 3,
+      "rgbSha256": "95e10e8338266f9e0ca03ee20ffe174f0a0667793d78486d916fe591deccc2c5",
+      "bytes": 6220800,
+      "writeCompleted": true
+    },
+    {
+      "ordinal": 4,
+      "rgbSha256": "0d4422148dae4b3c5a357ed2cbea1a3b43fe8f59f53163ddc229d63419e037a7",
+      "bytes": 6220800,
+      "writeCompleted": false
+    }
+  ],
+  "writerErrors": [
+    {
+      "type": "BrokenPipeError",
+      "message": "[Errno 32] Broken pipe",
+      "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/t02-native189-diagnosis-ok6396d2/probes.py\", line 46, in write_frames\n    p.stdin.write(rgb);p.stdin.flush();frames[-1]['writeCompleted']=True\n    ^^^^^^^^^^^^^^^^^^\nBrokenPipeError: [Errno 32] Broken pipe\n"
+    }
+  ],
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "",
+    "traceback": "Traceback (most recent call last):\n  File \"/private/tmp/t02-native189-diagnosis-ok6396d2/probes.py\", line 61, in <module>\n    assert subject[0]['birth']==birth and subject[0]['ppid']==os.getpid() and subject[0]['command']==FF\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  "ownedPid": 32810,
+  "ownedPgid": 32810,
+  "writerAlive": false,
+  "remainingOwned": [],
+  "releaseProved": true,
+  "peakSampledAggregateRSS": 206700544,
+  "rssObservations": [
+    {
+      "seconds": 0.12217704200884327,
+      "owned": [
+        {
+          "pid": 32802,
+          "ppid": 13901,
+          "pgid": 32802,
+          "rssBytes": 40009728,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12"
+        },
+        {
+          "pid": 32810,
+          "ppid": 32802,
+          "pgid": 32810,
+          "rssBytes": 278528,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg"
+        },
+        {
+          "pid": 32813,
+          "ppid": 32802,
+          "pgid": 32802,
+          "rssBytes": 2457600,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/bin/ps"
+        }
+      ],
+      "rssBytes": 42745856
+    },
+    {
+      "seconds": 0.33833779202541336,
+      "owned": [
+        {
+          "pid": 32802,
+          "ppid": 13901,
+          "pgid": 32802,
+          "rssBytes": 74612736,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12"
+        },
+        {
+          "pid": 32810,
+          "ppid": 32802,
+          "pgid": 32810,
+          "rssBytes": 30834688,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg"
+        },
+        {
+          "pid": 32822,
+          "ppid": 32802,
+          "pgid": 32802,
+          "rssBytes": 2457600,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/bin/ps"
+        }
+      ],
+      "rssBytes": 107905024
+    },
+    {
+      "seconds": 0.5240853340364993,
+      "owned": [
+        {
+          "pid": 32802,
+          "ppid": 13901,
+          "pgid": 32802,
+          "rssBytes": 84688896,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12"
+        },
+        {
+          "pid": 32810,
+          "ppid": 32802,
+          "pgid": 32810,
+          "rssBytes": 75988992,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg"
+        },
+        {
+          "pid": 32826,
+          "ppid": 32802,
+          "pgid": 32802,
+          "rssBytes": 2457600,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/bin/ps"
+        }
+      ],
+      "rssBytes": 163135488
+    },
+    {
+      "seconds": 0.703213750035502,
+      "owned": [
+        {
+          "pid": 32802,
+          "ppid": 13901,
+          "pgid": 32802,
+          "rssBytes": 84721664,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12"
+        },
+        {
+          "pid": 32810,
+          "ppid": 32802,
+          "pgid": 32810,
+          "rssBytes": 119521280,
+          "birth": "Sat Nov 7 05:16:22 2026",
+          "command": "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg"
+        },
+        {
+          "pid": 32830,
+          "ppid": 32802,
+          "pgid": 32802,
+          "rssBytes": 2457600,
+          "birth": "Sat Nov 7 05:16:23 2026",
+          "command": "/bin/ps"
+        }
+      ],
+      "rssBytes": 206700544
+    }
+  ],
+  "mediaBytes": 1048576,
+  "mediaSha256": "dbfcb6758b72f4a0e3f4f41ef5252993bd768719cc495288dd459e09094ad7a9",
+  "rawLogBytes": 0,
+  "rawLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,461 @@
+{
+  "base": "654658363a0347b1f50a40f868c32140b90881db",
+  "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0",
+  "scratch": "/private/tmp/t02-encoder-terminal-cpu-gy3n022c",
+  "status": "RED_REPRODUCED",
+  "count": 12,
+  "cases": [
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": -25,
+      "sinks": "ok",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": []
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": -25,
+      "sinks": "file",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": -25,
+      "sinks": "all",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          },
+          {
+            "type": "OSError",
+            "message": "STDERR_FAILED",
+            "details": {
+              "args": [
+                "STDERR_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": -9,
+      "sinks": "ok",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": []
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": -9,
+      "sinks": "file",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": -9,
+      "sinks": "all",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          },
+          {
+            "type": "OSError",
+            "message": "STDERR_FAILED",
+            "details": {
+              "args": [
+                "STDERR_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": 17,
+      "sinks": "ok",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": []
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": 17,
+      "sinks": "file",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": 17,
+      "sinks": "all",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          },
+          {
+            "type": "OSError",
+            "message": "STDERR_FAILED",
+            "details": {
+              "args": [
+                "STDERR_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": 0,
+      "sinks": "ok",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": []
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": 0,
+      "sinks": "file",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    },
+    {
+      "status": "RED_REPRODUCED",
+      "mode": "early",
+      "code": 0,
+      "sinks": "all",
+      "evidence": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 0,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PERSISTENCE_FAILED",
+            "details": {
+              "args": [
+                "PERSISTENCE_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          },
+          {
+            "type": "OSError",
+            "message": "STDERR_FAILED",
+            "details": {
+              "args": [
+                "STDERR_FAILED"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ]
+      },
+      "calls": [
+        "poll"
+      ],
+      "sourceSha256": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+    }
+  ]
+}
