@@ -1,7 +1,17 @@
 /** Opt-in only: importing this module never touches a runtime or starts rendering. */
 export const unknown = (reason) => ({ status: 'unknown', reason });
 const copy = (value) => value === undefined ? unknown('API unavailable') : structuredClone(value);
-const read = (fn) => { try { return copy(fn()); } catch (error) { return unknown(String(error)); } };
+const errorText = (error) => {
+  try { return String(error); } catch {
+    try {
+      const message = error?.message;
+      return typeof message === 'string' ? message : 'Unprintable rejection value';
+    } catch {
+      return 'Unprintable rejection value';
+    }
+  }
+};
+const read = (fn) => { try { return copy(fn()); } catch (error) { return unknown(errorText(error)); } };
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 export function capture(review, host = {}) {
@@ -76,7 +86,7 @@ export async function runMatrix({ review, interventions, host = {}, repetitions 
     const failures = [];
     const record = (error, phase = context.phase) => {
       errors.push(error);
-      failures.push({ ...context, phase, error: String(error) });
+      failures.push({ ...context, phase, error: errorText(error) });
     };
     const cleanup = async (phase, fn) => {
       try { await fn(); } catch (error) { record(error, phase); }

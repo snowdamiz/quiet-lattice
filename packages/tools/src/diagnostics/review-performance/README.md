@@ -45,13 +45,15 @@ Completion does not certify comparable runtime configurations. The runner checks
 
 On failure, a writable receipt retains both the primary error and subsequent cleanup errors. `failures` contains JSON-compatible `{id, repetition, arm, phase, error}` records; setup/save contexts use null repetition/arm when no arm has started. `errors` retains readable strings with the same context. Measurement rows also retain their own failures, including failed after-observations. A single failure rethrows its original error; multiple failures throw an `AggregateError` containing the original errors in occurrence order. An unwritable receipt may prevent persistence; its write failure is included in the thrown error.
 
+Rejections may be arbitrary values, including falsy values. Their original identities and order are preserved in the thrown result. Receipt descriptions and capture failure reasons use guarded string conversion; if conversion throws, an accessible string `message` is used, otherwise `Unprintable rejection value`. Message access is guarded too, including throwing getters and revoked proxies. This fallback does not suppress receipt-write failures or make a frozen/unwritable receipt persistable.
+
 Control restoration, its verification, root restoration and root verification are attempted separately, so a failed cleanup step cannot skip the remaining steps. The matrix guard is always released, including when setup fails. A rejecting or ineffective adapter/root setter can still leave state unrestored; inspect the receipt before reusing the runtime. Caller-owned hold/overlay/LOD choices in the recipe must be restored manually when leaving the review session.
 
 ## Local verification
 
 `node --test packages/tools/src/diagnostics/review-performance/*.test.mjs`
 
-This runs the five supplied tests, the 13 independent adversarial cases (retained with only their import made local), and focused regressions for simultaneous primary/cleanup failures, guard release and selector binding.
+This runs the five supplied tests, the 13 independent adversarial cases (retained with only their import made local), and focused regressions for simultaneous primary/cleanup failures, guard release, selector binding and hostile rejection values.
 
 Only tiny fake-runtime tests are authorized/executed for this preparation. No browser,
 native, GPU, render, full-suite or shipping qualification is included.
