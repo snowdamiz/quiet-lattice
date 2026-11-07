@@ -1,0 +1,592 @@
+diff --git a/packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md b/packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md
+index f2abdbc90..d5166f137 100644
+--- a/packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md
++++ b/packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md
+@@ -1,12 +1,12 @@
+ # Wire the Mule phase log into export_saved.py
+ 
+-The saved Mule export timed out while material `Mule_Accent.001` was baking. `resource-checkpoints.jsonl` names that material and does not name the channel. `packages/tools/blender/artlib/bake.py` bakes each channel inside `_bake_channels` (the loop at lines 160-186 of commit `54c969dff016ff576fe89f751d58b86b1057ab95`) and writes no channel receipt. This package records each of those calls. It is not installed. Adopting it is a later edit to `packages/tools/blender/hulls/mule-round4/export_saved.py` on that commit. Do not treat this file as that edit.
++The saved Mule export timed out while material `Mule_Accent.001` was baking. `resource-checkpoints.jsonl` names that material and does not name the channel. `packages/tools/blender/artlib/bake.py` bakes each channel inside `_bake_channels` (the loop at lines 160-186 of commit `54c969dff016ff576fe89f751d58b86b1057ab95`) and writes no channel receipt. This package records each of those calls. The isolated candidate adopts it in `packages/tools/blender/hulls/mule-round4/export_saved.py` on that caller pin, with logger commit `506bd292e73da91c935c5903e27be1b7721354a8` recovered by a provenance cherry-pick. This is source-only adoption for independent review. The real export remains HELD; no export retry is authorized.
+ 
+ The supervisor wall limit and RSS limit stay where `run.py` already enforces them. This package does not change those limits, skip a material, lower a bake resolution, retry an export, or cache a finished channel.
+ 
+ ## Add the wrapper after the material admission hook
+ 
+-`export_saved.py` already replaces `bake.bake_material` with `bounded_material`. That hook calls `check('bake '+mat.name)` and then the stock bake. Leave that hook in place. After the assignment `bake.bake_material = bounded_material` (line 36 at the pinned commit), install this wrapper so it sits outside `bounded_material`.
++`export_saved.py` already replaces `bake.bake_material` with `bounded_material`. That hook calls `check('bake '+mat.name)` and then the stock bake. Leave that hook in place. Install this wrapper immediately after `out=Path(os.environ['MULE_ATTEMPT'])` (line 43 at the caller pin), after the material admission hook and before identity controls or any export work. `out` must already be bound. The concrete caller below owns the installation; the snippet is its exact installed source.
+ 
+ ```python
+ sys.path.insert(0, str(ROOT / "packages/tools/blender/hulls/mule-phase-instrumentation"))
+@@ -21,21 +21,22 @@ def mesh_counts(objects):
+     return (len(objects), triangles)
+ 
+ def resource_snapshot():
++    # run.py publishes these limits before Popen. Missing/invalid input fails
++    # immediately; no polling, fallback limits, or export retry.
++    limits = json.loads((out / "launch-limits.json").read_text())
+     # Same measurement checkpoint.check already uses. Do not call check() here.
+     from run import resources
+     state = resources()
+     own = [row for row in state.pop("processes") if row[2] == os.getpgrp()]
+     state["group_rss_kib"] = sum(row[3] for row in own)
+-    # started.json is written by run.py before the export process starts.
+-    # Read those limits. Do not pass a new --wall or --rss-mib.
+-    limits = json.loads((out / "started.json").read_text())["limits"]
+     state["wall_limit_s"] = limits["wall_seconds"]
+     state["rss_limit_kib"] = limits["rss_mib"] * 1024
+     return state
+ 
++phase_log = PhaseLog(out / "bake-phases.jsonl")
+ install(
+     bake,
+-    PhaseLog(out / "bake-phases.jsonl"),
++    phase_log,
+     resources_of=resource_snapshot,
+     counts_of=mesh_counts,
+     variant_ids=("mule_husked", "mule_damaged", "mule"),
+@@ -50,12 +51,20 @@ install(
+ 
+ `bake-phases.jsonl` is append-only, next to `resource-checkpoints.jsonl` in the attempt directory. Each channel writes a `start` line and fsyncs it before the original `_bake_channels` call. After the call returns, it appends `success`. If the call raises `KeyboardInterrupt` or `SystemExit`, it appends `interrupt` and reraises. Any other exception appends `error` with `repr` of that exception and reraises the same exception.
+ 
+-A later reader pairs lines by `phase_id`. A `start` line with no terminal line is `unfinished`. Killing the process after the start fsync leaves that line. The log has no exit hook that writes `success`.
++A later reader pairs lines by `phase_id`. `load(path)` always reports `status="unfinished"` and `publication="unconfirmed"`. `observed_outcome` is the visible terminal event (`success`, `error`, or `interrupt`), or `None` if no complete terminal exists. A visible success means the channel returned, including `_finish`; it does **not** mean the logger returned successfully. A missing terminal cannot establish whether execution finished. The log has no exit hook that writes success.
+ 
+-A failed write of the terminal line after a successful channel bake leaves the phase `unfinished` and raises the write error. It does not write `success`. A failed write of the terminal line after a failed bake reraises the bake exception. The bake exception is the one the caller sees.
++This deliberately changes the old reader contract: disk-only terminals no longer qualify phase completion. A newline can become visible before fsync or close raises. Such bytes are retained, not rolled back or hidden with another fallible write. The original live `PhaseLog.phases()` additionally uses its in-memory acknowledgements: only after terminal append, fsync and close have all returned does that instance report `publication="acknowledged"` and `status` equal to `observed_outcome`. A new instance cannot recover those acknowledgements from disk. Interruptions between I/O return and acknowledgement remain conservative. No power-loss durability or persistent acknowledgement is promised.
++
++An open/write/short-write/fsync/close failure prevents the next channel and propagates after a successful channel. A start publication failure prevents that channel from running at all. On a channel exception, a secondary logging or exception-formatting failure never replaces the original exception object. If write/fsync and cleanup close both fail, the first exception wins. A failed terminal publication may expose a complete terminal, but both disk-only loading and the failed writer's view still report unfinished/unconfirmed.
++
++Whole-export qualification is separate. Channel success and even the live writer's acknowledgement are insufficient. The exact caller passes the result of `export.main` to `sys.exit`; that pinned function turns ordinary bake/logging exceptions into exit 1, while interrupts escape. That is Python source control flow, not verified Blender process-exit behavior; parent admission must also check the actual launch/error-exit configuration. The supervisor must independently publish a final `receipt.json` with PASS, exit 0, no failure reason and settled cleanup, and all existing source/export validation and identity gates must pass. Missing, failed, interrupted or mismatched run evidence leaves the export unqualified, regardless of terminal lines. `started.json` is never success evidence. This package does not grant export acceptance or infer it from phase logs.
+ 
+ Fields on both lines are `material`, `variant`, `channel`, `resolution`, `object_count`, `triangle_count`, `resources`, and `monotonic_s`. `resolution` is the `res` argument of that `_bake_channels` call. `resources` is the dict returned by `resources_of` immediately before that channel. The dict is stored as given. `monotonic_s` is `time.monotonic()` at the write. `resource-checkpoints.jsonl` stores `time.time()`.
+ 
++## Startup ordering
++
++`run.py` writes and closes `launch-limits.json` **before** calling `Popen`, inside the guarded launch block. This immutable file contains exactly `receipt["limits"]`; a write failure prevents launch, and no concurrent rewrite can truncate it under a child reader. The existing `started.json` remains a RUNNING receipt written after launch, with pid/pgid intact for controller-loss/recovery consumers. The new instrumentation never reads that later receipt. Its resource snapshot reads the limits file once per channel, without waiting, retry or invented limits; missing or malformed JSON fails before resource sampling, and missing required limit fields prevent channel work. The existing `resources()` probes retain their three-second subprocess timeouts. The supervisor's configured wall/RSS policy is unchanged (the held historical export used 5400 seconds / 8192 MiB).
++
+ ## Limits of this integration
+ 
+ The historical Accent timeout is not labeled with a channel. This log can name the channel only on a later run that actually bakes.
+@@ -64,4 +73,4 @@ Calling `_bake_channels` once per channel is the same loop body as the stock fun
+ 
+ `mesh_counts` uses the Blender mesh of the objects `bake_material` already received. This package does not import Blender. The tests call a fake bake.
+ 
+-Until the lines above are added to `export_saved.py` and reviewed, the export behavior is unchanged. Do not launch that export from this package.
++The concrete source adoption and stricter reader contract require parent admission and independent rereview. Fake-port tests cannot close the historical 5400-second Accent bake timeout, whose exact channel remains unknown. Do not launch the export from this package.
+diff --git a/packages/tools/blender/hulls/mule-phase-instrumentation/phase_log.py b/packages/tools/blender/hulls/mule-phase-instrumentation/phase_log.py
+index bcf94cc51..5eeeea4a7 100644
+--- a/packages/tools/blender/hulls/mule-phase-instrumentation/phase_log.py
++++ b/packages/tools/blender/hulls/mule-phase-instrumentation/phase_log.py
+@@ -1,10 +1,11 @@
+-"""Per-channel bake phase log. Nothing in the stock export imports this module."""
++"""Mule channel observations; disk visibility is not publication acknowledgement."""
+ 
+ import json
+ import os
+ import time
+ import uuid
+ from contextvars import ContextVar
++from contextlib import contextmanager
+ 
+ _FRAME = ContextVar("mule_bake_frame", default=None)
+ _IDENTITY = ("material", "variant", "channel", "resolution", "object_count", "triangle_count")
+@@ -15,6 +16,21 @@ class PhaseError(Exception):
+     pass
+ 
+ 
++@contextmanager
++def _closing(fd):
++    """A second close failure must not replace the original write/sync failure."""
++    try:
++        yield fd
++    except BaseException:
++        try:
++            os.close(fd)
++        except BaseException:
++            pass
++        raise
++    else:
++        os.close(fd)
++
++
+ class _Frame:
+     def __init__(self, material, variant, object_count, triangle_count):
+         self.material = material
+@@ -64,6 +80,7 @@ class PhaseLog:
+         self.path = os.fspath(path)
+         self._clock = clock or time.monotonic
+         self._open = {}
++        self._acknowledged = set()
+         self._dir_synced = False
+         parent = os.path.dirname(self.path)
+         if parent:
+@@ -105,6 +122,7 @@ class PhaseLog:
+         if error is not None:
+             record["error"] = error
+         self._append(record)
++        self._acknowledged.add(phase_id)
+         del self._open[phase_id]
+ 
+     def invoke(self, identity, resources, fn):
+@@ -123,28 +141,33 @@ class PhaseLog:
+ 
+     def phases(self):
+         phases, _truncated = load(self.path)
++        for phase in phases:
++            if phase["phase_id"] in self._acknowledged:
++                phase["publication"] = "acknowledged"
++                phase["status"] = phase["observed_outcome"]
+         return phases
+ 
+     def _append(self, record):
+         line = json.dumps(record, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+-        fd = os.open(self.path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o644)
+-        try:
++        with _closing(os.open(self.path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o644)) as fd:
+             written = os.write(fd, line)
+             if written != len(line):
+                 raise PhaseError("short phase-log write")
+             os.fsync(fd)
+-        finally:
+-            os.close(fd)
+         if not self._dir_synced:
+-            dir_fd = os.open(os.path.dirname(self.path) or ".", os.O_RDONLY)
+-            try:
++            with _closing(os.open(os.path.dirname(self.path) or ".", os.O_RDONLY)) as dir_fd:
+                 os.fsync(dir_fd)
+-            finally:
+-                os.close(dir_fd)
+             self._dir_synced = True
+ 
+ 
+ def load(path):
++    """Read observations, never infer that the writer acknowledged publication.
++
++    Even a complete terminal line can precede a failed fsync/close. All disk-only
++    phases therefore remain unfinished; observed_outcome describes execution.
++    Only the original live writer's phases() can report acknowledged terminals.
++    Neither view qualifies the whole export.
++    """
+     path = os.fspath(path)
+     if not os.path.exists(path):
+         return [], None
+@@ -200,7 +223,9 @@ def _closed(start, terminal):
+         started_monotonic_s=start["monotonic_s"],
+         ended_monotonic_s=None if terminal is None else terminal["monotonic_s"],
+         error=None if terminal is None else terminal.get("error"),
+-        status="unfinished" if terminal is None else terminal["event"],
++        observed_outcome=None if terminal is None else terminal["event"],
++        publication="unconfirmed",
++        status="unfinished",
+     )
+     return phase
+ 
+diff --git a/packages/tools/blender/hulls/mule-phase-instrumentation/test_corrections.py b/packages/tools/blender/hulls/mule-phase-instrumentation/test_corrections.py
+new file mode 100644
+index 000000000..cb2cf3a15
+--- /dev/null
++++ b/packages/tools/blender/hulls/mule-phase-instrumentation/test_corrections.py
+@@ -0,0 +1,345 @@
++"""Publication faults and exact adopted source with fake ports; no Blender launch."""
++import ast
++from contextlib import contextmanager, redirect_stdout
++import errno
++import io
++import json
++import os
++from pathlib import Path
++import sys
++import tempfile
++from types import SimpleNamespace as NS
++import types
++import unittest
++from unittest.mock import patch
++
++import phase_log as PL
++from test_phase_log import IDENTITY, RESOURCES
++
++HERE = Path(__file__).resolve().parent
++ROOT = HERE.parents[4]
++CALLER = HERE.parent / 'mule-round4'
++
++
++@contextmanager
++def fault(kind, active, *, second_close=False):
++    original = {name: getattr(os, name) for name in ('open', 'write', 'fsync', 'close')}
++    primary = OSError(errno.EIO, kind)
++    secondary = SystemExit('second close failure')
++
++    def opening(*args, **kwargs):
++        if active() and kind == 'open':
++            raise primary
++        return original['open'](*args, **kwargs)
++
++    def writing(fd, data):
++        if active():
++            if kind == 'write':
++                raise primary
++            if kind == 'partial':
++                return original['write'](fd, data[:len(data)//2])
++        return original['write'](fd, data)
++
++    def syncing(fd):
++        if active() and kind == 'fsync':
++            raise primary
++        return original['fsync'](fd)
++
++    def closing(fd):
++        original['close'](fd)
++        if active():
++            if second_close:
++                raise secondary
++            if kind == 'close':
++                raise primary
++
++    with patch.multiple(PL.os, open=opening, write=writing, fsync=syncing, close=closing):
++        yield primary
++
++
++def caller_env(out, *, main=None, admission=None):
++    """Execute the whole caller AST, replacing only import ports, never statements."""
++    events = []
++    bake = types.ModuleType('fake_bake')
++    bake.ensure_cycles = lambda *a: None
++    bake._bake_channels = lambda info, nt, output, surface, todo, res, label: (
++        events.append(('channels', todo)) or {ch: 'image' for ch in todo})
++
++    def material(mat, objects, res, **kwargs):
++        todo = ['baseColor', 'roughness']
++        bake._bake_channels(NS(mat=mat), None, None, None, todo, res, kwargs['label'])
++        return todo
++
++    bake.bake_material = material
++
++    class FakeCache:
++        def __truediv__(self, other): return self
++        def read_bytes(self): return b'fake tool'
++
++    def path(value):
++        return FakeCache() if value == '/Users/andreyyurlov/Documents/dev/space' else Path(value)
++
++    def check(label):
++        events.append(('admit', label))
++        if admission is not None:
++            raise admission
++
++    env = dict(__file__=str(CALLER/'export_saved.py'), __name__='fake_caller', Path=path,
++               sys=NS(path=[], stdout=NS(reconfigure=lambda **kw: None), exit=sys.exit),
++               os=NS(environ={'MULE_ATTEMPT':str(out)}, getpgrp=lambda:44), json=json,
++               hashlib=NS(sha256=lambda data:NS(digest=lambda:b'fake hash')), bake=bake,
++               export=NS(_write=lambda:None, main=main),
++               ktx=NS(compress=lambda:None), meshopt=NS(compress=lambda:None),
++               core=NS(load=lambda:None, run_checks=lambda:None),
++               snapshot=lambda:None, compare=lambda:None, negative_controls=lambda:[],
++               check=check, PhaseLog=PL.PhaseLog, install=PL.install)
++    tree = ast.parse((CALLER/'export_saved.py').read_text())
++    tree.body = [n for n in tree.body if not isinstance(n, (ast.Import, ast.ImportFrom))]
++    exec(compile(tree, str(CALLER/'export_saved.py'), 'exec'), env)
++    return env, events
++
++
++def launch_block():
++    tree = ast.parse((CALLER/'run.py').read_text())
++    return next(n for n in ast.walk(tree) if isinstance(n, ast.With)
++                and ast.unparse(n.items[0].context_expr) == "(out / 'output.log').open('x')")
++
++
++class Corrections(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temp.cleanup)
++        self.out = Path(self.temp.name)
++
++    def test_disk_observation_is_distinct_from_live_publication_acknowledgement(self):
++        log = PL.PhaseLog(self.out/'phases')
++        self.assertEqual(log.invoke(IDENTITY, RESOURCES, lambda:'image'), 'image')
++        self.assertEqual(log.phases()[0]['status'], 'success')
++        self.assertEqual(log.phases()[0]['publication'], 'acknowledged')
++        for phase in (PL.load(log.path)[0][0], PL.PhaseLog(log.path).phases()[0]):
++            self.assertEqual(phase['observed_outcome'], 'success')
++            self.assertEqual(phase['status'], 'unfinished')
++            self.assertEqual(phase['publication'], 'unconfirmed')
++
++    def test_each_start_publication_fault_prevents_channel_execution(self):
++        for kind in ('open', 'write', 'partial', 'fsync', 'close'):
++            with self.subTest(kind=kind):
++                log = PL.PhaseLog(self.out/kind)
++                called = []
++                with fault(kind, lambda:True) as primary:
++                    with self.assertRaises(PL.PhaseError if kind == 'partial' else OSError) as caught:
++                        log.invoke(IDENTITY, RESOURCES, lambda:called.append(1))
++                if kind != 'partial': self.assertIs(caught.exception, primary)
++                self.assertEqual(called, [])
++                self.assertTrue(all(p['status'] == 'unfinished' for p in log.phases()))
++
++    def test_each_terminal_fault_leaves_publication_unconfirmed(self):
++        for kind in ('open', 'write', 'partial', 'fsync', 'close'):
++            with self.subTest(kind=kind):
++                log = PL.PhaseLog(self.out/kind)
++                called = []
++                def channel():
++                    called.append(1)
++                    return 'image'
++                with fault(kind, lambda:bool(called)) as primary:
++                    with self.assertRaises(PL.PhaseError if kind == 'partial' else OSError) as caught:
++                        log.invoke(IDENTITY, RESOURCES, channel)
++                if kind != 'partial': self.assertIs(caught.exception, primary)
++                self.assertEqual(called, [1])
++                disk, tail = PL.load(log.path)
++                self.assertEqual(disk, log.phases())
++                self.assertEqual(disk[0]['status'], 'unfinished')
++                self.assertEqual(disk[0]['publication'], 'unconfirmed')
++                self.assertEqual(disk[0]['observed_outcome'], 'success' if kind in ('fsync','close') else None)
++                self.assertEqual(tail is not None, kind == 'partial')
++
++    def test_channel_exception_identity_survives_all_terminal_faults(self):
++        for kind in ('open', 'write', 'partial', 'fsync', 'close'):
++            with self.subTest(kind=kind):
++                log = PL.PhaseLog(self.out/kind)
++                original = RuntimeError('original channel failure')
++                called = []
++                def channel():
++                    called.append(1)
++                    raise original
++                with fault(kind, lambda:bool(called)):
++                    with self.assertRaises(RuntimeError) as caught:
++                        log.invoke(IDENTITY, RESOURCES, channel)
++                self.assertIs(caught.exception, original)
++                phase = log.phases()[0]
++                self.assertEqual(phase['status'], 'unfinished')
++                self.assertEqual(phase['observed_outcome'], 'error' if kind in ('fsync','close') else None)
++
++    def test_secondary_close_failure_preserves_first_io_exception_at_start_and_terminal(self):
++        for kind in ('write', 'partial', 'fsync'):
++            for terminal in (False, True):
++                with self.subTest(kind=kind, terminal=terminal):
++                    log = PL.PhaseLog(self.out/(kind+str(terminal)))
++                    called = []
++                    with fault(kind, lambda:not terminal or bool(called), second_close=True) as primary:
++                        with self.assertRaises(PL.PhaseError if kind == 'partial' else OSError) as caught:
++                            log.invoke(IDENTITY, RESOURCES, lambda:called.append(1))
++                    if kind != 'partial': self.assertIs(caught.exception, primary)
++                    self.assertTrue(all(p['status'] == 'unfinished' for p in log.phases()))
++
++    def test_directory_sync_failure_prevents_channel_and_preserves_original_exception(self):
++        log = PL.PhaseLog(self.out/'phases')
++        original, cleanup = OSError('directory fsync'), SystemExit('directory close')
++        fsync, close = os.fsync, os.close
++        calls = []
++        def syncing(fd):
++            calls.append(fd)
++            if len(calls) == 2: raise original
++            fsync(fd)
++        def closing(fd):
++            close(fd)
++            if len(calls) == 2: raise cleanup
++        called = []
++        with patch.object(PL.os, 'fsync', syncing), patch.object(PL.os, 'close', closing):
++            with self.assertRaises(OSError) as caught:
++                log.invoke(IDENTITY, RESOURCES, lambda:called.append(1))
++        self.assertIs(caught.exception, original)
++        self.assertEqual(called, [])
++        self.assertEqual(log.phases()[0]['status'], 'unfinished')
++
++    def test_exact_adopted_caller_initializes_then_preserves_admission_and_channel_order(self):
++        env, events = caller_env(self.out)
++        self.assertEqual(Path(env['phase_log'].path), self.out/'bake-phases.jsonl')
++        (self.out/'launch-limits.json').write_text(json.dumps({'wall_seconds':321,'rss_mib':123}))
++        fake_run = types.ModuleType('run')
++        fake_run.resources = lambda:dict(processes=[[1,0,44,10],[2,1,44,20],[3,1,99,90]], disk_free=123)
++        mesh = NS(loop_triangles=[1,2], calc_loop_triangles=lambda:None)
++        with patch.dict(sys.modules, {'run':fake_run}):
++            result = env['bake'].bake_material(NS(name='Mule_Accent.001'), [NS(data=mesh)], 4096, label='mule_damaged_Accent')
++        self.assertEqual(result, ['baseColor','roughness'])
++        self.assertEqual(events, [('admit','bake Mule_Accent.001'),('channels',['baseColor']),('channels',['roughness'])])
++        phases = env['phase_log'].phases()
++        self.assertEqual([p['status'] for p in phases], ['success','success'])
++        self.assertEqual(phases[0]['resources'], dict(disk_free=123, group_rss_kib=30, wall_limit_s=321, rss_limit_kib=125952))
++        self.assertEqual(phases[0]['variant'], 'mule_damaged')
++        self.assertIsNone(PL._FRAME.get())
++
++    def test_exact_adopted_caller_denied_admission_never_samples_or_bakes(self):
++        original = RuntimeError('denied')
++        env, events = caller_env(self.out, admission=original)
++        mesh = NS(loop_triangles=[], calc_loop_triangles=lambda:None)
++        with self.assertRaises(RuntimeError) as caught:
++            env['bake'].bake_material(NS(name='Mule_Accent.001'), [NS(data=mesh)], 4096, label='mule_Accent')
++        self.assertIs(caught.exception, original)
++        self.assertEqual(events, [('admit','bake Mule_Accent.001')])
++        self.assertFalse((self.out/'bake-phases.jsonl').exists())
++        self.assertIsNone(PL._FRAME.get())
++
++    def test_exact_adopted_caller_stops_later_channels_after_publication_failure(self):
++        env, events = caller_env(self.out)
++        (self.out/'launch-limits.json').write_text(json.dumps({'wall_seconds':5400,'rss_mib':8192}))
++        fake_run = types.ModuleType('run')
++        fake_run.resources = lambda:dict(processes=[])
++        mesh = NS(loop_triangles=[], calc_loop_triangles=lambda:None)
++        with patch.dict(sys.modules, {'run':fake_run}):
++            with fault('fsync', lambda:any(e[0]=='channels' for e in events)) as original:
++                with self.assertRaises(OSError) as caught:
++                    env['bake'].bake_material(NS(name='Mule_Accent.001'), [NS(data=mesh)], 4096, label='mule_Accent')
++        self.assertIs(caught.exception, original)
++        self.assertEqual(events, [('admit','bake Mule_Accent.001'),('channels',['baseColor'])])
++        phase = env['phase_log'].phases()[0]
++        self.assertEqual(phase['observed_outcome'], 'success')
++        self.assertEqual(phase['status'], 'unfinished')
++        self.assertIsNone(PL._FRAME.get())
++
++    def test_documented_install_is_exact_adopted_code_after_out_binding(self):
++        source = (CALLER/'export_saved.py').read_text()
++        snippet = (HERE/'INTEGRATION.md').read_text().split('```python\n')[1].split('```')[0]
++        self.assertIn(snippet, source)
++        self.assertLess(source.index("out=Path(os.environ['MULE_ATTEMPT'])"), source.index(snippet))
++        self.assertLess(source.index('bake.bake_material=bounded_material'), source.index(snippet))
++        self.assertLess(source.index(snippet), source.index("(out/'identity-controls.json')"))
++
++    def test_exact_launch_block_makes_limits_available_before_popen_returns(self):
++        env, _ = caller_env(self.out)
++        snapshots = []
++        fake_run = types.ModuleType('run')
++        fake_run.resources = lambda:dict(processes=[[1,0,44,10]])
++        def popen(*args, **kwargs):
++            snapshots.append(env['resource_snapshot']())
++            return NS(pid=44, poll=lambda:0)
++        receipt = {'status':'STARTING', 'limits':{'wall_seconds':321,'rss_mib':123}}
++        scope = dict(out=self.out, subprocess=NS(Popen=popen, STDOUT=-2), command=['fake'],
++                     ROOT=ROOT, env={}, receipt=receipt, json=json)
++        with patch.dict(sys.modules, {'run':fake_run}):
++            exec(compile(ast.Module(body=[launch_block()], type_ignores=[]), str(CALLER/'run.py'), 'exec'), scope)
++        self.assertEqual(snapshots, [dict(group_rss_kib=10, wall_limit_s=321, rss_limit_kib=125952)])
++        started = json.loads((self.out/'started.json').read_text())
++        self.assertEqual(started, {'status':'RUNNING', 'pid':44, 'pgid':44, 'limits':{'wall_seconds':321,'rss_mib':123}})
++        self.assertEqual(json.loads((self.out/'launch-limits.json').read_text()), {'wall_seconds':321,'rss_mib':123})
++        self.assertEqual(receipt['status'], 'RUNNING')
++        self.assertEqual(receipt['pid'], 44)
++
++    def test_exact_launch_block_receipt_failure_prevents_popen(self):
++        called = []
++        scope = dict(out=self.out, subprocess=NS(Popen=lambda *a,**k:called.append(1), STDOUT=-2),
++                     command=['fake'], ROOT=ROOT, env={}, receipt={'limits':{}}, json=json)
++        original = OSError('startup receipt failed')
++        with patch.object(Path, 'write_text', side_effect=original):
++            with self.assertRaises(OSError) as caught:
++                exec(compile(ast.Module(body=[launch_block()], type_ignores=[]), str(CALLER/'run.py'), 'exec'), scope)
++        self.assertIs(caught.exception, original)
++        self.assertEqual(called, [])
++
++    def test_missing_or_invalid_startup_receipt_fails_without_waiting_or_defaults(self):
++        env, _ = caller_env(self.out)
++        fake_run = types.ModuleType('run')
++        fake_run.resources = lambda:dict(processes=[])
++        with patch.dict(sys.modules, {'run':fake_run}):
++            with self.assertRaises(FileNotFoundError): env['resource_snapshot']()
++            (self.out/'launch-limits.json').write_text('{}')
++            with self.assertRaises(KeyError): env['resource_snapshot']()
++            (self.out/'launch-limits.json').write_text('{')
++            with self.assertRaises(json.JSONDecodeError): env['resource_snapshot']()
++
++    def test_exact_caller_entrypoint_propagates_export_failure_despite_acknowledged_channel(self):
++        env, _ = caller_env(self.out, main=lambda *a:1)
++        env['phase_log'].invoke(IDENTITY, RESOURCES, lambda:None)
++        self.assertEqual(env['phase_log'].phases()[0]['status'], 'success')
++        env['__name__'] = '__main__'
++        tree = ast.parse((CALLER/'export_saved.py').read_text())
++        main = tree.body[-1]
++        with self.assertRaises(SystemExit) as caught:
++            exec(compile(ast.Module(body=[main], type_ignores=[]), str(CALLER/'export_saved.py'), 'exec'), env)
++        self.assertEqual(caught.exception.code, 1)
++        original = KeyboardInterrupt('export interrupted')
++        def fail(*a): raise original
++        env['export'].main = fail
++        with self.assertRaises(KeyboardInterrupt) as caught:
++            exec(compile(ast.Module(body=[main], type_ignores=[]), str(CALLER/'export_saved.py'), 'exec'), env)
++        self.assertIs(caught.exception, original)
++
++    def test_actual_export_main_rejects_channel_logging_failure(self):
++        source = ROOT/'packages/tools/blender/artlib/export.py'
++        tree = ast.parse(source.read_text())
++        main = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'main')
++        (self.out/'hulls').mkdir()
++        (self.out/'hulls/mule.blend').write_text('fake source discovery only')
++        args = NS(src_root=str(self.out), only='mule', out_dir=str(self.out/'output'), compress=None)
++        rules = {'families':{'hulls':{}}, 'output':'{family}/{stem}.glb'}
++        for kind in ('open', 'write', 'partial', 'fsync', 'close'):
++            with self.subTest(kind=kind):
++                log = PL.PhaseLog(self.out/kind)
++                called, dropped = [], []
++                def export_one(*args):
++                    return log.invoke(IDENTITY, RESOURCES, lambda:called.append(1))
++                env = dict(Path=Path, parse=lambda argv:args,
++                           R=NS(load=lambda:rules, rel=str),
++                           ktx=NS(settings=lambda *a:{}), meshopt=NS(settings=lambda *a:{}),
++                           export_one=export_one, _drop_stale=dropped.append,
++                           traceback=NS(print_exc=lambda:None))
++                exec(compile(ast.Module(body=[main], type_ignores=[]), str(source), 'exec'), env)
++                with fault(kind, lambda:bool(called)), redirect_stdout(io.StringIO()):
++                    self.assertEqual(env['main']('hulls', []), 1)
++                self.assertEqual(called, [1])
++                self.assertEqual(dropped, [self.out/'output/hulls/mule.glb'])
++                self.assertEqual(log.phases()[0]['status'], 'unfinished')
++
++
++if __name__ == '__main__':
++    unittest.main(verbosity=2)
+diff --git a/packages/tools/blender/hulls/mule-round4/export_saved.py b/packages/tools/blender/hulls/mule-round4/export_saved.py
+index ec94e1b44..f931145a0 100644
+--- a/packages/tools/blender/hulls/mule-round4/export_saved.py
++++ b/packages/tools/blender/hulls/mule-round4/export_saved.py
+@@ -41,6 +41,40 @@ for module,name,label in [(export,'_write','write GLB'),(ktx,'compress','encode
+         return _original(*args,**kwargs)
+     setattr(module,name,bounded)
+ out=Path(os.environ['MULE_ATTEMPT'])
++
++sys.path.insert(0, str(ROOT / "packages/tools/blender/hulls/mule-phase-instrumentation"))
++from phase_log import PhaseLog, install
++
++def mesh_counts(objects):
++    triangles = 0
++    for obj in objects:
++        mesh = obj.data
++        mesh.calc_loop_triangles()
++        triangles += len(mesh.loop_triangles)
++    return (len(objects), triangles)
++
++def resource_snapshot():
++    # run.py publishes these limits before Popen. Missing/invalid input fails
++    # immediately; no polling, fallback limits, or export retry.
++    limits = json.loads((out / "launch-limits.json").read_text())
++    # Same measurement checkpoint.check already uses. Do not call check() here.
++    from run import resources
++    state = resources()
++    own = [row for row in state.pop("processes") if row[2] == os.getpgrp()]
++    state["group_rss_kib"] = sum(row[3] for row in own)
++    state["wall_limit_s"] = limits["wall_seconds"]
++    state["rss_limit_kib"] = limits["rss_mib"] * 1024
++    return state
++
++phase_log = PhaseLog(out / "bake-phases.jsonl")
++install(
++    bake,
++    phase_log,
++    resources_of=resource_snapshot,
++    counts_of=mesh_counts,
++    variant_ids=("mule_husked", "mule_damaged", "mule"),
++)
++
+ (out/'identity-controls.json').write_text(json.dumps({'rejected':negative_controls()},indent=2))
+ original_load=core.load
+ candidate=None
+diff --git a/packages/tools/blender/hulls/mule-round4/run.py b/packages/tools/blender/hulls/mule-round4/run.py
+index 269c607eb..475f7031a 100644
+--- a/packages/tools/blender/hulls/mule-round4/run.py
++++ b/packages/tools/blender/hulls/mule-round4/run.py
+@@ -172,6 +172,8 @@ def main(controller_fd=None):
+             if cancelled:raise RuntimeError('cancelled before launch '+str(cancelled))
+             env = dict(os.environ, OMP_NUM_THREADS='2', OPENBLAS_NUM_THREADS='2', MKL_NUM_THREADS='2', VECLIB_MAXIMUM_THREADS='2', NUMEXPR_NUM_THREADS='2', BLIS_NUM_THREADS='2', TBB_NUM_THREADS='2', RAYON_NUM_THREADS='2', UV_THREADPOOL_SIZE='2', BLENDER_THREADS='2', ART_KTX_JOBS='1', ART_KTX_THREADS='2', TMPDIR=str(temp), MULE_ATTEMPT=str(out), PYTHONDONTWRITEBYTECODE='1')
+             with (out / 'output.log').open('x') as log:
++                # A child can execute before Popen returns; publish immutable limits first.
++                (out / 'launch-limits.json').write_text(json.dumps(receipt['limits'], indent=2))
+                 proc = subprocess.Popen(command, cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+                 receipt['pid'] = receipt['pgid'] = proc.pid
+                 receipt['status'] = 'RUNNING'

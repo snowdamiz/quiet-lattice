@@ -1,0 +1,169 @@
+{
+  "verdict": "REVISE",
+  "scope": "SOURCE PREPARATION",
+  "head": "1e293e75258b986501780713d2956a7e8cc80ec0",
+  "tree": "7ce3b00b287bda07b97b75336ed9ff399122bb4a",
+  "implementationFindings": {
+    "R1": "CLOSED",
+    "R2": "CLOSED",
+    "R3": "CLOSED"
+  },
+  "remainingFindings": [
+    {
+      "id": "D1",
+      "severity": "P2",
+      "path": "packages/tools/src/diagnostics/review-performance/README.md",
+      "line": 19,
+      "finding": "Executable import example selects the clean but unfixed 8cad9bae reference checkout instead of the reviewed candidate.",
+      "reproduction": "documented-target-r1.tap"
+    }
+  ],
+  "tests": [
+    {
+      "suite": "independent",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/independent.test.mjs"
+      ],
+      "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+      "startedUtc": "2026-11-07T20:09:23.087554+00:00",
+      "exitCode": 0,
+      "tap": "independent.tap",
+      "timeoutSeconds": 30,
+      "tests": 28,
+      "pass": 28,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "suite": "index",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/index.test.mjs"
+      ],
+      "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+      "startedUtc": "2026-11-07T20:09:23.089436+00:00",
+      "exitCode": 0,
+      "tap": "index.tap",
+      "timeoutSeconds": 30,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "suite": "adversarial",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/adversarial.test.mjs"
+      ],
+      "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+      "startedUtc": "2026-11-07T20:09:23.091242+00:00",
+      "exitCode": 0,
+      "tap": "adversarial.tap",
+      "timeoutSeconds": 30,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "suite": "regressions",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/regressions.test.mjs"
+      ],
+      "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+      "startedUtc": "2026-11-07T20:09:23.092773+00:00",
+      "exitCode": 0,
+      "tap": "regressions.tap",
+      "timeoutSeconds": 30,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "suite": "raw-errors",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/raw-errors.test.mjs"
+      ],
+      "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+      "startedUtc": "2026-11-07T20:09:23.092986+00:00",
+      "exitCode": 0,
+      "tap": "raw-errors.tap",
+      "timeoutSeconds": 30,
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  ],
+  "focusedTests": [
+    {
+      "suite": "focused",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "focused.test.mjs"
+      ],
+      "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+      "exitCode": 0,
+      "tap": "focused.tap",
+      "timeoutSeconds": 30,
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "suite": "documented-target-r1",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=R1 raw root-cleanup",
+        "documented-target-r1.test.mjs"
+      ],
+      "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+      "exitCode": 1,
+      "tap": "documented-target-r1.tap",
+      "timeoutSeconds": 30,
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  ],
+  "runtimeAdmission": false,
+  "performancePass": false,
+  "repositoryChanged": false,
+  "report": "report.md",
+  "sealedUtc": "2026-11-07T20:13:07.797421+00:00"
+}

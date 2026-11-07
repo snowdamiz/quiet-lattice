@@ -1,0 +1,135 @@
+{
+  "lineup-False": [
+    [
+      "/private/tmp/lark-evidence-a6a0237-review-vVaHIq/lineup-ok/.cells/saved-default.png",
+      320,
+      320,
+      2,
+      8,
+      [
+        "lark_baseColor",
+        "lark_baseColor",
+        "lark_baseColor"
+      ]
+    ],
+    [
+      "/private/tmp/lark-evidence-a6a0237-review-vVaHIq/lineup-ok/.cells/compact.png",
+      320,
+      320,
+      2,
+      8,
+      [
+        "lark_livery_compact",
+        "lark_livery_compact",
+        "lark_livery_compact"
+      ]
+    ],
+    [
+      "/private/tmp/lark-evidence-a6a0237-review-vVaHIq/lineup-ok/.cells/working.png",
+      320,
+      320,
+      2,
+      8,
+      [
+        "lark_livery_working",
+        "lark_livery_working",
+        "lark_livery_working"
+      ]
+    ]
+  ],
+  "lineup-True": [
+    [
+      "/private/tmp/lark-evidence-a6a0237-review-vVaHIq/lineup-fail/.cells/saved-default.png",
+      320,
+      320,
+      2,
+      8,
+      [
+        "lark_baseColor",
+        "lark_baseColor",
+        "lark_baseColor"
+      ]
+    ],
+    [
+      "/private/tmp/lark-evidence-a6a0237-review-vVaHIq/lineup-fail/.cells/compact.png",
+      320,
+      320,
+      2,
+      8,
+      [
+        "lark_livery_compact",
+        "lark_livery_compact",
+        "lark_livery_compact"
+      ]
+    ]
+  ],
+  "reference_in_REF_WIP_selected": true,
+  "new_output_below_source_parent_allowed": true,
+  "single_edge_grid": {
+    "lattice_qualified": false,
+    "standing_shot_planned": true
+  },
+  "receipt-ok": {
+    "status": "complete_with_gaps",
+    "caught": null
+  },
+  "receipt-exception": {
+    "status": "failed",
+    "caught": "RuntimeError"
+  },
+  "receipt-interrupt": {
+    "status": "failed",
+    "caught": "KeyboardInterrupt"
+  },
+  "receipt-gpu-refusal": {
+    "status": "failed",
+    "caught": "CPU gate refused"
+  },
+  "receipt-mutated": {
+    "status": "invalid_source_changed",
+    "caught": 3
+  },
+  "receipt-deleted": {
+    "status": "invalid_source_changed",
+    "caught": 3
+  },
+  "shear": {
+    "source_world": [
+      [
+        4.0,
+        5.0,
+        6.0
+      ],
+      [
+        5.0,
+        5.0,
+        6.0
+      ],
+      [
+        5.0,
+        6.0,
+        6.0
+      ]
+    ],
+    "illustrative_TRS_update_world": [
+      [
+        4.0,
+        5.0,
+        6.0
+      ],
+      [
+        5.0,
+        5.0,
+        6.0
+      ],
+      [
+        4.0,
+        6.0,
+        6.0
+      ]
+    ],
+    "native_executed": false,
+    "pinned_asset_has_shear": "unknown",
+    "cause": "mesh remains local, parent removed, matrix assigned; no bake or rejection"
+  }
+}

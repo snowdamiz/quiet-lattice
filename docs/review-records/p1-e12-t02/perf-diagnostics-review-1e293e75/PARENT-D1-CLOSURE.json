@@ -1,0 +1,16 @@
+{
+  "review": "Independent R1/R2/R3 implementation PASS; overall review REVISE solely for D1 stale README path",
+  "parent_resolution": "Adopted reviewed source via provenance cherry-picks; corrected README path to this parent checkout and added explicit admitted-byte verification. No implementation or test bytes changed.",
+  "implementation_sha256": {
+    "adversarial.test.mjs": "e7ca87128020d6339777670fd48e32c3308cc55a1322500ecc7a4f54dbb8138a",
+    "index.mjs": "6ce1bc684d585956cc2e4cf52124b8fd7e9f979fbd66342af38f6d5a8ff31c37",
+    "index.test.mjs": "cd40edaa518f3fcfbaa2118aae6d97722a245159835970c57274f595e2277747",
+    "raw-errors.test.mjs": "5f3d3fd5f9f1e7a5797a483d8313e7293dd60a2611934ef01068595a89eeeff5",
+    "regressions.test.mjs": "e76a521f9283c2c27bd97737db820baf995708cf4069a0d1c99cd8f0124777e3"
+  },
+  "documented_url": "/@fs/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/diagnostics/review-performance/index.mjs",
+  "documented_target_sha256": "6ce1bc684d585956cc2e4cf52124b8fd7e9f979fbd66342af38f6d5a8ff31c37",
+  "runtime_admission": false,
+  "performance_qualification": false,
+  "test_policy": "No repeated suites for README-only change. Exact five .mjs blobs match independently tested source."
+}

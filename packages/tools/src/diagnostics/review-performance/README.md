@@ -9,14 +9,14 @@ No runtime admission or performance fix is claimed by this module.
 
 1. Obtain runtime admission for the native review backend and exact candidate. Record source revision, asset SHA256, runtime build, case, seed, camera, LOD, game time, streamed chunk/plant inventory and quality. Record actual OS/power/thermal/load/driver observations with their collection time separately; missing host fields remain unknown. Do not infer OS from user agent. Use the project's native review entrypoint; do not substitute a browser backend.
 2. Ensure exclusive ownership: no capture, other console commands, `review.perf`, pass instrumentation or pending full-frame queries. This module guards concurrent matrices only; existing review internals expose no global query lease. Keep controls/camera/streaming fixed. Await readiness, hold and select the desired case with existing controls. Compilation/streaming/cloud history must settle. Each perf call uses existing warmup; inspect its settle evidence (stability does not establish budget compliance).
-3. Serve this directory as a static ES module from the admitted review origin, without changing shipping source. In a native session backed by a Vite dev server that permits this checkout, the exact import URL is shown below. If `/@fs` is unavailable, explicitly arrange a same-origin static mount and substitute that URL; do not start another backend merely to load it.
+3. Serve this directory as a static ES module from the admitted review origin, without changing shipping source. The example points to the parent checkout containing the reviewed implementation from `1e293e75258b986501780713d2956a7e8cc80ec0`; its `index.mjs` SHA256 is `6ce1bc684d585956cc2e4cf52124b8fd7e9f979fbd66342af38f6d5a8ff31c37`. Before importing, verify that the served module matches the admitted candidate bytes. When using another checkout, update the URL and verify its bytes rather than reusing a historical worktree path. If `/@fs` is unavailable, explicitly arrange a same-origin static mount and substitute that URL; do not start another backend merely to load it.
 
 ```js
 await window.review.ready;
 window.review.hold();
 window.review.overlay(false);
 window.review.lod(0);
-const diag = await import('/@fs/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/index.mjs');
+const diag = await import('/@fs/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/diagnostics/review-performance/index.mjs');
 const rv = window.review;
 // Fill only independently verified identity/host observations before measuring.
 const host = { sourceRevision: 'REPLACE', assetSha256: 'REPLACE', runtimeBuild: 'REPLACE' };

@@ -1,0 +1,72 @@
+MULE INSTRUMENTATION IMPLEMENTATION — SOURCE-ONLY CANDIDATE FOR REREVIEW
+
+Final HEAD be360cf947511a37be805dac2aed0871a34fff8a
+Final tree 3228655fd47a84938f214ca4671400688b2633b6
+Checkout /Users/andreyyurlov/.t3/worktrees/space/t3-348f0295
+State: detached, clean, local commits only. Real export remains HELD.
+
+Lineage and inputs
+- Exact caller 54c969dff016ff576fe89f751d58b86b1057ab95, tree b6feaada99dd7c5ea35bed13add0b8c356fd3e16.
+- Logger origin 506bd292e73da91c935c5903e27be1b7721354a8, tree 17212ae3a417bf4ad625acb2f3dd5342e10a5c16.
+- Parent checkout lacked both. Detached only this isolated checkout at the caller with GIT_LFS_SKIP_SMUDGE=1, then cherry-picked ONLY the logger with -x as d2c5908bd6fcf4eade938bbbca3e57efb3a4757f. Fix commit is the final HEAD above. No existing branch ref was moved.
+- Original review /private/tmp/mule-phase-review-506bd29-20261107-nqr2_apu/REPORT.txt, SEAL.json, harness and both logs were verified before edits; complete report and harness were read. All supplied pin/tree/file and artifact hashes matched. Both reference checkouts remain clean at those pins, with all sealed bytes unchanged.
+- Original SEAL.json SHA256 ae1085cda5441acc1f725d6a8995ea89b5ff6e06d1a5face4836fa2837d230e0.
+- No AGENTS.md was present in the checkout/ancestor instruction search. Potato mode was not invoked. No delegation occurred.
+
+Final source scope
+Relative to caller pin: exactly six paths:
+packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md
+packages/tools/blender/hulls/mule-phase-instrumentation/phase_log.py
+packages/tools/blender/hulls/mule-phase-instrumentation/test_corrections.py
+packages/tools/blender/hulls/mule-phase-instrumentation/test_phase_log.py
+packages/tools/blender/hulls/mule-round4/export_saved.py
+packages/tools/blender/hulls/mule-round4/run.py
+The supplied 17-test file is byte-identical to the logger pin. The fixes commit touches the other five paths. Full candidate.patch and fixes.patch are retained, with exact final source snapshots.
+Stock artlib/bake.py, artlib/export.py, checkpoint.py and all assets/documents outside this scope are unchanged. The install wrapper AST is unchanged. Removing the adopted snippet gives the exact original caller AST. Removing only the new launch-limits publication gives the exact original supervisor AST, preserving its old started receipt, all limits and cleanup. No retry, cache, material skipping, resolution, supervisor bound or export output changes.
+
+R1 — concrete source adoption
+The exact installed snippet executes after out=Path(os.environ['MULE_ATTEMPT']) and after bounded_material, before identity controls/export work. The whole caller AST runs with fake import/system ports in the new test; it initializes the actual logger path and preserves admission-before-channel order. INTEGRATION.md contains the exact installed snippet and corrected insertion point.
+
+R2 — explicit conservative reader contract change, requiring parent review
+A complete newline-terminated event can survive failed fsync/close. The candidate deliberately does NOT claim this is recoverable publication acknowledgement and does not attempt a rollback, second journal or persistent success marker.
+- Disk-only load(path) returns status=unfinished and publication=unconfirmed for every phase. observed_outcome contains the visible channel terminal success/error/interrupt, or None when absent. An observed success proves only that the channel returned in this source flow, not that the terminal append returned successfully.
+- Only the original live writer's phases() can use its in-memory acknowledgement set to report publication=acknowledged and status=success/error/interrupt, after append/fsync/close returned. Another instance and any later process remain unconfirmed. There is no power-loss durability or persisted acknowledgement guarantee.
+- Failed start publication prevents that channel. Failed terminal publication after a return propagates and prevents later channels; it may retain visible success bytes, but cannot qualify them. A channel failure keeps its original exception identity even if terminal logging or repr fails. A write/fsync failure also survives a second close failure unchanged.
+- Channel execution, publication and whole export are separate. Disk events never qualify export PASS. Actual pinned export.main source catches ordinary logging/bake exceptions and returns 1, and the exact entrypoint passes that result to sys.exit; interrupts retain identity. Tests exercise these source paths with fake ports. Blender process exit behavior/launch error-exit configuration is NOT qualified by those tests.
+- Whole export still needs its independent successful supervisor receipt and all existing validation/identity gates. Missing/failed/interrupted evidence remains unqualified. This implementation grants no export acceptance.
+This is an intentional incompatibility with the earlier disk-reader status contract; parent and independent reviewer must decide whether to admit it. Raw event ordering and observed channel outcomes are retained. No acceptance condition was silently weakened.
+
+R3 — immutable readiness data before launch, existing receipt preserved
+run.py closes a new launch-limits.json containing exactly receipt['limits'] before Popen. The instrumentation reads that immutable file, never the post-launch started.json. Missing/malformed data fails; no polling, fallback limits or wait budget was introduced. Existing resources() subprocess timeouts stay 3 seconds. Existing configured supervisor limits remain unchanged; the historical export used 5400 seconds / 8192 MiB.
+The old started.json remains RUNNING with pid/pgid after launch. This preserves its controller-loss-test/recovery consumers; the final source/AST check proves the original supervisor is otherwise unchanged. Exact-AST fake Popen synchronously reads the limits before returning. Startup-write failure prevents fake launch. Nondefault 321-second / 123-MiB values pass through unchanged.
+An earlier local candidate moved started.json itself, then a read-only consumer check found test_controller_loss.py depends on its pgid. That approach was replaced before finalization; older candidate logs are explicitly named pre-consumer-fix. A new test fixture initially omitted receipt['limits']; its error and correction are retained. These are not final implementation failures.
+
+Red/green evidence
+1. baseline-17.txt: original supplied tests 17/17 PASS.
+2. baseline-13.txt: path-only adapted sealed harness 13 methods: 10 PASS, 2 failures (terminal fsync/close), 1 NameError (old insertion). Two passing hazard probes demonstrate Popen preceding started.json and the child observing it missing.
+3. candidate-17.txt: unchanged supplied tests 17/17 PASS on the final logger bytes.
+4. candidate-corrections.txt: 15/15 PASS on the final caller/logger/supervisor/test bytes. Covers start and terminal open/write/partial/fsync/close faults, original exception identity, second close failure, directory fsync+close failure, actual adoption/denied admission/stop-after-publication-failure, exact snippet, readiness ordering and startup failure, missing/malformed limits, source export-main failure qualification and entrypoint propagation.
+5. candidate-behavior.txt: 3/3 methods PASS using FakeScene from the path-only adapted sealed harness, without altering that harness. Eight success scenarios compare all state, output, returned todo and channel order (16 paired executions). Five exception types x two boundaries x secondary logging present/absent = 20 paired scenarios, 40 stock/wrapped exception executions; original identity, cleanup, stop order and frame reset agree. The earlier review called these forty subcases; the exact count is made explicit here.
+6. SIGKILL fake child exits -SIGKILL within a five-second bound; baseColor has observed_outcome=success and roughness uniquely has no observed terminal, with Mule_Accent.001 / mule_damaged identity. Disk publication remains unconfirmed for both. No historical-channel attribution is inferred.
+7. candidate-13-unaltered.txt: the retained 13-method harness was changed ONLY by the two explicit worktree path substitutions in path-substitutions.json. Its final result is intentionally NOT GREEN: 6 methods PASS, five methods have 31 failed assertions/subcases, two methods error. Both R2 fsync/close probes are now GREEN.
+   Remaining incompatible expectations:
+   - 20 paired-exception and 8 success-scenario assertions plus one SIGKILL assertion expect disk status=success, superseded by observed_outcome/publication separation. The separate candidate_behavior.py rechecks all behavior and the conservative fields.
+   - One probe still expects missing startup data in fake Popen; new launch-limits is ready and it no longer sees a missing file.
+   - One probe hard-codes old launch/started line numbers 175/178; new values are 177/180, with the old started ordering retained but no longer a dependency.
+   - One snippet probe still executes with line-36 globals and no out, despite the corrected documented/concrete line-43 insertion.
+   - One resource probe only writes the old started.json fixture, rather than the new prelaunch limits file.
+   No expectations were edited to conceal these differences. New exact-caller tests provide green evidence for the chosen contract and concrete placement.
+8. verification.json: final clean pin/tree, source scope, original references/seal, supplied-test bytes, unchanged stock/wrapper ASTs, exact adopted snippet, unchanged supervisor outside limits publication, LFS state. git diff --check passes.
+All suites were run under 30-second outer subprocess bounds. The only workload child was bounded fake Python test work. No Blender imports/engine execution, bake/export retry, rendering, GPU/native/browser work, full suites, push, PR, main edits, merge, Trunk or child agents occurred. Lark's Blender CPU lane was not used.
+
+Assets and remaining gates
+No asset was smudged by this work. Mule blend/glb remain exact pinned LFS pointers; 292 current LFS-filtered paths are pointers. 3029 other LFS-filtered paths were already hydrated in the app-prepared checkout and were preserved read-only, not rewritten/dehydrated. The list is retained in verification.json; the entire checkout is Git-clean.
+Real export remains HELD for parent admission and independent rereview of the exact adopted candidate and the stricter R2 contract. No actual Blender exit behavior, image quality, performance, successful export or production qualification is claimed. The historical 5400-second timeout during base Accent before compression remains open, with exact channel unknown.
+
+Reproduction (source-only)
+python3 -B /private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/verify_source.py
+python3 -B /Users/andreyyurlov/.t3/worktrees/space/t3-348f0295/packages/tools/blender/hulls/mule-phase-instrumentation/test_phase_log.py -v
+python3 -B /Users/andreyyurlov/.t3/worktrees/space/t3-348f0295/packages/tools/blender/hulls/mule-phase-instrumentation/test_corrections.py
+python3 -B /private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py
+python3 -B /private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/candidate_behavior.py
+Apply the same 30-second outer bound when rerunning suites; adversarial_review is expected red as documented. The original sealed harness remains untouched in its original directory.

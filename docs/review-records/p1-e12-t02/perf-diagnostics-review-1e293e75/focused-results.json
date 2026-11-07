@@ -1,0 +1,41 @@
+[
+  {
+    "suite": "focused",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "focused.test.mjs"
+    ],
+    "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+    "exitCode": 0,
+    "tap": "focused.tap",
+    "timeoutSeconds": 30,
+    "tests": 3,
+    "pass": 3,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  {
+    "suite": "documented-target-r1",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "--test-name-pattern=R1 raw root-cleanup",
+      "documented-target-r1.test.mjs"
+    ],
+    "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+    "exitCode": 1,
+    "tap": "documented-target-r1.tap",
+    "timeoutSeconds": 30,
+    "tests": 1,
+    "pass": 0,
+    "fail": 1,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  }
+]

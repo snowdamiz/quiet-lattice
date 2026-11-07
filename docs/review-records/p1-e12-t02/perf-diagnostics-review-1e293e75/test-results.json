@@ -1,0 +1,102 @@
+[
+  {
+    "suite": "independent",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/independent.test.mjs"
+    ],
+    "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+    "startedUtc": "2026-11-07T20:09:23.087554+00:00",
+    "exitCode": 0,
+    "tap": "independent.tap",
+    "timeoutSeconds": 30,
+    "tests": 28,
+    "pass": 28,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  {
+    "suite": "index",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/index.test.mjs"
+    ],
+    "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+    "startedUtc": "2026-11-07T20:09:23.089436+00:00",
+    "exitCode": 0,
+    "tap": "index.tap",
+    "timeoutSeconds": 30,
+    "tests": 5,
+    "pass": 5,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  {
+    "suite": "adversarial",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/adversarial.test.mjs"
+    ],
+    "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+    "startedUtc": "2026-11-07T20:09:23.091242+00:00",
+    "exitCode": 0,
+    "tap": "adversarial.tap",
+    "timeoutSeconds": 30,
+    "tests": 13,
+    "pass": 13,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  {
+    "suite": "regressions",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/regressions.test.mjs"
+    ],
+    "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+    "startedUtc": "2026-11-07T20:09:23.092773+00:00",
+    "exitCode": 0,
+    "tap": "regressions.tap",
+    "timeoutSeconds": 30,
+    "tests": 10,
+    "pass": 10,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  {
+    "suite": "raw-errors",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/private/tmp/review-performance-1e293e-independent-FOMw1zi5/source-snapshot/raw-errors.test.mjs"
+    ],
+    "cwd": "/private/tmp/review-performance-1e293e-independent-FOMw1zi5",
+    "startedUtc": "2026-11-07T20:09:23.092986+00:00",
+    "exitCode": 0,
+    "tap": "raw-errors.tap",
+    "timeoutSeconds": 30,
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  }
+]

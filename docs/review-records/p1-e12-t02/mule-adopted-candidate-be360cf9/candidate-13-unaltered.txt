@@ -1,0 +1,571 @@
+OBSERVED terminal close failed, reader status=unfinished
+OBSERVED terminal fsync failed, reader status=unfinished
+test_actual_bounded_material_admission_still_prevents_channel (__main__.Review.test_actual_bounded_material_admission_still_prevents_channel) ... ok
+test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) ... 
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='op', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='op', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='finish', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='finish', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='op', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='op', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='finish', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='finish', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='op', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='op', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='finish', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='finish', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='op', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='op', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='finish', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='finish', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='op', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='op', secondary=True) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='finish', secondary=False) ... FAIL
+  test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='finish', secondary=True) ... FAIL
+test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) ... 
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive', 'occlusion'], linked_ao=False) ... FAIL
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive'], linked_ao=False) ... FAIL
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['normal'], linked_ao=False) ... FAIL
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['occlusion'], linked_ao=False) ... FAIL
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive', 'occlusion'], linked_ao=True) ... FAIL
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive'], linked_ao=True) ... FAIL
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['normal'], linked_ao=True) ... FAIL
+  test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['occlusion'], linked_ao=True) ... FAIL
+test_actual_run_resources_with_fake_system_ports (__main__.Review.test_actual_run_resources_with_fake_system_ports) ... ok
+test_exact_run_launch_block_child_can_observe_missing_started_json (__main__.Review.test_exact_run_launch_block_child_can_observe_missing_started_json) ... FAIL
+test_exact_snippet_at_documented_insertion_must_execute (__main__.Review.test_exact_snippet_at_documented_insertion_must_execute) ... ERROR
+test_partial_terminal_write_stays_unfinished (__main__.Review.test_partial_terminal_write_stays_unfinished) ... ok
+test_sigkill_in_actual_channel_body_leaves_exact_channel_unfinished (__main__.Review.test_sigkill_in_actual_channel_body_leaves_exact_channel_unfinished) ... FAIL
+test_snippet_with_out_defined_preserves_admission_and_resource_values (__main__.Review.test_snippet_with_out_defined_preserves_admission_and_resource_values) ... ERROR
+test_start_fsync_failure_prevents_bake (__main__.Review.test_start_fsync_failure_prevents_bake) ... ok
+test_started_receipt_is_written_after_launch_in_actual_run (__main__.Review.test_started_receipt_is_written_after_launch_in_actual_run) ... FAIL
+test_terminal_close_failure_must_not_report_success (__main__.Review.test_terminal_close_failure_must_not_report_success) ... ok
+test_terminal_fsync_failure_must_not_report_success (__main__.Review.test_terminal_fsync_failure_must_not_report_success) ... ok
+
+======================================================================
+ERROR: test_exact_snippet_at_documented_insertion_must_execute (__main__.Review.test_exact_snippet_at_documented_insertion_must_execute)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 211, in test_exact_snippet_at_documented_insertion_must_execute
+    exec(compile('\n'*11+SNIPPET,str(INSTR/'INTEGRATION.md'),'exec'),env)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-348f0295/packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md", line 36, in <module>
+    phase_log = PhaseLog(out / "bake-phases.jsonl")
+                         ^^^
+NameError: name 'out' is not defined. Did you mean: 'oct'?
+
+======================================================================
+ERROR: test_snippet_with_out_defined_preserves_admission_and_resource_values (__main__.Review.test_snippet_with_out_defined_preserves_admission_and_resource_values)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 224, in test_snippet_with_out_defined_preserves_admission_and_resource_values
+    with patch.dict(sys.modules,{'run':fake_run}),patch.object(os,'getpgrp',return_value=44):state=env['resource_snapshot']()
+                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-348f0295/packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md", line 26, in resource_snapshot
+    limits = json.loads((out / "launch-limits.json").read_text())
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/tmpo4t1mg3b/launch-limits.json'
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='op', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'error']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'error']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='op', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='finish', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'error']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'error']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RuntimeError', at='finish', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='op', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'interrupt']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'interrupt']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='op', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='finish', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'interrupt']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'interrupt']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='KeyboardInterrupt', at='finish', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='op', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'interrupt']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'interrupt']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='op', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='finish', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'interrupt']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'interrupt']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='SystemExit', at='finish', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='op', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'error']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'error']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='op', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='finish', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'error']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
++ ['success', 'error']
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='RootFailure', at='finish', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='op', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='op', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='finish', secondary=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) (failure='UnprintableFailure', at='finish', secondary=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 179, in test_actual_failure_paths_preserve_exception_and_cleanup
+    self.assertEqual([p['status'] for p in phases[-2:]],['success',expected])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['unfinished', 'unfinished'] != ['success', 'unfinished']
+
+First differing element 0:
+'unfinished'
+'success'
+
+- ['unfinished', 'unfinished']
+?    ^^^^^ ^^^
+
++ ['success', 'unfinished']
+?   + ^^^ ^
+
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive', 'occlusion'], linked_ao=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive'], linked_ao=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['normal'], linked_ao=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['occlusion'], linked_ao=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive', 'occlusion'], linked_ao=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['baseColor', 'roughness', 'metallic', 'normal', 'emissive'], linked_ao=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['normal'], linked_ao=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) (todo=['occlusion'], linked_ao=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 167, in test_actual_material_channels_state_order_return_output_all_paths
+    self.assertTrue(all(p['status']=='success' for p in phases))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_exact_run_launch_block_child_can_observe_missing_started_json (__main__.Review.test_exact_run_launch_block_child_can_observe_missing_started_json)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 259, in test_exact_run_launch_block_child_can_observe_missing_started_json
+    self.assertEqual(observed,['child sees missing started.json'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != ['child sees missing started.json']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'child sees missing started.json'
+
+- []
++ ['child sees missing started.json']
+
+======================================================================
+FAIL: test_sigkill_in_actual_channel_body_leaves_exact_channel_unfinished (__main__.Review.test_sigkill_in_actual_channel_body_leaves_exact_channel_unfinished)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 281, in test_sigkill_in_actual_channel_body_leaves_exact_channel_unfinished
+    self.assertEqual([(p['channel'],p['status']) for p in phases],[('baseColor','success'),('roughness','unfinished')])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [('baseColor', 'unfinished'), ('roughness', 'unfinished')] != [('baseColor', 'success'), ('roughness', 'unfinished')]
+
+First differing element 0:
+('baseColor', 'unfinished')
+('baseColor', 'success')
+
+- [('baseColor', 'unfinished'), ('roughness', 'unfinished')]
+?                  ^^^^^ ^^^
+
++ [('baseColor', 'success'), ('roughness', 'unfinished')]
+?                 + ^^^ ^
+
+
+======================================================================
+FAIL: test_started_receipt_is_written_after_launch_in_actual_run (__main__.Review.test_started_receipt_is_written_after_launch_in_actual_run)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mule-instrumentation-fixes-20261107-512q_6ho/adversarial_review.py", line 241, in test_started_receipt_is_written_after_launch_in_actual_run
+    self.assertEqual(lines,{'launch':175,'receipt':178})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'launch': 177, 'receipt': 180} != {'launch': 175, 'receipt': 178}
+- {'launch': 177, 'receipt': 180}
+?              ^               -
+
++ {'launch': 175, 'receipt': 178}
+?              ^              +
+
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.336s
+
+FAILED (failures=31, errors=2)
+
+EXIT 1
