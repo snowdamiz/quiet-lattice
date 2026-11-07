@@ -1,0 +1,20 @@
+{
+  "status": "STOPPED_OWNED_CPU_TESTS",
+  "commands": [
+    "revision05-controls.py --report prior74-first.json",
+    "revision06-controls.py --report new-first.json"
+  ],
+  "exitCodes": [
+    143,
+    143
+  ],
+  "reason": "Repeated exception observation copies during held-descriptor unwinding caused growing CPU memory; no native process was involved.",
+  "observedRSSKiB": [
+    975088,
+    6194816
+  ],
+  "partialStdoutControls": [
+    62,
+    8
+  ]
+}

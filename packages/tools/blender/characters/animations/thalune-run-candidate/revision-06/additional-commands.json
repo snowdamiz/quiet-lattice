@@ -1,0 +1,25 @@
+[
+  {
+    "name": "native-preflight",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expectedExit": 0
+  },
+  {
+    "name": "native-disabled",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+      "--execute"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 1,
+    "expectedExit": 1
+  }
+]

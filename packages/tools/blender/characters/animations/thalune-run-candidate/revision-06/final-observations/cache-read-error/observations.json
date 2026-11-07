@@ -1,0 +1,705 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-t86dumf8/cache-read-error/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 484447375,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794037136520825343,
+            "ctime": 1794037136520825343,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 484447376,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794037136520886052,
+            "ctime": 1794037136520886052,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 8,
+      "descriptors": [
+        {
+          "path": "/",
+          "parentFd": null,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "/",
+            "dev": 16777232,
+            "ino": 2,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 736,
+            "mtime": 1790233837000000000,
+            "ctime": 1790233837000000000,
+            "links": 23
+          },
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            },
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "private",
+          "parentFd": 3,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "private",
+            "dev": 16777232,
+            "ino": 22907066,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 192,
+            "mtime": 1793752979086280124,
+            "ctime": 1793752979086280124,
+            "links": 6
+          },
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            },
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "tmp",
+          "parentFd": 4,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "tmp",
+            "dev": 16777232,
+            "ino": 315902304,
+            "uid": 0,
+            "gid": 0,
+            "mode": 17407,
+            "bytes": 239616,
+            "mtime": 1794037135523923139,
+            "ctime": 1794037135523923139,
+            "links": 7488
+          },
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            },
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "t02-r5-controls-t86dumf8",
+          "parentFd": 5,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "t02-r5-controls-t86dumf8",
+            "dev": 16777232,
+            "ino": 484372913,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16832,
+            "bytes": 1888,
+            "mtime": 1794037136520754093,
+            "ctime": 1794037136520754093,
+            "links": 59
+          },
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            },
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "cache-read-error",
+          "parentFd": 6,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "cache-read-error",
+            "dev": 16777232,
+            "ino": 484447374,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794037136520791593,
+            "ctime": 1794037136520791593,
+            "links": 3
+          },
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            },
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "cache",
+          "parentFd": 7,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "cache",
+            "dev": 16777232,
+            "ino": 484447375,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794037136520825343,
+            "ctime": 1794037136520825343,
+            "links": 3
+          },
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            },
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "data",
+          "parentFd": 8,
+          "operation": "content",
+          "closed": true,
+          "opened": {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 484447376,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794037136520886052,
+            "ctime": 1794037136520886052,
+            "links": 1
+          },
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            },
+            "retainedObservationFields": []
+          }
+        }
+      ],
+      "lastEntry": "/private/tmp/t02-r5-controls-t86dumf8/cache-read-error/cache/data",
+      "files": [
+        {
+          "path": "/private/tmp/t02-r5-controls-t86dumf8/cache-read-error/cache/data",
+          "readBytes": 0,
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+            "details": {
+              "cmd": [
+                "inert-cache-read"
+              ],
+              "timeout": 1,
+              "output": "b'PARTIAL\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": [
+                  null,
+                  false,
+                  77
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+      "details": {
+        "cmd": [
+          "inert-cache-read"
+        ],
+        "timeout": 1,
+        "output": "b'PARTIAL\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": [
+            null,
+            false,
+            77
+          ]
+        },
+        "cacheRead": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-t86dumf8/cache-read-error/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 484447375,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037136520825343,
+                "ctime": 1794037136520825343,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 484447376,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794037136520886052,
+                "ctime": 1794037136520886052,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "descriptors": [
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                },
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 3,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                },
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 4,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 239616,
+                "mtime": 1794037135523923139,
+                "ctime": 1794037135523923139,
+                "links": 7488
+              },
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                },
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "t02-r5-controls-t86dumf8",
+              "parentFd": 5,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r5-controls-t86dumf8",
+                "dev": 16777232,
+                "ino": 484372913,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 1888,
+                "mtime": 1794037136520754093,
+                "ctime": 1794037136520754093,
+                "links": 59
+              },
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                },
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "cache-read-error",
+              "parentFd": 6,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "cache-read-error",
+                "dev": 16777232,
+                "ino": 484447374,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037136520791593,
+                "ctime": 1794037136520791593,
+                "links": 3
+              },
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                },
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "cache",
+              "parentFd": 7,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "cache",
+                "dev": 16777232,
+                "ino": 484447375,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037136520825343,
+                "ctime": 1794037136520825343,
+                "links": 3
+              },
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                },
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "data",
+              "parentFd": 8,
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 484447376,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794037136520886052,
+                "ctime": 1794037136520886052,
+                "links": 1
+              },
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                },
+                "retainedObservationFields": []
+              }
+            }
+          ],
+          "lastEntry": "/private/tmp/t02-r5-controls-t86dumf8/cache-read-error/cache/data",
+          "files": [
+            {
+              "path": "/private/tmp/t02-r5-controls-t86dumf8/cache-read-error/cache/data",
+              "readBytes": 0,
+              "failure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-cache-read']' timed out after 1 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-cache-read"
+                  ],
+                  "timeout": 1,
+                  "output": "b'PARTIAL\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": [
+                      null,
+                      false,
+                      77
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

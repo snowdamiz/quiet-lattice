@@ -1,0 +1,5391 @@
+[
+  {
+    "name": "timeout-normal",
+    "status": "PASS",
+    "original": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-rss']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "inert-rss"
+        ],
+        "timeout": 2,
+        "output": "b'PARTIAL\\x00\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": 17
+        }
+      }
+    },
+    "primary": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-rss']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "inert-rss"
+        ],
+        "timeout": 2,
+        "output": "b'PARTIAL\\x00\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": 17
+        }
+      }
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "TimeoutExpired",
+        "message": "Command '['inert-rss']' timed out after 2 seconds",
+        "details": {
+          "cmd": [
+            "inert-rss"
+          ],
+          "timeout": 2,
+          "output": "b'PARTIAL\\x00\\xff'",
+          "stderr": "b'ERR\\x80'",
+          "unknown": {
+            "keep": 17
+          }
+        }
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.00574687501648441,
+      "outputBytes": 0,
+      "freeBytesAfter": 37067923456,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "7901fdf14a3dc25be501280ce00db2742b0cde3c562d9fca4ab92dd3e5d00db3"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/result.json",
+          "status": "written",
+          "sha256": "ef54c851f1cca58d65de62f40d8ef55ae8764609c955b0a5efa4c309af03725e",
+          "bytes": 2262
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "8d85bac2c9d5c46c11d7e7b44c38167850c5eaa52df3b6c7f7e00772f0977547",
+          "bytes": 2360
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "TimeoutExpired",
+        "message": "Command '['inert-rss']' timed out after 2 seconds",
+        "details": {
+          "cmd": [
+            "inert-rss"
+          ],
+          "timeout": 2,
+          "output": "b'PARTIAL\\x00\\xff'",
+          "stderr": "b'ERR\\x80'",
+          "unknown": {
+            "keep": 17
+          }
+        }
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269743.782104333,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269743.782168916,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-rss']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "inert-rss"
+              ],
+              "timeout": 2,
+              "output": "b'PARTIAL\\x00\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": 17
+              }
+            }
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "TimeoutExpired",
+          "message": "Command '['inert-rss']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "inert-rss"
+            ],
+            "timeout": 2,
+            "output": "b'PARTIAL\\x00\\xff'",
+            "stderr": "b'ERR\\x80'",
+            "unknown": {
+              "keep": 17
+            }
+          }
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "AssertionError",
+          "message": "",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 3656,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "timeout-receipt-fail",
+    "status": "PASS",
+    "original": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-rss']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "inert-rss"
+        ],
+        "timeout": 2,
+        "output": "b'PARTIAL\\x00\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": 17
+        }
+      }
+    },
+    "primary": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-rss']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "inert-rss"
+        ],
+        "timeout": 2,
+        "output": "b'PARTIAL\\x00\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": 17
+        }
+      }
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "TimeoutExpired",
+        "message": "Command '['inert-rss']' timed out after 2 seconds",
+        "details": {
+          "cmd": [
+            "inert-rss"
+          ],
+          "timeout": 2,
+          "output": "b'PARTIAL\\x00\\xff'",
+          "stderr": "b'ERR\\x80'",
+          "unknown": {
+            "keep": 17
+          }
+        }
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.004158416006248444,
+      "outputBytes": 0,
+      "freeBytesAfter": 37067976704,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "TimeoutExpired",
+              "message": "Command '['inert-rss']' timed out after 2 seconds",
+              "details": {
+                "cmd": [
+                  "inert-rss"
+                ],
+                "timeout": 2,
+                "output": "b'PARTIAL\\x00\\xff'",
+                "stderr": "b'ERR\\x80'",
+                "unknown": {
+                  "keep": 17
+                }
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "bootstrapPortRestored": true,
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 269743.79242975,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 269743.792490291,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "failure": {
+                  "type": "TimeoutExpired",
+                  "message": "Command '['inert-rss']' timed out after 2 seconds",
+                  "details": {
+                    "cmd": [
+                      "inert-rss"
+                    ],
+                    "timeout": 2,
+                    "output": "b'PARTIAL\\x00\\xff'",
+                    "stderr": "b'ERR\\x80'",
+                    "unknown": {
+                      "keep": 17
+                    }
+                  }
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-rss']' timed out after 2 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-rss"
+                  ],
+                  "timeout": 2,
+                  "output": "b'PARTIAL\\x00\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": 17
+                  }
+                }
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "secondaryFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 487,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "2907a026a844b5d797bca3cf559a03bd34b700c4cceb9e887e74ac18520bb093"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "d63913fa6cd87844017be3dcf78944221758b447d79a5ab5059c6dd0d01133a9",
+          "bytes": 10692
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "8cfc9192d337de7ed14f0e4111d222aa07d479a8d50e2f527940b6508067adf5",
+          "bytes": 10791
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "TimeoutExpired",
+        "message": "Command '['inert-rss']' timed out after 2 seconds",
+        "details": {
+          "cmd": [
+            "inert-rss"
+          ],
+          "timeout": 2,
+          "output": "b'PARTIAL\\x00\\xff'",
+          "stderr": "b'ERR\\x80'",
+          "unknown": {
+            "keep": 17
+          }
+        }
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269743.79242975,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269743.792490291,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-rss']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "inert-rss"
+              ],
+              "timeout": 2,
+              "output": "b'PARTIAL\\x00\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": 17
+              }
+            }
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "TimeoutExpired",
+          "message": "Command '['inert-rss']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "inert-rss"
+            ],
+            "timeout": 2,
+            "output": "b'PARTIAL\\x00\\xff'",
+            "stderr": "b'ERR\\x80'",
+            "unknown": {
+              "keep": 17
+            }
+          }
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 487,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "missing-normal",
+    "status": "PASS",
+    "original": {
+      "type": "AssertionError",
+      "message": "RSS missing identity",
+      "details": {}
+    },
+    "primary": {
+      "type": "AssertionError",
+      "message": "RSS missing identity",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "RSS missing identity",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.003974999999627471,
+      "outputBytes": 0,
+      "freeBytesAfter": 37067894784,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "17081c0208c631b5d57759154ab1d673f95d9eade7b0a70f400006adf451956c"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/result.json",
+          "status": "written",
+          "sha256": "65baa9e4e62cb707e8ae9a289a21abeb854e8469ca066768f7680cd67f219261",
+          "bytes": 2048
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "e14d120829da7af989bac31291b8088e269de120aa11caa8a34f484e47906fea",
+          "bytes": 2146
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "RSS missing identity",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269743.798924375,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269743.798998583,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {},
+            "unknown": [
+              "keep",
+              null
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS missing identity",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "RSS missing identity",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "AssertionError",
+          "message": "",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 3610,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "missing-receipt-fail",
+    "status": "PASS",
+    "original": {
+      "type": "AssertionError",
+      "message": "RSS missing identity",
+      "details": {}
+    },
+    "primary": {
+      "type": "AssertionError",
+      "message": "RSS missing identity",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "RSS missing identity",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.003977791988290846,
+      "outputBytes": 0,
+      "freeBytesAfter": 37067837440,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "RSS missing identity",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "bootstrapPortRestored": true,
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 269743.804811541,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 269743.804893958,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {},
+                  "unknown": [
+                    "keep",
+                    null
+                  ]
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "failure": {
+                  "type": "AssertionError",
+                  "message": "RSS missing identity",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "AssertionError",
+                "message": "RSS missing identity",
+                "details": {}
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "secondaryFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 487,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "49fe699c49bd63c4492449627761a159fd462195349ac435a1a2c98858ec963b"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "49248ebd8b91cb12916dcb4f950f3f5099ebbc3b02e41bb71203cb4efed76718",
+          "bytes": 10480
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "408352f8ed0fe2f390c148f0e4bd770906ac9a5462988fc15e194219ab2dc953",
+          "bytes": 10579
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "RSS missing identity",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269743.804811541,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269743.804893958,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {},
+            "unknown": [
+              "keep",
+              null
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS missing identity",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "RSS missing identity",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 487,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "excess-normal",
+    "status": "PASS",
+    "original": {
+      "type": "AssertionError",
+      "message": "Aggregate owned RSS exceeds 8 GiB",
+      "details": {}
+    },
+    "primary": {
+      "type": "AssertionError",
+      "message": "Aggregate owned RSS exceeds 8 GiB",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "Aggregate owned RSS exceeds 8 GiB",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.005048750026617199,
+      "outputBytes": 0,
+      "freeBytesAfter": 37067767808,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "59fd135302de136535dc0103054d9da252d01a82b78e424c1a69d5ef15c4c27e"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/result.json",
+          "status": "written",
+          "sha256": "779bd3514b6023e600ae473e27d9bcd11f7fb1e4ca4a84455194b7dcf3902ba6",
+          "bytes": 2057
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "c78b08c8ce8596f5498cd675ddbef5f4c5a57791f86ecd4c5cc955195d56044e",
+          "bytes": 2155
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "Aggregate owned RSS exceeds 8 GiB",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269743.8118965,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269743.811939166,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 8589934593
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 8589934593,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Aggregate owned RSS exceeds 8 GiB",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Aggregate owned RSS exceeds 8 GiB",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "AssertionError",
+          "message": "",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 3654,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "excess-receipt-fail",
+    "status": "PASS",
+    "original": {
+      "type": "AssertionError",
+      "message": "Aggregate owned RSS exceeds 8 GiB",
+      "details": {}
+    },
+    "primary": {
+      "type": "AssertionError",
+      "message": "Aggregate owned RSS exceeds 8 GiB",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "Aggregate owned RSS exceeds 8 GiB",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.003801999962888658,
+      "outputBytes": 0,
+      "freeBytesAfter": 37067718656,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "Aggregate owned RSS exceeds 8 GiB",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "bootstrapPortRestored": true,
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 269743.819078041,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 269743.819119791,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 8589934593
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 8589934593,
+                "failure": {
+                  "type": "AssertionError",
+                  "message": "Aggregate owned RSS exceeds 8 GiB",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "AssertionError",
+                "message": "Aggregate owned RSS exceeds 8 GiB",
+                "details": {}
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "secondaryFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 486,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "76c84d3c0cf5e2b5db8ef3c08779785a6bc9ca53ad27e2261a8ea875127a0ae8"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "4b4f9ee6a5c2b5c67f913fcac128195428fb705972098f2bd55d452440128107",
+          "bytes": 10522
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "371eeeb0b7077a3a38e104f100287e4799e74ab84f4a168b51bb71acea57cd7b",
+          "bytes": 10621
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "Aggregate owned RSS exceeds 8 GiB",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269743.819078041,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269743.819119791,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 8589934593
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 8589934593,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Aggregate owned RSS exceeds 8 GiB",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Aggregate owned RSS exceeds 8 GiB",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 486,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "deadline-normal",
+    "status": "PASS",
+    "original": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "primary": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "DeadlineExpired",
+        "message": "station phase deadline expired",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 3.0115747500094585,
+      "outputBytes": 0,
+      "freeBytesAfter": 37065220096,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "581ceb3022a81984b874b4b53ebf75690d608a542c8527c179c8355cebeda0f9"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/result.json",
+          "status": "written",
+          "sha256": "c27c1e6240fa57cdf345adc0a6068792fb07ddb067c999342ddbdf44e42b9d5d",
+          "bytes": 2061
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "3a7411604edaef8922d6a23c883f5ea7b2833d45ab4f4520be97e3048a919cd5",
+          "bytes": 2159
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "DeadlineExpired",
+        "message": "station phase deadline expired",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269743.82630975,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269743.826358041,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "DeadlineExpired",
+          "message": "station phase deadline expired",
+          "details": {}
+        }
+      ],
+      "outcome": "timed_out",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "AssertionError",
+          "message": "",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 2978,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "deadline-receipt-fail",
+    "status": "PASS",
+    "original": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "primary": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "DeadlineExpired",
+        "message": "station phase deadline expired",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 3.01299029099755,
+      "outputBytes": 0,
+      "freeBytesAfter": 37050466304,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "DeadlineExpired",
+              "message": "station phase deadline expired",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "bootstrapPortRestored": true,
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 269746.840583375,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 269746.840635333,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "failure": {
+                  "type": "DeadlineExpired",
+                  "message": "station phase deadline expired",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "DeadlineExpired",
+                "message": "station phase deadline expired",
+                "details": {}
+              }
+            ],
+            "outcome": "timed_out",
+            "exits": {},
+            "secondaryFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 488,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "ca4d3e02443554be325eec0b6e7ad243bf0711044396b6809eebde3f7e168411"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "825353dd08c5a774da7f9e7d51edbca42643196540067d24aa98574912630235",
+          "bytes": 9639
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "92eb6d9237e50e46a6e36ee09036453364657dc486b4f253e54bf88317ee2335",
+          "bytes": 9737
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "DeadlineExpired",
+        "message": "station phase deadline expired",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "bootstrapPortRestored": true,
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 269746.840583375,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 269746.840635333,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "DeadlineExpired",
+          "message": "station phase deadline expired",
+          "details": {}
+        }
+      ],
+      "outcome": "timed_out",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 488,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "rss-parser-missing",
+    "status": "PASS",
+    "result": {
+      "type": "AssertionError",
+      "message": "Missing/duplicate RSS identities",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-parser-duplicate",
+    "status": "PASS",
+    "result": {
+      "type": "AssertionError",
+      "message": "Missing/duplicate RSS identities",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-parser-bad",
+    "status": "PASS",
+    "result": {
+      "type": "AssertionError",
+      "message": "Unreadable RSS",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-parser-happy",
+    "status": "PASS",
+    "result": {
+      "bytesByPid": {
+        "100": 5120,
+        "101": 2048
+      },
+      "stdout": "100 5\n101 2\n",
+      "stderr": ""
+    }
+  },
+  {
+    "name": "rss-empty",
+    "status": "PASS",
+    "observations": [
+      {
+        "monotonic": 269749.862413625,
+        "limitBytes": 8589934592,
+        "quota": false,
+        "kernelBefore": {
+          "live": 0
+        },
+        "members": [],
+        "failure": {
+          "type": "AssertionError",
+          "message": "Empty/duplicate owned cohort",
+          "details": {}
+        }
+      }
+    ],
+    "result": {
+      "type": "AssertionError",
+      "message": "Empty/duplicate owned cohort",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-duplicate-after",
+    "status": "PASS",
+    "observations": [
+      {
+        "monotonic": 269749.8643355,
+        "limitBytes": 8589934592,
+        "quota": false,
+        "kernelBefore": {
+          "live": 1
+        },
+        "members": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "before": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "rss": {
+          "bytesByPid": {
+            "100": 1
+          }
+        },
+        "after": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "membersAfter": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          },
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "kernelAfter": {
+          "live": 1
+        },
+        "failure": {
+          "type": "AssertionError",
+          "message": "RSS cohort birth/departure/duplicate during sample",
+          "details": {}
+        }
+      }
+    ],
+    "result": {
+      "type": "AssertionError",
+      "message": "RSS cohort birth/departure/duplicate during sample",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-uid-after",
+    "status": "PASS",
+    "observations": [
+      {
+        "monotonic": 269749.866659791,
+        "limitBytes": 8589934592,
+        "quota": false,
+        "kernelBefore": {
+          "live": 1
+        },
+        "members": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "before": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "rss": {
+          "bytesByPid": {
+            "100": 1
+          }
+        },
+        "after": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 502,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "membersAfter": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "kernelAfter": {
+          "live": 1
+        },
+        "failure": {
+          "type": "AssertionError",
+          "message": "RSS reuse/departure",
+          "details": {}
+        }
+      }
+    ],
+    "result": {
+      "type": "AssertionError",
+      "message": "RSS reuse/departure",
+      "details": {}
+    }
+  },
+  {
+    "name": "cache-over-limit-reads-to-eof",
+    "status": "PASS",
+    "readBytes": 0,
+    "opens": 0,
+    "size": 402653185,
+    "failure": {
+      "type": "AssertionError",
+      "message": "Vite snapshot exceeds archive reserve",
+      "details": {
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/oversized-cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 484452309,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037143297330227,
+                "ctime": 1794037143297330227,
+                "links": 3
+              },
+              {
+                "path": "large",
+                "dev": 16777232,
+                "ino": 484452310,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 402653185,
+                "mtime": 1794037143297359269,
+                "ctime": 1794037143297359269,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 402653185,
+          "descriptors": [
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 3,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 4,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 239680,
+                "mtime": 1794037142700143690,
+                "ctime": 1794037142700143690,
+                "links": 7490
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "t02-r6-correction-ozalgm6_",
+              "parentFd": 5,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r6-correction-ozalgm6_",
+                "dev": 16777232,
+                "ino": 483239470,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 1792,
+                "mtime": 1794037142699893606,
+                "ctime": 1794037142699893606,
+                "links": 56
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "final-checks-guarded",
+              "parentFd": 6,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "final-checks-guarded",
+                "dev": 16777232,
+                "ino": 484358285,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 416,
+                "mtime": 1794037082140199288,
+                "ctime": 1794037082140199288,
+                "links": 13
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "prior-controls",
+              "parentFd": 7,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "prior-controls",
+                "dev": 16777232,
+                "ino": 484359903,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 2112,
+                "mtime": 1794037137214833812,
+                "ctime": 1794037137214833812,
+                "links": 66
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "adverse-green",
+              "parentFd": 8,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "adverse-green",
+                "dev": 16777232,
+                "ino": 484451633,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 352,
+                "mtime": 1794037143297280769,
+                "ctime": 1794037143297280769,
+                "links": 11
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "oversized-cache",
+              "parentFd": 9,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "oversized-cache",
+                "dev": 16777232,
+                "ino": 484452309,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037143297330227,
+                "ctime": 1794037143297330227,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            }
+          ],
+          "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/oversized-cache/large"
+        }
+      }
+    }
+  },
+  {
+    "name": "cache-stat-open-FIFO",
+    "status": "PASS",
+    "failure": {
+      "type": "AssertionError",
+      "message": "Cache descriptor type refused",
+      "details": {
+        "cacheRead": {
+          "paths": [
+            "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 484452311,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037143300236107,
+                "ctime": 1794037143300236107,
+                "links": 3
+              },
+              {
+                "path": "small",
+                "dev": 16777232,
+                "ino": 484452312,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 5,
+                "mtime": 1794037143300266774,
+                "ctime": 1794037143300266774,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 5,
+          "descriptors": [
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 3,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 4,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 239680,
+                "mtime": 1794037142700143690,
+                "ctime": 1794037142700143690,
+                "links": 7490
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "t02-r6-correction-ozalgm6_",
+              "parentFd": 5,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r6-correction-ozalgm6_",
+                "dev": 16777232,
+                "ino": 483239470,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 1792,
+                "mtime": 1794037142699893606,
+                "ctime": 1794037142699893606,
+                "links": 56
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "final-checks-guarded",
+              "parentFd": 6,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "final-checks-guarded",
+                "dev": 16777232,
+                "ino": 484358285,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 416,
+                "mtime": 1794037082140199288,
+                "ctime": 1794037082140199288,
+                "links": 13
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "prior-controls",
+              "parentFd": 7,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "prior-controls",
+                "dev": 16777232,
+                "ino": 484359903,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 2112,
+                "mtime": 1794037137214833812,
+                "ctime": 1794037137214833812,
+                "links": 66
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "adverse-green",
+              "parentFd": 8,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "adverse-green",
+                "dev": 16777232,
+                "ino": 484451633,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 384,
+                "mtime": 1794037143300191191,
+                "ctime": 1794037143300191191,
+                "links": 12
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "fifo-cache",
+              "parentFd": 9,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "fifo-cache",
+                "dev": 16777232,
+                "ino": 484452311,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037143300236107,
+                "ctime": 1794037143300236107,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "small",
+              "parentFd": 10,
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "small",
+                "dev": 16777232,
+                "ino": 484452313,
+                "uid": 501,
+                "gid": 0,
+                "mode": 4516,
+                "bytes": 0,
+                "mtime": 1794037143300632566,
+                "ctime": 1794037143300643483,
+                "links": 1
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": []
+              }
+            }
+          ],
+          "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache/small",
+          "files": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache/small",
+              "readBytes": 0,
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "observations": [
+      {
+        "beforeInventory": {
+          "paths": [
+            "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 484452311,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037143300236107,
+                "ctime": 1794037143300236107,
+                "links": 3
+              },
+              {
+                "path": "small",
+                "dev": 16777232,
+                "ino": 484452312,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 5,
+                "mtime": 1794037143300266774,
+                "ctime": 1794037143300266774,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 5,
+          "descriptors": [
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 3,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 4,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 239680,
+                "mtime": 1794037142700143690,
+                "ctime": 1794037142700143690,
+                "links": 7490
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "t02-r6-correction-ozalgm6_",
+              "parentFd": 5,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r6-correction-ozalgm6_",
+                "dev": 16777232,
+                "ino": 483239470,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 1792,
+                "mtime": 1794037142699893606,
+                "ctime": 1794037142699893606,
+                "links": 56
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "final-checks-guarded",
+              "parentFd": 6,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "final-checks-guarded",
+                "dev": 16777232,
+                "ino": 484358285,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 416,
+                "mtime": 1794037082140199288,
+                "ctime": 1794037082140199288,
+                "links": 13
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "prior-controls",
+              "parentFd": 7,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "prior-controls",
+                "dev": 16777232,
+                "ino": 484359903,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 2112,
+                "mtime": 1794037137214833812,
+                "ctime": 1794037137214833812,
+                "links": 66
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "adverse-green",
+              "parentFd": 8,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "adverse-green",
+                "dev": 16777232,
+                "ino": 484451633,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 384,
+                "mtime": 1794037143300191191,
+                "ctime": 1794037143300191191,
+                "links": 12
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "fifo-cache",
+              "parentFd": 9,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "fifo-cache",
+                "dev": 16777232,
+                "ino": 484452311,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794037143300236107,
+                "ctime": 1794037143300236107,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "small",
+              "parentFd": 10,
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "small",
+                "dev": 16777232,
+                "ino": 484452313,
+                "uid": 501,
+                "gid": 0,
+                "mode": 4516,
+                "bytes": 0,
+                "mtime": 1794037143300632566,
+                "ctime": 1794037143300643483,
+                "links": 1
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {},
+                "retainedObservationFields": []
+              }
+            }
+          ],
+          "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache/small",
+          "files": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache/small",
+              "readBytes": 0,
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {}
+              }
+            }
+          ]
+        },
+        "failure": {
+          "type": "AssertionError",
+          "message": "Cache descriptor type refused",
+          "details": {
+            "cacheRead": {
+              "paths": [
+                "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache"
+              ],
+              "trees": [
+                [
+                  {
+                    "path": ".",
+                    "dev": 16777232,
+                    "ino": 484452311,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 96,
+                    "mtime": 1794037143300236107,
+                    "ctime": 1794037143300236107,
+                    "links": 3
+                  },
+                  {
+                    "path": "small",
+                    "dev": 16777232,
+                    "ino": 484452312,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 33188,
+                    "bytes": 5,
+                    "mtime": 1794037143300266774,
+                    "ctime": 1794037143300266774,
+                    "links": 1
+                  }
+                ]
+              ],
+              "entriesSeen": 2,
+              "statBytes": 5,
+              "descriptors": [
+                {
+                  "path": "/",
+                  "parentFd": null,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "/",
+                    "dev": 16777232,
+                    "ino": 2,
+                    "uid": 0,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 736,
+                    "mtime": 1790233837000000000,
+                    "ctime": 1790233837000000000,
+                    "links": 23
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "private",
+                  "parentFd": 3,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "private",
+                    "dev": 16777232,
+                    "ino": 22907066,
+                    "uid": 0,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 192,
+                    "mtime": 1793752979086280124,
+                    "ctime": 1793752979086280124,
+                    "links": 6
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "tmp",
+                  "parentFd": 4,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "tmp",
+                    "dev": 16777232,
+                    "ino": 315902304,
+                    "uid": 0,
+                    "gid": 0,
+                    "mode": 17407,
+                    "bytes": 239680,
+                    "mtime": 1794037142700143690,
+                    "ctime": 1794037142700143690,
+                    "links": 7490
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "t02-r6-correction-ozalgm6_",
+                  "parentFd": 5,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "t02-r6-correction-ozalgm6_",
+                    "dev": 16777232,
+                    "ino": 483239470,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16832,
+                    "bytes": 1792,
+                    "mtime": 1794037142699893606,
+                    "ctime": 1794037142699893606,
+                    "links": 56
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "final-checks-guarded",
+                  "parentFd": 6,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "final-checks-guarded",
+                    "dev": 16777232,
+                    "ino": 484358285,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 416,
+                    "mtime": 1794037082140199288,
+                    "ctime": 1794037082140199288,
+                    "links": 13
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "prior-controls",
+                  "parentFd": 7,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "prior-controls",
+                    "dev": 16777232,
+                    "ino": 484359903,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 2112,
+                    "mtime": 1794037137214833812,
+                    "ctime": 1794037137214833812,
+                    "links": 66
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "adverse-green",
+                  "parentFd": 8,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "adverse-green",
+                    "dev": 16777232,
+                    "ino": 484451633,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 384,
+                    "mtime": 1794037143300191191,
+                    "ctime": 1794037143300191191,
+                    "links": 12
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "fifo-cache",
+                  "parentFd": 9,
+                  "operation": "directory",
+                  "closed": true,
+                  "opened": {
+                    "path": "fifo-cache",
+                    "dev": 16777232,
+                    "ino": 484452311,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 96,
+                    "mtime": 1794037143300236107,
+                    "ctime": 1794037143300236107,
+                    "links": 3
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": [
+                      "cacheRead"
+                    ]
+                  }
+                },
+                {
+                  "path": "small",
+                  "parentFd": 10,
+                  "operation": "content",
+                  "closed": true,
+                  "opened": {
+                    "path": "small",
+                    "dev": 16777232,
+                    "ino": 484452313,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 4516,
+                    "bytes": 0,
+                    "mtime": 1794037143300632566,
+                    "ctime": 1794037143300643483,
+                    "links": 1
+                  },
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {},
+                    "retainedObservationFields": []
+                  }
+                }
+              ],
+              "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache/small",
+              "files": [
+                {
+                  "path": "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green/fifo-cache/small",
+                  "readBytes": 0,
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Cache descriptor type refused",
+                    "details": {}
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+]

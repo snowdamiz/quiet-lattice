@@ -1,0 +1,2317 @@
+{
+  "status": "DEFECT_REPRODUCED",
+  "scratch": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c",
+  "result": {
+    "status": "HOLD",
+    "primaryFailure": {
+      "type": "RuntimeError",
+      "message": "REVIEW_STOP_BEFORE_PRIVATE_ALLOCATION",
+      "details": {}
+    },
+    "runtimeAuthorization": false,
+    "dispatchFailure": {
+      "type": "AssertionError",
+      "message": "",
+      "details": {}
+    },
+    "terminalAudit": [
+      {
+        "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "releaseProved": false,
+        "failure": {
+          "type": "AssertionError",
+          "message": "Unprovable attempted allocation",
+          "details": {}
+        }
+      }
+    ],
+    "terminalAuditFailures": [
+      {
+        "type": "AssertionError",
+        "message": "Unprovable attempted allocation",
+        "details": {},
+        "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/receipt.json"
+      },
+      {
+        "type": "AssertionError",
+        "message": "Attempt cleanup remains unproved: /private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "details": {},
+        "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/receipt.json"
+      },
+      {
+        "type": "TerminalAttemptAccountingFailure",
+        "message": "Every allocation attempt requires its own positive terminal audit",
+        "attempts": 1,
+        "handles": 1,
+        "audits": 1
+      }
+    ],
+    "nativeJobs": 1,
+    "pipelineSeconds": 0.0058470829972065985,
+    "outputBytes": 0,
+    "freeBytesAfter": 59873136640,
+    "terminalReleaseProved": false,
+    "receiptFallbacks": [
+      {
+        "attemptPath": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "receipt": {
+          "name": "motion-thalune-run-lod0",
+          "primaryFailure": {
+            "type": "RuntimeError",
+            "message": "REVIEW_STOP_BEFORE_PRIVATE_ALLOCATION",
+            "details": {}
+          },
+          "cleanupFailure": {
+            "type": "AssertionError",
+            "message": "Retain allocation: no durable owned boundary",
+            "details": {}
+          },
+          "persistenceFailures": [],
+          "terminal": null,
+          "cacheObservations": [
+            {
+              "beforeInventory": {
+                "paths": [
+                  "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                ],
+                "trees": [
+                  [
+                    {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1,
+                      "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                    }
+                  ]
+                ],
+                "entriesSeen": 2,
+                "statBytes": 8,
+                "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                "descriptors": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                    "operation": "directory",
+                    "closed": true,
+                    "opened": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    "after": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    }
+                  },
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "operation": "content",
+                    "closed": true,
+                    "opened": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    },
+                    "after": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    }
+                  }
+                ],
+                "files": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "readBytes": 8,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ],
+                "contentBytesRead": 8,
+                "afterInventory": {
+                  "paths": [
+                    "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                  ],
+                  "trees": [
+                    [
+                      {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      {
+                        "path": "data",
+                        "dev": 16777232,
+                        "ino": 483240472,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 33188,
+                        "bytes": 8,
+                        "mtime": 1794035767505892825,
+                        "ctime": 1794035767505892825,
+                        "links": 1
+                      }
+                    ]
+                  ],
+                  "entriesSeen": 2,
+                  "statBytes": 8,
+                  "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                  "descriptors": [
+                    {
+                      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                      "operation": "directory",
+                      "closed": true,
+                      "opened": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      "after": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      }
+                    }
+                  ]
+                }
+              },
+              "treesBefore": [
+                [
+                  {
+                    "path": ".",
+                    "dev": 16777232,
+                    "ino": 483240471,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 96,
+                    "mtime": 1794035767505842867,
+                    "ctime": 1794035767505842867,
+                    "links": 3
+                  },
+                  {
+                    "path": "data",
+                    "dev": 16777232,
+                    "ino": 483240472,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 33188,
+                    "bytes": 8,
+                    "mtime": 1794035767505892825,
+                    "ctime": 1794035767505892825,
+                    "links": 1,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ]
+              ],
+              "openFiles": {
+                "owners": [],
+                "controllerIdentity": {
+                  "pid": 27375,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501
+                },
+                "observedOwners": []
+              },
+              "afterInventory": {
+                "paths": [
+                  "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                ],
+                "trees": [
+                  [
+                    {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1,
+                      "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                    }
+                  ]
+                ],
+                "entriesSeen": 2,
+                "statBytes": 8,
+                "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                "descriptors": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                    "operation": "directory",
+                    "closed": true,
+                    "opened": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    "after": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    }
+                  },
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "operation": "content",
+                    "closed": true,
+                    "opened": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    },
+                    "after": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    }
+                  }
+                ],
+                "files": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "readBytes": 8,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ],
+                "contentBytesRead": 8,
+                "afterInventory": {
+                  "paths": [
+                    "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                  ],
+                  "trees": [
+                    [
+                      {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      {
+                        "path": "data",
+                        "dev": 16777232,
+                        "ino": 483240472,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 33188,
+                        "bytes": 8,
+                        "mtime": 1794035767505892825,
+                        "ctime": 1794035767505892825,
+                        "links": 1
+                      }
+                    ]
+                  ],
+                  "entriesSeen": 2,
+                  "statBytes": 8,
+                  "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                  "descriptors": [
+                    {
+                      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                      "operation": "directory",
+                      "closed": true,
+                      "opened": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      "after": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      }
+                    }
+                  ]
+                }
+              },
+              "treesAfter": [
+                [
+                  {
+                    "path": ".",
+                    "dev": 16777232,
+                    "ino": 483240471,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 96,
+                    "mtime": 1794035767505842867,
+                    "ctime": 1794035767505842867,
+                    "links": 3
+                  },
+                  {
+                    "path": "data",
+                    "dev": 16777232,
+                    "ino": 483240472,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 33188,
+                    "bytes": 8,
+                    "mtime": 1794035767505892825,
+                    "ctime": 1794035767505892825,
+                    "links": 1,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ]
+              ],
+              "accepted": true
+            },
+            {
+              "allocation": {
+                "lock": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/spent-lock",
+                "archive": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention",
+                "created": true,
+                "identity": [
+                  16777232,
+                  483240480,
+                  501
+                ]
+              }
+            },
+            {
+              "beforeInventory": {
+                "paths": [
+                  "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                ],
+                "trees": [
+                  [
+                    {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1,
+                      "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                    }
+                  ]
+                ],
+                "entriesSeen": 2,
+                "statBytes": 8,
+                "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                "descriptors": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                    "operation": "directory",
+                    "closed": true,
+                    "opened": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    "after": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    }
+                  },
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "operation": "content",
+                    "closed": true,
+                    "opened": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    },
+                    "after": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    }
+                  }
+                ],
+                "files": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "readBytes": 8,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ],
+                "contentBytesRead": 8,
+                "afterInventory": {
+                  "paths": [
+                    "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                  ],
+                  "trees": [
+                    [
+                      {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      {
+                        "path": "data",
+                        "dev": 16777232,
+                        "ino": 483240472,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 33188,
+                        "bytes": 8,
+                        "mtime": 1794035767505892825,
+                        "ctime": 1794035767505892825,
+                        "links": 1
+                      }
+                    ]
+                  ],
+                  "entriesSeen": 2,
+                  "statBytes": 8,
+                  "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                  "descriptors": [
+                    {
+                      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                      "operation": "directory",
+                      "closed": true,
+                      "opened": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      "after": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      }
+                    }
+                  ]
+                }
+              },
+              "treesBefore": [
+                [
+                  {
+                    "path": ".",
+                    "dev": 16777232,
+                    "ino": 483240471,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 96,
+                    "mtime": 1794035767505842867,
+                    "ctime": 1794035767505842867,
+                    "links": 3
+                  },
+                  {
+                    "path": "data",
+                    "dev": 16777232,
+                    "ino": 483240472,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 33188,
+                    "bytes": 8,
+                    "mtime": 1794035767505892825,
+                    "ctime": 1794035767505892825,
+                    "links": 1,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ]
+              ],
+              "openFiles": {
+                "owners": [],
+                "controllerIdentity": {
+                  "pid": 27375,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501
+                },
+                "observedOwners": []
+              },
+              "afterInventory": {
+                "paths": [
+                  "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                ],
+                "trees": [
+                  [
+                    {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1,
+                      "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                    }
+                  ]
+                ],
+                "entriesSeen": 2,
+                "statBytes": 8,
+                "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                "descriptors": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                    "operation": "directory",
+                    "closed": true,
+                    "opened": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    },
+                    "after": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240471,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767505842867,
+                      "ctime": 1794035767505842867,
+                      "links": 3
+                    }
+                  },
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "operation": "content",
+                    "closed": true,
+                    "opened": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    },
+                    "after": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    }
+                  }
+                ],
+                "files": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "readBytes": 8,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ],
+                "contentBytesRead": 8,
+                "afterInventory": {
+                  "paths": [
+                    "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                  ],
+                  "trees": [
+                    [
+                      {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      {
+                        "path": "data",
+                        "dev": 16777232,
+                        "ino": 483240472,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 33188,
+                        "bytes": 8,
+                        "mtime": 1794035767505892825,
+                        "ctime": 1794035767505892825,
+                        "links": 1
+                      }
+                    ]
+                  ],
+                  "entriesSeen": 2,
+                  "statBytes": 8,
+                  "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                  "descriptors": [
+                    {
+                      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                      "operation": "directory",
+                      "closed": true,
+                      "opened": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      "after": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      }
+                    }
+                  ]
+                }
+              },
+              "treesAfter": [
+                [
+                  {
+                    "path": ".",
+                    "dev": 16777232,
+                    "ino": 483240471,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 16877,
+                    "bytes": 96,
+                    "mtime": 1794035767505842867,
+                    "ctime": 1794035767505842867,
+                    "links": 3
+                  },
+                  {
+                    "path": "data",
+                    "dev": 16777232,
+                    "ino": 483240472,
+                    "uid": 501,
+                    "gid": 0,
+                    "mode": 33188,
+                    "bytes": 8,
+                    "mtime": 1794035767505892825,
+                    "ctime": 1794035767505892825,
+                    "links": 1,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ]
+              ],
+              "accepted": true
+            },
+            {
+              "copy": {
+                "name": "before",
+                "destination": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention/before",
+                "beforeInventory": {
+                  "paths": [
+                    "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                  ],
+                  "trees": [
+                    [
+                      {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      {
+                        "path": "data",
+                        "dev": 16777232,
+                        "ino": 483240472,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 33188,
+                        "bytes": 8,
+                        "mtime": 1794035767505892825,
+                        "ctime": 1794035767505892825,
+                        "links": 1
+                      }
+                    ]
+                  ],
+                  "entriesSeen": 2,
+                  "statBytes": 8,
+                  "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                  "descriptors": [
+                    {
+                      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                      "operation": "directory",
+                      "closed": true,
+                      "opened": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      "after": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      }
+                    }
+                  ]
+                },
+                "destinations": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention/before/0/data",
+                    "closed": true,
+                    "opened": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240487,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33152,
+                      "bytes": 0,
+                      "mtime": 1794035767516113803,
+                      "ctime": 1794035767516124553,
+                      "links": 1
+                    }
+                  }
+                ],
+                "descriptors": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention/before/0",
+                    "operation": "directory",
+                    "closed": true,
+                    "opened": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240486,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 64,
+                      "mtime": 1794035767516031761,
+                      "ctime": 1794035767516057803,
+                      "links": 2
+                    },
+                    "after": {
+                      "path": ".",
+                      "dev": 16777232,
+                      "ino": 483240486,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 16877,
+                      "bytes": 96,
+                      "mtime": 1794035767516114886,
+                      "ctime": 1794035767516114886,
+                      "links": 3
+                    }
+                  },
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "operation": "content",
+                    "closed": true,
+                    "opened": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    },
+                    "after": {
+                      "path": "data",
+                      "dev": 16777232,
+                      "ino": 483240472,
+                      "uid": 501,
+                      "gid": 0,
+                      "mode": 33188,
+                      "bytes": 8,
+                      "mtime": 1794035767505892825,
+                      "ctime": 1794035767505892825,
+                      "links": 1
+                    }
+                  }
+                ],
+                "files": [
+                  {
+                    "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                    "readBytes": 8,
+                    "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+                  }
+                ],
+                "contentBytesRead": 8,
+                "afterInventory": {
+                  "paths": [
+                    "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+                  ],
+                  "trees": [
+                    [
+                      {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      {
+                        "path": "data",
+                        "dev": 16777232,
+                        "ino": 483240472,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 33188,
+                        "bytes": 8,
+                        "mtime": 1794035767505892825,
+                        "ctime": 1794035767505892825,
+                        "links": 1
+                      }
+                    ]
+                  ],
+                  "entriesSeen": 2,
+                  "statBytes": 8,
+                  "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+                  "descriptors": [
+                    {
+                      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                      "operation": "directory",
+                      "closed": true,
+                      "opened": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      },
+                      "after": {
+                        "path": ".",
+                        "dev": 16777232,
+                        "ino": 483240471,
+                        "uid": 501,
+                        "gid": 0,
+                        "mode": 16877,
+                        "bytes": 96,
+                        "mtime": 1794035767505842867,
+                        "ctime": 1794035767505842867,
+                        "links": 3
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "argv": [
+            "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+            "--import",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs",
+            "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/entry.mjs",
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
+            "motion-thalune-run-lod0",
+            "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/packet/captures/motion-thalune-run-lod0"
+          ],
+          "phase": "allocation",
+          "ownedAllocation": {},
+          "releaseAudits": []
+        }
+      }
+    ],
+    "jobs": [
+      {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "sha256": "48c5010aa5abb3af39cad9046c4ae5dafe31dc0009a0828d2af669c4eabd8eb3"
+      }
+    ],
+    "terminalPersistenceFailures": [],
+    "terminalDelivery": {
+      "proof": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/result.json",
+        "status": "written",
+        "sha256": "aec4517f8f4b8776734fd8bfabfcdfc4a5c099be2a5faa5376d0ed0981f6702d",
+        "bytes": 42759
+      },
+      "packet": {
+        "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/packet/integration-result.json",
+        "status": "written",
+        "completeObservations": true,
+        "sha256": "16c5935eb7f9192c6829bb976dafb0de67e452542e5b981f4e0869f1359abb90",
+        "bytes": 42858
+      },
+      "completeObservationsPersisted": true,
+      "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+    }
+  },
+  "receipt": {
+    "name": "motion-thalune-run-lod0",
+    "primaryFailure": {
+      "type": "RuntimeError",
+      "message": "REVIEW_STOP_BEFORE_PRIVATE_ALLOCATION",
+      "details": {}
+    },
+    "cleanupFailure": {
+      "type": "AssertionError",
+      "message": "Retain allocation: no durable owned boundary",
+      "details": {}
+    },
+    "persistenceFailures": [],
+    "terminal": null,
+    "cacheObservations": [
+      {
+        "beforeInventory": {
+          "paths": [
+            "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1,
+                "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              },
+              "after": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "readBytes": 8,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ],
+          "contentBytesRead": 8,
+          "afterInventory": {
+            "paths": [
+              "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+            ],
+            "trees": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                {
+                  "path": "data",
+                  "dev": 16777232,
+                  "ino": 483240472,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 33188,
+                  "bytes": 8,
+                  "mtime": 1794035767505892825,
+                  "ctime": 1794035767505892825,
+                  "links": 1
+                }
+              ]
+            ],
+            "entriesSeen": 2,
+            "statBytes": 8,
+            "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+            "descriptors": [
+              {
+                "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                "operation": "directory",
+                "closed": true,
+                "opened": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                "after": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                }
+              }
+            ]
+          }
+        },
+        "treesBefore": [
+          [
+            {
+              "path": ".",
+              "dev": 16777232,
+              "ino": 483240471,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794035767505842867,
+              "ctime": 1794035767505842867,
+              "links": 3
+            },
+            {
+              "path": "data",
+              "dev": 16777232,
+              "ino": 483240472,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 8,
+              "mtime": 1794035767505892825,
+              "ctime": 1794035767505892825,
+              "links": 1,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ]
+        ],
+        "openFiles": {
+          "owners": [],
+          "controllerIdentity": {
+            "pid": 27375,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501
+          },
+          "observedOwners": []
+        },
+        "afterInventory": {
+          "paths": [
+            "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1,
+                "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              },
+              "after": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "readBytes": 8,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ],
+          "contentBytesRead": 8,
+          "afterInventory": {
+            "paths": [
+              "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+            ],
+            "trees": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                {
+                  "path": "data",
+                  "dev": 16777232,
+                  "ino": 483240472,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 33188,
+                  "bytes": 8,
+                  "mtime": 1794035767505892825,
+                  "ctime": 1794035767505892825,
+                  "links": 1
+                }
+              ]
+            ],
+            "entriesSeen": 2,
+            "statBytes": 8,
+            "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+            "descriptors": [
+              {
+                "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                "operation": "directory",
+                "closed": true,
+                "opened": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                "after": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                }
+              }
+            ]
+          }
+        },
+        "treesAfter": [
+          [
+            {
+              "path": ".",
+              "dev": 16777232,
+              "ino": 483240471,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794035767505842867,
+              "ctime": 1794035767505842867,
+              "links": 3
+            },
+            {
+              "path": "data",
+              "dev": 16777232,
+              "ino": 483240472,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 8,
+              "mtime": 1794035767505892825,
+              "ctime": 1794035767505892825,
+              "links": 1,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ]
+        ],
+        "accepted": true
+      },
+      {
+        "allocation": {
+          "lock": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/spent-lock",
+          "archive": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention",
+          "created": true,
+          "identity": [
+            16777232,
+            483240480,
+            501
+          ]
+        }
+      },
+      {
+        "beforeInventory": {
+          "paths": [
+            "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1,
+                "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              },
+              "after": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "readBytes": 8,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ],
+          "contentBytesRead": 8,
+          "afterInventory": {
+            "paths": [
+              "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+            ],
+            "trees": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                {
+                  "path": "data",
+                  "dev": 16777232,
+                  "ino": 483240472,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 33188,
+                  "bytes": 8,
+                  "mtime": 1794035767505892825,
+                  "ctime": 1794035767505892825,
+                  "links": 1
+                }
+              ]
+            ],
+            "entriesSeen": 2,
+            "statBytes": 8,
+            "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+            "descriptors": [
+              {
+                "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                "operation": "directory",
+                "closed": true,
+                "opened": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                "after": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                }
+              }
+            ]
+          }
+        },
+        "treesBefore": [
+          [
+            {
+              "path": ".",
+              "dev": 16777232,
+              "ino": 483240471,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794035767505842867,
+              "ctime": 1794035767505842867,
+              "links": 3
+            },
+            {
+              "path": "data",
+              "dev": 16777232,
+              "ino": 483240472,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 8,
+              "mtime": 1794035767505892825,
+              "ctime": 1794035767505892825,
+              "links": 1,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ]
+        ],
+        "openFiles": {
+          "owners": [],
+          "controllerIdentity": {
+            "pid": 27375,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501
+          },
+          "observedOwners": []
+        },
+        "afterInventory": {
+          "paths": [
+            "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1,
+                "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240471,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767505842867,
+                "ctime": 1794035767505842867,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              },
+              "after": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "readBytes": 8,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ],
+          "contentBytesRead": 8,
+          "afterInventory": {
+            "paths": [
+              "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+            ],
+            "trees": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                {
+                  "path": "data",
+                  "dev": 16777232,
+                  "ino": 483240472,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 33188,
+                  "bytes": 8,
+                  "mtime": 1794035767505892825,
+                  "ctime": 1794035767505892825,
+                  "links": 1
+                }
+              ]
+            ],
+            "entriesSeen": 2,
+            "statBytes": 8,
+            "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+            "descriptors": [
+              {
+                "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                "operation": "directory",
+                "closed": true,
+                "opened": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                "after": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                }
+              }
+            ]
+          }
+        },
+        "treesAfter": [
+          [
+            {
+              "path": ".",
+              "dev": 16777232,
+              "ino": 483240471,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794035767505842867,
+              "ctime": 1794035767505842867,
+              "links": 3
+            },
+            {
+              "path": "data",
+              "dev": 16777232,
+              "ino": 483240472,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 8,
+              "mtime": 1794035767505892825,
+              "ctime": 1794035767505892825,
+              "links": 1,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ]
+        ],
+        "accepted": true
+      },
+      {
+        "copy": {
+          "name": "before",
+          "destination": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention/before",
+          "beforeInventory": {
+            "paths": [
+              "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+            ],
+            "trees": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                {
+                  "path": "data",
+                  "dev": 16777232,
+                  "ino": 483240472,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 33188,
+                  "bytes": 8,
+                  "mtime": 1794035767505892825,
+                  "ctime": 1794035767505892825,
+                  "links": 1
+                }
+              ]
+            ],
+            "entriesSeen": 2,
+            "statBytes": 8,
+            "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+            "descriptors": [
+              {
+                "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                "operation": "directory",
+                "closed": true,
+                "opened": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                "after": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                }
+              }
+            ]
+          },
+          "destinations": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention/before/0/data",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240487,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33152,
+                "bytes": 0,
+                "mtime": 1794035767516113803,
+                "ctime": 1794035767516124553,
+                "links": 1
+              }
+            }
+          ],
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/proof/jobs/motion-thalune-run-lod0/vite-cache-retention/before/0",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240486,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 64,
+                "mtime": 1794035767516031761,
+                "ctime": 1794035767516057803,
+                "links": 2
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 483240486,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794035767516114886,
+                "ctime": 1794035767516114886,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              },
+              "after": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 483240472,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794035767505892825,
+                "ctime": 1794035767505892825,
+                "links": 1
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+              "readBytes": 8,
+              "sha256": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab"
+            }
+          ],
+          "contentBytesRead": 8,
+          "afterInventory": {
+            "paths": [
+              "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache"
+            ],
+            "trees": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                {
+                  "path": "data",
+                  "dev": 16777232,
+                  "ino": 483240472,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 33188,
+                  "bytes": 8,
+                  "mtime": 1794035767505892825,
+                  "ctime": 1794035767505892825,
+                  "links": 1
+                }
+              ]
+            ],
+            "entriesSeen": 2,
+            "statBytes": 8,
+            "lastEntry": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+            "descriptors": [
+              {
+                "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache",
+                "operation": "directory",
+                "closed": true,
+                "opened": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                },
+                "after": {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 483240471,
+                  "uid": 501,
+                  "gid": 0,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794035767505842867,
+                  "ctime": 1794035767505842867,
+                  "links": 3
+                }
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "--import",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs",
+      "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/entry.mjs",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
+      "motion-thalune-run-lod0",
+      "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/packet/captures/motion-thalune-run-lod0"
+    ],
+    "phase": "allocation",
+    "ownedAllocation": {},
+    "releaseAudits": []
+  },
+  "events": [
+    "PRIVATE_ALLOCATION_BOUNDARY_REACHED"
+  ],
+  "opens": [
+    {
+      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+      "resolved": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/moved/cache/data",
+      "ancestorLink": true
+    },
+    {
+      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+      "resolved": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/moved/cache/data",
+      "ancestorLink": true
+    },
+    {
+      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+      "resolved": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/moved/cache/data",
+      "ancestorLink": true
+    },
+    {
+      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+      "resolved": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/moved/cache/data",
+      "ancestorLink": true
+    },
+    {
+      "path": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/parent/cache/data",
+      "resolved": "/private/tmp/t02-r6-correction-ozalgm6_/adapter-cache-u4lph_6c/moved/cache/data",
+      "ancestorLink": true
+    }
+  ],
+  "nativeAllocations": 0
+}

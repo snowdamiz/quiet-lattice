@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 429, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 420, in main
+    record = consume(ready, args.grant)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 83, in consume
+    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 50, in verify_runtime
+    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SOURCE_ONLY_RUNTIME_DISABLED

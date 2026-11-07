@@ -1,0 +1,62 @@
+ordering timeout none
+ordering timeout post-write
+ordering timeout exits-read
+ordering timeout worker-read
+ordering timeout worker-failure
+ordering timeout post-write packet-fallback
+ordering timeout post-write all-files
+ordering timeout post-write all-sinks
+ordering timeout worker-read packet-fallback
+ordering timeout worker-read all-files
+ordering timeout worker-read all-sinks
+ordering missing none
+ordering missing post-write
+ordering missing exits-read
+ordering missing worker-read
+ordering missing worker-failure
+ordering missing post-write packet-fallback
+ordering missing post-write all-files
+ordering missing post-write all-sinks
+ordering missing worker-read packet-fallback
+ordering missing worker-read all-files
+ordering missing worker-read all-sinks
+ordering excess none
+ordering excess post-write
+ordering excess exits-read
+ordering excess worker-read
+ordering excess worker-failure
+ordering excess post-write packet-fallback
+ordering excess post-write all-files
+ordering excess post-write all-sinks
+ordering excess worker-read packet-fallback
+ordering excess worker-read all-files
+ordering excess worker-read all-sinks
+ordering deadline none
+ordering deadline post-write
+ordering deadline exits-read
+ordering deadline worker-read
+ordering deadline worker-failure
+ordering deadline post-write packet-fallback
+ordering deadline post-write all-files
+ordering deadline post-write all-sinks
+ordering deadline worker-read packet-fallback
+ordering deadline worker-read all-files
+ordering deadline worker-read all-sinks
+cache limit
+cache over-limit
+cache entries4096
+cache entries4097
+cache symlink
+cache fifo
+cache replace-fifo
+cache replace-link
+cache replace-regular
+cache growth
+cache truncate
+cache replace-after-read
+cache read-error
+cache cancel
+cache deadline
+cache close-error
+cache read-and-close-error
+aggregate bytes

@@ -105,8 +105,9 @@ class IOTrace:
     def install(self,stack,before_open=lambda p,f:None,after_read=lambda fd,b:None,before_read=lambda fd:None,after_close=lambda fd:None,before_entry=lambda:None):
         real_open,real_read,real_close,real_scandir=resources.os.open,resources.os.read,resources.os.close,resources.os.scandir
         def opened(path,flags,*a,**k):
-            before_open(path,flags)
-            fd=real_open(path,flags,*a,**k);self.opens[fd]=str(path);return fd
+            shown=Path(path) if Path(path).is_absolute() else Path(self.opens[k['dir_fd']])/path
+            before_open(shown,flags)
+            fd=real_open(path,flags,*a,**k);self.opens[fd]=str(shown);return fd
         def read(fd,n):
             before_read(fd);data=real_read(fd,n);self.reads.append(dict(path=self.opens.get(fd),requested=n,returned=len(data)));after_read(fd,data);return data
         def close(fd):real_close(fd);self.closed.append(fd);after_close(fd)

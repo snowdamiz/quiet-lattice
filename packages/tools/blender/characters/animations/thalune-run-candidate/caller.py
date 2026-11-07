@@ -145,6 +145,32 @@ def run_sequence(ready, adapter, packet, proof, check=lambda: None, writer=write
         persist_terminal_summary(result, handles, adapter.audit, jobs, proof, packet, started)
     return result
 
+def start_observed(job, receipt):
+    """Observe the immutable helper's actual bootstrap result before its write."""
+    start=job.start;namespace=start.__func__.__globals__;original=namespace.get('subprocess')
+    if original is None:return start()  # Inert test jobs may have no command port.
+    expected=['/bin/launchctl','bootstrap',f'gui/{os.getuid()}',str(job.scratch/'job.plist')]
+    class ObservedPort:
+        def __getattr__(self,key):return getattr(original,key)
+        def run(self,argv,*args,**kwargs):
+            if argv[:2]!=['/bin/launchctl','bootstrap']:return original.run(argv,*args,**kwargs)
+            assert argv==expected and not receipt.get('bootstrapObservations'),'Unexpected/repeated bootstrap'
+            event=dict(argv=list(argv),registrationUncertain=True)
+            receipt['bootstrapObservations']=[event]
+            try:
+                result=original.run(argv,*args,**kwargs)
+                event['result']=json.loads(json.dumps(vars(result),default=str))
+                return result
+            except BaseException as error:
+                event['failure']=error_receipt(error);raise
+    try:
+        namespace['subprocess']=ObservedPort()
+        return start()
+    finally:
+        namespace['subprocess']=original
+        receipt['bootstrapPortRestored']=True
+
+
 class StationAdapter:
     def __init__(self, ready, grant):
         assert ready['runtimeAuthorization'] is True, 'Source candidate: runtime disabled'
@@ -254,7 +280,7 @@ class StationAdapter:
                              PYTHONDONTWRITEBYTECODE='1', T02_PILOT_READY_SHA=sha(READY), T02_PILOT_ATTEMPT=ready['attemptId'],
                              T02_PILOT_STAGE=definition['id'], T02_PILOT_GRANT=self.grant['authorizationId']))
                 job.state.update(scope=ready['purpose'], stage=definition['id'], readiness_sha256=sha(READY)); job.save()
-                receipt['phase'] = 'start'; persist(); job.start()
+                receipt['phase'] = 'start'; persist(); start_observed(job, receipt)
                 admitted, events = {}, []
                 receipt.update(actualExecutables=admitted, observerEvents=events)
                 observer = self.stage_observer(definition, job, private)

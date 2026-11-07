@@ -5,7 +5,7 @@ from assertion_guard import require_assertions
 require_assertions(__debug__)
 import hashlib, json, os, shutil, stat, subprocess, time
 from pathlib import Path
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 from inspector import error_receipt, sha, write
 from release_accounting import identity_key
 
@@ -29,23 +29,37 @@ def same_stat(info, expected):
     return all(actual[k]==expected[k] for k in STAT_KEYS)
 
 
+def descriptor_failure(error):
+    # These owned facts remain attached to the original exception and outer receipt.
+    # Re-embedding them at every ancestor would recursively multiply the evidence.
+    details={k:v for k,v in vars(error).items() if k not in ['cacheRead','cacheInventory']}
+    try:message=str(error)
+    except BaseException:message='<original error could not be stringified>'
+    return dict(type=type(error).__name__,message=message,
+                details=json.loads(json.dumps(details,default=str)),
+                retainedObservationFields=[k for k in ['cacheRead','cacheInventory'] if hasattr(error,k)])
+
+
 @contextmanager
-def descriptor(path, expected, facts, directory=False):
-    event=dict(path=str(path),operation='directory' if directory else 'content',closed=False)
+def descriptor(path, expected, facts, directory=False, dir_fd=None, strict=True):
+    event=dict(path=str(path),parentFd=dir_fd,operation='directory' if directory else 'content',closed=False)
     facts.setdefault('descriptors',[]).append(event)
     fd=None;primary=None
     try:
         flags=os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK
         if directory:flags|=os.O_DIRECTORY
-        fd=os.open(path,flags)
+        fd=os.open(path,flags,dir_fd=dir_fd)
         opened=os.fstat(fd);event['opened']=stat_row(expected['path'],opened)
         assert (stat.S_ISDIR(opened.st_mode) if directory else stat.S_ISREG(opened.st_mode)), 'Cache descriptor type refused'
         assert same_stat(opened,expected), 'Cache descriptor identity/size changed'
         yield fd
         event['after']=stat_row(expected['path'],os.fstat(fd))
-        assert all(event['after'][k]==expected[k] for k in STAT_KEYS), 'Cache descriptor changed during read'
+        keys=STAT_KEYS if strict else ('dev','ino','uid','gid','mode')
+        assert all(event['after'][k]==expected[k] for k in keys), 'Cache descriptor changed during read'
+        linked=os.stat(path,dir_fd=dir_fd,follow_symlinks=False)
+        assert all(stat_row(str(path),linked)[k]==expected[k] for k in keys), 'Cache directory/file link replaced'
     except BaseException as error:
-        primary=error;event['failure']=error_receipt(error);raise
+        primary=error;event['failure']=descriptor_failure(error);raise
     finally:
         if fd is not None:
             try:os.close(fd);event['closed']=True
@@ -55,15 +69,31 @@ def descriptor(path, expected, facts, directory=False):
                 primary.descriptorCloseFailures=[*getattr(primary,'descriptorCloseFailures',[]),error_receipt(error)]
 
 
-def inventory(paths, facts):
-    """Admit all roots jointly by bounded enumeration/stat before content I/O."""
-    trees=[];facts.update(paths=list(map(str,paths)),trees=trees,entriesSeen=0,statBytes=0)
+def directory_chain(path, facts, stack, optional=False):
+    """Hold every ancestor; no full-path OS open may resolve through a link."""
+    path=Path(path)
+    assert path.is_absolute() and '..' not in path.parts and len(path.parts)<=CACHE_ENTRIES, 'Cache path form refused'
+    parent=None
+    for part in path.parts:
+        try:info=os.stat(part,dir_fd=parent,follow_symlinks=False)
+        except FileNotFoundError:
+            if optional:return None
+            raise
+        assert stat.S_ISDIR(info.st_mode) and info.st_uid in [0,os.getuid()], 'Cache ancestor type/owner refused'
+        expected=stat_row(part,info)
+        parent=stack.enter_context(descriptor(part,expected,facts,directory=True,dir_fd=parent,strict=False))
+    return parent
+
+
+def admitted_inventory(paths, facts, stack):
+    """All roots share the stat budget; hold admitted directory FDs until use ends."""
+    trees=[];views=[];facts.update(paths=list(map(str,paths)),trees=trees,entriesSeen=0,statBytes=0)
     try:
         for path in map(Path,paths):
             assert path.absolute()==path.resolve(), 'Cache path alias refused'
-            try:info=path.lstat()
-            except FileNotFoundError:trees.append(None);continue
-            rows=[];trees.append(rows)
+            fd=directory_chain(path,facts,stack,optional=True)
+            if fd is None:trees.append(None);views.append(None);continue
+            rows=[];view={};trees.append(rows);views.append(view)
             def add(name, info):
                 row=stat_row(name,info);rows.append(row)
                 assert info.st_uid==os.getuid() and not stat.S_ISLNK(info.st_mode), 'Unowned cache path'
@@ -73,37 +103,40 @@ def inventory(paths, facts):
                     assert facts['statBytes']<=CACHE_BYTES, 'Vite snapshot exceeds archive reserve'
                 return row
             def count(name):
-                facts['entriesSeen']+=1
-                facts['lastEntry']=str(path/name)
+                facts['entriesSeen']+=1;facts['lastEntry']=str(path/name)
                 assert facts['entriesSeen']<=CACHE_ENTRIES, 'Vite cache inventory file ceiling'
-            count('.');root=add('.',info)
-            assert stat.S_ISDIR(info.st_mode),'Cache root is not a directory'
+            count('.');root=add('.',os.fstat(fd));view['.']=(fd,root)
             pending=[root]
             while pending:
-                parent=pending.pop()
-                with descriptor(path/parent['path'],parent,facts,directory=True) as fd:
-                    with os.scandir(fd) as entries:
-                        for entry in entries:
-                            name=str(Path(parent['path'])/entry.name)
-                            count(name)  # Stop at the first surplus entry, before even its stat.
-                            row=add(name,entry.stat(follow_symlinks=False))
-                            if stat.S_ISDIR(row['mode']):pending.append(row)
-            rows.sort(key=lambda row:row['path'])  # At most 4096 already-admitted rows.
-        return trees
+                parent=pending.pop();parent_fd=view[parent['path']][0]
+                with os.scandir(parent_fd) as entries:
+                    for entry in entries:
+                        name=str(Path(parent['path'])/entry.name);count(name)
+                        row=add(name,entry.stat(follow_symlinks=False))
+                        if stat.S_ISDIR(row['mode']):
+                            child=stack.enter_context(descriptor(entry.name,row,facts,directory=True,dir_fd=parent_fd))
+                            view[name]=(child,row);pending.append(row)
+            rows.sort(key=lambda row:row['path'])
+        return trees,views
     except BaseException as error:
-        error.cacheInventory=facts
-        raise
+        error.cacheInventory=facts;raise
+
+
+def inventory(paths, facts):
+    with ExitStack() as stack:return admitted_inventory(paths,facts,stack)[0]
 
 
 def metadata(rows):
     return None if rows is None else [{k:r[k] for k in ('path',*STAT_KEYS)} for r in rows]
 
 
-def read_file(path, row, facts, consume=lambda data:None):
+def read_file(path, row, facts, consume=lambda data:None, parent_fd=None):
     item=dict(path=str(path),readBytes=0);facts.setdefault('files',[]).append(item)
     digest=hashlib.sha256();remaining=row['bytes']
     try:
-        with descriptor(path,row,facts) as fd:
+        with ExitStack() as stack:
+            if parent_fd is None:parent_fd=directory_chain(Path(path).parent,facts,stack)
+            fd=stack.enter_context(descriptor(Path(path).name,row,facts,dir_fd=parent_fd))
             while True:
                 data=os.read(fd,min(1024**2,remaining+1))
                 item['readBytes']+=len(data)
@@ -113,7 +146,7 @@ def read_file(path, row, facts, consume=lambda data:None):
                     assert remaining==0,'Cache file truncated during read'
                     break
                 digest.update(data);consume(data);remaining-=len(data)
-        assert same_stat(Path(path).lstat(),row), 'Cache pathname replaced during read'
+            assert same_stat(os.stat(Path(path).name,dir_fd=parent_fd,follow_symlinks=False),row), 'Cache pathname replaced during read'
         item['sha256']=digest.hexdigest()
         return item['sha256']
     except BaseException as error:
@@ -121,14 +154,16 @@ def read_file(path, row, facts, consume=lambda data:None):
 
 
 def trees(paths, facts):
-    rows=inventory(paths,facts)
-    for path,group in zip(map(Path,paths),rows):
-        for row in group or []:
-            if stat.S_ISREG(row['mode']):row['sha256']=read_file(path/row['path'],row,facts)
-    after={};facts['afterInventory']=after
-    current=inventory(paths,after)
-    assert list(map(metadata,current))==list(map(metadata,rows)), 'Cache changed while inventorying'
-    return rows
+    with ExitStack() as stack:
+        rows,views=admitted_inventory(paths,facts,stack)
+        for path,group,view in zip(map(Path,paths),rows,views):
+            for row in group or []:
+                if stat.S_ISREG(row['mode']):
+                    row['sha256']=read_file(path/row['path'],row,facts,parent_fd=view[str(Path(row['path']).parent)][0])
+        after={};facts['afterInventory']=after
+        current=inventory(paths,after)
+        assert list(map(metadata,current))==list(map(metadata,rows)), 'Cache changed while inventorying'
+        return rows
 
 
 def tree(path):
@@ -139,40 +174,34 @@ def content(rows):
     return None if rows is None else [{k:r[k] for k in ['path','mode','sha256'] if k in r} for r in rows]
 
 
-def copy_tree(source, destination, rows, facts):
-    """Only admitted rows are copied; every source read uses the bounded FD path."""
-    parents={}
+def create_directory(name, parent_fd, facts, stack, mode=0o700):
+    os.mkdir(name,mode=mode,dir_fd=parent_fd)
+    row=stat_row(name,os.stat(name,dir_fd=parent_fd,follow_symlinks=False))
+    return stack.enter_context(descriptor(name,row,facts,directory=True,dir_fd=parent_fd,strict=False))
+
+
+def copy_tree(source, destination, rows, facts, view, destination_fd, stack):
+    """Source and destination descendants use only held, admitted parent FDs."""
+    parents={'.':destination_fd}
     for row in rows:
         relative=Path(row['path']);target=destination/relative
         if stat.S_ISDIR(row['mode']):
-            target.mkdir(mode=stat.S_IMODE(row['mode']))
-            os.chmod(target,stat.S_IMODE(row['mode']),follow_symlinks=False)
-            parents[str(relative)]=stat_row(str(relative),target.lstat())
+            fd=destination_fd if str(relative)=='.' else create_directory(relative.name,parents[str(relative.parent)],facts,stack,stat.S_IMODE(row['mode']))
+            parents[str(relative)]=fd
             continue
-        # The new destination parent is held by identity while creating the file.
-        parent=parents[str(relative.parent)]
-        # Directory mtime/size changes as our previous children are added.
-        current=target.parent.lstat()
-        assert (current.st_dev,current.st_ino,current.st_uid)==(parent['dev'],parent['ino'],parent['uid']), 'Archive parent replaced'
-        parent=stat_row(parent['path'],current)
         fd=None;primary=None;event=dict(path=str(target),closed=False)
         facts.setdefault('destinations',[]).append(event)
         try:
-            # Source descriptor admission occurs in read_file before any content is copied.
-            with descriptor(target.parent,parent,facts,directory=True) as parent_fd:
-                fd=os.open(target.name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_NONBLOCK,0o600,dir_fd=parent_fd)
-                event['opened']=stat_row(row['path'],os.fstat(fd))
-                assert stat.S_ISREG(event['opened']['mode']) and event['opened']['uid']==os.getuid(), 'Archive descriptor refused'
-                def output(data):
-                    assert os.write(fd,data)==len(data),'Incomplete cache copy write'
-                digest=read_file(source/relative,row,facts,output)
-                assert digest==row['sha256'], 'Cache changed before copy'
-                os.fchmod(fd,stat.S_IMODE(row['mode']))
-                # Updating our directory is expected; retain its observed identity.
-                parent.update(stat_row(parent['path'],os.fstat(parent_fd)))
-                assert (parent['dev'],parent['ino'],parent['uid'])==(current.st_dev,current.st_ino,current.st_uid)
+            parent_fd=parents[str(relative.parent)]
+            fd=os.open(relative.name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_NONBLOCK,0o600,dir_fd=parent_fd)
+            event['opened']=stat_row(row['path'],os.fstat(fd))
+            assert stat.S_ISREG(event['opened']['mode']) and event['opened']['uid']==os.getuid(), 'Archive descriptor refused'
+            def output(data):assert os.write(fd,data)==len(data),'Incomplete cache copy write'
+            digest=read_file(source/relative,row,facts,output,parent_fd=view[str(relative.parent)][0])
+            assert digest==row['sha256'], 'Cache changed before copy'
+            os.fchmod(fd,stat.S_IMODE(row['mode']))
         except BaseException as error:
-            primary=error;event['failure']=error_receipt(error);raise
+            primary=error;event['failure']=descriptor_failure(error);raise
         finally:
             if fd is not None:
                 try:os.close(fd);event['closed']=True
@@ -180,6 +209,11 @@ def copy_tree(source, destination, rows, facts):
                     event['closeFailure']=error_receipt(error)
                     if primary is None:raise
                     primary.descriptorCloseFailures=[*getattr(primary,'descriptorCloseFailures',[]),error_receipt(error)]
+
+
+def archive_json(name, value, parent_fd):
+    fd=os.open(name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_NONBLOCK,0o600,dir_fd=parent_fd)
+    with os.fdopen(fd,'wb') as stream:stream.write((json.dumps(value,indent=2)+'\n').encode())
 
 
 def rss_read(pids):
@@ -303,13 +337,16 @@ class CacheLease:
         self.initial=self.check()
         allocation=dict(lock=str(self.lock),archive=str(self.archive),created=False)
         self.observations.append({'allocation':allocation})
-        if self.lock_identity is None:
-            self.lock.mkdir(mode=0o700)  # A spent lease is never reused by a different controller.
-            info=self.lock.lstat(); self.lock_identity=(info.st_dev,info.st_ino,info.st_uid)
-            allocation.update(created=True,identity=self.lock_identity)
-        self.active=True
-        self.archive.mkdir(parents=True, exist_ok=False)
-        write(self.archive/'lease.json',dict(lock=str(self.lock), identity=self.lock_identity, paths=list(map(str,self.paths))))
+        with ExitStack() as stack:
+            if self.lock_identity is None:
+                parent_fd=directory_chain(self.lock.parent,allocation,stack)
+                lock_fd=create_directory(self.lock.name,parent_fd,allocation,stack)
+                info=os.fstat(lock_fd);self.lock_identity=(info.st_dev,info.st_ino,info.st_uid)
+                allocation.update(created=True,identity=self.lock_identity)
+            self.active=True
+            parent_fd=directory_chain(self.archive.parent,allocation,stack)
+            archive_fd=create_directory(self.archive.name,parent_fd,allocation,stack)
+            archive_json('lease.json',dict(lock=str(self.lock), identity=self.lock_identity, paths=list(map(str,self.paths))),archive_fd)
         assert self.check()==self.initial, 'Cache changed around lease acquisition'
         self.copy('before', self.initial)
 
@@ -317,18 +354,21 @@ class CacheLease:
         facts=dict(name=name,destination=str(self.archive/name))
         self.observations.append({'copy':facts})
         try:
-            facts['beforeInventory']={}
-            before=inventory(self.paths,facts['beforeInventory'])
-            assert list(map(metadata,before))==list(map(metadata,observed)), 'Cache changed before copy admission'
-            destination=self.archive/name;destination.mkdir()
-            for i,(path,rows) in enumerate(zip(self.paths,observed)):
-                if rows is None:continue
-                copy_tree(path,destination/str(i),rows,facts)
-                assert content(tree(destination/str(i)))==content(rows), 'Cache archive bytes differ'
-            facts['afterInventory']={}
-            after=inventory(self.paths,facts['afterInventory'])
-            assert list(map(metadata,after))==list(map(metadata,observed)), 'Cache changed during archive'
-            write(destination/'inventory.json',observed)
+            with ExitStack() as stack:
+                facts['beforeInventory']={}
+                before,views=admitted_inventory(self.paths,facts['beforeInventory'],stack)
+                assert list(map(metadata,before))==list(map(metadata,observed)), 'Cache changed before copy admission'
+                archive_fd=directory_chain(self.archive,facts,stack)
+                destination=self.archive/name;destination_fd=create_directory(name,archive_fd,facts,stack)
+                for i,(path,rows,view) in enumerate(zip(self.paths,observed,views)):
+                    if rows is None:continue
+                    root_fd=create_directory(str(i),destination_fd,facts,stack,stat.S_IMODE(rows[0]['mode']))
+                    copy_tree(path,destination/str(i),rows,facts,view,root_fd,stack)
+                    assert content(tree(destination/str(i)))==content(rows), 'Cache archive bytes differ'
+                facts['afterInventory']={}
+                after=inventory(self.paths,facts['afterInventory'])
+                assert list(map(metadata,after))==list(map(metadata,observed)), 'Cache changed during archive'
+                archive_json('inventory.json',observed,destination_fd)
         except BaseException as error:
             facts['failure']=error_receipt(error);raise
 

@@ -1,0 +1,86 @@
+{
+  "environment": {
+    "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "commands": [
+    {
+      "name": "supplied224",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/run-controls.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expected": 0,
+      "elapsedSeconds": 12.969272290996742
+    },
+    {
+      "name": "supplied78",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/run-new-bound.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expected": 0,
+      "elapsedSeconds": 6.50799116602866
+    },
+    {
+      "name": "revision05-74",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision05-controls.py",
+        "--report",
+        "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/revision05-74.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expected": 0,
+      "elapsedSeconds": 35.43697245902149
+    },
+    {
+      "name": "retained-adverse17",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-r6-correction-ozalgm6_/final-checks-guarded/prior-controls/adverse-green.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expected": 0,
+      "elapsedSeconds": 6.28270858398173
+    },
+    {
+      "name": "native-preflight",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expected": 0,
+      "elapsedSeconds": 0.7184588329982944
+    },
+    {
+      "name": "native-disabled",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expected": 1,
+      "elapsedSeconds": 0.08052995899925008
+    }
+  ]
+}

@@ -9,7 +9,9 @@ import caller, contract, packet_budget
 from admission_json import snapshot, read
 from inspector import error_receipt, sha, write
 from release_accounting import persist_terminal_summary
-from resource_admission import CohortRSS, reserve, tree
+from resource_admission import CohortRSS, reserve, tree, directory_chain, read_file, stat_row
+from contextlib import ExitStack
+import stat
 
 HERE, READY, PLAN = contract.HERE, caller.READY, contract.HERE/'native189-plan.json'
 GIT='/opt/homebrew/Cellar/git/2.56.0/bin/git'
@@ -193,16 +195,30 @@ class NativeAdapter(caller.StationAdapter):
         return lambda:guard.observe(job)
 
     def inspect_native(self):
-        root=Path(self.plan['runRoot']);packet=root/'packet'
-        positive=load(packet/'inspections/native-189-validate/validation.json')
-        surplus=load(packet/'inspections/native-189-validate/surplus-refusal.json')
-        assert positive['accepted'] is True and positive['frames']==189 and positive['everyRgbAndRgbaHash'] is True
-        assert surplus['accepted'] is False and surplus['expectedRefusal'] is True and surplus['frames']==190
-        assert positive['videoSha256']==sha(packet/'captures/motion-thalune-run-lod0/primary.mp4')
-        assert positive['frameMapSha256']==sha(packet/'captures/motion-thalune-run-lod0/frame-map.json')
-        current=packet_budget.inspect(packet)
-        assert set(current['paths'])==set(self.plan['packetFilesBeforeTerminal'])
-        assert current['normalBytes']+current['reservedBytes']<=64*1024**2
+        facts=self.inspectionObservations
+        facts['deadlineSeconds']=30
+        with self.core.deadline(30):
+            root=Path(self.plan['runRoot']);packet=root/'packet'
+            positive=load(packet/'inspections/native-189-validate/validation.json')
+            surplus=load(packet/'inspections/native-189-validate/surplus-refusal.json')
+            facts.update(positive=positive,surplus=surplus)
+            assert positive['accepted'] is True and positive['frames']==189 and positive['everyRgbAndRgbaHash'] is True
+            assert surplus['accepted'] is False and surplus['expectedRefusal'] is True and surplus['frames']==190
+            with ExitStack() as stack:
+                directory=packet/'captures/motion-thalune-run-lod0'
+                parent_fd=directory_chain(directory,facts,stack)
+                rows=[];facts['artifacts']=rows
+                for name,limit in [('primary.mp4',contract.VIDEO_BYTES),('frame-map.json',64*1024**2)]:
+                    info=os.stat(name,dir_fd=parent_fd,follow_symlinks=False)
+                    row=stat_row(name,info);row['limitBytes']=limit;rows.append(row)
+                    assert stat.S_ISREG(info.st_mode) and info.st_uid==os.getuid() and 0<=info.st_size<=limit,'Native artifact type/owner/size refused'
+                for row,key in zip(rows,['videoSha256','frameMapSha256']):
+                    digest=read_file(directory/row['path'],row,facts,parent_fd=parent_fd)
+                    assert positive[key]==digest,'Native artifact hash mismatch'
+            current=packet_budget.inspect(packet)
+            assert set(current['paths'])==set(self.plan['packetFilesBeforeTerminal'])
+            assert current['normalBytes']+current['reservedBytes']<=64*1024**2
+
 
 
 def run_sequence(ready,plan,record,adapter,check,writer=write):
@@ -220,6 +236,7 @@ def run_sequence(ready,plan,record,adapter,check,writer=write):
             writer(proof/'returned-receipts.json',receipts);require_native_release(receipt)
             assert receipt['name']==name
             writer(proof/'sequence-state.json',dict(completed=[r['name'] for r in receipts]))
+        result['inspectionObservations']=adapter.inspectionObservations={}
         adapter.inspect_native();check()
         result['status']='NATIVE189_CHECKS_PASSED_AWAITING_PARENT_EXIT'
     except BaseException as error:

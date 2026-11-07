@@ -1,0 +1,16 @@
+ancestor-static PASS
+ancestor-check DEFECT_REPRODUCED
+ancestor-copy-source DEFECT_REPRODUCED
+ancestor-copy-destination DEFECT_REPRODUCED
+copy-write-error PASS
+copy-short-write PASS
+copy-dest-close PASS
+copy-read-and-close PASS
+copy-signal PASS
+lifecycle-constructor PASS
+lifecycle-bootstrap-control PASS
+lifecycle-bootstrap-17 DEFECT_REPRODUCED
+lifecycle-bootstrap-0 DEFECT_REPRODUCED
+artifact-normal PASS
+artifact-fifo DEFECT_REPRODUCED
+{"cases": 15, "defectReproductions": 6}
