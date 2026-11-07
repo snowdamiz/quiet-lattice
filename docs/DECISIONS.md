@@ -1284,3 +1284,9 @@ Format: task id, question → choice → why.
 - **P1.E08.T09 generated capture caches (2026-11-03 UTC)** → existing task-local Vite caches are mutable generated data, not an automatic launch blocker. Verify their realpaths and absence of a conflicting active owner, preserve a bounded pre-run snapshot, account for its copy, and record mutations. Do not delete or relocate existing caches or touch shared/user routes. A concrete shared-route conflict requires isolation before runtime.
 
 - **P1.E14.T13 CPU-context window scope (2026-11-03 UTC)** → the context gate concerns declared control windows. The pinned exporter defines a validated synchronous thread instant as a zero-duration point; such a point strictly outside every closed control window cannot invalidate those windows. Keep positive X recognition unchanged and refuse in-window/boundary instants or malformed/unbounded forms. Preserve the original failed run and publish the corrected interpretation separately. This metadata correction does not establish a cloud-work benefit or GPU budget result.
+
+## P1.E07.T16 — Live Reaches eligibility (2026-11-06)
+
+- Which contract opens Void? Use the existing skill-table `faction_rank` requirement: Free Reaches Deckhand, reached at 200 reputation. This connects the implemented rank model instead of inventing a second story flag. The Phase 2 chain remains the content source of standing.
+- What happens on rank loss? Retain purchases and fragment payments, but refuse gated actions and clear gated active slots through normal skill notifications. Recovery permits slotting again; future Void passive and effect implementations must check live eligibility.
+- Why a separate task? T08 also needs explicit decisions for actors and damage paths that are not implemented. This prerequisite has an independently testable production boundary and does not claim those effects complete.
