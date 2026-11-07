@@ -1,0 +1,309 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/props/catalyst_vial.glb",
+  "family": "props",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T07:41:18Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "catalyst_vial",
+      "variants": [
+        {
+          "id": "catalyst_vial_acidsalt",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4772,
+            "1": 2080,
+            "2": 664,
+            "3": 120
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_acidsalt_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Hull",
+            "chorus_Trim",
+            "chorus_Wear"
+          ],
+          "gpuTextureMB": 12.0
+        },
+        {
+          "id": "catalyst_vial_frostglass",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4700,
+            "1": 2048,
+            "2": 664,
+            "3": 120
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_frostglass_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Hull",
+            "chorus_Trim",
+            "chorus_Wear"
+          ],
+          "gpuTextureMB": 12.0
+        },
+        {
+          "id": "catalyst_vial_gamma",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4736,
+            "1": 2064,
+            "2": 664,
+            "3": 120
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_gamma_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Hull",
+            "chorus_Trim",
+            "chorus_Wear"
+          ],
+          "gpuTextureMB": 12.0
+        },
+        {
+          "id": "catalyst_vial_stormquartz",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4520,
+            "1": 1968,
+            "2": 664,
+            "3": 120
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_stormquartz_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Hull",
+            "chorus_Trim",
+            "chorus_Wear"
+          ],
+          "gpuTextureMB": 12.0
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "catalyst_vial.glb",
+          "message": "4 variant(s) in 1 asset(s) follow the props rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "catalyst_vial/catalyst_vial_acidsalt",
+          "message": "LOD0 4,772 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_frostglass",
+          "message": "LOD0 4,700 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_gamma",
+          "message": "LOD0 4,736 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_stormquartz",
+          "message": "LOD0 4,520 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.8 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "catalyst_vial/catalyst_vial_acidsalt",
+          "message": "4,772 > 2,080 > 664 > 120 triangles; LOD3 2.5% of LOD0"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_frostglass",
+          "message": "4,700 > 2,048 > 664 > 120 triangles; LOD3 2.6% of LOD0"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_gamma",
+          "message": "4,736 > 2,064 > 664 > 120 triangles; LOD3 2.5% of LOD0"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_stormquartz",
+          "message": "4,520 > 1,968 > 664 > 120 triangles; LOD3 2.7% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "catalyst_vial_acidsalt_Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "catalyst_vial_frostglass_Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "catalyst_vial_gamma_Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "catalyst_vial_stormquartz_Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "chorus_Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "chorus_Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "chorus_Signal",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "chorus_Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "chorus_Wear",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "9 KTX2 map(s) (1 UASTC, 8 ETC1S) with full mip chains, 0.2 MB"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_acidsalt",
+          "message": "textures take 12 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_frostglass",
+          "message": "textures take 12 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_gamma",
+          "message": "textures take 12 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_stormquartz",
+          "message": "textures take 12 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/props/catalyst_vial.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_acidsalt",
+          "message": "longest side 0.34 m within 0.05-6 m"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_frostglass",
+          "message": "longest side 0.34 m within 0.05-6 m"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_gamma",
+          "message": "longest side 0.34 m within 0.05-6 m"
+        },
+        {
+          "subject": "catalyst_vial/catalyst_vial_stormquartz",
+          "message": "longest side 0.34 m within 0.05-6 m"
+        }
+      ]
+    }
+  ]
+}

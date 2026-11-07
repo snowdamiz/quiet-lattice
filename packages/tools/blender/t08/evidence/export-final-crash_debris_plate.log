@@ -1,0 +1,50 @@
+packages/tools/blender/t08/evidence/20261107T080232518764Z-preview-crash_debris_plate-export-final
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/client/public/models/props/crash_debris.glb",
+    "--variant",
+    "crash_debris_plate",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/export-final/crash_debris_plate.png",
+    "--single",
+    "--size",
+    "640"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 38258810880,
+    "memoryFreePercent": 81,
+    "load": [
+      12.1787109375,
+      11.7177734375,
+      10.65185546875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T08:02:32.506108+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-go2nehl5",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 337824,
+  "pid": 20694,
+  "pgid": 20694,
+  "remainingGroup": [],
+  "elapsedSeconds": 4.332110291987192,
+  "logSHA256": "3b86b9087a8e2837a078b0b87c2197b59a79bff7db17db65466d72f100ec89f7",
+  "pass": true
+}

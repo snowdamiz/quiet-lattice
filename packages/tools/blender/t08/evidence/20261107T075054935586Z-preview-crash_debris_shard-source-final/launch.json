@@ -1,0 +1,40 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/crash_debris.blend",
+    "--variant",
+    "crash_debris_shard",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/source-final/crash_debris_shard.png"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 34395303936,
+    "memoryFreePercent": 81,
+    "load": [
+      10.37060546875,
+      9.822265625,
+      9.4208984375
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:50:54.921802+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-pnll15ah",
+  "exit": null,
+  "peakSampledGroupRSSKiB": 0
+}

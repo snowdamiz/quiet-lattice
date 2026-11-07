@@ -1,0 +1,191 @@
+00:00.341  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/market_stall.blend"
+
+export assets/blend/props/market_stall.blend -> packages/client/public/models/props/market_stall.glb
+
+validate assets/blend/props/market_stall.blend  (family props, source .blend)
+  market_stall / market_stall [prop]  tris LOD0 4,284, LOD1 2,416, LOD2 364, LOD3 60  size 3.35 x 2.01 x 2.65 m
+  market_stall / market_stall_reaches [prop]  tris LOD0 4,284, LOD1 2,416, LOD2 364, LOD3 60  size 3.35 x 2.01 x 2.65 m
+  PASS  naming
+        ok    market_stall.blend: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    market_stall: LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    market_stall/market_stall_reaches: LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    market_stall: 4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0
+        ok    market_stall/market_stall_reaches: 4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 9 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    market_stall: longest side 3.35 m within 0.05-6 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073113781798Z-r4-market_stall/stock/props__market_stall.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:31:14 | INFO: Starting glTF 2.0 export
+02:31:14 | INFO: Extracting primitive: COL_market_stall_Counter_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_CounterFittingsAndStock_L0_mesh
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | INFO: Primitives created: 4
+02:31:14 | INFO: Extracting primitive: market_stall_FusedAwningFrame_L0_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_HandPolishedCounterAndPatchedCanopy_L0_mesh
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | INFO: Primitives created: 3
+02:31:14 | INFO: Extracting primitive: market_stall_LappedShellAwning_L0_mesh
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_SalesCounter_L0_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_StockShelvesAndApron_L0_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_CounterFittingsAndStock_L1_mesh
+02:31:14 | INFO: Primitives created: 4
+02:31:14 | INFO: Extracting primitive: market_stall_FusedAwningFrame_L1_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_LappedShellAwning_L1_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_SalesCounter_L1_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_StockShelvesAndApron_L1_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_FusedAwningFrame_L2_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_LappedShellAwning_L2_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_SalesCounter_L2_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_StockShelvesAndApron_L2_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_FusedAwningFrame_L3_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_LappedShellAwning_L3_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_SalesCounter_L3_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: COL_market_stall_reaches_Counter_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_CounterFittingsAndStock_L0_mesh
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | INFO: Primitives created: 4
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_FusedAwningFrame_L0_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_HandPolishedCounterAndPatchedCanopy_L0_mesh
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | INFO: Primitives created: 3
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_LappedShellAwning_L0_mesh
+02:31:14 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_SalesCounter_L0_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_StockShelvesAndApron_L0_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_CounterFittingsAndStock_L1_mesh
+02:31:14 | INFO: Primitives created: 4
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_FusedAwningFrame_L1_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_LappedShellAwning_L1_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_SalesCounter_L1_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_StockShelvesAndApron_L1_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_FusedAwningFrame_L2_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_LappedShellAwning_L2_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_SalesCounter_L2_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_StockShelvesAndApron_L2_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_FusedAwningFrame_L3_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_LappedShellAwning_L3_mesh
+02:31:14 | INFO: Primitives created: 1
+02:31:14 | INFO: Extracting primitive: market_stall_reaches_SalesCounter_L3_mesh
+02:31:14 | INFO: Primitives created: 2
+02:31:14 | INFO: Finished glTF 2.0 export in 0.06819629669189453 s
+
+  3.6 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 14 texture(s) to KTX2 (1 UASTC, 13 ETC1S, 6 duplicate(s) stored once): 3.6 -> 1.4 MB of buffers
+  meshopt (high, quantized): geometry 1.1 -> 0.4 MB; file 1.5 -> 0.8 MB
+02:31:23 | INFO: Data are loaded, start creating Blender stuff
+02:31:23 | INFO: Blender create Mesh node COL_market_stall_Counter_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_CounterFittingsAndStock_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_FusedAwningFrame_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_HandPolishedCounterAndPatchedCanopy_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_LappedShellAwning_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_SalesCounter_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_StockShelvesAndApron_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_CounterFittingsAndStock_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_FusedAwningFrame_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_LappedShellAwning_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_SalesCounter_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_StockShelvesAndApron_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_FusedAwningFrame_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_LappedShellAwning_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_SalesCounter_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_StockShelvesAndApron_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_FusedAwningFrame_L3_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_LappedShellAwning_L3_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_SalesCounter_L3_mesh
+02:31:23 | INFO: Blender create Mesh node COL_market_stall_reaches_Counter_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_CounterFittingsAndStock_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_FusedAwningFrame_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_HandPolishedCounterAndPatchedCanopy_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_LappedShellAwning_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_SalesCounter_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_StockShelvesAndApron_L0_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_CounterFittingsAndStock_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_FusedAwningFrame_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_LappedShellAwning_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_SalesCounter_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_StockShelvesAndApron_L1_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_FusedAwningFrame_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_LappedShellAwning_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_SalesCounter_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_StockShelvesAndApron_L2_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_FusedAwningFrame_L3_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_LappedShellAwning_L3_mesh
+02:31:23 | INFO: Blender create Mesh node market_stall_reaches_SalesCounter_L3_mesh
+02:31:23 | INFO: glTF import finished in 0.05s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/props/market_stall.glb  (family props, export .glb)
+  market_stall / market_stall [prop]  tris LOD0 4,284, LOD1 2,416, LOD2 364, LOD3 60  size 3.35 x 2.01 x 2.65 m
+  market_stall / market_stall_reaches [prop]  tris LOD0 4,284, LOD1 2,416, LOD2 364, LOD3 60  size 3.35 x 2.01 x 2.65 m
+  PASS  naming
+        ok    market_stall.glb: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    market_stall: LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    market_stall/market_stall_reaches: LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    geometry: meshopt-compressed: 0.4 MB of streams
+  PASS  LODs
+        ok    market_stall: 4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0
+        ok    market_stall/market_stall_reaches: 4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0
+  PASS  materials
+        ok    compact_Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 12 more
+  PASS  scale references
+        ok    source: assets/blend/props/market_stall.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    market_stall: longest side 3.35 m within 0.05-6 m
+        ok    market_stall/market_stall_reaches: longest side 3.35 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073113781798Z-r4-market_stall/stock/props__market_stall.glb.json
+  wrote packages/client/public/models/props/market_stall.glb (785,784 bytes)
+
+export props: 1 of 1 source(s) exported

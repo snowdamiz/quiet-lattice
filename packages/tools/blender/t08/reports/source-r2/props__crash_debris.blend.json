@@ -1,0 +1,271 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/props/crash_debris.blend",
+  "family": "props",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T07:22:10Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "crash_debris",
+      "variants": [
+        {
+          "id": "crash_debris_plate",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4148,
+            "1": 1308,
+            "2": 224,
+            "3": 44
+          },
+          "implicitLods": false,
+          "dims": [
+            2.522,
+            1.747,
+            0.295
+          ],
+          "materials": [
+            "LIB_T08_compact_Hull",
+            "LIB_T08_compact_Trim",
+            "LIB_T08_compact_Dark",
+            "LIB_T08_compact_Wear"
+          ]
+        },
+        {
+          "id": "crash_debris_shard",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4148,
+            "1": 1308,
+            "2": 224,
+            "3": 44
+          },
+          "implicitLods": false,
+          "dims": [
+            1.412,
+            0.978,
+            0.189
+          ],
+          "materials": [
+            "LIB_T08_reaches_Accent",
+            "LIB_T08_reaches_Trim",
+            "LIB_T08_reaches_Dark",
+            "LIB_T08_reaches_Wear"
+          ]
+        },
+        {
+          "id": "crash_debris_rim",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 6728,
+            "1": 1448,
+            "2": 380,
+            "3": 32
+          },
+          "implicitLods": false,
+          "dims": [
+            5.35,
+            1.165,
+            0.291
+          ],
+          "materials": [
+            "LIB_T08_compact_Dark",
+            "LIB_T08_compact_Trim",
+            "LIB_T08_compact_Wear"
+          ]
+        },
+        {
+          "id": "crash_debris_scorch",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5132,
+            "1": 920,
+            "2": 256,
+            "3": 36
+          },
+          "implicitLods": false,
+          "dims": [
+            5.1,
+            2.52,
+            0.25
+          ],
+          "materials": [
+            "LIB_T08_compact_Dark",
+            "LIB_T08_compact_Wear",
+            "LIB_T08_compact_Trim"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "crash_debris.blend",
+          "message": "4 variant(s) in 1 asset(s) follow the props rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "crash_debris/crash_debris_plate",
+          "message": "LOD0 4,148 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "crash_debris/crash_debris_shard",
+          "message": "LOD0 4,148 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "crash_debris/crash_debris_rim",
+          "message": "LOD0 6,728 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "crash_debris/crash_debris_scorch",
+          "message": "LOD0 5,132 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "crash_debris/crash_debris_plate",
+          "message": "4,148 > 1,308 > 224 > 44 triangles; LOD3 1.1% of LOD0"
+        },
+        {
+          "subject": "crash_debris/crash_debris_shard",
+          "message": "4,148 > 1,308 > 224 > 44 triangles; LOD3 1.1% of LOD0"
+        },
+        {
+          "subject": "crash_debris/crash_debris_rim",
+          "message": "6,728 > 1,448 > 380 > 32 triangles; LOD3 0.5% of LOD0"
+        },
+        {
+          "subject": "crash_debris/crash_debris_scorch",
+          "message": "5,132 > 920 > 256 > 36 triangles; LOD3 0.7% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "compact_Dark (LIB_T08_compact_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Hull (LIB_T08_compact_Hull)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Trim (LIB_T08_compact_Trim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Wear (LIB_T08_compact_Wear)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Accent (LIB_T08_reaches_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Dark (LIB_T08_reaches_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Trim (LIB_T08_reaches_Trim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Wear (LIB_T08_reaches_Wear)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "crash_debris/crash_debris_plate",
+          "message": "longest side 2.52 m within 0.05-6 m"
+        },
+        {
+          "subject": "crash_debris/crash_debris_shard",
+          "message": "longest side 1.41 m within 0.05-6 m"
+        },
+        {
+          "subject": "crash_debris/crash_debris_rim",
+          "message": "longest side 5.35 m within 0.05-6 m"
+        },
+        {
+          "subject": "crash_debris/crash_debris_scorch",
+          "message": "longest side 5.10 m within 0.05-6 m"
+        }
+      ]
+    }
+  ]
+}

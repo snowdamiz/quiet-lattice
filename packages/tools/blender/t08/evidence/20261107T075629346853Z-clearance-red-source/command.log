@@ -1,0 +1,16 @@
+00:00.416  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/outpost_0.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/audit.py", line 262, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/audit.py", line 248, in main
+    r = inspect(item, args.mode)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/audit.py", line 218, in inspect
+    assert distance >= 12, (vid, c["name"], distance)
+           ^^^^^^^^^^^^^^
+AssertionError: ('outpost_0', 'COL_outpost_0_PadEdge1', 11.984290565030015)
+
+Error: script failed, file: 'packages/tools/blender/t08/audit.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

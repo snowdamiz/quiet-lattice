@@ -1,0 +1,277 @@
+00:00.282  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/outpost_1.blend"
+
+export assets/blend/sites/outpost_1.blend -> packages/client/public/models/sites/outpost_1.glb
+
+validate assets/blend/sites/outpost_1.blend  (family sites, source .blend)
+  outpost_1 / outpost_1 [building]  tris LOD0 21,216, LOD1 14,008, LOD2 1,916, LOD3 152  size 24.37 x 37.44 x 4.50 m
+  PASS  naming
+        ok    outpost_1.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    outpost_1: LOD0 21,216 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    outpost_1: 21,216 > 14,008 > 1,916 > 152 triangles; LOD3 0.7% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Glass (LIB_T08_compact_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_1: longest side 37.44 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T075827586298Z-clearance-final-outpost_1/stock/sites__outpost_1.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:58:28 | INFO: Starting glTF 2.0 export
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_East_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_Link_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge0_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge1_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge2_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge3_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge4_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge5_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge6_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge7_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge8_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge9_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge10_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge11_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge13_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge14_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_PadEdge15_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: COL_outpost_1_West_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: Door_outpost_1_DoorService_L0_mesh
+02:58:28 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_AbandonedServiceEquipment_L0_mesh
+02:58:28 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:58:28 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:58:28 | INFO: Primitives created: 3
+02:58:28 | INFO: Extracting primitive: outpost_1_Clear24mLandingSurface_L0_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_DiscardedCableAndEmptySupplyHarness_L0_mesh
+02:58:28 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EastDeckModuleShell_L0_mesh
+02:58:28 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EastDeckModuleSocketFrame_L0_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryLinkShell_L0_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryLinkSocketFrame_L0_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryPortal_L0_mesh
+02:58:28 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:58:28 | INFO: Primitives created: 6
+02:58:28 | INFO: Extracting primitive: outpost_1_InsetLandingGuidesAndServiceWalk_L0_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_LandingFootScarsAndRainRunoff_L0_mesh
+02:58:28 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_LapFlashingAndRepairPlates_L0_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_PadExpansionJointsAndDrainage_L0_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_PadPerimeterAndRamp_L0_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_RaisedServiceDeck_L0_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_ServiceGasketsPressureClampsAndSeamCaps_L0_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_WestDeckModuleShell_L0_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_WestDeckModuleSocketFrame_L0_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: Door_outpost_1_DoorService_L1_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_AbandonedServiceEquipment_L1_mesh
+02:58:28 | INFO: Primitives created: 3
+02:58:28 | INFO: Extracting primitive: outpost_1_Clear24mLandingSurface_L1_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_DiscardedCableAndEmptySupplyHarness_L1_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EastDeckModuleShell_L1_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EastDeckModuleSocketFrame_L1_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryLinkShell_L1_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryLinkSocketFrame_L1_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryPortal_L1_mesh
+02:58:28 | INFO: Primitives created: 6
+02:58:28 | INFO: Extracting primitive: outpost_1_InsetLandingGuidesAndServiceWalk_L1_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_LapFlashingAndRepairPlates_L1_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_PadExpansionJointsAndDrainage_L1_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_PadPerimeterAndRamp_L1_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_RaisedServiceDeck_L1_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_WestDeckModuleShell_L1_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_WestDeckModuleSocketFrame_L1_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: Door_outpost_1_DoorService_L2_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_AbandonedServiceEquipment_L2_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_Clear24mLandingSurface_L2_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_EastDeckModuleShell_L2_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EastDeckModuleSocketFrame_L2_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryLinkShell_L2_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryLinkSocketFrame_L2_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryPortal_L2_mesh
+02:58:28 | INFO: Primitives created: 3
+02:58:28 | INFO: Extracting primitive: outpost_1_InsetLandingGuidesAndServiceWalk_L2_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_PadPerimeterAndRamp_L2_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_RaisedServiceDeck_L2_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_WestDeckModuleShell_L2_mesh
+02:58:28 | INFO: Primitives created: 2
+02:58:28 | INFO: Extracting primitive: outpost_1_WestDeckModuleSocketFrame_L2_mesh
+02:58:28 | INFO: Primitives created: 4
+02:58:28 | INFO: Extracting primitive: Door_outpost_1_DoorService_L3_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_Clear24mLandingSurface_L3_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_EastDeckModuleShell_L3_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_EntryLinkShell_L3_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_PadPerimeterAndRamp_L3_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Extracting primitive: outpost_1_WestDeckModuleShell_L3_mesh
+02:58:28 | INFO: Primitives created: 1
+02:58:28 | INFO: Finished glTF 2.0 export in 0.07918691635131836 s
+
+  6.6 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 11 texture(s) to KTX2 (1 UASTC, 10 ETC1S): 6.5 -> 3.6 MB of buffers
+  meshopt (high, quantized): geometry 3.0 -> 1.0 MB; file 3.7 -> 1.8 MB
+02:58:58 | INFO: Data are loaded, start creating Blender stuff
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_East_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_Link_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge0_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge1_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge2_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge3_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge4_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge5_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge6_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge7_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge8_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge9_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge10_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge11_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge13_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge14_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_PadEdge15_mesh
+02:58:58 | INFO: Blender create Mesh node COL_outpost_1_West_mesh
+02:58:58 | INFO: Blender create Mesh node Door_outpost_1_DoorService_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_AbandonedServiceEquipment_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_Clear24mLandingSurface_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_DiscardedCableAndEmptySupplyHarness_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EastDeckModuleShell_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EastDeckModuleSocketFrame_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryLinkShell_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryLinkSocketFrame_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryPortal_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_InsetLandingGuidesAndServiceWalk_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_LandingFootScarsAndRainRunoff_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_LapFlashingAndRepairPlates_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_PadExpansionJointsAndDrainage_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_PadPerimeterAndRamp_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_RaisedServiceDeck_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_ServiceGasketsPressureClampsAndSeamCaps_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_WestDeckModuleShell_L0_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_WestDeckModuleSocketFrame_L0_mesh
+02:58:58 | INFO: Blender create Mesh node Door_outpost_1_DoorService_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_AbandonedServiceEquipment_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_Clear24mLandingSurface_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_DiscardedCableAndEmptySupplyHarness_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EastDeckModuleShell_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EastDeckModuleSocketFrame_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryLinkShell_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryLinkSocketFrame_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryPortal_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_InsetLandingGuidesAndServiceWalk_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_LapFlashingAndRepairPlates_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_PadExpansionJointsAndDrainage_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_PadPerimeterAndRamp_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_RaisedServiceDeck_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_WestDeckModuleShell_L1_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_WestDeckModuleSocketFrame_L1_mesh
+02:58:58 | INFO: Blender create Mesh node Door_outpost_1_DoorService_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_AbandonedServiceEquipment_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_Clear24mLandingSurface_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EastDeckModuleShell_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EastDeckModuleSocketFrame_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryLinkShell_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryLinkSocketFrame_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryPortal_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_InsetLandingGuidesAndServiceWalk_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_PadPerimeterAndRamp_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_RaisedServiceDeck_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_WestDeckModuleShell_L2_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_WestDeckModuleSocketFrame_L2_mesh
+02:58:58 | INFO: Blender create Mesh node Door_outpost_1_DoorService_L3_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_Clear24mLandingSurface_L3_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EastDeckModuleShell_L3_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_EntryLinkShell_L3_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_PadPerimeterAndRamp_L3_mesh
+02:58:58 | INFO: Blender create Mesh node outpost_1_WestDeckModuleShell_L3_mesh
+02:58:58 | INFO: glTF import finished in 0.15s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/sites/outpost_1.glb  (family sites, export .glb)
+  outpost_1 / outpost_1 [building]  tris LOD0 21,216, LOD1 14,008, LOD2 1,916, LOD3 152  size 24.37 x 37.44 x 4.50 m
+  PASS  naming
+        ok    outpost_1.glb: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    outpost_1: LOD0 21,216 triangles within the building budget 8,000-60,000 (families.json)
+        ok    geometry: meshopt-compressed: 1.0 MB of streams
+  PASS  LODs
+        ok    outpost_1: 21,216 > 14,008 > 1,916 > 152 triangles; LOD3 0.7% of LOD0
+  PASS  materials
+        ok    compact_Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Glass: glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 7 more
+  PASS  scale references
+        ok    source: assets/blend/sites/outpost_1.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    outpost_1: longest side 37.44 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T075827586298Z-clearance-final-outpost_1/stock/sites__outpost_1.glb.json
+  wrote packages/client/public/models/sites/outpost_1.glb (1,818,484 bytes)
+
+export sites: 1 of 1 source(s) exported

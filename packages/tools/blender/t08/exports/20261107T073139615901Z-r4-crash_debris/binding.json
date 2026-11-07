@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/props/crash_debris.blend",
+  "output": "packages/client/public/models/props/crash_debris.glb",
+  "status": "PASS",
+  "sourceSHA256": "7bb439937389bff51213bd8eefea9e630672505485dd3c82dc3ba5cb6809fa7d",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-crash_debris-r4",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "crash_debris",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T073139615901Z-r4-crash_debris/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "ce2de240125c2854e94ae25e6772184fe3decf2075557fab5f6c3b70f4bfb873"
+}

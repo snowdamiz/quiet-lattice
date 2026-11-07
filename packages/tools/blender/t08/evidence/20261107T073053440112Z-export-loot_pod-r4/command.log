@@ -1,0 +1,129 @@
+00:00.286  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/loot_pod.blend"
+
+export assets/blend/props/loot_pod.blend -> packages/client/public/models/props/loot_pod.glb
+
+validate assets/blend/props/loot_pod.blend  (family props, source .blend)
+  loot_pod / loot_pod [prop]  tris LOD0 4,166, LOD1 2,234, LOD2 498, LOD3 60  size 1.65 x 3.04 x 1.67 m
+  PASS  naming
+        ok    loot_pod.blend: 1 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    loot_pod: LOD0 4,166 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    loot_pod: 4,166 > 2,234 > 498 > 60 triangles; LOD3 1.4% of LOD0
+  PASS  materials
+        ok    reaches_Accent (LIB_T08_reaches_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    reaches_Dark (LIB_T08_reaches_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    reaches_Hull (LIB_T08_reaches_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 3 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    loot_pod: longest side 3.04 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073053388715Z-r4-loot_pod/stock/props__loot_pod.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:30:54 | INFO: Starting glTF 2.0 export
+02:30:54 | INFO: Extracting primitive: COL_loot_pod_Body_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_DockScrapesAndLatchPolish_L0_mesh
+02:30:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ExposedCargoRack_L0_mesh
+02:30:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:30:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:30:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_FusedCargoFrame_L0_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_HingesLatchesAndIdentification_L0_mesh
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_LappedPressureShell_L0_mesh
+02:30:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:30:54 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_ReleasedHatch_L0_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ShockSkids_L0_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ExposedCargoRack_L1_mesh
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_FusedCargoFrame_L1_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_HingesLatchesAndIdentification_L1_mesh
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_LappedPressureShell_L1_mesh
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_ReleasedHatch_L1_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ShockSkids_L1_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ExposedCargoRack_L2_mesh
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_FusedCargoFrame_L2_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_LappedPressureShell_L2_mesh
+02:30:54 | INFO: Primitives created: 3
+02:30:54 | INFO: Extracting primitive: loot_pod_ReleasedHatch_L2_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ShockSkids_L2_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_LappedPressureShell_L3_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ReleasedHatch_L3_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Extracting primitive: loot_pod_ShockSkids_L3_mesh
+02:30:54 | INFO: Primitives created: 1
+02:30:54 | INFO: Finished glTF 2.0 export in 0.04842090606689453 s
+
+  1.8 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 10 texture(s) to KTX2 (1 UASTC, 9 ETC1S): 1.7 -> 0.8 MB of buffers
+  meshopt (high, quantized): geometry 0.6 -> 0.2 MB; file 0.8 -> 0.5 MB
+02:31:00 | INFO: Data are loaded, start creating Blender stuff
+02:31:00 | INFO: Blender create Mesh node COL_loot_pod_Body_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_DockScrapesAndLatchPolish_L0_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ExposedCargoRack_L0_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_FusedCargoFrame_L0_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_HingesLatchesAndIdentification_L0_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_LappedPressureShell_L0_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ReleasedHatch_L0_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ShockSkids_L0_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ExposedCargoRack_L1_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_FusedCargoFrame_L1_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_HingesLatchesAndIdentification_L1_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_LappedPressureShell_L1_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ReleasedHatch_L1_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ShockSkids_L1_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ExposedCargoRack_L2_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_FusedCargoFrame_L2_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_LappedPressureShell_L2_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ReleasedHatch_L2_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ShockSkids_L2_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_LappedPressureShell_L3_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ReleasedHatch_L3_mesh
+02:31:00 | INFO: Blender create Mesh node loot_pod_ShockSkids_L3_mesh
+02:31:00 | INFO: glTF import finished in 0.04s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/props/loot_pod.glb  (family props, export .glb)
+  loot_pod / loot_pod [prop]  tris LOD0 4,166, LOD1 2,234, LOD2 498, LOD3 60  size 1.65 x 3.04 x 1.67 m
+  PASS  naming
+        ok    loot_pod.glb: 1 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    loot_pod: LOD0 4,166 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    geometry: meshopt-compressed: 0.2 MB of streams
+  PASS  LODs
+        ok    loot_pod: 4,166 > 2,234 > 498 > 60 triangles; LOD3 1.4% of LOD0
+  PASS  materials
+        ok    reaches_Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    reaches_Dark: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    reaches_Hull: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  PASS  scale references
+        ok    source: assets/blend/props/loot_pod.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    loot_pod: longest side 3.04 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073053388715Z-r4-loot_pod/stock/props__loot_pod.glb.json
+  wrote packages/client/public/models/props/loot_pod.glb (487,724 bytes)
+
+export props: 1 of 1 source(s) exported

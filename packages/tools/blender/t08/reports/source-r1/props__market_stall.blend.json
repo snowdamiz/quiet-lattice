@@ -1,0 +1,217 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/props/market_stall.blend",
+  "family": "props",
+  "mode": "source",
+  "status": "FAIL",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T07:19:47Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "FAIL",
+      "scale": "PASS"
+    },
+    "fail": 1,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "market_stall",
+      "variants": [
+        {
+          "id": "market_stall",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4284,
+            "1": 2416,
+            "2": 364,
+            "3": 60
+          },
+          "implicitLods": false,
+          "dims": [
+            3.348,
+            2.01,
+            2.655
+          ],
+          "materials": [
+            "LIB_T08_compact_Hull",
+            "LIB_T08_compact_Accent",
+            "LIB_T08_compact_Trim",
+            "LIB_T08_compact_Signal",
+            "LIB_T08_compact_Dark",
+            "LIB_T08_compact_Wear"
+          ]
+        },
+        {
+          "id": "market_stall_reaches",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4284,
+            "1": 2416,
+            "2": 364,
+            "3": 60
+          },
+          "implicitLods": false,
+          "dims": [
+            3.348,
+            2.01,
+            2.655
+          ],
+          "materials": [
+            "LIB_T08_reaches_Hull",
+            "LIB_T08_reaches_Accent",
+            "LIB_T08_reaches_Trim",
+            "LIB_T08_reaches_Signal",
+            "LIB_T08_reaches_Dark",
+            "LIB_T08_reaches_Wear"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "market_stall.blend",
+          "message": "2 variant(s) in 1 asset(s) follow the props rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "market_stall",
+          "message": "LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "market_stall/market_stall_reaches",
+          "message": "LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "market_stall",
+          "message": "4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0"
+        },
+        {
+          "subject": "market_stall/market_stall_reaches",
+          "message": "4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "FAIL",
+      "findings": [
+        {
+          "level": "fail",
+          "subject": "reaches_Accent (LIB_T08_reaches_Accent)",
+          "message": "base colour map reaches_Accent_Base is uniform under the surface's UVs (std 0.0023 < 0.0039): paint or bake real detail"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "compact_Accent (LIB_T08_compact_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Dark (LIB_T08_compact_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Hull (LIB_T08_compact_Hull)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Signal (LIB_T08_compact_Signal)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Trim (LIB_T08_compact_Trim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Wear (LIB_T08_compact_Wear)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Accent (LIB_T08_reaches_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Dark (LIB_T08_reaches_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Hull (LIB_T08_reaches_Hull)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Signal (LIB_T08_reaches_Signal)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Trim (LIB_T08_reaches_Trim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Wear (LIB_T08_reaches_Wear)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "market_stall",
+          "message": "longest side 3.35 m within 0.05-6 m"
+        },
+        {
+          "subject": "market_stall/market_stall_reaches",
+          "message": "longest side 3.35 m within 0.05-6 m"
+        }
+      ]
+    }
+  ]
+}

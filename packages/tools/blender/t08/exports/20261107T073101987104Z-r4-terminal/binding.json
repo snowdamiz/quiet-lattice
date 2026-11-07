@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/props/terminal.blend",
+  "output": "packages/client/public/models/props/terminal.glb",
+  "status": "PASS",
+  "sourceSHA256": "3b6dec839161d1a39140fa1b41d31287c806c458dcf5544590ebc6c0058ea2f2",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-terminal-r4",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "terminal",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T073101987104Z-r4-terminal/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "105d6c1bf602eab78d8f98a00f4bbe86520a691817412b9bf739fa4e4498fab9"
+}

@@ -1,0 +1,17 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/tools/blender/t08/controls/final/wrong-mips/cargo_pod.glb",
+  "family": "props",
+  "mode": "export",
+  "status": "FAIL",
+  "error": "could not load: ktx_cpu.py extract failed (3): error-8102: Invalid sgdByteLength for BasisLZ/ETC1S. sgdByteLength must be consistent with image count and BasisLzGlobalHeader. |     sgdByteLength is 776 but based on image count of 1 and the BasisLzGlobalHeader the expected value is 576 (20 + 20 * imageCount + endpointsByteLength + selectorsByteLength + tablesByteLength + extendedByteLength). | error-7011: Invalid padding byte value. Every padding byte's value must be 0. |     A padding byte value is 3 before DFD at offset 104 but it must be 0. | error-7011: Invalid padding byte value. Every padding byte's value must be 0. |     A padding byte value is 247 before image level 0 at offset 1272 but it must be 0.",
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T07:53:32Z",
+  "summary": {
+    "checks": {},
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [],
+  "checks": []
+}

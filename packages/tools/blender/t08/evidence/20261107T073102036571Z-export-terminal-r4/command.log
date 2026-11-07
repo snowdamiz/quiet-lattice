@@ -1,0 +1,205 @@
+00:00.281  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/terminal.blend"
+
+export assets/blend/props/terminal.blend -> packages/client/public/models/props/terminal.glb
+
+validate assets/blend/props/terminal.blend  (family props, source .blend)
+  terminal / terminal [prop]  tris LOD0 3,600, LOD1 1,168, LOD2 184, LOD3 48  size 0.94 x 0.78 x 1.81 m
+  terminal / terminal_reaches [prop]  tris LOD0 3,600, LOD1 1,168, LOD2 184, LOD3 48  size 0.94 x 0.78 x 1.81 m
+  PASS  naming
+        ok    terminal.blend: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    terminal: LOD0 3,600 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    terminal/terminal_reaches: LOD0 3,600 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    terminal: 3,600 > 1,168 > 184 > 48 triangles; LOD3 1.3% of LOD0
+        ok    terminal/terminal_reaches: 3,600 > 1,168 > 184 > 48 triangles; LOD3 1.3% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 11 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    terminal: longest side 1.81 m within 0.05-6 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073101987104Z-r4-terminal/stock/props__terminal.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:31:02 | INFO: Starting glTF 2.0 export
+02:31:02 | INFO: Extracting primitive: COL_terminal_Body_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_CantedDisplay_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_FlaredFoot_L0_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_KeypadToggleAndServicePort_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 4
+02:31:02 | INFO: Extracting primitive: terminal_OverlappedScreenVisor_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_PalmWearAndServiceScuffs_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_PowerUmbilical_L0_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_RearLatticeSpine_L0_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_CantedDisplay_L1_mesh
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_FlaredFoot_L1_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_KeypadToggleAndServicePort_L1_mesh
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_OverlappedScreenVisor_L1_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_PowerUmbilical_L1_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_RearLatticeSpine_L1_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_CantedDisplay_L2_mesh
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_FlaredFoot_L2_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_OverlappedScreenVisor_L2_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_RearLatticeSpine_L2_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_CantedDisplay_L3_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_FlaredFoot_L3_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_RearLatticeSpine_L3_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: COL_terminal_reaches_Body_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_CantedDisplay_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_reaches_FlaredFoot_L0_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_KeypadToggleAndServicePort_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 4
+02:31:02 | INFO: Extracting primitive: terminal_reaches_OverlappedScreenVisor_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_PalmWearAndServiceScuffs_L0_mesh
+02:31:02 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_PowerUmbilical_L0_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_RearLatticeSpine_L0_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_reaches_CantedDisplay_L1_mesh
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_reaches_FlaredFoot_L1_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_KeypadToggleAndServicePort_L1_mesh
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_reaches_OverlappedScreenVisor_L1_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_PowerUmbilical_L1_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_RearLatticeSpine_L1_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_reaches_CantedDisplay_L2_mesh
+02:31:02 | INFO: Primitives created: 3
+02:31:02 | INFO: Extracting primitive: terminal_reaches_FlaredFoot_L2_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_OverlappedScreenVisor_L2_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_RearLatticeSpine_L2_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_reaches_CantedDisplay_L3_mesh
+02:31:02 | INFO: Primitives created: 2
+02:31:02 | INFO: Extracting primitive: terminal_reaches_FlaredFoot_L3_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Extracting primitive: terminal_reaches_RearLatticeSpine_L3_mesh
+02:31:02 | INFO: Primitives created: 1
+02:31:02 | INFO: Finished glTF 2.0 export in 0.11404919624328613 s
+
+  3.5 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 15 texture(s) to KTX2 (1 UASTC, 14 ETC1S, 7 duplicate(s) stored once): 3.5 -> 1.1 MB of buffers
+  meshopt (high, quantized): geometry 0.8 -> 0.3 MB; file 1.2 -> 0.7 MB
+02:31:12 | INFO: Data are loaded, start creating Blender stuff
+02:31:12 | INFO: Blender create Mesh node COL_terminal_Body_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_CantedDisplay_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_FlaredFoot_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_KeypadToggleAndServicePort_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_OverlappedScreenVisor_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_PalmWearAndServiceScuffs_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_PowerUmbilical_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_RearLatticeSpine_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_CantedDisplay_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_FlaredFoot_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_KeypadToggleAndServicePort_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_OverlappedScreenVisor_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_PowerUmbilical_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_RearLatticeSpine_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_CantedDisplay_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_FlaredFoot_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_OverlappedScreenVisor_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_RearLatticeSpine_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_CantedDisplay_L3_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_FlaredFoot_L3_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_RearLatticeSpine_L3_mesh
+02:31:12 | INFO: Blender create Mesh node COL_terminal_reaches_Body_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_CantedDisplay_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_FlaredFoot_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_KeypadToggleAndServicePort_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_OverlappedScreenVisor_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_PalmWearAndServiceScuffs_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_PowerUmbilical_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_RearLatticeSpine_L0_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_CantedDisplay_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_FlaredFoot_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_KeypadToggleAndServicePort_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_OverlappedScreenVisor_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_PowerUmbilical_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_RearLatticeSpine_L1_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_CantedDisplay_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_FlaredFoot_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_OverlappedScreenVisor_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_RearLatticeSpine_L2_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_CantedDisplay_L3_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_FlaredFoot_L3_mesh
+02:31:12 | INFO: Blender create Mesh node terminal_reaches_RearLatticeSpine_L3_mesh
+02:31:12 | INFO: glTF import finished in 0.06s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/props/terminal.glb  (family props, export .glb)
+  terminal / terminal [prop]  tris LOD0 3,600, LOD1 1,168, LOD2 184, LOD3 48  size 0.94 x 0.78 x 1.81 m
+  terminal / terminal_reaches [prop]  tris LOD0 3,600, LOD1 1,168, LOD2 184, LOD3 48  size 0.94 x 0.78 x 1.81 m
+  PASS  naming
+        ok    terminal.glb: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    terminal: LOD0 3,600 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    terminal/terminal_reaches: LOD0 3,600 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    geometry: meshopt-compressed: 0.3 MB of streams
+  PASS  LODs
+        ok    terminal: 3,600 > 1,168 > 184 > 48 triangles; LOD3 1.3% of LOD0
+        ok    terminal/terminal_reaches: 3,600 > 1,168 > 184 > 48 triangles; LOD3 1.3% of LOD0
+  PASS  materials
+        ok    compact_Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 14 more
+  PASS  scale references
+        ok    source: assets/blend/props/terminal.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    terminal: longest side 1.82 m within 0.05-6 m
+        ok    terminal/terminal_reaches: longest side 1.82 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073101987104Z-r4-terminal/stock/props__terminal.glb.json
+  wrote packages/client/public/models/props/terminal.glb (704,076 bytes)
+
+export props: 1 of 1 source(s) exported

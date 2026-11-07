@@ -1,0 +1,120 @@
+00:00.317  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/cargo_pod.blend"
+
+export assets/blend/props/cargo_pod.blend -> packages/client/public/models/props/cargo_pod.glb
+
+validate assets/blend/props/cargo_pod.blend  (family props, source .blend)
+  cargo_pod / cargo_pod [prop]  tris LOD0 3,602, LOD1 1,766, LOD2 366, LOD3 48  size 1.65 x 2.18 x 1.67 m
+  PASS  naming
+        ok    cargo_pod.blend: 1 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    cargo_pod: LOD0 3,602 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    cargo_pod: 3,602 > 1,766 > 366 > 48 triangles; LOD3 1.3% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 3 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    cargo_pod: longest side 2.18 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T072258883957Z-r2-cargo_pod/stock/props__cargo_pod.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:22:59 | INFO: Starting glTF 2.0 export
+02:22:59 | INFO: Extracting primitive: cargo_pod_DockScrapesAndLatchPolish_L0_mesh
+02:22:59 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_FusedCargoFrame_L0_mesh
+02:22:59 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_HingesLatchesAndIdentification_L0_mesh
+02:22:59 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:22:59 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:22:59 | INFO: Primitives created: 3
+02:22:59 | INFO: Extracting primitive: cargo_pod_LappedPressureShell_L0_mesh
+02:22:59 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:22:59 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:22:59 | INFO: Primitives created: 3
+02:22:59 | INFO: Extracting primitive: cargo_pod_SealedHatch_L0_mesh
+02:22:59 | INFO: Primitives created: 2
+02:22:59 | INFO: Extracting primitive: cargo_pod_ShockSkids_L0_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_FusedCargoFrame_L1_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_HingesLatchesAndIdentification_L1_mesh
+02:22:59 | INFO: Primitives created: 3
+02:22:59 | INFO: Extracting primitive: cargo_pod_LappedPressureShell_L1_mesh
+02:22:59 | INFO: Primitives created: 3
+02:22:59 | INFO: Extracting primitive: cargo_pod_SealedHatch_L1_mesh
+02:22:59 | INFO: Primitives created: 2
+02:22:59 | INFO: Extracting primitive: cargo_pod_ShockSkids_L1_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_FusedCargoFrame_L2_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_LappedPressureShell_L2_mesh
+02:22:59 | INFO: Primitives created: 3
+02:22:59 | INFO: Extracting primitive: cargo_pod_SealedHatch_L2_mesh
+02:22:59 | INFO: Primitives created: 2
+02:22:59 | INFO: Extracting primitive: cargo_pod_ShockSkids_L2_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_LappedPressureShell_L3_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_SealedHatch_L3_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: cargo_pod_ShockSkids_L3_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Extracting primitive: COL_cargo_pod_Body_mesh
+02:22:59 | INFO: Primitives created: 1
+02:22:59 | INFO: Finished glTF 2.0 export in 0.03209710121154785 s
+
+  5.5 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 10 texture(s) to KTX2 (1 UASTC, 9 ETC1S): 5.4 -> 1.2 MB of buffers
+  meshopt (high, quantized): geometry 0.5 -> 0.2 MB; file 1.2 -> 0.9 MB
+02:23:06 | INFO: Data are loaded, start creating Blender stuff
+02:23:06 | INFO: Blender create Mesh node cargo_pod_DockScrapesAndLatchPolish_L0_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_FusedCargoFrame_L0_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_HingesLatchesAndIdentification_L0_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_LappedPressureShell_L0_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_SealedHatch_L0_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_ShockSkids_L0_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_FusedCargoFrame_L1_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_HingesLatchesAndIdentification_L1_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_LappedPressureShell_L1_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_SealedHatch_L1_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_ShockSkids_L1_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_FusedCargoFrame_L2_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_LappedPressureShell_L2_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_SealedHatch_L2_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_ShockSkids_L2_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_LappedPressureShell_L3_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_SealedHatch_L3_mesh
+02:23:06 | INFO: Blender create Mesh node cargo_pod_ShockSkids_L3_mesh
+02:23:06 | INFO: Blender create Mesh node COL_cargo_pod_Body_mesh
+02:23:06 | INFO: glTF import finished in 0.03s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/props/cargo_pod.glb  (family props, export .glb)
+  cargo_pod / cargo_pod [prop]  tris LOD0 3,602, LOD1 1,766, LOD2 366, LOD3 48  size 1.65 x 2.18 x 1.67 m
+  PASS  naming
+        ok    cargo_pod.glb: 1 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    cargo_pod: LOD0 3,602 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    geometry: meshopt-compressed: 0.2 MB of streams
+  PASS  LODs
+        ok    cargo_pod: 3,602 > 1,766 > 366 > 48 triangles; LOD3 1.3% of LOD0
+  PASS  materials
+        ok    compact_Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  PASS  scale references
+        ok    source: assets/blend/props/cargo_pod.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    cargo_pod: longest side 2.18 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T072258883957Z-r2-cargo_pod/stock/props__cargo_pod.glb.json
+  wrote packages/client/public/models/props/cargo_pod.glb (928,452 bytes)
+
+export props: 1 of 1 source(s) exported

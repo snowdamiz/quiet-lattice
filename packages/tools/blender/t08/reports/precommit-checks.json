@@ -1,0 +1,25 @@
+[
+  {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit": 2,
+    "output": "packages/tools/blender/t08/evidence/20261107T073553510213Z-consumer-r4-initial/command.log:39: new blank line at EOF.\npackages/tools/blender/t08/evidence/20261107T074221904906Z-consumer-cargo-transport/command.log:9: new blank line at EOF.\npackages/tools/blender/t08/evidence/20261107T075313648405Z-final-consumer/command.log:9: new blank line at EOF.\npackages/tools/blender/t08/evidence/20261107T080130134758Z-consumer-final-r2/command.log:9: new blank line at EOF.\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      ".",
+      ":(exclude)packages/tools/blender/t08/**/*.log"
+    ],
+    "exit": 0,
+    "output": ""
+  }
+]

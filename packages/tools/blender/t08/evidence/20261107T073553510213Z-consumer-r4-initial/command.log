@@ -1,0 +1,39 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+
+ ❯ packages/client/test/t08-props-real-assets.test.js (14 tests | 14 skipped) 13ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/client/test/t08-props-real-assets.test.js [ packages/client/test/t08-props-real-assets.test.js ]
+TypeError: Cannot read properties of null (reading 'getSupportedProfiles')
+ ❯ KTX2Loader.detectSupport ../../../../Documents/dev/space/node_modules/.pnpm/three@0.186.1/node_modules/three/examples/jsm/loaders/KTX2Loader.js:249:67
+ ❯ initTextureLoaders packages/client/src/core/Engine.js:196:14
+    194| export function initTextureLoaders(renderer) {
+    195|   ktx2Loader ??= new KTX2Loader().setTranscoderPath(BASIS_TRANSCODER_P…
+    196|   ktx2Loader.detectSupport(renderer);
+       |              ^
+    197|   return ktx2Loader;
+    198| }
+ ❯ packages/client/test/t08-props-real-assets.test.js:16:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  packages/client/test/t08-props-real-assets.test.js [ packages/client/test/t08-props-real-assets.test.js ]
+TypeError: Cannot read properties of undefined (reading 'dispose')
+ ❯ packages/client/test/t08-props-real-assets.test.js:20:7
+     18| });
+     19| afterAll(async () => {
+     20|   ktx.dispose();
+       |       ^
+     21|   await restore();
+     22| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  14 skipped (14)
+   Start at  02:35:53
+   Duration  531ms (transform 67%, import 30%, tests 3%)
+

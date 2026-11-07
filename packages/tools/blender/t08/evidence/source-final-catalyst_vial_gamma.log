@@ -1,0 +1,47 @@
+packages/tools/blender/t08/evidence/20261107T075029920853Z-preview-catalyst_vial_gamma-source-final
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/catalyst_vial.blend",
+    "--variant",
+    "catalyst_vial_gamma",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/source-final/catalyst_vial_gamma.png"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 34415726592,
+    "memoryFreePercent": 81,
+    "load": [
+      11.34228515625,
+      9.94580078125,
+      9.453125
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:50:29.907656+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-ed9oc2b6",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 351616,
+  "pid": 40455,
+  "pgid": 40455,
+  "remainingGroup": [],
+  "elapsedSeconds": 8.607411957986187,
+  "logSHA256": "05c0875e4322d17b5aaf53c4915c569087c105576a216af9a5dc2b51829e8cbb",
+  "pass": true
+}

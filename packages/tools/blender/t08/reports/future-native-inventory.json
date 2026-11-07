@@ -1,0 +1,496 @@
+{
+  "executed": false,
+  "requires": "Parent GPU admission, independent source review, then standard Review and blind grading",
+  "captures": [
+    {
+      "family": "props",
+      "file": "cargo_pod",
+      "asset": "cargo_pod",
+      "variant": "cargo_pod",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/cargo_pod",
+        "--asset",
+        "cargo_pod",
+        "--variant",
+        "cargo_pod"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "loot_pod",
+      "asset": "loot_pod",
+      "variant": "loot_pod",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/loot_pod",
+        "--asset",
+        "loot_pod",
+        "--variant",
+        "loot_pod"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "terminal",
+      "asset": "terminal",
+      "variant": "terminal",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/terminal",
+        "--asset",
+        "terminal",
+        "--variant",
+        "terminal"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "terminal",
+      "asset": "terminal",
+      "variant": "terminal_reaches",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/terminal",
+        "--asset",
+        "terminal",
+        "--variant",
+        "terminal_reaches"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "market_stall",
+      "asset": "market_stall",
+      "variant": "market_stall",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/market_stall",
+        "--asset",
+        "market_stall",
+        "--variant",
+        "market_stall"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "market_stall",
+      "asset": "market_stall",
+      "variant": "market_stall_reaches",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/market_stall",
+        "--asset",
+        "market_stall",
+        "--variant",
+        "market_stall_reaches"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "ammo",
+      "asset": "ammo",
+      "variant": "ammo_flak",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/ammo",
+        "--asset",
+        "ammo",
+        "--variant",
+        "ammo_flak"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "ammo",
+      "asset": "ammo",
+      "variant": "ammo_torpedo",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/ammo",
+        "--asset",
+        "ammo",
+        "--variant",
+        "ammo_torpedo"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "catalyst_vial",
+      "asset": "catalyst_vial",
+      "variant": "catalyst_vial_frostglass",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/catalyst_vial",
+        "--asset",
+        "catalyst_vial",
+        "--variant",
+        "catalyst_vial_frostglass"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "catalyst_vial",
+      "asset": "catalyst_vial",
+      "variant": "catalyst_vial_stormquartz",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/catalyst_vial",
+        "--asset",
+        "catalyst_vial",
+        "--variant",
+        "catalyst_vial_stormquartz"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "catalyst_vial",
+      "asset": "catalyst_vial",
+      "variant": "catalyst_vial_gamma",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/catalyst_vial",
+        "--asset",
+        "catalyst_vial",
+        "--variant",
+        "catalyst_vial_gamma"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "catalyst_vial",
+      "asset": "catalyst_vial",
+      "variant": "catalyst_vial_acidsalt",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/catalyst_vial",
+        "--asset",
+        "catalyst_vial",
+        "--variant",
+        "catalyst_vial_acidsalt"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "crash_debris",
+      "asset": "crash_debris",
+      "variant": "crash_debris_plate",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/crash_debris",
+        "--asset",
+        "crash_debris",
+        "--variant",
+        "crash_debris_plate"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "crash_debris",
+      "asset": "crash_debris",
+      "variant": "crash_debris_shard",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/crash_debris",
+        "--asset",
+        "crash_debris",
+        "--variant",
+        "crash_debris_shard"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "crash_debris",
+      "asset": "crash_debris",
+      "variant": "crash_debris_rim",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/crash_debris",
+        "--asset",
+        "crash_debris",
+        "--variant",
+        "crash_debris_rim"
+      ]
+    },
+    {
+      "family": "props",
+      "file": "crash_debris",
+      "asset": "crash_debris",
+      "variant": "crash_debris_scorch",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "props/crash_debris",
+        "--asset",
+        "crash_debris",
+        "--variant",
+        "crash_debris_scorch"
+      ]
+    },
+    {
+      "family": "sites",
+      "file": "outpost_0",
+      "asset": "outpost_0",
+      "variant": "outpost_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "sites/outpost_0",
+        "--asset",
+        "outpost_0",
+        "--variant",
+        "outpost_0"
+      ]
+    },
+    {
+      "family": "sites",
+      "file": "outpost_1",
+      "asset": "outpost_1",
+      "variant": "outpost_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "sites/outpost_1",
+        "--asset",
+        "outpost_1",
+        "--variant",
+        "outpost_1"
+      ]
+    },
+    {
+      "family": "sites",
+      "file": "outpost_2",
+      "asset": "outpost_2",
+      "variant": "outpost_2",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "sites/outpost_2",
+        "--asset",
+        "outpost_2",
+        "--variant",
+        "outpost_2"
+      ]
+    },
+    {
+      "family": "sites",
+      "file": "beacon_0",
+      "asset": "beacon_0",
+      "variant": "beacon_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "sites/beacon_0",
+        "--asset",
+        "beacon_0",
+        "--variant",
+        "beacon_0"
+      ]
+    },
+    {
+      "family": "sites",
+      "file": "beacon_1",
+      "asset": "beacon_1",
+      "variant": "beacon_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "sites/beacon_1",
+        "--asset",
+        "beacon_1",
+        "--variant",
+        "beacon_1"
+      ]
+    }
+  ],
+  "turntables": [
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/props/cargo_pod.glb",
+        "assets/renders/review/props/cargo_pod",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/props/loot_pod.glb",
+        "assets/renders/review/props/loot_pod",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/props/terminal.glb",
+        "assets/renders/review/props/terminal",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/props/market_stall.glb",
+        "assets/renders/review/props/market_stall",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/props/ammo.glb",
+        "assets/renders/review/props/ammo",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/props/catalyst_vial.glb",
+        "assets/renders/review/props/catalyst_vial",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/props/crash_debris.glb",
+        "assets/renders/review/props/crash_debris",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/sites/outpost_0.glb",
+        "assets/renders/review/sites/outpost_0",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/sites/outpost_1.glb",
+        "assets/renders/review/sites/outpost_1",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/sites/outpost_2.glb",
+        "assets/renders/review/sites/outpost_2",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/sites/beacon_0.glb",
+        "assets/renders/review/sites/beacon_0",
+        "--family"
+      ]
+    },
+    {
+      "command": [
+        "pnpm",
+        "turntable",
+        "--",
+        "packages/client/public/models/sites/beacon_1.glb",
+        "assets/renders/review/sites/beacon_1",
+        "--family"
+      ]
+    }
+  ],
+  "requiredReviewEvidence": [
+    "noon-lush LOD0 and LOD2",
+    "night-exotic LOD0 and LOD2",
+    "open-space LOD0 and LOD2",
+    "wireframe at both LODs",
+    "collider and marker overlay",
+    "far_lod2 at 100m",
+    "paired perf readout",
+    "8-angle turntable and material close-up",
+    "fresh blind rubric scores: all >=4; mean >=4.5"
+  ]
+}

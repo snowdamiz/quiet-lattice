@@ -1,0 +1,163 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/sites/beacon_0.glb",
+  "family": "sites",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T08:01:24Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "beacon_0",
+      "variants": [
+        {
+          "id": "beacon_0",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 15504,
+            "1": 8584,
+            "2": 1644,
+            "3": 84
+          },
+          "implicitLods": false,
+          "dims": [
+            5.6,
+            6.5,
+            18.7
+          ],
+          "materials": [
+            "compact_Signal",
+            "compact_Dark",
+            "compact_Hull",
+            "compact_Screen",
+            "compact_Trim",
+            "compact_Accent",
+            "compact_Wear",
+            "Lamp_compact"
+          ],
+          "gpuTextureMB": 58.7
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "beacon_0.glb",
+          "message": "1 variant(s) in 1 asset(s) follow the sites rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "beacon_0",
+          "message": "LOD0 15,504 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.7 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "beacon_0",
+          "message": "15,504 > 8,584 > 1,644 > 84 triangles; LOD3 0.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Lamp_compact",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "compact_Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Screen",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Signal",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Wear",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "11 KTX2 map(s) (1 UASTC, 10 ETC1S) with full mip chains, 0.6 MB"
+        },
+        {
+          "subject": "beacon_0",
+          "message": "textures take 59 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/sites/beacon_0.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "beacon_0",
+          "message": "longest side 18.70 m within 1-250 m"
+        }
+      ]
+    }
+  ]
+}

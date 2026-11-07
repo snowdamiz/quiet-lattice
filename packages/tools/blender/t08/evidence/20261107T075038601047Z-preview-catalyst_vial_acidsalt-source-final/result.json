@@ -1,0 +1,46 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/catalyst_vial.blend",
+    "--variant",
+    "catalyst_vial_acidsalt",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/source-final/catalyst_vial_acidsalt.png"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 34408374272,
+    "memoryFreePercent": 80,
+    "load": [
+      10.7607421875,
+      9.865234375,
+      9.4296875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:50:38.587800+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-3zy3hqrt",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 355008,
+  "pid": 40617,
+  "pgid": 40617,
+  "remainingGroup": [],
+  "elapsedSeconds": 8.618678958970122,
+  "logSHA256": "220a0523c219bbdb89cb65bc972445579a6eeae32a7a8faa7336973f4806fff2",
+  "pass": true
+}

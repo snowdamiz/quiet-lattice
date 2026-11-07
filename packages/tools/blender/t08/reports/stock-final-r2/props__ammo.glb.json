@@ -1,0 +1,201 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/props/ammo.glb",
+  "family": "props",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T08:01:06Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ammo",
+      "variants": [
+        {
+          "id": "ammo_flak",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4924,
+            "1": 2308,
+            "2": 308,
+            "3": 36
+          },
+          "implicitLods": false,
+          "dims": [
+            0.47,
+            0.397,
+            0.554
+          ],
+          "materials": [
+            "compact_Wear",
+            "compact_Hull",
+            "compact_Accent",
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Dark"
+          ],
+          "gpuTextureMB": 13.3
+        },
+        {
+          "id": "ammo_torpedo",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 2412,
+            "1": 1060,
+            "2": 364,
+            "3": 84
+          },
+          "implicitLods": false,
+          "dims": [
+            1.43,
+            0.54,
+            0.56
+          ],
+          "materials": [
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Dark",
+            "compact_Wear",
+            "compact_Accent",
+            "compact_Hull"
+          ],
+          "gpuTextureMB": 13.3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ammo.glb",
+          "message": "2 variant(s) in 1 asset(s) follow the props rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ammo/ammo_flak",
+          "message": "LOD0 4,924 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ammo/ammo_torpedo",
+          "message": "LOD0 2,412 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.3 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ammo/ammo_flak",
+          "message": "4,924 > 2,308 > 308 > 36 triangles; LOD3 0.7% of LOD0"
+        },
+        {
+          "subject": "ammo/ammo_torpedo",
+          "message": "2,412 > 1,060 > 364 > 84 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "compact_Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Signal",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Wear",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "10 KTX2 map(s) (1 UASTC, 9 ETC1S) with full mip chains, 0.2 MB"
+        },
+        {
+          "subject": "ammo/ammo_flak",
+          "message": "textures take 13 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        },
+        {
+          "subject": "ammo/ammo_torpedo",
+          "message": "textures take 13 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/props/ammo.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "ammo/ammo_flak",
+          "message": "longest side 0.55 m within 0.05-6 m"
+        },
+        {
+          "subject": "ammo/ammo_torpedo",
+          "message": "longest side 1.43 m within 0.05-6 m"
+        }
+      ]
+    }
+  ]
+}

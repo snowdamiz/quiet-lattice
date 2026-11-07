@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/sites/outpost_0.blend",
+  "output": "packages/client/public/models/sites/outpost_0.glb",
+  "status": "PASS",
+  "sourceSHA256": "b1f51a2f7c19e5973a5d1bbacf59b95ef47c3acd51524f325a5ffbcda5f61bd9",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-outpost_0-r4",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_sites.py",
+    "--",
+    "--only",
+    "outpost_0",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T073147157587Z-r4-outpost_0/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "982cbe9ace6ea628523f4a49eb995c58981e503037bbdf7b3b8b4d66ed90e0df"
+}

@@ -1,0 +1,183 @@
+00:00.309  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/outpost_0.blend"
+00:00.361  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls/final/missing-colliders/sources/sites/outpost_0.blend"
+00:00.802  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls/final/missing-colliders/sources/sites/outpost_0.blend"
+00:01.198  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/cargo_pod.blend"
+00:01.215  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls/final/missing-normal-map/sources/props/cargo_pod.blend"
+00:01.302  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/crash_debris.blend"
+00:01.343  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls/final/oversized-debris/sources/props/crash_debris.blend"
+00:01.564  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/catalyst_vial.blend"
+00:01.593  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls/final/missing-lod3/sources/props/catalyst_vial.blend"
+Info: Saved as "outpost_0.blend"
+
+validate packages/tools/blender/t08/controls/final/missing-colliders/sources/sites/outpost_0.blend  (family sites, source .blend)
+  outpost_0 / outpost_0 [building]  tris LOD0 19,118, LOD1 11,290, LOD2 1,466, LOD3 192  size 24.37 x 37.58 x 5.72 m
+  FAIL  naming  (1 failed, 0 warnings)
+        fail  outpost_0: no COL_* mesh (Structures.js turns COL_ meshes into colliders)
+  PASS  triangle budget
+        ok    outpost_0: LOD0 19,118 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    outpost_0: 19,118 > 11,290 > 1,466 > 192 triangles; LOD3 1.0% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Glass (LIB_T08_compact_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_0: longest side 37.58 m within 1-250 m
+RESULT: FAIL (4 of 5 checks passed)
+  report: packages/tools/blender/t08/controls/final/missing-colliders/stock-source.json
+
+export packages/tools/blender/t08/controls/final/missing-colliders/sources/sites/outpost_0.blend -> packages/tools/blender/t08/controls/final/missing-colliders/models/sites/outpost_0.glb
+
+validate packages/tools/blender/t08/controls/final/missing-colliders/sources/sites/outpost_0.blend  (family sites, source .blend)
+  outpost_0 / outpost_0 [building]  tris LOD0 19,118, LOD1 11,290, LOD2 1,466, LOD3 192  size 24.37 x 37.58 x 5.72 m
+  FAIL  naming  (1 failed, 0 warnings)
+        fail  outpost_0: no COL_* mesh (Structures.js turns COL_ meshes into colliders)
+  PASS  triangle budget
+        ok    outpost_0: LOD0 19,118 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    outpost_0: 19,118 > 11,290 > 1,466 > 192 triangles; LOD3 1.0% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Glass (LIB_T08_compact_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_0: longest side 37.58 m within 1-250 m
+RESULT: FAIL (4 of 5 checks passed)
+  report: packages/tools/blender/t08/controls/final/missing-colliders/export-stock/sites__outpost_0.blend.json
+  outpost_0.blend failed validation: nothing written
+  removed the stale packages/tools/blender/t08/controls/final/missing-colliders/models/sites/outpost_0.glb
+
+export sites: 0 of 1 source(s) exported
+Info: Saved as "cargo_pod.blend"
+
+validate packages/tools/blender/t08/controls/final/missing-normal-map/sources/props/cargo_pod.blend  (family props, source .blend)
+  cargo_pod / cargo_pod [prop]  tris LOD0 3,602, LOD1 1,766, LOD2 366, LOD3 48  size 1.65 x 2.18 x 1.67 m
+  PASS  naming
+        ok    cargo_pod.blend: 1 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    cargo_pod: LOD0 3,602 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    cargo_pod: 3,602 > 1,766 > 366 > 48 triangles; LOD3 1.3% of LOD0
+  FAIL  materials  (6 failed, 0 warnings)
+        fail  compact_Accent (LIB_T08_compact_Accent): missing maps: normal (constant (0.00, 0.00, 0.00))
+        fail  compact_Dark (LIB_T08_compact_Dark): missing maps: normal (constant (0.00, 0.00, 0.00))
+        fail  compact_Hull (LIB_T08_compact_Hull): missing maps: normal (constant (0.00, 0.00, 0.00))
+        fail  compact_Signal (LIB_T08_compact_Signal): missing maps: normal (constant (0.00, 0.00, 0.00))
+        fail  compact_Trim (LIB_T08_compact_Trim): missing maps: normal (constant (0.00, 0.00, 0.00))
+        fail  compact_Wear (LIB_T08_compact_Wear): missing maps: normal (constant (0.00, 0.00, 0.00))
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    cargo_pod: longest side 2.18 m within 0.05-6 m
+RESULT: FAIL (4 of 5 checks passed)
+  report: packages/tools/blender/t08/controls/final/missing-normal-map/stock-source.json
+Info: Saved as "crash_debris.blend"
+
+validate packages/tools/blender/t08/controls/final/oversized-debris/sources/props/crash_debris.blend  (family props, source .blend)
+  crash_debris / crash_debris_plate [prop]  tris LOD0 4,348, LOD1 1,388, LOD2 236, LOD3 44  size 12.61 x 8.74 x 1.47 m
+  crash_debris / crash_debris_shard [prop]  tris LOD0 4,348, LOD1 1,388, LOD2 236, LOD3 44  size 7.06 x 4.89 x 0.95 m
+  crash_debris / crash_debris_rim [prop]  tris LOD0 7,056, LOD1 1,504, LOD2 400, LOD3 32  size 26.75 x 5.82 x 1.45 m
+  crash_debris / crash_debris_scorch [prop]  tris LOD0 5,340, LOD1 972, LOD2 276, LOD3 36  size 25.50 x 12.60 x 1.25 m
+  PASS  naming
+        ok    crash_debris.blend: 4 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    crash_debris/crash_debris_plate: LOD0 4,348 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    crash_debris/crash_debris_shard: LOD0 4,348 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    crash_debris/crash_debris_rim: LOD0 7,056 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ... 1 more
+  PASS  LODs
+        ok    crash_debris/crash_debris_plate: 4,348 > 1,388 > 236 > 44 triangles; LOD3 1.0% of LOD0
+        ok    crash_debris/crash_debris_shard: 4,348 > 1,388 > 236 > 44 triangles; LOD3 1.0% of LOD0
+        ok    crash_debris/crash_debris_rim: 7,056 > 1,504 > 400 > 32 triangles; LOD3 0.5% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Trim (LIB_T08_compact_Trim): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  FAIL  scale references  (4 failed, 0 warnings)
+        fail  crash_debris/crash_debris_plate: longest side 12.61 m is outside 0.05-6 m for class prop in props; check the scale against the 1 m grid
+        fail  crash_debris/crash_debris_shard: longest side 7.06 m is outside 0.05-6 m for class prop in props; check the scale against the 1 m grid
+        fail  crash_debris/crash_debris_rim: longest side 26.75 m is outside 0.05-6 m for class prop in props; check the scale against the 1 m grid
+        fail  crash_debris/crash_debris_scorch: longest side 25.50 m is outside 0.05-6 m for class prop in props; check the scale against the 1 m grid
+RESULT: FAIL (4 of 5 checks passed)
+  report: packages/tools/blender/t08/controls/final/oversized-debris/stock-source.json
+Info: Saved as "catalyst_vial.blend"
+
+validate packages/tools/blender/t08/controls/final/missing-lod3/sources/props/catalyst_vial.blend  (family props, source .blend)
+  catalyst_vial / catalyst_vial_frostglass [prop]  tris LOD0 5,020, LOD1 2,240, LOD2 760  size 0.14 x 0.14 x 0.34 m
+  catalyst_vial / catalyst_vial_stormquartz [prop]  tris LOD0 4,840, LOD1 2,160, LOD2 760  size 0.14 x 0.14 x 0.34 m
+  catalyst_vial / catalyst_vial_gamma [prop]  tris LOD0 5,056, LOD1 2,256, LOD2 760  size 0.14 x 0.14 x 0.34 m
+  catalyst_vial / catalyst_vial_acidsalt [prop]  tris LOD0 5,092, LOD1 2,272, LOD2 760  size 0.14 x 0.14 x 0.34 m
+  PASS  naming
+        ok    catalyst_vial.blend: 4 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    catalyst_vial/catalyst_vial_frostglass: LOD0 5,020 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)00:01.769  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/beacon_0.blend"
+00:01.797  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls/final/light-without-intensity/sources/sites/beacon_0.blend"
+00:02.180  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/cargo_pod.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/controls.py", line 162, in main
+    assert any("mip" in m for m in messages), messages
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: []
+
+        ok    catalyst_vial/catalyst_vial_stormquartz: LOD0 4,840 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    catalyst_vial/catalyst_vial_gamma: LOD0 5,056 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ... 1 more
+  FAIL  LODs  (4 failed, 0 warnings)
+        fail  catalyst_vial/catalyst_vial_frostglass: 3 of 4 LODs: missing LOD3 (hand-make all of them, or only LOD0 and let the export generate the rest)
+        fail  catalyst_vial/catalyst_vial_stormquartz: 3 of 4 LODs: missing LOD3 (hand-make all of them, or only LOD0 and let the export generate the rest)
+        fail  catalyst_vial/catalyst_vial_gamma: 3 of 4 LODs: missing LOD3 (hand-make all of them, or only LOD0 and let the export generate the rest)
+        fail  catalyst_vial/catalyst_vial_acidsalt: 3 of 4 LODs: missing LOD3 (hand-make all of them, or only LOD0 and let the export generate the rest)
+  PASS  materials
+        ok    catalyst_vial_acidsalt_Glass (LIB_T08_catalyst_vial_acidsalt_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    catalyst_vial_frostglass_Glass (LIB_T08_catalyst_vial_frostglass_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    catalyst_vial_gamma_Glass (LIB_T08_catalyst_vial_gamma_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 6 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    catalyst_vial/catalyst_vial_frostglass: longest side 0.34 m within 0.05-6 m
+        ok    ... 3 more
+RESULT: FAIL (4 of 5 checks passed)
+  report: packages/tools/blender/t08/controls/final/missing-lod3/stock-source.json
+Info: Saved as "beacon_0.blend"
+
+validate packages/tools/blender/t08/controls/final/light-without-intensity/sources/sites/beacon_0.blend  (family sites, source .blend)
+  beacon_0 / beacon_0 [building]  tris LOD0 15,504, LOD1 8,584, LOD2 1,644, LOD3 84  size 5.60 x 6.50 x 18.70 m
+  FAIL  naming  (1 failed, 0 warnings)
+        fail  Light_1: missing custom properties intensity (point lights; the game reads the extras)
+  PASS  triangle budget
+        ok    beacon_0: LOD0 15,504 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    beacon_0: 15,504 > 8,584 > 1,644 > 84 triangles; LOD3 0.5% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    beacon_0: longest side 18.70 m within 1-250 m
+RESULT: FAIL (4 of 5 checks passed)
+  report: packages/tools/blender/t08/controls/final/light-without-intensity/stock-source.json
+
+validate packages/tools/blender/t08/controls/final/wrong-mips/cargo_pod.glb  (family props, export .glb)
+  FAIL  could not load: ktx_cpu.py extract failed (3): error-8102: Invalid sgdByteLength for BasisLZ/ETC1S. sgdByteLength must be consistent with image count and BasisLzGlobalHeader. |     sgdByteLength is 776 but based on image count of 1 and the BasisLzGlobalHeader the expected value is 576 (20 + 20 * imageCount + endpointsByteLength + selectorsByteLength + tablesByteLength + extendedByteLength). | error-7011: Invalid padding byte value. Every padding byte's value must be 0. |     A padding byte value is 3 before DFD at offset 104 but it must be 0. | error-7011: Invalid padding byte value. Every padding byte's value must be 0. |     A padding byte value is 247 before image level 0 at offset 1272 but it must be 0.
+RESULT: FAIL
+  report: packages/tools/blender/t08/controls/final/wrong-mips/stock-export.json
+
+Error: script failed, file: 'packages/tools/blender/t08/controls.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

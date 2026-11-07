@@ -1,0 +1,46 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/loot_pod.blend",
+    "--variant",
+    "loot_pod",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/source-final/loot_pod.png"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 34492796928,
+    "memoryFreePercent": 80,
+    "load": [
+      12.16748046875,
+      9.587890625,
+      9.29248046875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:49:09.596452+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-dbmxhgqo",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 351488,
+  "pid": 37970,
+  "pgid": 37970,
+  "remainingGroup": [],
+  "elapsedSeconds": 9.65144424996106,
+  "logSHA256": "531db8407682102bdd145e5cd2c7f9b1d3f4c4e1dff96390e451d243ad5a55df",
+  "pass": true
+}

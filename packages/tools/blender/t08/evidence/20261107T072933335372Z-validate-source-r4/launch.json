@@ -1,0 +1,49 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/validate.py",
+    "--",
+    "assets/blend/props/cargo_pod.blend",
+    "assets/blend/props/loot_pod.blend",
+    "assets/blend/props/terminal.blend",
+    "assets/blend/props/market_stall.blend",
+    "assets/blend/props/ammo.blend",
+    "assets/blend/props/catalyst_vial.blend",
+    "assets/blend/props/crash_debris.blend",
+    "assets/blend/sites/outpost_0.blend",
+    "assets/blend/sites/outpost_1.blend",
+    "assets/blend/sites/outpost_2.blend",
+    "assets/blend/sites/beacon_0.blend",
+    "assets/blend/sites/beacon_1.blend",
+    "--report-dir",
+    "packages/tools/blender/t08/reports/source-r4"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 40575660032,
+    "memoryFreePercent": 79,
+    "load": [
+      8.33642578125,
+      10.1455078125,
+      10.08154296875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:29:33.322570+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-dhprla4a",
+  "exit": null,
+  "peakGroupRSSKiB": 0
+}

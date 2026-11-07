@@ -1,0 +1,49 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/client/public/models/props/ammo.glb",
+    "--variant",
+    "ammo_flak",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/export-final/ammo_flak.png",
+    "--single",
+    "--size",
+    "640"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 38271930368,
+    "memoryFreePercent": 80,
+    "load": [
+      12.0361328125,
+      11.66943359375,
+      10.6171875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T08:02:21.622705+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-i247x8m3",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 340048,
+  "pid": 20531,
+  "pgid": 20531,
+  "remainingGroup": [],
+  "elapsedSeconds": 5.391416957951151,
+  "logSHA256": "11755d754333f0131bf60597018fd86a414de45467b6ddc922a03187b0fa5420",
+  "pass": true
+}

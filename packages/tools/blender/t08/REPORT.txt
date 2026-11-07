@@ -1,0 +1,97 @@
+TASK: P1.E14.T08 (art) Props
+STATUS: DONE -- authorized CPU source/export unit only. Full P1.E14.T08 remains pending independent source review, native Review captures and blind grading.
+TASK VERBATIM: P1.E14.T08 (art) Props · deps: T02 · done: cargo and loot pods, terminals, market stalls, ammo, catalyst vials, beacons rebuilt, outposts rebuilt (3), crash-site debris kit.
+
+SUMMARY: Authored twelve editable saved Blender bundles and twelve stock-compressed GLBs, seven props and five sites, containing 21 named variants and 84 saved LODs. Sources contain fitted component meshes, linked-library-derived palettes, packed PBR trims, localized wear and four explicit simplification levels. Export reads the saved files only; no authoring helpers are imported by export_saved.py. Current stock validation, decoded geometry/density checks, production GLTFLoader/Review CPU checks and malformed controls pass. The three outposts preserve a clear 24m pad at every LOD; edge colliders were corrected after a full-disc clearance red reproduction.
+
+PROVENANCE:
+  Branch: task/P1-E14-T08-props
+  Exact isolated base: afc0dacaaac45de27776e24ad35e42e3250d8f25
+  Base tree: 172bce71ceeda8d496a724a8ee568521d65fcce4
+  Final commit HEAD/tree: supplied in the accompanying worker response; this report is committed in that HEAD. No recursive self-hash is claimed.
+  Library SHA256: 33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c
+  Lock SHA256: 120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f
+  Blender 5.2.3 LTS e13b728c6880; Node 22.23.3; pnpm 12.15.0; KTX-Software 4.4.2.
+  Existing verified local dependencies and already-hydrated matching library only; no dependency install or bulk LFS fetch.
+
+FILES CHANGED:
+  assets/blend/props/cargo_pod.blend (1629189 bytes) SHA256 629b6a27be1ddd45e0ff9af6ce0b08fc80858211e9e186998a88a25c94f173dd
+  packages/client/public/models/props/cargo_pod.glb (458656 bytes) SHA256 adcecb67c9b65ac2f8f6504070412cd6cdef183cd3f4352831a8b5891705276c
+  assets/blend/props/loot_pod.blend (1572036 bytes) SHA256 55c4c55b37a7426387944e9deee4b3d2909fe943d9c907cc04e5dc2344364b90
+  packages/client/public/models/props/loot_pod.glb (487724 bytes) SHA256 2c212e0b37ad27147c13984d5ab2007f46f5bad665f420c56e6a352cc5254f08
+  assets/blend/props/terminal.blend (2649309 bytes) SHA256 3b6dec839161d1a39140fa1b41d31287c806c458dcf5544590ebc6c0058ea2f2
+  packages/client/public/models/props/terminal.glb (704076 bytes) SHA256 105d6c1bf602eab78d8f98a00f4bbe86520a691817412b9bf739fa4e4498fab9
+  assets/blend/props/market_stall.blend (2726849 bytes) SHA256 34b2a2f563feca17a08fdb82c286d8135daa90ec0444289fe9c9951e2f7de432
+  packages/client/public/models/props/market_stall.glb (785784 bytes) SHA256 e380ec564cd3b049b79d092da4b09b9ae53eb4d44174c968d4a86abec92dd414
+  assets/blend/props/ammo.blend (1759743 bytes) SHA256 25986bd870f29783478730dd4363713c0487d8d18c7cbd3902e25dcbaad87796
+  packages/client/public/models/props/ammo.glb (588776 bytes) SHA256 0121e7dad6de169c249b02034e18f43c93aa9a78c543c3103b5ac52786552f6a
+  assets/blend/props/catalyst_vial.blend (2261787 bytes) SHA256 0a5ccd8bd5960eee8c878f802783ac5cdebc614e0cdd35917dd7fcdef0748a1a
+  packages/client/public/models/props/catalyst_vial.glb (1304472 bytes) SHA256 01d9704a6a0e79f3b5bff98dc4cc5478d344b0e149bfbc01e09a19443f50366c
+  assets/blend/props/crash_debris.blend (3367979 bytes) SHA256 47a1ce921ab3b677c5db044bf55b70b89c99680baf678547a00b264acfe3aa54
+  packages/client/public/models/props/crash_debris.glb (1156772 bytes) SHA256 42113d140a09451ba26a9675103dfa5ed0df46a2ab6e209972b7d25bb0a8b8b3
+  assets/blend/sites/outpost_0.blend (4394041 bytes) SHA256 433a4dc5ca5b81e37d513c0131fc044016737400b951eacf51d58290d39d0676
+  packages/client/public/models/sites/outpost_0.glb (1684472 bytes) SHA256 cd4840097d01059f32b5b654c0500933af78f45544344552fef2891af551b648
+  assets/blend/sites/outpost_1.blend (4366106 bytes) SHA256 dacc541126e9a52e79ae36eb4fefd7bd4088a6625e36745b2ffb7a4f8ac8b001
+  packages/client/public/models/sites/outpost_1.glb (1818484 bytes) SHA256 c58a15278b116f3fa295fb43dfba78bc0d809c5ec2ff2d9c07ecbcdb03ae0231
+  assets/blend/sites/outpost_2.blend (4393433 bytes) SHA256 8c24142fd91b2ecb798f3ddcd6430a095f914f20db49ad3fe1ed70b66af51c97
+  packages/client/public/models/sites/outpost_2.glb (1843504 bytes) SHA256 b7037fba4b7b57318d6b60c87b51a967206e14132e1169e8322d3ebb3d647ee6
+  assets/blend/sites/beacon_0.blend (4125518 bytes) SHA256 c3dbb7cd4b59080c8658155031a597a3d6b9d1a517c958e6069f748986ec9dec
+  packages/client/public/models/sites/beacon_0.glb (1413764 bytes) SHA256 8a992c4a34235bf44cdc06ddd37fba0a7380ebe4c2205f0d480508378c0562eb
+  assets/blend/sites/beacon_1.blend (3990408 bytes) SHA256 46cc7db69af1d0549986339338b6a0f5adfb376481888bcda545de7460291ac8
+  packages/client/public/models/sites/beacon_1.glb (1141540 bytes) SHA256 0a9bd5f14002f27b62efa281454c82e3422b27045927269d5c7e5f7608df0595
+  packages/client/test/t08-props-real-assets.test.js
+  packages/tools/blender/t08/** -- authoring, bounded launcher, export receipts, audits, CPU transport, controls and immutable evidence.
+  assets/renders/props/t08/** -- compact CPU previews and retained historical source archives under existing LFS policy.
+  No protected tracked path changed. reports/protected-final.json records base/index blobs and working hashes of critical protected inputs; staged/committed ownership is also checked at delivery. No shared exporter, artlib, schema, library, Review, runtime, generator, orchestration document or other art family was edited.
+
+VERIFY:
+  Full exact argv, exits, admission samples, wall/RSS/process-group receipts, log hashes and last 20 lines of every failed supervised command: reports/commands-final.json. Exclusive original logs remain under evidence/. Historical failures remain failures; only hash-matching current evidence qualifies current bytes.
+  python3 packages/tools/blender/t08/export_saved.py --label <attempt> [--only <stems>] -> PASS for all twelve current source/output hash bindings. Each call invokes the unmodified export_props.py or export_sites.py with --only. Previous runtime bytes are archived before an attempt; a failed attempt cannot leave stale runtime bytes. Current binding paths are in reports/delivery-final.json.
+  python3 packages/tools/blender/t08/run.py --label stock-final-24-r2 --wall 600 -- blender -P packages/tools/blender/validate.py -- <all twelve exact source paths and all twelve exact GLB paths listed above> --report-dir packages/tools/blender/t08/reports/stock-final-r2 -> exit 0, 24/24 PASS.
+  python3 packages/tools/blender/t08/run.py --label source-clearance-final --wall 600 -- blender -P packages/tools/blender/t08/audit.py -- --mode source --out packages/tools/blender/t08/reports/source-clearance-final.json -> exit 0, 12/12 PASS, 21 variants, 84 LODs.
+  Same audit with --mode export and reports/export-clearance-final.json -> exit 0, 12/12 PASS. Measures decoded geometry and actual texture resolutions, not resolution as a proxy for density.
+  python3 packages/tools/blender/t08/run.py --label consumer-final-r2 --wall 300 -- node node_modules/vitest/vitest.mjs run --config packages/tools/blender/t08/vitest.config.mjs --configLoader native --no-cache --no-fsModuleCache -> exit 0, 15/15 PASS. One focused test file, maxWorkers=2. Actual production GLTFLoader, Meshopt, shipped Basis WASM/KTX2Loader, Review roots/variants/LOD selection and texture-memory estimator; a CPU-only Web Worker/fetch transport supplies local bytes. No browser, renderer or GPU is created. All current ammo/catalyst registry IDs are covered. Image/material/UV associations and full mip payloads are checked at all LODs. Real malformed Meshopt and KTX2 payloads reject.
+  python3 packages/tools/blender/t08/run.py --label final-controls-r2 --wall 600 -- blender -P packages/tools/blender/t08/controls.py -- --out packages/tools/blender/t08/controls/final-r2 -> exit 0, eight expected-negative controls PASS: missing collider, missing normal map, oversized debris, missing LOD3, malformed Light, quarter-density actual UVs, valid one-level KTX2, and failed stock export removing seeded real runtime bytes.
+  python3 packages/tools/blender/t08/check_scope.py -> exit 0: Ruff format and E9/F, Prettier, ESLint, Node syntax, Python AST syntax, git diff --check, pinned Node/pnpm versions. No root build or broad test suite. Final staged diff check excluding immutable .log files passes. The full staged diff check reports only four existing Vitest logs with an extra blank line at EOF; those logs are preserved byte-for-byte. Exact exits/output: reports/precommit-checks.json.
+  python3 packages/tools/blender/t08/preview_batch.py --mode source --label source-final; source-clearance-final --only outpost_0,outpost_1,outpost_2; --mode export --label export-final -> all exit 0. Current source sheets cover all 21 variants; decoded GLB previews cover all twelve files. All current sheets were inspected; observations and limitations are in reports/cpu-inspection.json. These are CPU inspection images, not native Review acceptance evidence.
+  python3 packages/tools/blender/t08/delivery.py -> exit 0, all final hash bindings, inventory, ownership and evidence caps checked.
+
+MEASUREMENTS:
+  Exact per-variant LOD triangles, bounds, materials and GPU estimates: reports/delivery-final.json and stock-final-r2/*.json. LOD3 maximum is 3.483% for props and 1.042% for buildings. No class override or budget/schema relaxation.
+  PBR textures are 1024 for props and 2048 for buildings, KTX2 with full 11/12-level mip chains; geometry uses EXT_meshopt_compression. Per-variant GPU estimate: props 8.0-14.7 MB / 32 MB; buildings 58.7 MB / 128 MB.
+  Real UV density is sqrt(pixel UV triangle area / world triangle area), area-weighted across textured surfaces. Constant Glass/Lamp profiles are explicitly enumerated, not hidden. Sources measure 512 px/m props and 256 px/m buildings to floating-point precision. Decoded per-LOD weighted means: props 510.6622-512.5890 px/m; buildings 255.9783-256.0394 px/m. Quantization extrema, percentiles and low-area fractions are retained, not rounded into an exact 512/256 claim. No zero-area UV or world triangles remain. Gate: mean >=99.5% of the unchanged target and <0.5% surface area below 97% target; worst measured fractions are 0.34462% props and 0.19563% buildings. This is a documented quantization tolerance, not a lower authoring target. Metric trims provide density without larger maps or shader work.
+  Decoded outpost pad inscribed diameters: LOD0 24.34514m, LOD1 24.32915m, LOD2 24.28380m, LOD3 24.15180m. Minimum collider-footprint distance from pad center: 12.03858m. Doors: 1.51998m wide x 2.46000m tall. Interact points remain outside collider footprints. Each debris segment stays <=6m; the largest is the 5.35040m rim segment.
+  Evidence cap: 44 CPU preview images plus one control texture (45 total owned PNGs), 423681967 bytes (404.055 MiB) in the complete render tree including historical source archives; <=48 images and <=512 MiB. No raw render sequences retained.
+
+DECISIONS:
+  Art consumer eligibility? -> Standard Review, per the parent DECISIONS entry -> gameplay adoption and procedural generator removal stay in T07.
+  Task says three outposts but generator has two? -> Author outpost_2 with asymmetrical tower/wing massing -> satisfy the task and DESIGN 19.3, without inventing another gameplay root.
+  Tall beacons and 24m pads fit which class? -> Stock sites/building -> prop exceptions would contradict actual family rules.
+  Full crash ring is 18m? -> Supply a curved rim segment <=6m plus plate/shard/scorch -> placement/instancing remains T07.
+  Canonical item IDs? -> flak_ammo, torpedo; frostglass_catalyst, stormquartz_catalyst, gamma_catalyst, acidsalt_catalyst -> verified from the current shared ITEMS registry in the real consumer test.
+  Faction variation? -> Compact/Reaches paint on terminals/stalls, Chorus vial family -> library-derived palette, no borrowed people-language city kit and no glyph-light cyan.
+  Quantization collapses tiny details? -> Center-cap triangulation, integer UV phase wrapping, local narrow-member meshes -> preserve actual source/export density and geometry, without padding triangle counts or changing exporter settings.
+  Pad center clear but corners intrude? -> Narrow 0.30m edge boxes to 0.20m and measure the full collider AABB footprint -> retain 24m usable disc across every LOD. Old source fails the stronger check, corrected saved and exported sources pass. Render meshes unchanged; proof in reports/pad-correction.json.
+
+FAILURES AND RESOURCE HISTORY:
+  Nine failed supervised attempts are retained with original logs and the last 20 lines in commands-final.json: early uniform materials (three rounds), initial pad-auditor inclusion of the approach, decoded quantization/density failures (two rounds), initial CPU ASTC capability transport, invalid mip-control fixture, and the genuine pad-corner clearance red. Sources that produced failures remain in history archives or task-local fixtures; current bindings supersede them explicitly.
+  A preliminary pnpm probe used a nonexistent Node-v26 corepack path (MODULE_NOT_FOUND); the resolved pinned Node-v22 path reports pnpm 12.15.0. Initial lint diagnostics were corrected; later explicit per-command receipts pass.
+  Historical resource deviations: the earliest cargo r2 export ran the stock encoder's host-derived thread count before the wrapper enforced one thread. All current exports were subsequently re-encoded with one encoder thread. Before the final ktx wrapper mutex was added, stock decoded_copy could launch two extraction processes internally despite ART_KTX_JOBS=1. Final controls, audits, stock validation and previews serialize all codec invocations through that mutex. These historical attempts are not claimed to satisfy the final codec-one policy.
+  Every supervised heavy invocation records fresh disk/memory/load admission, CPU Blender -b --factory-startup -t 2, math threads=2, private short TMPDIR, wall limit and sampled aggregate RSS cap 8GiB. Owned Blender work is serial. All recorded process groups ended empty. No GPU/Cycles Metal/native/browser capture, server, DB, service, screenshot cleanup, dehydration or pruning was used. Private launch directories and failed attempts are retained; ordinary stock temporary intermediates are not delivery artifacts. No shared caches or dependencies were fetched.
+
+OUT OF SCOPE FOUND:
+  Independent source/code review remains pending, as do native standard Review captures, far/LOD/performance evidence and blind rubric grading. This worker has not graded its own art and makes no runtime or visual acceptance claim.
+  T07 owns gameplay integration, third-outpost placement policy and generator/fallback removal. Existing Structures/modelLibrary/Planet/ground/city/den/station/hull/monolith files and generators remain unchanged.
+  No push, PR, CI, merge-queue submission or main merge occurred.
+
+ARTIFACTS:
+  packages/tools/blender/t08/reports/delivery-final.json -- all 24 asset hashes and bytes, current export bindings, budgets, density summary, preview hashes.
+  packages/tools/blender/t08/reports/commands-final.json -- exact commands/exits, resource receipts and failure tails.
+  packages/tools/blender/t08/reports/protected-final.json and staged-ownership.json -- protected inputs, equality of every protected base/index entry, and all 24 staged LFS hashes.
+  packages/tools/blender/t08/reports/source-clearance-final.json and export-clearance-final.json -- complete 84-LOD saved/decoded metric census.
+  packages/tools/blender/t08/reports/stock-final-r2/ -- all 24 current stock reports.
+  packages/tools/blender/t08/controls/final-r2/results.json -- eight actual negative boundaries.
+  packages/tools/blender/t08/reports/cpu-inspection.json -- inspected current CPU previews and limitations.
+  assets/renders/props/t08/source-final/, source-clearance-final/, export-final/ -- current compact sheets/previews; use the hash-bound currentPreviews entries in delivery-final.json, not historical source-r2 images.
+  assets/renders/props/t08/history/ -- immutable retained source attempts.
+  packages/tools/blender/t08/reports/future-native-inventory.json -- 21 exact variant Review commands and twelve family turntable commands, explicitly not executed. Native evidence must cover noon-lush/night-exotic/open-space at LOD0/LOD2, both wireframes, collider/marker overlay, 100m far view, paired perf, turntables and material close-ups; blind rubric requires every score >=4 and mean >=4.5.

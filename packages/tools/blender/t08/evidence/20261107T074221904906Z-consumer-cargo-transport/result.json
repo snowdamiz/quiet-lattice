@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "packages/tools/blender/t08/vitest.config.mjs",
+    "--configLoader",
+    "native",
+    "--no-cache",
+    "--no-fsModuleCache",
+    "--maxWorkers",
+    "2",
+    "-t",
+    "cargo_pod"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 36390187008,
+    "memoryFreePercent": 83,
+    "load": [
+      6.6669921875,
+      8.75048828125,
+      9.1279296875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:42:21.891471+00:00"
+  },
+  "limits": {
+    "wallSeconds": 300,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-bsgciwjz",
+  "exit": 0,
+  "peakGroupRSSKiB": 944,
+  "pid": 94651,
+  "pgid": 94651,
+  "remainingGroup": [],
+  "elapsedSeconds": 1.1602323750266805,
+  "logSHA256": "263858d0b24355a11f3f28ca53c46544daa0ccf06d863919fdc27217063be346",
+  "pass": true
+}

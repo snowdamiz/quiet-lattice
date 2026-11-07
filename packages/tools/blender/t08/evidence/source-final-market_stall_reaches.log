@@ -1,0 +1,47 @@
+packages/tools/blender/t08/evidence/20261107T074946499017Z-preview-market_stall_reaches-source-final
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/market_stall.blend",
+    "--variant",
+    "market_stall_reaches",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/source-final/market_stall_reaches.png"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 34469875712,
+    "memoryFreePercent": 81,
+    "load": [
+      12.056640625,
+      9.85107421875,
+      9.39794921875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:49:46.486552+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-q8sx3gjq",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 359616,
+  "pid": 39283,
+  "pgid": 39283,
+  "remainingGroup": [],
+  "elapsedSeconds": 8.623013291042298,
+  "logSHA256": "91ec6390443f480c981c9b2d7014b5394a3a16de1bd7a63a4c7cf3b692efe93f",
+  "pass": true
+}

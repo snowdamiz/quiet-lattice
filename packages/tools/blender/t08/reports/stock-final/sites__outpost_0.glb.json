@@ -1,0 +1,163 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/sites/outpost_0.glb",
+  "family": "sites",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T07:55:11Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "outpost_0",
+      "variants": [
+        {
+          "id": "outpost_0",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 19118,
+            "1": 11290,
+            "2": 1466,
+            "3": 192
+          },
+          "implicitLods": false,
+          "dims": [
+            24.372,
+            37.58,
+            5.716
+          ],
+          "materials": [
+            "compact_Accent",
+            "compact_Dark",
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Hull",
+            "compact_Screen",
+            "compact_Wear",
+            "compact_Glass"
+          ],
+          "gpuTextureMB": 58.7
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_0.glb",
+          "message": "1 variant(s) in 1 asset(s) follow the sites rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_0",
+          "message": "LOD0 19,118 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.9 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "outpost_0",
+          "message": "19,118 > 11,290 > 1,466 > 192 triangles; LOD3 1.0% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "compact_Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "compact_Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Screen",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Signal",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Wear",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "11 KTX2 map(s) (1 UASTC, 10 ETC1S) with full mip chains, 0.6 MB"
+        },
+        {
+          "subject": "outpost_0",
+          "message": "textures take 59 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/sites/outpost_0.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "outpost_0",
+          "message": "longest side 37.58 m within 1-250 m"
+        }
+      ]
+    }
+  ]
+}

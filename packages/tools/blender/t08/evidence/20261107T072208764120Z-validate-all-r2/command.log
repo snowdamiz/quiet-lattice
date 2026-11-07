@@ -1,0 +1,287 @@
+00:00.441  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/cargo_pod.blend"
+00:00.614  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/loot_pod.blend"
+00:00.762  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/terminal.blend"
+00:01.052  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/market_stall.blend"
+00:01.334  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/ammo.blend"
+00:01.487  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/catalyst_vial.blend"
+
+validate assets/blend/props/cargo_pod.blend  (family props, source .blend)
+  cargo_pod / cargo_pod [prop]  tris LOD0 3,602, LOD1 1,766, LOD2 366, LOD3 48  size 1.65 x 2.18 x 1.67 m
+  PASS  naming
+        ok    cargo_pod.blend: 1 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    cargo_pod: LOD0 3,602 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    cargo_pod: 3,602 > 1,766 > 366 > 48 triangles; LOD3 1.3% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 3 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    cargo_pod: longest side 2.18 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/props__cargo_pod.blend.json
+
+validate assets/blend/props/loot_pod.blend  (family props, source .blend)
+  loot_pod / loot_pod [prop]  tris LOD0 4,166, LOD1 2,234, LOD2 498, LOD3 60  size 1.65 x 3.04 x 1.67 m
+  PASS  naming
+        ok    loot_pod.blend: 1 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    loot_pod: LOD0 4,166 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    loot_pod: 4,166 > 2,234 > 498 > 60 triangles; LOD3 1.4% of LOD0
+  PASS  materials
+        ok    reaches_Accent (LIB_T08_reaches_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    reaches_Dark (LIB_T08_reaches_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    reaches_Hull (LIB_T08_reaches_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 3 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    loot_pod: longest side 3.04 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/props__loot_pod.blend.json
+
+validate assets/blend/props/terminal.blend  (family props, source .blend)
+  terminal / terminal [prop]  tris LOD0 3,600, LOD1 1,168, LOD2 184, LOD3 48  size 0.94 x 0.78 x 1.81 m
+  terminal / terminal_reaches [prop]  tris LOD0 3,600, LOD1 1,168, LOD2 184, LOD3 48  size 0.94 x 0.78 x 1.81 m
+  PASS  naming
+        ok    terminal.blend: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    terminal: LOD0 3,600 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    terminal/terminal_reaches: LOD0 3,600 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    terminal: 3,600 > 1,168 > 184 > 48 triangles; LOD3 1.3% of LOD0
+        ok    terminal/terminal_reaches: 3,600 > 1,168 > 184 > 48 triangles; LOD3 1.3% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 11 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    terminal: longest side 1.81 m within 0.05-6 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/props__terminal.blend.json
+
+validate assets/blend/props/market_stall.blend  (family props, source .blend)
+  market_stall / market_stall [prop]  tris LOD0 4,284, LOD1 2,416, LOD2 364, LOD3 60  size 3.35 x 2.01 x 2.65 m
+  market_stall / market_stall_reaches [prop]  tris LOD0 4,284, LOD1 2,416, LOD2 364, LOD3 60  size 3.35 x 2.01 x 2.65 m
+  PASS  naming
+        ok    market_stall.blend: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    market_stall: LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    market_stall/market_stall_reaches: LOD0 4,284 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    market_stall: 4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0
+        ok    market_stall/market_stall_reaches: 4,284 > 2,416 > 364 > 60 triangles; LOD3 1.4% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 9 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    market_stall: longest side 3.35 m within 0.05-6 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/props__market_stall.blend.json
+
+validate assets/blend/props/ammo.blend  (family props, source .blend)
+  ammo / ammo_flak [prop]  tris LOD0 4,684, LOD1 2,068, LOD2 260, LOD3 36  size 0.47 x 0.35 x 0.55 m
+  ammo / ammo_torpedo [prop]  tris LOD0 2,412, LOD1 1,060, LOD2 364, LOD3 84  size 1.43 x 0.54 x 0.56 m
+  PASS  naming
+        ok    ammo.blend: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    ammo/ammo_flak: LOD0 4,684 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ammo/ammo_torpedo: LOD0 2,412 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    ammo/ammo_flak: 4,684 > 2,068 > 260 > 36 triangles; LOD3 0.8% of LOD0
+        ok    ammo/ammo_torpedo: 2,412 > 1,060 > 364 > 84 triangles; LOD3 3.5% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 3 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ammo/ammo_flak: longest side 0.55 m within 0.05-6 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/props__ammo.blend.json
+
+validate assets/blend/props/catalyst_vial.blend  (family props, source .blend)
+  catalyst_vial / catalyst_vial_frostglass [prop]  tris LOD0 4,512, LOD1 1,968, LOD2 632, LOD3 108  size 0.14 x 0.14 x 0.34 m
+  catalyst_vial / catalyst_vial_stormquartz [prop]  tris LOD0 4,368, LOD1 1,904, LOD2 632, LOD3 108  size 0.14 x 0.14 x 0.34 m
+  catalyst_vial / catalyst_vial_gamma [prop]  tris LOD0 4,584, LOD1 2,000, LOD2 632, LOD3 108  size 0.14 x 0.14 x 0.34 m
+  catalyst_vial / catalyst_vial_acidsalt [prop]  tris LOD0 4,620, LOD1 2,016, LOD2 632, LOD3 108  size 0.14 x 0.14 x 0.34 m
+  PASS  naming
+        ok    catalyst_vial.blend: 4 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    catalyst_vial/catalyst_vial_frostglass: LOD0 4,512 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    catalyst_vial/catalyst_vial_stormquartz: LOD0 4,368 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    catalyst_vial/catalyst_vial_gamma: LOD0 4,584 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ... 1 more
+  PASS  LODs
+        ok    catalyst_vial/catalyst_vial_frostglass: 4,512 > 1,968 > 632 > 108 triangles; LOD3 2.4% of LOD000:01.690  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/crash_debris.blend"
+00:01.966  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/outpost_0.blend"
+00:02.489  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/outpost_1.blend"
+00:02.982  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/outpost_2.blend"
+00:03.487  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/beacon_0.blend"
+
+        ok    catalyst_vial/catalyst_vial_stormquartz: 4,368 > 1,904 > 632 > 108 triangles; LOD3 2.5% of LOD0
+        ok    catalyst_vial/catalyst_vial_gamma: 4,584 > 2,000 > 632 > 108 triangles; LOD3 2.4% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    catalyst_vial_acidsalt_Glass (LIB_T08_catalyst_vial_acidsalt_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    catalyst_vial_frostglass_Glass (LIB_T08_catalyst_vial_frostglass_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    catalyst_vial_gamma_Glass (LIB_T08_catalyst_vial_gamma_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 6 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    catalyst_vial/catalyst_vial_frostglass: longest side 0.34 m within 0.05-6 m
+        ok    ... 3 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/props__catalyst_vial.blend.json
+
+validate assets/blend/props/crash_debris.blend  (family props, source .blend)
+  crash_debris / crash_debris_plate [prop]  tris LOD0 4,148, LOD1 1,308, LOD2 224, LOD3 44  size 2.52 x 1.75 x 0.29 m
+  crash_debris / crash_debris_shard [prop]  tris LOD0 4,148, LOD1 1,308, LOD2 224, LOD3 44  size 1.41 x 0.98 x 0.19 m
+  crash_debris / crash_debris_rim [prop]  tris LOD0 6,728, LOD1 1,448, LOD2 380, LOD3 32  size 5.35 x 1.17 x 0.29 m
+  crash_debris / crash_debris_scorch [prop]  tris LOD0 5,132, LOD1 920, LOD2 256, LOD3 36  size 5.10 x 2.52 x 0.25 m
+  PASS  naming
+        ok    crash_debris.blend: 4 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    crash_debris/crash_debris_plate: LOD0 4,148 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    crash_debris/crash_debris_shard: LOD0 4,148 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    crash_debris/crash_debris_rim: LOD0 6,728 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ... 1 more
+  PASS  LODs
+        ok    crash_debris/crash_debris_plate: 4,148 > 1,308 > 224 > 44 triangles; LOD3 1.1% of LOD0
+        ok    crash_debris/crash_debris_shard: 4,148 > 1,308 > 224 > 44 triangles; LOD3 1.1% of LOD0
+        ok    crash_debris/crash_debris_rim: 6,728 > 1,448 > 380 > 32 triangles; LOD3 0.5% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Trim (LIB_T08_compact_Trim): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    crash_debris/crash_debris_plate: longest side 2.52 m within 0.05-6 m
+        ok    ... 3 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/props__crash_debris.blend.json
+
+validate assets/blend/sites/outpost_0.blend  (family sites, source .blend)
+  outpost_0 / outpost_0 [building]  tris LOD0 19,118, LOD1 11,290, LOD2 1,466, LOD3 192  size 24.37 x 37.58 x 5.72 m
+  PASS  naming
+        ok    outpost_0.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    outpost_0: LOD0 19,118 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    outpost_0: 19,118 > 11,290 > 1,466 > 192 triangles; LOD3 1.0% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Glass (LIB_T08_compact_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_0: longest side 37.58 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/sites__outpost_0.blend.json
+
+validate assets/blend/sites/outpost_1.blend  (family sites, source .blend)
+  outpost_1 / outpost_1 [building]  tris LOD0 17,400, LOD1 10,192, LOD2 1,412, LOD3 152  size 24.37 x 37.44 x 4.50 m
+  PASS  naming
+        ok    outpost_1.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    outpost_1: LOD0 17,400 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    outpost_1: 17,400 > 10,192 > 1,412 > 152 triangles; LOD3 0.9% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Glass (LIB_T08_compact_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_1: longest side 37.44 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/sites__outpost_1.blend.json
+
+validate assets/blend/sites/outpost_2.blend  (family sites, source .blend)
+  outpost_2 / outpost_2 [building]  tris LOD0 17,688, LOD1 10,336, LOD2 1,532, LOD3 152  size 24.37 x 37.44 x 7.00 m
+  PASS  naming
+        ok    outpost_2.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    outpost_2: LOD0 17,688 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    outpost_2: 17,688 > 10,336 > 1,532 > 152 triangles; LOD3 0.9% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Glass (LIB_T08_compact_Glass): glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    outpost_2: longest side 37.44 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/sites__outpost_2.blend.json
+
+validate assets/blend/sites/beacon_0.blend  (family sites, source .blend)
+  beacon_0 / beacon_0 [building]  tris LOD0 12,900, LOD1 6,844, LOD2 1,260, LOD3 80  size 5.60 x 6.50 x 18.70 m
+  PASS  naming
+        ok    beacon_0.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    beacon_0: LOD0 12,900 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    beacon_0: 12,900 > 6,844 > 1,260 > 80 triangles; LOD3 0.6% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    beacon_0: longest side 18.70 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)00:03.968  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/beacon_1.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+  report: packages/tools/blender/t08/reports/source-r2/sites__beacon_0.blend.json
+
+validate assets/blend/sites/beacon_1.blend  (family sites, source .blend)
+  beacon_1 / beacon_1 [building]  tris LOD0 9,868, LOD1 5,140, LOD2 840, LOD3 108  size 6.20 x 6.24 x 13.10 m
+  PASS  naming
+        ok    beacon_1.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    beacon_1: LOD0 9,868 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    beacon_1: 9,868 > 5,140 > 840 > 108 triangles; LOD3 1.1% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    beacon_1: longest side 13.10 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/reports/source-r2/sites__beacon_1.blend.json
+
+12 of 12 file(s) passed validation

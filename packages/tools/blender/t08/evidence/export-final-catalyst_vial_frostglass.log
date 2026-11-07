@@ -1,0 +1,50 @@
+packages/tools/blender/t08/evidence/20261107T080227086352Z-preview-catalyst_vial_frostglass-export-final
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/client/public/models/props/catalyst_vial.glb",
+    "--variant",
+    "catalyst_vial_frostglass",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/export-final/catalyst_vial_frostglass.png",
+    "--single",
+    "--size",
+    "640"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 38269489152,
+    "memoryFreePercent": 81,
+    "load": [
+      12.54296875,
+      11.78076171875,
+      10.66796875
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T08:02:27.074022+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-39nyekxz",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 367696,
+  "pid": 20625,
+  "pgid": 20625,
+  "remainingGroup": [],
+  "elapsedSeconds": 5.365996333013754,
+  "logSHA256": "f19e1654887443f786bb1280859195fce91f4500dbba027dfe40b2162e0fba5f",
+  "pass": true
+}

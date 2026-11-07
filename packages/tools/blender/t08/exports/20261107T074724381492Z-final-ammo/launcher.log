@@ -1,0 +1,46 @@
+packages/tools/blender/t08/evidence/20261107T074724434933Z-export-ammo-final
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "ammo",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T074724381492Z-final-ammo/stock"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 34726400000,
+    "memoryFreePercent": 82,
+    "load": [
+      8.46337890625,
+      8.744140625,
+      9.0224609375
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:47:24.421948+00:00"
+  },
+  "limits": {
+    "wallSeconds": 1800,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-e39y1z6t",
+  "exit": 0,
+  "peakGroupRSSKiB": 462224,
+  "pid": 21051,
+  "pgid": 21051,
+  "remainingGroup": [],
+  "elapsedSeconds": 9.64014816598501,
+  "logSHA256": "73fef6757734ba1a2af10ebfb008a3c71db345a7328459da85e3c1a107b2ee51",
+  "pass": true
+}

@@ -1,0 +1,155 @@
+00:00.276  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/props/ammo.blend"
+
+export assets/blend/props/ammo.blend -> packages/client/public/models/props/ammo.glb
+
+validate assets/blend/props/ammo.blend  (family props, source .blend)
+  ammo / ammo_flak [prop]  tris LOD0 4,684, LOD1 2,068, LOD2 260, LOD3 36  size 0.47 x 0.35 x 0.55 m
+  ammo / ammo_torpedo [prop]  tris LOD0 2,412, LOD1 1,060, LOD2 364, LOD3 84  size 1.43 x 0.54 x 0.56 m
+  PASS  naming
+        ok    ammo.blend: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    ammo/ammo_flak: LOD0 4,684 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ammo/ammo_torpedo: LOD0 2,412 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    ammo/ammo_flak: 4,684 > 2,068 > 260 > 36 triangles; LOD3 0.8% of LOD0
+        ok    ammo/ammo_torpedo: 2,412 > 1,060 > 364 > 84 triangles; LOD3 3.5% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 3 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ammo/ammo_flak: longest side 0.55 m within 0.05-6 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073124520742Z-r4-ammo/stock/props__ammo.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:31:25 | INFO: Starting glTF 2.0 export
+02:31:25 | INFO: Extracting primitive: ammo_flak_CarryGripPolish_L0_mesh
+02:31:25 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_flak_FragmentRoundCan_L0_mesh
+02:31:25 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:25 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_flak_LidAndCarryBail_L0_mesh
+02:31:25 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:25 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:25 | INFO: Primitives created: 3
+02:31:25 | INFO: Extracting primitive: ammo_flak_SixProtectedFragmentCartridges_L0_mesh
+02:31:25 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_flak_CarryGripPolish_L1_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_flak_FragmentRoundCan_L1_mesh
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_flak_LidAndCarryBail_L1_mesh
+02:31:25 | INFO: Primitives created: 3
+02:31:25 | INFO: Extracting primitive: ammo_flak_SixProtectedFragmentCartridges_L1_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_flak_FragmentRoundCan_L2_mesh
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_flak_LidAndCarryBail_L2_mesh
+02:31:25 | INFO: Primitives created: 3
+02:31:25 | INFO: Extracting primitive: ammo_flak_FragmentRoundCan_L3_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_flak_LidAndCarryBail_L3_mesh
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: COL_ammo_flak_Carry_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_ArmingCollarAndCoolingFins_L0_mesh
+02:31:25 | INFO: Primitives created: 3
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_CradleContactScars_L0_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_FoldedStabilizers_L0_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_GuidanceBody_L0_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_TransportCradle_L0_mesh
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_ArmingCollarAndCoolingFins_L1_mesh
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_FoldedStabilizers_L1_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_GuidanceBody_L1_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_TransportCradle_L1_mesh
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_FoldedStabilizers_L2_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_GuidanceBody_L2_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_TransportCradle_L2_mesh
+02:31:25 | INFO: Primitives created: 2
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_GuidanceBody_L3_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: ammo_torpedo_TransportCradle_L3_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Extracting primitive: COL_ammo_torpedo_Carry_mesh
+02:31:25 | INFO: Primitives created: 1
+02:31:25 | INFO: Finished glTF 2.0 export in 0.032896995544433594 s
+
+  2.2 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 10 texture(s) to KTX2 (1 UASTC, 9 ETC1S): 2.1 -> 1.1 MB of buffers
+  meshopt (high, quantized): geometry 0.8 -> 0.3 MB; file 1.1 -> 0.6 MB
+02:31:31 | INFO: Data are loaded, start creating Blender stuff
+02:31:31 | INFO: Blender create Mesh node ammo_flak_CarryGripPolish_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_FragmentRoundCan_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_LidAndCarryBail_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_SixProtectedFragmentCartridges_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_CarryGripPolish_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_FragmentRoundCan_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_LidAndCarryBail_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_SixProtectedFragmentCartridges_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_FragmentRoundCan_L2_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_LidAndCarryBail_L2_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_FragmentRoundCan_L3_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_flak_LidAndCarryBail_L3_mesh
+02:31:31 | INFO: Blender create Mesh node COL_ammo_flak_Carry_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_ArmingCollarAndCoolingFins_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_CradleContactScars_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_FoldedStabilizers_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_GuidanceBody_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_TransportCradle_L0_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_ArmingCollarAndCoolingFins_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_FoldedStabilizers_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_GuidanceBody_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_TransportCradle_L1_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_FoldedStabilizers_L2_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_GuidanceBody_L2_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_TransportCradle_L2_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_GuidanceBody_L3_mesh
+02:31:31 | INFO: Blender create Mesh node ammo_torpedo_TransportCradle_L3_mesh
+02:31:31 | INFO: Blender create Mesh node COL_ammo_torpedo_Carry_mesh
+02:31:31 | INFO: glTF import finished in 0.04s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/props/ammo.glb  (family props, export .glb)
+  ammo / ammo_flak [prop]  tris LOD0 4,684, LOD1 2,068, LOD2 260, LOD3 36  size 0.47 x 0.35 x 0.55 m
+  ammo / ammo_torpedo [prop]  tris LOD0 2,412, LOD1 1,060, LOD2 364, LOD3 84  size 1.43 x 0.54 x 0.56 m
+  PASS  naming
+        ok    ammo.glb: 2 variant(s) in 1 asset(s) follow the props rules
+  PASS  triangle budget
+        ok    ammo/ammo_flak: LOD0 4,684 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ammo/ammo_torpedo: LOD0 2,412 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    geometry: meshopt-compressed: 0.3 MB of streams
+  PASS  LODs
+        ok    ammo/ammo_flak: 4,684 > 2,068 > 260 > 36 triangles; LOD3 0.8% of LOD0
+        ok    ammo/ammo_torpedo: 2,412 > 1,060 > 364 > 84 triangles; LOD3 3.5% of LOD0
+  PASS  materials
+        ok    compact_Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 6 more
+  PASS  scale references
+        ok    source: assets/blend/props/ammo.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    ammo/ammo_flak: longest side 0.55 m within 0.05-6 m
+        ok    ammo/ammo_torpedo: longest side 1.43 m within 0.05-6 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073124520742Z-r4-ammo/stock/props__ammo.glb.json
+  wrote packages/client/public/models/props/ammo.glb (570,004 bytes)
+
+export props: 1 of 1 source(s) exported

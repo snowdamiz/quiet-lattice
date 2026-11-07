@@ -1,0 +1,136 @@
+00:00.265  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/blend/sites/beacon_1.blend"
+
+export assets/blend/sites/beacon_1.blend -> packages/client/public/models/sites/beacon_1.glb
+
+validate assets/blend/sites/beacon_1.blend  (family sites, source .blend)
+  beacon_1 / beacon_1 [building]  tris LOD0 10,368, LOD1 5,432, LOD2 1,020, LOD3 108  size 6.20 x 6.24 x 13.10 m
+  PASS  naming
+        ok    beacon_1.blend: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    beacon_1: LOD0 10,368 triangles within the building budget 8,000-60,000 (families.json)
+  PASS  LODs
+        ok    beacon_1: 10,368 > 5,432 > 1,020 > 108 triangles; LOD3 1.0% of LOD0
+  PASS  materials
+        ok    compact_Accent (LIB_T08_compact_Accent): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark (LIB_T08_compact_Dark): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Hull (LIB_T08_compact_Hull): pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 5 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    beacon_1: longest side 13.10 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073333430708Z-r4-beacon_1/stock/sites__beacon_1.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:33:34 | INFO: Starting glTF 2.0 export
+02:33:34 | INFO: Extracting primitive: beacon_1_ConduitClampsAndAccessPanels_L0_mesh
+02:33:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:33:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_GroundServiceConsole_L0_mesh
+02:33:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:33:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_ServiceLadderAndInsulatorBanks_L0_mesh
+02:33:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:33:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:33:34 | INFO: Primitives created: 4
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalCrown_L0_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalStructure_L0_mesh
+02:33:34 | INFO: Primitives created: 3
+02:33:34 | INFO: Extracting primitive: beacon_1_SteppedGroundPlatform_L0_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_StepTreadWear_L0_mesh
+02:33:34 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalLens_L0_mesh
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Extracting primitive: beacon_1_GroundServiceConsole_L1_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_ServiceLadderAndInsulatorBanks_L1_mesh
+02:33:34 | INFO: Primitives created: 4
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalCrown_L1_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalStructure_L1_mesh
+02:33:34 | INFO: Primitives created: 3
+02:33:34 | INFO: Extracting primitive: beacon_1_SteppedGroundPlatform_L1_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalLens_L1_mesh
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Extracting primitive: beacon_1_GroundServiceConsole_L2_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalCrown_L2_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalStructure_L2_mesh
+02:33:34 | INFO: Primitives created: 3
+02:33:34 | INFO: Extracting primitive: beacon_1_SteppedGroundPlatform_L2_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalLens_L2_mesh
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalStructure_L3_mesh
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Extracting primitive: beacon_1_SteppedGroundPlatform_L3_mesh
+02:33:34 | INFO: Primitives created: 2
+02:33:34 | INFO: Extracting primitive: beacon_1_SignalLens_L3_mesh
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Extracting primitive: COL_beacon_1_Mast_mesh
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Extracting primitive: COL_beacon_1_Platform_mesh
+02:33:34 | INFO: Primitives created: 1
+02:33:34 | INFO: Finished glTF 2.0 export in 0.037856101989746094 s
+
+  4.8 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 11 texture(s) to KTX2 (1 UASTC, 10 ETC1S): 4.8 -> 1.9 MB of buffers
+  meshopt (high, quantized): geometry 1.3 -> 0.4 MB; file 2.0 -> 1.1 MB
+02:34:02 | INFO: Data are loaded, start creating Blender stuff
+02:34:02 | INFO: Blender create Mesh node beacon_1_ConduitClampsAndAccessPanels_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_GroundServiceConsole_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_ServiceLadderAndInsulatorBanks_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalCrown_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalStructure_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SteppedGroundPlatform_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_StepTreadWear_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalLens_L0_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_GroundServiceConsole_L1_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_ServiceLadderAndInsulatorBanks_L1_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalCrown_L1_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalStructure_L1_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SteppedGroundPlatform_L1_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalLens_L1_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_GroundServiceConsole_L2_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalCrown_L2_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalStructure_L2_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SteppedGroundPlatform_L2_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalLens_L2_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalStructure_L3_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SteppedGroundPlatform_L3_mesh
+02:34:02 | INFO: Blender create Mesh node beacon_1_SignalLens_L3_mesh
+02:34:02 | INFO: Blender create Mesh node COL_beacon_1_Mast_mesh
+02:34:02 | INFO: Blender create Mesh node COL_beacon_1_Platform_mesh
+02:34:02 | INFO: glTF import finished in 0.07s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/sites/beacon_1.glb  (family sites, export .glb)
+  beacon_1 / beacon_1 [building]  tris LOD0 10,368, LOD1 5,432, LOD2 1,020, LOD3 108  size 6.20 x 6.24 x 13.10 m
+  PASS  naming
+        ok    beacon_1.glb: 1 variant(s) in 1 asset(s) follow the sites rules
+  PASS  triangle budget
+        ok    beacon_1: LOD0 10,368 triangles within the building budget 8,000-60,000 (families.json)
+        ok    geometry: meshopt-compressed: 0.4 MB of streams
+  PASS  LODs
+        ok    beacon_1: 10,368 > 5,432 > 1,020 > 108 triangles; LOD3 1.0% of LOD0
+  PASS  materials
+        ok    Lamp_compact: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    compact_Accent: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    compact_Dark: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    ... 7 more
+  PASS  scale references
+        ok    source: assets/blend/sites/beacon_1.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    beacon_1: longest side 13.10 m within 1-250 m
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/t08/exports/20261107T073333430708Z-r4-beacon_1/stock/sites__beacon_1.glb.json
+  wrote packages/client/public/models/sites/beacon_1.glb (1,141,540 bytes)
+
+export sites: 1 of 1 source(s) exported

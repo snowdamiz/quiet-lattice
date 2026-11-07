@@ -1,0 +1,295 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/props/crash_debris.glb",
+  "family": "props",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T08:01:08Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "crash_debris",
+      "variants": [
+        {
+          "id": "crash_debris_plate",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4348,
+            "1": 1388,
+            "2": 236,
+            "3": 44
+          },
+          "implicitLods": false,
+          "dims": [
+            2.522,
+            1.747,
+            0.295
+          ],
+          "materials": [
+            "compact_Trim",
+            "compact_Dark",
+            "compact_Wear",
+            "compact_Hull"
+          ],
+          "gpuTextureMB": 10.7
+        },
+        {
+          "id": "crash_debris_rim",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 7056,
+            "1": 1504,
+            "2": 400,
+            "3": 32
+          },
+          "implicitLods": false,
+          "dims": [
+            5.35,
+            1.165,
+            0.291
+          ],
+          "materials": [
+            "compact_Trim",
+            "compact_Wear",
+            "compact_Dark"
+          ],
+          "gpuTextureMB": 8.0
+        },
+        {
+          "id": "crash_debris_scorch",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5340,
+            "1": 972,
+            "2": 276,
+            "3": 36
+          },
+          "implicitLods": false,
+          "dims": [
+            5.1,
+            2.52,
+            0.25
+          ],
+          "materials": [
+            "compact_Wear",
+            "compact_Dark",
+            "compact_Trim"
+          ],
+          "gpuTextureMB": 8.0
+        },
+        {
+          "id": "crash_debris_shard",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4348,
+            "1": 1388,
+            "2": 236,
+            "3": 44
+          },
+          "implicitLods": false,
+          "dims": [
+            1.412,
+            0.979,
+            0.189
+          ],
+          "materials": [
+            "reaches_Trim",
+            "reaches_Dark",
+            "reaches_Wear",
+            "reaches_Accent"
+          ],
+          "gpuTextureMB": 10.7
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "crash_debris.glb",
+          "message": "4 variant(s) in 1 asset(s) follow the props rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "crash_debris/crash_debris_plate",
+          "message": "LOD0 4,348 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "crash_debris/crash_debris_rim",
+          "message": "LOD0 7,056 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "crash_debris/crash_debris_scorch",
+          "message": "LOD0 5,340 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "crash_debris/crash_debris_shard",
+          "message": "LOD0 4,348 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.9 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "crash_debris/crash_debris_plate",
+          "message": "4,348 > 1,388 > 236 > 44 triangles; LOD3 1.0% of LOD0"
+        },
+        {
+          "subject": "crash_debris/crash_debris_rim",
+          "message": "7,056 > 1,504 > 400 > 32 triangles; LOD3 0.5% of LOD0"
+        },
+        {
+          "subject": "crash_debris/crash_debris_scorch",
+          "message": "5,340 > 972 > 276 > 36 triangles; LOD3 0.7% of LOD0"
+        },
+        {
+          "subject": "crash_debris/crash_debris_shard",
+          "message": "4,348 > 1,388 > 236 > 44 triangles; LOD3 1.0% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "compact_Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Wear",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "reaches_Wear",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "10 KTX2 map(s) (1 UASTC, 9 ETC1S) with full mip chains, 0.2 MB"
+        },
+        {
+          "subject": "crash_debris/crash_debris_plate",
+          "message": "textures take 11 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        },
+        {
+          "subject": "crash_debris/crash_debris_rim",
+          "message": "textures take 8 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        },
+        {
+          "subject": "crash_debris/crash_debris_scorch",
+          "message": "textures take 8 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        },
+        {
+          "subject": "crash_debris/crash_debris_shard",
+          "message": "textures take 11 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/props/crash_debris.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "crash_debris/crash_debris_plate",
+          "message": "longest side 2.52 m within 0.05-6 m"
+        },
+        {
+          "subject": "crash_debris/crash_debris_rim",
+          "message": "longest side 5.35 m within 0.05-6 m"
+        },
+        {
+          "subject": "crash_debris/crash_debris_scorch",
+          "message": "longest side 5.10 m within 0.05-6 m"
+        },
+        {
+          "subject": "crash_debris/crash_debris_shard",
+          "message": "longest side 1.41 m within 0.05-6 m"
+        }
+      ]
+    }
+  ]
+}

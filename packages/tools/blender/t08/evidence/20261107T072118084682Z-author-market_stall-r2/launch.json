@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/t08/author.py",
+    "--",
+    "market_stall"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 57316241408,
+    "memoryFreePercent": 40,
+    "load": [
+      7.8251953125,
+      8.63720703125,
+      9.40771484375
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:21:18.068729+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-ifwhg0rl",
+  "exit": null,
+  "peakGroupRSSKiB": 0
+}

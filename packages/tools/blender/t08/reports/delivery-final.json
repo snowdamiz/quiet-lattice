@@ -1,0 +1,1705 @@
+{
+  "status": "PASS: authorized CPU unit only; independent review/native capture/blind grade pending",
+  "base": {
+    "base": "afc0dacaaac45de27776e24ad35e42e3250d8f25",
+    "tree": "172bce71ceeda8d496a724a8ee568521d65fcce4",
+    "branch": "task/P1-E14-T08-props",
+    "librarySHA256": "33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c",
+    "lockSHA256": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f"
+  },
+  "assets": [
+    {
+      "family": "props",
+      "stem": "cargo_pod",
+      "variants": [
+        "cargo_pod"
+      ],
+      "class": "prop",
+      "density": 512,
+      "source": {
+        "path": "assets/blend/props/cargo_pod.blend",
+        "sha256": "629b6a27be1ddd45e0ff9af6ce0b08fc80858211e9e186998a88a25c94f173dd",
+        "bytes": 1629189
+      },
+      "export": {
+        "path": "packages/client/public/models/props/cargo_pod.glb",
+        "sha256": "adcecb67c9b65ac2f8f6504070412cd6cdef183cd3f4352831a8b5891705276c",
+        "bytes": 458656
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__cargo_pod.blend.json",
+          "sha256": "5e03456dc69dfdc0e7caeb7c3b75be26f9ff504f34f2b0103283984a10c2c3cb",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__cargo_pod.glb.json",
+          "sha256": "07aca489d19e088f84227267867181a974afc01ef067bbcaa560c68a00dd6dee",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T073044763880Z-r4-cargo_pod/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "cargo_pod",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 3602,
+            "1": 1766,
+            "2": 366,
+            "3": 48
+          },
+          "implicitLods": false,
+          "dims": [
+            1.65,
+            2.182,
+            1.674
+          ],
+          "materials": [
+            "compact_Wear",
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Dark",
+            "compact_Accent",
+            "compact_Hull"
+          ],
+          "gpuTextureMB": 13.3
+        }
+      ]
+    },
+    {
+      "family": "props",
+      "stem": "loot_pod",
+      "variants": [
+        "loot_pod"
+      ],
+      "class": "prop",
+      "density": 512,
+      "source": {
+        "path": "assets/blend/props/loot_pod.blend",
+        "sha256": "55c4c55b37a7426387944e9deee4b3d2909fe943d9c907cc04e5dc2344364b90",
+        "bytes": 1572036
+      },
+      "export": {
+        "path": "packages/client/public/models/props/loot_pod.glb",
+        "sha256": "2c212e0b37ad27147c13984d5ab2007f46f5bad665f420c56e6a352cc5254f08",
+        "bytes": 487724
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__loot_pod.blend.json",
+          "sha256": "f71de3d31cef1b32f87b2aea5cc0396f4fe5bd5ac819c6f3d5d0371e7f11efbc",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__loot_pod.glb.json",
+          "sha256": "56f7ac231c62858700273c6acc89a3dad4e1d320377b9c9a6c918c4b66213cde",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T073053388715Z-r4-loot_pod/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "loot_pod",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4166,
+            "1": 2234,
+            "2": 498,
+            "3": 60
+          },
+          "implicitLods": false,
+          "dims": [
+            1.65,
+            3.044,
+            1.674
+          ],
+          "materials": [
+            "reaches_Wear",
+            "reaches_Signal",
+            "reaches_Trim",
+            "reaches_Dark",
+            "reaches_Accent",
+            "reaches_Hull"
+          ],
+          "gpuTextureMB": 13.3
+        }
+      ]
+    },
+    {
+      "family": "props",
+      "stem": "terminal",
+      "variants": [
+        "terminal",
+        "terminal_reaches"
+      ],
+      "class": "prop",
+      "density": 512,
+      "source": {
+        "path": "assets/blend/props/terminal.blend",
+        "sha256": "3b6dec839161d1a39140fa1b41d31287c806c458dcf5544590ebc6c0058ea2f2",
+        "bytes": 2649309
+      },
+      "export": {
+        "path": "packages/client/public/models/props/terminal.glb",
+        "sha256": "105d6c1bf602eab78d8f98a00f4bbe86520a691817412b9bf739fa4e4498fab9",
+        "bytes": 704076
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__terminal.blend.json",
+          "sha256": "0235ae67d4389d58a526a78f71f4c7763bc65e9f2cb734ec0cd2814816fc473a",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__terminal.glb.json",
+          "sha256": "c90d33aba84384145b494183a91800a22138edfcb4c27a7968a729ae194611b8",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T073101987104Z-r4-terminal/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "terminal",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 3600,
+            "1": 1168,
+            "2": 184,
+            "3": 48
+          },
+          "implicitLods": false,
+          "dims": [
+            0.94,
+            0.782,
+            1.815
+          ],
+          "materials": [
+            "compact_Accent",
+            "compact_Screen",
+            "compact_Dark",
+            "compact_Signal",
+            "compact_Trim",
+            "compact_Hull",
+            "compact_Wear"
+          ],
+          "gpuTextureMB": 14.7
+        },
+        {
+          "id": "terminal_reaches",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 3600,
+            "1": 1168,
+            "2": 184,
+            "3": 48
+          },
+          "implicitLods": false,
+          "dims": [
+            0.94,
+            0.782,
+            1.815
+          ],
+          "materials": [
+            "reaches_Accent",
+            "reaches_Screen",
+            "reaches_Dark",
+            "reaches_Signal",
+            "reaches_Trim",
+            "reaches_Hull",
+            "reaches_Wear"
+          ],
+          "gpuTextureMB": 14.7
+        }
+      ]
+    },
+    {
+      "family": "props",
+      "stem": "market_stall",
+      "variants": [
+        "market_stall",
+        "market_stall_reaches"
+      ],
+      "class": "prop",
+      "density": 512,
+      "source": {
+        "path": "assets/blend/props/market_stall.blend",
+        "sha256": "34b2a2f563feca17a08fdb82c286d8135daa90ec0444289fe9c9951e2f7de432",
+        "bytes": 2726849
+      },
+      "export": {
+        "path": "packages/client/public/models/props/market_stall.glb",
+        "sha256": "e380ec564cd3b049b79d092da4b09b9ae53eb4d44174c968d4a86abec92dd414",
+        "bytes": 785784
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__market_stall.blend.json",
+          "sha256": "6cc389f317619aae9ee1c78e2088f5cf5a2e17cd98dd0c43dbf9ce2c90074e80",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__market_stall.glb.json",
+          "sha256": "e093f07a01ea6503bda599667f1fc0840ae1a4515483cbaa500d97c55b2aef6b",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T073113781798Z-r4-market_stall/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "market_stall",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4284,
+            "1": 2416,
+            "2": 364,
+            "3": 60
+          },
+          "implicitLods": false,
+          "dims": [
+            3.348,
+            2.01,
+            2.655
+          ],
+          "materials": [
+            "compact_Dark",
+            "compact_Signal",
+            "compact_Trim",
+            "compact_Hull",
+            "compact_Wear",
+            "compact_Accent"
+          ],
+          "gpuTextureMB": 13.3
+        },
+        {
+          "id": "market_stall_reaches",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4284,
+            "1": 2416,
+            "2": 364,
+            "3": 60
+          },
+          "implicitLods": false,
+          "dims": [
+            3.348,
+            2.01,
+            2.655
+          ],
+          "materials": [
+            "reaches_Dark",
+            "reaches_Signal",
+            "reaches_Trim",
+            "reaches_Hull",
+            "reaches_Wear",
+            "reaches_Accent"
+          ],
+          "gpuTextureMB": 13.3
+        }
+      ]
+    },
+    {
+      "family": "props",
+      "stem": "ammo",
+      "variants": [
+        "ammo_flak",
+        "ammo_torpedo"
+      ],
+      "class": "prop",
+      "density": 512,
+      "itemIds": {
+        "ammo_flak": "flak_ammo",
+        "ammo_torpedo": "torpedo"
+      },
+      "source": {
+        "path": "assets/blend/props/ammo.blend",
+        "sha256": "25986bd870f29783478730dd4363713c0487d8d18c7cbd3902e25dcbaad87796",
+        "bytes": 1759743
+      },
+      "export": {
+        "path": "packages/client/public/models/props/ammo.glb",
+        "sha256": "0121e7dad6de169c249b02034e18f43c93aa9a78c543c3103b5ac52786552f6a",
+        "bytes": 588776
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__ammo.blend.json",
+          "sha256": "d85d4ca777ca1799e889cfb9a84d20f7a30338c49f5b6d070e1ccc55291a3209",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__ammo.glb.json",
+          "sha256": "755a12a8a3ec8991a15205606e2a83682680a53a1ba16279dfe647892c96efa9",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T074724381492Z-final-ammo/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "ammo_flak",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4924,
+            "1": 2308,
+            "2": 308,
+            "3": 36
+          },
+          "implicitLods": false,
+          "dims": [
+            0.47,
+            0.397,
+            0.554
+          ],
+          "materials": [
+            "compact_Wear",
+            "compact_Hull",
+            "compact_Accent",
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Dark"
+          ],
+          "gpuTextureMB": 13.3
+        },
+        {
+          "id": "ammo_torpedo",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 2412,
+            "1": 1060,
+            "2": 364,
+            "3": 84
+          },
+          "implicitLods": false,
+          "dims": [
+            1.43,
+            0.54,
+            0.56
+          ],
+          "materials": [
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Dark",
+            "compact_Wear",
+            "compact_Accent",
+            "compact_Hull"
+          ],
+          "gpuTextureMB": 13.3
+        }
+      ]
+    },
+    {
+      "family": "props",
+      "stem": "catalyst_vial",
+      "variants": [
+        "catalyst_vial_frostglass",
+        "catalyst_vial_stormquartz",
+        "catalyst_vial_gamma",
+        "catalyst_vial_acidsalt"
+      ],
+      "class": "prop",
+      "density": 512,
+      "itemIds": {
+        "catalyst_vial_frostglass": "frostglass_catalyst",
+        "catalyst_vial_stormquartz": "stormquartz_catalyst",
+        "catalyst_vial_gamma": "gamma_catalyst",
+        "catalyst_vial_acidsalt": "acidsalt_catalyst"
+      },
+      "source": {
+        "path": "assets/blend/props/catalyst_vial.blend",
+        "sha256": "0a5ccd8bd5960eee8c878f802783ac5cdebc614e0cdd35917dd7fcdef0748a1a",
+        "bytes": 2261787
+      },
+      "export": {
+        "path": "packages/client/public/models/props/catalyst_vial.glb",
+        "sha256": "01d9704a6a0e79f3b5bff98dc4cc5478d344b0e149bfbc01e09a19443f50366c",
+        "bytes": 1304472
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__catalyst_vial.blend.json",
+          "sha256": "440a2142fd1bd1fbd6da4ac193f6b998d11934332eba04a0a0eebc7d84b8132a",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__catalyst_vial.glb.json",
+          "sha256": "10f2febb161a36f1145d1ee3dfadbd92cca44e0af1528a133e7be681c869e3d8",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T074734084133Z-final-catalyst_vial/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "catalyst_vial_acidsalt",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5092,
+            "1": 2272,
+            "2": 760,
+            "3": 168
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_acidsalt_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Wear",
+            "chorus_Hull",
+            "chorus_Trim"
+          ],
+          "gpuTextureMB": 12.0
+        },
+        {
+          "id": "catalyst_vial_frostglass",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5020,
+            "1": 2240,
+            "2": 760,
+            "3": 168
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_frostglass_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Hull",
+            "chorus_Trim",
+            "chorus_Wear"
+          ],
+          "gpuTextureMB": 12.0
+        },
+        {
+          "id": "catalyst_vial_gamma",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5056,
+            "1": 2256,
+            "2": 760,
+            "3": 168
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_gamma_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Hull",
+            "chorus_Trim",
+            "chorus_Wear"
+          ],
+          "gpuTextureMB": 12.0
+        },
+        {
+          "id": "catalyst_vial_stormquartz",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4840,
+            "1": 2160,
+            "2": 760,
+            "3": 168
+          },
+          "implicitLods": false,
+          "dims": [
+            0.144,
+            0.145,
+            0.34
+          ],
+          "materials": [
+            "catalyst_vial_stormquartz_Glass",
+            "chorus_Signal",
+            "chorus_Accent",
+            "chorus_Hull",
+            "chorus_Trim",
+            "chorus_Wear"
+          ],
+          "gpuTextureMB": 12.0
+        }
+      ]
+    },
+    {
+      "family": "props",
+      "stem": "crash_debris",
+      "variants": [
+        "crash_debris_plate",
+        "crash_debris_shard",
+        "crash_debris_rim",
+        "crash_debris_scorch"
+      ],
+      "class": "prop",
+      "density": 512,
+      "source": {
+        "path": "assets/blend/props/crash_debris.blend",
+        "sha256": "47a1ce921ab3b677c5db044bf55b70b89c99680baf678547a00b264acfe3aa54",
+        "bytes": 3367979
+      },
+      "export": {
+        "path": "packages/client/public/models/props/crash_debris.glb",
+        "sha256": "42113d140a09451ba26a9675103dfa5ed0df46a2ab6e209972b7d25bb0a8b8b3",
+        "bytes": 1156772
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__crash_debris.blend.json",
+          "sha256": "ccbe201c4cac09b0a6caddbaa9f71683aa4ace61f2cf3b34e056e476dca59f96",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/props__crash_debris.glb.json",
+          "sha256": "57b2298fb472652e09847f1258c810ba05615c6df14e5d0f6faec4e4b1efb309",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T074118514859Z-r5-crash_debris/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "crash_debris_plate",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4348,
+            "1": 1388,
+            "2": 236,
+            "3": 44
+          },
+          "implicitLods": false,
+          "dims": [
+            2.522,
+            1.747,
+            0.295
+          ],
+          "materials": [
+            "compact_Trim",
+            "compact_Dark",
+            "compact_Wear",
+            "compact_Hull"
+          ],
+          "gpuTextureMB": 10.7
+        },
+        {
+          "id": "crash_debris_rim",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 7056,
+            "1": 1504,
+            "2": 400,
+            "3": 32
+          },
+          "implicitLods": false,
+          "dims": [
+            5.35,
+            1.165,
+            0.291
+          ],
+          "materials": [
+            "compact_Trim",
+            "compact_Wear",
+            "compact_Dark"
+          ],
+          "gpuTextureMB": 8.0
+        },
+        {
+          "id": "crash_debris_scorch",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5340,
+            "1": 972,
+            "2": 276,
+            "3": 36
+          },
+          "implicitLods": false,
+          "dims": [
+            5.1,
+            2.52,
+            0.25
+          ],
+          "materials": [
+            "compact_Wear",
+            "compact_Dark",
+            "compact_Trim"
+          ],
+          "gpuTextureMB": 8.0
+        },
+        {
+          "id": "crash_debris_shard",
+          "class": "prop",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4348,
+            "1": 1388,
+            "2": 236,
+            "3": 44
+          },
+          "implicitLods": false,
+          "dims": [
+            1.412,
+            0.979,
+            0.189
+          ],
+          "materials": [
+            "reaches_Trim",
+            "reaches_Dark",
+            "reaches_Wear",
+            "reaches_Accent"
+          ],
+          "gpuTextureMB": 10.7
+        }
+      ]
+    },
+    {
+      "family": "sites",
+      "stem": "outpost_0",
+      "variants": [
+        "outpost_0"
+      ],
+      "class": "building",
+      "density": 256,
+      "source": {
+        "path": "assets/blend/sites/outpost_0.blend",
+        "sha256": "433a4dc5ca5b81e37d513c0131fc044016737400b951eacf51d58290d39d0676",
+        "bytes": 4394041
+      },
+      "export": {
+        "path": "packages/client/public/models/sites/outpost_0.glb",
+        "sha256": "cd4840097d01059f32b5b654c0500933af78f45544344552fef2891af551b648",
+        "bytes": 1684472
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__outpost_0.blend.json",
+          "sha256": "8c568fe6baf235a55537c1c50467a7d2549963e0452fb0ecb2f782cb269ccc6c",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__outpost_0.glb.json",
+          "sha256": "a2f91c6edc552dc5612cf6dd94513d0a69a458eacacb61820fb8bd9f0c3254c6",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T075756657119Z-clearance-final-outpost_0/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "outpost_0",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 19118,
+            "1": 11290,
+            "2": 1466,
+            "3": 192
+          },
+          "implicitLods": false,
+          "dims": [
+            24.372,
+            37.58,
+            5.716
+          ],
+          "materials": [
+            "compact_Accent",
+            "compact_Dark",
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Hull",
+            "compact_Screen",
+            "compact_Wear",
+            "compact_Glass"
+          ],
+          "gpuTextureMB": 58.7
+        }
+      ]
+    },
+    {
+      "family": "sites",
+      "stem": "outpost_1",
+      "variants": [
+        "outpost_1"
+      ],
+      "class": "building",
+      "density": 256,
+      "source": {
+        "path": "assets/blend/sites/outpost_1.blend",
+        "sha256": "dacc541126e9a52e79ae36eb4fefd7bd4088a6625e36745b2ffb7a4f8ac8b001",
+        "bytes": 4366106
+      },
+      "export": {
+        "path": "packages/client/public/models/sites/outpost_1.glb",
+        "sha256": "c58a15278b116f3fa295fb43dfba78bc0d809c5ec2ff2d9c07ecbcdb03ae0231",
+        "bytes": 1818484
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__outpost_1.blend.json",
+          "sha256": "9be330eae1c2f75d9e417ef32bda3adf8d7b3cca2189125dbdaf3d3df8ad9df2",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__outpost_1.glb.json",
+          "sha256": "a930d2101e462a6f400b497a82d89eaf5ea1dc800955a1042ed46bb5f2e76a0a",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T075827586298Z-clearance-final-outpost_1/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "outpost_1",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 21216,
+            "1": 14008,
+            "2": 1916,
+            "3": 152
+          },
+          "implicitLods": false,
+          "dims": [
+            24.372,
+            37.442,
+            4.5
+          ],
+          "materials": [
+            "compact_Accent",
+            "compact_Dark",
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Hull",
+            "compact_Glass",
+            "compact_Screen",
+            "compact_Wear"
+          ],
+          "gpuTextureMB": 58.7
+        }
+      ]
+    },
+    {
+      "family": "sites",
+      "stem": "outpost_2",
+      "variants": [
+        "outpost_2"
+      ],
+      "class": "building",
+      "density": 256,
+      "source": {
+        "path": "assets/blend/sites/outpost_2.blend",
+        "sha256": "8c24142fd91b2ecb798f3ddcd6430a095f914f20db49ad3fe1ed70b66af51c97",
+        "bytes": 4393433
+      },
+      "export": {
+        "path": "packages/client/public/models/sites/outpost_2.glb",
+        "sha256": "b7037fba4b7b57318d6b60c87b51a967206e14132e1169e8322d3ebb3d647ee6",
+        "bytes": 1843504
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__outpost_2.blend.json",
+          "sha256": "69e21c0b5187ad891fb76fe9566cb90aff221588cf44ae754fb8829e9693f193",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__outpost_2.glb.json",
+          "sha256": "f7a75f00e2b1d30f999380b91b6089e16a1e5e9ec4c21623193f9b24381710b4",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T075859735226Z-clearance-final-outpost_2/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "outpost_2",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 21512,
+            "1": 14160,
+            "2": 2044,
+            "3": 152
+          },
+          "implicitLods": false,
+          "dims": [
+            24.372,
+            37.442,
+            7.005
+          ],
+          "materials": [
+            "compact_Accent",
+            "compact_Dark",
+            "compact_Trim",
+            "compact_Signal",
+            "compact_Hull",
+            "compact_Glass",
+            "compact_Screen",
+            "compact_Wear"
+          ],
+          "gpuTextureMB": 58.7
+        }
+      ]
+    },
+    {
+      "family": "sites",
+      "stem": "beacon_0",
+      "variants": [
+        "beacon_0"
+      ],
+      "class": "building",
+      "density": 256,
+      "source": {
+        "path": "assets/blend/sites/beacon_0.blend",
+        "sha256": "c3dbb7cd4b59080c8658155031a597a3d6b9d1a517c958e6069f748986ec9dec",
+        "bytes": 4125518
+      },
+      "export": {
+        "path": "packages/client/public/models/sites/beacon_0.glb",
+        "sha256": "8a992c4a34235bf44cdc06ddd37fba0a7380ebe4c2205f0d480508378c0562eb",
+        "bytes": 1413764
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__beacon_0.blend.json",
+          "sha256": "bbab71c64ff44c10de791231e1aa4904996284a16d294c01aef6ab8ebfae124e",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__beacon_0.glb.json",
+          "sha256": "6700050b101bf5c2c6d11084c58a3bc22bf0377cf7166b22aa177b92be6eabb4",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T074428299661Z-r6-beacon_0/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "beacon_0",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 15504,
+            "1": 8584,
+            "2": 1644,
+            "3": 84
+          },
+          "implicitLods": false,
+          "dims": [
+            5.6,
+            6.5,
+            18.7
+          ],
+          "materials": [
+            "compact_Signal",
+            "compact_Dark",
+            "compact_Hull",
+            "compact_Screen",
+            "compact_Trim",
+            "compact_Accent",
+            "compact_Wear",
+            "Lamp_compact"
+          ],
+          "gpuTextureMB": 58.7
+        }
+      ]
+    },
+    {
+      "family": "sites",
+      "stem": "beacon_1",
+      "variants": [
+        "beacon_1"
+      ],
+      "class": "building",
+      "density": 256,
+      "source": {
+        "path": "assets/blend/sites/beacon_1.blend",
+        "sha256": "46cc7db69af1d0549986339338b6a0f5adfb376481888bcda545de7460291ac8",
+        "bytes": 3990408
+      },
+      "export": {
+        "path": "packages/client/public/models/sites/beacon_1.glb",
+        "sha256": "0a9bd5f14002f27b62efa281454c82e3422b27045927269d5c7e5f7608df0595",
+        "bytes": 1141540
+      },
+      "stock": [
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__beacon_1.blend.json",
+          "sha256": "e855e28fb02e66d2666246f1e7a309abd8a6df48e996a442d7a0b96aaf5daf27",
+          "status": "PASS"
+        },
+        {
+          "file": "packages/tools/blender/t08/reports/stock-final-r2/sites__beacon_1.glb.json",
+          "sha256": "afea6a8c45f7eb431badad1903c40142b347f4a264d2021ef100cfb6681e168a",
+          "status": "PASS"
+        }
+      ],
+      "exportBinding": "packages/tools/blender/t08/exports/20261107T073333430708Z-r4-beacon_1/binding.json",
+      "variantsMeasured": [
+        {
+          "id": "beacon_1",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 10368,
+            "1": 5432,
+            "2": 1020,
+            "3": 108
+          },
+          "implicitLods": false,
+          "dims": [
+            6.2,
+            6.235,
+            13.1
+          ],
+          "materials": [
+            "compact_Signal",
+            "compact_Dark",
+            "compact_Hull",
+            "compact_Screen",
+            "compact_Trim",
+            "compact_Accent",
+            "compact_Wear",
+            "Lamp_compact"
+          ],
+          "gpuTextureMB": 58.7
+        }
+      ]
+    }
+  ],
+  "variants": 21,
+  "savedLODs": 84,
+  "stockFilesPassed": 24,
+  "consumerTestsPassed": 15,
+  "malformedControlsPassed": 8,
+  "density": {
+    "source": {
+      "prop": {
+        "targetPxM": 512,
+        "lodCount": 64,
+        "weightedMeanRangePxM": [
+          511.9998435288281,
+          512.0000593193727
+        ],
+        "worstAreaBelow97PercentTarget": 0.0,
+        "minTrianglePxM": 511.9775437215418,
+        "maxTrianglePxM": 512.0383896772904,
+        "zeroUVTriangles": 0,
+        "zeroWorldTriangles": 0
+      },
+      "building": {
+        "targetPxM": 256,
+        "lodCount": 20,
+        "weightedMeanRangePxM": [
+          255.99998939432479,
+          256.0000079788309
+        ],
+        "worstAreaBelow97PercentTarget": 0.0,
+        "minTrianglePxM": 255.89476594999633,
+        "maxTrianglePxM": 256.0895994351869,
+        "zeroUVTriangles": 0,
+        "zeroWorldTriangles": 0
+      }
+    },
+    "export": {
+      "prop": {
+        "targetPxM": 512,
+        "lodCount": 64,
+        "weightedMeanRangePxM": [
+          510.6622044583082,
+          512.5890116628262
+        ],
+        "worstAreaBelow97PercentTarget": 0.003446198112061909,
+        "minTrianglePxM": 309.44283808759485,
+        "maxTrianglePxM": 635.8435204800915,
+        "zeroUVTriangles": 0,
+        "zeroWorldTriangles": 0
+      },
+      "building": {
+        "targetPxM": 256,
+        "lodCount": 20,
+        "weightedMeanRangePxM": [
+          255.97828230921516,
+          256.03938498190945
+        ],
+        "worstAreaBelow97PercentTarget": 0.0019562211575793794,
+        "minTrianglePxM": 212.5045454330729,
+        "maxTrianglePxM": 342.6896847260516,
+        "zeroUVTriangles": 0,
+        "zeroWorldTriangles": 0
+      }
+    }
+  },
+  "currentPreviews": [
+    {
+      "input": "assets/blend/props/cargo_pod.blend",
+      "variant": "cargo_pod",
+      "inputSHA256": "629b6a27be1ddd45e0ff9af6ce0b08fc80858211e9e186998a88a25c94f173dd",
+      "image": "assets/renders/props/t08/source-final/cargo_pod.png",
+      "imageSHA256": "9301b6ff333a634e9e7c2eee513f75911b16a4692eff58602ddd7e5ee40470fe",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/loot_pod.blend",
+      "variant": "loot_pod",
+      "inputSHA256": "55c4c55b37a7426387944e9deee4b3d2909fe943d9c907cc04e5dc2344364b90",
+      "image": "assets/renders/props/t08/source-final/loot_pod.png",
+      "imageSHA256": "0a4e9b509e45747c6f4ae7e00ff7f822d5d237806a2615d445d40018c0e13f04",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/terminal.blend",
+      "variant": "terminal",
+      "inputSHA256": "3b6dec839161d1a39140fa1b41d31287c806c458dcf5544590ebc6c0058ea2f2",
+      "image": "assets/renders/props/t08/source-final/terminal.png",
+      "imageSHA256": "0aa8bcbd1891034397a3abe2671b2d4ce17d977a71ddc97c1c20dd700ad60f80",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/terminal.blend",
+      "variant": "terminal_reaches",
+      "inputSHA256": "3b6dec839161d1a39140fa1b41d31287c806c458dcf5544590ebc6c0058ea2f2",
+      "image": "assets/renders/props/t08/source-final/terminal_reaches.png",
+      "imageSHA256": "1c8166fef6eb293410c947a34c2581b21a01b452c50951e391f92e9afda2a8c2",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/market_stall.blend",
+      "variant": "market_stall",
+      "inputSHA256": "34b2a2f563feca17a08fdb82c286d8135daa90ec0444289fe9c9951e2f7de432",
+      "image": "assets/renders/props/t08/source-final/market_stall.png",
+      "imageSHA256": "b3043aaa28e263a9b19713d870609f7ded719a2de00bc622b00b69c6bb3a8d6a",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/market_stall.blend",
+      "variant": "market_stall_reaches",
+      "inputSHA256": "34b2a2f563feca17a08fdb82c286d8135daa90ec0444289fe9c9951e2f7de432",
+      "image": "assets/renders/props/t08/source-final/market_stall_reaches.png",
+      "imageSHA256": "c297129ea5acfda54cb2c0b836be48911f278200fbb68e328311d7c098900fd3",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/ammo.blend",
+      "variant": "ammo_flak",
+      "inputSHA256": "25986bd870f29783478730dd4363713c0487d8d18c7cbd3902e25dcbaad87796",
+      "image": "assets/renders/props/t08/source-final/ammo_flak.png",
+      "imageSHA256": "5e2a73c9adefc259c5bd221f5c7c19946785d421b60d7ade1e97e8b44b7b19b3",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/ammo.blend",
+      "variant": "ammo_torpedo",
+      "inputSHA256": "25986bd870f29783478730dd4363713c0487d8d18c7cbd3902e25dcbaad87796",
+      "image": "assets/renders/props/t08/source-final/ammo_torpedo.png",
+      "imageSHA256": "fd2124c1c06b385138f70434408d2072e8da35973988b0be9c28928bdbd7ded1",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/catalyst_vial.blend",
+      "variant": "catalyst_vial_frostglass",
+      "inputSHA256": "0a5ccd8bd5960eee8c878f802783ac5cdebc614e0cdd35917dd7fcdef0748a1a",
+      "image": "assets/renders/props/t08/source-final/catalyst_vial_frostglass.png",
+      "imageSHA256": "9d20add56d8c5e8761d6c359f18cb14c0c24431e3558d73e6be62c73da089a2c",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/catalyst_vial.blend",
+      "variant": "catalyst_vial_stormquartz",
+      "inputSHA256": "0a5ccd8bd5960eee8c878f802783ac5cdebc614e0cdd35917dd7fcdef0748a1a",
+      "image": "assets/renders/props/t08/source-final/catalyst_vial_stormquartz.png",
+      "imageSHA256": "e533f879c19501f6ebd1de90c06604a1cecaeb2fd3c6fb47ddc0b61ad0989dcf",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/catalyst_vial.blend",
+      "variant": "catalyst_vial_gamma",
+      "inputSHA256": "0a5ccd8bd5960eee8c878f802783ac5cdebc614e0cdd35917dd7fcdef0748a1a",
+      "image": "assets/renders/props/t08/source-final/catalyst_vial_gamma.png",
+      "imageSHA256": "fe80cc12fd99bee407c01c87f4da12e89cac082d6e352212fb559a53728cb105",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/catalyst_vial.blend",
+      "variant": "catalyst_vial_acidsalt",
+      "inputSHA256": "0a5ccd8bd5960eee8c878f802783ac5cdebc614e0cdd35917dd7fcdef0748a1a",
+      "image": "assets/renders/props/t08/source-final/catalyst_vial_acidsalt.png",
+      "imageSHA256": "4eb465631445370dd1b7e85ead22abe85628e7b240d9e071f7478645eb8ca194",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/crash_debris.blend",
+      "variant": "crash_debris_plate",
+      "inputSHA256": "47a1ce921ab3b677c5db044bf55b70b89c99680baf678547a00b264acfe3aa54",
+      "image": "assets/renders/props/t08/source-final/crash_debris_plate.png",
+      "imageSHA256": "0f130dac045ae007a1eb1306c1332b34fb34a41940067092fc18f11f828f7481",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/crash_debris.blend",
+      "variant": "crash_debris_shard",
+      "inputSHA256": "47a1ce921ab3b677c5db044bf55b70b89c99680baf678547a00b264acfe3aa54",
+      "image": "assets/renders/props/t08/source-final/crash_debris_shard.png",
+      "imageSHA256": "c16e6ac08bcd19cf378e8644e0e6a8eff8b63b1a00b6ca01ffce51473cf75122",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/crash_debris.blend",
+      "variant": "crash_debris_rim",
+      "inputSHA256": "47a1ce921ab3b677c5db044bf55b70b89c99680baf678547a00b264acfe3aa54",
+      "image": "assets/renders/props/t08/source-final/crash_debris_rim.png",
+      "imageSHA256": "ceddf9ec1e7d919b5d8f9222edee1424b52219d15b28699cc1122cd05eaec821",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/props/crash_debris.blend",
+      "variant": "crash_debris_scorch",
+      "inputSHA256": "47a1ce921ab3b677c5db044bf55b70b89c99680baf678547a00b264acfe3aa54",
+      "image": "assets/renders/props/t08/source-final/crash_debris_scorch.png",
+      "imageSHA256": "369b054396fc3d79de767b209b55ad26d885ffa75a53439b7d27815da03be5c0",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/sites/outpost_0.blend",
+      "variant": "outpost_0",
+      "inputSHA256": "433a4dc5ca5b81e37d513c0131fc044016737400b951eacf51d58290d39d0676",
+      "image": "assets/renders/props/t08/source-clearance-final/outpost_0.png",
+      "imageSHA256": "5118bcb16220c5a1cbc1c2f26786b0edb827b197d0ecdb34cef6e8298561145e",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/sites/outpost_1.blend",
+      "variant": "outpost_1",
+      "inputSHA256": "dacc541126e9a52e79ae36eb4fefd7bd4088a6625e36745b2ffb7a4f8ac8b001",
+      "image": "assets/renders/props/t08/source-clearance-final/outpost_1.png",
+      "imageSHA256": "2c7a01278a070a4fd8ee002383d4b6479e727c0368e7a6bc5c98980f4b86df4e",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/sites/outpost_2.blend",
+      "variant": "outpost_2",
+      "inputSHA256": "8c24142fd91b2ecb798f3ddcd6430a095f914f20db49ad3fe1ed70b66af51c97",
+      "image": "assets/renders/props/t08/source-clearance-final/outpost_2.png",
+      "imageSHA256": "30431ad9ed4cd6c6d56205ad04ebb48e0271548e9d066f0a22c17d943896e7d0",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/sites/beacon_0.blend",
+      "variant": "beacon_0",
+      "inputSHA256": "c3dbb7cd4b59080c8658155031a597a3d6b9d1a517c958e6069f748986ec9dec",
+      "image": "assets/renders/props/t08/source-final/beacon_0.png",
+      "imageSHA256": "d74e0b008a1cd448494a63d98274b84cfb4ee57bea5cdef754feddc81006bbde",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "assets/blend/sites/beacon_1.blend",
+      "variant": "beacon_1",
+      "inputSHA256": "46cc7db69af1d0549986339338b6a0f5adfb376481888bcda545de7460291ac8",
+      "image": "assets/renders/props/t08/source-final/beacon_1.png",
+      "imageSHA256": "8455ba9dc8f94de882e789c337fa8602726d7fd63d47f5465b403ed1cef6371a",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/props/cargo_pod.glb",
+      "variant": "cargo_pod",
+      "inputSHA256": "adcecb67c9b65ac2f8f6504070412cd6cdef183cd3f4352831a8b5891705276c",
+      "image": "assets/renders/props/t08/export-final/cargo_pod.png",
+      "imageSHA256": "914f117dd5e0825f250ed329be5f61f2b15e33e978ccf2dfd382976a7b2724c7",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/props/loot_pod.glb",
+      "variant": "loot_pod",
+      "inputSHA256": "2c212e0b37ad27147c13984d5ab2007f46f5bad665f420c56e6a352cc5254f08",
+      "image": "assets/renders/props/t08/export-final/loot_pod.png",
+      "imageSHA256": "47111d6cfe62488568b2f1cb9b7fc172c8400084924939de50ac1b89e357bb96",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/props/terminal.glb",
+      "variant": "terminal",
+      "inputSHA256": "105d6c1bf602eab78d8f98a00f4bbe86520a691817412b9bf739fa4e4498fab9",
+      "image": "assets/renders/props/t08/export-final/terminal.png",
+      "imageSHA256": "a617e509203162a6df5f7fdf1fc59ecaf12f3be6d5c2357ce5e7fa9d4921739f",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/props/market_stall.glb",
+      "variant": "market_stall",
+      "inputSHA256": "e380ec564cd3b049b79d092da4b09b9ae53eb4d44174c968d4a86abec92dd414",
+      "image": "assets/renders/props/t08/export-final/market_stall.png",
+      "imageSHA256": "55a15a3371167419a633c059da1ed15419471859ab986e217fda6208b52867b5",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/props/ammo.glb",
+      "variant": "ammo_flak",
+      "inputSHA256": "0121e7dad6de169c249b02034e18f43c93aa9a78c543c3103b5ac52786552f6a",
+      "image": "assets/renders/props/t08/export-final/ammo_flak.png",
+      "imageSHA256": "a1e44e355773aec7ef1e779eed27a022aac3d1165bb5d302ed78f0cf14c122af",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/props/catalyst_vial.glb",
+      "variant": "catalyst_vial_frostglass",
+      "inputSHA256": "01d9704a6a0e79f3b5bff98dc4cc5478d344b0e149bfbc01e09a19443f50366c",
+      "image": "assets/renders/props/t08/export-final/catalyst_vial_frostglass.png",
+      "imageSHA256": "e3f1e3cf8df93e8f2fa1a3d8021c19dd3c525ad2ebffa28de1e2484dd53b9973",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/props/crash_debris.glb",
+      "variant": "crash_debris_plate",
+      "inputSHA256": "42113d140a09451ba26a9675103dfa5ed0df46a2ab6e209972b7d25bb0a8b8b3",
+      "image": "assets/renders/props/t08/export-final/crash_debris_plate.png",
+      "imageSHA256": "9862186a050db4e3c89a974deab479320226c350c9522f0bc4ad1ee5bd479099",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/sites/outpost_0.glb",
+      "variant": "outpost_0",
+      "inputSHA256": "cd4840097d01059f32b5b654c0500933af78f45544344552fef2891af551b648",
+      "image": "assets/renders/props/t08/export-final/outpost_0.png",
+      "imageSHA256": "0ce197e2022aeada366227d60f511597ef7ee5eb30f5d4220b045559726d8103",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/sites/outpost_1.glb",
+      "variant": "outpost_1",
+      "inputSHA256": "c58a15278b116f3fa295fb43dfba78bc0d809c5ec2ff2d9c07ecbcdb03ae0231",
+      "image": "assets/renders/props/t08/export-final/outpost_1.png",
+      "imageSHA256": "3fec73d9e462719622930774ad1088f5011a9fdcbe544c3e16570e10a5cc5525",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/sites/outpost_2.glb",
+      "variant": "outpost_2",
+      "inputSHA256": "b7037fba4b7b57318d6b60c87b51a967206e14132e1169e8322d3ebb3d647ee6",
+      "image": "assets/renders/props/t08/export-final/outpost_2.png",
+      "imageSHA256": "4ae6279860d9a98c4e66b713d47dd9ac8c6075f1ae164530b7d94bca5f19779f",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/sites/beacon_0.glb",
+      "variant": "beacon_0",
+      "inputSHA256": "8a992c4a34235bf44cdc06ddd37fba0a7380ebe4c2205f0d480508378c0562eb",
+      "image": "assets/renders/props/t08/export-final/beacon_0.png",
+      "imageSHA256": "09f6b7bb8be78b18daa342754a503117db0fcb6b634b7d3c73421e21bb857a67",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    },
+    {
+      "input": "packages/client/public/models/sites/beacon_1.glb",
+      "variant": "beacon_1",
+      "inputSHA256": "0a9bd5f14002f27b62efa281454c82e3422b27045927269d5c7e5f7608df0595",
+      "image": "assets/renders/props/t08/export-final/beacon_1.png",
+      "imageSHA256": "0bcf2cee032c123045c33619b03f637c9843806013caad59fd7164d0bc95f2ed",
+      "kind": "CPU inspection only; not native Review",
+      "exit": 0
+    }
+  ],
+  "allCPUImages": [
+    {
+      "path": "assets/renders/props/t08/export-final/ammo_flak.png",
+      "sha256": "a1e44e355773aec7ef1e779eed27a022aac3d1165bb5d302ed78f0cf14c122af",
+      "bytes": 791830
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/beacon_0.png",
+      "sha256": "09f6b7bb8be78b18daa342754a503117db0fcb6b634b7d3c73421e21bb857a67",
+      "bytes": 671673
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/beacon_1.png",
+      "sha256": "0bcf2cee032c123045c33619b03f637c9843806013caad59fd7164d0bc95f2ed",
+      "bytes": 683320
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/cargo_pod.png",
+      "sha256": "914f117dd5e0825f250ed329be5f61f2b15e33e978ccf2dfd382976a7b2724c7",
+      "bytes": 804495
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/catalyst_vial_frostglass.png",
+      "sha256": "e3f1e3cf8df93e8f2fa1a3d8021c19dd3c525ad2ebffa28de1e2484dd53b9973",
+      "bytes": 761324
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/crash_debris_plate.png",
+      "sha256": "9862186a050db4e3c89a974deab479320226c350c9522f0bc4ad1ee5bd479099",
+      "bytes": 718532
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/loot_pod.png",
+      "sha256": "47111d6cfe62488568b2f1cb9b7fc172c8400084924939de50ac1b89e357bb96",
+      "bytes": 761955
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/market_stall.png",
+      "sha256": "55a15a3371167419a633c059da1ed15419471859ab986e217fda6208b52867b5",
+      "bytes": 800474
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/outpost_0.png",
+      "sha256": "0ce197e2022aeada366227d60f511597ef7ee5eb30f5d4220b045559726d8103",
+      "bytes": 624096
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/outpost_1.png",
+      "sha256": "3fec73d9e462719622930774ad1088f5011a9fdcbe544c3e16570e10a5cc5525",
+      "bytes": 631825
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/outpost_2.png",
+      "sha256": "4ae6279860d9a98c4e66b713d47dd9ac8c6075f1ae164530b7d94bca5f19779f",
+      "bytes": 633456
+    },
+    {
+      "path": "assets/renders/props/t08/export-final/terminal.png",
+      "sha256": "a617e509203162a6df5f7fdf1fc59ecaf12f3be6d5c2357ce5e7fa9d4921739f",
+      "bytes": 717798
+    },
+    {
+      "path": "assets/renders/props/t08/initial-cargo.png",
+      "sha256": "31511d155615dbfa398d7fbca62bc7a0438526644133532cfbdc3c65af0580f9",
+      "bytes": 824050
+    },
+    {
+      "path": "assets/renders/props/t08/source-clearance-final/outpost_0.png",
+      "sha256": "5118bcb16220c5a1cbc1c2f26786b0edb827b197d0ecdb34cef6e8298561145e",
+      "bytes": 1313039
+    },
+    {
+      "path": "assets/renders/props/t08/source-clearance-final/outpost_1.png",
+      "sha256": "2c7a01278a070a4fd8ee002383d4b6479e727c0368e7a6bc5c98980f4b86df4e",
+      "bytes": 1332381
+    },
+    {
+      "path": "assets/renders/props/t08/source-clearance-final/outpost_2.png",
+      "sha256": "30431ad9ed4cd6c6d56205ad04ebb48e0271548e9d066f0a22c17d943896e7d0",
+      "bytes": 1344742
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/ammo_flak.png",
+      "sha256": "5e2a73c9adefc259c5bd221f5c7c19946785d421b60d7ade1e97e8b44b7b19b3",
+      "bytes": 1571803
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/ammo_torpedo.png",
+      "sha256": "fd2124c1c06b385138f70434408d2072e8da35973988b0be9c28928bdbd7ded1",
+      "bytes": 1494590
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/beacon_0.png",
+      "sha256": "d74e0b008a1cd448494a63d98274b84cfb4ee57bea5cdef754feddc81006bbde",
+      "bytes": 1370638
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/beacon_1.png",
+      "sha256": "8455ba9dc8f94de882e789c337fa8602726d7fd63d47f5465b403ed1cef6371a",
+      "bytes": 1396835
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/cargo_pod.png",
+      "sha256": "9301b6ff333a634e9e7c2eee513f75911b16a4692eff58602ddd7e5ee40470fe",
+      "bytes": 1583065
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/catalyst_vial_acidsalt.png",
+      "sha256": "4eb465631445370dd1b7e85ead22abe85628e7b240d9e071f7478645eb8ca194",
+      "bytes": 1563880
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/catalyst_vial_frostglass.png",
+      "sha256": "9d20add56d8c5e8761d6c359f18cb14c0c24431e3558d73e6be62c73da089a2c",
+      "bytes": 1547223
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/catalyst_vial_gamma.png",
+      "sha256": "fe80cc12fd99bee407c01c87f4da12e89cac082d6e352212fb559a53728cb105",
+      "bytes": 1569257
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/catalyst_vial_stormquartz.png",
+      "sha256": "e533f879c19501f6ebd1de90c06604a1cecaeb2fd3c6fb47ddc0b61ad0989dcf",
+      "bytes": 1586975
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/crash_debris_plate.png",
+      "sha256": "0f130dac045ae007a1eb1306c1332b34fb34a41940067092fc18f11f828f7481",
+      "bytes": 1455638
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/crash_debris_rim.png",
+      "sha256": "ceddf9ec1e7d919b5d8f9222edee1424b52219d15b28699cc1122cd05eaec821",
+      "bytes": 1371587
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/crash_debris_scorch.png",
+      "sha256": "369b054396fc3d79de767b209b55ad26d885ffa75a53439b7d27815da03be5c0",
+      "bytes": 1383051
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/crash_debris_shard.png",
+      "sha256": "c16e6ac08bcd19cf378e8644e0e6a8eff8b63b1a00b6ca01ffce51473cf75122",
+      "bytes": 1444674
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/loot_pod.png",
+      "sha256": "0a4e9b509e45747c6f4ae7e00ff7f822d5d237806a2615d445d40018c0e13f04",
+      "bytes": 1529960
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/market_stall.png",
+      "sha256": "b3043aaa28e263a9b19713d870609f7ded719a2de00bc622b00b69c6bb3a8d6a",
+      "bytes": 1609722
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/market_stall_reaches.png",
+      "sha256": "c297129ea5acfda54cb2c0b836be48911f278200fbb68e328311d7c098900fd3",
+      "bytes": 1609353
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/outpost_0.png",
+      "sha256": "5118bcb16220c5a1cbc1c2f26786b0edb827b197d0ecdb34cef6e8298561145e",
+      "bytes": 1313039
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/outpost_1.png",
+      "sha256": "2c7a01278a070a4fd8ee002383d4b6479e727c0368e7a6bc5c98980f4b86df4e",
+      "bytes": 1332381
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/outpost_2.png",
+      "sha256": "30431ad9ed4cd6c6d56205ad04ebb48e0271548e9d066f0a22c17d943896e7d0",
+      "bytes": 1344742
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/terminal.png",
+      "sha256": "0aa8bcbd1891034397a3abe2671b2d4ce17d977a71ddc97c1c20dd700ad60f80",
+      "bytes": 1470209
+    },
+    {
+      "path": "assets/renders/props/t08/source-final/terminal_reaches.png",
+      "sha256": "1c8166fef6eb293410c947a34c2581b21a01b452c50951e391f92e9afda2a8c2",
+      "bytes": 1458315
+    },
+    {
+      "path": "assets/renders/props/t08/source-r2/beacon_0.png",
+      "sha256": "b907984b9851008153208a61e3879119e51d34a97a69eb656aa7c8e82ef42502",
+      "bytes": 1370791
+    },
+    {
+      "path": "assets/renders/props/t08/source-r2/beacon_1.png",
+      "sha256": "3d9e54aa020d47a4636aa474a34504da07c45bf1cb7a0dc8d06e3b204573b1f4",
+      "bytes": 1395834
+    },
+    {
+      "path": "assets/renders/props/t08/source-r2/cargo_pod.png",
+      "sha256": "8e59e3d2f41a7a70f4ff6c1ebab5e8400de5f7a64f4c10c1db04dfb07edb3b99",
+      "bytes": 1598256
+    },
+    {
+      "path": "assets/renders/props/t08/source-r2/catalyst_vial_frostglass.png",
+      "sha256": "859c08497f813789a5492880ae6501c2dd9ff75fef817b199c410ed3bf5d1386",
+      "bytes": 1550904
+    },
+    {
+      "path": "assets/renders/props/t08/source-r2/outpost_0.png",
+      "sha256": "f9b4f3d36b4410c99741a63134a0e5d86ee4b54851d27887cd83493d1ae51679",
+      "bytes": 1324291
+    },
+    {
+      "path": "assets/renders/props/t08/source-r2/outpost_1.png",
+      "sha256": "47ce3a6289bb345ce49b1f4ad27bf7b6911be1e3ab9c8e4a50711e743bda2beb",
+      "bytes": 1339319
+    },
+    {
+      "path": "assets/renders/props/t08/source-r2/outpost_2.png",
+      "sha256": "584f257acf8acfbc8bb3bc01bb178fa3d5bf09e7a2f0dadce82407e989b56f88",
+      "bytes": 1348945
+    }
+  ],
+  "imageCount": 44,
+  "ownedCPUImageCountIncludingControlTextures": 45,
+  "renderTreeBytesIncludingHistory": 423681967,
+  "resourceRuns": 148,
+  "historicalFailedRuns": 9,
+  "protectedProof": "packages/tools/blender/t08/reports/protected-final.json",
+  "commandsAndFailureTails": "packages/tools/blender/t08/reports/commands-final.json",
+  "futureNativeInventory": "packages/tools/blender/t08/reports/future-native-inventory.json"
+}

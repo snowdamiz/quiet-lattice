@@ -1,0 +1,26 @@
+{
+  "source": "assets/blend/sites/beacon_0.blend",
+  "output": "packages/client/public/models/sites/beacon_0.glb",
+  "status": "PASS",
+  "retiredSHA256": "a8315fdf4bf3aa4b2f9db829008740e78c1b36b63c961f4b29f38fe2be004ac9",
+  "sourceSHA256": "c3dbb7cd4b59080c8658155031a597a3d6b9d1a517c958e6069f748986ec9dec",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-beacon_0-r6",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_sites.py",
+    "--",
+    "--only",
+    "beacon_0",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T074428299661Z-r6-beacon_0/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "8a992c4a34235bf44cdc06ddd37fba0a7380ebe4c2205f0d480508378c0562eb"
+}

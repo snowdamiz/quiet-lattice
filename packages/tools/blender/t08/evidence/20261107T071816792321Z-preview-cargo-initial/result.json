@@ -1,0 +1,49 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/t08/preview.py",
+    "--",
+    "assets/blend/props/cargo_pod.blend",
+    "--variant",
+    "cargo_pod",
+    "--out",
+    "assets/renders/props/t08/initial-cargo.png",
+    "--single",
+    "--size",
+    "640"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 59636965376,
+    "memoryFreePercent": 58,
+    "load": [
+      8.93359375,
+      9.30810546875,
+      9.78369140625
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T07:18:16.780018+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-ti3fjxws",
+  "exit": 0,
+  "peakGroupRSSKiB": 336816,
+  "pid": 44068,
+  "pgid": 44068,
+  "remainingGroup": [],
+  "elapsedSeconds": 5.402355166967027,
+  "logSHA256": "9702745f0e5d516ad91a6215dc3e7e9a89ba146660f8c0c20b35f4945e8802f4",
+  "pass": true
+}

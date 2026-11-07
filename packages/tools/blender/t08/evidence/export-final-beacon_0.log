@@ -1,0 +1,50 @@
+packages/tools/blender/t08/evidence/20261107T080259681900Z-preview-beacon_0-export-final
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/preview.py",
+    "--",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/client/public/models/sites/beacon_0.glb",
+    "--variant",
+    "beacon_0",
+    "--out",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/assets/renders/props/t08/export-final/beacon_0.png",
+    "--single",
+    "--size",
+    "640"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "admission": {
+    "freeBytes": 38230482944,
+    "memoryFreePercent": 81,
+    "load": [
+      10.2197265625,
+      11.27734375,
+      10.52197265625
+    ],
+    "cpus": 15,
+    "observed": "2026-11-07T08:02:59.669318+00:00"
+  },
+  "limits": {
+    "wallSeconds": 600,
+    "rssGiB": 8,
+    "threads": 2,
+    "codecs": 1
+  },
+  "tmpdir": "/tmp/t08-9y6_5bmp",
+  "exit": 0,
+  "peakSampledGroupRSSKiB": 521632,
+  "pid": 22765,
+  "pgid": 22765,
+  "remainingGroup": [],
+  "elapsedSeconds": 7.509738665947225,
+  "logSHA256": "580f4bc3f0cf79cfc6c5b7e0ef473d37cf621406e32054cdae7301875ce7561a",
+  "pass": true
+}

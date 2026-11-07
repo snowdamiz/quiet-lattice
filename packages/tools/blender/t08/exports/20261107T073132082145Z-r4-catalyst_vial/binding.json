@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/props/catalyst_vial.blend",
+  "output": "packages/client/public/models/props/catalyst_vial.glb",
+  "status": "PASS",
+  "sourceSHA256": "b437f944c233252555f3835c93df534e58b8c5a93909374d18a19566c57dbd92",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-catalyst_vial-r4",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "catalyst_vial",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T073132082145Z-r4-catalyst_vial/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "f7fa8858179a478614ec978515fec71b82e7c1e89de391b1cf22a5432352cf11"
+}

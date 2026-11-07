@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/props/cargo_pod.blend",
+  "output": "packages/client/public/models/props/cargo_pod.glb",
+  "status": "PASS",
+  "sourceSHA256": "55258c8e46c8669b842c8d0e4e83751f3965f4c4eb477e8f1e441c51627bf9b1",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-cargo_pod-r2",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "cargo_pod",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T072258883957Z-r2-cargo_pod/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "3a313b29fc7c7c2ba8c8d87d3e25399209ca9c4cf9b00d06364006cd6f45b6d4"
+}

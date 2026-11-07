@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/props/ammo.blend",
+  "output": "packages/client/public/models/props/ammo.glb",
+  "status": "PASS",
+  "sourceSHA256": "eb39ef3e494f3a5118b99048e06797e78bfeab1eb88c461dde04318fc05f91bc",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-ammo-r4",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "ammo",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T073124520742Z-r4-ammo/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "73c0d0030567ebc788fd1306d2f9f9587da1d665cec84e2d60dda468a7c0838b"
+}

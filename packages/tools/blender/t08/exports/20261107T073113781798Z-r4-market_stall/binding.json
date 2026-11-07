@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/props/market_stall.blend",
+  "output": "packages/client/public/models/props/market_stall.glb",
+  "status": "PASS",
+  "sourceSHA256": "34b2a2f563feca17a08fdb82c286d8135daa90ec0444289fe9c9951e2f7de432",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-market_stall-r4",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "market_stall",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T073113781798Z-r4-market_stall/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "e380ec564cd3b049b79d092da4b09b9ae53eb4d44174c968d4a86abec92dd414"
+}

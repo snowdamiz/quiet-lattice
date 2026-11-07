@@ -1,0 +1,25 @@
+{
+  "source": "assets/blend/props/loot_pod.blend",
+  "output": "packages/client/public/models/props/loot_pod.glb",
+  "status": "PASS",
+  "sourceSHA256": "55c4c55b37a7426387944e9deee4b3d2909fe943d9c907cc04e5dc2344364b90",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/run.py",
+    "--label",
+    "export-loot_pod-r4",
+    "--wall",
+    "1800",
+    "--",
+    "blender",
+    "-P",
+    "packages/tools/blender/export_props.py",
+    "--",
+    "--only",
+    "loot_pod",
+    "--report-dir",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/exports/20261107T073053388715Z-r4-loot_pod/stock"
+  ],
+  "exit": 0,
+  "outputSHA256": "2c212e0b37ad27147c13984d5ab2007f46f5bad665f420c56e6a352cc5254f08"
+}

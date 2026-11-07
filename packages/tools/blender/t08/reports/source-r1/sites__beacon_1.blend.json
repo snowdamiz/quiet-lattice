@@ -1,0 +1,154 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/sites/beacon_1.blend",
+  "family": "sites",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T07:19:50Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "beacon_1",
+      "variants": [
+        {
+          "id": "beacon_1",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 9868,
+            "1": 5140,
+            "2": 840,
+            "3": 108
+          },
+          "implicitLods": false,
+          "dims": [
+            6.2,
+            6.235,
+            13.1
+          ],
+          "materials": [
+            "LIB_T08_compact_Dark",
+            "LIB_T08_compact_Accent",
+            "LIB_T08_compact_Trim",
+            "LIB_T08_compact_Hull",
+            "LIB_T08_compact_Screen",
+            "LIB_T08_compact_Signal",
+            "LIB_T08_compact_Wear",
+            "Lamp_compact"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "beacon_1.blend",
+          "message": "1 variant(s) in 1 asset(s) follow the sites rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "beacon_1",
+          "message": "LOD0 9,868 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "beacon_1",
+          "message": "9,868 > 5,140 > 840 > 108 triangles; LOD3 1.1% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "compact_Accent (LIB_T08_compact_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Dark (LIB_T08_compact_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Hull (LIB_T08_compact_Hull)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Screen (LIB_T08_compact_Screen)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Signal (LIB_T08_compact_Signal)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Trim (LIB_T08_compact_Trim)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "compact_Wear (LIB_T08_compact_Wear)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "Lamp_compact",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "beacon_1",
+          "message": "longest side 13.10 m within 1-250 m"
+        }
+      ]
+    }
+  ]
+}
