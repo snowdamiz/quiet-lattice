@@ -1,0 +1,717 @@
+TASK: P1.E12.T02 — Kestrel component, visual revision round 3 only.
+TASK VERBATIM: P1.E12.T02 (art) Lark, Swift, Kestrel, Mule · deps: E14.T02 · done: four hulls with gear, canopy, cockpit interior, hardpoint mounts, damage state, husked variant, three liveries each; the Lark rebuilds today's ship at the new bar. · verify: validate; review.
+STATUS: DONE — scoped Kestrel CPU implementation and artifact preparation. Parent fresh source/code review and third blind visual grade remain PENDING. This does not complete the four-hull task or grant runtime, visual, release or merge approval.
+
+SUMMARY: Recovered the exact retained Kestrel source/export in a separate commit, then revised the saved editable source. Preserved 38,954 original lattice vertices outside the cabin edit area. Replaced the box cockpit with a suspended floor, curved seat, harness, pedals, hand controls, kidney consoles and physical instrument surrounds. Authored a port boarding aperture and nine-tread stair with rails, fitted canopy/gear collision volumes and grown collars at the unchanged three hardpoint markers. Replaced uniform crackle/stipple with placed contact wear, leading-attachment weathering, sheltered lichen, nozzle soot and a membrane repair patch. Baked packed 4096 PBR atlases on actual LOD0 UVs with CPU Cycles, then shared those images through all four saved LODs. Saved nine base/damaged/husked × Ulgani/Compact/Working variants. Exported the saved source with the unchanged parent exporter. Complete compressed-file inventory, adverse checks and CPU-only previews accompany the bytes.
+
+PROVENANCE:
+  cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118
+  branch: task/P1-E12-T02-kestrel-r3
+  base: e397f3d8db6717aac59b068aa5941af5999b0c06
+  recovery commit: 9571dce6466063984967189d6363c989255b3b9c
+  content head: c46e864028b32cea22622f5b1ffc19a95f99120e
+  content tree: fc9f2cb3495085b2746339c6ea65d17b9b201292
+  This report is committed after the content commit; the final delivery head/tree are returned in the implementation reply.
+  canonical content ref: 75ea700462c17d63a69b570e2ca710c5eb1e055d
+  identical cleanup ref: d584a1d386a1a5cd76911b314a7f9c5293aa23a3
+  source ref 82408e840 and graded round2 ref 3413edb7 pointers also checked.
+  recovered blend: ea45999c7d204b5d04ee6bfa8789c69c8f0e25cb686f8efaeaa86d95301f51dc, 32,699,293 bytes
+  recovered GLB: 3cd7a084ff4c78da6a1fae3030c3b2a517308bb5236763ec30ce6dd92ae7df5c, 14,700,144 bytes
+  final blend: 18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65, 78,976,965 bytes
+  final GLB: 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb, 20,931,568 bytes
+  Full LFS pointers and local object hashes/sizes were verified before hydration. No network fetch, old branch checkout, bulk recovery, .blend1, rejected GLB, den attachment or cache recovery. Two verified old reference images are retained under reference/ and are not current evidence. Old reports and round2 packets remain immutable on their refs.
+
+VERIFY:
+  CPU source five gates: PASS on final source bytes.
+  CPU actual compressed GLB five gates: PASS on final export bytes.
+  Kestrel-specific source audit: PASS, nine variants × four LODs, packed 4096 maps, exact image sharing with LOD0, common markers/profiles, scale and collider triangle limits.
+  Measured source length is 14.94 m; 148 authored collision objects have at most 284 triangles each, below the unchanged 512-triangle collider ceiling.
+  Static render primitive count: 12 at each LOD of each variant. This is not measured runtime GPU draw calls.
+  Source triangle counts LOD0/1/2/3: base 146409/43913/14629/7226; damaged 146291/43878/14618/7197; husked 146473/43932/14636/7265. Each state's three liveries share these counts.
+  Actual compressed GLB triangle counts LOD0/1/2/3: kestrel 146408/43912/14496/6963; kestrel_damaged 146290/43877/14486/6934; kestrel_husked 146472/43931/14506/7002. The shared compressor drops degenerate triangles; these measured export values are separately inventoried.
+  The close CPU LOD2 views expose faceting around the nose and dorsal cover. They are retained explicitly for review; the required runtime 100 m/200 m silhouette checks have not run, and no LOD2 visual-quality approval is claimed.
+  Actual export has 13 unique KTX2 4096 images, complete mip chains, UASTC normal, correct transfer functions, required Basis/meshopt/quantization extensions and no PNG fallback. The inventory preserves the complete glTF document and binary chunk hash as well as every node/primitive, including materialless collider primitives.
+  Existing 512 MiB texture ceiling is unchanged. At the existing 8-bpp mipmapped accounting assumption: 67,108,944 bytes per active variant; 290,805,424 bytes for every unique image loaded together. These are static estimates, not device-memory measurements.
+  All 13 required named hardpoint/canopy/gear/cockpit/screen/control world matrices match the verified retained source; variant-level matrices match across all nine variants.
+  Source hash before/after successful shared export is identical. Export performs no modeling or source saving.
+  Four source adverse checks reject moved hardpoint, missing LOD2 and a 1K normal; an actual invalid saved source through the shared exporter removes only its known stale export and preserves a foreign output.
+  Eight actual compressed-asset tests pass, including complete document/node/primitive inventory, missing hardpoint/LOD, required compression, 1K maps, missing mips, loss of LOD0 normal atlas in LOD2 and a hidden thirteenth primitive. Tests never publish mutated bytes.
+  Six real lane CLI tests pass and cover exit-42 stale-own-output/receipt cleanup, deadline with a confirmed TERM-ignoring descendant, signal exit 143 with lock contention exit 75 and subsequent lock reacquisition, source mutation invalidating an export, failed executable startup and keeping the lane closed until a prior owned group is gone. Owned process groups are reaped before unlock; foreign outputs remain intact. The final lane also bounds process waits and records/quarantines an unreaped group instead of admitting another job. Final results are appended below.
+  Base-state CPU collision probe: within 4 cm, body 99.647%, canopy glass/frame 100%, front gear/stairs 99.966%, left/right gear 100%. The report retains the uncovered vertices' bounds/bins. All 261 body rays through the side-entry aperture are clear; 16 static passage samples are clear. This is not a runtime capsule/physics simulation.
+  Contact-sheet pixel verification: PASS; all 20 cells have maximum decoded RGB error 0 against their individually hashed frames.
+  CPU evidence uses Cycles CPU, Blender -t 2, math threads 2, codec threads 2, ART_KTX_JOBS=1, one Blender in the Kestrel lane and finite process-group deadlines. Other lanes were not locked or modified.
+  Full command/exit records and failure tails are appended below. qualification.json binds final PASS reports to exact source/export bytes; cpu-preview-manifest.json binds current images and shared-core hashes. Historical/superseded iteration images are excluded from current evidence.
+
+DECISIONS:
+  Preserve the accepted grown-bone silhouette? -> retain the original lattice outside the local cabin aperture -> exact retained-vertex comparison, not a replacement hull.
+  4096 hero maps within the unchanged budget? -> one shared atlas layout across material roles, three state ORM atlases, nine baked livery albedos and one shared normal -> all lower LODs reuse LOD0-derived images. No budget increase or shader-only livery substitute.
+  How to replace noisy wear? -> author fields in metres at specific hand/foot/leading/root/nozzle sites and bake onto LOD0 -> no uniform crackle or tech stipple. UV occupancy is 28.397%, with zero sampled overlaps and 312 folded triangle charts repaired; 4096 storage is not a claim of full 4K effective density on every surface.
+  Damage versus husk? -> separate saved geometry and PBR atlases -> damaged removes 2/62 panels (4.30% area); husk removes 16/62 panels (25.81% count, 19.34% area), with char/rust and restrained seam/glyph remnants.
+  Common signal rules versus extinguished husk lamps? -> retain the unchanged mandatory NavWhite slot with emitted linear RGB 0.00006 -> exact zero and 1e-12 failed the unchanged source/export profile after conversion. It reads dark in CPU views but is not mathematically zero radiance; parent visual/runtime review must assess it.
+  Fitted boarding and moving parts? -> nine 0.18 m rises, 0.30 m goings, 1.4 m treads, 1.42 m rail clearance; colliders follow the saved Canopy/Gear pivots -> prove landed/open CPU fit without modifying Ship, Cockpit or gameplay. Stair flight folding remains unqualified.
+  Missing LOD3 canopy after decimation? -> retain the small 27-triangle LOD2 canopy in LOD3 -> preserve the canopy contract while remaining below 5% of LOD0.
+  Runtime draw target? -> consolidate saved assemblies/material primitives to twelve and inventory the actual compressed file -> do not equate source primitive counts with measured GPU draws.
+  Navigation consolidation? -> three spatial lens meshes share one Blink_NavSpore driver and a NavWhite material -> the common Blink_ profile remains valid while avoiding three separate render primitives. The former three independent blink helper nodes are not preserved; canonical hardpoint, canopy, gear, cockpit, screen and control transforms are checked separately against the verified original source. Runtime navigation animation remains unqualified.
+  macOS post-kill EPERM race? -> treat signal-zero EPERM as presence not yet disproved, keep bounded polling, always remove stale own output on failure, and quarantine an unreaped group -> the strengthened live descendant test reproduced the failure and the corrected six-test suite passed.
+  Independent grade? -> prepare exact final-byte CPU artifacts and a future GPU inventory -> no self-grade or runtime PASS; parent's third blind Kestrel round remains pending.
+
+OUT OF SCOPE FOUND:
+  The current gameplay Ship/Cockpit route still loads the legacy ship asset; hull runtime adoption, flight animation, real boarding/collision integration and GPU review belong to the parent flow. No shared gameplay/Review/capture code was changed.
+  Lark, Swift, Mule, families.json, artlib, _library.blend and export_hulls.py remain unchanged. No parent plan/PROGRESS/DECISIONS/VISUAL-REVIEW edits. No push, PR, queue action or merge.
+  Prior Kestrel grade remains R2 REVISE 3.8 (materials 3, placeholder 3, other criteria 4). This implementation does not overwrite or reinterpret that grade.
+
+ARTIFACTS:
+  assets/blend/hulls/kestrel.blend
+  packages/client/public/models/hulls/kestrel.glb
+  packages/tools/blender/hulls/kestrel/recovery.json
+  assets/renders/hulls/kestrel-round3-current/qualification.json
+  assets/renders/hulls/kestrel-round3-current/source-five-gates.json
+  assets/renders/hulls/kestrel-round3-current/source-contracts.json
+  assets/renders/hulls/kestrel-round3-current/export-five-gates.json
+  assets/renders/hulls/kestrel-round3-current/glb-inventory.json
+  assets/renders/hulls/kestrel-round3-current/collision-probe.json
+  assets/renders/hulls/kestrel-round3-current/cpu-preview-manifest.json
+  assets/renders/hulls/kestrel-round3-current/turntable-eight-angles.png
+  assets/renders/hulls/kestrel-round3-current/materials-three-states.png
+  assets/renders/hulls/kestrel-round3-current/states-and-liveries-nine.png
+  assets/renders/hulls/kestrel-round3-current/fit-cockpit.png
+  assets/renders/hulls/kestrel-round3-current/fit-boarding.png
+  assets/renders/hulls/kestrel-round3-current/fit-hardpoint-clear.png
+  assets/renders/hulls/kestrel-round3-current/future-gpu-review-inventory.json
+  Future GPU inventory contains nine explicit variant commands, 99 raw captures and 135 paired per-case performance runs. None were run. Parent retention plan uses a separate review worktree, hydrates eight selected CPU images, and composes eleven labelled 3x3 GPU sheets plus four additional views: 23 retained images, 354,067,200 decoded RGBA bytes; at most 445,305,600 decoded bytes while one variant raw set is transient. Full current CPU evidence remains immutable on this commit. Exact dimensions and encoded/decoded totals must be rechecked during that future work.
+
+
+
+RESUME / FINAL QUALIFICATION:
+  The provider/user interruption left the original qualify-export-sealed run without a lane completion receipt. Its original log is retained; no exit code is invented. On explicit resume, cwd/branch/recovery HEAD, source/export hashes, 39 preview files and absence of an owned qualification process were freshly checked.
+  qualify-export-resumed failed before spawning a child because the executable path omitted a slash (exit 1, retained receipt). qualify-export-resumed-path-fixed completed in 17.713 seconds, exit 0, owned group 7340 reaped before unlock; source/export bytes remained unchanged.
+  No modeling was restarted, no additional previews were generated, and no archive image was removed or dehydrated. Screenshot cleanup remains STOPPED. The future GPU inventory is not an execution grant; the parent must resolve its bounded retention workflow before running it.
+
+RETENTION / SEAL:
+  {"byteLimit": 536870912, "decodedRGBABytes": 250374400, "encodedBytes": 67408889, "imageLimit": 48, "images": 39}
+  Current final-byte render images: 29; three contact sheets; all historical and superseded images count toward the retained total.
+  Packet seal: assets/renders/hulls/kestrel-round3-current/packet-seal.json
+  Packet seal SHA256: 5bbd23ae990b0c585bdf77cd1a8290c6f3031bf3c0cbcc0c21dd5141b360e090
+  Sealed packet files: 213; sealed tool/recovery files: 23. The seal excludes itself and this separately committed delivery report.
+  The source/export LFS pointers at the content head match the full byte hashes and lengths above. The content tree pins the full evidence packet; this report-only descendant does not change it.
+
+FILES CHANGED (base through this report; exact paths):
+  assets/blend/hulls/kestrel.blend
+  assets/renders/hulls/kestrel-round3-current/atlas-base.json
+  assets/renders/hulls/kestrel-round3-current/author-geometry-fixed.log
+  assets/renders/hulls/kestrel-round3-current/author-geometry-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/author-geometry.log
+  assets/renders/hulls/kestrel-round3-current/author-geometry.run.json
+  assets/renders/hulls/kestrel-round3-current/authoring.json
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-chart-fixed.log
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-chart-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-import-fixed.log
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-import-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-packed.log
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-packed.run.json
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-repaired.log
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-repaired.run.json
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-uv-fixed.log
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas-uv-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas.log
+  assets/renders/hulls/kestrel-round3-current/bake-base-atlas.run.json
+  assets/renders/hulls/kestrel-round3-current/build-states-liveries-fixed.log
+  assets/renders/hulls/kestrel-round3-current/build-states-liveries-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/build-states-liveries.log
+  assets/renders/hulls/kestrel-round3-current/build-states-liveries.run.json
+  assets/renders/hulls/kestrel-round3-current/cabin-refinement.json
+  assets/renders/hulls/kestrel-round3-current/cockpit-working.json
+  assets/renders/hulls/kestrel-round3-current/cockpit-working.png
+  assets/renders/hulls/kestrel-round3-current/collision-correction.json
+  assets/renders/hulls/kestrel-round3-current/collision-fit.json
+  assets/renders/hulls/kestrel-round3-current/collision-probe-before-correction.json
+  assets/renders/hulls/kestrel-round3-current/collision-probe-bins.log
+  assets/renders/hulls/kestrel-round3-current/collision-probe-bins.run.json
+  assets/renders/hulls/kestrel-round3-current/collision-probe-corrected.log
+  assets/renders/hulls/kestrel-round3-current/collision-probe-corrected.run.json
+  assets/renders/hulls/kestrel-round3-current/collision-probe-detail.log
+  assets/renders/hulls/kestrel-round3-current/collision-probe-detail.run.json
+  assets/renders/hulls/kestrel-round3-current/collision-probe-final.log
+  assets/renders/hulls/kestrel-round3-current/collision-probe-final.run.json
+  assets/renders/hulls/kestrel-round3-current/collision-probe.json
+  assets/renders/hulls/kestrel-round3-current/collision-refinement.json
+  assets/renders/hulls/kestrel-round3-current/contact-sheet-verification.json
+  assets/renders/hulls/kestrel-round3-current/cpu-preview-manifest.json
+  assets/renders/hulls/kestrel-round3-current/current-hero.json
+  assets/renders/hulls/kestrel-round3-current/current-hero.log
+  assets/renders/hulls/kestrel-round3-current/current-hero.png
+  assets/renders/hulls/kestrel-round3-current/current-hero.run.json
+  assets/renders/hulls/kestrel-round3-current/draft-boarding.json
+  assets/renders/hulls/kestrel-round3-current/draft-boarding.log
+  assets/renders/hulls/kestrel-round3-current/draft-boarding.png
+  assets/renders/hulls/kestrel-round3-current/draft-boarding.run.json
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit-refined.json
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit-refined.log
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit-refined.png
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit-refined.run.json
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit.json
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit.log
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit.png
+  assets/renders/hulls/kestrel-round3-current/draft-cockpit.run.json
+  assets/renders/hulls/kestrel-round3-current/export-LOD2-kestrel.json
+  assets/renders/hulls/kestrel-round3-current/export-LOD2-kestrel.png
+  assets/renders/hulls/kestrel-round3-current/export-LOD2-kestrel_damaged.json
+  assets/renders/hulls/kestrel-round3-current/export-LOD2-kestrel_damaged.png
+  assets/renders/hulls/kestrel-round3-current/export-LOD2-kestrel_husked.json
+  assets/renders/hulls/kestrel-round3-current/export-LOD2-kestrel_husked.png
+  assets/renders/hulls/kestrel-round3-current/export-before-signal-correction.run.json
+  assets/renders/hulls/kestrel-round3-current/export-contract-tests-colliders-fixed.txt
+  assets/renders/hulls/kestrel-round3-current/export-contract-tests-complete-document.txt
+  assets/renders/hulls/kestrel-round3-current/export-contract-tests-final.txt
+  assets/renders/hulls/kestrel-round3-current/export-contract-tests.txt
+  assets/renders/hulls/kestrel-round3-current/export-final-reports/hulls__kestrel.blend.json
+  assets/renders/hulls/kestrel-round3-current/export-final-reports/hulls__kestrel.glb.json
+  assets/renders/hulls/kestrel-round3-current/export-final-signals.log
+  assets/renders/hulls/kestrel-round3-current/export-final-signals.run.json
+  assets/renders/hulls/kestrel-round3-current/export-final.log
+  assets/renders/hulls/kestrel-round3-current/export-final.run.json
+  assets/renders/hulls/kestrel-round3-current/export-five-gates.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_compact.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_compact.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_damaged.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_damaged.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_damaged_compact.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_damaged_compact.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_damaged_working.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_damaged_working.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_husked.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_husked.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_husked_compact.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_husked_compact.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_husked_working.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_husked_working.png
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_working.json
+  assets/renders/hulls/kestrel-round3-current/export-kestrel_working.png
+  assets/renders/hulls/kestrel-round3-current/export-pilot.json
+  assets/renders/hulls/kestrel-round3-current/export-pilot.png
+  assets/renders/hulls/kestrel-round3-current/export-reports/hulls__kestrel.blend.json
+  assets/renders/hulls/kestrel-round3-current/export-reports/hulls__kestrel.glb.json
+  assets/renders/hulls/kestrel-round3-current/failure-history.json
+  assets/renders/hulls/kestrel-round3-current/finish-collisions-corrected.log
+  assets/renders/hulls/kestrel-round3-current/finish-collisions-corrected.run.json
+  assets/renders/hulls/kestrel-round3-current/finish-collisions.log
+  assets/renders/hulls/kestrel-round3-current/finish-collisions.run.json
+  assets/renders/hulls/kestrel-round3-current/finish-signals.log
+  assets/renders/hulls/kestrel-round3-current/finish-signals.run.json
+  assets/renders/hulls/kestrel-round3-current/finish-source.log
+  assets/renders/hulls/kestrel-round3-current/finish-source.run.json
+  assets/renders/hulls/kestrel-round3-current/first-export-material-failures.json
+  assets/renders/hulls/kestrel-round3-current/fit-boarding.json
+  assets/renders/hulls/kestrel-round3-current/fit-boarding.png
+  assets/renders/hulls/kestrel-round3-current/fit-cockpit.json
+  assets/renders/hulls/kestrel-round3-current/fit-cockpit.png
+  assets/renders/hulls/kestrel-round3-current/fit-colliders.log
+  assets/renders/hulls/kestrel-round3-current/fit-colliders.run.json
+  assets/renders/hulls/kestrel-round3-current/fit-hardpoint-clear.json
+  assets/renders/hulls/kestrel-round3-current/fit-hardpoint-clear.png
+  assets/renders/hulls/kestrel-round3-current/fit-hardpoint.json
+  assets/renders/hulls/kestrel-round3-current/fit-hardpoint.png
+  assets/renders/hulls/kestrel-round3-current/fit-pilot.json
+  assets/renders/hulls/kestrel-round3-current/fit-pilot.png
+  assets/renders/hulls/kestrel-round3-current/future-gpu-review-inventory.json
+  assets/renders/hulls/kestrel-round3-current/geometry-before.json
+  assets/renders/hulls/kestrel-round3-current/glb-inventory.json
+  assets/renders/hulls/kestrel-round3-current/inspect-geometry.log
+  assets/renders/hulls/kestrel-round3-current/inspect-geometry.run.json
+  assets/renders/hulls/kestrel-round3-current/inspect-recovered.log
+  assets/renders/hulls/kestrel-round3-current/inspect-recovered.run.json
+  assets/renders/hulls/kestrel-round3-current/interruption-resume.json
+  assets/renders/hulls/kestrel-round3-current/lane-tests-cleanup-complete.txt
+  assets/renders/hulls/kestrel-round3-current/lane-tests-final.txt
+  assets/renders/hulls/kestrel-round3-current/lane-tests-permission-race-fixed.txt
+  assets/renders/hulls/kestrel-round3-current/lane-tests-qualified.txt
+  assets/renders/hulls/kestrel-round3-current/lane-tests.txt
+  assets/renders/hulls/kestrel-round3-current/material-kestrel.json
+  assets/renders/hulls/kestrel-round3-current/material-kestrel.png
+  assets/renders/hulls/kestrel-round3-current/material-kestrel_damaged.json
+  assets/renders/hulls/kestrel-round3-current/material-kestrel_damaged.png
+  assets/renders/hulls/kestrel-round3-current/material-kestrel_husked.json
+  assets/renders/hulls/kestrel-round3-current/material-kestrel_husked.png
+  assets/renders/hulls/kestrel-round3-current/materials-three-states.json
+  assets/renders/hulls/kestrel-round3-current/materials-three-states.png
+  assets/renders/hulls/kestrel-round3-current/packet-seal.json
+  assets/renders/hulls/kestrel-round3-current/preview-budget-export.json
+  assets/renders/hulls/kestrel-round3-current/preview-budget-source.json
+  assets/renders/hulls/kestrel-round3-current/preview-export-packet-world.log
+  assets/renders/hulls/kestrel-round3-current/preview-export-packet-world.run.json
+  assets/renders/hulls/kestrel-round3-current/preview-export-packet.log
+  assets/renders/hulls/kestrel-round3-current/preview-export-packet.run.json
+  assets/renders/hulls/kestrel-round3-current/preview-source-packet.log
+  assets/renders/hulls/kestrel-round3-current/preview-source-packet.run.json
+  assets/renders/hulls/kestrel-round3-current/probe-collision.log
+  assets/renders/hulls/kestrel-round3-current/probe-collision.run.json
+  assets/renders/hulls/kestrel-round3-current/qualification.json
+  assets/renders/hulls/kestrel-round3-current/qualify-export-complete-inventory.log
+  assets/renders/hulls/kestrel-round3-current/qualify-export-complete-inventory.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-export-final.log
+  assets/renders/hulls/kestrel-round3-current/qualify-export-final.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-export-resumed-path-fixed.log
+  assets/renders/hulls/kestrel-round3-current/qualify-export-resumed-path-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-export-resumed.log
+  assets/renders/hulls/kestrel-round3-current/qualify-export-resumed.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-export-sealed.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source-canonical-markers-fixed.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source-canonical-markers-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-source-canonical-markers.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source-canonical-markers.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-source-collisions.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source-collisions.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-source-final.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source-final.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-source-fixed.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source-fixed.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-source-signals.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source-signals.run.json
+  assets/renders/hulls/kestrel-round3-current/qualify-source.log
+  assets/renders/hulls/kestrel-round3-current/qualify-source.run.json
+  assets/renders/hulls/kestrel-round3-current/reference-provenance.json
+  assets/renders/hulls/kestrel-round3-current/reference/kestrel_cockpit_open_q.png
+  assets/renders/hulls/kestrel-round3-current/reference/kestrel_kestrel_turntable.png
+  assets/renders/hulls/kestrel-round3-current/refine-cabin.log
+  assets/renders/hulls/kestrel-round3-current/refine-cabin.run.json
+  assets/renders/hulls/kestrel-round3-current/refine-collisions.log
+  assets/renders/hulls/kestrel-round3-current/refine-collisions.run.json
+  assets/renders/hulls/kestrel-round3-current/rejected-export.json
+  assets/renders/hulls/kestrel-round3-current/signal-compatibility.json
+  assets/renders/hulls/kestrel-round3-current/source-before.json
+  assets/renders/hulls/kestrel-round3-current/source-contracts.json
+  assets/renders/hulls/kestrel-round3-current/source-finish.json
+  assets/renders/hulls/kestrel-round3-current/source-five-gates.json
+  assets/renders/hulls/kestrel-round3-current/states-and-liveries-nine.json
+  assets/renders/hulls/kestrel-round3-current/states-and-liveries-nine.png
+  assets/renders/hulls/kestrel-round3-current/states-and-liveries.json
+  assets/renders/hulls/kestrel-round3-current/tools-manifest.json
+  assets/renders/hulls/kestrel-round3-current/turntable-000.json
+  assets/renders/hulls/kestrel-round3-current/turntable-000.png
+  assets/renders/hulls/kestrel-round3-current/turntable-045.json
+  assets/renders/hulls/kestrel-round3-current/turntable-045.png
+  assets/renders/hulls/kestrel-round3-current/turntable-090.json
+  assets/renders/hulls/kestrel-round3-current/turntable-090.png
+  assets/renders/hulls/kestrel-round3-current/turntable-135.json
+  assets/renders/hulls/kestrel-round3-current/turntable-135.png
+  assets/renders/hulls/kestrel-round3-current/turntable-180.json
+  assets/renders/hulls/kestrel-round3-current/turntable-180.png
+  assets/renders/hulls/kestrel-round3-current/turntable-225.json
+  assets/renders/hulls/kestrel-round3-current/turntable-225.png
+  assets/renders/hulls/kestrel-round3-current/turntable-270.json
+  assets/renders/hulls/kestrel-round3-current/turntable-270.png
+  assets/renders/hulls/kestrel-round3-current/turntable-315.json
+  assets/renders/hulls/kestrel-round3-current/turntable-315.png
+  assets/renders/hulls/kestrel-round3-current/turntable-eight-angles.json
+  assets/renders/hulls/kestrel-round3-current/turntable-eight-angles.png
+  assets/renders/hulls/kestrel-round3-current/uv-packing-probe.json
+  assets/renders/hulls/kestrel-round3-current/uv-packing-probe.log
+  assets/renders/hulls/kestrel-round3-current/uv-packing-probe.run.json
+  assets/renders/hulls/kestrel-round3-current/verify-contact-sheets.log
+  assets/renders/hulls/kestrel-round3-current/verify-contact-sheets.run.json
+  packages/client/public/models/hulls/kestrel.glb
+  packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt
+  packages/tools/blender/hulls/kestrel/asset_contract.py
+  packages/tools/blender/hulls/kestrel/atlas.py
+  packages/tools/blender/hulls/kestrel/author_round3.py
+  packages/tools/blender/hulls/kestrel/collision_probe.py
+  packages/tools/blender/hulls/kestrel/finalize_packet.py
+  packages/tools/blender/hulls/kestrel/finish_collisions.py
+  packages/tools/blender/hulls/kestrel/finish_signals.py
+  packages/tools/blender/hulls/kestrel/finish_source.py
+  packages/tools/blender/hulls/kestrel/fit_colliders.py
+  packages/tools/blender/hulls/kestrel/inspect_geometry.py
+  packages/tools/blender/hulls/kestrel/inspect_source.py
+  packages/tools/blender/hulls/kestrel/ktx_cpu.py
+  packages/tools/blender/hulls/kestrel/lane.py
+  packages/tools/blender/hulls/kestrel/preview.py
+  packages/tools/blender/hulls/kestrel/qualify_export.py
+  packages/tools/blender/hulls/kestrel/qualify_source.py
+  packages/tools/blender/hulls/kestrel/recovery.json
+  packages/tools/blender/hulls/kestrel/render_packet.py
+  packages/tools/blender/hulls/kestrel/repack_probe.py
+  packages/tools/blender/hulls/kestrel/states.py
+  packages/tools/blender/hulls/kestrel/test_export_contract.py
+  packages/tools/blender/hulls/kestrel/test_lane.py
+  packages/tools/blender/hulls/kestrel/verify_sheets.py
+
+COMMANDS AND EXITS:
+  Historical authoring commands below are iteration receipts, not an instruction to replay one-time modeling on the finished source. Each child command ran through the Kestrel lane with the receipt deadline and recorded environment. The export-before-signal-correction receipt is a retained alias of the first export-final attempt.
+  inspect-recovered.run.json: exit 0; 1.569 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/inspect_source.py
+  inspect-geometry.run.json: exit 0; 1.152 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/inspect_geometry.py
+  author-geometry.run.json: exit 1; 2.615 seconds; deadline 600.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/author_round3.py
+  author-geometry-fixed.run.json: exit 0; 2.301 seconds; deadline 600.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/author_round3.py
+  draft-cockpit.run.json: exit 0; 9.844 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/preview.py -- --draft --view cockpit --open --name draft-cockpit
+  draft-boarding.run.json: exit 0; 9.304 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/preview.py -- --draft --view boarding --open --name draft-boarding
+  refine-cabin.run.json: exit 0; 1.673 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/author_round3.py -- --refine-cabin
+  draft-cockpit-refined.run.json: exit 0; 10.012 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/preview.py -- --draft --view cockpit --open --name draft-cockpit-refined
+  bake-base-atlas.run.json: exit 1; 1.257 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/atlas.py
+  bake-base-atlas-import-fixed.run.json: exit 1; 7.365 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/atlas.py
+  bake-base-atlas-uv-fixed.run.json: exit 0; 61.652 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/atlas.py
+  build-states-liveries.run.json: exit 1; 47.964 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/states.py
+  uv-packing-probe.run.json: exit 0; 21.446 seconds; deadline 300.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/repack_probe.py
+  bake-base-atlas-packed.run.json: exit 1; 14.059 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/atlas.py
+  bake-base-atlas-repaired.run.json: exit 1; 8.406 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/atlas.py
+  bake-base-atlas-chart-fixed.run.json: exit 0; 179.198 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/atlas.py
+  build-states-liveries-fixed.run.json: exit 0; 162.272 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/states.py
+  fit-colliders.run.json: exit 0; 3.969 seconds; deadline 300.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/fit_colliders.py
+  qualify-source.run.json: exit 1; 5.317 seconds; deadline 600.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_source.py
+  finish-source.run.json: exit 0; 3.647 seconds; deadline 300.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/finish_source.py
+  qualify-source-fixed.run.json: exit 0; 7.161 seconds; deadline 600.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_source.py
+  current-hero.run.json: exit 0; 25.68 seconds; deadline 300.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/preview.py -- --view hero --name current-hero
+  export-before-signal-correction.run.json: exit 1; 191.591 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/export_hulls.py -- --only kestrel --report-dir assets/renders/hulls/kestrel-round3-current/export-reports --quiet
+  finish-signals.run.json: exit 0; 2.315 seconds; deadline 180.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/finish_signals.py
+  qualify-source-signals.run.json: exit 0; 6.238 seconds; deadline 600.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_source.py
+  export-final-signals.run.json: exit 0; 216.297 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/export_hulls.py -- --only kestrel --report-dir assets/renders/hulls/kestrel-round3-current/export-final-reports --quiet
+  probe-collision.run.json: exit 0; 1.187 seconds; deadline 180.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/collision_probe.py
+  finish-collisions.run.json: exit 1; 1.894 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/finish_collisions.py
+  finish-collisions-corrected.run.json: exit 0; 3.132 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/finish_collisions.py
+  collision-probe-corrected.run.json: exit 0; 2.414 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/collision_probe.py
+  qualify-source-collisions.run.json: exit 0; 7.15 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_source.py
+  collision-probe-bins.run.json: exit 0; 2.415 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/collision_probe.py
+  collision-probe-detail.run.json: exit 0; 2.205 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/collision_probe.py
+  refine-collisions.run.json: exit 0; 2.215 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/finish_collisions.py -- --refine
+  qualify-source-final.run.json: exit 0; 8.324 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_source.py
+  collision-probe-final.run.json: exit 0; 2.323 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/collision_probe.py
+  export-final.run.json: exit 0; 255.237 seconds; deadline 2400.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/export_hulls.py -- --only kestrel --report-dir assets/renders/hulls/kestrel-round3-current/export-final-reports --quiet
+  qualify-export-final.run.json: exit 0; 20.88 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_export.py
+  preview-source-packet.run.json: exit 0; 754.149 seconds; deadline 1200.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/render_packet.py -- source
+  qualify-export-complete-inventory.run.json: exit 0; 22.081 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_export.py
+  preview-export-packet.run.json: exit 1; 20.289 seconds; deadline 1200.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/render_packet.py -- export
+  preview-export-packet-world.run.json: exit 0; 651.703 seconds; deadline 1200.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/render_packet.py -- export
+  qualify-source-canonical-markers.run.json: exit 1; 1.812 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_source.py
+  qualify-source-canonical-markers-fixed.run.json: exit 0; 8.128 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_source.py
+  verify-contact-sheets.run.json: exit 0; 2.317 seconds; deadline 120.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/verify_sheets.py
+  qualify-export-resumed.run.json: exit 1; 0.039 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/ContentsMacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_export.py
+    runner error: FileNotFoundError(2, 'No such file or directory')
+  qualify-export-resumed-path-fixed.run.json: exit 0; 17.713 seconds; deadline 240.0 seconds; ownedGroupReapedBeforeUnlock=True
+    child command: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/kestrel/qualify_export.py
+  python3 packages/tools/blender/hulls/kestrel/test_lane.py -> exit 0; lane-tests-qualified.txt; 6 tests.
+  python3 packages/tools/blender/hulls/kestrel/test_export_contract.py -> exit 0; export-contract-tests-complete-document.txt; 8 tests on the exact final GLB hash.
+  PYTHONDONTWRITEBYTECODE=1 python3 packages/tools/blender/hulls/kestrel/finalize_packet.py -> exit 0; 29 current renders, 39 total retained images, common core unchanged, future GPU work NOT RUN.
+  git diff --check -> exit 0. git diff --cached --check -> exit 0 before content commit.
+  git commit -m 'P1.E12.T02: revise Kestrel round3 and seal CPU evidence' -> exit 0; c46e864028b32cea22622f5b1ffc19a95f99120e.
+  Final report commit and clean delivery HEAD/tree are verified and returned in the implementation reply to avoid a self-referential report hash.
+
+FAILURE TAILS (historical failures retained; not the current verdict):
+
+  author-geometry.run.json — exit 1
+    00:01.042  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/assets/blend/hulls/kestrel.blend"
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/author_round3.py", line 286, in <module>
+        if __name__=='__main__':prepare()
+                                ~~~~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/author_round3.py", line 279, in prepare
+        assert 60000<=tris<=150000,tris
+               ^^^^^^^^^^^^^^^^^^^
+    AssertionError: 151950
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/author_round3.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  bake-base-atlas-import-fixed.run.json — exit 1
+    rasterized GearRight_Assembly
+    rasterized CockpitStick_grip
+    rasterized CockpitThrottle_lever
+    rasterized CockpitInteriorMesh
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 208, in <module>
+        if __name__=='__main__':main()
+                                ~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 186, in main
+        atlas,mask,raster_report=raster(objects);f=fields(atlas)
+                                 ~~~~~~^^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 77, in raster
+        assert overlap<100, f'overlapping UV islands: {overlap} texels'
+               ^^^^^^^^^^^
+    AssertionError: overlapping UV islands: 943 texels
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/atlas.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  bake-base-atlas-packed.run.json — exit 1
+    raster coverage 4314777 triangles 133274 overlap 21
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 245, in <module>
+        if __name__=='__main__':main()
+                                ~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 218, in main
+        atlas,mask,raster_report=pack_surface(objects);f=fields(atlas)
+                                 ~~~~~~~~~~~~^^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 109, in pack_surface
+        a,m,final=raster(objects)
+                  ~~~~~~^^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 82, in raster
+        if strict:assert overlap==0, f'overlapping UV islands: {overlap} texels'
+                         ^^^^^^^^^^
+    AssertionError: overlapping UV islands: 21 texels
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/atlas.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  bake-base-atlas-repaired.run.json — exit 1
+    rasterized CockpitStick_grip overlap 0
+    rasterized CockpitThrottle_lever overlap 0
+    rasterized CockpitInteriorMesh overlap 0
+    raster coverage 4810374 triangles 134581 overlap 1395
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 248, in <module>
+        if __name__=='__main__':main()
+                                ~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 221, in main
+        atlas,mask,raster_report=pack_surface(objects);f=fields(atlas)
+                                 ~~~~~~~~~~~~^^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 100, in pack_surface
+        assert len(bad)<=256, f'too many folded charts for a local repair: {len(bad)}'
+               ^^^^^^^^^^^^^
+    AssertionError: too many folded charts for a local repair: 296
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/atlas.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  bake-base-atlas.run.json — exit 1
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 18, in <module>
+        from author_round3 import select
+    ModuleNotFoundError: No module named 'author_round3'
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/atlas.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  build-states-liveries.run.json — exit 1
+    rasterized GearRight_Assembly.002 overlap 1461
+    rasterized CockpitStick_grip.002 overlap 58
+    rasterized CockpitThrottle_lever.002 overlap 56
+    rasterized CockpitInteriorMesh.002 overlap 8879
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/states.py", line 159, in <module>
+        if __name__=='__main__':main()
+                                ~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/states.py", line 117, in main
+        atlas,mask,coverage=raster(meshes);f=fields(atlas)
+                            ~~~~~~^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py", line 78, in raster
+        assert overlap<100, f'overlapping UV islands: {overlap} texels'
+               ^^^^^^^^^^^
+    AssertionError: overlapping UV islands: 50561385 texels
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/states.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  export-before-signal-correction.run.json — exit 1
+    The original console tail was superseded by the final export run. Structured pre-correction failure is retained in export-reports/hulls__kestrel.glb.json.
+
+  finish-collisions.run.json — exit 1
+    00:01.083  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/assets/blend/hulls/kestrel.blend"
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/finish_collisions.py", line 60, in <module>
+        if __name__=='__main__':main()
+                                ~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/finish_collisions.py", line 53, in main
+        points=[o.matrix_world@p.co for o in objects if o.type=='MESH' and o.name.startswith(('CanopyGlass','CanopyFrame')) for p in o.data.vertices]
+                                                        ^^^^^^
+    ReferenceError: StructRNA of type Object has been removed
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/finish_collisions.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  qualify-source.run.json — exit 1
+    00:00.837  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/assets/blend/hulls/kestrel.blend"
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/qualify_source.py", line 107, in <module>
+        if __name__=='__main__':main()
+                                ~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/qualify_source.py", line 101, in main
+        facts=audit();negatives=negative_checks();assert sha(SRC)==before
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/qualify_source.py", line 47, in audit
+        assert REQUIRED_MATERIALS<=names,(v.id,level,names)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    AssertionError: ('kestrel', 3, {'EngineGlow', 'NavWhite', 'Trim', 'Hull', 'Dark', 'Accent'})
+    PASS  assets/blend/hulls/kestrel.blend
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/qualify_source.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  preview-export-packet.run.json — exit 1
+    01:05:31 | INFO: glTF import finished in 3.54s
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/render_packet.py", line 77, in <module>
+        if __name__=='__main__':main()
+                                ~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/render_packet.py", line 68, in main
+        name='export-'+variant;render(name,['--export','--variant',variant]);names.append(name)
+                               ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/render_packet.py", line 30, in render
+        sys.argv=['preview.py','--',*args,'--name',name];preview.main();budget()
+                                                         ~~~~~~~~~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/preview.py", line 68, in main
+        sc.world.use_nodes=True;sc.world.node_tree.nodes.get('Background').inputs[0].default_value=(.14,.16,.18,1);sc.world.node_tree.nodes.get('Background').inputs[1].default_value=.35
+        ^^^^^^^^^^^^^^^^^^
+    AttributeError: 'NoneType' object has no attribute 'use_nodes' and no __dict__ for setting new attributes
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/render_packet.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  qualify-source-canonical-markers.run.json — exit 1
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/qualify_source.py", line 110, in main
+        before=sha(SRC);expected=canonical_marker_matrices();r=rules.load();report=core.validate_path(r,SRC,family='hulls')
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/qualify_source.py", line 26, in canonical_marker_matrices
+        core.load(path);bpy.context.view_layer.update()
+        ~~~~~~~~~^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/artlib/core.py", line 41, in load
+        if ktx.is_compressed(path):
+           ~~~~~~~~~~~~~~~~~^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/artlib/ktx.py", line 487, in is_compressed
+        js, _ = glb.read(path)
+                ~~~~~~~~^^^^^^
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/artlib/glb.py", line 18, in read
+        raise ValueError(f"{path}: not a glTF 2.0 binary")
+    ValueError: /Users/andreyyurlov/Documents/dev/space/.git/lfs/objects/ea/45/ea45999c7d204b5d04ee6bfa8789c69c8f0e25cb686f8efaeaa86d95301f51dc: not a glTF 2.0 binary
+
+    Error: script failed, file: 'packages/tools/blender/hulls/kestrel/qualify_source.py', exiting.
+    Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+    Blender quit
+
+  qualify-export-resumed.run.json — exit 1
+    FileNotFoundError(2, 'No such file or directory')
+    No child stderr tail; see the runner error in the retained receipt.
+
+  export-contract-tests.txt — historical focused test failure; superseded by export-contract-tests-complete-document.txt
+             ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    AssertionError: "missing or duplicate" does not match "primitive without material"
+
+    ======================================================================
+    FAIL: test_short_mip_chain_rejected (__main__.CompressedAssetTests.test_short_mip_chain_rejected)
+    ----------------------------------------------------------------------
+    AssertionError: primitive without material
+
+    During handling of the above exception, another exception occurred:
+
+    Traceback (most recent call last):
+      File "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/test_export_contract.py", line 51, in test_short_mip_chain_rejected
+        with self.assertRaisesRegex(AssertionError,'mip chain'):inventory(self.doc,self.binary)
+             ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    AssertionError: "mip chain" does not match "primitive without material"
+
+    ----------------------------------------------------------------------
+    Ran 7 tests in 0.138s
+
+    FAILED (failures=5)
+
+  lane-tests-final.txt — historical focused test failure; superseded by lane-tests-qualified.txt
+
+    During handling of the above exception, another exception occurred:
+
+    Traceback (most recent call last):
+      File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/kestrel-lane-test-0lbp1y65/packages/tools/blender/hulls/kestrel/lane.py", line 123, in <module>
+        sys.exit(main())
+                 ~~~~^^
+      File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/kestrel-lane-test-0lbp1y65/packages/tools/blender/hulls/kestrel/lane.py", line 107, in main
+        if proc is not None and alive_group(proc.pid):
+                                ~~~~~~~~~~~^^^^^^^^^^
+      File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/kestrel-lane-test-0lbp1y65/packages/tools/blender/hulls/kestrel/lane.py", line 32, in alive_group
+        os.killpg(pgid, 0)
+        ~~~~~~~~~^^^^^^^^^
+    PermissionError: [Errno 1] Operation not permitted
+
+
+    ----------------------------------------------------------------------
+    Ran 4 tests in 9.459s
+
+    FAILED (failures=1)
+
+  The original first-export console tail was overwritten before sealing; the original nonzero receipt and full structured validator failure remain in export-before-signal-correction.run.json, export-reports/hulls__kestrel.glb.json and first-export-material-failures.json. No reconstructed text is presented as original stderr.
+  The actual shared exporter invalid-source FAIL inside successful source qualification is an expected negative control (exit 1); source-contracts.json records the rejection and foreign-output preservation.
+  One attempted qualification during active export returned 75 (Kestrel lane occupied), without starting another Blender; failure-history.json preserves that boundary.
+
+REPORT FORMATTING CHECK:
+  git diff --cached --check initially exited 2 because indenting blank lines in failure excerpts created trailing whitespace. Original sealed failure logs were not changed. Last 20 diagnostic lines:
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:650: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:655: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:657: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:663: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:666: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:670: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:672: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:684: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:685: trailing whitespace.
+    +
+    packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt:688: trailing whitespace.
+    +
+  Removed trailing spaces from this report only; the repeated cached whitespace check then passed (exit 0).
