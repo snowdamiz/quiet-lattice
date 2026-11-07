@@ -1,0 +1,25 @@
+QA: PASS WITH EXPECTED SKIPS
+Tested source SHA: e1ed4752805ee92be561db81910ee1bc1a87b1d9
+Current documentation HEAD: dd9e10fd665315127a538f8892701bceed94efcc
+Shared packages tree: c67e6ad628485d3dffa7a2f0569b7bbc303d862a
+Current HEAD differs from tested source only in documentation (see documentation-head.log).
+
+Checks:
+- pnpm typecheck: PASS, all four packages, exit 0.
+- pnpm test: PASS, 212 files / 2700 tests, 18.05 s, exit 0; no skips.
+- Full integration reused with explicit parent authorization: worker 7a3c9f51108eb8d453b1b6cd98cd240742092985, 37 files / 196 tests, 356.60 s, worker-reported exit 0; no skips. Independent tree comparison established identical packages/runtime/config/manifests; worker-to-staged full diff is docs/PROGRESS.md only. Worker finished before our focused integration or smoke.
+- Staged focused integration: pnpm test:int packages/server/test/skillEligibility.int.test.ts, PASS, 1 file / 3 tests, 1.57 s, exit 0.
+- pnpm smoke -- --output /tmp/space-t16-final-smoke-results: PASS, 38 passed / 3 skipped / 0 failed, 8.8 min, exit 0; normal documented GPU workflow, no extra GPU measurement.
+- Smoke skips: optional Firefox could not start (Could not find profile folder); two harness-hang fixtures intentionally skipped by the outer suite and exercised by passing nested harness tests.
+- pnpm gate:removed: PASS, 10 rules enforced / 14 waiting, exit 0.
+- Scoped ESLint + Prettier: PASS on 8 changed TypeScript implementation/test files, both exit 0. Initial QA wrapper passed one combined filename argument (both exit 2); corrected argument passing, retained invocation logs, no source issue.
+
+Isolation and cleanup:
+- Asserted DATABASE_URL=127.0.0.1:53055/astra and REDIS_URL=127.0.0.1:53058 before application imports/runs; confirmed Postgres identity and Redis PONG. Defaults 55432/56379 not used.
+- Observed live smoke server at 53055/astra_smoke_mw5u0yqu_209909 and Redis 53058/7.
+- No remaining QA test/browser/server processes, PostgreSQL sessions, or astra_smoke_* scratch databases. Cleanup exit 0.
+- Parent-owned space-t16-pg-20261106 and space-t16-redis-20261106 remain running and healthy.
+- App-owned node_repl helpers excluded from QA process ownership and left running. Initial broad cleanup filter matched these helpers; retained diagnostic and corrected ownership filter, no processes killed.
+- No source/docs edits or commits by QA. Final worktree clean.
+
+Evidence: /tmp/space-t16-final-*.log and *.exit; smoke artifacts in /tmp/space-t16-final-smoke-results.
