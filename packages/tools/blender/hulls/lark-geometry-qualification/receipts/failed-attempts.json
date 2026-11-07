@@ -1,0 +1,34 @@
+{
+  "scope": "Preserved failed or superseded attempts; final passing checks are separate receipts",
+  "attempts": [
+    {
+      "stage": "Initial decoded asset inspection",
+      "observed_error": "Error: Skin/morph evaluation required",
+      "cause": "Pinned GLB contains 24 skins; a static-only adapter would omit actual render geometry",
+      "resolution": "Implemented saved-pose jointWorld * inverseBind weighted position evaluation and added an analytical control",
+      "receipt_limit": "Original terminal failure is in the task transcript. The initial decode resource filename was reused by the successful decode; its original timing/RSS was not retained. No fabricated timing is supplied."
+    },
+    {
+      "stage": "Initial analytical world-normal control",
+      "observed_error": "deepStrictEqual: actual z 0.6000000000000001, expected z 0.6",
+      "cause": "Exact floating-point equality in test assertion",
+      "resolution": "Use an explicit 1e-12 analytical comparison; geometry formula unchanged"
+    },
+    {
+      "stage": "First Blender perimeter stage",
+      "observed_error": "AssertionError: assert all(not f.modifiers for f in frames)",
+      "receipts": ["source-glazing.json.log", "source-glazing.json.resource.json", "source-glazing.json.seal.json"],
+      "resolution": "Evaluate and compare canopy vertex coordinates and polygon topology exactly; all match. Source-glazing-v2 is the admitted measurement."
+    },
+    {
+      "stage": "Preliminary historical frame ring correspondence",
+      "observed_result": "0 complete ring matches at int16 storage half-cell precision",
+      "resolution": "Effective 14-bit quantization with MSB replication is coarser than the storage lattice. Final source-comparison-v3 binds exact integer codewords to saved source topology. Initial failed correspondence remains in glazing receipts."
+    },
+    {
+      "stage": "Initial source comparison duplicate count",
+      "observed_issue": "Metadata counter included ambiguous vertices among duplicates resolved",
+      "resolution": "v2/v3 count only uniquely mapped export vertices minus unique mapped source identities. Ambiguities remain listed and never welded."
+    }
+  ]
+}

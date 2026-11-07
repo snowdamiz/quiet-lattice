@@ -1,0 +1,11 @@
+00:01.213  blend            | Read blend: "/private/tmp/lark-readonly-geometry-syduioyk/lark-pinned.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8fc63472/packages/tools/blender/hulls/lark-geometry-qualification/measure_glazing.py", line 38, in <module>
+    assert all(not f.modifiers for f in frames)
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+Error: script failed, file: '/Users/andreyyurlov/.t3/worktrees/space/t3-8fc63472/packages/tools/blender/hulls/lark-geometry-qualification/measure_glazing.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

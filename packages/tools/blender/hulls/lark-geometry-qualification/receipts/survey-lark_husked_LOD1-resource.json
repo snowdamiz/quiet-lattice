@@ -1,0 +1,27 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=1024",
+    "packages/tools/blender/hulls/lark-geometry-qualification/survey.mjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/client/public/models/hulls/lark.glb",
+    "/Users/andreyyurlov/Documents/dev/space/packages/tools/package.json",
+    "lark_husked_LOD1",
+    "packages/tools/blender/hulls/lark-geometry-qualification/receipts/survey-lark_husked_LOD1"
+  ],
+  "exit_code": 0,
+  "termination_reason": null,
+  "wall_seconds": 128.9710433749715,
+  "sampled_peak_group_rss_bytes": 910770176,
+  "sampled_peak_output_and_tmp_bytes": 98183291,
+  "sampling_seconds": 0.25,
+  "limits": {
+    "rss_bytes": 2147483648,
+    "wall_seconds": 600,
+    "output_bytes": 536870912
+  },
+  "profile": "node",
+  "process_group": 95223,
+  "leader_reaped": true,
+  "private_tmp": null,
+  "remaining_owned_processes_at_leader_exit": []
+}

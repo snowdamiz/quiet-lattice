@@ -1,0 +1,39 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--disable-autoexec",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8fc63472/packages/tools/blender/hulls/lark-geometry-qualification/measure_glazing.py",
+    "--",
+    "--source",
+    "/private/tmp/lark-readonly-geometry-5pgfh4nw/lark-pinned.blend",
+    "--sha256",
+    "d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba",
+    "--output",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8fc63472/packages/tools/blender/hulls/lark-geometry-qualification/receipts/source-glazing-v2.json",
+    "--spacing-m",
+    ".001"
+  ],
+  "exit_code": 0,
+  "termination_reason": null,
+  "wall_seconds": 2.6782044579740614,
+  "sampled_peak_group_rss_bytes": 448364544,
+  "sampled_peak_output_and_tmp_bytes": 87723587,
+  "sampling_seconds": 0.25,
+  "limits": {
+    "rss_bytes": 8589934592,
+    "wall_seconds": 2700,
+    "output_bytes": 6442450944,
+    "min_free_bytes": 12884901888
+  },
+  "profile": "blender",
+  "process_group": 4603,
+  "leader_reaped": true,
+  "private_tmp": "/private/tmp/lark-readonly-geometry-5pgfh4nw"
+}

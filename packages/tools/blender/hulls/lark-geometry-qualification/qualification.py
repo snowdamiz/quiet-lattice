@@ -10,8 +10,10 @@ def perimeter(vertices, faces, nearest_distance, tolerance, spacing):
     The resulting upper bound covers edges, not just selected arch centres.
     nearest_distance must be exact distance to world-space frame triangles.
     """
-    if not (0 < spacing <= tolerance and isfinite(tolerance)):
-        raise ValueError('Require finite tolerance >= positive spacing')
+    if not (isfinite(spacing) and spacing > 0):
+        raise ValueError('Require finite positive spacing')
+    if tolerance is not None and not (isfinite(tolerance) and spacing <= tolerance):
+        raise ValueError('Require finite tolerance >= positive spacing, or unknown tolerance')
     edges = Counter(tuple(sorted((a, b))) for f in faces
                     for a, b in zip(f, f[1:] + f[:1]))
     boundary = [e for e, n in edges.items() if n == 1]
@@ -33,19 +35,27 @@ def perimeter(vertices, faces, nearest_distance, tolerance, spacing):
         upper = max(upper, max(values) + edge_length/(2*n))
         length += edge_length
         samples += len(values)
-    return dict(status='WITHIN_CLEARANCE_BOUND' if upper <= tolerance else
+    return dict(status='MEASURED_CLEARANCE_UNQUALIFIED' if tolerance is None else
+                'WITHIN_CLEARANCE_BOUND' if upper <= tolerance else
                 'EXCEEDS_CLEARANCE' if maximum > tolerance else 'UNRESOLVED_BOUND',
                 perimeter_m=length, edges=len(boundary), samples=samples,
                 sampled_max_m=maximum, conservative_max_m=upper, tolerance_m=tolerance)
 
 
-def plate_count(inventory):
+def plate_count(inventory, current_binding=None):
     """Only reviewed construction identities count; area never sets this gate."""
     plates = inventory.get('plates', [])
     ids = [p['id'] for p in plates]
     if len(set(ids)) != len(ids):
         raise ValueError('Duplicate semantic plate')
+    binding = inventory.get('binding')
+    if not binding or current_binding is None or binding != current_binding:
+        return dict(status='UNQUALIFIED', reason='Missing or stale source/export/topology binding')
+    if not all(binding.get(k) for k in ('source_sha256', 'glb_sha256', 'source_topology', 'decoded_topology')):
+        return dict(status='UNQUALIFIED', reason='Incomplete topology invalidation binding')
     complete = bool(plates) and inventory.get('denominator_complete') is True
+    review = inventory.get('denominator_review', {})
+    complete &= bool(review.get('construction_evidence')) and set(review.get('outer_plate_ids', [])) == set(ids)
     complete &= all(p.get('construction_evidence') and p.get('source_faces') and
                     p.get('state') in ('present', 'removed') for p in plates)
     if not complete:

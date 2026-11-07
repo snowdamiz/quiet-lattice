@@ -1,0 +1,18 @@
+✔ actual NodeIO accessor normalizes once, full ancestor chain includes decode once (1.649708ms)
+✔ world cross products yield correct nonuniform area and winding (0.178125ms)
+✔ source provenance inverts shear/nonuniform world and uses effective quantizer precision (0.123875ms)
+✔ saved skin pose applies joint world and inverse bind once, without mesh node twice (0.240125ms)
+✔ UV split within indexed component rejoins; distinct coincident panes stay separate (0.457542ms)
+✔ fully cut UV seam is reported ambiguous instead of joining separate panes (0.096125ms)
+✔ all-scene first hit detects unrelated nearer occluder and exact triangle identity (0.564125ms)
+✔ triangle nearest handles face, edge and degenerate cases (0.16375ms)
+✔ 3/12/48 deterministic equal-area triangular strata stay inside and cover centroid (0.359167ms)
+✔ real Meshopt binary round trip preserves normalized positions under ancestor/decode transforms (26.804583ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 92.003458

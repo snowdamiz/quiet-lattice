@@ -1,0 +1,28 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=1024",
+    "packages/tools/blender/hulls/lark-geometry-qualification/source_compare.mjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/client/public/models/hulls/lark.glb",
+    "/Users/andreyyurlov/Documents/dev/space/packages/tools/package.json",
+    "packages/tools/blender/hulls/lark-geometry-qualification/receipts/source-semantic-facts.json",
+    "packages/tools/blender/hulls/lark-geometry-qualification/receipts/glazing.json",
+    "packages/tools/blender/hulls/lark-geometry-qualification/receipts/source-glazing-v2.json",
+    "packages/tools/blender/hulls/lark-geometry-qualification/receipts/source-comparison.json"
+  ],
+  "exit_code": 0,
+  "termination_reason": null,
+  "wall_seconds": 1.8472723330487497,
+  "sampled_peak_group_rss_bytes": 794427392,
+  "sampled_peak_output_and_tmp_bytes": 38771037,
+  "sampling_seconds": 0.25,
+  "limits": {
+    "rss_bytes": 2147483648,
+    "wall_seconds": 600,
+    "output_bytes": 536870912
+  },
+  "profile": "node",
+  "process_group": 13950,
+  "leader_reaped": true,
+  "private_tmp": null
+}
