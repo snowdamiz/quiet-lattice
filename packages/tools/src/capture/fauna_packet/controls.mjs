@@ -202,7 +202,7 @@ async function entryFailureControl(scenario, entryUrl) {
       [path.join(root, 'packages/client/src/ui/HUD.js'), 'export class HUD {hitNumber(){} hitAnchor(){}}'],
       [path.join(root, 'packages/client/src/gameplay/Fauna.js'), 'export class Fauna {update(){} hitAnchor(){}}'],
       [path.join(root, 'packages/client/src/net/combat.js'), 'export class CombatFeed {event(){} take(){}}'],
-      [ready.playwright, 'export const chromium={launch(){throw Error("FORBIDDEN_BROWSER")}}'],
+      [ready.playwright, 'export default {chromium:{launch(){throw Error("FORBIDDEN_BROWSER")}}}'],
       [
         path.join(root, 'packages/tools/src/capture/screens.ts'),
         `export const SCREENS={${JSON.stringify(unit)}:{clipSeconds:1.2,clipAspect:'16x9',stills:{kill(){},offscreen(){},start(){}},open(){},motion(){}}}`,

@@ -2,13 +2,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { registerHooks, stripTypeScriptTypes, syncBuiltinESMExports } from 'node:module';
+import { createRequire, registerHooks, stripTypeScriptTypes, syncBuiltinESMExports } from 'node:module';
 import { pathToFileURL, URL } from 'node:url';
 import process from 'node:process';
 import { Buffer } from 'node:buffer';
 import console from 'node:console';
 import { createHash } from 'node:crypto';
 import cp from 'node:child_process';
+import net from 'node:net';
 const W = fs.realpathSync(new URL('../../../../..', import.meta.url));
 const B = fs.realpathSync(fs.mkdtempSync(path.join(process.env.TMPDIR || '/private/tmp', 'fauna-entry-controls-')));
 const sha = (x) => createHash('sha256').update(x).digest('hex'),
@@ -18,7 +19,30 @@ for (const name of ['spawn', 'spawnSync', 'exec', 'execSync', 'execFile', 'execF
   cp[name] = () => {
     throw Error('FORBIDDEN_CHILD:' + name);
   };
+net.Server.prototype.listen = net.Socket.prototype.connect = () => {
+  throw Error('FORBIDDEN_NETWORK');
+};
 syncBuiltinESMExports();
+// Load the real pinned CJS route and the package's public ESM route before fixture hooks.
+// Only the browser launch port below is replaced, never either module's export shape.
+const installed = JSON.parse(fs.readFileSync(new URL('./readiness.json', import.meta.url), 'utf8'));
+assert.equal(process.execPath, installed.node);
+const require = createRequire(installed.playwright);
+const playwrightNamespace = await import(pathToFileURL(installed.playwright).href);
+const playwright = require(installed.playwright);
+const publicEntry = path.resolve(path.dirname(installed.playwright), require('./package.json').exports['.'].import);
+const publicPlaywright = await import(pathToFileURL(publicEntry).href);
+assert.equal(playwrightNamespace.default, playwright);
+assert.equal(publicPlaywright.chromium, playwright.chromium);
+const originalLaunch = playwright.chromium.launch;
+const playwrightBinding = {
+  path: installed.playwright,
+  sha256: sha(fs.readFileSync(installed.playwright)),
+  publicEntry,
+  publicEntrySha256: sha(fs.readFileSync(publicEntry)),
+  namespaceKeys: Object.keys(playwrightNamespace),
+  sameBrowserObject: publicPlaywright.chromium === playwright.chromium,
+};
 let mode,
   trace = [];
 let primary;
@@ -28,26 +52,24 @@ const loaded = [],
 const navigation = Object.freeze(Object.assign(Error('PRIMARY_PAGE_GOTO'), { partial: Buffer.from([0, 255]), unknown: { original: true } }));
 const secondary = Object.assign(Error('SECONDARY_BROWSER_CLOSE'), { partial: Buffer.from([1, 255]), unknown: { cleanup: true } });
 const viteError = Object.assign(Error('SECONDARY_VITE_CLOSE'), { unknown: { cleanup: 'vite' } });
-globalThis.__faunaChrome = {
-  launch: async () => {
-    trace.push('INERT-browser-port');
-    return {
-      newPage: async () => ({
-        screenshot: async () => {
-          throw Error('UNEXPECTED screenshot');
-        },
-        on() {},
-        goto: async () => {
-          trace.push('actual-captureUi-goto');
-          throw primary;
-        },
-      }),
-      close: async () => {
-        trace.push('browser.close');
-        if (mode === 'goto-plus-close' || mode.startsWith('combined')) throw secondary;
+playwright.chromium.launch = async () => {
+  trace.push('INERT-browser-port');
+  return {
+    newPage: async () => ({
+      screenshot: async () => {
+        throw Error('UNEXPECTED screenshot');
       },
-    };
-  },
+      on() {},
+      goto: async () => {
+        trace.push('actual-captureUi-goto');
+        throw primary;
+      },
+    }),
+    close: async () => {
+      trace.push('browser.close');
+      if (mode === 'goto-plus-close' || mode.startsWith('combined')) throw secondary;
+    },
+  };
 };
 globalThis.__faunaVite = {
   listen: async () => {},
@@ -70,7 +92,8 @@ globalThis.__faunaNet = () => ({
 registerHooks({
   resolve(spec, ctx, next) {
     if (sources.has(spec) || realTS.has(spec)) return { url: spec, shortCircuit: true };
-    if (spec === '@playwright/test') return { url: 'inert:pw', shortCircuit: true };
+    if (spec === '@playwright/test') return { url: pathToFileURL(publicEntry).href, shortCircuit: true };
+    if (spec === pathToFileURL(installed.playwright).href || spec === pathToFileURL(publicEntry).href) return next(spec, ctx);
     if (spec === 'vite') return { url: 'inert:vite', shortCircuit: true };
     if (spec === 'node:net' && ctx.parentURL?.endsWith('/capture.ts')) return { url: 'inert:net', shortCircuit: true };
     if (spec.startsWith('./') && ctx.parentURL?.endsWith('/capture.ts')) return { url: new URL(spec, ctx.parentURL).href, shortCircuit: true };
@@ -78,7 +101,6 @@ registerHooks({
     throw Error('FORBIDDEN_IMPORT:' + spec);
   },
   load(url, ctx, next) {
-    if (url === 'inert:pw') return { format: 'module', source: 'export const chromium=globalThis.__faunaChrome;', shortCircuit: true };
     if (url === 'inert:vite') return { format: 'module', source: 'export const createServer=async()=>globalThis.__faunaVite;', shortCircuit: true };
     if (url === 'inert:net') return { format: 'module', source: 'export const createServer=globalThis.__faunaNet;', shortCircuit: true };
     if (sources.has(url)) return { format: 'module', source: sources.get(url), shortCircuit: true };
@@ -146,7 +168,7 @@ for (mode of [
     productBindings: {},
     tsxApi: root + '/tsx.mjs',
     esbuild: root + '/esbuild.mjs',
-    playwright: root + '/playwright.mjs',
+    playwright: installed.playwright,
     units: { [unit]: spec },
   };
   put(readyPath, ready);
@@ -157,7 +179,6 @@ for (mode of [
     [root + '/packages/client/src/ui/HUD.js', 'export class HUD {hitNumber(){} hitAnchor(){}}'],
     [root + '/packages/client/src/gameplay/Fauna.js', 'export class Fauna {update(){} hitAnchor(){}}'],
     [root + '/packages/client/src/net/combat.js', 'export class CombatFeed {event(){} take(){}}'],
-    [ready.playwright, 'export const chromium=globalThis.__faunaChrome'],
     [
       root + '/packages/tools/src/capture/screens.ts',
       `export const SCREENS={${JSON.stringify(unit)}:{clipSeconds:1.2,clipAspect:'16x9',stills:{kill(){},offscreen(){},start(){}},open(){},motion(){}}}`,
@@ -214,13 +235,15 @@ for (mode of [
     assert.deepEqual(durable, result);
   }
   results.push({ mode, trace: [...trace], root, result, durable, thrown: { message: thrown.message }, nativeLaunches: 0 });
-  put(B + '/capture-controls-results.json', { results, loaded, node: process.version });
+  put(B + '/capture-controls-results.json', { results, loaded, playwrightBinding, node: process.version });
 }
+playwright.chromium.launch = originalLaunch;
 console.log(
   JSON.stringify({
     cases: results.length,
     actualFaunaMain: true,
     actualCaptureUi: true,
+    playwrightBinding,
     nativeLaunches: 0,
     node: process.version,
     status: 'PASS: original navigation, both cleanup errors, raw bytes/falsy values and all-sink failure retained',

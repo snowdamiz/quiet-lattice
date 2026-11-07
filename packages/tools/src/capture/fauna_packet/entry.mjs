@@ -281,7 +281,7 @@ export async function main() {
     }))
       expectedMethods[name] = canonical(fn.toString());
     metadata('source-methods.json', { unit, productBindings: ready.productBindings, expectedMethods });
-    const playwright = await import(pathToFileURL(ready.playwright).href);
+    const { default: playwright } = await import(pathToFileURL(ready.playwright).href);
     const launch = playwright.chromium.launch.bind(playwright.chromium);
     restoreBrowser = () => {
       playwright.chromium.launch = launch;

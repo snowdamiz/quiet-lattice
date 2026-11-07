@@ -199,7 +199,7 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
                        'evidence': '/private/tmp/fhp-' + nonce, 'consumption': '/private/tmp/fhc-' + nonce + '.json',
                        'grant': '/private/tmp/fhg-' + nonce + '.json', 'authorizationId': 'fauna-' + nonce}
     ready = {
-        'runtimeEnabled': True, 'phase': 'ENABLED_CANDIDATE_PENDING_R9_REVIEW_AND_ONE_UNIT_PARENT_GRANT',
+        'runtimeEnabled': True, 'phase': 'ENABLED_CANDIDATE_PENDING_INDEPENDENT_REVIEW_AND_ONE_UNIT_PARENT_GRANT',
         'root': str(ROOT), 'uid': os.getuid(), 'python': str(Path(sys.executable).resolve()), 'pythonVersion': sys.version,
         'node': node, 'path': os.environ['PATH'], 'git': '/usr/bin/git', **routes,
         'stationDirectory': str(HELPERS), 'acceptedHelperCommit': 'ca7d91e378e9d2f3f0ce8f0651475dcb843875d9',
