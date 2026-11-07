@@ -20,14 +20,18 @@ ALT_IMAGES = {"compact": "lark_livery_compact", "working": "lark_livery_working"
 # These are missing verification capabilities, not switches a caller can attest away.
 PROOF_GAPS = {
     "seated-closed-canopy": [
-        "production actor/rig identity and measured 1.85m standing stature",
-        "evaluated seated joint pose, seat contact and actor world transform",
-        "authored closed canopy target, tolerances and evaluated glass/frame transforms",
-        "full body/head versus canopy intersection and containment inspection",
+        "identified reference biped with measured 1.85m standing extent and visible 1m grid",
+        "evaluated seated joint pose, seat/pelvis/feet/back/hand relationships and reference world transform",
+        "authored or geometrically justified closed canopy target, tolerances and evaluated glass/frame transforms",
+        "dimensioned static reference views; body/head versus canopy inspection with a documented clearance method",
     ],
     "boarding-clearance": [
-        "posed production body along boarding route with tread/handhold contacts",
-        "body/collider intersections, containment and continuous reachability",
+        "measured reference biped actually posed at representative boarding tread/handhold contacts with 1m grid",
+        "dimensioned static reference/body/collider views; intersection and containment if claiming clearance",
+    ],
+    "production-runtime-qualification": [
+        "production actor fit is separate from static reference evidence",
+        "continuous boarding, runtime collision and gameplay-speed articulation remain unverified",
     ],
     "mounted-axis-clearance": [
         "authored module identity, socket binding, dimensions and forward-axis convention",
@@ -117,6 +121,22 @@ def world_points(vertices, matrix):
     if any(not math.isfinite(x) for p in result for x in p):
         raise ValueError("nonfinite world geometry")
     return result
+
+
+def require_snapshot_trs(matrix, name):
+    """An unparented display object cannot store a general affine world matrix."""
+    if any(not math.isfinite(x) for row in matrix for x in row):
+        raise ValueError(f"{name}: nonfinite snapshot transform")
+    if matrix[3] != [0, 0, 0, 1]:
+        raise ValueError(f"{name}: non-affine snapshot transform")
+    columns = [[matrix[i][j] for i in range(3)] for j in range(3)]
+    lengths = [math.hypot(*column) for column in columns]
+    if any(length <= 1e-8 for length in lengths):
+        raise ValueError(f"{name}: degenerate snapshot axis (length <= 1e-8)")
+    axes = [[value / length for value in column] for column, length in zip(columns, lengths)]
+    if any(abs(sum(a*b for a, b in zip(axes[i], axes[j]))) > 1e-6
+           for i, j in ((0, 1), (0, 2), (1, 2))):
+        raise ValueError(f"{name}: unsupported world shear (normalized axis dot > 1e-6)")
 
 
 def base_scope(paths):

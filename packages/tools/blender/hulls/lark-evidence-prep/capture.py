@@ -19,6 +19,7 @@ import bpy
 from mathutils import Vector
 
 AXIS_COLORS = {0: (.85, .12, .1, 1), 1: (.15, .7, .2, 1), 2: (.15, .35, .9, 1)}
+SNAPSHOT_VERTEX_TOL_M = 1e-5
 
 
 def file_sha256(path):
@@ -112,6 +113,7 @@ def base_color_node(material):
 
 def snapshot_mesh(obj, scene, depsgraph, materials):
     evaluated = obj.evaluated_get(depsgraph)
+    plan.require_snapshot_trs(matrix_list(evaluated.matrix_world), obj.name)
     mesh = bpy.data.meshes.new_from_object(evaluated, preserve_all_data_layers=True, depsgraph=depsgraph)
     face_materials = [polygon.material_index for polygon in mesh.polygons]
     mesh.materials.clear()
@@ -132,6 +134,27 @@ def snapshot_mesh(obj, scene, depsgraph, materials):
     copy.matrix_world = evaluated.matrix_world.copy()
     copy.hide_render = True
     return copy
+
+
+def verify_snapshot_world(handles):
+    """Compare evaluated vertices after the capture scene becomes active and updates."""
+    bpy.context.view_layer.update()
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    checks = []
+    for name, snapshot, expected in handles["snapshot_sources"]:
+        evaluated = snapshot.evaluated_get(depsgraph)
+        actual = world_vertices(evaluated)
+        if len(actual) != len(expected):
+            raise ValueError(f"{name}: snapshot world vertex count changed after update")
+        error = max((math.dist(a, b) for a, b in zip(actual, expected)), default=0.0)
+        if error > SNAPSHOT_VERTEX_TOL_M:
+            raise ValueError(f"{name}: snapshot world vertices diverged after update: "
+                             f"{error:.9g} m > {SNAPSHOT_VERTEX_TOL_M:g} m")
+        checks.append({"name": name, "vertices": len(actual), "max_world_error_m": error})
+    return {"status": "matched_after_update", "tolerance_m": SNAPSHOT_VERTEX_TOL_M,
+            "method": "indexed evaluated source/snapshot world vertices",
+            "normals": "not_verified; local normal layers are copied, no affine baking",
+            "objects": checks}
 
 
 def extract(source_scene, capture_scene):
@@ -164,6 +187,7 @@ def extract(source_scene, capture_scene):
     refs = {name: reference.all_objects.get(name) if reference else None for name in ("REF_Biped", "REF_Grid")}
     refs = {name: obj if obj and obj.type == "MESH" else None for name, obj in refs.items()}
     originals = list(dict.fromkeys(meshes + colliders + [o for o in refs.values() if o is not None]))
+    source_vertices = {o.name: world_vertices(o.evaluated_get(depsgraph)) for o in originals}
     material_copies = {}
     snapshots = {o.name: snapshot_mesh(o, capture_scene, depsgraph, material_copies) for o in originals}
     original_names = {copy.name: name for name, copy in material_copies.items()}
@@ -213,8 +237,8 @@ def extract(source_scene, capture_scene):
         raise ValueError("metre conversion requires inspection for this source unit scale")
     extracted = {
         "lod0_meshes": [o.name for o in meshes], "collider_names": [o.name for o in colliders],
-        "biped": {"vertices": world_vertices(biped)} if biped else None,
-        "grid": {"vertices": world_vertices(grid), "edges": [tuple(e.vertices) for e in grid.data.edges]} if grid else None,
+        "biped": {"vertices": source_vertices["REF_Biped"]} if biped else None,
+        "grid": {"vertices": source_vertices["REF_Grid"], "edges": [tuple(e.vertices) for e in grid.data.edges]} if grid else None,
         "boarding_xyz": tuple(boarding.evaluated_get(depsgraph).matrix_world.translation) if boarding else None,
         "hardpoints": [object_fact(o, depsgraph) for o in hardpoints],
         "pivots": [object_fact(o, depsgraph) for o in pivots],
@@ -222,7 +246,8 @@ def extract(source_scene, capture_scene):
         "livery_graph_gaps": graph_gaps, "observations": observations,
     }
     handles = {"lod0": [snapshots[o.name] for o in meshes], "biped": biped, "grid": grid,
-               "colliders": [snapshots[o.name] for o in colliders], "swap_nodes": swap_nodes}
+               "colliders": [snapshots[o.name] for o in colliders], "swap_nodes": swap_nodes,
+               "snapshot_sources": [(o.name, snapshots[o.name], source_vertices[o.name]) for o in originals]}
     return extracted, handles
 
 
@@ -535,7 +560,7 @@ def capture(args, blend, out):
     extracted, handles = extract(source_scene, scene)
     bpy.context.window.scene = scene
     prepare_scene(scene, args)
-    bpy.context.view_layer.update()
+    extracted["observations"]["snapshot_world_check"] = verify_snapshot_world(handles)
     report = plan.assemble_report(extracted)
     shots = plan.plan_shots(extracted, report, args["width"], args["height"])
     add_lights(scene)
