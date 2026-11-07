@@ -591,7 +591,17 @@ def snapshot_caches(ready, evidence):
                             primary.cache_copy_close = fact
                     copy_fact['complete'] = True
                     copied_rows.append({**row, 'sha256': digest})
-                copied = hash_plan(tree_plan(destination, ready['budget']['cacheSnapshotCapBytes']))
+                admitted_bytes = sum(row['bytes'] for row in before)
+                source_after = tree_plan(plan['root'], admitted_bytes, entry_cap=len(plan['files']) + len(plan['directories']))
+                require(source_after['files'] == plan['files'] and source_after['directories'] == plan['directories']
+                        and all(path in source_after['pins'] and same_entry(info, source_after['pins'][path], stat.S_ISDIR(info.st_mode))
+                                for path, info in plan['pins'].items()), 'Generated cache changed during snapshot')
+                require(hash_plan(source_after) == before, 'Generated cache changed during snapshot')
+                expected_directories = {str(parent) for row in before for parent in Path(row['path']).parents if str(parent) != '.'}
+                copied_plan = tree_plan(destination, admitted_bytes, entry_cap=len(before) + len(expected_directories))
+                require(copied_plan['files'] == plan['files'] and copied_plan['directories'] == expected_directories,
+                        'Generated cache snapshot verification shape changed')
+                copied = hash_plan(copied_plan)
                 require(copied == before == copied_rows, 'Generated cache changed during snapshot')
             persist(evidence / 'cache-before.json', rows)
             observation['complete'] = True

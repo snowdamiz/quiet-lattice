@@ -395,6 +395,40 @@ class CacheSnapshotControls(unittest.TestCase):
             self.assertEqual(len(caught.exception.cacheObservation['entries']), caller.CACHE_ENTRY_CAP)
             self.assertEqual(list(evidence.iterdir()), [])
 
+    def test_snapshot_verification_rejects_extra_copied_entries_before_hashing(self):
+        for extra in (b'X', b''):
+            with self.subTest(extraBytes=len(extra)), tempfile.TemporaryDirectory(prefix='fauna-copy-verify-') as temp:
+                base = Path(temp).resolve();cache = base / 'cache';cache.mkdir();(cache / 'source').write_bytes(b'A' * 8)
+                evidence = base / 'evidence';evidence.mkdir();original_plan = caller.tree_plan;original_hash = caller.hash_plan;hash_calls = []
+                def plan(root, *a, **kw):
+                    if Path(root).name == 'cache-before-0': (Path(root) / 'unexpected').write_bytes(extra)
+                    return original_plan(root, *a, **kw)
+                def hashed(plan, *a):
+                    hash_calls.append(str(plan['root']))
+                    return original_hash(plan, *a)
+                with patch.object(caller, 'tree_plan', side_effect=plan), patch.object(caller, 'hash_plan', side_effect=hashed):
+                    with self.assertRaises(caller.Refused): caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 64}}, evidence)
+                self.assertNotIn(str(evidence / 'cache-before-0'), hash_calls, 'Unadmitted copied entries reached payload hashing')
+                self.assertEqual((evidence / 'cache-before-0/source').read_bytes(), b'A' * 8)
+                self.assertFalse((evidence / 'cache-before.json').exists())
+
+    def test_snapshot_rechecks_source_shape_and_content_within_admitted_budget(self):
+        for fault in ('extra-empty', 'extra-bytes', 'same-size-change'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-source-verify-') as temp:
+                base = Path(temp).resolve();cache = base / 'cache';cache.mkdir();source = cache / 'source';source.write_bytes(b'A' * 8)
+                evidence = base / 'evidence';evidence.mkdir();original = caller.tree_plan;plans = []
+                def plan(root, *a, **kw):
+                    if Path(root) == cache:
+                        plans.append(str(root))
+                        if len(plans) == 2:
+                            if fault == 'same-size-change': source.write_bytes(b'B' * 8)
+                            else: (cache / 'extra').write_bytes(b'' if fault == 'extra-empty' else b'X')
+                    return original(root, *a, **kw)
+                with patch.object(caller, 'tree_plan', side_effect=plan):
+                    with self.assertRaises(caller.Refused): caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 64}}, evidence)
+                self.assertEqual((evidence / 'cache-before-0/source').read_bytes(), b'A' * 8)
+                self.assertFalse((evidence / 'cache-before.json').exists())
+
     def test_cache_copy_read_cancel_and_close_errors_keep_partial_ownership(self):
         for fault in ('read', 'cancel', 'deadline', 'write-after-bytes'):
             with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-cache-failure-') as temp:
