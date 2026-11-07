@@ -1,0 +1,62 @@
+{
+  "schema": 2,
+  "stage": "retry",
+  "runId": "b45078a0d39d428e895bb7e78a7da59a",
+  "supervisorPID": 58269,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "pass"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/red-late-fork-02/late_same_group_fork/root",
+  "beforeFree": 40696553472,
+  "beforePayload": 1540945,
+  "start": 1794055945.918981,
+  "samples": [
+    {
+      "time": 1794055945.9605079,
+      "rss": 6062080,
+      "free": 40696541184,
+      "processes": [
+        {
+          "pid": 58270,
+          "ppid": 58269,
+          "pgid": 58270,
+          "rss": 6062080,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 58270,
+  "ownership": {
+    "directChild": {
+      "pid": 58270,
+      "birth": [
+        1794055945,
+        919216
+      ],
+      "waiterLost": false
+    },
+    "knownDescendants": []
+  },
+  "end": 1794055945.9983711,
+  "maxRSS": 6062080,
+  "afterFree": 40696532992,
+  "afterPayload": 1541297,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "success"
+}

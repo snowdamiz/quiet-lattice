@@ -1,0 +1,96 @@
+{
+  "paths": [
+    {
+      "path": "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1",
+      "exists": true,
+      "is_symlink": false,
+      "mode": "0o40755",
+      "mtime": 1794053072.5244713,
+      "size": null
+    },
+    {
+      "path": "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-readiness.json",
+      "exists": true,
+      "is_symlink": false,
+      "mode": "0o100644",
+      "mtime": 1794053052.447632,
+      "size": 35973
+    },
+    {
+      "path": "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-thalune.consumed.json",
+      "exists": true,
+      "is_symlink": false,
+      "mode": "0o100644",
+      "mtime": 1794053072.5241973,
+      "size": 941
+    },
+    {
+      "path": "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-thalune.consumed.json.failure-summary.json",
+      "exists": true,
+      "is_symlink": false,
+      "mode": "0o100644",
+      "mtime": 1794053081.6935887,
+      "size": 553
+    },
+    {
+      "path": "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-thalune.grant.json",
+      "exists": true,
+      "is_symlink": false,
+      "mode": "0o100644",
+      "mtime": 1794053052.447793,
+      "size": 345
+    },
+    {
+      "path": "/private/tmp/space-vm-parent-unit1-r2-q6kzldbb",
+      "exists": true,
+      "is_symlink": false,
+      "mode": "0o40700",
+      "mtime": 1794053146.7785232,
+      "size": null
+    }
+  ],
+  "failureSummary": {
+    "schema": "viewmodel-publication-failure/1",
+    "accepted": false,
+    "completeRecordDurable": false,
+    "completeFacts": "retained-in-memory-only-unless-full-sink-succeeded",
+    "primaryFailure": {
+      "type": "ValueError",
+      "messagePrefix": "Capture did not complete: observer_failed"
+    },
+    "secondaryFailureCount": 1,
+    "secondaryFailurePrefixes": [
+      {
+        "type": "AssertionError",
+        "messagePrefix": ""
+      }
+    ],
+    "persistenceErrorCount": 2,
+    "persistenceErrorPrefixes": [
+      {
+        "type": "ValueError",
+        "messagePrefix": "Raw observation node ceiling"
+      },
+      {
+        "type": "ValueError",
+        "messagePrefix": "Raw observation node ceiling"
+      }
+    ]
+  },
+  "consumptionKeys": [
+    "admission",
+    "authorizationId",
+    "entryToken",
+    "freeBytesAtAdmission",
+    "grantPath",
+    "grantSha256",
+    "observationEncoding",
+    "observations",
+    "previousOutputs",
+    "readySha256",
+    "schema",
+    "sourceHead",
+    "unit"
+  ],
+  "spentHint": true
+}

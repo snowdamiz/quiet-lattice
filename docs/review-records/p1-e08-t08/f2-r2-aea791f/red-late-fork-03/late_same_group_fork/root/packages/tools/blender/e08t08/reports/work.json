@@ -1,0 +1,65 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "02a9872a96d347159eef6356e74ca473",
+  "supervisorPID": 74939,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/red-late-fork-03/late_same_group_fork",
+    "late-leader"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/red-late-fork-03/late_same_group_fork/root",
+  "beforeFree": 42425335808,
+  "beforePayload": 1538274,
+  "start": 1794056050.2328022,
+  "samples": [
+    {
+      "time": 1794056050.2764359,
+      "rss": 5390336,
+      "free": 42425319424,
+      "processes": [
+        {
+          "pid": 74940,
+          "ppid": 74939,
+          "pgid": 74940,
+          "rss": 5390336,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [],
+  "cancelSignals": [
+    15
+  ],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 74940,
+  "ownership": {
+    "directChild": {
+      "pid": 74940,
+      "birth": [
+        1794056050,
+        233074
+      ],
+      "waiterLost": false
+    },
+    "knownDescendants": []
+  },
+  "end": 1794056050.4510322,
+  "maxRSS": 5390336,
+  "afterFree": 42424979456,
+  "afterPayload": 1538883,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "cancelled"
+}

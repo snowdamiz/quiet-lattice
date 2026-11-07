@@ -1,0 +1,121 @@
+{
+  "mode": "late_same_group_fork",
+  "base": false,
+  "start": 1794055949.8287911,
+  "assertions": {
+    "late same-group fork cannot seal verified cleanup while leaf lives": true,
+    "late leaf drained before admission opens": true,
+    "cancelled/uncertain run still refused by finalizer": true,
+    "supervisor did not claim success": true
+  },
+  "workerPIDs": [
+    58422,
+    58428
+  ],
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork/late_same_group_fork/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork/late_same_group_fork",
+    "late_same_group_fork",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork/late_same_group_fork",
+    "late-leader"
+  ],
+  "supervisorExit": 1,
+  "spawned": {
+    "leader": 58422,
+    "leaf": 58428,
+    "pgid": 58422
+  },
+  "leafAfterSupervisor": "",
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "fca07c4ab8f44cf38ab089df71c3d314",
+    "supervisorPID": 58420,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork/late_same_group_fork",
+      "late-leader"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork/late_same_group_fork/root",
+    "beforeFree": 40686600192,
+    "beforePayload": 1540580,
+    "start": 1794055949.883307,
+    "samples": [
+      {
+        "time": 1794055949.9369888,
+        "rss": 131072,
+        "free": 40686583808,
+        "processes": [
+          {
+            "pid": 58422,
+            "ppid": 58420,
+            "pgid": 58422,
+            "rss": 131072,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [
+      "cleanup signal: RuntimeError(\"RuntimeError('owned process identity changed; refusing signal')\")"
+    ],
+    "cancelSignals": [
+      15
+    ],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "unknown",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 58422,
+    "ownership": {
+      "directChild": {
+        "pid": 58422,
+        "birth": [
+          1794055949,
+          883730
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": [
+        {
+          "pid": 58428,
+          "birth": [
+            1794055950,
+            101027
+          ],
+          "exitObserved": true
+        }
+      ]
+    },
+    "end": 1794055952.407365,
+    "maxRSS": 131072,
+    "afterFree": 40693891072,
+    "afterPayload": 1541188,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "uncertain"
+  },
+  "settled": null,
+  "retryExit": 1,
+  "leafAfterRetry": "",
+  "finalizerExit": 1,
+  "defectReproduced": false,
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794055952.599823,
+  "passed": true
+}

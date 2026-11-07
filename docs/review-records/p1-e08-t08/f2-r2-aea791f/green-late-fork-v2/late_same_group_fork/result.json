@@ -1,0 +1,123 @@
+{
+  "mode": "late_same_group_fork",
+  "base": false,
+  "start": 1794056042.897685,
+  "assertions": {
+    "late same-group fork cannot seal verified cleanup while leaf lives": true,
+    "late leaf drained before admission opens": true,
+    "cancelled/uncertain run still refused by finalizer": true,
+    "supervisor did not claim success": true
+  },
+  "workerPIDs": [
+    74652,
+    74657
+  ],
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork-v2/late_same_group_fork/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork-v2/late_same_group_fork",
+    "late_same_group_fork",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork-v2/late_same_group_fork",
+    "late-leader"
+  ],
+  "supervisorExit": 1,
+  "spawned": {
+    "leader": 74652,
+    "leaf": 74657,
+    "pgid": 74652
+  },
+  "leafAfterSupervisor": "",
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "0f2b04cf9b0741e9b304a760eaa7f30f",
+    "supervisorPID": 74651,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork-v2/late_same_group_fork",
+      "late-leader"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-r2-20261107/green-late-fork-v2/late_same_group_fork/root",
+    "beforeFree": 42435551232,
+    "beforePayload": 1540893,
+    "start": 1794056042.943241,
+    "samples": [
+      {
+        "time": 1794056042.991246,
+        "rss": 32768,
+        "free": 42435530752,
+        "processes": [
+          {
+            "pid": 74652,
+            "ppid": 74651,
+            "pgid": 74652,
+            "rss": 32768,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [
+      15
+    ],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 74652,
+    "ownership": {
+      "directChild": {
+        "pid": 74652,
+        "birth": [
+          1794056042,
+          943559
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": [
+        {
+          "pid": 74657,
+          "birth": [
+            1794056043,
+            143702
+          ],
+          "exitObserved": true
+        }
+      ]
+    },
+    "end": 1794056045.407136,
+    "maxRSS": 32768,
+    "afterFree": 42434031616,
+    "afterPayload": 1541504,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "cancelled"
+  },
+  "settled": {
+    "runId": "0f2b04cf9b0741e9b304a760eaa7f30f",
+    "admissionSHA256": "0e8bdb0c6feb683b96b0580d6162b737c112b96ddfd08ea33036bcaf9cd8acd1",
+    "terminalSHA256": "e17e24ad8280766c3be4e2a5698bc2c737f55381f72bcd22e63bf5bf1a69d37b"
+  },
+  "retryExit": 0,
+  "leafAfterRetry": "",
+  "finalizerExit": 1,
+  "defectReproduced": false,
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794056045.7999418,
+  "passed": true
+}

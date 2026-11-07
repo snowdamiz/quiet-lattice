@@ -1,0 +1,36 @@
+{
+  "actualCallerExit": 0,
+  "resultSha256": "061583f114952bf422f90dfd4f7c66d2962c4badcaac67b1504c805a641d68bf",
+  "consumptionSha256": "c08c3b3a8b0be82d8ca29b4005c636423789a5bed52042de961d06e2fd785052",
+  "resultBytes": 146606,
+  "consumptionBytes": 671,
+  "helperAttemptedBytes": 5028074,
+  "helperReservedBytes": 28984,
+  "journal": {
+    "valid": true,
+    "events": 191937,
+    "expandedBytes": 8072382,
+    "logicalBytes": 22133398,
+    "storedBytes": 237464
+  },
+  "successorAdmittedWithoutDispatch": true,
+  "sourceHead": "fc2b689948e09c4e70f08cbaedf2064df16432a2",
+  "realNative": false,
+  "limits": {
+    "metadataBytes": 67108864,
+    "helperPhysical": 16777216,
+    "node": 8388608,
+    "journal": 8388608,
+    "callerAttempts": 33554432,
+    "callerSingleSink": 14680064
+  },
+  "budgetChecks": {
+    "journalStoredWithin8MiB": true,
+    "helperReservedWithin16MiB": true,
+    "callerResultWithin14MiB": true,
+    "sumCeilingsEq64MiB": true,
+    "noPublicationErrors": true,
+    "helperEvidencePresent": true
+  },
+  "ok": true
+}

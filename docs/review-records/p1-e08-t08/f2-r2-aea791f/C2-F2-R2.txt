@@ -1,0 +1,43 @@
+TASK: P1.E08.T08 (art) Creatures at the new bar — F2-R2 late-observation/admission race only
+STATUS: F2-R2 ownership fix and local process qualification complete; fresh independent review required. Full task remains incomplete. F1 exact-float export and all native/visual gates remain open. No whole-task, native, visual, or production-loader rejection PASS claim.
+SUMMARY: Independent F2 review reproduced that drain()/OwnedProcesses.observe() could seal cleanup=verified from a stale final ps snapshot while a same-pgid child forked after that snapshot and before leader reap stayed alive, allowing retry admission. F2-R2 re-observes before reap, requires the latest snapshot to contain only the unreaped leader, proves no same-pgid leftovers after wait(), and treats Darwin zombie identity clearing as exit before refusing signals. Exact-base RED on ccdcb1b reproduces the defect; current GREEN drains the late leaf, keeps finalizer rejection of cancelled runs, and passes 23/23.
+
+PINS:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13 (same app-bound checkout).
+- Branch: task/P1-E08-T08-creatures
+- Exact F2 base under revision: ccdcb1b6079c4f6d6a64506e889f4a6e170464ba / tree 6cd252ce39721ba4355942ab967fe8148d562bc0
+- Independent review defect evidence (untouched): /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/late-same-group-fork/result.json; report SHA256 91e1e1346464aae6c7e982c9428c325f04b77495cf12d6e3e14f9d872d3a3c7e
+- Revision commit/tree are returned in the handoff outside this self-contained report.
+
+FILES:
+- packages/tools/blender/e08t08/stage.py: drain confirms with a second observe before wait; post-reap same-pgid leftover scan refuses verified cleanup (individual SIGKILL only; no killpg after reap).
+- packages/tools/blender/e08t08/stage_processes.py: all_exited requires latest snapshot has only the leader; same_group_leftovers(); ProcessWatch.send treats ESRCH/zombie identity clearing as exit.
+- packages/tools/blender/e08t08/lifecycle_driver.py, lifecycle_worker.py, stage_lifecycle_test.py: late_same_group_fork actual-process fixture (one-shot stale drain snapshot + same-group late leaf). Exact-base RED loads stage.py/finalize.py/stage_processes.py from ccdcb1b.
+- packages/tools/blender/e08t08/revisions/f2-r2-20261107/**: exclusive RED/GREEN evidence. No asset/Blender/codec/native/GPU/export work.
+
+VERIFY:
+- Exact-base RED: python3.14 packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence packages/tools/blender/e08t08/revisions/f2-r2-20261107/red-late-fork-03 --base --cases late_same_group_fork; exit 1. defectReproduced with leaf alive after supervisor and after retryExit=0; cleanup=verified; remainingProcesses=[]; finalizerExit=1.
+- Candidate late-fork GREEN: .../green-late-fork-v2 --cases late_same_group_fork; exit 0. leafAfterSupervisor empty; cleanup=verified; outcome=cancelled; settled; retryExit=0 after real cleanup; finalizerExit=1; defectReproduced=false.
+- Full GREEN matrix: .../final-qualification-v2; exit 0; 23/23; allFixtureWorkersExited=true.
+- Asset/PNG/protected hashes unchanged vs reports/asset-hash-inventory.json and protected pins; 79 PNGs preserved. See preservation-final.json.
+- No owned e08t08 fixture processes remain after qualification. A foreign hull Blender in worktree t3-46f90470 was observed and not signalled (global hull lane held by parent).
+
+DECISIONS (question -> choice -> why):
+- How to close the stale-snapshot/reap window? -> Re-observe before wait, require self.last to contain only the leader, then post-reap same-pgid scan -> a one-shot stale ps view can no longer seal verified cleanup; Darwin orphans keep the reaped leader pgid.
+- What if leftovers appear only after reap? -> Record remainingProcesses, SIGKILL individuals, return unverified (no killpg after reap) -> PID reuse makes killpg unsafe; uncertain cleanup keeps admission closed.
+- How to avoid false identity-loss while draining a just-exited late leaf? -> Treat identity None / zombie-cleared birth after NOTE_EXIT drain as exited -> Darwin clears BSD start fields on zombies before the watch is consumed.
+- Exact-base pin for F2-R2? -> ccdcb1b stage.py+stage_processes.py -> the defect is in F2 drain/observe, not the earlier F1 art parent.
+
+OUTOFSCOPE (owner/task):
+- F1 exact-float COLOR_0 / P1.E14.T16 exporter ownership unchanged.
+- Native Review/turntable/three-lights/wireframe/far/performance/blind grade: parent gates; inventory still reports/native-pending.json (38 targets / 380 Review PNGs / etc.).
+- No Blender/codec/asset regeneration; all 14 sources/exports and 79 PNGs preserved.
+- Independent R3 review of this revision commit/tree. No push/PR/merge.
+
+ARTIFACTS:
+- revisions/f2-r2-20261107/red-late-fork-03/: exact-base RED
+- revisions/f2-r2-20261107/green-late-fork-v2/: late-fork GREEN with verified cancelled cleanup
+- revisions/f2-r2-20261107/final-qualification-v2/: 23/23 matrix
+- revisions/f2-r2-20261107/preservation-final.json
+- Earlier red-late-fork / red-late-fork-02 / green-late-fork / final-qualification attempts retained as history.
+- No push, PR, merge, branch/base/worktree switch, orchestration-doc edit, or heavy writer.
