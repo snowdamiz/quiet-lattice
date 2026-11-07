@@ -1,0 +1,27 @@
+{
+  "kind": "T15_CALLER_CENSUS",
+  "qualification": "SOURCE_CPU_READ_ONLY",
+  "runtime": false,
+  "visual": false,
+  "native": false,
+  "report": "/private/tmp/space-t15-caller-census-20261107-991ffe3c/REPORT.md",
+  "reportSha256": "479830b753293734c8cc1de9bf66dcf782fb1c39badbf78e11a5650579095556",
+  "reportBytes": 10273,
+  "requestedParent": "8026dc55308fc850da4730870fe5ccd59ef483e5",
+  "liveParent": "991ffe3c080d3e7b1224a1bff53168f8acfe3d7b",
+  "reviewedT15": "38b6c4b58db43146df20cd760808d1461d7a667b",
+  "reviewedCaptureBlob": "555c71d140a36004200ac04ff66609eeb4458136",
+  "actionable": [
+    "packages/tools/src/capture/playthrough-run.ts"
+  ],
+  "adopted": [
+    "effects_packet",
+    "viewmodel_packet",
+    "fauna_packet@d0a914c94754"
+  ],
+  "heldNotActionable": [
+    "thalune-run-candidate/entry.mjs@bc9dbad83c77",
+    "native-vite.ts@8a881e369de3",
+    "timer-boundaries.ts@8a881e369de3"
+  ]
+}

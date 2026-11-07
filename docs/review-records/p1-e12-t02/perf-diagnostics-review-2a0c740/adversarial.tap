@@ -1,0 +1,101 @@
+✔ async perf rejection restores initial root/control, preserves failure, and releases lease (2.954ms)
+✔ async apply rejection restores partial mutation and releases lease (0.643ms)
+✔ async restore rejection retains its failure, restores root, and releases lease (0.5495ms)
+✖ BUG R1: preserve BOTH errors when async perf and final restoration reject (1.099709ms)
+✖ BUG R2: initialization failure must not poison future runs on the same review (0.453625ms)
+✖ BUG R2 variant: uncloneable input must not leave the matrix lease active (0.130417ms)
+✖ BUG R3: capture records the available atmosphere march branch instead of cloning its method (0.400584ms)
+✔ concurrent matrices are rejected and a successful run releases its lease (0.33725ms)
+✔ no-op and persistent runtime reversal of toggle are rejected (1.531292ms)
+✔ restoration that silently fails is detected (0.417959ms)
+✔ five default repetitions really execute 5 baseline and 10 alternating intervention calls (1.155209ms)
+✔ captured supported config is detached; missing hardware/query evidence stays unknown (0.09825ms)
+✔ documented limitation: camera/clock/inventory drift is absent from captured snapshots and does not stop the runner (0.269708ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 9
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 46.971292
+
+✖ failing tests:
+
+test at ../../../../../../private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:44:1
+✖ BUG R1: preserve BOTH errors when async perf and final restoration reject (1.099709ms)
+  AssertionError [ERR_ASSERTION]: the failure receipt loses the original measurement error
+      at TestContext.<anonymous> (file:///private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:56:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Error: restoration failure',
+    expected: /original GPU submission failure/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:59:1
+✖ BUG R2: initialization failure must not poison future runs on the same review (0.453625ms)
+  AssertionError [ERR_ASSERTION]: Got unwanted rejection: a corrected retry is rejected as already active
+  Actual message: "Diagnostic matrix already active"
+      at async TestContext.<anonymous> (file:///private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:63:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: Diagnostic matrix already active
+        at runMatrix (file:///Users/andreyyurlov/.t3/worktrees/space/t3-92cb10ba/packages/tools/src/diagnostics/review-performance/index.mjs:69:33)
+        at TestContext.<anonymous> (file:///private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:63:30)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: undefined,
+    operator: 'doesNotReject',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:66:1
+✖ BUG R2 variant: uncloneable input must not leave the matrix lease active (0.130417ms)
+  AssertionError [ERR_ASSERTION]: Got unwanted rejection: correcting host input cannot recover the same session
+  Actual message: "Diagnostic matrix already active"
+      at async TestContext.<anonymous> (file:///private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:69:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: Diagnostic matrix already active
+        at runMatrix (file:///Users/andreyyurlov/.t3/worktrees/space/t3-92cb10ba/packages/tools/src/diagnostics/review-performance/index.mjs:69:33)
+        at TestContext.<anonymous> (file:///private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:69:30)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    expected: undefined,
+    operator: 'doesNotReject',
+    diff: 'simple'
+  }
+
+test at ../../../../../../private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:72:1
+✖ BUG R3: capture records the available atmosphere march branch instead of cloning its method (0.400584ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   reason: 'DataCloneError: marchPlanet() {return expected;} could not be cloned.',
+  +   status: 'unknown'
+  + }
+  - -1
+  
+      at TestContext.<anonymous> (file:///private/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs:76:12)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { status: 'unknown', reason: 'DataCloneError: marchPlanet() {return expected;} could not be cloned.' },
+    expected: -1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
