@@ -1,0 +1,144 @@
+{
+  "IDENTITY.json": {
+    "sha256": "aa0fdc7f0d7bfb02b75fb080b143ba4ae0017dd22e31d722159a05fbfc4d462f",
+    "data": {
+      "revision": "8b6c3604bb842019c899956a1b57d6a01385d6f3",
+      "tree": "765b8b28265d0da6af0a16a568c33a365178d748",
+      "inputs_before_and_after": {
+        "assets/blend/hulls/lark.blend": {
+          "sha256": "4d0eec86894b3eefa3985cbd6686e1f27d0d7512140e7d09e39a65adc19d07c1",
+          "bytes": 35508071
+        },
+        "packages/client/public/models/hulls/lark.glb": {
+          "sha256": "659b084f2664b9f79d406a4c5abf2a425ba9e4dc2d1c533de467fecde6ba8836",
+          "bytes": 16699824
+        }
+      },
+      "renderer": {
+        "cpu": "Cycles CPU; OpenImageDenoise GPU disabled; direct and render_pre checks",
+        "native": "capture reports gl=metal; actual hardware device string not collected"
+      },
+      "baseline_counts": {
+        "cpu": 6,
+        "stills": 7,
+        "review": 36
+      },
+      "capture_deviation": "Private CPU-only renderer selection; unchanged cameras/materials/lighting."
+    }
+  },
+  "INDEX.json": {
+    "sha256": "4a70f8a553c396497c0fedcd865798d94b4f1699b9376496caae586729f44b17",
+    "data": null
+  },
+  "TIMING.json": {
+    "sha256": "3369a13e774cef950fc123ddd8b2aceb36d599fb5760a4c7472e2935281e07d7",
+    "data": [
+      {
+        "variant": "lark",
+        "case": "noon-lush",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 23.05,
+        "underBudget": false,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark",
+        "case": "night-exotic",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 27.464,
+        "underBudget": false,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark",
+        "case": "open-space",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 3.843,
+        "underBudget": true,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark_damaged",
+        "case": "noon-lush",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 26.161,
+        "underBudget": false,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark_damaged",
+        "case": "night-exotic",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 27.376,
+        "underBudget": false,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark_damaged",
+        "case": "open-space",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 4.141,
+        "underBudget": true,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark_husked",
+        "case": "noon-lush",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 25.836,
+        "underBudget": false,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark_husked",
+        "case": "night-exotic",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 27.457,
+        "underBudget": false,
+        "disjoint": 0
+      },
+      {
+        "variant": "lark_husked",
+        "case": "open-space",
+        "gl": "metal",
+        "timing": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+        "reliable": true,
+        "scene_gpu_median": 4.066,
+        "underBudget": true,
+        "disjoint": 0
+      }
+    ]
+  },
+  "verdict_sha256": "9929728c816c65c243ee7689745209c95c60b1a6b507ac694991f51b1f5922ba",
+  "scores": [
+    3,
+    4,
+    3,
+    3,
+    4,
+    2,
+    3,
+    3,
+    3,
+    2
+  ],
+  "inspected_images": [
+    "stills/lark_cockpit_closed_side.png"
+  ]
+}
