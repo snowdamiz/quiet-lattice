@@ -1,0 +1,63 @@
+{
+  "verdict": "REVISE",
+  "scope": "INDEPENDENT_SOURCE_CPU_ONLY",
+  "head": "ff497e5525f8e93c71df67827446d7e426bbc20d",
+  "tree": "5eccd017f148fbedc6b1fc751fb16ea7fcc1c660",
+  "base": "ddce6731b1fd465a1160d2f1e49813ff6f8c626c",
+  "baseTree": "48da9aed7d28ed5901676496d7cc2ee0db6d7809",
+  "findings": [
+    {
+      "id": "C2-R12-F1",
+      "severity": "P2",
+      "location": "release_accounting.py:133,147-168; caller.py:378-405",
+      "summary": "Both final summary writes can fail after successful receipts, leaving terminalReleaseProved=true with completeObservationsPersisted=false.",
+      "reproduction": "terminal-both-fail.command.json",
+      "exitCode": 1,
+      "primaryPreserved": true,
+      "nativeJobsInert": 1,
+      "validatorDispatched": false
+    },
+    {
+      "id": "C2-R12-F2",
+      "severity": "P2",
+      "location": "revision-12/rss-controls.py:60; revision-12/red-source.py:6-13; revision-12/REPORT.md:77-79",
+      "summary": "The sealed base replay's real-birth/departure fail at construction on unsupported admit=, not at RSS behavior.",
+      "reproduction": "exact-red-supplied.command.json",
+      "independentCompatibleReplay": "exact-red-compatible.command.json"
+    }
+  ],
+  "suppliedControlsPassed": 142,
+  "breakdown": {
+    "new": 54,
+    "retained": 66,
+    "admission": 22
+  },
+  "priorBroadsRerun": false,
+  "compatibleExactBaseFailuresReproduced": 4,
+  "negativeControl": 1,
+  "harmlessChildrenExitedAndAbsent": 7,
+  "protectedPriorRows": 1368,
+  "retainedAttempt2Rows": 50,
+  "manifestRows": 1433,
+  "prospectiveAbsent": 11,
+  "runtimeAuthorization": false,
+  "nativeFixtureAuthorization": true,
+  "currentCapacityAdmission": false,
+  "launchAuthorized": false,
+  "requiredReserveBytes": 22066626560,
+  "rssBytes": 8589934592,
+  "native189Qualification": false,
+  "nativeProcesses": 0,
+  "originalCleanupActions": 0,
+  "sourceOrDependenciesChanged": false,
+  "historicalAttempts": "BOTH_FAILED_SPENT_HOLD_PRESERVED",
+  "historicalFullSnapshot": "FAILED_THREE_PNPM_TASK_STATE_DEVIATIONS_RETAINED",
+  "report": "/private/tmp/t02-independent-c2-r12-hsKJ8v8Q/REPORT.md",
+  "limitations": [
+    "Native ownership and physical release untested",
+    "No full189 or visuals",
+    "Inert lifecycle ports and explicitly synthetic new-member RSS in replay",
+    "No current capacity admission",
+    "Earlier broad/ACK/library evidence reused only by exact hash"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "verdict": "REVISE",
+  "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+  "qualification": "SOURCE_CPU_ONLY",
+  "source": {
+    "head": "ec5221197dafd5acb2cb90b356d878e2360cd386",
+    "tree": "39428cfbdcd94e0739aa9ba368610a726959e0de",
+    "clean": true
+  },
+  "readinessSha256": "6c8308cdc601652b22b4256a9e94c703d58c05dfd4782d0c662aec2d04e908a0",
+  "findings": [
+    {
+      "id": "C2-WRITERS-1",
+      "severity": "P2",
+      "verdict": "REVISE",
+      "path": "packages/tools/src/capture/effects_packet/live_cache.py",
+      "line": 87,
+      "relatedLines": [
+        36,
+        44,
+        114,
+        122,
+        124
+      ],
+      "title": "Retry can accept a replaced required root as an empty sample",
+      "reproducers": [
+        "root-replacement-enoent.py",
+        "root-replacement-wait.py"
+      ],
+      "observed": "Owned child renames private TMP, removes the enumerated volatile child in the old root, creates a new same-UID empty TMP root. Actual stat fails ENOENT. Second attempt succeeds with a different root inode; budgets.complete=true, privateTmpNonprofileBytes=0; actual helper wait returns completed.",
+      "remedy": "Pin the first acquired root identity and ancestor route identities across every retry. Reacquire and compare them before accepting a replacement traversal; a missing or changed required anchor must refuse. Preserve ephemeral child churn and original partial evidence; do not use mutable mtime/size as the live anchor identity."
+    }
+  ],
+  "report": "/private/tmp/p1-e07-t14-writers-independent-tvcw5utk/APPENDIX-C2.md",
+  "readyForParentVerificationOnly": true,
+  "nativeGrantIssued": false,
+  "nativeAcceptance": false,
+  "visualAcceptance": false,
+  "wholeTaskAcceptance": false,
+  "freshReviewRequiredAfterCorrection": true,
+  "reportSha256": "f63be429ca17cb20d973c42572638de931b027360ec5d1d97cfe9cb52a54e6c1"
+}

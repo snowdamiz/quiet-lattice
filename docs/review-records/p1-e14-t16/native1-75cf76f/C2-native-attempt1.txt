@@ -1,0 +1,131 @@
+TASK: P1.E14.T16 — Preserve exact colour masks through stock export (deps T12).
+
+STATUS: INCOMPLETE. One admitted native attempt executed and failed at the fixture's Node import, before compression/GLTFLoader. The concrete fixture correction is committed and passes its pure CPU regression. Resource ownership is released. A fresh parent allocation is required before another native attempt. This is a source checkpoint plus partial boundary evidence, not task acceptance.
+
+SUMMARY:
+The production fix from 75cf76f now has actual saved-source/raw-export evidence: creatures and flora each preserve all 5,856 compared Float32 RGBA channel values across 488 triangles, 16 material primitives, POINT/CORNER variants and four LODs. Position, normal, UV, _LIMB, _PIVOT and _GLOW are included in the same oriented triangle comparison against the reopened .blend oracle. The unadapted raw RED and quantizing props control retain normalized UINT16 COLOR_0. Stock raw export validation passes, and five incompatible format controls are rejected for each exact family.
+The attempted Node stage failed before the consumer body at shared/src/world/sites.ts:309: ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX (parameter property unsupported in strip-only mode). No compression, GLTFLoader decoding, maskColors/recolor or final compressed stock validation ran. The corrected task-local resolver uses the already installed TypeScript compiler in memory and preserves source/dependency routing. Its real sites.ts import regression fails under the retained old resolver and passes with the correction. No second native or codec attempt was made.
+
+FILES:
+This follow-up commit changes only:
+- packages/tools/blender/exact_mask/dependencies.mjs — transform .ts in memory with the explicit existing dependency checkout's compiler.
+- packages/tools/blender/exact_mask/dependencies.test.mjs — bounded pure CPU regression importing the actual module that failed.
+- packages/tools/blender/exact_mask/README.md — loader, supervision and partial-result documentation.
+- packages/tools/blender/exact_mask/native-attempt1.json — new attempt evidence, not a change to the prior source receipt.
+The follow-up is 99 insertions and 2 deletions across four files. Production export/validator/adapter and the native fixture/consumer remain byte-identical to the admitted 75cf76f checkpoint. The original production patch remains confined to artlib/export.py, artlib/exact_masks.py and artlib/checks.py. Full cumulative file inventory and rationale are in the first C2 report. No assets, art manifests, installed backend files, shared dependencies, plan/progress/decisions, renderer/gameplay/capture code, parent or other art worktrees were edited. No push, PR, merge, grants or nested agents.
+
+VERIFY:
+Provenance:
+CWD /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187
+Branch task/P1-E14-T16-exact-masks
+Base HEAD 3888f189b16bd9ce70d914eebce3260750ca475d
+Base tree 00909cfc9b45153e3e18eefbca3227b3b00a30b5
+Native tested HEAD 75cf76fd9581d492bdf81de7c385ccd84ecc5eb9
+Native tested tree 381e5246f1559971441f589e2d7f43265688ca03
+Corrected source HEAD 2156fe66bb596f5604a26e4eea9fc88ed0a712c8
+Corrected source tree eb49d23813f0105293b546cfd965b33acebd18cd
+Final status --porcelain=v1 --untracked-files=all --ignored=matching: empty.
+Cumulative patch SHA256 49494fd23372caffb41d34a6b71dddb7183452777bf6f5652b0d37c952e95914
+Follow-up patch SHA256 68778c9fa7b7e170f2590251402bb7bc027d5a3ad4c6b20f84a6d37a4a79318e
+
+Admission:
+/private/tmp/space-t16-cpu-admission-kwodc911/admission.json
+SHA256 f49e4dda3a24c93f6750b0e02c21cf154e0efd07042008a1c6828c1afaeafdd7
+Slot parent:t16-tiny-mask-75cf76f-20261107
+Limits 300 seconds TOTAL native-stage wall; 4 GiB sampled aggregate RSS; 256 MiB new scratch; 8 GiB free floor; Blender 2 threads; NumPy and codec at most 1; serial stages. Node v26.12.1, Blender 5.2.3 LTS e13b728c6880 (2026-10-22), Python /opt/homebrew/bin/python3 (3.14.8), existing TypeScript 6.0.3. No installs.
+
+Supervision (outside the source checkout):
+The shell launcher alone had no bounded ownership. The attempt used the retained T13 StationJob kernel-coalition ownership helper unchanged, plus a small local guard based on the existing process-group termination pattern. The independent controller acquired slot.lock before producer dispatch. The launchd-owned root was confirmed with PID birth identity and coalition before the go signal. A second guard acquired guard.lock and recorded ownership before spawning Bash in a new session. Guards observed output/scratch, free space and RSS every approximately 0.1 seconds. The inner deadline was 280 seconds with five seconds reserved for cleanup; outer wait 285 seconds plus bounded drain/unload fit the 300-second grant. RLIMIT_FSIZE was 64 MiB per file. Failed/error/cancel paths terminate and reap known children, verify the group/kernel coalition empty, then release ownership. No native retry loop exists.
+Frozen helper hashes: round4_job_boundary.py 3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c; round4_capture_children.py e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07.
+Local guard hash 68bc8172d5be46330e1c56413ffaac5ba037d8cd887fc1f114d83f9b0be26834.
+Exact pure CPU guard-control command:
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native1-tkcyk12j/guard_controls.py
+Exit 0; seven controls: success, producer exit 7, wall, RSS, scratch, free floor, SIGTERM cancellation. Every control reached terminal state and its lock was reacquired. These controls do not qualify Blender or codec behavior.
+
+Exact native command (once):
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native1-tkcyk12j/controller.py > /private/tmp/space-e14t16-native1-tkcyk12j/controller.stdout 2> /private/tmp/space-e14t16-native1-tkcyk12j/controller.stderr
+Exit 1. Controller pins/asserts clean 75cf76f and a fresh absent boundary directory before launch.
+Expanded producer command:
+/bin/bash /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/run_boundary.sh /private/tmp/space-e14t16-native1-tkcyk12j/boundary
+EXACT_MASK_NODE=/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node
+EXACT_MASK_DEPS=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+NODE_OPTIONS empty; NODE_DISABLE_COMPILE_CACHE=1; PYTHONDONTWRITEBYTECODE=1; UV_THREADPOOL_SIZE, OMP_NUM_THREADS, OPENBLAS_NUM_THREADS, MKL_NUM_THREADS, VECLIB_MAXIMUM_THREADS all 1. Full environment and argv retained in native-config.json.
+
+Stage 1:
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/fixture.py -- export /private/tmp/space-e14t16-native1-tkcyk12j/boundary/fixture
+Exit 0 (set -e launcher advanced to Node); 01-export.log retains three stock PASS results and normal Blender quit. Saved/reopened source SHA256 9987ceb7b0f7659b2a90e3bcf24f0ce1ffa826795a1e35cb7d1fff9b640c5188. Eight mesh objects, five negative formats per exact family (normalized UINT16, normalized UINT8, non-normalized UINT16, normalized FLOAT, FLOAT/VEC3). No native source fixture failure was observed.
+
+Stage 2:
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --import /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/dependencies.mjs /Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/consumer.mjs /private/tmp/space-e14t16-native1-tkcyk12j/boundary/fixture
+Exit 1, before consumer body:
+SyntaxError [ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]: TypeScript parameter property is not supported in strip-only mode
+file:///Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/shared/src/world/sites.ts:309
+readonly R: number
+No codec encode or actual loader/consumer assertion was reached. Stage 3 (fixture.py validate), result.txt and consumer success evidence were not produced.
+
+Read-only raw GLB check (no codec):
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native1-tkcyk12j/inspect_raw.py
+Exit 0. Real binary accessors are read with their offsets/strides; material-specific oriented triangle multisets compare against source.json. Creatures/flora: 16 FLOAT/VEC4/non-normalized primitives each, 488 exact triangles and 5,856 RGBA channels each. Props and stock-red: 16 UINT16/VEC4/normalized primitives each. This is raw-export evidence only, not GLTFLoader or compressed equivalence. raw-analysis.json and final-check-3.log retain the counts.
+
+Pure CPU fixture correction RED:
+EXACT_MASK_DEPS=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node packages/tools/blender/exact_mask/dependencies.test.mjs /private/tmp/space-e14t16-native1-tkcyk12j/baseline-dependencies.mjs
+Exit 1, expected: the actual sites.ts import reproduces the identical unsupported parameter-property failure. Baseline loader is the retained git-show 75cf76f source. final-dependencies-red.log retained.
+Pure CPU fixture correction GREEN:
+EXACT_MASK_DEPS=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node packages/tools/blender/exact_mask/dependencies.test.mjs
+Exit 0: PASS: source sites.ts imports through the exact-mask resolver without strip-only failure.
+Only the pure shared world module graph is imported; no Engine, GLTFLoader, meshopt, Blender, renderer or service. The exact same test is used for the final RED and GREEN. An earlier RED run had an unreachable incorrect denCounts expected object, corrected to the actual API before the final RED/GREEN pair; it never passed or exercised native work. Both RED logs are preserved. Node 26.12.1 help showed no transform-types option, so the fix uses the already installed compiler rather than a nonexistent flag.
+
+Further exact checks (all exit 0):
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --check packages/tools/blender/exact_mask/dependencies.mjs
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --check packages/tools/blender/exact_mask/dependencies.test.mjs
+git diff --check
+git diff --cached --check
+git commit -m 'P1.E14.T16: transpile TypeScript in exact-mask launcher'
+git rev-parse HEAD HEAD^{tree}
+git branch --show-current
+git status --porcelain=v1 --untracked-files=all --ignored=matching
+git diff 3888f189b16bd9ce70d914eebce3260750ca475d..HEAD --check
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native1-tkcyk12j/snapshot.py after-correction.json
+/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native1-tkcyk12j/final_audit.py
+Original 15/15 real installed Python packer/accessor tests passed at 75cf76f (original expected RED exit 1). Production source is unchanged since that run. The earlier C2 report contains the exact commands and logs; these were not relabeled as full pipeline regressions or rerun as native validation.
+
+Observed resources/release:
+Controller native wall 2.485908041 seconds; inner producer/guard wall 2.198084334 seconds. Peak sampled aggregate coalition RSS 324,845,568 bytes (about 310 MiB); peak sampled producer-group RSS 280,363,008 bytes. Minimum sampled free 50,287,730,688 bytes. Sampled cumulative per-inode scratch high water 6,302,982 bytes. Accounting is sampled and may miss transient deleted writes; it is not a proof of every byte written. Final retained evidence, including three dependency snapshots and reports/patches before this report, totaled 14,190,839 bytes. All well below the grant; no limit triggered.
+Bash producer PID/PGID 41680 was reaped; remainingGroup empty. Root PID 41671, coalition 43448; drain reports no errors and kernel coalition absent/live 0. capture exit 1, caffeinate exit 0. launchctl bootout exit 3 because the job had already gone; print exit 113 explicitly reports the named service absent. Initial release-audit and final audit (2026-11-07T12:12:43.697254Z) both confirm no retained PID birth identities, no coalition members, both slot.lock and guard.lock reacquired/released, and registration absent. Final free 50,745,217,024 bytes. No cleanup hold remains.
+
+Preservation:
+before.json and after.json around the native attempt are identical (cmp exit 0): 17,319 dependency lstat entries across explicit parent root/tools/client node_modules, 141 source/backend hashes, empty worktree and ignored status. after-correction.json shows the same 17,319 dependency entries and changes only the four intended task-local files; installed backend and all production/manifest/lock hashes unchanged. Final ignored/untracked status empty. Snapshot scope is explicit; this is not a whole-machine mutation audit. No dependency links, package installs, bytecode/compile cache writes or production asset regeneration occurred. Previous source receipt and RED remain intact.
+
+DECISIONS:
+1. Stop after the first admitted failure and release the lane; the resource grant permits no autonomous native retry. The failing module import is corrected and tested with pure CPU work only.
+2. Keep the source-selected Node 26.12.1 and explicit read-only parent dependencies. Use the existing TypeScript compiler in a task-local loader hook; do not modify the shared parameter-property source to accommodate this fixture.
+3. Keep the production first-lossy-boundary adapter unchanged. Raw real exports now support its source mapping. The missing codec/GLTFLoader evidence cannot be replaced by the custom raw binary reader or the earlier unit tests.
+4. Retain source .blend, unadapted raw RED, all negative/control GLBs, reports, guard logs and ownership records in the exclusive scratch directory. No cleanup or screenshot deletion.
+
+OUTOFSCOPE:
+Still pending: corrected actual stock compression and Engine.gltfLoader decoding; exact masks and alpha-occlusion consumer assertions; compressed stock format validation; existing meshopt.test.ts, focused Blender pipeline and material-mask regressions; independent review (parent-owned, no nested reviewers here); parent integration checks on the final combined head. No broad pipeline sweep, GPU, browser, render, bake, KTX2, services, production-class/skin/morph or real-asset adoption was attempted under this tiny grant. The reviewed 515ba1f material logic remains unchanged.
+Affected families remain creatures and flora only (existing colorMask + nonquantizing geometry contract). The retained candidate audit from the initial checkpoint remains the adoption inventory, not a new current-owner status claim:
+- E08.T08 f9294a466d6223f695f102dc1a13ed526f155e67: biped/flyer/quad_grazer/quad_heavy/quad_small, 34 variants and 136 primitive/LOD selections, all normalized UINT16. Owners must re-export after separate capacity admission; owner stage.py/finalize.py changes remain untouched. Constructs outpost_drone/outpost_overseer have no masks.
+- T04 70f8a164614ad9cf370e448a081603bfc4fa1cf4: tree_blob_t04/tree_cactus_t04/tree_conifer_t04/tree_coral_t04/tree_mushroom_t04/tree_palm_t04/tree_round_t04/tree_spiral_t04, 76 primitive/LOD selections, already FLOAT/VEC4 via local source-float carriers/promote_masks.mjs. Header compatibility alone is not source-value proof.
+- T05 a46e7c4d444befd6efe6e06b9134b3a41abcb639: non_tree_foliage/non_tree_resources/non_tree_stone, 124 primitive/LOD selections, already FLOAT/VEC4 via write_exact carriers. Existing two-argument _write wrapper stays compatible; owners decide later adoption/retirement.
+- Legacy root creatures.glb/flora.glb use normalized UINT16 and fail the new exact format contract. T06/future exports inherit it; no retained T06 candidate was identified in the initial inventory. No silent exemptions, family/budget widening or mass regeneration.
+
+Exact pending small-resource request:
+A NEW parent receipt for clean 2156fe66bb596f5604a26e4eea9fc88ed0a712c8, tree eb49d23813f0105293b546cfd965b33acebd18cd; one serial <=300-second total native slot, <=4 GiB sampled aggregate RSS, <=256 MiB cumulative new scratch, >=8 GiB free, Blender 2 threads/NumPy 1/codec at most 1, fresh absent scratch, independent ownership/supervision before dispatch and proven drain before lock release. Same two Blender invocations around four tiny serial meshopt encodes and actual GLTFLoader/consumer. No GPU/bake/assets and no automatic retries. The old controller deliberately pins 75cf76f and consumed scratch and must not be reused unchanged; a fresh supervisor receipt/root must pin the corrected commit. No new grant is assumed by this report.
+
+ARTIFACTS:
+Primary report /private/tmp/space-e14t16-native1-tkcyk12j/C2-native-attempt1.txt
+Native failure /private/tmp/space-e14t16-native1-tkcyk12j/boundary/02-consumer.log
+Export log /private/tmp/space-e14t16-native1-tkcyk12j/boundary/01-export.log
+Saved source and oracle /private/tmp/space-e14t16-native1-tkcyk12j/boundary/fixture/{fixture.blend,source.json,export-result.json}
+Raw baseline and exact/control GLBs /private/tmp/space-e14t16-native1-tkcyk12j/boundary/fixture/
+Raw inspection /private/tmp/space-e14t16-native1-tkcyk12j/{inspect_raw.py,raw-analysis.json}
+Ownership/resource evidence /private/tmp/space-e14t16-native1-tkcyk12j/{slot-owned-before-dispatch.json,native-config.json,guard-controls.json,controller-terminal.json,guard/terminal.json,owned-job/boundary.json,release-audit.json,final-release-and-pin.json}
+Supervisor/control source /private/tmp/space-e14t16-native1-tkcyk12j/{controller.py,guard.py,guard_controls.py,final_audit.py}
+Correction RED/GREEN /private/tmp/space-e14t16-native1-tkcyk12j/{baseline-dependencies.mjs,final-dependencies-red.log,dependencies-green.log}
+Snapshots/checks /private/tmp/space-e14t16-native1-tkcyk12j/{before.json,after.json,after-correction.json,final-checks.json}
+Patches /private/tmp/space-e14t16-native1-tkcyk12j/{fixture-correction.patch,complete-source.patch}
+Earlier source C2 /tmp/space-e14t16-source-2wuGqU/C2-source-checkpoint.txt
+Earlier source evidence /tmp/space-e14t16-source-2wuGqU/{red-packing.log,final-cpu.log,affected-candidates.json,legacy-audit.json,source-checkpoint.patch}
+Committed receipt packages/tools/blender/exact_mask/native-attempt1.json
+Original source receipt packages/tools/blender/exact_mask/source-evidence.json (unchanged)

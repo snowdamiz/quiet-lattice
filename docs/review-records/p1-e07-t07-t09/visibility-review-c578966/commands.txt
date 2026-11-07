@@ -1,0 +1,245 @@
+Exact verification commands; full raw outputs are the referenced log files.
+Common environment: {"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-source-review-c5789666-gseoebo8/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8/pw-cache", "PYTHONDONTWRITEBYTECODE": "1", "TEMP": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8/tmp", "TMP": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8/tmp", "TMPDIR": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8/cache"}
+Each command cwd: /private/tmp/symbiotic-source-review-c5789666-gseoebo8
+
+focused-cpu | exit=0 | seconds=6.379184 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/cpu.config.mjs --configLoader=runner --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/focused-cpu.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/focused-cpu.log
+
+protected-before | exit=0 | seconds=35.993326 | timeout=False
+/usr/bin/python3 /private/tmp/symbiotic-source-review-c5789666-gseoebo8/audit.py before
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/protected-before.log
+
+assertion-preservation | exit=0 | seconds=0.190677 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/assertions.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/assertion-preservation.log
+
+build-review | exit=0 | seconds=0.147924 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review.log
+
+review-controls-initial | exit=1 | seconds=1.188751 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/review-controls-initial.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/review-controls-initial.log
+FAILURE LAST 20 LINES:
+- true
++ false
+
+ ❯ review.test.ts:345:57
+    343|     }
+    344|     console.log('REAL_COMBAT',JSON.stringify(out));
+    345|     expect(out.views.every((v:any)=>v.result==='PASS')).toBe(true);
+       |                                                         ^
+    346|   }finally{s.close();}
+    347| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  07:03:55
+   Duration  959ms (transform 44%, import 34%, tests 22%)
+
+JSON report written to /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review-controls-initial.json
+
+producer-base-red | exit=1 | seconds=0.189518 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/capture-boundary.mjs /private/tmp/symbiotic-visibility-da532383-y1y_tk7x/base/packages/tools/src/smoke/symbiotic-online.spec.ts
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/producer-base-red.log
+FAILURE LAST 20 LINES:
+{
+  "file": "/private/tmp/symbiotic-visibility-da532383-y1y_tk7x/base/packages/tools/src/smoke/symbiotic-online.spec.ts",
+  "sourceSha256": "e0e93db3515ea2362d85a24942ecf3e4b2abebb24ed3e60a78411c114b234ab1",
+  "node": "v22.23.3",
+  "results": [
+    {
+      "name": "actual image producer attaches bytes and client/entity/tick/camera bindings for both clients",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n\n0 !== 2\n"
+    },
+    {
+      "name": "actual pre-disconnect call captures the same surviving observer identity as post-disconnect",
+      "status": "FAIL",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'before-disconnect-owner'\n- 'before-disconnect-observer'\n                      ^\n"
+    }
+  ],
+  "limit": "CPU actual source calls with inert screenshot/metadata ports; not native evidence"
+}
+
+producer-current-green | exit=0 | seconds=0.194073 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/capture-boundary.mjs /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/producer-current-green.log
+
+build-review-expanded | exit=0 | seconds=0.140444 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review-expanded.log
+
+retirement-interval-control | exit=0 | seconds=0.697816 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --testNamePattern post-retirement --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/retirement-interval-control.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/retirement-interval-control.log
+
+build-review-debug | exit=0 | seconds=0.142096 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review-debug.log
+
+retirement-interval-debug | exit=0 | seconds=0.583049 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --testNamePattern post-retirement --reporter=default
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/retirement-interval-debug.log
+
+build-review-v2 | exit=0 | seconds=0.141801 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review-v2.log
+
+retirement-interval-v2 | exit=1 | seconds=0.597149 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --testNamePattern post-retirement --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/retirement-interval-v2.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/retirement-interval-v2.log
+FAILURE LAST 20 LINES:
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ review.test.ts:376:178
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  07:06:29
+   Duration  479ms (import 63%, transform 23%, tests 13%)
+
+JSON report written to /private/tmp/symbiotic-source-review-c5789666-gseoebo8/retirement-interval-v2.json
+
+build-review-v3 | exit=0 | seconds=0.136051 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review-v3.log
+
+retirement-interval-v3 | exit=1 | seconds=0.591228 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --testNamePattern post-retirement --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/retirement-interval-v3.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/retirement-interval-v3.log
+FAILURE LAST 20 LINES:
+   ↓ real hostile combat with 0.5s post-hit scheduler delay
+   ↓ real hostile combat with 1s post-hit scheduler delay
+   × post-retirement caller rejects a target that dies during its PNG interval 54ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  review.test.ts > post-retirement caller rejects a target that dies during its PNG interval
+AssertionError: expected undefined to be defined
+ ❯ review.test.ts:376:238
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  07:06:55
+   Duration  424ms (import 64%, transform 22%, tests 14%)
+
+JSON report written to /private/tmp/symbiotic-source-review-c5789666-gseoebo8/retirement-interval-v3.json
+
+build-review-final | exit=0 | seconds=0.13551 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review-final.log
+
+independent-controls-final | exit=1 | seconds=0.871483 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/independent-controls-final.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/independent-controls-final.log
+FAILURE LAST 20 LINES:
+   × post-retirement capture interval fault: during 8ms
+   ✓ post-retirement capture interval fault: camera 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  review.test.ts > post-retirement capture interval fault: before
+ FAIL  review.test.ts > post-retirement capture interval fault: during
+AssertionError: expected undefined to be defined
+ ❯ review.test.ts:377:292
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  07:07:54
+   Duration  704ms (import 44%, tests 35%, transform 21%)
+
+JSON report written to /private/tmp/symbiotic-source-review-c5789666-gseoebo8/independent-controls-final.json
+
+protected-after | exit=0 | seconds=35.732105 | timeout=False
+/usr/bin/python3 /private/tmp/symbiotic-source-review-c5789666-gseoebo8/audit.py after
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/protected-after.log
+
+build-review-qualified | exit=0 | seconds=0.140789 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review-qualified.log
+
+independent-controls-qualified | exit=1 | seconds=0.78767 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/independent-controls-qualified.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/independent-controls-qualified.log
+FAILURE LAST 20 LINES:
+- true
++ false
+
+ ❯ review.test.ts:360:138
+    358|   w.step();for(let i=0;i<400&&w.zone.entity(enemy)!.fields.hp===1;i++)…
+    359|   expect(w.zone.entity(enemy)!.fields.hp).toBeGreaterThan(0);expect(w.…
+    360|   expect(w.events.some(m=>m.t==='event'&&m.event.kind==='combat'&&m.ev…
+       |                                                                                                                                          ^
+    361|   const release={tick:w.zone.tick};
+    362|   const before=await view(s),observerBefore={before,after:before};
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 6 passed (10)
+   Start at  07:10:15
+   Duration  625ms (import 44%, tests 39%, transform 17%)
+
+JSON report written to /private/tmp/symbiotic-source-review-c5789666-gseoebo8/independent-controls-qualified.json
+
+build-review-qualified-final | exit=0 | seconds=0.137734 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-source-review-c5789666-gseoebo8/build-review.mjs
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/build-review-qualified-final.log
+
+independent-controls-qualified-final | exit=1 | seconds=0.712908 | timeout=False
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-source-review-c5789666-gseoebo8/review.config.mjs --configLoader=runner --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/independent-controls-qualified-final.json
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/independent-controls-qualified-final.log
+FAILURE LAST 20 LINES:
+   × post-retirement capture interval fault: during 12ms
+   ✓ post-retirement capture interval fault: camera 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  review.test.ts > post-retirement capture interval fault: before
+ FAIL  review.test.ts > post-retirement capture interval fault: during
+AssertionError: expected undefined to be defined
+ ❯ review.test.ts:380:292
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  07:10:48
+   Duration  602ms (import 44%, tests 41%, transform 15%)
+
+JSON report written to /private/tmp/symbiotic-source-review-c5789666-gseoebo8/independent-controls-qualified-final.json
+
+final-metadata | exit=0 | seconds=2.792431 | timeout=False
+/usr/bin/python3 /private/tmp/symbiotic-source-review-c5789666-gseoebo8/final-metadata.py
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/final-metadata.log
+
+protected-final | exit=0 | seconds=34.684709 | timeout=False
+/usr/bin/python3 /private/tmp/symbiotic-source-review-c5789666-gseoebo8/audit.py after
+raw=/private/tmp/symbiotic-source-review-c5789666-gseoebo8/logs/protected-final.log
+

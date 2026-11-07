@@ -1,0 +1,152 @@
+diff --git a/packages/tools/blender/exact_mask/README.md b/packages/tools/blender/exact_mask/README.md
+index 52695a705..9db537e8a 100644
+--- a/packages/tools/blender/exact_mask/README.md
++++ b/packages/tools/blender/exact_mask/README.md
+@@ -29,6 +29,20 @@ point is skipped; Accessor, BinaryData and packing code are real installed modul
+ These tests prove packing, restoration, family scope and JSON format validation.
+ They do not prove source mesh extraction, material/loop mapping or compression.
+ 
++The fixture's Node resolver has a separate pure CPU import regression:
++
++```sh
++EXACT_MASK_DEPS=/absolute/existing/dependency-checkout \
++  /absolute/pinned/node packages/tools/blender/exact_mask/dependencies.test.mjs
++```
++
++This imports the actual shared `sites.ts` module that contains parameter
++properties. Node 26.12.1 cannot execute those in strip-only mode. The resolver
++transpiles TypeScript in memory with the explicitly selected checkout's installed
++compiler; it writes no compiled files or dependency cache. The test does not load
++the consumer, Blender or meshopt. An optional positional loader path lets the
++same test demonstrate the old resolver's failure.
++
+ ## Deferred real boundary (requires parent resource assignment)
+ 
+ ```sh
+@@ -43,6 +57,9 @@ The dependency resolver uses the task checkout's source and an explicit existing
+ checkout's dependencies without creating `node_modules` links. Run serially in
+ the assigned lane (Blender at two threads, NumPy at one), with <=256 MiB scratch.
+ Snapshot dependency/ignored state before and after execution, as for CPU checks.
++The shell script does not own supervision: the parent must supply an independent
++bounded supervisor before dispatch and hold the lane until all children are
++proven terminated. A failed native attempt requires a new capacity assignment.
+ 
+ `fixture.py export` saves and reopens a small real `.blend`, records every saved
+ Float32 triangle corner, then retains the unadapted raw RED and runs stock
+@@ -69,6 +86,15 @@ independent review and parent integration remain separate gates. KTX2/baking,
+ full production-class geometry, skinned/morph export and visual equivalence are
+ outside the tiny fixture; the existing pipeline regressions cover those paths.
+ 
++The first admitted attempt at source `75cf76f` completed the saved-source exports
++and five format negatives for both exact families, then failed at Node's
++parameter-property import before compression or GLTFLoader ran. Read-only raw
++GLB analysis matched each exact family's 488 triangles (5,856 RGBA channel values)
++to the reopened source across both variants, four LODs and two materials. Props
++and the unadapted RED retained normalized UINT16. The resolver correction passes
++the pure CPU regression above; the actual consumer remains pending a new grant.
++See `native-attempt1.json` for the retained evidence and resource-release record.
++
+ ## Retained asset adoption
+ 
+ Read-only header audit at the source checkpoint:
+diff --git a/packages/tools/blender/exact_mask/dependencies.mjs b/packages/tools/blender/exact_mask/dependencies.mjs
+index f0e744631..b3845b534 100644
+--- a/packages/tools/blender/exact_mask/dependencies.mjs
++++ b/packages/tools/blender/exact_mask/dependencies.mjs
+@@ -1,11 +1,28 @@
+ // Read dependencies from an explicit existing checkout; never install or create node_modules.
+-import { registerHooks } from 'node:module';
+-import { pathToFileURL } from 'node:url';
++import { createRequire, registerHooks } from 'node:module';
++import { fileURLToPath, pathToFileURL } from 'node:url';
+ import { resolve } from 'node:path';
+ 
+ const deps = process.env.EXACT_MASK_DEPS;
+ if (!deps) throw new Error('EXACT_MASK_DEPS must name an existing dependency checkout');
++const ts = createRequire(pathToFileURL(resolve(deps, 'package.json')))('typescript');
+ registerHooks({
++  load(url, context, nextLoad) {
++    const loaded = nextLoad(url, context);
++    if (!url.startsWith('file:') || !url.endsWith('.ts')) return loaded;
++    // Engine reaches parameter properties in shared/world/sites.ts. Node's native
++    // strip-only loader cannot execute them; use the already installed compiler.
++    const { outputText, diagnostics } = ts.transpileModule(Buffer.from(loaded.source).toString(), {
++      fileName: fileURLToPath(url),
++      compilerOptions: { target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.ESNext },
++      reportDiagnostics: true,
++    });
++    const errors = diagnostics.filter((d) => d.category === ts.DiagnosticCategory.Error);
++    if (errors.length) throw new Error(ts.formatDiagnostics(errors, {
++      getCanonicalFileName: (name) => name, getCurrentDirectory: () => process.cwd(), getNewLine: () => '\n',
++    }));
++    return { ...loaded, format: 'module', source: outputText };
++  },
+   resolve(specifier, context, nextResolve) {
+     if (specifier === '@astra/shared' || specifier.startsWith('@astra/shared/')) {
+       const suffix = specifier.slice('@astra/shared'.length);
+diff --git a/packages/tools/blender/exact_mask/dependencies.test.mjs b/packages/tools/blender/exact_mask/dependencies.test.mjs
+new file mode 100644
+index 000000000..73aa393bd
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/dependencies.test.mjs
+@@ -0,0 +1,17 @@
++// Pure CPU import regression for the actual parameter-property module reached by Engine.
++// No Blender, meshopt, GLTFLoader, renderer, service or generated asset.
++import assert from 'node:assert/strict';
++import { spawnSync } from 'node:child_process';
++
++const loader = process.argv[2] ?? new URL('./dependencies.mjs', import.meta.url).pathname;
++const sites = new URL('../../../shared/src/world/sites.ts', import.meta.url).href;
++const child = spawnSync(process.execPath, ['--import', loader, '--input-type=module', '--eval', `
++  import assert from 'node:assert/strict';
++  const sites = await import(${JSON.stringify(sites)});
++  assert.deepEqual(sites.SITE_TYPES, ['outpost', 'monolith', 'crash', 'beacon']);
++  assert.equal(sites.FOOTPRINT.outpost, 16.5);
++  assert.deepEqual(sites.denCounts(0, 1), { predator: 0, ambusher: 0, apex: 0 });
++`], { encoding: 'utf8', timeout: 15000, env: { ...process.env, NODE_DISABLE_COMPILE_CACHE: '1' } });
++assert.equal(child.error, undefined);
++assert.equal(child.status, 0, child.stderr);
++console.log('PASS: source sites.ts imports through the exact-mask resolver without strip-only failure');
+diff --git a/packages/tools/blender/exact_mask/native-attempt1.json b/packages/tools/blender/exact_mask/native-attempt1.json
+new file mode 100644
+index 000000000..47a3c9866
+--- /dev/null
++++ b/packages/tools/blender/exact_mask/native-attempt1.json
+@@ -0,0 +1,37 @@
++{
++  "task": "P1.E14.T16",
++  "status": "PARTIAL: native attempt failed before compression and GLTFLoader",
++  "tested_head": "75cf76fd9581d492bdf81de7c385ccd84ecc5eb9",
++  "tested_tree": "381e5246f1559971441f589e2d7f43265688ca03",
++  "admission": "/private/tmp/space-t16-cpu-admission-kwodc911/admission.json",
++  "slot": "parent:t16-tiny-mask-75cf76f-20261107",
++  "evidence": "/private/tmp/space-e14t16-native1-tkcyk12j",
++  "command": "/opt/homebrew/bin/python3 -B /private/tmp/space-e14t16-native1-tkcyk12j/controller.py",
++  "exit": 1,
++  "stages": {
++    "saved_source_export": "PASS: creatures/flora/props raw stock exports, five format negatives for each exact family",
++    "raw_analysis": "PASS: each exact family matches 488 triangles and 5856 RGBA channel values across POINT/CORNER, four LODs and two materials",
++    "node": "FAIL: ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX, shared/src/world/sites.ts:309 parameter property, before consumer body",
++    "compression": "NOT RUN",
++    "GLTFLoader_and_consumer": "NOT RUN",
++    "compressed_stock_validation": "NOT RUN"
++  },
++  "source_sha256": "9987ceb7b0f7659b2a90e3bcf24f0ce1ffa826795a1e35cb7d1fff9b640c5188",
++  "resource_observations": {
++    "controller_wall_seconds": 2.4859080410096794,
++    "peak_sampled_coalition_rss_bytes": 324845568,
++    "sampled_scratch_inode_high_water_bytes": 6302982,
++    "minimum_sampled_free_bytes": 50287730688,
++    "scratch_limitations": "Sampled per-inode high-water accounting can miss transient deleted writes; 64 MiB per-file RLIMIT_FSIZE also applied."
++  },
++  "release": {
++    "producer_reaped": true,
++    "kernel_coalition_absent": true,
++    "remaining_known_identities": 0,
++    "launchctl_registration_absent": true,
++    "slot_and_guard_locks_reacquired": true
++  },
++  "preservation": "Before/after native snapshots identical: 17319 dependency entries, 141 file hashes, empty worktree/ignored status. No asset adoption or regeneration.",
++  "correction": "Fixture resolver transpiles TypeScript in memory using the explicit dependency checkout's installed compiler. Same pure CPU sites.ts import regression fails with the retained old resolver (exit 1) and passes with the correction (exit 0).",
++  "pending": "Fresh parent capacity assignment for corrected native launcher; focused pipeline regressions; independent review; parent integration. No native retry was made."
++}

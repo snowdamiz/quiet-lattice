@@ -1,0 +1,51 @@
+{
+  "accepted": false,
+  "released": true,
+  "failure": null,
+  "peakCoalitionRss": 324845568,
+  "samples": 21,
+  "minimumFree": 50288533504,
+  "wait": "completed",
+  "guardExit": 1,
+  "cleanup": {
+    "scope": "CPU_CANDIDATE_BOUNDARY",
+    "exits": {
+      "capture": 1,
+      "caffeinate": 0
+    },
+    "errors": [],
+    "signals": [],
+    "drained": true,
+    "clean": true,
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "started": 3,
+      "exited": 2,
+      "live": 1
+    },
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "started": 47,
+      "exited": 46,
+      "live": 1
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "remaining": [],
+    "elapsed_cleanup_seconds": 0.07834016700508073
+  },
+  "registration": {
+    "target": "gui/501/local.stations.round4.4ed69b4feda742b0805149f77032cec7",
+    "bootoutExit": 3,
+    "printExit": 113,
+    "printStderr": "Bad request.\nCould not find service \"local.stations.round4.4ed69b4feda742b0805149f77032cec7\" in domain for user gui: 501\n"
+  },
+  "kernelTerminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "remaining": [],
+  "wallSeconds": 2.4859080410096794
+}
