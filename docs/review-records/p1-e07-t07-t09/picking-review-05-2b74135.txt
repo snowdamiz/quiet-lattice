@@ -1,0 +1,131 @@
+TASK: P1.E07.T07 / P1.E08.T09 two-client live QA fixture — independent R5 source/CPU review
+STATUS: DONE — PASS (SOURCE/CPU ONLY)
+SUMMARY: No blocking source finding in the exact observer sightline/evidence-order correction. The old fixture reproduces enemy35 winning over companion34 through real source; the corrected generated observer viewpoint selects companion34 while retaining both living animals. Failure evidence now survives every subsequent beforeRelease assertion. Existing input, ship ownership, retirement and cleanup corrections remain intact. This is not a native or art acceptance result and grants no launch authorization.
+
+EXACT PIN / SCOPE
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Branch: t3/P1-E07-T07-T09-live-qa
+HEAD: 2b74135bbd5ce91f550821c347798a3a5dacd014
+Tree: fb3dfea41c0667caf44bd50cd60d98567a5ef1ee
+Base: 9848d00486bd5e8fbaaf00cc7afc9a476fb7edcb
+Base tree: 6c474cf3e7568a4b331340ad1cc37a3cc6860953
+Source commit: ecfcbe0d7c5abddcfdfd5273f15c05e587d51ae0
+Source tree: 834fac62cf00cc2e8b7cbd9ab348bfd85b652700
+Fresh reviewer context; no worker transcript, nested subagent or Potato mode. Read plan 0.3, 0.9.5, Appendix C, T07 and fauna T09 task blocks, DESIGN 9.1/9.5/12.1/12.2/20.3, relevant source and prior R2/R3/R4 records, worker C.2/manifest, actual postrun failure/evidence and prospective final-pin instructions. T09 here is the plan's P1.E08.T09 fauna renderer, as established by the brief's behavior and reports.
+
+FILES CHANGED
+None in the worktree, dependencies, existing reports or previous packets. All new reviewer files are inside the exclusive mktemp directory /private/tmp/symbiotic-pick-r5-review-g763Fh. Reviewed source delta: symbiotic-online.spec.ts (observer offset and evidence ordering); symbiotic-private.test.ts (four appended CPU cases plus imports). All other changed paths are the author's new pick-fix evidence directory. No product bytes changed.
+
+FINDINGS / REAL SOURCE BOUNDARY
+No mandatory REVISE condition under 0.9.5 and no new substantive finding.
+
+Observer correction at packages/tools/src/smoke/symbiotic-online.spec.ts:325: actual ground callback now returns at(-24,-24,gearHeight), using the same broad dry patch and tangent basis. Independent replay executes the actual selectArena with real shared galaxy tiers, real Planet.surfaceRadius/terrain and generated callback. It still selects system31, seed1262081916, body7, frame1262081916:7, companion species0 and enemy species4. Both actual owner/observer ship placements retain SHIP_GEAR_HEIGHT. Real AdminCommand/resolvePlacement, Game.placeFromServer/handleInteractions/exitShip, Player.spawn and MovementAuthority accept both actual feet positions and preserve their parked ship. Missing/wrong-frame ownership, illegal height, and distant exit negatives still refuse. These controls use the real identity quaternion returned by placement, not a replacement upright pose.
+
+Picking controls execute actual Player.cameraState, the unchanged fixture aim function, RemoteEntities ingest/update and Fauna instancing/targets/pick, with shared creatureSphere. Both creature records and meshes remain present, living, and in the camera frame; aiming does not move either animal. CPU instance matrices agree with camera-relative positions and species-size scale. We independently compared all frozen rendered/wire positions, HP and species used by the controls with the retained native attachment.
+Historical observer/rendered sample: companion centre t=19.612561904m; enemy t=17.657990382m, perpendicular=0.881581908m inside radius2.035064956m. Real picker returns35. Corrected generated observer/rendered sample: companion t=23.987372008m, enemy t=25.945685869m; real picker returns34. Corrected wire sample: t=23.963776479m versus25.858793924m, also34. Both animals remain inside the candidate set. The picker is unchanged and still chooses the nearer animal; no filtering, retry, conditional acceptance or convenient-hit wait was introduced.
+Exact old git-show fixture executed against the new assertions: two historical occlusion controls PASS and two intended clear-companion positives FAIL35-vs34 (exit1). Current repository file: all four PASS inside the55-case fresh run (exit0). Geometry receipts record feet, camera, ray, both real spheres, frame identity, shown/drawn state and actual pick.
+
+Evidence correction at spec:481: inspect's returned beforeRelease is stored before drawn/HP/picked assertions. Independent CPU controls compile the actual pre-release statements, actual drawn function and actual test finally block, replacing only browser/attachment ports. Injected drawing, HP and picked failures all still throw and attach the exact returned object, earlier evidence, unfiltered errors and server output, then attempt both client closes. The exact old source loses beforeRelease in all three cases (three expected failures, exit1); new source passes3/3 (exit0). These are synthetic failure controls based on retained data, not fabricated native beforeRelease observations. An inspect failure before returning still has no returned object to preserve; this correction concerns subsequent assertion failures.
+
+NONWEAKENING / OLD FINDING DISPOSITIONS
+R1 retirement vacuity: FIXED in R2, preserved and freshly tested. spec:485-538 requires positive-HP identified foot observer, correct frame, a living selected enemy with real reduced HP, owner close followed by thaw, and a strictly newer joined observer snapshot. Owner/companion must disappear from authoritative entities; companion must also leave remotes, shown instances, targets and picks. Dead/missing enemy or observer and stale snapshots cannot satisfy it. Finally teardown is not retirement evidence.
+R1 cleanup error masking: FIXED in R2, preserved and freshly tested. online.ts:159 attempts Vite/server cleanup and owned-database cleanup, retains cleanup errors; :238 retains the original startup error first plus cleanup error. Borrowed database is not dropped. TERM/KILL/close timeout cases remain.
+R1 failed Vite.listen unowned handle: FIXED in R2, preserved and freshly tested. online.ts:209 assigns the Vite handle before :210 listen; failed listen is closed, with original failure retained.
+Prior invalid foot/board_range setup: FIXED and preserved; actual generated owner and new observer exit controls pass with owned parked ships.
+R3 ignored KeyF / later S input: FIXED in R4 and preserved. acquireInput at spec:41 brings each page forward, waits focus/playing state, clicks the real Resume control if unlocked, and requires enabled/locked input before both F sites and later owner S. Failed admission does not send input; finally key-up remains. Current55 tests rerun the actual UI/Input/Game consumer controls.
+Latest native pre-release pick failure: corrected at SOURCE/CPU scope only. Actual9848 run remains FAIL; genuine Bond, render/pick/follow and companion-attributed nonlethal damage were reached, retirement was not. The exact failing beforeRelease object is absent; the nearby retained combat samples support the diagnosis but do not recreate the missing snapshot.
+
+Normalize only the new offset/comment and evidence assignment order: the ENTIRE current live spec equals base9848 bytes. Base/normalized SHA25671490dd311bac1f4e80f5fc5014de09ec282eaa73e2eb1fdaeda2906b738a24c. Current spec SHA2568226e92a76414cafd0da14343ceabf39c550931a2a272ac6f722dad70bef79fc. All old private test body bytes after imports are identical. No product picker, authority, AI, health policy, clock timing, assertion, retry setting or screenshot policy changed.
+
+VERIFY / COUNTS / EXITS
+Exact argv/cwd/environment/deadline/observed child exits: commands.json/txt and per-command records. Pinned Node v22.23.3; Node/Vitest/tsc/ESLint/Prettier paths and SHA256s in tool-hashes.json. All CPU runs serial, maxWorkers1, no file parallelism, no cache; private Vite/Vitest/compile/temp directories; pre-import TCP/TLS/UDP listen/connect/fetch denial and cleared application routing. Each child has120s bound and observed exit; none timed out. No service/browser executable was launched.
+- focused:55/55 actual repository cases PASS, exit0, no pending/skipped/todo.
+- old-picking:2 FAIL /2 PASS /51 deliberately filtered, expected exit1.
+- arena-authority:13/13 prior independent real-source controls replayed against current source, PASS exit0. Only output path rebound.
+- new-evidence-v2:3/3 new independent failure-evidence controls, PASS exit0.
+- old-evidence:3/3 expected retention failures against exact base, exit1.
+- geometry-diagnostics:1 additional case exercising four real-source scenes, PASS exit0;55 deliberately filtered.
+- removed-gate:1/1 PASS exit0. Executes real runGate; also invokes both actual fauna T09 rules directly and confirms empty results even though plan statusR would defer them in the ordinary gate.
+- tools-typecheck, scoped ESLint, Prettier --check, Node version, initial/final preservation audit and git diff --check: PASS exit0.
+Total current fresh PASS cases73 =55 repository +18 supplemental. Supplemental controls do not enlarge the product inventory. Inventory continuity: all396 prior identities retained, exactly4 new ->400. Author's96 fresh/304 reused accounting checks out. Reviewer independently ran55 catalog cases and hash-qualified345 prior passing cases; this is NOT a fresh400-case run. Reused test source bytes match base; source/config/product dependency preservation is established by the complete scoped diff and blob audit. No full suite, Playwright discovery or live test rerun.
+
+PRESERVATION
+Both audits independently recompute all5 reviewed/integrated stable patch-ID pairs, compare all55 reviewed product blobs and20 protected objects across integration/base/source/final pins, and verify source hashes. T10/T16, authority, skills, renderer, assets/public/Blender, manifests/lockfile and orchestration documents remain unchanged.
+All190 old report files and3659 manifest-listed prior packet files match their saved SHA256s. All43 current author packet checksum entries verify. Additional before/after inventories verify3350 supplied author/R4/postrun packet files unchanged (overlapping sets, not additive counts). All4337 tracked file SHA256s match. All15554 dependency directory/file/symlink metadata entries and20288 worktree metadata entries match; this covers ignored paths and prospective existing paths without writing through node_modules. Dependency target content was not exhaustively hashed; executable hashes are explicit. Final HEAD/tree/branch match; git status empty; no special index flags. New reviewer cache/output exists only in the exclusive directory; nothing was cleaned or hydrated.
+
+DEVIATIONS / SCRATCH FAILURES
+No scope or preservation deviation observed. The first private new-evidence adapter failed at import with SyntaxError: Unexpected string, zero cases, exit1: separately transpiling the finally block inserted a strict directive in invalid syntax. Compiling the complete async try/finally fixed the private adapter; v1 source and all failed output remain. No product/source change or assertion weakening. Read-only exploratory probes returned no-match/missing-path exits for absent AGENTS paths, an assumed symbiotic-predicates.ts and an assumed client/vitest.config.js; the predicates are inline and config is.ts. These were read errors, not test results. No earlier report was overwritten. All expected RED and scratch failures are retained below and in full logs.
+
+DECISIONS / LIMITS / HANDOFF
+Fixture-only sightline arrangement is consistent with the existing picker/spec; no new spec interpretation. Source PASS only. CPU controls cannot submit GPU draws, prove pixels/native user gestures, HTTP/WebSocket/DB transport, moving live combat timing, native cleanup or successful living retirement. They do not grade art or performance. The historical exact beforeRelease state was never saved and is not reconstructed as fact. The original actual run stays FAIL; no retries occurred.
+Parent T13 experiment was left untouched. No browser/GPU/native/helper/Blender/codec/server/DB/full-suite/heavy execution, services inspection, package manager/install, asset hydration, screenshot cleanup, grant/ticket/claim, push/PR/merge. Existing runtime prospective paths and packets remain unchanged. Reviewer PASS grants NO launch authorization. A later live attempt, if independently authorized by the parent, must bind its fresh admission and evidence to this exact HEAD/tree; this report does not create that authorization or mark T07/T09 fully accepted.
+
+ARTIFACTS
+/private/tmp/symbiotic-pick-r5-review-g763Fh/Appendix-C.2.txt
+verification-summary.json; commands.json/txt; initial/final-audit.json and baseline inventories; index-flags.json; inventory-reuse.json; tool-hashes.json; adaptations.json; audit.py/run.py/boundary.mjs; immutable exact-base spec; private CPU control sources/configs; per-command stdout/JSON/actual-exit receipts; independent-geometry.json; arena.json; old/new-failure-evidence.json; removed-gate-receipt.json; SHA256SUMS. Original packets remain at their supplied locations. No PNG generated, viewed, edited or deleted.
+
+OLD-PICKING — EXACT LAST20 STDOUT LINES
+- 34
++ 35
+
+ ❯ ../../../../../../private/tmp/symbiotic-pick-r5-review-g763Fh/picking-boundary.test.ts:877:141
+    875|       try {
+    876|         const dir = new three.Vector3(0, 0, -1).applyQuaternion(s.g.ca…
+    877|         expect(s.g.fauna.pick(s.g.cam.frame, s.g.cam.pos, dir, 70)?.id…
+       |                                                                                                                                             ^
+    878|         expect(s.g.remotes.list.map((r: { pos: { toArray(): number[] }…
+    879|         for (const r of s.g.remotes.list) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed | 51 skipped (55)
+   Start at  04:36:31
+   Duration  552ms (import 50%, tests 27%, transform 24%)
+
+JSON report written to /private/tmp/symbiotic-pick-r5-review-g763Fh/old-picking.json
+
+OLD-EVIDENCE — EXACT LAST20 STDOUT LINES
++ Received:
+undefined
+
+ ❯ ../../../../../../private/tmp/symbiotic-pick-r5-review-g763Fh/evidence-boundary.test.ts:48:33
+     46|   receipts.push({kind,failure:String(failure),decoded,serverOutput:att…
+     47|   writeFileSync(OUT+'/'+(process.env.REVIEW_CASE??'new')+'-failure-evi…
+     48|   expect(decoded.beforeRelease).toEqual(sample);
+       |                                 ^
+     49|   expect(decoded.errors).toEqual(['diagnostic unfiltered']);expect(dec…
+     50|   expect(evidence.beforeRelease).toBe(sample);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  04:37:45
+   Duration  310ms (import 73%, transform 24%, tests 3%, worker 1%)
+
+JSON report written to /private/tmp/symbiotic-pick-r5-review-g763Fh/old-evidence.json
+
+NEW-EVIDENCE — EXACT LAST20 STDOUT LINES
+
+ FAIL  ../../../../../../private/tmp/symbiotic-pick-r5-review-g763Fh/evidence-boundary.test.ts [ ../../../../../../private/tmp/symbiotic-pick-r5-review-g763Fh/evidence-boundary.test.ts ]
+SyntaxError: Unexpected string
+ ❯ ../../../../../../private/tmp/symbiotic-pick-r5-review-g763Fh/evidence-boundary.test.ts:23:15
+     21| const releaseBlock=spec.slice(liveStart,liveEnd);
+     22| const finallyBody=tryStmt.finallyBlock!;
+     23| const execute=new Function('b','companion','evidence','aim','inspect',…
+       |               ^
+     24|  'return (async()=>{try{'+compile(releaseBlock)+'}finally'+compile(fin…
+     25| const saved=JSON.parse(readFileSync('/private/tmp/symbiotic-postrun-98…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  04:37:14
+   Duration  429ms (worker 97%, environment 3%)
+
+JSON report written to /private/tmp/symbiotic-pick-r5-review-g763Fh/new-evidence.json
