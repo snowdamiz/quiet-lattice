@@ -1,0 +1,336 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/effects/symbiotic.glb",
+  "family": "effects",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T04:20:26Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "symbiotic_bond",
+      "variants": [
+        {
+          "id": "symbiotic_bond",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 1368
+          },
+          "implicitLods": false,
+          "dims": [
+            1.807,
+            1.287,
+            0.329
+          ],
+          "materials": [
+            "LIB_FX_Symbiotic"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "symbiotic_call",
+      "variants": [
+        {
+          "id": "symbiotic_call",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 612
+          },
+          "implicitLods": false,
+          "dims": [
+            1.114,
+            1.391,
+            0.094
+          ],
+          "materials": [
+            "LIB_FX_Symbiotic"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "symbiotic_particle",
+      "variants": [
+        {
+          "id": "symbiotic_particle",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 12
+          },
+          "implicitLods": false,
+          "dims": [
+            1.0,
+            0.008,
+            1.0
+          ],
+          "materials": [
+            "LIB_FX_Symbiotic_Particle"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "symbiotic_regrow",
+      "variants": [
+        {
+          "id": "symbiotic_regrow",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 2268
+          },
+          "implicitLods": false,
+          "dims": [
+            0.943,
+            0.577,
+            1.86
+          ],
+          "materials": [
+            "LIB_FX_Symbiotic"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "symbiotic_repair_drones",
+      "variants": [
+        {
+          "id": "symbiotic_repair_drones",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 2268
+          },
+          "implicitLods": false,
+          "dims": [
+            1.462,
+            1.425,
+            0.425
+          ],
+          "materials": [
+            "LIB_FX_Symbiotic"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "symbiotic_spore",
+      "variants": [
+        {
+          "id": "symbiotic_spore",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 4578
+          },
+          "implicitLods": false,
+          "dims": [
+            1.583,
+            1.571,
+            0.438
+          ],
+          "materials": [
+            "LIB_FX_Symbiotic"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "symbiotic.glb",
+          "message": "6 variant(s) in 6 asset(s) follow the effects rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "symbiotic_bond",
+          "message": "LOD0 1,368 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "symbiotic_call",
+          "message": "LOD0 612 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "symbiotic_particle",
+          "message": "LOD0 12 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "symbiotic_regrow",
+          "message": "LOD0 2,268 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "symbiotic_repair_drones",
+          "message": "LOD0 2,268 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "symbiotic_spore",
+          "message": "LOD0 4,578 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.2 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "symbiotic_bond",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "symbiotic_call",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "symbiotic_particle",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "symbiotic_regrow",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "symbiotic_repair_drones",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "symbiotic_spore",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_FX_Symbiotic",
+          "message": "effect: base colour, emissive"
+        },
+        {
+          "subject": "LIB_FX_Symbiotic_Particle",
+          "message": "effect: base colour, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "2 KTX2 map(s) (0 UASTC, 2 ETC1S) with full mip chains, 0.1 MB"
+        },
+        {
+          "subject": "symbiotic_bond",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "symbiotic_call",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "symbiotic_particle",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "symbiotic_regrow",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "symbiotic_repair_drones",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "symbiotic_spore",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/effects/symbiotic.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "symbiotic_bond",
+          "message": "longest side 1.81 m within 0.01-200 m"
+        },
+        {
+          "subject": "symbiotic_call",
+          "message": "longest side 1.39 m within 0.01-200 m"
+        },
+        {
+          "subject": "symbiotic_particle",
+          "message": "longest side 1.00 m within 0.01-200 m"
+        },
+        {
+          "subject": "symbiotic_regrow",
+          "message": "longest side 1.86 m within 0.01-200 m"
+        },
+        {
+          "subject": "symbiotic_repair_drones",
+          "message": "longest side 1.46 m within 0.01-200 m"
+        },
+        {
+          "subject": "symbiotic_spore",
+          "message": "longest side 1.58 m within 0.01-200 m"
+        }
+      ]
+    }
+  ]
+}

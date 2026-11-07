@@ -1,0 +1,420 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/effects/void.glb",
+  "family": "effects",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T04:20:26Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "void_blink_strike",
+      "variants": [
+        {
+          "id": "void_blink_strike",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 306
+          },
+          "implicitLods": false,
+          "dims": [
+            1.376,
+            0.357,
+            1.609
+          ],
+          "materials": [
+            "LIB_FX_Void"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "void_cloak",
+      "variants": [
+        {
+          "id": "void_cloak",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 108
+          },
+          "implicitLods": false,
+          "dims": [
+            2.174,
+            0.164,
+            0.903
+          ],
+          "materials": [
+            "LIB_FX_Void"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "void_drain",
+      "variants": [
+        {
+          "id": "void_drain",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 252
+          },
+          "implicitLods": false,
+          "dims": [
+            0.296,
+            0.844,
+            0.197
+          ],
+          "materials": [
+            "LIB_FX_Void"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "void_eclipse",
+      "variants": [
+        {
+          "id": "void_eclipse",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 1872
+          },
+          "implicitLods": false,
+          "dims": [
+            2.024,
+            2.024,
+            0.657
+          ],
+          "materials": [
+            "LIB_FX_Void"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "void_micro_jump",
+      "variants": [
+        {
+          "id": "void_micro_jump",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 108
+          },
+          "implicitLods": false,
+          "dims": [
+            2.203,
+            0.173,
+            0.908
+          ],
+          "materials": [
+            "LIB_FX_Void"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "void_particle",
+      "variants": [
+        {
+          "id": "void_particle",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 12
+          },
+          "implicitLods": false,
+          "dims": [
+            1.0,
+            0.008,
+            1.0
+          ],
+          "materials": [
+            "LIB_FX_Void_Particle"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "void_phase",
+      "variants": [
+        {
+          "id": "void_phase",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 108
+          },
+          "implicitLods": false,
+          "dims": [
+            1.001,
+            0.173,
+            1.854
+          ],
+          "materials": [
+            "LIB_FX_Void"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "void_rift",
+      "variants": [
+        {
+          "id": "void_rift",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 864
+          },
+          "implicitLods": false,
+          "dims": [
+            1.543,
+            1.619,
+            0.102
+          ],
+          "materials": [
+            "LIB_FX_Void"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "void.glb",
+          "message": "8 variant(s) in 8 asset(s) follow the effects rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "void_blink_strike",
+          "message": "LOD0 306 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "void_cloak",
+          "message": "LOD0 108 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "void_drain",
+          "message": "LOD0 252 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "void_eclipse",
+          "message": "LOD0 1,872 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "void_micro_jump",
+          "message": "LOD0 108 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "void_particle",
+          "message": "LOD0 12 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "void_phase",
+          "message": "LOD0 108 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "void_rift",
+          "message": "LOD0 864 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.1 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "void_blink_strike",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "void_cloak",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "void_drain",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "void_eclipse",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "void_micro_jump",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "void_particle",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "void_phase",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "void_rift",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_FX_Void",
+          "message": "effect: base colour, emissive"
+        },
+        {
+          "subject": "LIB_FX_Void_Particle",
+          "message": "effect: base colour, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "2 KTX2 map(s) (0 UASTC, 2 ETC1S) with full mip chains, 0.1 MB"
+        },
+        {
+          "subject": "void_blink_strike",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "void_cloak",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "void_drain",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "void_eclipse",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "void_micro_jump",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "void_particle",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "void_phase",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "void_rift",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/effects/void.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "void_blink_strike",
+          "message": "longest side 1.61 m within 0.01-200 m"
+        },
+        {
+          "subject": "void_cloak",
+          "message": "longest side 2.17 m within 0.01-200 m"
+        },
+        {
+          "subject": "void_drain",
+          "message": "longest side 0.84 m within 0.01-200 m"
+        },
+        {
+          "subject": "void_eclipse",
+          "message": "longest side 2.02 m within 0.01-200 m"
+        },
+        {
+          "subject": "void_micro_jump",
+          "message": "longest side 2.20 m within 0.01-200 m"
+        },
+        {
+          "subject": "void_particle",
+          "message": "longest side 1.00 m within 0.01-200 m"
+        },
+        {
+          "subject": "void_phase",
+          "message": "longest side 1.85 m within 0.01-200 m"
+        },
+        {
+          "subject": "void_rift",
+          "message": "longest side 1.62 m within 0.01-200 m"
+        }
+      ]
+    }
+  ]
+}

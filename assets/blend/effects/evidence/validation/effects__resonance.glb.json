@@ -1,0 +1,378 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/effects/resonance.glb",
+  "family": "effects",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T04:20:26Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "resonance_deep_sweep",
+      "variants": [
+        {
+          "id": "resonance_deep_sweep",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 1230
+          },
+          "implicitLods": false,
+          "dims": [
+            1.006,
+            1.011,
+            0.244
+          ],
+          "materials": [
+            "LIB_FX_Resonance"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "resonance_harmonic",
+      "variants": [
+        {
+          "id": "resonance_harmonic",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 72
+          },
+          "implicitLods": false,
+          "dims": [
+            1.012,
+            0.009,
+            0.839
+          ],
+          "materials": [
+            "LIB_FX_Resonance"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "resonance_jammer",
+      "variants": [
+        {
+          "id": "resonance_jammer",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 72
+          },
+          "implicitLods": false,
+          "dims": [
+            1.8,
+            0.016,
+            0.916
+          ],
+          "materials": [
+            "LIB_FX_Resonance"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "resonance_particle",
+      "variants": [
+        {
+          "id": "resonance_particle",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 12
+          },
+          "implicitLods": false,
+          "dims": [
+            1.0,
+            0.008,
+            1.0
+          ],
+          "materials": [
+            "LIB_FX_Resonance_Particle"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "resonance_pulse",
+      "variants": [
+        {
+          "id": "resonance_pulse",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 4320
+          },
+          "implicitLods": false,
+          "dims": [
+            1.935,
+            1.943,
+            0.076
+          ],
+          "materials": [
+            "LIB_FX_Resonance"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "resonance_shatter",
+      "variants": [
+        {
+          "id": "resonance_shatter",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 918
+          },
+          "implicitLods": false,
+          "dims": [
+            1.76,
+            0.314,
+            1.804
+          ],
+          "materials": [
+            "LIB_FX_Resonance"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    },
+    {
+      "asset": "resonance_veil",
+      "variants": [
+        {
+          "id": "resonance_veil",
+          "class": "effect",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 972
+          },
+          "implicitLods": false,
+          "dims": [
+            0.88,
+            0.604,
+            1.857
+          ],
+          "materials": [
+            "LIB_FX_Resonance"
+          ],
+          "gpuTextureMB": 1.3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "resonance.glb",
+          "message": "7 variant(s) in 7 asset(s) follow the effects rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "resonance_deep_sweep",
+          "message": "LOD0 1,230 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "resonance_harmonic",
+          "message": "LOD0 72 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "resonance_jammer",
+          "message": "LOD0 72 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "resonance_particle",
+          "message": "LOD0 12 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "resonance_pulse",
+          "message": "LOD0 4,320 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "resonance_shatter",
+          "message": "LOD0 918 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "resonance_veil",
+          "message": "LOD0 972 triangles within the effect budget 12-5,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.1 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "resonance_deep_sweep",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "resonance_harmonic",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "resonance_jammer",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "resonance_particle",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "resonance_pulse",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "resonance_shatter",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        },
+        {
+          "subject": "resonance_veil",
+          "message": "class effect uses one LOD (not in 19.2: ability effect meshes are short-lived and mostly emissive)"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_FX_Resonance",
+          "message": "effect: base colour, emissive"
+        },
+        {
+          "subject": "LIB_FX_Resonance_Particle",
+          "message": "effect: base colour, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "2 KTX2 map(s) (0 UASTC, 2 ETC1S) with full mip chains, 0.1 MB"
+        },
+        {
+          "subject": "resonance_deep_sweep",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "resonance_harmonic",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "resonance_jammer",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "resonance_particle",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "resonance_pulse",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "resonance_shatter",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        },
+        {
+          "subject": "resonance_veil",
+          "message": "textures take 1 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the effect budget of 32 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/effects/resonance.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "resonance_deep_sweep",
+          "message": "longest side 1.01 m within 0.01-200 m"
+        },
+        {
+          "subject": "resonance_harmonic",
+          "message": "longest side 1.01 m within 0.01-200 m"
+        },
+        {
+          "subject": "resonance_jammer",
+          "message": "longest side 1.80 m within 0.01-200 m"
+        },
+        {
+          "subject": "resonance_particle",
+          "message": "longest side 1.00 m within 0.01-200 m"
+        },
+        {
+          "subject": "resonance_pulse",
+          "message": "longest side 1.94 m within 0.01-200 m"
+        },
+        {
+          "subject": "resonance_shatter",
+          "message": "longest side 1.80 m within 0.01-200 m"
+        },
+        {
+          "subject": "resonance_veil",
+          "message": "longest side 1.86 m within 0.01-200 m"
+        }
+      ]
+    }
+  ]
+}

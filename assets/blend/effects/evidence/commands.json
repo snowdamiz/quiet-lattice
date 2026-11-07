@@ -1,0 +1,52 @@
+[
+  {
+    "command": "pnpm install --offline --frozen-lockfile --ignore-scripts",
+    "exit": 0,
+    "result": "239 packages reused; zero downloads"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py author",
+    "exit": 0,
+    "result": "six saved source files; 59 assets"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py export",
+    "exit": 1,
+    "result": "initial Spore 5292 tris rejected; full red report retained"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py revise",
+    "exit": 0,
+    "result": "seven Spore caps retained; five gill ribs each; 4578 tris"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py refine",
+    "exit": 0,
+    "result": "sRGB encoding corrected; all four particle shape rows distinct; geometry preserved"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py export",
+    "exit": 0,
+    "result": "6/6 compressed GLBs; editable sources byte-identical before/after"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py audit",
+    "exit": 0,
+    "result": "118 source/export checks and six negative controls; 96 functional particle frames"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py validate",
+    "exit": 0,
+    "result": "12/12 source and export family validations"
+  },
+  {
+    "command": "python3 packages/tools/blender/effects/run.py preview",
+    "exit": 0,
+    "result": "nine CPU composites; no retained per-frame PNGs"
+  },
+  {
+    "command": "python3 -m py_compile packages/tools/blender/effects/*.py",
+    "exit": 0,
+    "result": "Python syntax"
+  }
+]

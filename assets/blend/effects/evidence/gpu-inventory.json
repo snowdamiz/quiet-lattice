@@ -1,0 +1,1146 @@
+{
+  "status": "PENDING_PARENT_SLOT",
+  "independentCodeReview": "pending; no nested reviewer started",
+  "blindVisualGrade": "pending; CPU images are iteration evidence only",
+  "standardCases": [
+    "lush world noon",
+    "exotic world night",
+    "open space"
+  ],
+  "lods": [
+    0
+  ],
+  "lod2": "N/A: actual family effect class has exactly one LOD",
+  "stillViews": [
+    {
+      "asset": "gravitic_pull",
+      "glb": "/models/effects/gravitic.glb",
+      "root": "gravitic_pull",
+      "lod": "gravitic_pull_LOD0",
+      "material": "LIB_FX_Gravitic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "gravitic_tractor_beam",
+      "glb": "/models/effects/gravitic.glb",
+      "root": "gravitic_tractor_beam",
+      "lod": "gravitic_tractor_beam_LOD0",
+      "material": "LIB_FX_Gravitic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "gravitic_slam",
+      "glb": "/models/effects/gravitic.glb",
+      "root": "gravitic_slam",
+      "lod": "gravitic_slam_LOD0",
+      "material": "LIB_FX_Gravitic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "gravitic_well",
+      "glb": "/models/effects/gravitic.glb",
+      "root": "gravitic_well",
+      "lod": "gravitic_well_LOD0",
+      "material": "LIB_FX_Gravitic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "gravitic_inertial_brake",
+      "glb": "/models/effects/gravitic.glb",
+      "root": "gravitic_inertial_brake",
+      "lod": "gravitic_inertial_brake_LOD0",
+      "material": "LIB_FX_Gravitic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "gravitic_particle",
+      "glb": "/models/effects/gravitic.glb",
+      "root": "gravitic_particle",
+      "lod": "gravitic_particle_LOD0",
+      "material": "LIB_FX_Gravitic_Particle",
+      "role": "particle",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "thermal_lance",
+      "glb": "/models/effects/thermal.glb",
+      "root": "thermal_lance",
+      "lod": "thermal_lance_LOD0",
+      "material": "LIB_FX_Thermal",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "thermal_flare",
+      "glb": "/models/effects/thermal.glb",
+      "root": "thermal_flare",
+      "lod": "thermal_flare_LOD0",
+      "material": "LIB_FX_Thermal",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "thermal_sear",
+      "glb": "/models/effects/thermal.glb",
+      "root": "thermal_sear",
+      "lod": "thermal_sear_LOD0",
+      "material": "LIB_FX_Thermal",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "thermal_vent",
+      "glb": "/models/effects/thermal.glb",
+      "root": "thermal_vent",
+      "lod": "thermal_vent_LOD0",
+      "material": "LIB_FX_Thermal",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "thermal_particle",
+      "glb": "/models/effects/thermal.glb",
+      "root": "thermal_particle",
+      "lod": "thermal_particle_LOD0",
+      "material": "LIB_FX_Thermal_Particle",
+      "role": "particle",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "resonance_pulse",
+      "glb": "/models/effects/resonance.glb",
+      "root": "resonance_pulse",
+      "lod": "resonance_pulse_LOD0",
+      "material": "LIB_FX_Resonance",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "resonance_deep_sweep",
+      "glb": "/models/effects/resonance.glb",
+      "root": "resonance_deep_sweep",
+      "lod": "resonance_deep_sweep_LOD0",
+      "material": "LIB_FX_Resonance",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "resonance_harmonic",
+      "glb": "/models/effects/resonance.glb",
+      "root": "resonance_harmonic",
+      "lod": "resonance_harmonic_LOD0",
+      "material": "LIB_FX_Resonance",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "resonance_shatter",
+      "glb": "/models/effects/resonance.glb",
+      "root": "resonance_shatter",
+      "lod": "resonance_shatter_LOD0",
+      "material": "LIB_FX_Resonance",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "resonance_veil",
+      "glb": "/models/effects/resonance.glb",
+      "root": "resonance_veil",
+      "lod": "resonance_veil_LOD0",
+      "material": "LIB_FX_Resonance",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "resonance_jammer",
+      "glb": "/models/effects/resonance.glb",
+      "root": "resonance_jammer",
+      "lod": "resonance_jammer_LOD0",
+      "material": "LIB_FX_Resonance",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "resonance_particle",
+      "glb": "/models/effects/resonance.glb",
+      "root": "resonance_particle",
+      "lod": "resonance_particle_LOD0",
+      "material": "LIB_FX_Resonance_Particle",
+      "role": "particle",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "symbiotic_bond",
+      "glb": "/models/effects/symbiotic.glb",
+      "root": "symbiotic_bond",
+      "lod": "symbiotic_bond_LOD0",
+      "material": "LIB_FX_Symbiotic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "symbiotic_repair_drones",
+      "glb": "/models/effects/symbiotic.glb",
+      "root": "symbiotic_repair_drones",
+      "lod": "symbiotic_repair_drones_LOD0",
+      "material": "LIB_FX_Symbiotic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "symbiotic_regrow",
+      "glb": "/models/effects/symbiotic.glb",
+      "root": "symbiotic_regrow",
+      "lod": "symbiotic_regrow_LOD0",
+      "material": "LIB_FX_Symbiotic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "symbiotic_spore",
+      "glb": "/models/effects/symbiotic.glb",
+      "root": "symbiotic_spore",
+      "lod": "symbiotic_spore_LOD0",
+      "material": "LIB_FX_Symbiotic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "symbiotic_call",
+      "glb": "/models/effects/symbiotic.glb",
+      "root": "symbiotic_call",
+      "lod": "symbiotic_call_LOD0",
+      "material": "LIB_FX_Symbiotic",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "symbiotic_particle",
+      "glb": "/models/effects/symbiotic.glb",
+      "root": "symbiotic_particle",
+      "lod": "symbiotic_particle_LOD0",
+      "material": "LIB_FX_Symbiotic_Particle",
+      "role": "particle",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_phase",
+      "glb": "/models/effects/void.glb",
+      "root": "void_phase",
+      "lod": "void_phase_LOD0",
+      "material": "LIB_FX_Void",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_micro_jump",
+      "glb": "/models/effects/void.glb",
+      "root": "void_micro_jump",
+      "lod": "void_micro_jump_LOD0",
+      "material": "LIB_FX_Void",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_drain",
+      "glb": "/models/effects/void.glb",
+      "root": "void_drain",
+      "lod": "void_drain_LOD0",
+      "material": "LIB_FX_Void",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_rift",
+      "glb": "/models/effects/void.glb",
+      "root": "void_rift",
+      "lod": "void_rift_LOD0",
+      "material": "LIB_FX_Void",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_eclipse",
+      "glb": "/models/effects/void.glb",
+      "root": "void_eclipse",
+      "lod": "void_eclipse_LOD0",
+      "material": "LIB_FX_Void",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_cloak",
+      "glb": "/models/effects/void.glb",
+      "root": "void_cloak",
+      "lod": "void_cloak_LOD0",
+      "material": "LIB_FX_Void",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_blink_strike",
+      "glb": "/models/effects/void.glb",
+      "root": "void_blink_strike",
+      "lod": "void_blink_strike_LOD0",
+      "material": "LIB_FX_Void",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "void_particle",
+      "glb": "/models/effects/void.glb",
+      "root": "void_particle",
+      "lod": "void_particle_LOD0",
+      "material": "LIB_FX_Void_Particle",
+      "role": "particle",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_dissolve",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_dissolve",
+      "lod": "recall_dissolve_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_flash",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_flash",
+      "lod": "recall_flash_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "beat",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_particle",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_particle",
+      "lod": "recall_particle_LOD0",
+      "material": "LIB_GlyphLight_Recall_Particle",
+      "role": "particle",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_a",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_a",
+      "lod": "recall_glyph_a_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_b",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_b",
+      "lod": "recall_glyph_b_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_d",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_d",
+      "lod": "recall_glyph_d_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_e",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_e",
+      "lod": "recall_glyph_e_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_f",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_f",
+      "lod": "recall_glyph_f_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_g",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_g",
+      "lod": "recall_glyph_g_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_h",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_h",
+      "lod": "recall_glyph_h_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_i",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_i",
+      "lod": "recall_glyph_i_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_j",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_j",
+      "lod": "recall_glyph_j_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_k",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_k",
+      "lod": "recall_glyph_k_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_l",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_l",
+      "lod": "recall_glyph_l_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_m",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_m",
+      "lod": "recall_glyph_m_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_n",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_n",
+      "lod": "recall_glyph_n_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_o",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_o",
+      "lod": "recall_glyph_o_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_p",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_p",
+      "lod": "recall_glyph_p_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_r",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_r",
+      "lod": "recall_glyph_r_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_s",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_s",
+      "lod": "recall_glyph_s_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_t",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_t",
+      "lod": "recall_glyph_t_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_u",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_u",
+      "lod": "recall_glyph_u_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_v",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_v",
+      "lod": "recall_glyph_v_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_w",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_w",
+      "lod": "recall_glyph_w_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_y",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_y",
+      "lod": "recall_glyph_y_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_z",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_z",
+      "lod": "recall_glyph_z_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    },
+    {
+      "asset": "recall_glyph_divider",
+      "glb": "/models/effects/recall.glb",
+      "root": "recall_glyph_divider",
+      "lod": "recall_glyph_divider_LOD0",
+      "material": "LIB_GlyphLight_Recall",
+      "role": "glyph",
+      "required": [
+        "three-light textured views",
+        "wireframe",
+        "alpha/depth overlap against light and dark geometry"
+      ]
+    }
+  ],
+  "motionViews": [
+    {
+      "node": "gravitic.inertial_brake",
+      "assets": [
+        "gravitic_inertial_brake"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "gravitic.pull",
+      "assets": [
+        "gravitic_pull"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "gravitic.pull_many",
+      "assets": [
+        "gravitic_pull"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "gravitic.slam",
+      "assets": [
+        "gravitic_slam"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "gravitic.tractor_beam",
+      "assets": [
+        "gravitic_tractor_beam"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "gravitic.well",
+      "assets": [
+        "gravitic_well"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "resonance.deep_sweep",
+      "assets": [
+        "resonance_deep_sweep"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "resonance.echo",
+      "assets": [
+        "resonance_pulse"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "resonance.harmonic",
+      "assets": [
+        "resonance_harmonic"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "resonance.jammer",
+      "assets": [
+        "resonance_jammer"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "resonance.pulse",
+      "assets": [
+        "resonance_pulse"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "resonance.shatter",
+      "assets": [
+        "resonance_shatter"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "resonance.veil",
+      "assets": [
+        "resonance_veil"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "symbiotic.big_game",
+      "assets": [
+        "symbiotic_bond"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "symbiotic.bond",
+      "assets": [
+        "symbiotic_bond"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "symbiotic.call",
+      "assets": [
+        "symbiotic_call"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "symbiotic.regrow",
+      "assets": [
+        "symbiotic_regrow"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "symbiotic.repair_drones",
+      "assets": [
+        "symbiotic_repair_drones"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "symbiotic.spore",
+      "assets": [
+        "symbiotic_spore"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "thermal.chain",
+      "assets": [
+        "thermal_lance"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "thermal.flare",
+      "assets": [
+        "thermal_flare"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "thermal.lance",
+      "assets": [
+        "thermal_lance"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "thermal.sear",
+      "assets": [
+        "thermal_sear"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "thermal.vent",
+      "assets": [
+        "thermal_vent"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "void.blink_strike",
+      "assets": [
+        "void_blink_strike"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "void.cloak",
+      "assets": [
+        "void_cloak"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "void.drain",
+      "assets": [
+        "void_drain"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "void.eclipse",
+      "assets": [
+        "void_eclipse"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "void.micro_jump",
+      "assets": [
+        "void_micro_jump"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "void.phase",
+      "assets": [
+        "void_phase"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "void.rift",
+      "assets": [
+        "void_rift"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    },
+    {
+      "node": "recall",
+      "assets": [
+        "recall_glyph_*",
+        "recall_dissolve",
+        "recall_flash",
+        "recall_particle"
+      ],
+      "aspectRatios": [
+        "16:9",
+        "21:9"
+      ],
+      "fps": 60
+    }
+  ],
+  "perf": [
+    "real draw calls and transparent overdraw with 24 remotes/capital target context",
+    "particle pooling/batching and 512-particle/64-VFX-draw integration caps",
+    "60 fps target is unmeasured"
+  ],
+  "playbackDependencies": "Ability tasks and E06.T03 own animation/lifetime, billboarding, UV stepping, glyph batching, body dissolve mask, reveal/occlusion and hit feedback. No playback code is supplied here."
+}

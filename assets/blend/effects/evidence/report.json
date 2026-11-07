@@ -1,0 +1,45 @@
+{
+  "TASK": "P1.E07.T14",
+  "STATUS": "BLOCKED",
+  "statusBoundary": "Authorized source unit complete and CPU-verified; full-task acceptance awaits parent code review and blind GPU visual grade.",
+  "SUMMARY": "Six editable branch/Recall sources, 29 beat meshes, six UV carriers, 24 exact glyphs, six functional 4x4 alpha sheets plus six 1K filament textures. All 63 Tier I-II nodes mapped. No gameplay integration.",
+  "BASE": "634c51d2378748c6a514af2a792ee4500b912643",
+  "branch": "task/P1-E07-T14-effects",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects",
+  "FILES_CHANGED": [
+    "assets/blend/effects/**",
+    "packages/client/public/models/effects/*.glb",
+    "packages/client/public/particles/effects/*.png",
+    "packages/tools/blender/effects/**"
+  ],
+  "VERIFY": "commands.json; validation/*.json; audit.json; source-before-export.json",
+  "DECISIONS": [
+    "No named branch palettes in the cited design tables -> choose existing bible rows: Gravitic Ixari violet/lilac, Thermal Reaches oxide/red-orange, Resonance Chorus indigo/gold, Symbiotic Ulgani amber/spore green, Void Reaches gunmetal/patch yellow; only Recall uses monolith white-cyan.",
+    "Pilot/Exo-suit Tier I-II -> nine passives each, palette references but no invented VFX. The audit text describing their actives does not override the actual design tables.",
+    "Other stat, scanner/HUD, eligibility and passive ship modifiers -> explicit existing-feedback reasons; no arbitrary auras. Pull Many, Chain, Echo and Big Game reuse the base cues with capped instances.",
+    "Shapes use explicit metre-space reference geometry. Spatial volumes normalize to unit radius/length and declare later server-driven placement/scaling; 2 km abilities use endpoint meshes rather than 2 km geometry.",
+    "No numeric particle/draw budget in cited sources -> integration limits 64 particles and four draws per cast, 512 particles and 64 VFX draws scene-wide. The delivered assets have one mesh/material primitive each and 12-triangle carriers; no runtime enforcement or timing claim.",
+    "Recall alphabet -> all 23 letters plus divider, canonical unrotated seven-node lattice, round caps, stroke width 0.08 of the 1 m lattice diameter. Arrange signs clockwise without rotating each sign. Merge up to six glyphs into one draw.",
+    "Recall visual timing proposal -> glyph 0-.45 s, dissolve .30-.95 s, flash .95-1.07 s. No keyframe clips authored. These are presentation suggestions, not authoritative gameplay lifetimes.",
+    "Effect-specific envelope suggestions, particle caps and silhouettes -> catalog.py and manifest.json; source meshes stay editable and export never imports authoring code.",
+    "Actual effects class -> 12-4578 tris per asset, 1K textures, one LOD. Existing KTX2/meshopt/quantization contracts retained with BLEND straight alpha and stable material names. LOD2 review is inapplicable.",
+    "Library -> append local REF grid/biped and derive local variants of LIB_EngineGlow/LIB_GlyphLight; shared library, family rules and exporter remain unchanged.",
+    "No existing ability effect path slot -> no loader hook or unowned module edit. Consumer selects manifest-named roots through the current compressed GLTF loader."
+  ],
+  "OUT_OF_SCOPE_FOUND": "Ability tasks and E06.T03 own animation/lifetime, billboarding, UV stepping, glyph batching, body dissolve mask, reveal/occlusion and hit feedback. No playback code is supplied here.",
+  "ARTIFACTS": [
+    "manifest.json",
+    "evidence/audit.json",
+    "evidence/validation",
+    "evidence/previews",
+    "evidence/gpu-inventory.json",
+    "evidence/hashes.json"
+  ],
+  "resourceBoundary": "One Blender process at a time, -t 2, Cycles CPU; final export encoder wrapper also caps KTX to two threads. No GPU/browser/native capture/DB/server. Nine composites (4.79 MB), twelve texture PNGs; no per-frame PNGs retained.",
+  "limitations": [
+    "No independent code review or blind grade",
+    "No native/GPU/perf evidence",
+    "No ability or Recall playback implementation",
+    "No push, PR, merge or orchestration-document edits"
+  ]
+}

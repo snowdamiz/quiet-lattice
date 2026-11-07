@@ -1,0 +1,2881 @@
+{
+  "task": "P1.E07.T14",
+  "base": "634c51d2378748c6a514af2a792ee4500b912643",
+  "palettes": {
+    "gravitic": {
+      "owner": "Ixari",
+      "primary": "#7A4FD0",
+      "light": "#B9A6FF",
+      "rhythm": "paired compression crescents; inward cadence"
+    },
+    "thermal": {
+      "owner": "Free Reaches",
+      "primary": "#8E2F23",
+      "light": "#FF6A3D",
+      "rhythm": "split tapered tongues; sharp attack and ember decay"
+    },
+    "resonance": {
+      "owner": "Chorus of the Count",
+      "primary": "#2B2A5C",
+      "light": "#E8C66A",
+      "rhythm": "open concentric wave combs; measured repeating beats"
+    },
+    "symbiotic": {
+      "owner": "Ulgani",
+      "primary": "#D9962B",
+      "light": "#C7F06A",
+      "rhythm": "bifurcating tendrils and gilled caps; unfurl and drift"
+    },
+    "void": {
+      "owner": "Free Reaches",
+      "primary": "#3A3D42",
+      "light": "#D8B23A",
+      "rhythm": "offset severed planes with dark centres; abrupt absence"
+    },
+    "pilot": {
+      "owner": "Waystation Compact",
+      "primary": "#22406A",
+      "light": "#FFFFFF",
+      "rhythm": "existing propulsion and shield feedback only; no Tier I-II active"
+    },
+    "exosuit": {
+      "owner": "Ulgani",
+      "primary": "#F2EAD3",
+      "light": "#59F2C1",
+      "rhythm": "existing jetpack, scanner and mining feedback only; no Tier I-II active"
+    },
+    "recall": {
+      "owner": "Cartographers",
+      "primary": "#7FD8FF",
+      "light": "#D8F6FF",
+      "rhythm": "upright exact signs, upward dissolution, single hard flash"
+    }
+  },
+  "nodes": [
+    {
+      "id": "exosuit.cartridge_recycler",
+      "name": "Cartridge Recycler",
+      "tier": 1,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.cold_blood",
+      "name": "Cold Blood",
+      "tier": 2,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.efficient_jetpack",
+      "name": "Efficient Jetpack",
+      "tier": 1,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.hazard_weave",
+      "name": "Hazard Weave",
+      "tier": 2,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.heat_shroud",
+      "name": "Heat Shroud",
+      "tier": 2,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.long_jump",
+      "name": "Long Jump",
+      "tier": 1,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.optical_drill",
+      "name": "Optical Drill",
+      "tier": 2,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.scanner_lens",
+      "name": "Scanner Lens",
+      "tier": 2,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "exosuit.sprint_stride",
+      "name": "Sprint Stride",
+      "tier": 2,
+      "type": "passive",
+      "palette": "exosuit",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "gravitic.dense_bones",
+      "name": "Dense Bones",
+      "tier": 2,
+      "type": "passive",
+      "palette": "gravitic",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "gravitic.heavy_footing",
+      "name": "Heavy Footing",
+      "tier": 1,
+      "type": "passive",
+      "palette": "gravitic",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "gravitic.inertial_brake",
+      "name": "Inertial Brake",
+      "tier": 2,
+      "type": "ship",
+      "palette": "gravitic",
+      "disposition": "asset",
+      "assets": [
+        "gravitic_inertial_brake"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "gravitic.mass_sense",
+      "name": "Mass Sense",
+      "tier": 2,
+      "type": "passive",
+      "palette": "gravitic",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Scanner reveal/outline belongs to scanner UI; no independent world-space cast."
+    },
+    {
+      "id": "gravitic.pull",
+      "name": "Pull",
+      "tier": 1,
+      "type": "active",
+      "palette": "gravitic",
+      "disposition": "asset",
+      "assets": [
+        "gravitic_pull"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "gravitic.pull_many",
+      "name": "Pull Many",
+      "tier": 2,
+      "type": "augment",
+      "palette": "gravitic",
+      "disposition": "reuse",
+      "assets": [
+        "gravitic_pull"
+      ],
+      "meshInstances": 3,
+      "reason": "Same Pull cue on up to three targets; one shared particle batch."
+    },
+    {
+      "id": "gravitic.slam",
+      "name": "Slam",
+      "tier": 2,
+      "type": "active",
+      "palette": "gravitic",
+      "disposition": "asset",
+      "assets": [
+        "gravitic_slam"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "gravitic.tractor_beam",
+      "name": "Tractor Beam",
+      "tier": 1,
+      "type": "ship",
+      "palette": "gravitic",
+      "disposition": "asset",
+      "assets": [
+        "gravitic_tractor_beam"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "gravitic.well",
+      "name": "Well",
+      "tier": 2,
+      "type": "active",
+      "palette": "gravitic",
+      "disposition": "asset",
+      "assets": [
+        "gravitic_well"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "pilot.hazard_coating",
+      "name": "Hazard Coating",
+      "tier": 2,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.hull_plating",
+      "name": "Hull Plating",
+      "tier": 2,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.photon_thrusters",
+      "name": "Photon Thrusters",
+      "tier": 2,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.pressure_hull",
+      "name": "Pressure Hull",
+      "tier": 2,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.reserve_tank",
+      "name": "Reserve Tank",
+      "tier": 1,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.shield_capacitor",
+      "name": "Shield Capacitor",
+      "tier": 2,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.soft_landing",
+      "name": "Soft Landing",
+      "tier": 1,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.thermal_plating",
+      "name": "Thermal Plating",
+      "tier": 2,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "pilot.throttle_tuning",
+      "name": "Throttle Tuning",
+      "tier": 1,
+      "type": "passive",
+      "palette": "pilot",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "resonance.choir",
+      "name": "Choir",
+      "tier": 2,
+      "type": "passive",
+      "palette": "resonance",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Shares the existing Pulse reveal/stun; no additional cast or aura."
+    },
+    {
+      "id": "resonance.deep_sweep",
+      "name": "Deep Sweep",
+      "tier": 1,
+      "type": "ship",
+      "palette": "resonance",
+      "disposition": "asset",
+      "assets": [
+        "resonance_deep_sweep"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "resonance.echo",
+      "name": "Echo",
+      "tier": 2,
+      "type": "augment",
+      "palette": "resonance",
+      "disposition": "reuse",
+      "assets": [
+        "resonance_pulse"
+      ],
+      "meshInstances": 1,
+      "reason": "Replay Pulse after 2 seconds; do not overlap both envelopes."
+    },
+    {
+      "id": "resonance.harmonic",
+      "name": "Harmonic",
+      "tier": 2,
+      "type": "active",
+      "palette": "resonance",
+      "disposition": "asset",
+      "assets": [
+        "resonance_harmonic"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "resonance.jammer",
+      "name": "Jammer",
+      "tier": 2,
+      "type": "ship",
+      "palette": "resonance",
+      "disposition": "asset",
+      "assets": [
+        "resonance_jammer"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "resonance.long_ear",
+      "name": "Long Ear",
+      "tier": 1,
+      "type": "passive",
+      "palette": "resonance",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Extends scanner range and map beacons; uses existing scanner presentation."
+    },
+    {
+      "id": "resonance.pulse",
+      "name": "Pulse",
+      "tier": 1,
+      "type": "active",
+      "palette": "resonance",
+      "disposition": "asset",
+      "assets": [
+        "resonance_pulse"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "resonance.shatter",
+      "name": "Shatter",
+      "tier": 2,
+      "type": "active",
+      "palette": "resonance",
+      "disposition": "asset",
+      "assets": [
+        "resonance_shatter"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "resonance.veil",
+      "name": "Veil",
+      "tier": 2,
+      "type": "active",
+      "palette": "resonance",
+      "disposition": "asset",
+      "assets": [
+        "resonance_veil"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "symbiotic.big_game",
+      "name": "Big Game",
+      "tier": 2,
+      "type": "augment",
+      "palette": "symbiotic",
+      "disposition": "reuse",
+      "assets": [
+        "symbiotic_bond"
+      ],
+      "meshInstances": 1,
+      "reason": "Same Bond cue fitted to the heavy quadruped or flyer bounds."
+    },
+    {
+      "id": "symbiotic.bond",
+      "name": "Bond",
+      "tier": 1,
+      "type": "active",
+      "palette": "symbiotic",
+      "disposition": "asset",
+      "assets": [
+        "symbiotic_bond"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "symbiotic.call",
+      "name": "Call",
+      "tier": 2,
+      "type": "active",
+      "palette": "symbiotic",
+      "disposition": "asset",
+      "assets": [
+        "symbiotic_call"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "symbiotic.regrow",
+      "name": "Regrow",
+      "tier": 2,
+      "type": "active",
+      "palette": "symbiotic",
+      "disposition": "asset",
+      "assets": [
+        "symbiotic_regrow"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "symbiotic.repair_drones",
+      "name": "Repair Drones",
+      "tier": 1,
+      "type": "ship",
+      "palette": "symbiotic",
+      "disposition": "asset",
+      "assets": [
+        "symbiotic_repair_drones"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "symbiotic.second_lung",
+      "name": "Second Lung",
+      "tier": 1,
+      "type": "passive",
+      "palette": "symbiotic",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "symbiotic.spore",
+      "name": "Spore",
+      "tier": 2,
+      "type": "active",
+      "palette": "symbiotic",
+      "disposition": "asset",
+      "assets": [
+        "symbiotic_spore"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "symbiotic.symbiont_hull",
+      "name": "Symbiont Hull",
+      "tier": 2,
+      "type": "ship",
+      "palette": "symbiotic",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Passive shield capacity/regen modifiers; existing shield feedback only."
+    },
+    {
+      "id": "symbiotic.thick_hide",
+      "name": "Thick Hide",
+      "tier": 2,
+      "type": "passive",
+      "palette": "symbiotic",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "thermal.ablative_plating",
+      "name": "Ablative Plating",
+      "tier": 2,
+      "type": "ship",
+      "palette": "thermal",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Passive hazard multiplier despite ship type; no activation beat."
+    },
+    {
+      "id": "thermal.chain",
+      "name": "Chain",
+      "tier": 2,
+      "type": "augment",
+      "palette": "thermal",
+      "disposition": "reuse",
+      "assets": [
+        "thermal_lance"
+      ],
+      "meshInstances": 2,
+      "reason": "Second Lance link to the chained target; at most two links."
+    },
+    {
+      "id": "thermal.flare",
+      "name": "Flare",
+      "tier": 2,
+      "type": "active",
+      "palette": "thermal",
+      "disposition": "asset",
+      "assets": [
+        "thermal_flare"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "thermal.focused_lasers",
+      "name": "Focused Lasers",
+      "tier": 1,
+      "type": "ship",
+      "palette": "thermal",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Damage/range upgrade to existing ship lasers; no new firing shape required."
+    },
+    {
+      "id": "thermal.hot_hands",
+      "name": "Hot Hands",
+      "tier": 2,
+      "type": "passive",
+      "palette": "thermal",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "thermal.lance",
+      "name": "Lance",
+      "tier": 1,
+      "type": "active",
+      "palette": "thermal",
+      "disposition": "asset",
+      "assets": [
+        "thermal_lance"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "thermal.sear",
+      "name": "Sear",
+      "tier": 2,
+      "type": "active",
+      "palette": "thermal",
+      "disposition": "asset",
+      "assets": [
+        "thermal_sear"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "thermal.tempered_core",
+      "name": "Tempered Core",
+      "tier": 1,
+      "type": "passive",
+      "palette": "thermal",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "thermal.vent",
+      "name": "Vent",
+      "tier": 2,
+      "type": "active",
+      "palette": "thermal",
+      "disposition": "asset",
+      "assets": [
+        "thermal_vent"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "void.blink_strike",
+      "name": "Blink Strike",
+      "tier": 2,
+      "type": "augment",
+      "palette": "void",
+      "disposition": "asset",
+      "assets": [
+        "void_blink_strike"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "void.cloak",
+      "name": "Cloak",
+      "tier": 2,
+      "type": "ship",
+      "palette": "void",
+      "disposition": "asset",
+      "assets": [
+        "void_cloak"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "void.drain",
+      "name": "Drain",
+      "tier": 2,
+      "type": "active",
+      "palette": "void",
+      "disposition": "asset",
+      "assets": [
+        "void_drain"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "void.eclipse",
+      "name": "Eclipse",
+      "tier": 2,
+      "type": "active",
+      "palette": "void",
+      "disposition": "asset",
+      "assets": [
+        "void_eclipse"
+      ],
+      "meshInstances": 1
+    },
+    {
+      "id": "void.edge_sense",
+      "name": "Edge Sense",
+      "tier": 1,
+      "type": "passive",
+      "palette": "void",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Hollow outline and Count HUD are separate UI tasks; no activation beat."
+    },
+    {
+      "id": "void.hollowed",
+      "name": "Hollowed",
+      "tier": 2,
+      "type": "passive",
+      "palette": "void",
+      "disposition": "existing_feedback",
+      "assets": [],
+      "meshInstances": 0,
+      "reason": "Always-on stat or eligibility modifier; existing movement/equipment feedback suffices, no separate visible beat."
+    },
+    {
+      "id": "void.micro_jump",
+      "name": "Micro-jump",
+      "tier": 1,
+      "type": "ship",
+      "palette": "void",
+      "disposition": "asset",
+      "assets": [
+        "void_micro_jump"
+      ],
+      "meshInstances": 2
+    },
+    {
+      "id": "void.phase",
+      "name": "Phase",
+      "tier": 1,
+      "type": "active",
+      "palette": "void",
+      "disposition": "asset",
+      "assets": [
+        "void_phase"
+      ],
+      "meshInstances": 2
+    },
+    {
+      "id": "void.rift",
+      "name": "Rift",
+      "tier": 2,
+      "type": "active",
+      "palette": "void",
+      "disposition": "asset",
+      "assets": [
+        "void_rift"
+      ],
+      "meshInstances": 1
+    }
+  ],
+  "assets": [
+    {
+      "id": "gravitic_pull",
+      "root": "gravitic_pull",
+      "lod": "gravitic_pull_LOD0",
+      "mesh": "gravitic_pull_Surface",
+      "material": "LIB_FX_Gravitic",
+      "triangles": 576,
+      "boundsBlender": [
+        [
+          -0.1255086362361908,
+          -0.5010707378387451,
+          -0.12698976695537567
+        ],
+        [
+          0.14278095960617065,
+          0.5004498958587646,
+          0.12964355945587158
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "gravitic",
+      "role": "beat",
+      "silhouette": "three converging lens rails",
+      "envelopeSeconds": 0.45,
+      "maxParticles": 12,
+      "placement": "unit beam along Blender +Y / glTF -Z; stretch to target, at most 25 m",
+      "source": "assets/blend/effects/gravitic.blend",
+      "glb": "/models/effects/gravitic.glb",
+      "particle": "gravitic_particle"
+    },
+    {
+      "id": "gravitic_tractor_beam",
+      "root": "gravitic_tractor_beam",
+      "lod": "gravitic_tractor_beam_LOD0",
+      "mesh": "gravitic_tractor_beam_Surface",
+      "material": "LIB_FX_Gravitic",
+      "triangles": 2208,
+      "boundsBlender": [
+        [
+          -0.19142691791057587,
+          -0.5021432042121887,
+          -0.19186760485172272
+        ],
+        [
+          0.18520809710025787,
+          0.5009071230888367,
+          0.18348222970962524
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "gravitic",
+      "role": "beat",
+      "silhouette": "nested tractor jaws and helical cable",
+      "envelopeSeconds": 3,
+      "maxParticles": 20,
+      "placement": "unit beam along -Z; stretch to target; range owned by ability",
+      "source": "assets/blend/effects/gravitic.blend",
+      "glb": "/models/effects/gravitic.glb",
+      "particle": "gravitic_particle"
+    },
+    {
+      "id": "gravitic_slam",
+      "root": "gravitic_slam",
+      "lod": "gravitic_slam_LOD0",
+      "mesh": "gravitic_slam_Surface",
+      "material": "LIB_FX_Gravitic",
+      "triangles": 2880,
+      "boundsBlender": [
+        [
+          -0.7394710779190063,
+          -0.7740195393562317,
+          0.0
+        ],
+        [
+          0.7394710779190063,
+          0.7740195393562317,
+          0.061400000005960464
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "gravitic",
+      "role": "beat",
+      "silhouette": "six staggered pressure wedges",
+      "envelopeSeconds": 0.7,
+      "maxParticles": 32,
+      "placement": "unit radius ground ring; scale radius 6-18 m",
+      "source": "assets/blend/effects/gravitic.blend",
+      "glb": "/models/effects/gravitic.glb",
+      "particle": "gravitic_particle"
+    },
+    {
+      "id": "gravitic_well",
+      "root": "gravitic_well",
+      "lod": "gravitic_well_LOD0",
+      "mesh": "gravitic_well_Surface",
+      "material": "LIB_FX_Gravitic",
+      "triangles": 2856,
+      "boundsBlender": [
+        [
+          -1.0123646259307861,
+          -1.011922836303711,
+          -0.9887710809707642
+        ],
+        [
+          1.0035969018936157,
+          1.0056623220443726,
+          0.9971711039543152
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "gravitic",
+      "role": "beat",
+      "silhouette": "open latitude cage with compressed poles",
+      "envelopeSeconds": 8,
+      "maxParticles": 32,
+      "placement": "unit radius sphere; scale radius 12 m",
+      "source": "assets/blend/effects/gravitic.blend",
+      "glb": "/models/effects/gravitic.glb",
+      "particle": "gravitic_particle"
+    },
+    {
+      "id": "gravitic_inertial_brake",
+      "root": "gravitic_inertial_brake",
+      "lod": "gravitic_inertial_brake_LOD0",
+      "mesh": "gravitic_inertial_brake_Surface",
+      "material": "LIB_FX_Gravitic",
+      "triangles": 612,
+      "boundsBlender": [
+        [
+          -1.1122348308563232,
+          -0.6092960238456726,
+          -0.20000000298023224
+        ],
+        [
+          1.1122348308563232,
+          0.5024443864822388,
+          0.23717659711837769
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "gravitic",
+      "role": "beat",
+      "silhouette": "opposing swept brake vanes",
+      "envelopeSeconds": 0.6,
+      "maxParticles": 16,
+      "placement": "hull-centred unit radius; fit hull bounds; gust immunity is gameplay",
+      "source": "assets/blend/effects/gravitic.blend",
+      "glb": "/models/effects/gravitic.glb",
+      "particle": "gravitic_particle"
+    },
+    {
+      "id": "gravitic_particle",
+      "root": "gravitic_particle",
+      "lod": "gravitic_particle_LOD0",
+      "mesh": "gravitic_particle_Surface",
+      "material": "LIB_FX_Gravitic_Particle",
+      "triangles": 12,
+      "boundsBlender": [
+        [
+          -0.5,
+          -0.00800000037997961,
+          -0.5
+        ],
+        [
+          0.5,
+          0.0,
+          0.5
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "gravitic",
+      "role": "particle",
+      "source": "assets/blend/effects/gravitic.blend",
+      "glb": "/models/effects/gravitic.glb",
+      "maxParticles": 0
+    },
+    {
+      "id": "thermal_lance",
+      "root": "thermal_lance",
+      "lod": "thermal_lance_LOD0",
+      "mesh": "thermal_lance_Surface",
+      "material": "LIB_FX_Thermal",
+      "triangles": 960,
+      "boundsBlender": [
+        [
+          -0.08809223026037216,
+          -0.5009468197822571,
+          -0.07608452439308167
+        ],
+        [
+          0.08709082007408142,
+          0.5003677010536194,
+          0.08835697919130325
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "thermal",
+      "role": "beat",
+      "silhouette": "braided tapered plasma spear",
+      "envelopeSeconds": 0.25,
+      "maxParticles": 12,
+      "placement": "unit beam along -Z; stretch to target, at most 30 m",
+      "source": "assets/blend/effects/thermal.blend",
+      "glb": "/models/effects/thermal.glb",
+      "particle": "thermal_particle"
+    },
+    {
+      "id": "thermal_flare",
+      "root": "thermal_flare",
+      "lod": "thermal_flare_LOD0",
+      "mesh": "thermal_flare_Surface",
+      "material": "LIB_FX_Thermal",
+      "triangles": 510,
+      "boundsBlender": [
+        [
+          -0.5208431482315063,
+          -0.5089526772499084,
+          0.0
+        ],
+        [
+          0.5208431482315063,
+          0.5,
+          0.1984851360321045
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "thermal",
+      "role": "beat",
+      "silhouette": "five divergent flame tongues",
+      "envelopeSeconds": 0.5,
+      "maxParticles": 32,
+      "placement": "unit length 60-degree cone along -Z; scale length 12 m",
+      "source": "assets/blend/effects/thermal.blend",
+      "glb": "/models/effects/thermal.glb",
+      "particle": "thermal_particle"
+    },
+    {
+      "id": "thermal_sear",
+      "root": "thermal_sear",
+      "lod": "thermal_sear_LOD0",
+      "mesh": "thermal_sear_Surface",
+      "material": "LIB_FX_Thermal",
+      "triangles": 1368,
+      "boundsBlender": [
+        [
+          -0.4696301221847534,
+          -0.11941271275281906,
+          -0.4696301221847534
+        ],
+        [
+          0.4696301221847534,
+          0.01679999940097332,
+          0.4696301221847534
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "thermal",
+      "role": "beat",
+      "silhouette": "four hooked branding tongues",
+      "envelopeSeconds": 8,
+      "maxParticles": 16,
+      "placement": "target-centred; fit target bounds, no lore glyph",
+      "source": "assets/blend/effects/thermal.blend",
+      "glb": "/models/effects/thermal.glb",
+      "particle": "thermal_particle"
+    },
+    {
+      "id": "thermal_vent",
+      "root": "thermal_vent",
+      "lod": "thermal_vent_LOD0",
+      "mesh": "thermal_vent_Surface",
+      "material": "LIB_FX_Thermal",
+      "triangles": 4104,
+      "boundsBlender": [
+        [
+          -0.9834020137786865,
+          -0.9799067378044128,
+          0.0
+        ],
+        [
+          0.9834020137786865,
+          0.9799067378044128,
+          0.37970349192619324
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "thermal",
+      "role": "beat",
+      "silhouette": "broken low radial flame crown",
+      "envelopeSeconds": 0.8,
+      "maxParticles": 32,
+      "placement": "unit radius ground wave; size from heat at playback",
+      "source": "assets/blend/effects/thermal.blend",
+      "glb": "/models/effects/thermal.glb",
+      "particle": "thermal_particle"
+    },
+    {
+      "id": "thermal_particle",
+      "root": "thermal_particle",
+      "lod": "thermal_particle_LOD0",
+      "mesh": "thermal_particle_Surface",
+      "material": "LIB_FX_Thermal_Particle",
+      "triangles": 12,
+      "boundsBlender": [
+        [
+          -0.5,
+          -0.00800000037997961,
+          -0.5
+        ],
+        [
+          0.5,
+          0.0,
+          0.5
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "thermal",
+      "role": "particle",
+      "source": "assets/blend/effects/thermal.blend",
+      "glb": "/models/effects/thermal.glb",
+      "maxParticles": 0
+    },
+    {
+      "id": "resonance_pulse",
+      "root": "resonance_pulse",
+      "lod": "resonance_pulse_LOD0",
+      "mesh": "resonance_pulse_Surface",
+      "material": "LIB_FX_Resonance",
+      "triangles": 4320,
+      "boundsBlender": [
+        [
+          -0.967231035232544,
+          -0.9715394377708435,
+          0.0
+        ],
+        [
+          0.967231035232544,
+          0.9715394377708435,
+          0.07599999755620956
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "resonance",
+      "role": "beat",
+      "silhouette": "three spaced wave combs",
+      "envelopeSeconds": 0.9,
+      "maxParticles": 24,
+      "placement": "unit radius ground wave; scale radius 15 m",
+      "source": "assets/blend/effects/resonance.blend",
+      "glb": "/models/effects/resonance.glb",
+      "particle": "resonance_particle"
+    },
+    {
+      "id": "resonance_deep_sweep",
+      "root": "resonance_deep_sweep",
+      "lod": "resonance_deep_sweep_LOD0",
+      "mesh": "resonance_deep_sweep_Surface",
+      "material": "LIB_FX_Resonance",
+      "triangles": 1230,
+      "boundsBlender": [
+        [
+          -0.5030099749565125,
+          -0.501989483833313,
+          -0.20494386553764343
+        ],
+        [
+          0.5030099749565125,
+          0.5090000033378601,
+          0.03959999978542328
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "resonance",
+      "role": "beat",
+      "silhouette": "descending broad scan fan",
+      "envelopeSeconds": 1.2,
+      "maxParticles": 24,
+      "placement": "ship origin; aim cone toward world; scale from scanner",
+      "source": "assets/blend/effects/resonance.blend",
+      "glb": "/models/effects/resonance.glb",
+      "particle": "resonance_particle"
+    },
+    {
+      "id": "resonance_harmonic",
+      "root": "resonance_harmonic",
+      "lod": "resonance_harmonic_LOD0",
+      "mesh": "resonance_harmonic_Surface",
+      "material": "LIB_FX_Resonance",
+      "triangles": 72,
+      "boundsBlender": [
+        [
+          -0.5057752728462219,
+          0.0,
+          -0.4000000059604645
+        ],
+        [
+          0.5057752728462219,
+          0.009119999594986439,
+          0.4389999806880951
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "resonance",
+      "role": "beat",
+      "silhouette": "interleaved tuning forks",
+      "envelopeSeconds": 1.4,
+      "maxParticles": 16,
+      "placement": "target-centred; fit creature bounds within 30 m",
+      "source": "assets/blend/effects/resonance.blend",
+      "glb": "/models/effects/resonance.glb",
+      "particle": "resonance_particle"
+    },
+    {
+      "id": "resonance_shatter",
+      "root": "resonance_shatter",
+      "lod": "resonance_shatter_LOD0",
+      "mesh": "resonance_shatter_Surface",
+      "material": "LIB_FX_Resonance",
+      "triangles": 918,
+      "boundsBlender": [
+        [
+          -0.8521698117256165,
+          -0.2263324111700058,
+          -0.8863269686698914
+        ],
+        [
+          0.9081279039382935,
+          0.08816106617450714,
+          0.9175269603729248
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "resonance",
+      "role": "beat",
+      "silhouette": "radial prismatic pressure splinters",
+      "envelopeSeconds": 0.4,
+      "maxParticles": 24,
+      "placement": "target-centred unit radius impact",
+      "source": "assets/blend/effects/resonance.blend",
+      "glb": "/models/effects/resonance.glb",
+      "particle": "resonance_particle"
+    },
+    {
+      "id": "resonance_veil",
+      "root": "resonance_veil",
+      "lod": "resonance_veil_LOD0",
+      "mesh": "resonance_veil_Surface",
+      "material": "LIB_FX_Resonance",
+      "triangles": 972,
+      "boundsBlender": [
+        [
+          -0.44009530544281006,
+          -0.30181801319122314,
+          -0.925000011920929
+        ],
+        [
+          0.44009530544281006,
+          0.30181801319122314,
+          0.9317200183868408
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "resonance",
+      "role": "beat",
+      "silhouette": "open offset interference curtains",
+      "envelopeSeconds": 15,
+      "maxParticles": 12,
+      "placement": "body-centred 1.85 m envelope; sparse shimmer, never an opaque shell",
+      "source": "assets/blend/effects/resonance.blend",
+      "glb": "/models/effects/resonance.glb",
+      "particle": "resonance_particle"
+    },
+    {
+      "id": "resonance_jammer",
+      "root": "resonance_jammer",
+      "lod": "resonance_jammer_LOD0",
+      "mesh": "resonance_jammer_Surface",
+      "material": "LIB_FX_Resonance",
+      "triangles": 72,
+      "boundsBlender": [
+        [
+          -0.8999999761581421,
+          0.0,
+          -0.3545650541782379
+        ],
+        [
+          0.8999999761581421,
+          0.015599998645484447,
+          0.5616676807403564
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "resonance",
+      "role": "beat",
+      "silhouette": "crossed broken wave bars",
+      "envelopeSeconds": 0.6,
+      "maxParticles": 16,
+      "placement": "target hull bounds; discrete pulse interruption, not a 2 km mesh",
+      "source": "assets/blend/effects/resonance.blend",
+      "glb": "/models/effects/resonance.glb",
+      "particle": "resonance_particle"
+    },
+    {
+      "id": "resonance_particle",
+      "root": "resonance_particle",
+      "lod": "resonance_particle_LOD0",
+      "mesh": "resonance_particle_Surface",
+      "material": "LIB_FX_Resonance_Particle",
+      "triangles": 12,
+      "boundsBlender": [
+        [
+          -0.5,
+          -0.00800000037997961,
+          -0.5
+        ],
+        [
+          0.5,
+          0.0,
+          0.5
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "resonance",
+      "role": "particle",
+      "source": "assets/blend/effects/resonance.blend",
+      "glb": "/models/effects/resonance.glb",
+      "maxParticles": 0
+    },
+    {
+      "id": "symbiotic_bond",
+      "root": "symbiotic_bond",
+      "lod": "symbiotic_bond_LOD0",
+      "mesh": "symbiotic_bond_Surface",
+      "material": "LIB_FX_Symbiotic",
+      "triangles": 1368,
+      "boundsBlender": [
+        [
+          -0.9168996214866638,
+          -0.6431114077568054,
+          0.0
+        ],
+        [
+          0.8901396989822388,
+          0.6439343690872192,
+          0.3289908170700073
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "symbiotic",
+      "role": "beat",
+      "silhouette": "two interlocking root loops",
+      "envelopeSeconds": 1.5,
+      "maxParticles": 16,
+      "placement": "target-centred unit radius; fit creature bounds",
+      "source": "assets/blend/effects/symbiotic.blend",
+      "glb": "/models/effects/symbiotic.glb",
+      "particle": "symbiotic_particle"
+    },
+    {
+      "id": "symbiotic_repair_drones",
+      "root": "symbiotic_repair_drones",
+      "lod": "symbiotic_repair_drones_LOD0",
+      "mesh": "symbiotic_repair_drones_Surface",
+      "material": "LIB_FX_Symbiotic",
+      "triangles": 2268,
+      "boundsBlender": [
+        [
+          -0.6501515507698059,
+          -0.8164721727371216,
+          -0.12108840048313141
+        ],
+        [
+          0.8117453455924988,
+          0.60830157995224,
+          0.3043477237224579
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "symbiotic",
+      "role": "beat",
+      "silhouette": "three gilled open chitin motes",
+      "envelopeSeconds": 20,
+      "maxParticles": 12,
+      "placement": "ship-centred unit radius; fit hull bounds; motes are visual only",
+      "source": "assets/blend/effects/symbiotic.blend",
+      "glb": "/models/effects/symbiotic.glb",
+      "particle": "symbiotic_particle"
+    },
+    {
+      "id": "symbiotic_regrow",
+      "root": "symbiotic_regrow",
+      "lod": "symbiotic_regrow_LOD0",
+      "mesh": "symbiotic_regrow_Surface",
+      "material": "LIB_FX_Symbiotic",
+      "triangles": 2268,
+      "boundsBlender": [
+        [
+          -0.4717957377433777,
+          -0.2699248194694519,
+          -0.925000011920929
+        ],
+        [
+          0.4715896546840668,
+          0.3068993091583252,
+          0.9345999956130981
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "symbiotic",
+      "role": "beat",
+      "silhouette": "ascending bifurcated fronds",
+      "envelopeSeconds": 6,
+      "maxParticles": 20,
+      "placement": "body-centred 1.85 m envelope",
+      "source": "assets/blend/effects/symbiotic.blend",
+      "glb": "/models/effects/symbiotic.glb",
+      "particle": "symbiotic_particle"
+    },
+    {
+      "id": "symbiotic_spore",
+      "root": "symbiotic_spore",
+      "lod": "symbiotic_spore_LOD0",
+      "mesh": "symbiotic_spore_Surface",
+      "material": "LIB_FX_Symbiotic",
+      "triangles": 4578,
+      "boundsBlender": [
+        [
+          -0.792392909526825,
+          -0.5976987481117249,
+          -0.12108840048313141
+        ],
+        [
+          0.7901806831359863,
+          0.973505437374115,
+          0.31715744733810425
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "symbiotic",
+      "role": "beat",
+      "silhouette": "low gilled cap canopy",
+      "envelopeSeconds": 10,
+      "maxParticles": 32,
+      "placement": "unit radius volume; scale radius 8 m; preserve sparse interior",
+      "source": "assets/blend/effects/symbiotic.blend",
+      "glb": "/models/effects/symbiotic.glb",
+      "particle": "symbiotic_particle"
+    },
+    {
+      "id": "symbiotic_call",
+      "root": "symbiotic_call",
+      "lod": "symbiotic_call_LOD0",
+      "mesh": "symbiotic_call_Surface",
+      "material": "LIB_FX_Symbiotic",
+      "triangles": 612,
+      "boundsBlender": [
+        [
+          -0.5569628477096558,
+          -0.6839393973350525,
+          0.0
+        ],
+        [
+          0.5569628477096558,
+          0.7071923613548279,
+          0.09370139241218567
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "symbiotic",
+      "role": "beat",
+      "silhouette": "three forward root chevrons",
+      "envelopeSeconds": 0.9,
+      "maxParticles": 20,
+      "placement": "aim point ground marker; unit radius; herd is a separate actor",
+      "source": "assets/blend/effects/symbiotic.blend",
+      "glb": "/models/effects/symbiotic.glb",
+      "particle": "symbiotic_particle"
+    },
+    {
+      "id": "symbiotic_particle",
+      "root": "symbiotic_particle",
+      "lod": "symbiotic_particle_LOD0",
+      "mesh": "symbiotic_particle_Surface",
+      "material": "LIB_FX_Symbiotic_Particle",
+      "triangles": 12,
+      "boundsBlender": [
+        [
+          -0.5,
+          -0.00800000037997961,
+          -0.5
+        ],
+        [
+          0.5,
+          0.0,
+          0.5
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "symbiotic",
+      "role": "particle",
+      "source": "assets/blend/effects/symbiotic.blend",
+      "glb": "/models/effects/symbiotic.glb",
+      "maxParticles": 0
+    },
+    {
+      "id": "void_phase",
+      "root": "void_phase",
+      "lod": "void_phase_LOD0",
+      "mesh": "void_phase_Surface",
+      "material": "LIB_FX_Void",
+      "triangles": 108,
+      "boundsBlender": [
+        [
+          -0.5005568861961365,
+          -0.1599999964237213,
+          -0.9268900752067566
+        ],
+        [
+          0.5005568861961365,
+          0.013199999928474426,
+          0.9268277287483215
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "beat",
+      "silhouette": "split folded doorway scar",
+      "envelopeSeconds": 0.35,
+      "maxParticles": 16,
+      "placement": "body-centred 1.85 m departure and arrival; no connecting 12 m trail",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "particle": "void_particle"
+    },
+    {
+      "id": "void_micro_jump",
+      "root": "void_micro_jump",
+      "lod": "void_micro_jump_LOD0",
+      "mesh": "void_micro_jump_Surface",
+      "material": "LIB_FX_Void",
+      "triangles": 108,
+      "boundsBlender": [
+        [
+          -1.101603388786316,
+          -0.1599999964237213,
+          -0.4540124535560608
+        ],
+        [
+          1.101603388786316,
+          0.013199999928474426,
+          0.45398402214050293
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "beat",
+      "silhouette": "severed swept hull aperture",
+      "envelopeSeconds": 0.3,
+      "maxParticles": 20,
+      "placement": "departure and arrival at hull bounds; never a 2 km mesh",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "particle": "void_particle"
+    },
+    {
+      "id": "void_drain",
+      "root": "void_drain",
+      "lod": "void_drain_LOD0",
+      "mesh": "void_drain_Surface",
+      "material": "LIB_FX_Void",
+      "triangles": 252,
+      "boundsBlender": [
+        [
+          -0.14793728291988373,
+          -0.5003260374069214,
+          -0.09404290467500687
+        ],
+        [
+          0.14793728291988373,
+          0.3438348174095154,
+          0.1024429053068161
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "beat",
+      "silhouette": "paired discontinuous siphon ribbons",
+      "envelopeSeconds": 4,
+      "maxParticles": 20,
+      "placement": "unit beam along -Z; stretch between target and caster",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "particle": "void_particle"
+    },
+    {
+      "id": "void_rift",
+      "root": "void_rift",
+      "lod": "void_rift_LOD0",
+      "mesh": "void_rift_Surface",
+      "material": "LIB_FX_Void",
+      "triangles": 864,
+      "boundsBlender": [
+        [
+          -0.8484159111976624,
+          -0.7419754266738892,
+          -0.09200000017881393
+        ],
+        [
+          0.6944688558578491,
+          0.8772221803665161,
+          0.009600000455975533
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "beat",
+      "silhouette": "three offset inward spiral cuts",
+      "envelopeSeconds": 3,
+      "maxParticles": 32,
+      "placement": "unit radius ground aperture; scale radius 10 m",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "particle": "void_particle"
+    },
+    {
+      "id": "void_eclipse",
+      "root": "void_eclipse",
+      "lod": "void_eclipse_LOD0",
+      "mesh": "void_eclipse_Surface",
+      "material": "LIB_FX_Void",
+      "triangles": 1872,
+      "boundsBlender": [
+        [
+          -1.0118738412857056,
+          -1.0118738412857056,
+          0.0
+        ],
+        [
+          1.0118738412857056,
+          1.0118738412857056,
+          0.6574984192848206
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "beat",
+      "silhouette": "dark negative-space broken dome",
+      "envelopeSeconds": 8,
+      "maxParticles": 24,
+      "placement": "unit radius dome; scale radius 10 m; occlusion shader belongs to playback",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "particle": "void_particle"
+    },
+    {
+      "id": "void_cloak",
+      "root": "void_cloak",
+      "lod": "void_cloak_LOD0",
+      "mesh": "void_cloak_Surface",
+      "material": "LIB_FX_Void",
+      "triangles": 108,
+      "boundsBlender": [
+        [
+          -1.0870702266693115,
+          -0.1599999964237213,
+          -0.45131316781044006
+        ],
+        [
+          1.0870702266693115,
+          0.00431999983265996,
+          0.4513038396835327
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "beat",
+      "silhouette": "thin discontinuous hull seams",
+      "envelopeSeconds": 20,
+      "maxParticles": 12,
+      "placement": "hull-centred unit radius; fit hull bounds; visibility owned by playback",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "particle": "void_particle"
+    },
+    {
+      "id": "void_blink_strike",
+      "root": "void_blink_strike",
+      "lod": "void_blink_strike_LOD0",
+      "mesh": "void_blink_strike_Surface",
+      "material": "LIB_FX_Void",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.4631310701370239,
+          -0.26622939109802246,
+          -0.7794228792190552
+        ],
+        [
+          0.9131296873092651,
+          0.0904809758067131,
+          0.8298228979110718
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "beat",
+      "silhouette": "crossing shear blades",
+      "envelopeSeconds": 0.2,
+      "maxParticles": 12,
+      "placement": "target-centred unit radius impact, paired with Phase",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "particle": "void_particle"
+    },
+    {
+      "id": "void_particle",
+      "root": "void_particle",
+      "lod": "void_particle_LOD0",
+      "mesh": "void_particle_Surface",
+      "material": "LIB_FX_Void_Particle",
+      "triangles": 12,
+      "boundsBlender": [
+        [
+          -0.5,
+          -0.00800000037997961,
+          -0.5
+        ],
+        [
+          0.5,
+          0.0,
+          0.5
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "void",
+      "role": "particle",
+      "source": "assets/blend/effects/void.blend",
+      "glb": "/models/effects/void.glb",
+      "maxParticles": 0
+    },
+    {
+      "id": "recall_dissolve",
+      "root": "recall_dissolve",
+      "lod": "recall_dissolve_LOD0",
+      "mesh": "recall_dissolve_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 360,
+      "boundsBlender": [
+        [
+          -0.3787081241607666,
+          -0.37649765610694885,
+          -0.9295348525047302
+        ],
+        [
+          0.41204550862312317,
+          0.35598811507225037,
+          1.024999976158142
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "beat",
+      "silhouette": "rising lattice fragments in a body envelope",
+      "envelopeSeconds": 0.65,
+      "maxParticles": 48,
+      "placement": "1.85 m tall body-centred scatter; body masking belongs to Recall",
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "particle": "recall_particle"
+    },
+    {
+      "id": "recall_flash",
+      "root": "recall_flash",
+      "lod": "recall_flash_LOD0",
+      "mesh": "recall_flash_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 732,
+      "boundsBlender": [
+        [
+          -0.8677997589111328,
+          -0.11999999731779099,
+          -1.0
+        ],
+        [
+          0.8677997589111328,
+          0.11999999731779099,
+          1.0191999673843384
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "beat",
+      "silhouette": "six short radial rays with a faceted lens",
+      "envelopeSeconds": 0.12,
+      "maxParticles": 12,
+      "placement": "unit radius; local hard flash, not a full-screen white card",
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "particle": "recall_particle"
+    },
+    {
+      "id": "recall_particle",
+      "root": "recall_particle",
+      "lod": "recall_particle_LOD0",
+      "mesh": "recall_particle_Surface",
+      "material": "LIB_GlyphLight_Recall_Particle",
+      "triangles": 12,
+      "boundsBlender": [
+        [
+          -0.5,
+          -0.00800000037997961,
+          -0.5
+        ],
+        [
+          0.5,
+          0.0,
+          0.5
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "particle",
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0
+    },
+    {
+      "id": "recall_glyph_a",
+      "root": "recall_glyph_a",
+      "lod": "recall_glyph_a_LOD0",
+      "mesh": "recall_glyph_a_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 228,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "a",
+      "strokes": [
+        "S0",
+        "R0"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_b",
+      "root": "recall_glyph_b",
+      "lod": "recall_glyph_b_LOD0",
+      "mesh": "recall_glyph_b_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 228,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.03999999910593033,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "b",
+      "strokes": [
+        "S0",
+        "S3"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_d",
+      "root": "recall_glyph_d",
+      "lod": "recall_glyph_d_LOD0",
+      "mesh": "recall_glyph_d_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 228,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.28999999165534973
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.28999999165534973
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "d",
+      "strokes": [
+        "S1",
+        "S4"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_e",
+      "root": "recall_glyph_e",
+      "lod": "recall_glyph_e_LOD0",
+      "mesh": "recall_glyph_e_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 228,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.28999999165534973
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.28999999165534973
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "e",
+      "strokes": [
+        "S2",
+        "S5"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_f",
+      "root": "recall_glyph_f",
+      "lod": "recall_glyph_f_LOD0",
+      "mesh": "recall_glyph_f_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "f",
+      "strokes": [
+        "S0",
+        "R5",
+        "R0"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_g",
+      "root": "recall_glyph_g",
+      "lod": "recall_glyph_g_LOD0",
+      "mesh": "recall_glyph_g_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.03999999910593033
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "g",
+      "strokes": [
+        "S3",
+        "R2",
+        "R3"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_h",
+      "root": "recall_glyph_h",
+      "lod": "recall_glyph_h_LOD0",
+      "mesh": "recall_glyph_h_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 228,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.28999999165534973
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "h",
+      "strokes": [
+        "S1",
+        "S5"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_i",
+      "root": "recall_glyph_i",
+      "lod": "recall_glyph_i_LOD0",
+      "mesh": "recall_glyph_i_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 150,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.03999999910593033,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "i",
+      "strokes": [
+        "S0"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_j",
+      "root": "recall_glyph_j",
+      "lod": "recall_glyph_j_LOD0",
+      "mesh": "recall_glyph_j_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "j",
+      "strokes": [
+        "S0",
+        "S2",
+        "R2"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_k",
+      "root": "recall_glyph_k",
+      "lod": "recall_glyph_k_LOD0",
+      "mesh": "recall_glyph_k_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 234,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "k",
+      "strokes": [
+        "S0",
+        "S1",
+        "R0"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_l",
+      "root": "recall_glyph_l",
+      "lod": "recall_glyph_l_LOD0",
+      "mesh": "recall_glyph_l_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 150,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.03999999910593033,
+          0.03999999910593033,
+          0.03999999910593033
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "l",
+      "strokes": [
+        "S3"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_m",
+      "root": "recall_glyph_m",
+      "lod": "recall_glyph_m_LOD0",
+      "mesh": "recall_glyph_m_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.28999999165534973
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "m",
+      "strokes": [
+        "S1",
+        "S3",
+        "S5"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_n",
+      "root": "recall_glyph_n",
+      "lod": "recall_glyph_n_LOD0",
+      "mesh": "recall_glyph_n_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.28999999165534973
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "n",
+      "strokes": [
+        "S0",
+        "S2",
+        "S4"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_o",
+      "root": "recall_glyph_o",
+      "lod": "recall_glyph_o_LOD0",
+      "mesh": "recall_glyph_o_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 546,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "o",
+      "strokes": [
+        "S0",
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_p",
+      "root": "recall_glyph_p",
+      "lod": "recall_glyph_p_LOD0",
+      "mesh": "recall_glyph_p_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.28999999165534973
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "p",
+      "strokes": [
+        "S0",
+        "R0",
+        "R1"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_r",
+      "root": "recall_glyph_r",
+      "lod": "recall_glyph_r_LOD0",
+      "mesh": "recall_glyph_r_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.28999999165534973
+        ],
+        [
+          0.03999999910593033,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "r",
+      "strokes": [
+        "S0",
+        "R5",
+        "R4"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_s",
+      "root": "recall_glyph_s",
+      "lod": "recall_glyph_s_LOD0",
+      "mesh": "recall_glyph_s_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 234,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.28999999165534973
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.28999999165534973
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "s",
+      "strokes": [
+        "S1",
+        "S2",
+        "R1"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_t",
+      "root": "recall_glyph_t",
+      "lod": "recall_glyph_t_LOD0",
+      "mesh": "recall_glyph_t_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "t",
+      "strokes": [
+        "S5",
+        "S0",
+        "S1"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_u",
+      "root": "recall_glyph_u",
+      "lod": "recall_glyph_u_LOD0",
+      "mesh": "recall_glyph_u_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.03999999910593033
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "u",
+      "strokes": [
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_v",
+      "root": "recall_glyph_v",
+      "lod": "recall_glyph_v_LOD0",
+      "mesh": "recall_glyph_v_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 312,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.03999999910593033
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "v",
+      "strokes": [
+        "S2",
+        "R2",
+        "R3",
+        "S4"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_w",
+      "root": "recall_glyph_w",
+      "lod": "recall_glyph_w_LOD0",
+      "mesh": "recall_glyph_w_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 384,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.28999999165534973
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.28999999165534973
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "w",
+      "strokes": [
+        "S1",
+        "S2",
+        "S4",
+        "S5"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_y",
+      "root": "recall_glyph_y",
+      "lod": "recall_glyph_y_LOD0",
+      "mesh": "recall_glyph_y_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.5400000214576721
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "y",
+      "strokes": [
+        "S0",
+        "S3",
+        "R2"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_z",
+      "root": "recall_glyph_z",
+      "lod": "recall_glyph_z_LOD0",
+      "mesh": "recall_glyph_z_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 306,
+      "boundsBlender": [
+        [
+          -0.47301268577575684,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.47301268577575684,
+          0.03999999910593033,
+          0.5400000214576721
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "z",
+      "strokes": [
+        "S1",
+        "S5",
+        "R5"
+      ],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    },
+    {
+      "id": "recall_glyph_divider",
+      "root": "recall_glyph_divider",
+      "lod": "recall_glyph_divider_LOD0",
+      "mesh": "recall_glyph_divider_Surface",
+      "material": "LIB_GlyphLight_Recall",
+      "triangles": 72,
+      "boundsBlender": [
+        [
+          -0.03999999910593033,
+          -0.03999999910593033,
+          -0.03999999910593033
+        ],
+        [
+          0.03999999910593033,
+          0.03999999910593033,
+          0.03999999910593033
+        ]
+      ],
+      "drawCalls": 1,
+      "assetClass": "effect",
+      "branch": "recall",
+      "role": "glyph",
+      "letter": "\u00b7",
+      "strokes": [],
+      "source": "assets/blend/effects/recall.blend",
+      "glb": "/models/effects/recall.glb",
+      "maxParticles": 0,
+      "placement": "upright in Blender XZ / glTF XY; N0 stays up; arrange clockwise without rotating signs"
+    }
+  ],
+  "sheets": [
+    {
+      "branch": "gravitic",
+      "path": "/particles/effects/gravitic_particles.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "rowOrigin": "bottom",
+      "frameDirection": "left-to-right",
+      "frameUVSize": [
+        0.25,
+        0.25
+      ],
+      "templateUVCell": [
+        0,
+        0
+      ],
+      "gutterPixels": 14,
+      "alpha": "straight",
+      "frames": 4,
+      "rows": 4,
+      "uvStep": "add (frame/4,row/4) to the template UV; no additional scale",
+      "playback": "four decay frames across each row, choose one of four shapes; clamp texture, never wrap; pool and batch by branch"
+    },
+    {
+      "branch": "thermal",
+      "path": "/particles/effects/thermal_particles.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "rowOrigin": "bottom",
+      "frameDirection": "left-to-right",
+      "frameUVSize": [
+        0.25,
+        0.25
+      ],
+      "templateUVCell": [
+        0,
+        0
+      ],
+      "gutterPixels": 14,
+      "alpha": "straight",
+      "frames": 4,
+      "rows": 4,
+      "uvStep": "add (frame/4,row/4) to the template UV; no additional scale",
+      "playback": "four decay frames across each row, choose one of four shapes; clamp texture, never wrap; pool and batch by branch"
+    },
+    {
+      "branch": "resonance",
+      "path": "/particles/effects/resonance_particles.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "rowOrigin": "bottom",
+      "frameDirection": "left-to-right",
+      "frameUVSize": [
+        0.25,
+        0.25
+      ],
+      "templateUVCell": [
+        0,
+        0
+      ],
+      "gutterPixels": 14,
+      "alpha": "straight",
+      "frames": 4,
+      "rows": 4,
+      "uvStep": "add (frame/4,row/4) to the template UV; no additional scale",
+      "playback": "four decay frames across each row, choose one of four shapes; clamp texture, never wrap; pool and batch by branch"
+    },
+    {
+      "branch": "symbiotic",
+      "path": "/particles/effects/symbiotic_particles.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "rowOrigin": "bottom",
+      "frameDirection": "left-to-right",
+      "frameUVSize": [
+        0.25,
+        0.25
+      ],
+      "templateUVCell": [
+        0,
+        0
+      ],
+      "gutterPixels": 14,
+      "alpha": "straight",
+      "frames": 4,
+      "rows": 4,
+      "uvStep": "add (frame/4,row/4) to the template UV; no additional scale",
+      "playback": "four decay frames across each row, choose one of four shapes; clamp texture, never wrap; pool and batch by branch"
+    },
+    {
+      "branch": "void",
+      "path": "/particles/effects/void_particles.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "rowOrigin": "bottom",
+      "frameDirection": "left-to-right",
+      "frameUVSize": [
+        0.25,
+        0.25
+      ],
+      "templateUVCell": [
+        0,
+        0
+      ],
+      "gutterPixels": 14,
+      "alpha": "straight",
+      "frames": 4,
+      "rows": 4,
+      "uvStep": "add (frame/4,row/4) to the template UV; no additional scale",
+      "playback": "four decay frames across each row, choose one of four shapes; clamp texture, never wrap; pool and batch by branch"
+    },
+    {
+      "branch": "recall",
+      "path": "/particles/effects/recall_particles.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "grid": [
+        4,
+        4
+      ],
+      "rowOrigin": "bottom",
+      "frameDirection": "left-to-right",
+      "frameUVSize": [
+        0.25,
+        0.25
+      ],
+      "templateUVCell": [
+        0,
+        0
+      ],
+      "gutterPixels": 14,
+      "alpha": "straight",
+      "frames": 4,
+      "rows": 4,
+      "uvStep": "add (frame/4,row/4) to the template UV; no additional scale",
+      "playback": "four decay frames across each row, choose one of four shapes; clamp texture, never wrap; pool and batch by branch"
+    }
+  ],
+  "sourceInputs": {
+    "packages/shared/src/art/glyphs.ts": "8f4ad4410689222515b56039555e775aad9869cb22f6fcaff35351a0f4ac0bac",
+    "packages/tools/blender/families.json": "2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d",
+    "assets/blend/_library.blend": "33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c"
+  },
+  "contract": {
+    "loader": "packages/client/src/core/Engine.js:gltfLoader; select named root and its LOD0",
+    "coordinates": "Blender metres +Z up -> glTF metres +Y up. Beams: Blender +Y -> glTF -Z.",
+    "material": "glTF PBR emissive, BLEND, double-sided, straight alpha; depthWrite=false for particle playback",
+    "animation": "No GLB animation authored. Timeline/visibility/UV stepping/body dissolve shader belong to playback tasks.",
+    "particleBudget": {
+      "perCast": 64,
+      "scene": 512,
+      "drawCallsPerCast": 4,
+      "sceneDrawCalls": 64,
+      "enforcement": "integration requirement, not a runtime performance claim"
+    }
+  },
+  "recall": {
+    "sequence": [
+      "glyph light",
+      "dissolve",
+      "flash"
+    ],
+    "glyphs": 24,
+    "exampleWord": [
+      "r",
+      "e",
+      "k",
+      "a",
+      "l",
+      "l"
+    ],
+    "maxGlyphInstances": 6,
+    "maxParticles": 48,
+    "maxDrawCalls": 3,
+    "batching": "Merge at most six selected glyph meshes into one geometry/material draw (different signs cannot share ordinary instancing); dissolve one draw, flash one draw, particles one draw. Glyph+dissolve+particles then flash+particles; no all-stage overlap.",
+    "proposedTiming": [
+      {
+        "stage": "glyph light",
+        "start": 0,
+        "end": 0.45
+      },
+      {
+        "stage": "dissolve",
+        "start": 0.3,
+        "end": 0.95
+      },
+      {
+        "stage": "flash",
+        "start": 0.95,
+        "end": 1.07
+      }
+    ]
+  }
+}
