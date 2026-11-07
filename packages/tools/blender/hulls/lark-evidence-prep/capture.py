@@ -1,8 +1,8 @@
-"""CPU stills for the Lark scale, canopy, livery, and collider questions.
+"""Future CPU captures of the pinned Lark candidate; no fit/clearance qualification.
 
-Open a blend by path, write PNGs and receipt.json under --out, and leave the
-blend bytes unchanged. Run under Blender with --factory-startup. The script
-does not claim review qualification, and it does not measure dynamic clearance.
+Run only after capture authorization. Geometry is frozen from evaluated world
+transforms into a separate scene. This script never saves a blend or reuses an
+output directory. Seated/closed-canopy proof is deliberately unsupported.
 """
 
 import hashlib
@@ -11,22 +11,14 @@ import math
 import sys
 from pathlib import Path
 
+# Blender does not consistently add a -P script's directory to sys.path.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import capture_plan as plan
+
 import bpy
 from mathutils import Vector
 
-import capture_plan as plan
-
-KNOWN_IMAGES = (
-    "boarding-standing.png",
-    "cockpit-closed-canopy.png",
-    "colliders-axes.png",
-    "livery-lineup.png",
-)
-AXIS_COLORS = {
-    0: (0.85, 0.12, 0.1, 1.0),
-    1: (0.15, 0.7, 0.2, 1.0),
-    2: (0.15, 0.35, 0.9, 1.0),
-}
+AXIS_COLORS = {0: (.85, .12, .1, 1), 1: (.15, .7, .2, 1), 2: (.15, .35, .9, 1)}
 
 
 def file_sha256(path):
@@ -38,26 +30,10 @@ def file_sha256(path):
 
 
 def write_json(path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(payload, indent=2) + "\n")
-    temporary.replace(path)
-
-
-def retire_known(out):
-    for name in KNOWN_IMAGES:
-        path = out / name
-        if path.is_file():
-            path.unlink()
-    cell_dir = out / ".cells"
-    if cell_dir.is_dir():
-        for child in cell_dir.iterdir():
-            if child.is_file():
-                child.unlink()
-        try:
-            cell_dir.rmdir()
-        except OSError:
-            pass
+    # The run owns a newly created directory. Never replace even an unexpected file.
+    with path.open("x") as handle:
+        json.dump(payload, handle, indent=2, allow_nan=False)
+        handle.write("\n")
 
 
 def hide_all(scene):
@@ -70,203 +46,184 @@ def show(obj):
     obj.hide_render = False
 
 
+def matrix_list(matrix):
+    return [[float(value) for value in row] for row in matrix]
+
+
+def object_fact(obj, depsgraph):
+    chain = []
+    parent = obj.parent
+    while parent is not None:
+        chain.append({"name": parent.name, "matrix_world": matrix_list(parent.evaluated_get(depsgraph).matrix_world)})
+        parent = parent.parent
+    return {"name": obj.name, "matrix_world": matrix_list(obj.evaluated_get(depsgraph).matrix_world),
+            "parent_chain": chain, "collections": sorted(c.name for c in obj.users_collection),
+            "child_meshes": [child.name for child in obj.children if child.type == "MESH"]}
+
+
 def world_vertices(obj):
-    depsgraph = bpy.context.evaluated_depsgraph_get()
-    evaluated = obj.evaluated_get(depsgraph)
-    mesh = evaluated.to_mesh()
-    try:
-        matrix = evaluated.matrix_world
-        return [tuple(matrix @ vertex.co) for vertex in mesh.vertices]
-    finally:
-        evaluated.to_mesh_clear()
-
-
-def world_triangles(obj):
-    depsgraph = bpy.context.evaluated_depsgraph_get()
-    evaluated = obj.evaluated_get(depsgraph)
-    mesh = evaluated.to_mesh()
-    try:
-        mesh.calc_loop_triangles()
-        if len(mesh.loop_triangles) > plan.TRIANGLE_CAP:
-            return None
-        matrix = evaluated.matrix_world
-        triangles = []
-        for tri in mesh.loop_triangles:
-            triangles.append(tuple(tuple(matrix @ mesh.vertices[index].co) for index in tri.vertices))
-        return triangles
-    finally:
-        evaluated.to_mesh_clear()
-
-
-def grid_geometry(obj):
-    mesh = obj.data
-    matrix = obj.matrix_world
-    vertices = [tuple(matrix @ vertex.co) for vertex in mesh.vertices]
-    edges = [(int(edge.vertices[0]), int(edge.vertices[1])) for edge in mesh.edges]
-    origin_z = float(matrix.translation.z)
-    return vertices, edges, origin_z
-
-
-def choose(objects, predicate):
-    picked = plan.prefer_unsuffixed([obj.name for obj in objects if predicate(obj.name)])
-    by_name = {obj.name: obj for obj in objects}
-    return [by_name[name] for name in picked["kept"]], picked["dropped_duplicates"]
-
-
-def matrix3(obj):
-    matrix = obj.matrix_world
-    return tuple(tuple(float(matrix[row][col]) for col in range(3)) for row in range(3))
-
-
-def translation_of(obj):
-    location = obj.matrix_world.translation
-    return (float(location.x), float(location.y), float(location.z))
-
-
-def surface_payload(objects, kind):
-    chosen, dropped = choose(objects, lambda name: plan.is_canopy_surface(name, kind))
-    if not chosen:
-        return {"status": "missing", "triangles": []}, dropped
-    triangles = []
-    for obj in chosen:
-        found = world_triangles(obj)
-        if found is None:
-            return {"status": "triangle_cap_exceeded", "triangles": []}, dropped
-        triangles.extend(found)
-        if len(triangles) > plan.TRIANGLE_CAP:
-            return {"status": "triangle_cap_exceeded", "triangles": []}, dropped
-    return {"status": "ok", "triangles": triangles}, dropped
-
-
-def collider_payload(objects):
-    chosen, dropped = choose([obj for obj in objects if obj.type == "MESH"], plan.is_collider_name)
-    if not chosen:
-        return {"names": [], "status": "missing", "triangles": []}, dropped
-    triangles = []
-    names = [obj.name for obj in chosen]
-    for obj in chosen:
-        found = world_triangles(obj)
-        if found is None or len(triangles) + len(found) > plan.TRIANGLE_CAP:
-            return {"names": names, "status": "triangle_cap_exceeded", "triangles": []}, dropped
-        triangles.extend(found)
-    return {"names": names, "status": "ok", "triangles": triangles}, dropped
-
-
-def base_color_node(material):
-    if material is None or not material.use_nodes or material.node_tree is None:
-        return None
-    for node in material.node_tree.nodes:
-        if node.type != "BSDF_PRINCIPLED":
-            continue
-        socket = node.inputs.get("Base Color")
-        if socket is None or len(socket.links) != 1:
-            return None
-        source = socket.links[0].from_node
-        if source.type != "TEX_IMAGE" or source.image is None:
-            return None
-        return source
-    return None
+    # Display objects are already baked evaluated meshes, with no parents/modifiers.
+    return plan.world_points([tuple(v.co) for v in obj.data.vertices], matrix_list(obj.matrix_world))
 
 
 def image_fact(image):
     if image is None:
         return None
-    backed = bool(image.has_data or image.packed_file is not None or image.filepath)
-    return {
-        "key": str(image.as_pointer()),
-        "name": image.name,
-        "width": int(image.size[0]),
-        "height": int(image.size[1]),
-        "backed": backed,
+    packed = image.packed_file
+    valid = bool(packed and image.source == "FILE" and not image.is_dirty
+                 and image.size[0] > 0 and image.size[1] > 0)
+    return {"name": image.name, "width": int(image.size[0]), "height": int(image.size[1]),
+            "colorspace": image.colorspace_settings.name, "alpha_mode": image.alpha_mode,
+            "packed_clean": valid, "sha256": hashlib.sha256(bytes(packed.data)).hexdigest() if valid else None,
+            "identity": "packed file bytes; decoded/perceptual equality not measured"}
+
+
+def active_nodes(material):
+    if material is None or not material.use_nodes or material.node_tree is None:
+        return []
+    outputs = [n for n in material.node_tree.nodes if n.type == "OUTPUT_MATERIAL" and n.is_active_output]
+    if len(outputs) != 1:
+        raise ValueError(f"{material.name}: ambiguous active material output")
+    seen = set()
+    pending = [outputs[0]]
+    while pending:
+        node = pending.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        if node.type == "GROUP":
+            raise ValueError(f"{material.name}: inspect nested material graph before capture")
+        for socket in node.inputs:
+            pending.extend(link.from_node for link in socket.links)
+    return list(seen)
+
+
+def base_color_node(material):
+    nodes = active_nodes(material)
+    shaders = [n for n in nodes if n.type == "BSDF_PRINCIPLED"]
+    if len(shaders) != 1:
+        return None
+    socket = shaders[0].inputs.get("Base Color")
+    if socket is None or len(socket.links) != 1:
+        return None
+    source = socket.links[0].from_node
+    return source if source.type == "TEX_IMAGE" and source.image is not None else None
+
+
+def snapshot_mesh(obj, scene, depsgraph, materials):
+    evaluated = obj.evaluated_get(depsgraph)
+    mesh = bpy.data.meshes.new_from_object(evaluated, preserve_all_data_layers=True, depsgraph=depsgraph)
+    face_materials = [polygon.material_index for polygon in mesh.polygons]
+    mesh.materials.clear()
+    for slot in evaluated.material_slots:
+        original = slot.material
+        if original is None:
+            raise ValueError(f"{obj.name}: empty material slot requires inspection")
+        if original.name not in materials:
+            materials[original.name] = original.copy()
+            materials[original.name].animation_data_clear()
+            if materials[original.name].node_tree:
+                materials[original.name].node_tree.animation_data_clear()
+        mesh.materials.append(materials[original.name])
+    for polygon, index in zip(mesh.polygons, face_materials):
+        polygon.material_index = index
+    copy = bpy.data.objects.new("EvidenceSnapshot_" + obj.name, mesh)
+    scene.collection.objects.link(copy)
+    copy.matrix_world = evaluated.matrix_world.copy()
+    copy.hide_render = True
+    return copy
+
+
+def extract(source_scene, capture_scene):
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    asset = source_scene.collection.children.get("lark")
+    paths, objects = {}, {}
+
+    def collect(collection, ancestry):
+        path = ancestry + [collection.name]
+        for obj in collection.objects:
+            paths.setdefault(obj.name, []).append(path)
+            objects[obj.name] = obj
+        for child in collection.children:
+            collect(child, path)
+
+    if asset:
+        collect(asset, [])
+    scopes = {name: plan.base_scope(owners) for name, owners in paths.items()}
+    lod0 = [obj for name, obj in objects.items() if scopes[name] == "base_lod0"]
+    scoped = [obj for name, obj in objects.items() if scopes[name] != "excluded"]
+    for obj in scoped:
+        if "_dmg" in obj.name or "_husk" in obj.name:
+            raise ValueError(f"variant name conflicts with base/shared collection ownership: {obj.name}")
+    meshes = [o for o in lod0 if o.type == "MESH" and not o.name.startswith(("COL_", "REF_"))]
+    colliders = [o for o in scoped if o.type == "MESH" and o.name.startswith("COL_")]
+    hardpoints = [o for o in scoped if o.type == "EMPTY" and o.name.startswith(("HP_S_", "HP_M_", "HP_L_"))]
+    pivots = [o for o in scoped if o.type == "EMPTY" and (o.name == "Canopy" or o.name.startswith("Gear"))]
+    boarding = next((o for o in scoped if o.name == "BoardingFoot" and o.type == "EMPTY"), None)
+    reference = source_scene.collection.children.get("REF")
+    refs = {name: reference.all_objects.get(name) if reference else None for name in ("REF_Biped", "REF_Grid")}
+    refs = {name: obj if obj and obj.type == "MESH" else None for name, obj in refs.items()}
+    originals = list(dict.fromkeys(meshes + colliders + [o for o in refs.values() if o is not None]))
+    material_copies = {}
+    snapshots = {o.name: snapshot_mesh(o, capture_scene, depsgraph, material_copies) for o in originals}
+    original_names = {copy.name: name for name, copy in material_copies.items()}
+    used_materials = {}
+    for obj in meshes:
+        frozen = snapshots[obj.name]
+        for index in {p.material_index for p in frozen.data.polygons}:
+            if index >= len(frozen.material_slots):
+                raise ValueError(f"{obj.name}: unresolved face material {index}")
+            material = frozen.material_slots[index].material
+            used_materials[original_names[material.name]] = material
+    facts, graph_gaps, swap_nodes, dependencies = {}, [], [], {}
+    for name, material in used_materials.items():
+        nodes = active_nodes(material)
+        color = base_color_node(material)
+        if name in plan.MATERIALS and color is None:
+            graph_gaps.append(name + " active base-color graph unresolved")
+        tagged = [n for n in nodes if n.type == "TEX_IMAGE" and n.image and
+                  ("baseColor" in n.image.name or n.image.name.startswith("lark_livery_"))]
+        for node in nodes:
+            if node.type == "TEX_IMAGE":
+                fact = image_fact(node.image)
+                if not fact or not fact["packed_clean"]:
+                    raise ValueError(f"{name}: active image lacks clean packed bytes; inspect dependency")
+                dependencies[node.image.name] = fact
+        for node in tagged:
+            if node not in swap_nodes:
+                swap_nodes.append(node)
+            facts[name + "/" + node.name] = image_fact(node.image)
+        if color is not None and name in plan.MATERIALS:
+            facts[name] = image_fact(color.image)
+            if color not in swap_nodes:
+                swap_nodes.append(color)
+    biped = snapshots.get("REF_Biped")
+    grid = snapshots.get("REF_Grid")
+    observations = {
+        "lod0_collection": "lark_LOD0", "lod0_present": bool(lod0),
+        "frame": source_scene.frame_current, "subframe": source_scene.frame_subframe,
+        "units": {"system": source_scene.unit_settings.system, "scale_length": source_scene.unit_settings.scale_length,
+                  "convention": "one Blender world unit = one metre, pinned author asset"},
+        "objects": [object_fact(o, depsgraph) for o in dict.fromkeys(originals + hardpoints + pivots + ([boarding] if boarding else []))],
+        "active_materials": sorted(used_materials), "image_dependencies": dependencies,
+        "selection": "base LOD0 meshes plus shared asset colliders/markers; exact names in REF; no duplicate fallback",
+        "collection_paths": paths, "object_scopes": scopes,
     }
-
-
-def extract(variant):
-    dropped = []
-    objects = list(bpy.data.objects)
-    meshes = [obj for obj in objects if obj.type == "MESH"]
-    empties = [obj for obj in objects if obj.type == "EMPTY"]
-    collection_name = f"{variant}_LOD0"
-    collection = bpy.data.collections.get(collection_name)
-    lod0 = list(collection.all_objects) if collection is not None else []
-    biped_objects, extra = choose(meshes, plan.is_biped)
-    dropped.extend(extra)
-    grid_objects, extra = choose(meshes, plan.is_grid)
-    dropped.extend(extra)
-    seat_objects, extra = choose(empties, plan.is_pilot_seat)
-    dropped.extend(extra)
-    boarding_objects, extra = choose(empties, plan.is_boarding_foot)
-    dropped.extend(extra)
-    glass, extra = surface_payload([obj for obj in lod0 if obj.type == "MESH"], "glass")
-    dropped.extend(extra)
-    frame, extra = surface_payload([obj for obj in lod0 if obj.type == "MESH"], "frame")
-    dropped.extend(extra)
-    colliders, extra = collider_payload(meshes)
-    dropped.extend(extra)
-    hardpoint_objects, extra = choose(empties, plan.is_hardpoint_name)
-    dropped.extend(extra)
-    pivot_objects, extra = choose(empties, plan.is_rest_pivot)
-    dropped.extend(extra)
-    biped = biped_objects[0] if biped_objects else None
-    grid = grid_objects[0] if grid_objects else None
-    grid_vertices, grid_edges, origin_z = grid_geometry(grid) if grid is not None else ([], [], None)
-    materials = {}
-    for name in plan.MATERIALS:
-        node = base_color_node(bpy.data.materials.get(name))
-        fact = image_fact(node.image) if node is not None else None
-        if fact is not None:
-            materials[name] = fact
-    images = {}
-    for image_name in plan.ALT_IMAGES.values():
-        fact = image_fact(bpy.data.images.get(image_name))
-        if fact is not None:
-            images[image_name] = fact
-    canopy_objects = [
-        obj
-        for obj in lod0
-        if obj.type == "MESH" and (plan.is_canopy_surface(obj.name, "glass") or plan.is_canopy_surface(obj.name, "frame"))
-    ]
+    if abs(source_scene.unit_settings.scale_length - 1.0) > 1e-9:
+        raise ValueError("metre conversion requires inspection for this source unit scale")
     extracted = {
-        "biped": None
-        if biped is None
-        else {"name": biped.name, "vertices": world_vertices(biped)},
-        "grid": None if grid is None else {"name": grid.name, "origin_z": origin_z, "vertices": grid_vertices, "edges": grid_edges},
-        "boarding_xyz": None if not boarding_objects else translation_of(boarding_objects[0]),
-        "seat_xyz": None if not seat_objects else translation_of(seat_objects[0]),
-        "canopy_glass": glass,
-        "canopy_frame": frame,
-        "colliders": colliders,
-        "hardpoints": [
-            {
-                "name": obj.name,
-                "matrix3": matrix3(obj),
-                "translation": translation_of(obj),
-                "child_meshes": [child.name for child in obj.children if child.type == "MESH"],
-            }
-            for obj in hardpoint_objects
-        ],
-        "pivots": [
-            {"name": obj.name, "matrix3": matrix3(obj), "translation": translation_of(obj)} for obj in pivot_objects
-        ],
-        "materials": materials,
-        "images": images,
-        "dropped_duplicate_names": dropped,
+        "lod0_meshes": [o.name for o in meshes], "collider_names": [o.name for o in colliders],
+        "biped": {"vertices": world_vertices(biped)} if biped else None,
+        "grid": {"vertices": world_vertices(grid), "edges": [tuple(e.vertices) for e in grid.data.edges]} if grid else None,
+        "boarding_xyz": tuple(boarding.evaluated_get(depsgraph).matrix_world.translation) if boarding else None,
+        "hardpoints": [object_fact(o, depsgraph) for o in hardpoints],
+        "pivots": [object_fact(o, depsgraph) for o in pivots],
+        "materials": facts, "images": {name: image_fact(bpy.data.images.get(name)) for name in plan.ALT_IMAGES.values()},
+        "livery_graph_gaps": graph_gaps, "observations": observations,
     }
-    handles = {
-        "lod0": lod0,
-        "biped": biped,
-        "grid": grid,
-        "colliders": [obj for obj in meshes if obj.name in set(colliders["names"])],
-        "hardpoints": hardpoint_objects,
-        "canopy": canopy_objects,
-    }
-    notes = {
-        "lod0_collection": collection_name,
-        "lod0_present": collection is not None,
-        "lod0_object_count": len(lod0),
-        "grid_polygon_count": None if grid is None else len(grid.data.polygons),
-    }
-    return extracted, handles, notes
+    handles = {"lod0": [snapshots[o.name] for o in meshes], "biped": biped, "grid": grid,
+               "colliders": [snapshots[o.name] for o in colliders], "swap_nodes": swap_nodes}
+    return extracted, handles
 
 
 def set_input(node, names, value):
@@ -293,17 +250,6 @@ def link_object(obj):
     return obj
 
 
-def duplicate_object(obj, name):
-    dup = obj.copy()
-    dup.data = obj.data
-    world = dup.matrix_world.copy()
-    dup.parent = None
-    dup.name = name
-    link_object(dup)
-    dup.matrix_world = world
-    return dup
-
-
 def translate(obj, delta):
     obj.matrix_world.translation = obj.matrix_world.translation + Vector(delta)
     bpy.context.view_layer.update()
@@ -316,6 +262,8 @@ def display_copy(obj, material, name):
     for _ in range(len(dup.data.materials)):
         dup.data.materials.pop(index=0)
     dup.data.materials.append(material)
+    for polygon in dup.data.polygons:
+        polygon.material_index = 0
     world = obj.matrix_world.copy()
     link_object(dup)
     dup.parent = None
@@ -327,7 +275,7 @@ def display_copy(obj, material, name):
 def _orthonormal(direction):
     axis = Vector(direction)
     if axis.length < 1e-8:
-        axis = Vector((0.0, 0.0, 1.0))
+        raise ValueError("degenerate marker axis")
     axis.normalize()
     helper = Vector((1.0, 0.0, 0.0)) if abs(axis.x) < 0.9 else Vector((0.0, 1.0, 0.0))
     side = axis.cross(helper).normalized()
@@ -356,14 +304,8 @@ def rod(name, origin, direction, material, length=0.75, radius=0.03):
     return link_object(bpy.data.objects.new(name, mesh))
 
 
-def show_lod0(objects, include_colliders=False):
+def show_lod0(objects):
     for obj in objects:
-        if obj.type != "MESH":
-            continue
-        if plan.is_biped(obj.name) or plan.is_grid(obj.name):
-            continue
-        if plan.is_collider_name(obj.name) and not include_colliders:
-            continue
         show(obj)
 
 
@@ -465,83 +407,77 @@ def frame_camera(scene, camera, shot, points):
     if boxed is None:
         raise RuntimeError(f"{shot['id']} has no geometry to frame")
     mins, maxs = boxed
-    place_camera(camera, plan.center_of(mins, maxs), shot["direction"], plan.ortho_scale(mins, maxs, shot["margin"]))
+    # A bounding sphere fits any view direction; account for portrait frames too.
+    diameter = math.sqrt(sum((maxs[i] - mins[i]) ** 2 for i in range(3)))
+    aspect = shot.get("cell_width", shot["width"]) / shot.get("cell_height", shot["height"])
+    scale = max(.5, diameter * shot["margin"] * max(1, aspect, 1 / aspect))
+    place_camera(camera, plan.center_of(mins, maxs), shot["direction"], scale)
 
 
-def stage_body(handles, shot, report):
+def stage_body(handles, report):
     show_lod0(handles["lod0"])
-    if handles["grid"] is not None and shot["id"] != "livery-lineup":
-        show(handles["grid"])
-    placement = report["placements"]["boarding" if shot["id"] == "boarding-standing" else "cockpit_standing"]
-    if handles["biped"] is None or placement is None:
-        raise RuntimeError(f"{shot['id']} is missing the reference placement")
-    body = duplicate_object(handles["biped"], f"EvidenceBiped_{shot['id']}")
+    if handles["grid"] is not None:
+        grid = handles["grid"]
+        if len(grid.data.edges) > 512:
+            raise ValueError("reference grid edge display exceeds cap; inspect before capture")
+        vertices = world_vertices(grid)
+        material = flat_material("EvidenceGrid_edges", (.45, .45, .45, 1), emit=.2)
+        for index, edge in enumerate(grid.data.edges):
+            start, end = (Vector(vertices[i]) for i in edge.vertices)
+            direction = end - start
+            if direction.length > 1e-8:
+                rod(f"EvidenceGrid_{index}", start, direction, material, length=direction.length, radius=.006)
+    placement = report["standing_reference_placement"]
+    material = flat_material("EvidenceReference_display", (.95, .65, .12, 1))
+    body = display_copy(handles["biped"], material, "EvidenceStandingReference")
     translate(body, placement["translation_m"])
     show(body)
-    frame_points = object_corners(body)
-    if shot["frame"] == "biped_and_canopy":
-        for obj in handles["canopy"]:
-            show(obj)
-            frame_points.extend(object_corners(obj))
-    return frame_points
+    return object_corners(body)
 
 
-def stage_colliders(handles):
+def stage_colliders(handles, report):
     show_lod0(handles["lod0"])
-    material = flat_material("EvidencePrep_collider", (0.95, 0.15, 0.75, 1.0), emit=0.35)
-    points = []
-    for obj in handles["lod0"]:
-        if obj.type == "MESH" and not plan.is_collider_name(obj.name) and not plan.is_biped(obj.name):
-            points.extend(object_corners(obj))
+    points = [p for obj in handles["lod0"] for p in object_corners(obj)]
+    material = flat_material("EvidencePrep_collider", (.95, .15, .75, 1), emit=.35)
     for index, obj in enumerate(handles["colliders"]):
         copy = display_copy(obj, material, f"EvidenceCollider_{index}")
+        # Edge cages keep the hull visible. This is display geometry, not collision evidence.
+        wire = copy.modifiers.new("Display edges only", "WIREFRAME")
+        wire.thickness = .015
         points.extend(object_corners(copy))
-    axis_materials = {axis: flat_material(f"EvidencePrep_axis_{axis}", color, emit=2.0) for axis, color in AXIS_COLORS.items()}
-    for obj in handles["hardpoints"]:
-        origin = translation_of(obj)
-        columns = matrix3(obj)
-        for axis in range(3):
-            direction = (columns[0][axis], columns[1][axis], columns[2][axis])
-            rod_obj = rod(f"EvidenceAxis_{obj.name}_{axis}", origin, direction, axis_materials[axis])
-            show(rod_obj)
-            points.extend(object_corners(rod_obj))
+    axis_materials = {axis: flat_material(f"EvidencePrep_axis_{axis}", color, emit=2) for axis, color in AXIS_COLORS.items()}
+    for marker in report["hardpoints"]:
+        for axis, direction in enumerate(marker["axis_columns_xyz"]):
+            if sum(x*x for x in direction) < 1e-16:
+                continue
+            obj = rod(f"EvidenceAxis_{marker['name']}_{axis}", marker["translation_m"], direction, axis_materials[axis])
+            show(obj)
+            points.extend(object_corners(obj))
     return points
 
 
-def render_lineup(scene, camera, shot, report, out, images_already, samples):
-    nodes = []
-    for name in plan.MATERIALS:
-        node = base_color_node(bpy.data.materials.get(name))
-        if node is None:
-            raise RuntimeError(f"{name} has no single base-color image to swap")
-        nodes.append(node)
-    originals = [(node, node.image) for node in nodes]
+def render_lineup(scene, shot, report, handles, out, images_already, samples):
+    originals = [(node, node.image) for node in handles["swap_nodes"]]
     cell_dir = out / ".cells"
-    cell_dir.mkdir(parents=True, exist_ok=True)
+    cell_dir.mkdir(exist_ok=False)
     cells = []
-    last = None
+    gates = []
     try:
         for source in report["liveries"]["sources"]:
-            image = bpy.data.images.get(source["image_name"])
-            if image is None:
-                raise RuntimeError(f"livery image missing at render: {source['image_name']}")
-            for node, _image in originals:
+            image = bpy.data.images.get(source["name"])
+            if image_fact(image) != {k: v for k, v in source.items() if k != "id"}:
+                raise RuntimeError("livery image changed after extraction")
+            for node, _ in originals:
                 node.image = image
             cell = cell_dir / f"{source['id']}.png"
-            last = render_pixels(scene, cell, shot["cell_width"], shot["cell_height"], images_already, samples)
+            gates.append(render_pixels(scene, cell, shot["cell_width"], shot["cell_height"], images_already, samples))
             cells.append(cell)
         stitch(cells, out / "livery-lineup.png", shot["cell_width"], shot["cell_height"])
-        return last
+        return gates
     finally:
         for node, image in originals:
             node.image = image
-        for cell in cells:
-            if cell.is_file():
-                cell.unlink()
-        try:
-            cell_dir.rmdir()
-        except OSError:
-            pass
+        # Retain owned intermediate files on success/failure; never remove user files.
 
 
 def stitch(cells, dest, cell_width, cell_height):
@@ -576,126 +512,88 @@ def stitch(cells, dest, cell_width, cell_height):
         bpy.data.images.remove(sheet_image)
 
 
-def image_file_fact(path):
-    if not path.is_file() or path.stat().st_size <= 0:
-        raise RuntimeError(f"missing render {path.name}")
-    return {"file": path.name, "bytes": path.stat().st_size, "sha256": file_sha256(path)}
-
-
 def prepare_scene(scene, args):
-    scene.render.resolution_x = int(args["width"])
-    scene.render.resolution_y = int(args["height"])
-    scene.render.resolution_percentage = 100
-    scene.cycles.samples = int(args["samples"])
-    if scene.world is not None:
-        scene.world.color = (0.18, 0.18, 0.18)
-    try:
-        scene.view_settings.view_transform = "AgX"
-    except TypeError:
-        pass
+    scene.render.engine = "CYCLES"
+    scene.render.resolution_x = args["width"]
+    scene.render.resolution_y = args["height"]
+    scene.cycles.samples = args["samples"]
+    scene.world = bpy.data.worlds.new("EvidencePrep_world")
+    scene.world.use_nodes = True
+    background = next(n for n in scene.world.node_tree.nodes if n.type == "BACKGROUND")
+    background.inputs["Color"].default_value = (.18, .18, .18, 1)
+    background.inputs["Strength"].default_value = .8
+    scene.view_settings.view_transform = "AgX"
     require_cpu(scene, 0)
 
 
-def capture(args, blend, out, before):
-    retire_known(out)
-    bpy.ops.wm.open_mainfile(filepath=str(blend))
-    scene = bpy.context.scene
+def capture(args, blend, out):
+    bpy.ops.wm.open_mainfile(filepath=str(blend), load_ui=False, use_scripts=False)
+    if bpy.data.libraries:
+        raise ValueError("linked libraries are not sealed by the blend hash; inspect dependencies first")
+    source_scene = bpy.context.scene
+    scene = bpy.data.scenes.new("EvidencePrep")
+    extracted, handles = extract(source_scene, scene)
+    bpy.context.window.scene = scene
     prepare_scene(scene, args)
-    extracted, handles, notes = extract(args["variant"])
+    bpy.context.view_layer.update()
     report = plan.assemble_report(extracted)
-    shots = plan.plan_shots(
-        plan.shot_facts(extracted, report["liveries"]["lineup"]),
-        args["width"],
-        args["height"],
-    )
+    shots = plan.plan_shots(extracted, report, args["width"], args["height"])
     add_lights(scene)
     camera = add_camera(scene)
-    images = []
-    cpu_gates = []
+    images, cpu_gates = [], []
     for shot in shots["shots"]:
         hide_all(scene)
         if shot["id"] == "livery-lineup":
             show_lod0(handles["lod0"])
-            frame_camera(scene, camera, shot, [corner for obj in handles["lod0"] if obj.type == "MESH" for corner in object_corners(obj)])
-            observed = render_lineup(scene, camera, shot, report, out, len(images), args["samples"])
-        elif shot["id"] == "colliders-axes":
-            points = stage_colliders(handles)
-            frame_camera(scene, camera, shot, points)
-            observed = render_pixels(scene, out / f"{shot['id']}.png", shot["width"], shot["height"], len(images), args["samples"])
+            frame_camera(scene, camera, shot, [p for obj in handles["lod0"] for p in object_corners(obj)])
+            observed = render_lineup(scene, shot, report, handles, out, len(images), args["samples"])
         else:
-            points = stage_body(handles, shot, report)
+            points = stage_colliders(handles, report) if shot["id"] == "colliders-marker-axes" else stage_body(handles, report)
             frame_camera(scene, camera, shot, points)
-            observed = render_pixels(scene, out / f"{shot['id']}.png", shot["width"], shot["height"], len(images), args["samples"])
-        cpu_gates.append({"shot": shot["id"], **observed})
-        images.append(image_file_fact(out / f"{shot['id']}.png"))
-    return {
-        "schema": plan.SCHEMA,
-        "status": "complete",
-        "dynamic_clearance": plan.DYNAMIC_CLEARANCE,
-        "review_qualification": "not_claimed",
-        "runtime": {
-            "blender_executed": True,
-            "review_qualification": "not_claimed",
-            "dynamic_clearance": plan.DYNAMIC_CLEARANCE,
-        },
-        "blend": {"path": str(blend), "sha256_before": before, "sha256_after": None, "bytes_unchanged": None},
-        "measurements": report,
-        "plan": shots,
-        "scene_notes": notes,
-        "cpu_gates": cpu_gates,
-        "images": images,
-    }
+            observed = [render_pixels(scene, out / f"{shot['id']}.png", shot["width"], shot["height"], len(images), args["samples"])]
+        cpu_gates.append({"shot": shot["id"], "render_calls": observed})
+        path = out / f"{shot['id']}.png"
+        if not path.is_file() or path.stat().st_size == 0:
+            raise RuntimeError(f"missing render {path.name}")
+        images.append({"file": path.name, "bytes": path.stat().st_size, "sha256": file_sha256(path), "label": shot["label"]})
+    return {"status": "complete_with_gaps", "measurements": report, "plan": shots,
+            "cpu_gates": cpu_gates, "images": images}
 
 
 def main(argv):
     args = plan.parse_args(argv)
     blend = Path(args["blend"]).resolve()
-    out = Path(args["out"]).resolve()
-    if not blend.is_file():
-        raise SystemExit(f"blend not found: {blend}")
-    if not plan.output_allowed(out, blend):
-        raise SystemExit("refusing to write into the blend path")
-    out.mkdir(parents=True, exist_ok=True)
     before = file_sha256(blend)
-    payload = None
+    if before != plan.SOURCE_SHA256:
+        raise SystemExit("source hash mismatch; capture only the pinned 6445c7ec blend")
+    out = plan.claim_output(args["out"], blend)
+    payload = {"schema": plan.SCHEMA, "status": "failed", "review_qualification": "not_claimed",
+               "dynamic_clearance": "not_measured", "images": [],
+               "source_pin": {"reference_commit": plan.SOURCE_REVISION, "expected_sha256": plan.SOURCE_SHA256},
+               "tool_sha256": {name: file_sha256(Path(__file__).with_name(name)) for name in ("capture.py", "capture_plan.py")},
+               "ownership": {"directory": str(out), "policy": "fresh directory, no reuse or deletion"}}
     error = None
     try:
-        payload = capture(args, blend, out, before)
-    except Exception as exc:
+        payload.update(capture(args, blend, out))
+    except (Exception, SystemExit, KeyboardInterrupt) as exc:
         error = exc
+        payload["error"] = f"{type(exc).__name__}: {exc}"
     finally:
-        after = file_sha256(blend)
+        try:
+            after = file_sha256(blend)
+        except OSError:
+            after = None
+        payload["blend"] = {"path": str(blend), "sha256_before": before, "sha256_after": after,
+                            "bytes_unchanged": before == after}
         if after != before:
-            raise SystemExit(3)
-    receipt = out / "receipt.json"
+            payload["status"] = "invalid_source_changed"
+        write_json(out / "receipt.json", payload)
+    if after != before:
+        raise SystemExit(3)
     if error is not None:
-        write_json(
-            receipt,
-            {
-                "schema": plan.SCHEMA,
-                "status": "failed",
-                "error": str(error),
-                "dynamic_clearance": plan.DYNAMIC_CLEARANCE,
-                "review_qualification": "not_claimed",
-                "blend": {
-                    "path": str(blend),
-                    "sha256_before": before,
-                    "sha256_after": after,
-                    "bytes_unchanged": True,
-                },
-                "images": [
-                    {"file": path.name, "bytes": path.stat().st_size, "sha256": file_sha256(path)}
-                    for name in KNOWN_IMAGES
-                    if (path := out / name).is_file() and path.stat().st_size > 0
-                ],
-            },
-        )
         raise error
-    payload["blend"]["sha256_after"] = after
-    payload["blend"]["bytes_unchanged"] = True
-    write_json(receipt, payload)
-    print("EVIDENCE_PREP_DONE", receipt, flush=True)
+    print("EVIDENCE_PREP_DONE_WITH_GAPS", out / "receipt.json", flush=True)
 
 
 if __name__ == "__main__":
-    main(sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else [])
+    main(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else [])
