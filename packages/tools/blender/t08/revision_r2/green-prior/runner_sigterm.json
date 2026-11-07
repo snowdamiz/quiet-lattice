@@ -1,0 +1,81 @@
+{
+  "case": "runner_sigterm",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-eschyjxq/runner_sigterm/packages/tools/blender/t08/run.py",
+    "--label",
+    "runner_sigterm",
+    "--wall",
+    "20",
+    "--",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-eschyjxq/runner_sigterm/probe.py"
+  ],
+  "scratch": "/tmp/t08-life-eschyjxq/runner_sigterm",
+  "supervisorPID": 25993,
+  "exit": 143,
+  "receipt": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-eschyjxq/runner_sigterm/probe.py"
+    ],
+    "cwd": "/private/tmp/t08-life-eschyjxq/runner_sigterm",
+    "exit": 143,
+    "childExit": -15,
+    "childReaped": true,
+    "terminal": true,
+    "remainingGroup": [],
+    "errors": [
+      {
+        "operation": "execute",
+        "type": "InterruptedError",
+        "errno": null,
+        "message": "received signal 15"
+      }
+    ],
+    "cleanupSignals": [
+      {
+        "signal": 15,
+        "sent": true
+      }
+    ],
+    "pass": false,
+    "peakSampledGroupRSSKiB": 5920,
+    "limits": {
+      "wallSeconds": 20.0,
+      "rssGiB": 8,
+      "threads": 2,
+      "codecs": 1
+    },
+    "claimPath": "/private/tmp/t08-life-eschyjxq/runner_sigterm/packages/tools/blender/t08/evidence/.lane-blocked.json",
+    "claimEstablished": true,
+    "claimReleased": true,
+    "admission": {
+      "freeBytes": 34359738368,
+      "memoryFreePercent": 82,
+      "load": [
+        2.7978515625,
+        4.32421875,
+        4.63916015625
+      ],
+      "cpus": 15,
+      "observed": "2026-11-07T09:54:47.661856+00:00"
+    },
+    "tmpdir": "/tmp/t08-hjy641oq",
+    "pid": 25996,
+    "pgid": 25996,
+    "signal": 15,
+    "elapsedSeconds": 0.4740823329775594,
+    "logSnapshotBytes": 0,
+    "logComplete": true,
+    "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receiptPath": "/private/tmp/t08-life-eschyjxq/runner_sigterm/packages/tools/blender/t08/evidence/20261107T095447658928Z-runner_sigterm/result.json"
+  },
+  "remainingBeforeRelease": [],
+  "expectationMet": true,
+  "failureTail20": []
+}

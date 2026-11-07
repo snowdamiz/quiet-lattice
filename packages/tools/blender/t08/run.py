@@ -76,9 +76,18 @@ def lane():
     with open("/tmp/space-t08-cpu.lock", "a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         blocked = HERE / "evidence/.lane-blocked.json"
-        if blocked.exists():
-            raise RuntimeError(f"unresolved producer cohort; inspect {blocked}")
+        for claim in [blocked, blocked.with_name(blocked.name + ".pending")]:
+            if os.path.lexists(claim):
+                raise RuntimeError(f"unresolved producer ownership; inspect {claim}")
         yield
+
+
+def sync_directory(path):
+    fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
 
 
 def admission():
@@ -178,6 +187,8 @@ def execute(command, out, stop, wall=1800, rss_gib=8, scratch=None):
     start = time.monotonic()
     proc = None
     log = out / "command.log"
+    claim = HERE / "evidence/.lane-blocked.json"
+    result.update(claimPath=str(claim), claimEstablished=False, claimReleased=False)
     try:
         result["admission"] = admission()
         assert (
@@ -225,6 +236,19 @@ def execute(command, out, stop, wall=1800, rss_gib=8, scratch=None):
         save_json(out / "launch.json", result)
         stop.check()
         with log.open("x") as stream:
+            # Establish durable ownership before a child can exist. Any partial
+            # write also blocks admission; cleanup never needs a new guard write.
+            claim.parent.mkdir(parents=True, exist_ok=True)
+            save_json(
+                claim,
+                {
+                    "producerReceipt": str(out / "result.json"),
+                    "supervisorPID": os.getpid(),
+                },
+            )
+            sync_directory(claim.parent)
+            result["claimEstablished"] = True
+            stop.check()
             proc = subprocess.Popen(
                 command,
                 cwd=ROOT,
@@ -267,22 +291,14 @@ def execute(command, out, stop, wall=1800, rss_gib=8, scratch=None):
             except Exception as error:
                 result["terminal"] = False
                 result["errors"].append(error_fact("drain", error))
-            if not result["terminal"]:
+            if result["terminal"]:
                 try:
-                    blocked = HERE / "evidence/.lane-blocked.json"
-                    blocked.parent.mkdir(parents=True, exist_ok=True)
-                    save_json(
-                        blocked,
-                        {
-                            "producerReceipt": str(out / "result.json"),
-                            "pid": proc.pid,
-                            "remainingGroup": result["remainingGroup"],
-                            "errors": result["errors"],
-                        },
-                    )
+                    claim.unlink()
+                    sync_directory(claim.parent)
+                    result["claimReleased"] = True
                 except Exception as error:
                     result["errors"].append(
-                        error_fact("persist unresolved cohort", error)
+                        error_fact("release producer ownership", error)
                     )
         result["signal"] = stop.signum
         if stop.signum is not None:

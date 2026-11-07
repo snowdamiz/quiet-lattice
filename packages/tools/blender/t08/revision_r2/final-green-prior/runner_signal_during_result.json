@@ -1,0 +1,77 @@
+{
+  "case": "runner_signal_during_result",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-b96via0i/runner_signal_during_result/packages/tools/blender/t08/run.py",
+    "--label",
+    "runner_signal_during_result",
+    "--wall",
+    "20",
+    "--",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-b96via0i/runner_signal_during_result/probe.py"
+  ],
+  "scratch": "/tmp/t08-life-b96via0i/runner_signal_during_result",
+  "supervisorPID": 40909,
+  "exit": 143,
+  "receipt": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-b96via0i/runner_signal_during_result/probe.py"
+    ],
+    "cwd": "/private/tmp/t08-life-b96via0i/runner_signal_during_result",
+    "exit": 143,
+    "childExit": 0,
+    "childReaped": true,
+    "terminal": true,
+    "remainingGroup": [],
+    "errors": [
+      {
+        "operation": "write result receipt",
+        "type": "InterruptedError",
+        "errno": null,
+        "message": "signal received during result commit"
+      }
+    ],
+    "cleanupSignals": [],
+    "pass": false,
+    "peakSampledGroupRSSKiB": 400,
+    "limits": {
+      "wallSeconds": 20.0,
+      "rssGiB": 8,
+      "threads": 2,
+      "codecs": 1
+    },
+    "claimPath": "/private/tmp/t08-life-b96via0i/runner_signal_during_result/packages/tools/blender/t08/evidence/.lane-blocked.json",
+    "claimEstablished": true,
+    "claimReleased": true,
+    "admission": {
+      "freeBytes": 34359738368,
+      "memoryFreePercent": 83,
+      "load": [
+        8.7451171875,
+        5.95263671875,
+        5.22802734375
+      ],
+      "cpus": 15,
+      "observed": "2026-11-07T09:56:59.491953+00:00"
+    },
+    "tmpdir": "/tmp/t08-3ur0og3b",
+    "pid": 40912,
+    "pgid": 40912,
+    "unexpectedSurvivors": [],
+    "signal": 15,
+    "elapsedSeconds": 0.428323708998505,
+    "logSnapshotBytes": 0,
+    "logComplete": true,
+    "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receiptPath": "/private/tmp/t08-life-b96via0i/runner_signal_during_result/packages/tools/blender/t08/evidence/20261107T095659485934Z-runner_signal_during_result/result-failure.json"
+  },
+  "remainingBeforeRelease": [],
+  "expectationMet": true,
+  "failureTail20": []
+}

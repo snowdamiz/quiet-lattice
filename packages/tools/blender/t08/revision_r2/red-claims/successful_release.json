@@ -1,0 +1,354 @@
+{
+  "case": "successful_release",
+  "scratch": "/tmp/t08-life-vaf8ru53/successful_release",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "first",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "4ba8022e52929e22008ad8858bb76d1e0608b90020fc50eb78c0e1022e7617fa",
+    "export_saved.py": "a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d"
+  },
+  "supervisorPID": 7651,
+  "firstProducer": null,
+  "claimDuringProduction": false,
+  "firstExit": 1,
+  "firstReceipts": [
+    {
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-vaf8ru53/successful_release",
+      "exit": 1,
+      "childExit": null,
+      "childReaped": false,
+      "terminal": false,
+      "remainingGroup": null,
+      "errors": [
+        {
+          "operation": "execute",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "CPU admission refused: {'freeBytes': 24599519232, 'memoryFreePercent': 82, 'load': (4.0439453125, 5.66455078125, 5.0966796875), 'cpus': 15, 'observed': '2026-11-07T09:51:38.329252+00:00'}"
+        },
+        {
+          "operation": "hash command log",
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "[Errno 2] No such file or directory: '/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/run/command.log'"
+        }
+      ],
+      "cleanupSignals": [],
+      "pass": false,
+      "peakSampledGroupRSSKiB": 0,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "signal": null,
+      "elapsedSeconds": 0.002600667008664459,
+      "receiptPath": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/run/result.json"
+    }
+  ],
+  "firstReceiptHashes": {
+    "/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/run/result.json": "25d0e5379e348a073222b1713250aa2414b1014e7eefa719d1bc0aabfefbd28a"
+  },
+  "guardExists": false,
+  "pendingExists": false,
+  "firstAliveBeforeRetry": [],
+  "retryCommand": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "second",
+    "--only",
+    "cargo_pod"
+  ],
+  "retryPID": 7653,
+  "retryExit": 1,
+  "launches": [
+    0,
+    0
+  ],
+  "firstAliveAfterRetry": [],
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "producer did not finish with a verified empty cohort"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 489610669,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794045098290913779,
+            "ctimeNs": 1794045098290913779
+          },
+          "quarantine": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/previous.glb",
+          "detachedRegular": true
+        },
+        {
+          "path": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489610664,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045098290716070,
+          "ctimeNs": 1794045098290716070
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "blender",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-vaf8ru53/successful_release/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-vaf8ru53/successful_release",
+        "exit": 1,
+        "childExit": null,
+        "childReaped": false,
+        "terminal": false,
+        "remainingGroup": null,
+        "errors": [
+          {
+            "operation": "execute",
+            "type": "RuntimeError",
+            "errno": null,
+            "message": "CPU admission refused: {'freeBytes': 24599519232, 'memoryFreePercent': 82, 'load': (4.0439453125, 5.66455078125, 5.0966796875), 'cpus': 15, 'observed': '2026-11-07T09:51:38.329252+00:00'}"
+          },
+          {
+            "operation": "hash command log",
+            "type": "FileNotFoundError",
+            "errno": 2,
+            "message": "[Errno 2] No such file or directory: '/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/run/command.log'"
+          }
+        ],
+        "cleanupSignals": [],
+        "pass": false,
+        "peakSampledGroupRSSKiB": 0,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "signal": null,
+        "elapsedSeconds": 0.002600667008664459,
+        "receiptPath": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138325894Z-first-cargo_pod/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489610664,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045098290716070,
+          "ctimeNs": 1794045098290716070
+        }
+      },
+      "sourceChanged": false,
+      "privateOutputUnresolved": true,
+      "canonicalAbsent": true
+    },
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "producer did not finish with a verified empty cohort"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        },
+        {
+          "path": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489610664,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045098290716070,
+          "ctimeNs": 1794045098290716070
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "blender",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-vaf8ru53/successful_release/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-vaf8ru53/successful_release",
+        "exit": 1,
+        "childExit": null,
+        "childReaped": false,
+        "terminal": false,
+        "remainingGroup": null,
+        "errors": [
+          {
+            "operation": "execute",
+            "type": "RuntimeError",
+            "errno": null,
+            "message": "CPU admission refused: {'freeBytes': 24599502848, 'memoryFreePercent': 82, 'load': (4.0439453125, 5.66455078125, 5.0966796875), 'cpus': 15, 'observed': '2026-11-07T09:51:38.388117+00:00'}"
+          },
+          {
+            "operation": "hash command log",
+            "type": "FileNotFoundError",
+            "errno": 2,
+            "message": "[Errno 2] No such file or directory: '/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/producer/run/command.log'"
+          }
+        ],
+        "cleanupSignals": [],
+        "pass": false,
+        "peakSampledGroupRSSKiB": 0,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "signal": null,
+        "elapsedSeconds": 0.002496542001608759,
+        "receiptPath": "/private/tmp/t08-life-vaf8ru53/successful_release/packages/tools/blender/t08/exports/20261107T095138385203Z-second-cargo_pod/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489610664,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045098290716070,
+          "ctimeNs": 1794045098290716070
+        }
+      },
+      "sourceChanged": false,
+      "privateOutputUnresolved": true,
+      "canonicalAbsent": true
+    }
+  ],
+  "canonicalExistsAfterRetry": false,
+  "firstReceiptUnchanged": true,
+  "canonicalExistsAfterRelease": false,
+  "stockMoves": [],
+  "expectationMet": false
+}

@@ -1,0 +1,38 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "packages/tools/blender/t08/revision_r2/test_claim.py",
+    "--code",
+    "packages/tools/blender/t08/revision_r2/baseline",
+    "--evidence",
+    "packages/tools/blender/t08/revision_r2/red-exact-review",
+    "--original-review"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "exit": 1,
+  "elapsedSeconds": 20.13892058399506,
+  "log": "packages/tools/blender/t08/revision_r2/red-commands/exact-review.log",
+  "failureTail20": [
+    "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/test_claim.py\", line 314, in <module>",
+    "    sys.exit(main())",
+    "             ~~~~^^",
+    "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/test_claim.py\", line 310, in main",
+    "    return exact_review(args) if args.original_review else claims(args)",
+    "           ~~~~~~~~~~~~^^^^^^",
+    "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/test_claim.py\", line 64, in exact_review",
+    "    exec(",
+    "    ~~~~^",
+    "        compile(script.read_bytes(), str(script), \"exec\"), {\"__name__\": \"__main__\"}",
+    "        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "    )",
+    "    ^",
+    "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/inputs/fence_probe.py\", line 57, in <module>",
+    "    finally:h.finish()",
+    "            ~~~~~~~~^^",
+    "  File \"/tmp/t08r2-old-w21ys_i8/packages/tools/blender/t08/revision_r1/test_lifecycle.py\", line 465, in finish",
+    "    os.killpg(proc.pid, signal.SIGKILL)",
+    "    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "PermissionError: [Errno 1] Operation not permitted"
+  ]
+}

@@ -1,0 +1,168 @@
+TASK: P1.E14.T08 (art) Props — independent R2 tooling-only REVISE, F5
+STATUS: DONE — implementation correction; independent new review remains with parent.
+
+SUMMARY:
+Moved persistent ownership establishment before producer launch. The runner now
+creates and fsyncs an exclusive claim, including its containing directory, before
+Popen. Any existing final or pending claim, including a dangling symlink, refuses
+admission. The claim stays in place through unresolved cleanup and is removed only
+after the actual child is reaped and its process group is observed empty. A failed
+claim write launches nothing; a failed release remains a failure. Cleanup no longer
+depends on creating a new guard after the producer is already alive. Only run.py
+changed in production. The private-output fence and export_saved.py remain exact.
+Fresh focused controls pass 9/9 for ownership and 16/16 for retained R1 behavior.
+
+PROVENANCE:
+  Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5
+  Branch: task/P1-E14-T08-props
+  Exact revision base: 25d3859012444f8294acc64fd566c824e88f1a85
+  Base tree: 0ef6a1226f595dfd0816498d48beba667009efd0
+  Original isolated base: afc0dacaaac45de27776e24ad35e42e3250d8f25
+  Original base tree: 172bce71ceeda8d496a724a8ee568521d65fcce4
+  Final HEAD/tree: the containing commit, returned exactly in the worker handoff.
+  Final run.py SHA256: 693861140b7ae41154ddf3eac789d6cdfa99494795c27a4a6ff2ca7353afe97e
+  Independent R2 input: /private/tmp/t08-r2-source-25d38590-x6AaWJ
+  Input SHA256SUMS.json seal:
+    5ce4d08dc41511a376cf54ee202f0789135826f19acd8f787c3e12c6aa6bfb0e
+  Read REPORT.txt and HANDOFF.json fully, read the reproducer and its caller, and
+  verified every sealed input entry (including unreadable inode/error facts).
+  Exact immutable copies of the report, handoff, seal, reproducer and commands
+  are in inputs/. No prior input or report was overwritten.
+
+FILES CHANGED:
+  packages/tools/blender/t08/run.py — prelaunch claim and terminal-only release.
+  packages/tools/blender/t08/revision_r2/** — focused real-caller probes, explicit
+    CPU dependency fixture, immutable baseline/input copies and new evidence.
+  No expanded production scope was needed. export_saved.py, all shared stock
+  exporters/artlib/schema/library/runtime, assets, previews, orchestration files,
+  original reports and revision_r1 remain unchanged.
+
+VERIFY:
+  Final ownership: final-green-claims/results.json — 9/9 PASS, command exit 0.
+  Final retained controls: final-green-prior/results.json — 16/16 PASS, exit 0.
+  final-code-binding.json verifies that all 25 fixture copies match the final
+  production run.py/export_saved.py and unchanged stock props/sites/core bytes.
+  Actual stock main, source/report paths, compression routing and final move run
+  unchanged with inert geometry, validator and codec dependencies. No actual
+  Blender, codec, GPU, native renderer, browser, server, DB or art work executed.
+
+  Exact independent old-source probe:
+    python3.14 -B test_claim.py --code baseline --evidence red-admitted-exact-review
+      --original-review — exit 1, expected RED.
+    Executes inputs/fence_probe.py unchanged, configuring only fresh root/output
+    locations and CPU dependency fixtures. Writable-directory control refuses the
+    retry (first 143, retry 1, launches 1->1). Real mode-0555 directory reproduces
+    F5: first 143, retry 0/PASS, launches 1->2, first producer alive through retry.
+    Private publication remains fenced in both cases.
+  Final common old/new ownership probe:
+    python3.14 -B test_claim.py --code baseline --evidence final-red-claims
+      — exit 1: eight new ownership assertions fail, successful reuse passes.
+    Same command with --code .. --evidence final-green-claims
+      — exit 0: all nine pass.
+    Cases: writable live producer; unwritable parent before launch; parent made
+    unwritable AFTER the producer reaches its barrier; pre-existing pending claim;
+    dangling final claim; claim-file fsync error; release unlink denial; successful
+    terminal release/retry; supervisor killed by SIGKILL with producer still alive.
+  Before-launch directory denial now gives first/retry exit 1 with ZERO launches.
+  After-launch denial and supervisor SIGKILL retain the claim and refuse the real
+  retry while the first producer is still observed alive: launches stay 1->1.
+  Barriers release the old producer only after the retry has completed. All late
+  stock moves stay private, canonical output stays absent in unresolved cases,
+  and the first receipt remains unchanged. No elapsed-time-only liveness proof.
+  A normal completed cohort releases ownership: first/retry both exit 0 and both
+  bind PASS, launches 1->2. An unlink failure leaves the claim and rejects reuse.
+
+  Retained original R1 controls:
+    python3.14 -B test_claim.py --code .. --evidence final-green-prior --prior-controls
+      — exit 0, 16/16; happy props/sites, symlink/relative/hardlink archives,
+      old/new unreadable and batch handling, source alias change, SIGTERM, denied
+      cleanup/private late publication, live-cohort rejection and final receipt
+      signal windows. This is focused CPU coverage, not a full-suite run.
+
+  Scoped verification, exact argv/cwd/exits/logs in checks/00.json through 04.json:
+    cached Ruff 0.17.4 check --no-cache --select E9,F, five Python files: exit 0.
+    cached Ruff format --check --no-cache on the same files: exit 0.
+    Python AST parse, checks/syntax.json: PASS, no pyc writes.
+    python3.14 -B verify.py --out protected.json: exit 0.
+    python3.14 -B seal_fixtures.py: exit 0; archive independently read/verified.
+    git diff --check on production edits: exit 0.
+  staged-ownership.json confirms the one existing file plus revision_r2-only
+  additions; both full staged and scoped source/report whitespace checks exit 0.
+  final-test-commands/ records all three final test vectors, exits, durations and
+  failure tails. red-admitted-commands/ retains the exact reviewer reproduction.
+  actual-commands.json records 126 caller invocations with exits and last 20 lines
+  for nonzero exits/failed assertions. Expected failures retain their nonzero exit.
+  The initial exact probe's pre-producer refusal/cleanup exception is separately
+  retained in red-commands/exact-review.json and its raw log/fixture archive.
+
+RESOURCE / FIXTURE BOUNDARY AND RETAINED FAILURES:
+  Initial probes encountered actual free disk about 24.6 billion bytes (~23 GiB),
+  below the runner's unchanged 25 GiB art-job floor. Memory was ~81–82% free and
+  load ~4 on 15 CPUs. No art producer launched. Those refusals are retained in
+  red-* and are not credited as F5 proof. The unchanged reviewer harness then
+  timed out waiting for its barrier and its cleanup hit EPERM; those errors remain.
+  capacity_fixture.py is explicitly an inert-CPU test dependency: each observed
+  real statvfs value is recorded and only the fixture root's free-space reading is
+  set to at least 32 GiB. Production admission code and thresholds are unchanged.
+  This allows small CPU fixtures to test lifecycle ownership without admitting
+  heavy work or claiming actual art-job capacity. No cleanup, install or hydration
+  was used to obtain capacity. All other admission readings and pinned Node
+  v22.23.3 checks remain real. Python is direct 3.14.8, -B, math thread env=2.
+  One serial fixture case at a time; at most two inert producer cohorts coexist
+  intentionally in baseline RED. No full suite or Vitest execution.
+  Two harness errors are also retained, not relabeled PASS: the initial private
+  path assertion compared /tmp against /private/tmp without resolving aliases;
+  the first capacity receipt filename collided on a second stem in the same PID.
+  Final probes resolve paths and use exclusive per-call capacity receipt names.
+  Earlier harness versions are preserved in baseline/; all earlier logs/results
+  remain unchanged. These were fixture corrections, not added production changes.
+
+PROTECTED PROOF / ARTIFACT RETENTION:
+  protected.json verifies all 5,410 pre-existing tracked paths except the one
+  authorized run.py edit, in SHA256, size, mode and mtime. This includes the entire
+  original 4,951-file protection set, all 4,097 original parent paths, all old
+  reports and R1 evidence, all 24 assets and all 44 PNGs. It lists the 24 asset
+  hashes and matches their base LFS pointer OIDs, and lists all 44 image hashes.
+  It also verifies the supplied independent R2 seal and every original input
+  entry in place. No unreadable inode was chmodded to invent a digest.
+  The 12 saved sources, 12 GLBs, 21 variants, 84 LODs, measured density/PBR/markers,
+  source/dequantized export checks and 15 production-consumer results are reused
+  only by exact prior byte proof. No art fix or fresh art/runtime acceptance claimed.
+  fixtures.tar.gz SHA256:
+    327ecc5ee65f604d3a36bde2239dd8050140f9b012d6a425bd7d1e6c5ec49bd5
+  fixtures-manifest.json records 4,272 entries, 2,269 independently verified
+  archive members and six unreadable inode/error facts with null digests. Original
+  scratch remains at the recorded paths. No pruning, dehydrate or screenshot cleanup.
+  terminal-process-check.json observes all 206 recorded owned groups absent after
+  the probes. No peer Blender/codec process was signalled.
+  SHA256SUMS.json seals the new revision evidence and final production script,
+  excluding itself. Post-commit protection and exact HEAD/tree are in the handoff.
+
+DECISIONS:
+  Can ownership be recorded only after cleanup fails? -> no -> establish and
+    fsync the claim before any child can exist; inability to claim means no launch.
+  What does an incomplete or dangling claim mean? -> uncertain ownership -> refuse
+    admission; do not infer release from missing receipt content or a dead PID.
+  When may ownership be released? -> actual child reaped and group observed empty
+    -> retain the claim through cleanup uncertainty, signal loss and supervisor exit.
+  What if launch fails after claiming? -> keep the claim for explicit inspection
+    -> no automatic release based on absence of a returned Popen handle.
+  Must private publication change? -> no -> existing destination isolation already
+    holds and remains byte-identical; fresh caller tests confirm it still holds.
+  Disk below heavy-job admission floor? -> preserve refusal, use an explicit
+    recorded statvfs dependency fixture for inert CPU tests -> no production
+    threshold relaxation or cleanup authorization inferred.
+
+OUT OF SCOPE FOUND:
+No source-asset change was necessary. New independent review remains with the
+parent. Native Review captures, blind grading, GPU performance, T07 gameplay
+adoption/generator removal, CI and whole-task acceptance remain pending. The
+unchanged future native inventory is ../reports/future-native-inventory.json.
+No permission grants, push, PR, merge/queue action or screenshot cleanup occurred.
+
+ARTIFACTS:
+  REPORT.txt; protection-before.json; protected.json; inputs/; baseline/;
+  red-admitted-exact-review/; final-red-claims/; final-green-claims/;
+  final-green-prior/; final-test-commands/; checks/; actual-commands.json;
+  final-code-binding.json; fixtures.tar.gz; fixtures-manifest.json;
+  terminal-process-check.json; SHA256SUMS.json; exact post-commit handoff.

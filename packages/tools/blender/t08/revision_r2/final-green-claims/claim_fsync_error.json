@@ -1,0 +1,289 @@
+{
+  "case": "claim_fsync_error",
+  "scratch": "/tmp/t08-life-iel_9cly/claim_fsync_error",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "first",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "693861140b7ae41154ddf3eac789d6cdfa99494795c27a4a6ff2ca7353afe97e",
+    "export_saved.py": "a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d"
+  },
+  "supervisorPID": 37150,
+  "firstProducer": null,
+  "claimDuringProduction": false,
+  "firstExit": 1,
+  "firstReceipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-iel_9cly/claim_fsync_error/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-iel_9cly/claim_fsync_error",
+      "exit": 1,
+      "childExit": null,
+      "childReaped": false,
+      "terminal": false,
+      "remainingGroup": null,
+      "errors": [
+        {
+          "operation": "execute",
+          "type": "OSError",
+          "errno": 5,
+          "message": "[Errno 5] controlled ownership-claim fsync failure"
+        }
+      ],
+      "cleanupSignals": [],
+      "pass": false,
+      "peakSampledGroupRSSKiB": 0,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "claimPath": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/evidence/.lane-blocked.json",
+      "claimEstablished": false,
+      "claimReleased": false,
+      "admission": {
+        "freeBytes": 34359738368,
+        "memoryFreePercent": 83,
+        "load": [
+          8.67626953125,
+          5.70361328125,
+          5.12255859375
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:56:34.712781+00:00"
+      },
+      "tmpdir": "/tmp/t08-life-iel_9cly/claim_fsync_error/t08-lgw9pdqj",
+      "signal": null,
+      "elapsedSeconds": 0.02576200000476092,
+      "logSnapshotBytes": 0,
+      "logComplete": false,
+      "logSHA256": null,
+      "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receiptPath": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/run/result.json"
+    }
+  ],
+  "firstReceiptHashes": {
+    "/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/run/result.json": "b9a3f299804deee9f3f4d1f3cbd5e6cb6353f904e605f4c4c17ce6d988d8c98e"
+  },
+  "guardExists": false,
+  "pendingExists": true,
+  "firstAliveBeforeRetry": [],
+  "retryCommand": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "second",
+    "--only",
+    "cargo_pod"
+  ],
+  "retryPID": 37164,
+  "retryExit": 1,
+  "launches": [
+    0,
+    0
+  ],
+  "firstAliveAfterRetry": [],
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "producer did not finish with a verified empty cohort"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 489662926,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794045394632929561,
+            "ctimeNs": 1794045394632929561
+          },
+          "quarantine": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/previous.glb",
+          "detachedRegular": true
+        },
+        {
+          "path": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489662921,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045394632179560,
+          "ctimeNs": 1794045394632179560
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-iel_9cly/claim_fsync_error/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-iel_9cly/claim_fsync_error/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-iel_9cly/claim_fsync_error",
+        "exit": 1,
+        "childExit": null,
+        "childReaped": false,
+        "terminal": false,
+        "remainingGroup": null,
+        "errors": [
+          {
+            "operation": "execute",
+            "type": "OSError",
+            "errno": 5,
+            "message": "[Errno 5] controlled ownership-claim fsync failure"
+          }
+        ],
+        "cleanupSignals": [],
+        "pass": false,
+        "peakSampledGroupRSSKiB": 0,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "claimPath": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/evidence/.lane-blocked.json",
+        "claimEstablished": false,
+        "claimReleased": false,
+        "admission": {
+          "freeBytes": 34359738368,
+          "memoryFreePercent": 83,
+          "load": [
+            8.67626953125,
+            5.70361328125,
+            5.12255859375
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:56:34.712781+00:00"
+        },
+        "tmpdir": "/tmp/t08-life-iel_9cly/claim_fsync_error/t08-lgw9pdqj",
+        "signal": null,
+        "elapsedSeconds": 0.02576200000476092,
+        "logSnapshotBytes": 0,
+        "logComplete": false,
+        "logSHA256": null,
+        "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "receiptPath": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634705022Z-first-cargo_pod/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489662921,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045394632179560,
+          "ctimeNs": 1794045394632179560
+        }
+      },
+      "sourceChanged": false,
+      "privateOutputUnresolved": true,
+      "canonicalAbsent": true
+    },
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "acquire export lane",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "unresolved producer ownership; inspect /private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/evidence/.lane-blocked.json.pending"
+        }
+      ],
+      "archives": [],
+      "privateOutput": "/private/tmp/t08-life-iel_9cly/claim_fsync_error/packages/tools/blender/t08/exports/20261107T095634834386Z-second-cargo_pod/producer/models/props/cargo_pod.glb",
+      "laneOwned": false
+    }
+  ],
+  "canonicalExistsAfterRetry": false,
+  "firstReceiptUnchanged": true,
+  "canonicalExistsAfterRelease": false,
+  "stockMoves": [],
+  "expectationMet": true
+}

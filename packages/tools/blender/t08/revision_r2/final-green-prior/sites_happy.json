@@ -1,0 +1,276 @@
+{
+  "case": "sites_happy",
+  "dependencyFixture": true,
+  "scratch": "/tmp/t08-life-b96via0i/sites_happy",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "probe",
+    "--only",
+    "outpost_0"
+  ],
+  "codeSHA256": {
+    "run.py": "693861140b7ae41154ddf3eac789d6cdfa99494795c27a4a6ff2ca7353afe97e",
+    "export_saved.py": "a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d"
+  },
+  "supervisorPID": 39781,
+  "exit": 0,
+  "bindings": [
+    {
+      "source": "assets/blend/sites/outpost_0.blend",
+      "output": "packages/client/public/models/sites/outpost_0.glb",
+      "status": "PASS",
+      "exit": 0,
+      "outputSHA256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+      "errors": [],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-b96via0i/sites_happy/packages/client/public/models/sites/outpost_0.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 489664502,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794045412147897815,
+            "ctimeNs": 1794045412147897815
+          },
+          "quarantine": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/previous-quarantine/outpost_0.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/previous.glb",
+          "detachedRegular": true
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/models/sites/outpost_0.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489664497,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045412147642398,
+          "ctimeNs": 1794045412147642398
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_sites.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-b96via0i/sites_happy/assets/blend",
+        "--only",
+        "outpost_0",
+        "--out-dir",
+        "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_sites.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-b96via0i/sites_happy/assets/blend",
+          "--only",
+          "outpost_0",
+          "--out-dir",
+          "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-b96via0i/sites_happy",
+        "exit": 0,
+        "childExit": 0,
+        "childReaped": true,
+        "terminal": true,
+        "remainingGroup": [],
+        "errors": [],
+        "cleanupSignals": [],
+        "pass": true,
+        "peakSampledGroupRSSKiB": 4752,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "claimPath": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/evidence/.lane-blocked.json",
+        "claimEstablished": true,
+        "claimReleased": true,
+        "admission": {
+          "freeBytes": 34359738368,
+          "memoryFreePercent": 83,
+          "load": [
+            8.6123046875,
+            5.83251953125,
+            5.17822265625
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:56:52.223828+00:00"
+        },
+        "tmpdir": "/tmp/t08-zupkxvmk",
+        "pid": 39792,
+        "pgid": 39792,
+        "unexpectedSurvivors": [],
+        "signal": null,
+        "elapsedSeconds": 0.42529487499268726,
+        "logSnapshotBytes": 511,
+        "logComplete": true,
+        "logSHA256": "2c3c1ce3b02d1fd66a9f7e1bba2acf5aa4be5757c9ac43dbb4e3da43a0a9f619",
+        "logSnapshotSHA256": "2c3c1ce3b02d1fd66a9f7e1bba2acf5aa4be5757c9ac43dbb4e3da43a0a9f619",
+        "receiptPath": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489664497,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045412147642398,
+          "ctimeNs": 1794045412147642398
+        }
+      },
+      "sourceChanged": false,
+      "stock": [
+        {
+          "path": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/stock/sites__outpost_0.blend.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 489664525,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794045412306095120,
+            "ctimeNs": 1794045412306095120
+          }
+        },
+        {
+          "path": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/stock/sites__outpost_0.glb.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 489664534,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794045412308264957,
+            "ctimeNs": 1794045412308264957
+          }
+        }
+      ]
+    }
+  ],
+  "receipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_sites.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-b96via0i/sites_happy/assets/blend",
+        "--only",
+        "outpost_0",
+        "--out-dir",
+        "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-b96via0i/sites_happy",
+      "exit": 0,
+      "childExit": 0,
+      "childReaped": true,
+      "terminal": true,
+      "remainingGroup": [],
+      "errors": [],
+      "cleanupSignals": [],
+      "pass": true,
+      "peakSampledGroupRSSKiB": 4752,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "claimPath": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/evidence/.lane-blocked.json",
+      "claimEstablished": true,
+      "claimReleased": true,
+      "admission": {
+        "freeBytes": 34359738368,
+        "memoryFreePercent": 83,
+        "load": [
+          8.6123046875,
+          5.83251953125,
+          5.17822265625
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:56:52.223828+00:00"
+      },
+      "tmpdir": "/tmp/t08-zupkxvmk",
+      "pid": 39792,
+      "pgid": 39792,
+      "unexpectedSurvivors": [],
+      "signal": null,
+      "elapsedSeconds": 0.42529487499268726,
+      "logSnapshotBytes": 511,
+      "logComplete": true,
+      "logSHA256": "2c3c1ce3b02d1fd66a9f7e1bba2acf5aa4be5757c9ac43dbb4e3da43a0a9f619",
+      "logSnapshotSHA256": "2c3c1ce3b02d1fd66a9f7e1bba2acf5aa4be5757c9ac43dbb4e3da43a0a9f619",
+      "receiptPath": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/run/result.json"
+    }
+  ],
+  "receiptHashesBeforeRelease": {
+    "/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/run/result.json": "e6725f58370ba3e3b58add081329dac45e1bea251bfc106b831aaa47a587575e"
+  },
+  "currentAbsentBeforeRelease": false,
+  "remainingBeforeRelease": [],
+  "currentAbsentAfterRelease": false,
+  "receiptHashesAfterRelease": {
+    "/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/run/result.json": "e6725f58370ba3e3b58add081329dac45e1bea251bfc106b831aaa47a587575e"
+  },
+  "previous": [
+    {
+      "isSymlink": false,
+      "nlink": 1,
+      "bytes": "CURRENT-GLB"
+    }
+  ],
+  "stockMove": {
+    "source": "/tmp/t08-zupkxvmk/art-export-tcedg3iw/meshopt/outpost_0.glb",
+    "destination": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/models/sites/outpost_0.glb"
+  },
+  "stockMoves": [
+    {
+      "source": "/tmp/t08-zupkxvmk/art-export-tcedg3iw/meshopt/outpost_0.glb",
+      "destination": "/private/tmp/t08-life-b96via0i/sites_happy/packages/tools/blender/t08/exports/20261107T095652217966Z-probe-outpost_0/producer/models/sites/outpost_0.glb"
+    }
+  ],
+  "historyAfterRuntimeMutation": [
+    "CURRENT-GLB"
+  ],
+  "expectationMet": true,
+  "failureTail20": []
+}

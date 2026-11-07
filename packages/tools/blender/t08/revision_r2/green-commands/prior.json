@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "packages/tools/blender/t08/revision_r2/test_claim.py",
+    "--code",
+    "packages/tools/blender/t08",
+    "--evidence",
+    "packages/tools/blender/t08/revision_r2/green-prior",
+    "--prior-controls"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "exit": 1,
+  "elapsedSeconds": 18.38767149997875,
+  "log": "packages/tools/blender/t08/revision_r2/green-commands/prior.log",
+  "failureTail20": [
+    "happy True",
+    "symlink True",
+    "relative_symlink True",
+    "hardlink True",
+    "old_unreadable True",
+    "source_alias True",
+    "new_unreadable True",
+    "batch_unreadable False",
+    "sigterm True",
+    "denied_cleanup_late_publish True",
+    "leader_exit_with_cohort True",
+    "signal_during_binding True",
+    "sites_happy True",
+    "runner_sigterm True",
+    "runner_eperm True",
+    "runner_signal_during_result True"
+  ]
+}

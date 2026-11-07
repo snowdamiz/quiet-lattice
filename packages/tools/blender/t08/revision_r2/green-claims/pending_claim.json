@@ -1,0 +1,85 @@
+{
+  "case": "pending_claim",
+  "scratch": "/tmp/t08-life-6j289h3o/pending_claim",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-6j289h3o/pending_claim/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "first",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "693861140b7ae41154ddf3eac789d6cdfa99494795c27a4a6ff2ca7353afe97e",
+    "export_saved.py": "a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d"
+  },
+  "supervisorPID": 25073,
+  "firstProducer": null,
+  "claimDuringProduction": false,
+  "firstExit": 1,
+  "firstReceipts": [],
+  "firstReceiptHashes": {},
+  "guardExists": false,
+  "pendingExists": true,
+  "firstAliveBeforeRetry": [],
+  "retryCommand": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-6j289h3o/pending_claim/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "second",
+    "--only",
+    "cargo_pod"
+  ],
+  "retryPID": 25074,
+  "retryExit": 1,
+  "launches": [
+    0,
+    0
+  ],
+  "firstAliveAfterRetry": [],
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "acquire export lane",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "unresolved producer ownership; inspect /private/tmp/t08-life-6j289h3o/pending_claim/packages/tools/blender/t08/evidence/.lane-blocked.json.pending"
+        }
+      ],
+      "archives": [],
+      "privateOutput": "/private/tmp/t08-life-6j289h3o/pending_claim/packages/tools/blender/t08/exports/20261107T095434212322Z-first-cargo_pod/producer/models/props/cargo_pod.glb",
+      "laneOwned": false
+    },
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 1,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "acquire export lane",
+          "type": "RuntimeError",
+          "errno": null,
+          "message": "unresolved producer ownership; inspect /private/tmp/t08-life-6j289h3o/pending_claim/packages/tools/blender/t08/evidence/.lane-blocked.json.pending"
+        }
+      ],
+      "archives": [],
+      "privateOutput": "/private/tmp/t08-life-6j289h3o/pending_claim/packages/tools/blender/t08/exports/20261107T095434274841Z-second-cargo_pod/producer/models/props/cargo_pod.glb",
+      "laneOwned": false
+    }
+  ],
+  "canonicalExistsAfterRetry": true,
+  "firstReceiptUnchanged": true,
+  "canonicalExistsAfterRelease": true,
+  "stockMoves": [],
+  "expectationMet": true
+}

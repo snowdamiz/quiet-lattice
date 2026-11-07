@@ -1,0 +1,103 @@
+{
+  "case": "runner_eperm",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-b96via0i/runner_eperm/packages/tools/blender/t08/run.py",
+    "--label",
+    "runner_eperm",
+    "--wall",
+    "20",
+    "--",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-b96via0i/runner_eperm/probe.py"
+  ],
+  "scratch": "/tmp/t08-life-b96via0i/runner_eperm",
+  "supervisorPID": 39955,
+  "exit": 130,
+  "receipt": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t08-life-b96via0i/runner_eperm/probe.py"
+    ],
+    "cwd": "/private/tmp/t08-life-b96via0i/runner_eperm",
+    "exit": 130,
+    "childExit": null,
+    "childReaped": false,
+    "terminal": false,
+    "remainingGroup": [
+      {
+        "pid": 39970,
+        "rssKiB": 17312,
+        "state": "Ss",
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-b96via0i/runner_eperm/probe.py"
+      }
+    ],
+    "errors": [
+      {
+        "operation": "execute",
+        "type": "InterruptedError",
+        "errno": null,
+        "message": "received signal 2"
+      },
+      {
+        "operation": "killpg 15",
+        "type": "PermissionError",
+        "errno": 1,
+        "message": "[Errno 1] controlled killpg EPERM"
+      },
+      {
+        "operation": "killpg 9",
+        "type": "PermissionError",
+        "errno": 1,
+        "message": "[Errno 1] controlled killpg EPERM"
+      },
+      {
+        "operation": "wait direct child",
+        "type": "TimeoutExpired",
+        "errno": null,
+        "message": "Command '['/opt/homebrew/opt/python@3.14/bin/python3.14', '-B', '/tmp/t08-life-b96via0i/runner_eperm/probe.py']' timed out after 1 seconds"
+      }
+    ],
+    "cleanupSignals": [],
+    "pass": false,
+    "peakSampledGroupRSSKiB": 5392,
+    "limits": {
+      "wallSeconds": 20.0,
+      "rssGiB": 8,
+      "threads": 2,
+      "codecs": 1
+    },
+    "claimPath": "/private/tmp/t08-life-b96via0i/runner_eperm/packages/tools/blender/t08/evidence/.lane-blocked.json",
+    "claimEstablished": true,
+    "claimReleased": false,
+    "admission": {
+      "freeBytes": 34359738368,
+      "memoryFreePercent": 83,
+      "load": [
+        8.72314453125,
+        5.9013671875,
+        5.2060546875
+      ],
+      "cpus": 15,
+      "observed": "2026-11-07T09:56:53.621458+00:00"
+    },
+    "tmpdir": "/tmp/t08-8pmthikj",
+    "pid": 39970,
+    "pgid": 39970,
+    "signal": 2,
+    "elapsedSeconds": 5.600823874992784,
+    "logSnapshotBytes": 0,
+    "logComplete": false,
+    "logSHA256": null,
+    "logSnapshotSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receiptPath": "/private/tmp/t08-life-b96via0i/runner_eperm/packages/tools/blender/t08/evidence/20261107T095653617068Z-runner_eperm/result.json"
+  },
+  "remainingBeforeRelease": [
+    "39970 39970 Ss"
+  ],
+  "expectationMet": true,
+  "failureTail20": []
+}

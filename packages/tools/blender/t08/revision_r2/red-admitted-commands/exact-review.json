@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "packages/tools/blender/t08/revision_r2/test_claim.py",
+    "--code",
+    "packages/tools/blender/t08/revision_r2/baseline",
+    "--evidence",
+    "packages/tools/blender/t08/revision_r2/red-admitted-exact-review",
+    "--original-review"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "exit": 1,
+  "elapsedSeconds": 12.006900290958583,
+  "log": "packages/tools/blender/t08/revision_r2/red-admitted-commands/exact-review.log",
+  "failureTail20": [
+    "guard_writable safeRefusal True first 143 retry 1 launches 1 1 firstAliveDuringRetry True",
+    "guard_unwritable safeRefusal False first 143 retry 0 launches 1 2 firstAliveDuringRetry True"
+  ]
+}

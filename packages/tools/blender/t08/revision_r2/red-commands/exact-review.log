@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/inputs/fence_probe.py", line 26, in <module>
+    m.until(lambda:(root/'validation-entered').exists())
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/t08r2-old-w21ys_i8/packages/tools/blender/t08/revision_r1/test_lifecycle.py", line 36, in until
+    raise TimeoutError("fixture barrier/termination not observed")
+TimeoutError: fixture barrier/termination not observed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/test_claim.py", line 314, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/test_claim.py", line 310, in main
+    return exact_review(args) if args.original_review else claims(args)
+           ~~~~~~~~~~~~^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/test_claim.py", line 64, in exact_review
+    exec(
+    ~~~~^
+        compile(script.read_bytes(), str(script), "exec"), {"__name__": "__main__"}
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5/packages/tools/blender/t08/revision_r2/inputs/fence_probe.py", line 57, in <module>
+    finally:h.finish()
+            ~~~~~~~~^^
+  File "/tmp/t08r2-old-w21ys_i8/packages/tools/blender/t08/revision_r1/test_lifecycle.py", line 465, in finish
+    os.killpg(proc.pid, signal.SIGKILL)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 1] Operation not permitted

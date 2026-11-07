@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "packages/tools/blender/t08/revision_r2/test_claim.py",
+    "--code",
+    "packages/tools/blender/t08/revision_r2/baseline",
+    "--evidence",
+    "packages/tools/blender/t08/revision_r2/final-red-claims"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8895fab5",
+  "exit": 1,
+  "elapsedSeconds": 45.00046562496573,
+  "log": "packages/tools/blender/t08/revision_r2/final-test-commands/red-claims.log",
+  "failureTail20": [
+    "writable_live False first 143 retry 1 launches [1, 1]",
+    "unwritable_before_launch False first 143 retry 0 launches [1, 2]",
+    "unwritable_after_launch False first 143 retry 0 launches [1, 2]",
+    "pending_claim False first 143 retry 0 launches [1, 2]",
+    "dangling_claim False first 143 retry 0 launches [1, 2]",
+    "claim_fsync_error False first 143 retry 0 launches [1, 2]",
+    "release_denied False first 0 retry 0 launches [1, 2]",
+    "successful_release True first 0 retry 0 launches [1, 2]",
+    "supervisor_killed False first -9 retry 0 launches [1, 2]"
+  ]
+}

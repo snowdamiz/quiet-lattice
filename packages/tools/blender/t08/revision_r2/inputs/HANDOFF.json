@@ -1,0 +1,62 @@
+{
+  "task": "P1.E14.T08 independent R2 SOURCE/CPU",
+  "status": "DONE review",
+  "verdict": "REVISE",
+  "head": "25d3859012444f8294acc64fd566c824e88f1a85",
+  "tree": "0ef6a1226f595dfd0816498d48beba667009efd0",
+  "base": "9ec69d49395a8bdddc161240782a8bfa28b3cc38",
+  "report": "/private/tmp/t08-r2-source-25d38590-x6AaWJ/REPORT.txt",
+  "seal": "/private/tmp/t08-r2-source-25d38590-x6AaWJ/SHA256SUMS.json",
+  "originalFindings": {
+    "F1": "FIXED",
+    "F2": "FIXED",
+    "F3": "FIXED",
+    "F4": "FIXED"
+  },
+  "findings": [
+    {
+      "id": "F5",
+      "severity": "P2",
+      "file": "packages/tools/blender/t08/run.py",
+      "line": 270,
+      "admissionLine": 72,
+      "summary": "Failed unresolved-cohort marker persistence releases the lane; real retry launches and passes while prior producer remains alive.",
+      "red": "/private/tmp/t08-r2-source-25d38590-x6AaWJ/fence-probe/guard_unwritable.json",
+      "greenControl": "/private/tmp/t08-r2-source-25d38590-x6AaWJ/fence-probe/guard_writable.json",
+      "redExits": [
+        143,
+        0
+      ],
+      "greenExits": [
+        143,
+        1
+      ],
+      "implementedFix": false
+    }
+  ],
+  "freshFocusedBaseline": {
+    "exit": 1,
+    "passed": 4,
+    "failed": 12
+  },
+  "freshFocusedHead": {
+    "exit": 0,
+    "passed": 16,
+    "failed": 0
+  },
+  "freshNeighbor": {
+    "exit": 1,
+    "passed": 1,
+    "failed": 1
+  },
+  "protectedFiles": 4951,
+  "originalParentPaths": 4097,
+  "unchangedAssets": 24,
+  "unchangedPNGs": 44,
+  "trackedFilesUnchanged": 5411,
+  "ignoredFactsUnchanged": 34,
+  "noRemainingReviewGroups": true,
+  "nativeVisualAcceptance": false,
+  "sourceOrDocsEdited": false,
+  "pushPRMerge": false
+}

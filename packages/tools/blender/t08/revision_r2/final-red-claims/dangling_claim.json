@@ -1,0 +1,475 @@
+{
+  "case": "dangling_claim",
+  "scratch": "/tmp/t08-life-o0p7mu21/dangling_claim",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "first",
+    "--only",
+    "cargo_pod"
+  ],
+  "codeSHA256": {
+    "run.py": "4ba8022e52929e22008ad8858bb76d1e0608b90020fc50eb78c0e1022e7617fa",
+    "export_saved.py": "a1a2b57416a10dc04f6147843718345dfbcd83079cb89d9e351f0efd4ebc678d"
+  },
+  "supervisorPID": 32018,
+  "firstProducer": 32049,
+  "claimDuringProduction": true,
+  "firstExit": 143,
+  "firstReceipts": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/stock"
+      ],
+      "cwd": "/private/tmp/t08-life-o0p7mu21/dangling_claim",
+      "exit": 143,
+      "childExit": null,
+      "childReaped": false,
+      "terminal": false,
+      "remainingGroup": [
+        {
+          "pid": 32049,
+          "rssKiB": 22704,
+          "state": "Ss",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-o0p7mu21/dangling_claim/fixture_blender.py -b --factory-startup -t 2 --python-exit-code 1 -P packages/tools/blender/export_props.py -- --src-root /private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend --only cargo_pod --out-dir /private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models --report-dir /private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/stock"
+        }
+      ],
+      "errors": [
+        {
+          "operation": "execute",
+          "type": "InterruptedError",
+          "errno": null,
+          "message": "received signal 15"
+        },
+        {
+          "operation": "killpg 15",
+          "type": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] controlled killpg EPERM"
+        },
+        {
+          "operation": "killpg 9",
+          "type": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] controlled killpg EPERM"
+        },
+        {
+          "operation": "wait direct child",
+          "type": "TimeoutExpired",
+          "errno": null,
+          "message": "Command '['/opt/homebrew/Cellar/python@3.14/3.14.8/bin/python3.14', '-B', '/tmp/t08-life-o0p7mu21/dangling_claim/fixture_blender.py', '-b', '--factory-startup', '-t', '2', '--python-exit-code', '1', '-P', 'packages/tools/blender/export_props.py', '--', '--src-root', '/private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend', '--only', 'cargo_pod', '--out-dir', '/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models', '--report-dir', '/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/stock']' timed out after 1 seconds"
+        },
+        {
+          "operation": "persist unresolved cohort",
+          "type": "FileExistsError",
+          "errno": null,
+          "message": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/evidence/.lane-blocked.json"
+        }
+      ],
+      "cleanupSignals": [],
+      "pass": false,
+      "peakSampledGroupRSSKiB": 640,
+      "limits": {
+        "wallSeconds": 1800,
+        "rssGiB": 8,
+        "threads": 2,
+        "codecs": 1
+      },
+      "admission": {
+        "freeBytes": 34359738368,
+        "memoryFreePercent": 82,
+        "load": [
+          7.53369140625,
+          5.21435546875,
+          4.9365234375
+        ],
+        "cpus": 15,
+        "observed": "2026-11-07T09:56:02.749508+00:00"
+      },
+      "tmpdir": "/tmp/t08-life-o0p7mu21/dangling_claim/t08-rw5eq3dw",
+      "pid": 32049,
+      "pgid": 32049,
+      "signal": 15,
+      "elapsedSeconds": 5.670855708012823,
+      "logSnapshotBytes": 304,
+      "logComplete": false,
+      "logSHA256": null,
+      "logSnapshotSHA256": "52976fc79d0652572246739ba3ce1c02dd0fa70fe2ae74c3fb1339882a21cc1c",
+      "receiptPath": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/run/result.json"
+    }
+  ],
+  "firstReceiptHashes": {
+    "/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/run/result.json": "47562f435e287ca1b8ddeb2a1701e01a881de7fcd19d1bfabdbb0a8201ae9222"
+  },
+  "guardExists": true,
+  "pendingExists": false,
+  "firstAliveBeforeRetry": [
+    "32049 32049 Ss"
+  ],
+  "retryCommand": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/export_saved.py",
+    "--label",
+    "second",
+    "--only",
+    "cargo_pod"
+  ],
+  "retryPID": 32776,
+  "retryExit": 0,
+  "launches": [
+    1,
+    2
+  ],
+  "firstAliveAfterRetry": [
+    "32049 32049 Ss"
+  ],
+  "bindings": [
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "FAILED",
+      "exit": 143,
+      "outputSHA256": null,
+      "errors": [
+        {
+          "operation": "export transaction",
+          "type": "InterruptedError",
+          "errno": null,
+          "message": "received signal 15"
+        }
+      ],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+          "errors": [],
+          "existed": true,
+          "original": {
+            "device": 16777232,
+            "inode": 489639196,
+            "mode": 33188,
+            "size": 11,
+            "mtimeNs": 1794045362602797064,
+            "ctimeNs": 1794045362602797064
+          },
+          "quarantine": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/previous-quarantine/cargo_pod.glb",
+          "quarantineRetained": false,
+          "archive": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/previous.glb",
+          "detachedRegular": true
+        },
+        {
+          "path": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489639157,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045362599243267,
+          "ctimeNs": 1794045362599243267
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-o0p7mu21/dangling_claim",
+        "exit": 143,
+        "childExit": null,
+        "childReaped": false,
+        "terminal": false,
+        "remainingGroup": [
+          {
+            "pid": 32049,
+            "rssKiB": 22704,
+            "state": "Ss",
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /tmp/t08-life-o0p7mu21/dangling_claim/fixture_blender.py -b --factory-startup -t 2 --python-exit-code 1 -P packages/tools/blender/export_props.py -- --src-root /private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend --only cargo_pod --out-dir /private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models --report-dir /private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/stock"
+          }
+        ],
+        "errors": [
+          {
+            "operation": "execute",
+            "type": "InterruptedError",
+            "errno": null,
+            "message": "received signal 15"
+          },
+          {
+            "operation": "killpg 15",
+            "type": "PermissionError",
+            "errno": 1,
+            "message": "[Errno 1] controlled killpg EPERM"
+          },
+          {
+            "operation": "killpg 9",
+            "type": "PermissionError",
+            "errno": 1,
+            "message": "[Errno 1] controlled killpg EPERM"
+          },
+          {
+            "operation": "wait direct child",
+            "type": "TimeoutExpired",
+            "errno": null,
+            "message": "Command '['/opt/homebrew/Cellar/python@3.14/3.14.8/bin/python3.14', '-B', '/tmp/t08-life-o0p7mu21/dangling_claim/fixture_blender.py', '-b', '--factory-startup', '-t', '2', '--python-exit-code', '1', '-P', 'packages/tools/blender/export_props.py', '--', '--src-root', '/private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend', '--only', 'cargo_pod', '--out-dir', '/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models', '--report-dir', '/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/stock']' timed out after 1 seconds"
+          },
+          {
+            "operation": "persist unresolved cohort",
+            "type": "FileExistsError",
+            "errno": null,
+            "message": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/evidence/.lane-blocked.json"
+          }
+        ],
+        "cleanupSignals": [],
+        "pass": false,
+        "peakSampledGroupRSSKiB": 640,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "admission": {
+          "freeBytes": 34359738368,
+          "memoryFreePercent": 82,
+          "load": [
+            7.53369140625,
+            5.21435546875,
+            4.9365234375
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:56:02.749508+00:00"
+        },
+        "tmpdir": "/tmp/t08-life-o0p7mu21/dangling_claim/t08-rw5eq3dw",
+        "pid": 32049,
+        "pgid": 32049,
+        "signal": 15,
+        "elapsedSeconds": 5.670855708012823,
+        "logSnapshotBytes": 304,
+        "logComplete": false,
+        "logSHA256": null,
+        "logSnapshotSHA256": "52976fc79d0652572246739ba3ce1c02dd0fa70fe2ae74c3fb1339882a21cc1c",
+        "receiptPath": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/run/result.json"
+      },
+      "privateOutputUnresolved": true,
+      "canonicalAbsent": true
+    },
+    {
+      "source": "assets/blend/props/cargo_pod.blend",
+      "output": "packages/client/public/models/props/cargo_pod.glb",
+      "status": "PASS",
+      "exit": 0,
+      "outputSHA256": "f1d2689bdcea2908cc3169451ba089147ac3afcae08ef5a27d4a5a0f94743b0f",
+      "errors": [],
+      "archives": [
+        {
+          "path": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/client/public/models/props/cargo_pod.glb",
+          "invalidated": true,
+          "sha256": null,
+          "errors": [],
+          "existed": false
+        }
+      ],
+      "privateOutput": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/producer/models/props/cargo_pod.glb",
+      "sourceBefore": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489639157,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045362599243267,
+          "ctimeNs": 1794045362599243267
+        }
+      },
+      "sourceSHA256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+      "command": [
+        "blender",
+        "-P",
+        "packages/tools/blender/export_props.py",
+        "--",
+        "--src-root",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend",
+        "--only",
+        "cargo_pod",
+        "--out-dir",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/producer/models",
+        "--report-dir",
+        "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/stock"
+      ],
+      "producerReceipt": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/producer/run/result.json",
+      "producer": {
+        "command": [
+          "/Applications/Blender.app/Contents/MacOS/Blender",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "-P",
+          "packages/tools/blender/export_props.py",
+          "--",
+          "--src-root",
+          "/private/tmp/t08-life-o0p7mu21/dangling_claim/assets/blend",
+          "--only",
+          "cargo_pod",
+          "--out-dir",
+          "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/producer/models",
+          "--report-dir",
+          "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/stock"
+        ],
+        "cwd": "/private/tmp/t08-life-o0p7mu21/dangling_claim",
+        "exit": 0,
+        "childExit": 0,
+        "childReaped": true,
+        "terminal": true,
+        "remainingGroup": [],
+        "errors": [],
+        "cleanupSignals": [],
+        "pass": true,
+        "peakSampledGroupRSSKiB": 4480,
+        "limits": {
+          "wallSeconds": 1800,
+          "rssGiB": 8,
+          "threads": 2,
+          "codecs": 1
+        },
+        "admission": {
+          "freeBytes": 34359738368,
+          "memoryFreePercent": 82,
+          "load": [
+            7.81103515625,
+            5.31005859375,
+            4.9716796875
+          ],
+          "cpus": 15,
+          "observed": "2026-11-07T09:56:08.574201+00:00"
+        },
+        "tmpdir": "/tmp/t08-life-o0p7mu21/dangling_claim/t08-_17vj6ey",
+        "pid": 32796,
+        "pgid": 32796,
+        "unexpectedSurvivors": [],
+        "signal": null,
+        "elapsedSeconds": 0.47421866696095094,
+        "logSnapshotBytes": 522,
+        "logComplete": true,
+        "logSHA256": "514152b2a11c3429ef81605a7a7f1dff0250645ed4c080a68095fd8cdb27c94d",
+        "logSnapshotSHA256": "514152b2a11c3429ef81605a7a7f1dff0250645ed4c080a68095fd8cdb27c94d",
+        "receiptPath": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/producer/run/result.json"
+      },
+      "sourceAfter": {
+        "sha256": "7df00ada93c8e5ccfa905b1ea35842d6586583ac4a51ed428203c84bac2d6ab8",
+        "identity": {
+          "device": 16777232,
+          "inode": 489639157,
+          "mode": 33188,
+          "size": 15,
+          "mtimeNs": 1794045362599243267,
+          "ctimeNs": 1794045362599243267
+        }
+      },
+      "sourceChanged": false,
+      "stock": [
+        {
+          "path": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/stock/props__cargo_pod.blend.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 489662026,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794045368666766091,
+            "ctimeNs": 1794045368666766091
+          }
+        },
+        {
+          "path": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/stock/props__cargo_pod.glb.json",
+          "sha256": "4a87bbd577e929b03cd8693986955088373a9eef2168ce7d6837bad49ac856e3",
+          "identity": {
+            "device": 16777232,
+            "inode": 489662034,
+            "mode": 33188,
+            "size": 49,
+            "mtimeNs": 1794045368669675428,
+            "ctimeNs": 1794045368669675428
+          }
+        }
+      ]
+    }
+  ],
+  "canonicalExistsAfterRetry": true,
+  "firstReceiptUnchanged": true,
+  "canonicalExistsAfterRelease": true,
+  "stockMoves": [
+    {
+      "source": "/tmp/t08-life-o0p7mu21/dangling_claim/t08-_17vj6ey/art-export-6z5x0p2q/meshopt/cargo_pod.glb",
+      "destination": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095608567081Z-second-cargo_pod/producer/models/props/cargo_pod.glb"
+    },
+    {
+      "source": "/tmp/t08-life-o0p7mu21/dangling_claim/t08-rw5eq3dw/art-export-zn9iidtd/meshopt/cargo_pod.glb",
+      "destination": "/private/tmp/t08-life-o0p7mu21/dangling_claim/packages/tools/blender/t08/exports/20261107T095602736256Z-first-cargo_pod/producer/models/props/cargo_pod.glb"
+    }
+  ],
+  "expectationMet": false
+}
