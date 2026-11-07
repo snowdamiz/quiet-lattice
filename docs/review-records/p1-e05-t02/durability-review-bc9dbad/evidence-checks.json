@@ -1,0 +1,211 @@
+{
+  "status": "PASS",
+  "currentPassingChecks": 206,
+  "counts": {
+    "focused54": 54,
+    "retainedNative": 22,
+    "retainedOrdering": 44,
+    "sinkMatrix": 41,
+    "independentNeighbors": 20,
+    "admission": 22,
+    "exactReviewerGreen": 3
+  },
+  "oldBaseAssertions": 5,
+  "oldBaseTerminalExpectedFailure": true,
+  "defectiveOriginalRedPreserved": true,
+  "explicitFreshAbsentChildren": [
+    {
+      "pid": 91794,
+      "exit": 0,
+      "identity": null,
+      "stderr": "",
+      "reviewTerminalIdentity": null
+    },
+    {
+      "pid": 91796,
+      "exit": 0,
+      "identity": null,
+      "stderr": "",
+      "reviewTerminalIdentity": null
+    },
+    {
+      "pid": 91801,
+      "exit": 0,
+      "identity": null,
+      "stderr": "",
+      "reviewTerminalIdentity": null
+    },
+    {
+      "pid": 91804,
+      "exit": 0,
+      "identity": null,
+      "stderr": "",
+      "reviewTerminalIdentity": null
+    },
+    {
+      "pid": 90116,
+      "exit": 0,
+      "identity": null,
+      "stderr": "",
+      "reviewTerminalIdentity": null
+    },
+    {
+      "pid": 90117,
+      "exit": 0,
+      "identity": null,
+      "stderr": "",
+      "reviewTerminalIdentity": null
+    },
+    {
+      "pid": 90135,
+      "exit": 0,
+      "identity": null,
+      "stderr": "",
+      "reviewTerminalIdentity": null
+    }
+  ],
+  "retainedZeroLaunchCLIProof": {
+    "count": 3,
+    "fresh": false,
+    "sha256": "7e5b09e7e366d4209d485478cfad8d184a3b64e40c9a0d8438cba1db0e381995",
+    "runs": [
+      {
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "-B",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+          "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py",
+          "native-absent-v2",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+          "--execute",
+          "--grant",
+          "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+        ],
+        "exitCode": 1,
+        "expectedExit": 1,
+        "requiredError": "FileNotFoundError",
+        "subprocessEvents": [],
+        "stdout": "{\"label\": \"native-absent-v2\", \"exitCode\": 1, \"seconds\": 0.35952804202679545, \"subprocessCount\": 0, \"reviewBytes\": 7090405}\n",
+        "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py\", line 33, in <module>\n    try:runpy.run_path(str(target),run_name='__main__')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen runpy>\", line 287, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 263, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 257, in main\n    record=consume(ready,plan,args.grant)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 92, in consume\n    grant_snapshot=snapshot(grant_path);grant=grant_snapshot['value']\n                   ^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/admission_json.py\", line 14, in snapshot\n    before=path.lstat();facts['before']=dict(mode=before.st_mode,bytes=before.st_size,dev=before.st_dev,ino=before.st_ino)\n           ^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 847, in lstat\n    return self.stat(follow_symlinks=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 840, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json'\n"
+      },
+      {
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "-B",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+          "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py",
+          "capture-disabled",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+          "--execute",
+          "--grant",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json"
+        ],
+        "exitCode": 1,
+        "expectedExit": 1,
+        "requiredError": "SOURCE_ONLY_RUNTIME_DISABLED",
+        "subprocessEvents": [],
+        "stdout": "{\"label\": \"capture-disabled\", \"exitCode\": 1, \"seconds\": 0.02019924996420741, \"subprocessCount\": 0, \"reviewBytes\": 7093792}\n",
+        "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py\", line 33, in <module>\n    try:runpy.run_path(str(target),run_name='__main__')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen runpy>\", line 287, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 505, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 496, in main\n    record = consume(ready, args.grant)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 84, in consume\n    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 51, in verify_runtime\n    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SOURCE_ONLY_RUNTIME_DISABLED\n"
+      },
+      {
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "-B",
+          "-O",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/optimized-cli.py",
+          "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/optimized-v2-events.json"
+        ],
+        "exitCode": 1,
+        "expectedExit": 1,
+        "requiredError": "T02_ASSERTIONS_REQUIRED",
+        "stdout": "",
+        "stderr": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused\n",
+        "events": {
+          "optimize": 1,
+          "launchEvents": [],
+          "argv": [
+            "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+            "--execute",
+            "--grant",
+            "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+          ]
+        }
+      }
+    ]
+  },
+  "historicalFullSnapshot": {
+    "status": "FAILED_MISMATCH_UNCHANGED",
+    "sha256": "cab8c0944e1f619581ada542003f9ba23c620bbe758503c72ab7d21e4be50103",
+    "deviations": [
+      {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1",
+        "before": {
+          "mode": 16877,
+          "bytes": 128,
+          "dev": 16777232,
+          "ino": 477605751,
+          "mtime": 1794039528785627211
+        },
+        "after": {
+          "mode": 16877,
+          "bytes": 128,
+          "dev": 16777232,
+          "ino": 477605751,
+          "mtime": 1794041565439653483
+        }
+      },
+      {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b516a662-14929-1.finished",
+        "before": {
+          "mode": 33152,
+          "bytes": 0,
+          "dev": 16777232,
+          "ino": 485878575,
+          "mtime": 1794039528779584614,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "error": "FileNotFoundError",
+          "errno": 2,
+          "message": "[Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b516a662-14929-1.finished'"
+        }
+      },
+      {
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/latest.json",
+        "before": {
+          "mode": 33152,
+          "bytes": 122,
+          "dev": 16777232,
+          "ino": 485873202,
+          "mtime": 1794039522918625207,
+          "sha256": "ba965578829433599e905a2607f1ac0c6e8b91bebed0f6a495e4bcedf66276ff"
+        },
+        "after": {
+          "mode": 33152,
+          "bytes": 122,
+          "dev": 16777232,
+          "ino": 487115172,
+          "mtime": 1794041558697985383,
+          "sha256": "ebcb797d6e49af8b3c02de75889e3fc448bd4bc324d677b99b9030ea4acbcb95"
+        }
+      }
+    ]
+  },
+  "historicalTerminals": [
+    {
+      "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/result.json",
+      "status": "HOLD",
+      "terminalReleaseProved": false,
+      "sha256": "c913a55c0cc00e6976a29a25ea442a27c547db9e0c179765e11304933f100490"
+    },
+    {
+      "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/integration-result.json",
+      "status": "HOLD",
+      "terminalReleaseProved": false,
+      "sha256": "46bfa9b6d020b2e136cf6fcfc8d141f4d5c4ef605719d137ad2e2aba8a662da7"
+    }
+  ],
+  "nativeQualification": false,
+  "currentCapacityAdmission": false,
+  "perReelBytes": 39354368
+}

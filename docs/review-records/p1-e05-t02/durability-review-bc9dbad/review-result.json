@@ -1,0 +1,56 @@
+{
+  "verdict": "PASS",
+  "scope": "INDEPENDENT_BOUNDED_SOURCE_CPU_ONLY",
+  "head": "bc9dbad83c772e6202075404362490eef4f46d2b",
+  "tree": "3b25f1b6ff405127f0f011890719f0795e9b341a",
+  "base": "ff497e5525f8e93c71df67827446d7e426bbc20d",
+  "baseTree": "5eccd017f148fbedc6b1fc751fb16ea7fcc1c660",
+  "findings": [],
+  "priorFindings": [
+    {
+      "id": "C2-R12-F1",
+      "priorSeverity": "P2",
+      "disposition": "FIXED_NEW_RED_GREEN_ACTUAL_ADAPTER_DISPATCHER",
+      "currentLocation": "release_accounting.py:133-170; native189.py:225-249; caller.py:378-415"
+    },
+    {
+      "id": "C2-R12-F2",
+      "priorSeverity": "P2",
+      "disposition": "FIXED_NEW_COMPATIBLE_OLD_BASE_RSS_MILESTONE_PROOF",
+      "currentLocation": "revision-13/compatible-red-controls.py:10-47; historical bad replay retained"
+    }
+  ],
+  "currentSourcePassingChecks": 206,
+  "authorCurrentSourceChecksIndependentlyRerun": 186,
+  "independentAdditionalChecks": 20,
+  "oldBaseMilestoneAssertions": 5,
+  "retainedZeroLaunchCLIs": 3,
+  "retainedCLIProofFresh": false,
+  "inventoryRows": 6969,
+  "beforeAfterInventoryEqual": true,
+  "protectedPriorRows": 1368,
+  "unchangedProtectedPriorRows": 1367,
+  "authorizedException": [
+    {
+      "original": {
+        "path": "packages/tools/blender/characters/animations/thalune-run-candidate/release_accounting.py",
+        "bytes": 10735,
+        "sha256": "bf84569764d31354e6a6955b450f68a03ed6d3753ba41f36e4dfafcd10032ae8"
+      },
+      "currentSha256": "d2c7a641642fc8c588b93a3536fd7a76fdd4e64e00023090f6782cc686fa81b0",
+      "reason": "Explicit user-authorized C2-R12-F1 accounting correction only"
+    }
+  ],
+  "attempt2Rows": 50,
+  "prospectiveAbsent": 11,
+  "harmlessChildrenReapedAndFreshAbsent": 7,
+  "requiredReserveBytes": 22066626560,
+  "rssBytes": 8589934592,
+  "perReelBytes": 39354368,
+  "currentCapacityAdmission": false,
+  "native189Qualification": false,
+  "runtimeAuthorization": false,
+  "nativeFixtureAuthorization": true,
+  "historicalFullSnapshot": "FAILED_MISMATCH_THREE_PNPM_TASK_STATE_DEVIATIONS_RETAINED",
+  "screenshotCleanup": "STOPPED"
+}

@@ -1,0 +1,28 @@
+{
+  "verdict": "PASS",
+  "source": {
+    "head": "64ba2ba38051ca545ea8d808098e28a7a3220ef8",
+    "tree": "823f852bf1d201656ec81a5f1eb4a151f41b20d0",
+    "clean": true
+  },
+  "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+  "qualification": "SOURCE_CPU_ONLY_NOT_NATIVE_VISUAL_OR_LAUNCH_ACCEPTANCE",
+  "readinessSha256": "40f9930dbfe824cc433c7a34de1c17ffcc52b72cc3a865251c743a3861f69903",
+  "reportSha256": "7992552657c4851aecbe707bd95836a88758203df4c98b2b55bf9ae9e0e1cbe9",
+  "fixed": [
+    "C2-WRITERS-1"
+  ],
+  "advisories": [
+    {
+      "id": "A1",
+      "severity": "P3",
+      "location": "anchor_controls.py:223",
+      "description": "port.wait is unused by caller; real job.wait boundary proven freshly in reviewer controls"
+    }
+  ],
+  "freshMethods": 33,
+  "freshActualCLIRefusals": 4,
+  "operationalGrant": false,
+  "nativeLaunch": false,
+  "bothPriorAttempts": "FAILED_SPENT"
+}

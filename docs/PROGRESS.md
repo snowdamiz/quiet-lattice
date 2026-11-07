@@ -991,3 +991,14 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - After T16 releases its CPU slot, fresh capacity and process checks admit Lark alone to resume the density correction under its existing8GiB/45-minute/6GiB-growth bounds. Other hull heavy stages remain held. All six fauna units subsequently release, so their concurrent disk reserve is removed from future Lark admissions.
 - Seventy-six original reports, source handoffs, capture receipts and the blind packet index are retained exact or losslessly compressed in `20261107-fauna-six-unit-capture-and-reviews.json`. Captured images stay at their original paths, and screenshot cleanup remains STOPPED. No main, remote, PR, Trunk or merge action.
 - Verification rehashes all76 originals, stored payloads and staged blobs. Prose whitespace checks pass. The full evidence diff retains three EOF blank-line diagnostics in the already hash-bound blind packet excerpts/index; those bytes stay unchanged while grading proceeds. Exact checks: `/private/tmp/space-parent-fauna-six-check-fdr7ztuv/verification.json`.
+
+
+## 2026-11-07 — Account failover; effects and animation independent PASS
+
+- **Provider failover:** Codex usage limit stopped the previous parent run mid-batch. Child reviews/workers that were paused or mid-seal were continued on Cursor. Trunk/main/remote/PR actions remain withheld.
+- **Effects `64ba2ba`:** independent SOURCE/CPU PASS (nonblocking P3 advisory). Seal retained under `docs/review-records/p1-e07-t14/root-review-64ba2ba/`. Both native pilots remain FAILED/SPENT; no launch authorization.
+- **Animation durability `bc9dbad`:** independent SOURCE/CPU PASS; C2-R12-F1/F2 FIXED. Seal retained under `docs/review-records/p1-e05-t02/durability-review-bc9dbad/`. Native189 remains parent-owned and ungranted.
+- **Fauna six-unit artifacts:** author evidence-only LFS retention completed on the fauna worker at `d0a914c94754a6ba0c3b1f364e2254c2815b5f54` (768 files / 418,439,146 bytes, captureHead `0922f7f`). Blind visual grade of those original bytes remains in flight. Whole T09 closure remains open.
+- **T13 category-return:** author reports correction committed at `8a881e369`; finishing the sealed report after freeze-ceiling clarification (readiness freeze ceiling separate from ≤256 MiB test/evidence scratch). No native grant or timing acceptance.
+- Companion R8, creature F2 review, exact-mask regression prep, Lark density resume, and fauna blind visual remain active. Screenshot cleanup stays STOPPED. No main/remote/PR/Trunk action.
+- Index: `docs/review-records/20261107-effects-animation-independent-pass.json` (9 retained seal files).
