@@ -5,7 +5,6 @@ its authored bits through vertex splitting, then replace COLOR_0 before KTX2/mes
 No authoring module is imported and no .blend is saved.
 """
 
-import hashlib
 import struct
 import sys
 from pathlib import Path
@@ -15,8 +14,9 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(HERE))
-from artlib import export, glb, ktx
-from material_trace import install
+from artlib import core, export, glb, ktx, rules
+from export_transaction import export_transaction
+from receipts import DEFAULT_EVIDENCE, ROOT
 
 _original_write = export._write
 _original_encode_args = ktx.encode_args
@@ -115,16 +115,31 @@ def write_exact(roots, path):
     restore_float_masks(path)
 
 
-if __name__ == "__main__":
-    root = HERE.parents[3]
-    paths = sorted((root / "assets/blend/flora").glob("non_tree_*.blend"))
-    before = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+def main(argv):
+    args = export.parse(argv)
+    if args.only or args.compress is False:
+        raise ValueError(
+            "T05 exports the fixed complete source set with required compression"
+        )
     export._write = write_exact
     ktx.encode_args = cpu_encode_args
-    install()
-    args = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
-    code = export.main("flora", ["--only", ",".join(p.stem for p in paths), *args])
-    after = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
-    assert before == after, "Export changed a source!"
-    print("SOURCE_HASHES_UNCHANGED", before)
-    sys.exit(code)
+    extra = []
+    if args.bake_res:
+        extra += ["--bake-res", str(args.bake_res)]
+    if args.verbose:
+        extra += ["--verbose"]
+    if args.quiet:
+        extra += ["--quiet"]
+    # Stock validation is mandatory. The old local tracer is deliberately not installed.
+    return export_transaction(
+        Path(args.src_root) if args.src_root else ROOT / "assets/blend",
+        Path(args.out_dir) if args.out_dir else ROOT / "packages/client/public/models",
+        Path(args.report_dir) if args.report_dir else DEFAULT_EVIDENCE / "export",
+        export.main,
+        lambda path: core.validate_path(rules.load(), path, family="flora"),
+        extra,
+    )
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []))

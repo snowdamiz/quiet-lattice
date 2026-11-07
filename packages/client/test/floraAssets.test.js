@@ -3,6 +3,8 @@
 import { Buffer } from 'node:buffer';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import process from 'node:process';
 import * as THREE from 'three';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { collectLods, showLod, parseSpec, applyGameLook } from '../src/dev/review.js';
@@ -12,7 +14,13 @@ import { makeBush, makeFern, makeGrass, makeRock, makeResourcePlant, makeDeposit
 
 const root = new URL('../../../', import.meta.url);
 const read = (path) => readFileSync(new URL(path, root));
-const manifest = JSON.parse(read('assets/renders/flora/t05/source_manifest.json'));
+const manifest = JSON.parse(
+  process.env.T05_SOURCE_MANIFEST ? readFileSync(process.env.T05_SOURCE_MANIFEST) : read('assets/renders/flora/t05/source_manifest.json'),
+);
+const exportBytes = (group) =>
+  process.env.T05_EXPORT_ROOT
+    ? readFileSync(join(process.env.T05_EXPORT_ROOT, `non_tree_${group}.glb`))
+    : read(`packages/client/public/models/flora/non_tree_${group}.glb`);
 const groups = ['foliage', 'stone', 'resources'];
 let loadedScene;
 const palette = { primary: new THREE.Color(0.21, 0.47, 0.32), secondary: new THREE.Color(0.11, 0.16, 0.08), accent: new THREE.Color(0.69, 0.36, 0.17) };
@@ -56,6 +64,19 @@ function validateMesh(mesh, expected) {
   }
   if (hash(masks) !== expected.mask_sha256) throw new Error('Mask float bits changed');
   if (hash(associations) !== expected.mask_position_sha256) throw new Error('Mask moved to another vertex');
+  if (process.env.T05_RUN_ID || expected.triangle_association_sha256) {
+    const triangles = [];
+    const index = mesh.geometry.index;
+    for (let i = 0; i < count * 3; i += 3)
+      triangles.push(
+        [0, 1, 2]
+          .map((k) => associations[index ? index.getX(i + k) : i + k])
+          .sort()
+          .join('|'),
+      );
+    const digest = createHash('sha256').update(triangles.sort().join('\n')).digest('hex');
+    if (digest !== expected.triangle_association_sha256) throw new Error('Triangle geometry/mask association changed');
+  }
   const geo = recolor(mesh, palette, { glowAccent: expected.glow_accent });
   if (!geo.attributes.color.array.every(Number.isFinite)) throw new Error('Invalid recolour');
   geo.dispose();
@@ -63,8 +84,9 @@ function validateMesh(mesh, expected) {
 
 beforeAll(async () => {
   const scene = new THREE.Group();
+  if (process.env.T05_RUN_ID) expect(manifest.run_id).toBe(process.env.T05_RUN_ID);
   for (const group of groups) {
-    const data = read(`packages/client/public/models/flora/non_tree_${group}.glb`);
+    const data = exportBytes(group);
     const json = JSON.parse(data.subarray(20, 20 + data.readUInt32LE(12)).toString());
     expect(json.extensionsRequired).toContain('EXT_meshopt_compression');
     expect(json.extensionsRequired).toContain('KHR_texture_basisu');
@@ -80,6 +102,23 @@ beforeAll(async () => {
     // extras, materials and geometry are parsed unchanged by the production GLTFLoader.
     loader.register(() => ({ name: 'KHR_texture_basisu', loadTexture: () => Promise.resolve(null) }));
     const loaded = await loader.parseAsync(data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength), '');
+    loaded.scene.updateMatrixWorld(true);
+    const expected = Object.entries(manifest.meshes).filter(([, row]) => row.file === `non_tree_${group}.blend`);
+    const actual = [];
+    loaded.scene.traverse((object) => {
+      if (object.isMesh) actual.push(object);
+    });
+    // Check each file before combining libraries: another file cannot fill a hole
+    // or hide a duplicate/wrong collection under this source's filename.
+    expect(actual.map((mesh) => mesh.name).sort(), `source/export pairing non_tree_${group}`).toEqual(expected.map(([name]) => name).sort());
+    for (const [name, row] of expected) {
+      const mesh = actual.find((object) => object.name === name);
+      const ancestry = [];
+      for (let object = mesh.parent; object; object = object.parent) ancestry.push(object.name);
+      expect(ancestry).toContain(row.root);
+      expect(ancestry).toContain(row.variant_node);
+      validateMesh(mesh, row);
+    }
     while (loaded.scene.children.length) scene.add(loaded.scene.children[0]);
   }
   loadedScene = scene;

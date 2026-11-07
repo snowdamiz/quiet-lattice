@@ -1,7 +1,6 @@
-"""Recognize Blender's imported glTF base-map × COLOR_0 node without weakening PBR checks.
+"""Historical rejected tracer, retained only for R6 red controls; never install in production.
 
-Only the exact full-strength multiplication by the named colour mask is transparent
-for material-map validation. The separate geometry mask checks still validate COLOR_0.
+Delete with the controls' legacy route after the parent integrates the reviewed stock fix.
 """
 
 from artlib import materials
