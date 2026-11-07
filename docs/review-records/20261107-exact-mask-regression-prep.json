@@ -1,0 +1,57 @@
+{
+  "createdAt": "2026-11-07T12:51:11.007242+00:00",
+  "parentBase": {
+    "head": "0e87ef0f2f04db2af8e330f8afce665ef7f1b452"
+  },
+  "limits": {
+    "noMainRemotePrTrunk": true,
+    "screenshotCleanup": "STOPPED",
+    "heavyCpuOwner": "Lark",
+    "exactMaskSerialNodeUnit": "HELD_UNTIL_LARK_RELEASE"
+  },
+  "records": [
+    {
+      "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/regression-prep.json",
+      "path": "docs/review-records/p1-e14-t16/regression-prep-d7430f7/regression-prep.json",
+      "sourceBytes": 12540,
+      "sourceSha256": "a85e71943366ffff70583d34d2f2222b3bc43ec9cfdb7118a926f14be29b1864",
+      "storedBytes": 12540,
+      "storedSha256": "a85e71943366ffff70583d34d2f2222b3bc43ec9cfdb7118a926f14be29b1864",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/README.md",
+      "path": "docs/review-records/p1-e14-t16/regression-prep-d7430f7/README.md",
+      "sourceBytes": 9277,
+      "sourceSha256": "885337437b93a858057bc5911e8cf20c3c84d4b4eef518e0111c2e2c64510d7d",
+      "storedBytes": 9277,
+      "storedSha256": "885337437b93a858057bc5911e8cf20c3c84d4b4eef518e0111c2e2c64510d7d",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/tmp/space-e14t16-regression-prep-eWnW3P/light-results.json",
+      "path": "docs/review-records/p1-e14-t16/regression-prep-d7430f7/light-results.json",
+      "sourceBytes": 7636,
+      "sourceSha256": "7ad196986341a655e8fe282fbb0701584b3d958e57d54b5ce194febf6f03f6ae",
+      "storedBytes": 7636,
+      "storedSha256": "7ad196986341a655e8fe282fbb0701584b3d958e57d54b5ce194febf6f03f6ae",
+      "encoding": "exact",
+      "alreadyPresent": false
+    },
+    {
+      "source": "/tmp/space-e14t16-regression-prep-eWnW3P/suite-inventory.json",
+      "path": "docs/review-records/p1-e14-t16/regression-prep-d7430f7/suite-inventory.json",
+      "sourceBytes": 17739,
+      "sourceSha256": "5ead1ef8c161b698c64af6631abe589db607a35d9235b7be096a2b2f759d5a3d",
+      "storedBytes": 17739,
+      "storedSha256": "5ead1ef8c161b698c64af6631abe589db607a35d9235b7be096a2b2f759d5a3d",
+      "encoding": "exact",
+      "alreadyPresent": false
+    }
+  ],
+  "summary": {
+    "exactMaskRegressionPrep": "LIGHT_PASS at d7430f7a4; executable parity with 2156fe6; serial modelLibrary+meshopt unit proposed, not granted"
+  }
+}

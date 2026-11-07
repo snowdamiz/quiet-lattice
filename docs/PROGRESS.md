@@ -1012,3 +1012,10 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **Viewmodel observation budget `98a68686`:** author SOURCE/CPU correction committed after native attempt2 Raw helper observation ceiling failure. Durable per-event journal seals 191,937 events without omitting admitted facts; exact-base RED retained. Fresh independent SOURCE/CPU review assigned. `unit1-launch.json` is data-only; no one-use grant issued. Native/visual T03 remain open.
 - Fauna blind visual, creature F2-R2 fix, T13 category-return seal, exact-mask regression prep and Lark density remain in flight. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
 - Index: `docs/review-records/20261107-companion-r8-and-vm-observation-budget.json`.
+
+
+## 2026-11-07 — Exact-mask light regression prep (Lark still owns heavy CPU)
+
+- **E14.T16 `e11acd3` → prep `d7430f7a4`:** light non-codec rechecks PASS after usage-limit failover. Resolver/syntax exit0; sealed tiny boundary and 15/16 CPU suites reused by hash; executable bytes still match `2156fe6`. Evidence retained under `docs/review-records/p1-e14-t16/regression-prep-d7430f7/`.
+- Proposed serial node unit (`modelLibrary` 6 + `meshopt` 4, workers=1, ≤90s/256MiB RSS/64MiB scratch, independent guardian) remains **HELD** while Lark owns the heavy CPU lane. No Blender/codec/bake/render grant issued.
+- Fauna blind visual, viewmodel observation-budget review, creature F2-R2 fix, T13 category-return seal, and Lark density resume remain in flight on Cursor. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.

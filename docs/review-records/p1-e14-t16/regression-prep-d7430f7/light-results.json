@@ -1,0 +1,208 @@
+{
+  "task": "P1.E14.T16",
+  "phase": "remaining-regression-prep-light-cpu",
+  "scratch": "/tmp/space-e14t16-regression-prep-eWnW3P",
+  "provenance": {
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+    "branch": "task/P1-E14-T16-exact-masks",
+    "head": "e11acd393201115e5fa682325fc19a463c0d539a",
+    "tree": "3ffe09045b4d0673b7921018fb7f8a435a79b941",
+    "status_porcelain": "",
+    "sealed_review_sha256": "0aa23d8a7e083acd42cf7df2aa2ab09b0bad7f9f5d5c767f32c12b008eaf4829",
+    "expected_sealed_sha256": "0aa23d8a7e083acd42cf7df2aa2ab09b0bad7f9f5d5c767f32c12b008eaf4829",
+    "expected_head": "e11acd393201115e5fa682325fc19a463c0d539a",
+    "expected_tree": "3ffe09045b4d0673b7921018fb7f8a435a79b941"
+  },
+  "source_parity_vs_2156fe6": [
+    {
+      "path": "packages/tools/blender/artlib/export.py",
+      "current_sha256": "5dd21ae0ab4c430634adb8a8c61697cc26f730d31493e6ee7be699a0b227e8a0",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/artlib/exact_masks.py",
+      "current_sha256": "b881ed4986701ea43b0dc62f6573f24a74352739879062d8dc78460780ceff4c",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/artlib/checks.py",
+      "current_sha256": "58928ee55ed5914b7c69bc401e42697f66d967a020c217c4e36fbe237ff9d010",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/exact_mask/backend_cpu.py",
+      "current_sha256": "860cb0d8819ccd7c78ffbf275f9e141cbc98542d7ac0b2d9272cc12780e0751d",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/exact_mask/consumer.mjs",
+      "current_sha256": "f95c2a4645387b0df0234270067a71f023eda6543a685304cd437d94bae98d9d",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/exact_mask/cpu_test.py",
+      "current_sha256": "7102fe7be427ac26649c9dc04eafa07cef6fcf43bf63b610d752f9174a830c96",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/exact_mask/dependencies.mjs",
+      "current_sha256": "b9f628c303bf3f6ce18bb59f40261a308fa53a129d692cad1e30b2a3c0128bf0",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/exact_mask/dependencies.test.mjs",
+      "current_sha256": "c8dce6507639359943dd2b4120a0c944c4dbb62f1941c9fa31f0aa8b54c9a9af",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/exact_mask/fixture.py",
+      "current_sha256": "b7eb3056c1ebc4e06a93c786b62b4cb958042de244ef442c018e620645f49f35",
+      "bytes_equal_2156fe6": true
+    },
+    {
+      "path": "packages/tools/blender/exact_mask/run_boundary.sh",
+      "current_sha256": "479a73533947b30aa601481dd553f203e48bf274afafa5d0eff1526708970e95",
+      "bytes_equal_2156fe6": true
+    }
+  ],
+  "dependency_snapshot_before": {
+    "task_worktree_node_modules": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/node_modules",
+      "exists": false,
+      "is_symlink": false,
+      "entries": 0
+    },
+    "deps_checkout_node_modules": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules",
+      "exists": true,
+      "is_symlink": false,
+      "entries": 17
+    },
+    "pnpm_lock_task": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "pnpm_lock_deps": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "node": {
+      "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "version": "v26.12.1"
+    }
+  },
+  "dependency_snapshot_after": {
+    "task_worktree_node_modules": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/node_modules",
+      "exists": false,
+      "is_symlink": false,
+      "entries": 0
+    },
+    "deps_checkout_node_modules": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules",
+      "exists": true,
+      "is_symlink": false,
+      "entries": 17
+    },
+    "pnpm_lock_task": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "pnpm_lock_deps": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f",
+    "status_porcelain": ""
+  },
+  "dependency_mutation": {
+    "task_node_modules_unchanged": true,
+    "deps_node_modules_unchanged": true,
+    "locks_unchanged": true,
+    "worktree_still_clean": true
+  },
+  "light_commands": [
+    {
+      "label": "resolver",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/dependencies.test.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.23781837499700487,
+      "stdout": "PASS: source sites.ts imports through the exact-mask resolver without strip-only failure\n",
+      "stderr": ""
+    },
+    {
+      "label": "consumer-syntax",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "--check",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/consumer.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.022431665973272175,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "deps-syntax",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "--check",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/dependencies.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.023151874949689955,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "launcher-syntax",
+      "command": [
+        "/bin/bash",
+        "-n",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/run_boundary.sh"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.0028505829977802932,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "reuse_by_hash": {
+    "cpu_packer_format_tests": {
+      "count": 15,
+      "source": "packages/tools/blender/exact_mask/source-evidence.json final-cpu + native-attempt2.json",
+      "exit": 0,
+      "rerun": false,
+      "reason": "no source change since sealed C2/C4 at e11acd393; reuse by hash"
+    },
+    "existing_export_target_tests": {
+      "count": 16,
+      "source": "native-attempt2.json cpu_regressions",
+      "exit": 0,
+      "rerun": false,
+      "reason": "reuse by hash; no new defect"
+    },
+    "tiny_boundary": {
+      "receipt": "packages/tools/blender/exact_mask/native-attempt2.json",
+      "tested_head": "2156fe66bb596f5604a26e4eea9fc88ed0a712c8",
+      "exit": 0,
+      "rerun": false,
+      "reason": "reuse by hash; evidence-only e11acd393 does not change executable bytes"
+    },
+    "independent_c2_c4": {
+      "path": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e14t16-independent-c2-dckdw7m3/C2-C4-independent-review.txt",
+      "sha256": "0aa23d8a7e083acd42cf7df2aa2ab09b0bad7f9f5d5c767f32c12b008eaf4829",
+      "matches_expected": true
+    }
+  },
+  "scratch_bytes": 0,
+  "limits": {
+    "max_workers": 2,
+    "actual_workers": 1,
+    "scratch_limit_mib": 256,
+    "forbidden_now": [
+      "Blender",
+      "codec/compression encode",
+      "bake",
+      "render",
+      "browser/GPU",
+      "pnpm install",
+      "full suites",
+      "asset regeneration"
+    ]
+  }
+}
