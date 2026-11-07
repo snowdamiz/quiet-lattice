@@ -27,7 +27,7 @@ def measure(path, cap, record, *, allow_special=False, allow_absent=True, classi
     limits = cap if isinstance(cap, dict) else {'bytes': cap}
     attempts = 1 if settled else ATTEMPTS
     record.update(mode='settled-writer-metadata' if settled else 'live-writer-metadata-estimate', atomicSnapshot=False,
-                  complete=False, bytes=None, attempts=[], metadataEvents=0)
+                  complete=False, bytes=None, attempts=[], metadataEvents=0, anchorRoute=None)
     def charge():
         record['metadataEvents'] += 1
         require(record['metadataEvents'] <= ENTRY_CAP, 'Writer metadata observation cap')
@@ -42,6 +42,8 @@ def measure(path, cap, record, *, allow_special=False, allow_absent=True, classi
             observed = {}
             attempt['directories'].append(observed)
             with acquire(path, observed, directory=True, ancestors=ancestors) as fd:
+                if path == root and record['anchorRoute'] is None:
+                    record['anchorRoute'] = [dict(row) for row in observed['route']]
                 if expected is not None:
                     require(identity(os.fstat(fd)) == expected, 'Live cache directory replaced')
                 def names(key):
@@ -84,7 +86,7 @@ def measure(path, cap, record, *, allow_special=False, allow_absent=True, classi
                     observed['after'] = stamp(os.fstat(fd))
                     require(observed['after'] == observed['before'], 'Settled writer directory changed')
         try:
-            visit(root)
+            visit(root, ancestors=record['anchorRoute'])
             within_time()
         except BaseException as error:
             attempt['failure'] = failure(error)
@@ -96,8 +98,9 @@ def measure(path, cap, record, *, allow_special=False, allow_absent=True, classi
             close_failed = any(d.get('closeFailures') for d in dirs)
             if absent and allow_absent and number == 0 and not close_failed:
                 # Reconcile the parent's route while observing absence, not after closing it.
+                record['absentParentRoute'] = [dict(row) for row in dirs[0]['route']]
                 verification = attempt['absenceVerification'] = {}
-                with acquire(root.parent, verification, directory=True, ancestors=dirs[0]['route']) as fd:
+                with acquire(root.parent, verification, directory=True, ancestors=record['absentParentRoute']) as fd:
                     try:
                         os.stat(root.name, dir_fd=fd, follow_symlinks=False)
                     except FileNotFoundError as missing:
@@ -113,7 +116,18 @@ def measure(path, cap, record, *, allow_special=False, allow_absent=True, classi
             # Unknown errors, close failures, deadlines and replaced roots never become empty.
             transient = ((isinstance(error, FileNotFoundError) and error.errno == 2 and not absent)
                          or isinstance(error, PublicationChanged))
-            if not transient or close_failed or number + 1 == attempts:
+            if not transient or close_failed or record['anchorRoute'] is None or number + 1 == attempts:
+                raise
+            # A child may disappear; the admitted anchor and its route must survive.
+            verification = attempt['anchorVerification'] = {}
+            try:
+                within_time()
+                charge()
+                with acquire(root, verification, directory=True, ancestors=record['anchorRoute']):
+                    pass
+                within_time()
+            except BaseException as anchor_error:
+                verification['failure'] = failure(anchor_error)
                 raise
             within_time()
             attempt['retryDelaySeconds'] = min(RETRY_SECONDS, max(0, until - time.monotonic()))

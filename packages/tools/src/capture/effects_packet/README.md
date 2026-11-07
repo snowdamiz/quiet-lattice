@@ -1,3 +1,39 @@
+# P1.E07.T14 admitted live-anchor identity correction
+
+Independent review of `ec5221197dafd5acb2cb90b356d878e2360cd386` returned REVISE
+for C2-WRITERS-1: ENOENT retry could acquire a different same-UID private-TMP
+root and let the actual helper wait complete. The review remains unchanged:
+`/private/tmp/p1-e07-t14-writers-independent-tvcw5utk/APPENDIX-C2.md`.
+
+The shared sampler now retains its first admitted root and ancestor route across
+attempts using component/dev/inode/mode/UID/GID, without live size/timestamps.
+A transient child failure revalidates that anchor before retry; each later
+acquisition compares the same route before scanning, and descriptor exit checks
+it before acceptance. Missing/replaced anchors are terminal uncertainty. Optional
+initial cache absence retains and verifies its original admitted parent route.
+All interrupted metadata and anchor-verification failures remain in raw evidence.
+The same 8192 cumulative event cap,16 attempts,2-second shared deadline and10ms
+yield remain; anchor revalidation consumes an event. No byte budget increases.
+
+Real owned CPU writers reproduce root replacement through the actual budgets,
+helper wait and caller evidence ports. Normal child deletion/publication and
+paced profile shutdown still pass. Sixty focused methods pass, including
+ancestor replacement retaining the root inode, required-root death, permission
+uncertainty, real SIGALRM, all-sink failure and unchanged prior lifecycle gates.
+The reviewed wait script's final assertion expected an escaped exception, while
+the frozen helper returns observer_failed; both its original failed assertion and
+the corrected return/state oracle's exact-base RED/current GREEN are retained.
+No native constructor/runtime or operational grant is used in these controls.
+
+Evidence and complete C.2: `/private/tmp/p1-e07-t14-anchor-5hsuw2b1/APPENDIX-C2.md`.
+Both runtime flags remain enabled with fresh unused bindings/paths, pending a
+fresh independent review and parent-owned serialized assignment/admission.
+Both native attempts remain FAILED/SPENT. All12failed packet files,64assets,
+4helpers,shared T15 and prior reports are unchanged. No screenshot cleanup,
+service/browser/GPU/codec/Blender launch, grant, retry, push, PR or merge occurs.
+
+Earlier checkpoint descriptions below remain historical provenance.
+
 # P1.E07.T14 live writer/shutdown observation correction
 
 Pilot2 at `4795d01fa0098d0b29310124fdeee06fd5fa4e24` produced the complete

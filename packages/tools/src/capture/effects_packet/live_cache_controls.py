@@ -165,7 +165,9 @@ class LiveCacheControls(unittest.TestCase):
         with patch.object(os, 'stat', observed), self.assertRaises(FileNotFoundError):
             live_cache.measure(self.cache, 137, record)
         self.assertIsNone(record['bytes']); self.assertFalse(record['complete'])
-        self.assertEqual(len(record['attempts']), 2)
+        self.assertEqual(len(record['attempts']), 1)
+        self.assertTrue(record['anchorRoute'])
+        self.assertEqual(record['attempts'][0]['anchorVerification']['failure']['type'], 'FileNotFoundError')
 
     def test_directory_replaced_by_link_before_open_refuses(self):
         real = os.open
