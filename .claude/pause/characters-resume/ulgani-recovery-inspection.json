@@ -1,0 +1,357 @@
+{
+  "prepared_utc": "2026-11-01T23:38:09.134574+00:00",
+  "checkpoint": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_before_bake.blend",
+  "checkpoint_sha256": "ac217344d5aa07b28f133045b0357506c0d0693b5223bed1b83fbbf0f16247be",
+  "recovery_script_sha256": "57f82bec5a138f01f59ab68a482528f65ee3e07bebc2862d41c30edf21e708c7",
+  "authoring_scripts": {
+    "bendtest.py": "7273603d52ce42d68bb1ac7808a3da4978388a446841a44c7cceb7983a5c8374",
+    "build.py": "09d3714510320ae67d77090ecadd051629bccd57a0f43f8313c558898261b9bb",
+    "build_r2_backup.py": "2abb5e42e7ca7ff85ec5df97983ad1e89c8293bb0e366e2ad6f6c4676c135e3e",
+    "dbg_img.py": "55352a661508bbbdbad8a98bff3171a61b4e92f7c348c77b9e0e55b81c1db5a4",
+    "downscale_copy.py": "a82e6a0cf7d96f2fd209705a3dc123aae2e107e4cff4b6de09246b01bfb157fb",
+    "dump_tex.py": "6b14051fab58455957562eecc25f69cd23d0d4b2c43f2883167fe8bc17c95316",
+    "embed_save.py": "2a75939cab25ca2829e3aa3c8b5747f295d4154459604abf55736fe1466869de",
+    "filter_variants.py": "bcfce08ab40bee69b3284ff82177608c99b6632b7a4b8c1cb6e2db33d1d46465",
+    "fix_meshes.py": "ccacb993cf4d0a3aaeea83b4fc4bfe8e0150f6d50bc9bba0fceff2b4011a29dc",
+    "glb_pos.py": "331f863d641df4f9785997c7ac04bede17540434f768a565caa431aa526a7112",
+    "glb_tex.py": "1cea3f656779dbadb2cc79e8e2c81d491d7f0dfb30056b45c3e790916ed0d112",
+    "glbtree.py": "a5469701475e8eeedba337ca3aa6b87f20d5bde40b5daa443580cbf1d8ce0979",
+    "img_sizes.py": "e5d51762a26addaea8d67f77d19dfe211e1fe2da14c63bb27ad4de9bd7529ff8",
+    "inspect_lib.py": "c720377f7fdcc242fab042fb20de192151fa6671185b2909c0f058445d22cc2a",
+    "lineup.py": "87b11d61a863df3c096463ca725674c88e076e885afe733f4ccbac13f60e84df",
+    "look.py": "eae3565057d817fc1d12cbf5a1242f7376df714ae2a54ec5aa4a6e261997f441",
+    "perf_summary.py": "1a1f0af7ca2316dee2e40f9197e4c2ec585474f61b3c6e89dcc77a5f3fef4690",
+    "portraits.py": "bbabe8e578c4579ffb301233c2da514840dd391772fee527de210828df8e3544",
+    "probe_env.py": "112440d6e284284a757e94e4173fc375c56e294bcab6f5a28928151aed06a521",
+    "probe_sole.py": "634d8f064bd9d41cf7599dc21f12970cf80cb09667c48a7ac1640d736d52e207",
+    "proto_pipeline.py": "cc28e7412723678c455ea1d1312c602e44d8330bd0139eca6a7cc46fa9f8463c",
+    "readme_dump.py": "25dd657e1fa76a26e6632919c7eaa97dc68c1d6ba7e7fd74feaeef7b0d9cb41d",
+    "rebake_skin.py": "72d60b514689fc0ad95f4eb83922fc5941b86cbbbcf9b9a1f3117241fc25f7b2",
+    "rebake_skin2.py": "0f5a62497d522810e319910f9e201cdbf216f2aa9cb323fb9616c462b412c3e4",
+    "smooth_facets.py": "c9cddc18b83bdc2f642c5b2189ff9081961ce85791b4c72a082f12c0218e7ef7",
+    "t_blink.py": "51192efb44fe9141b81cabc4f8546cbfe5228bb3bd94d7601f12645d50ca8b92",
+    "t_bodycache.py": "b7a28233d1a30585e5987982c18de2f9f94cb41e9ee7cf36e12f0c3b19201290",
+    "t_cage.py": "0ad58fdbd90eb81c8d47c15813c710c41031802d6b26d73c60f54f48436897b3",
+    "t_closeups.py": "0ecedc8787f5c8625a18d670749424b03a1d012fc2ee16741f673834551d1069",
+    "t_dbg2.py": "5443af483a494249ccb1096e226fe931ac989ecb8cb5f76a2609a7b228ae8a30",
+    "t_dbg3.py": "eab6ed287457d533765eb7fbd65f14893e2bb835b20ebfe94c0eedd30ca8cc5a",
+    "t_dbg4.py": "e1e764287db7fc9f469ad77bf6f965f86a12b8718c996bbc82e90e45eba1e5e8",
+    "t_dbg5.py": "99afd34a4009a8dfb216cbcb90798c0f0e96cb9d577380bb908d0b88e8278778",
+    "t_dbg6.py": "cbae79c28da193ea4b9bf173a7cdd7cb4eb5d8167da2408130a1a8870196709b",
+    "t_dbg_foot.py": "cb0318c97330001549682ff922c0451f3e899e35ceacf820e16f7de39503a0fb",
+    "t_eyecage.py": "06c435665c7403ad672b5aaff6a75a2df4fdfbccdcc25c38c62d1330beb28157",
+    "t_eyecu.py": "bc3fbcbba9b1077d07c916d9d08862bc3af76c78a97ffccc3c58df4fc5f7338b",
+    "t_face.py": "6dea0c4bbb70be5613e6a4c7f406adf0b910363c7554d9250be067949fd7dd77",
+    "t_face2.py": "7a7d8eef4563195ff46ff59eee27b5df375815a01b9c0d9788916321fd3c96d8",
+    "t_head.py": "896c593c162cc85cd2ec219f49f1541a98f19ab7a06ef09d39fafc1b6a9a0a22",
+    "t_head2.py": "4fb9cadf3a8b258307c98f352159dce8a1406d0f59ad654e43f251a1b9285835",
+    "t_neck.py": "975d671b7c61590e70c2907177b83a3d62e7982bcb6b2fc08dad4201b163f704",
+    "t_sdf_all.py": "780d67fd6da2faef25bb8bcebf27a9a268ec20005bcfde9b30b7351853041d3e",
+    "t_sdf_body.py": "909d7be4ef423769c69a0a412504cd7034dca13dcde92f46c878c94f8bb6b5f3",
+    "t_shapes.py": "cc88dc5819923a826c90056ebdcc1ae4fa54c5d07443d9656f51227227793b57",
+    "t_skin.py": "9f679f9964adb0a9039bde4243405fb35d318953ac45510a5842dde02b24793f",
+    "t_suit.py": "3357e8db1bb069142ad436574178b2c50fcffff313ab37c9ac0121fc5a8e5312",
+    "t_uv.py": "399457c9e279f1c49475d6b1eb0b3b4cd8a45cefb43eb950c62d6df84d88a5e6",
+    "t_weights.py": "0882894482bd98b9c20ab67813d3028eadcc0a5acd014690740bbec4dc4246a8",
+    "tri_summary.py": "ba0292df47457bdbe73a2a946701252a25fdde2dc41fe451ae9e824b7f3ca021",
+    "lib/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lib/anatomy.py": "f6e0f6611571ddbae096d9c733e8527a9ce6e1597aabc0cf2a179f7933d69cc9",
+    "lib/bake.py": "7f4bf709469d5c5e95f701c1d97c4f7633a9aa8b1dd8904db5272f861a7b3e90",
+    "lib/cage.py": "3e7414769c3ea8ab420fe57c061e2441d41291c34432d0c9299df0093e7d8d86",
+    "lib/growths.py": "4352f4f1a6af4c355145355b45510f688c744511cfb4b61337ec0b8ca6d07585",
+    "lib/head.py": "1e5b5257861f13e59f934aa3c29e66731cd6ec7a06cbb4d0754731bae311a358",
+    "lib/heads.py": "d9806bab769dfd01b917a12f267c90eda8dd0e54003957674951c480d40d15e5",
+    "lib/membrane.py": "15e167ddbe99568f7841f415b7bde82b2cbbdb5b3a6d456b950c7bbea7a759f7",
+    "lib/mesh.py": "ffabaa2f1a228ec636cf017727004a5fa3b33585864bf46bae866f168d0b5c13",
+    "lib/pack.py": "2d4e1658c31cbab684f48af2efee73a54ca4887393b2aed78b87943cdafff940",
+    "lib/peoples.py": "9fd5d36ea8b5b52e31c7f8c102bf16226ad5dbc633d39bd9591a1e724ecc5b83",
+    "lib/preview.py": "9acec47e5d546d8fd473ba82ceb520b4eec2f2df366e0ea21dd6f8836f7ea880",
+    "lib/sdf.py": "8b2ed93c57c0fdd520f49afa0de1c8e086d8b7d26f9d692ae458a84f108f3457",
+    "lib/shaders.py": "b08b9edaa6aea34e3bf4e7f7f715cfedb2e6d0715eb4851f4d93f1c5ff45b160",
+    "lib/shapes.py": "83ff82560c7e03d763e7b77a6b2240e31b3b4df5c732dea2385e2ce2af47b7da",
+    "lib/skel.py": "4f3adf2278098f15ebaee7a3a3f47498f0f57fa9c7df3c77ff22d9f2e8e2a389",
+    "lib/suitdefs.py": "efd8489dd7a01380510a437e7cfa8823a96c78586974e3645b43f61b95dba75e",
+    "lib/suits.py": "9faceaf4542801094b567410abb6682d42347e4f02c8470c7284cd8393831561",
+    "lib/uv.py": "1d1d38f5498ef2c460b8086a1ea57e8e0ad9c2d2baadef0f7325a4acda6bb6b4",
+    "lib/weights.py": "232d026da5fd19b7f9845ae7e5e8b8a185695372e2beed1c58048d3d45cdbc7c"
+  },
+  "mesh_hashes_unchanged": {
+    "UL_Acc1_g0": {
+      "vertices": 18504,
+      "sha256": "e6e2f8b3e6a9dec113a68b4787b013447295c9b1bfd2369de875789bad5faa09"
+    },
+    "UL_Acc2_g0": {
+      "vertices": 14209,
+      "sha256": "8f113ce7be2555c601392b60a67d2d420aaf50eaf02a0c0fe186acf85ba9e8ac"
+    },
+    "UL_Acc3_g0": {
+      "vertices": 8970,
+      "sha256": "50034ba45d17c7749adbe8eb4fcc9c617450a87f261b0becf7c63264e7ee6ba4"
+    },
+    "UL_Acc4_g0": {
+      "vertices": 8584,
+      "sha256": "c5b26b18433c949780c56a9040ad47329002e630047f6c2366d306dec2418947"
+    },
+    "UL_Acc5_g0": {
+      "vertices": 9284,
+      "sha256": "088e76867068f9b298d1688cfff57820616123c5887667336e0909fcb5d7cf8c"
+    },
+    "UL_Acc6_g0": {
+      "vertices": 12916,
+      "sha256": "180f652a7e7cf62bb9e525df4a2939b69e929286e39d8405fcd77f419009c356"
+    },
+    "UL_Body": {
+      "vertices": 22019,
+      "sha256": "0293e6f3f2c63becf0c53e7a3d16708692e949462d6c189ac871e9ad321d035e"
+    },
+    "UL_Body_hi": {
+      "vertices": 351875,
+      "sha256": "391e3e9e1e560a4b334da7b2ba05eb9558d3ad8d87e96a256f907acb927b9082"
+    },
+    "UL_Eye1_0": {
+      "vertices": 362,
+      "sha256": "386d27b2d93ed0de3af9b7d48535d5fd639dba1d9dda7084edc626ddb1f6c974"
+    },
+    "UL_Eye1_1": {
+      "vertices": 362,
+      "sha256": "44ad93f828f71182e4d7dd25241bfbe47ee7d9d49f170ea6d8cc26211fa27949"
+    },
+    "UL_Eye2_0": {
+      "vertices": 362,
+      "sha256": "386d27b2d93ed0de3af9b7d48535d5fd639dba1d9dda7084edc626ddb1f6c974"
+    },
+    "UL_Eye2_1": {
+      "vertices": 362,
+      "sha256": "44ad93f828f71182e4d7dd25241bfbe47ee7d9d49f170ea6d8cc26211fa27949"
+    },
+    "UL_Eye3_0": {
+      "vertices": 362,
+      "sha256": "386d27b2d93ed0de3af9b7d48535d5fd639dba1d9dda7084edc626ddb1f6c974"
+    },
+    "UL_Eye3_1": {
+      "vertices": 362,
+      "sha256": "44ad93f828f71182e4d7dd25241bfbe47ee7d9d49f170ea6d8cc26211fa27949"
+    },
+    "UL_Eye4_0": {
+      "vertices": 362,
+      "sha256": "386d27b2d93ed0de3af9b7d48535d5fd639dba1d9dda7084edc626ddb1f6c974"
+    },
+    "UL_Eye4_1": {
+      "vertices": 362,
+      "sha256": "44ad93f828f71182e4d7dd25241bfbe47ee7d9d49f170ea6d8cc26211fa27949"
+    },
+    "UL_Eye5_0": {
+      "vertices": 362,
+      "sha256": "386d27b2d93ed0de3af9b7d48535d5fd639dba1d9dda7084edc626ddb1f6c974"
+    },
+    "UL_Eye5_1": {
+      "vertices": 362,
+      "sha256": "44ad93f828f71182e4d7dd25241bfbe47ee7d9d49f170ea6d8cc26211fa27949"
+    },
+    "UL_Eye6_0": {
+      "vertices": 362,
+      "sha256": "386d27b2d93ed0de3af9b7d48535d5fd639dba1d9dda7084edc626ddb1f6c974"
+    },
+    "UL_Eye6_1": {
+      "vertices": 362,
+      "sha256": "44ad93f828f71182e4d7dd25241bfbe47ee7d9d49f170ea6d8cc26211fa27949"
+    },
+    "UL_Head1": {
+      "vertices": 12951,
+      "sha256": "d769c0b4879f4c0ef7ba94d17220c4ed00e1cae89d9995a4be99296a83bf3c35"
+    },
+    "UL_Head2": {
+      "vertices": 12951,
+      "sha256": "eaabae803a4389ff4a627ca181b3db9e39912d017bdb431c5ec0c3b25a8a2664"
+    },
+    "UL_Head3": {
+      "vertices": 12951,
+      "sha256": "fbc79a97f3a6a9da2a1ef74a0b4f1623772144ef44cfda440cd80c1b732baad1"
+    },
+    "UL_Head4": {
+      "vertices": 12951,
+      "sha256": "b181e54de6dd69e12ba511c9dc66a01b07177bace27a7e5f65674a3b5a2e4668"
+    },
+    "UL_Head5": {
+      "vertices": 12951,
+      "sha256": "8b7b6626f61429082da9c990349df89626015eaa84e2940261fa8fff20834342"
+    },
+    "UL_Head6": {
+      "vertices": 12951,
+      "sha256": "d545d555ef152263c04501be0743e8b52bbf58abb56b51d42835f0577042eb49"
+    },
+    "UL_Suit1": {
+      "vertices": 14570,
+      "sha256": "b6972164a1b305826513b5e25fb45cc23361f8ca597f63c068f1df1d7a4a26d8"
+    },
+    "UL_Suit2": {
+      "vertices": 19196,
+      "sha256": "f366166ea7b7ef90b99f251c6c259eb64a359f0cef57b67b0d6819ef65c83ca8"
+    },
+    "UL_Suit3": {
+      "vertices": 34587,
+      "sha256": "15e60b556978a574517db6e3867786e57d4ab85456ed090dccb3d3b0635e5912"
+    },
+    "UL_Suit4": {
+      "vertices": 29889,
+      "sha256": "f69fea7a93388b368f559712a586d4db9f50f42f38c1bb2d00d584fe9a23c03f"
+    }
+  },
+  "landmarks": {
+    "1": {
+      "mouth": [
+        0.0,
+        -0.10742578091716355,
+        1.5903344999746853
+      ],
+      "mouth_z": 1.5903344999746853,
+      "eyes": [
+        [
+          0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ],
+        [
+          -0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ]
+      ]
+    },
+    "2": {
+      "mouth": [
+        0.0,
+        -0.10944664018563792,
+        1.5903344999746853
+      ],
+      "mouth_z": 1.5903344999746853,
+      "eyes": [
+        [
+          0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ],
+        [
+          -0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ]
+      ]
+    },
+    "3": {
+      "mouth": [
+        0.0,
+        -0.10684288617804912,
+        1.5903344999746853
+      ],
+      "mouth_z": 1.5903344999746853,
+      "eyes": [
+        [
+          0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ],
+        [
+          -0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ]
+      ]
+    },
+    "4": {
+      "mouth": [
+        0.0,
+        -0.10589023211322385,
+        1.5903344999746853
+      ],
+      "mouth_z": 1.5903344999746853,
+      "eyes": [
+        [
+          0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ],
+        [
+          -0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ]
+      ]
+    },
+    "5": {
+      "mouth": [
+        0.0,
+        -0.10783915734745868,
+        1.5903344999746853
+      ],
+      "mouth_z": 1.5903344999746853,
+      "eyes": [
+        [
+          0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ],
+        [
+          -0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ]
+      ]
+    },
+    "6": {
+      "mouth": [
+        0.0,
+        -0.10897174456439263,
+        1.5903344999746853
+      ],
+      "mouth_z": 1.5903344999746853,
+      "eyes": [
+        [
+          0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ],
+        [
+          -0.037111265801529084,
+          -0.07785356376956128,
+          1.6467065793411584
+        ]
+      ]
+    }
+  },
+  "suit_coverage": {
+    "1": {
+      "fabric_vertices": 1292,
+      "covered_body_vertices": 958,
+      "coverage_sha256": "fb6263941d4d342af3f3a42dd289a506a80a58f2bcfa217daa15a101ed57dc97"
+    },
+    "2": {
+      "fabric_vertices": 1735,
+      "covered_body_vertices": 1295,
+      "coverage_sha256": "8ac18bb5f672ca9de7687c38946b29e11582e7f1be0e21295cfdd3541d251584"
+    },
+    "3": {
+      "fabric_vertices": 3971,
+      "covered_body_vertices": 3153,
+      "coverage_sha256": "a096c79b75e8745ada1bac78881121f6fea130de5ec1ce645caf3ac20b4018ea"
+    },
+    "4": {
+      "fabric_vertices": 3793,
+      "covered_body_vertices": 3039,
+      "coverage_sha256": "09dff666f9cc78d427d12acc22fd8e007494568c5d7b176fb8539e832cea5ce4"
+    }
+  },
+  "resume_boundary": "Original build.main body from bake.cycles(sc, 16) onward",
+  "authored_texture_size": [
+    4096,
+    4096
+  ],
+  "ao_bake_size": [
+    2048,
+    2048
+  ],
+  "ao_storage_size": [
+    4096,
+    4096
+  ]
+}

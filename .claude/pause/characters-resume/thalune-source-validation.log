@@ -1,0 +1,39 @@
+$ tsx packages/tools/src/art/cli.ts validate -- assets/blend/characters/thalune.blend
+
+validate assets/blend/characters/thalune.blend  (family characters, source .blend)
+  thalune / thalune_head1 [hero]  tris LOD0 97,326, LOD1 24,916, LOD2 7,599, LOD3 3,309  size 1.36 x 0.41 x 1.80 m
+  thalune / thalune_head2 [hero]  tris LOD0 91,524, LOD1 23,395, LOD2 7,026, LOD3 3,110  size 1.36 x 0.41 x 1.87 m
+  thalune / thalune_head3 [hero]  tris LOD0 90,998, LOD1 23,242, LOD2 6,931, LOD3 3,093  size 1.36 x 0.41 x 1.80 m
+  thalune / thalune_head4 [hero]  tris LOD0 100,142, LOD1 25,620, LOD2 7,795, LOD3 3,403  size 1.36 x 0.41 x 1.80 m
+  thalune / thalune_head5 [hero]  tris LOD0 90,998, LOD1 23,242, LOD2 6,931, LOD3 3,092  size 1.36 x 0.41 x 1.81 m
+  thalune / thalune_head6 [hero]  tris LOD0 92,228, LOD1 23,573, LOD2 7,074, LOD3 3,135  size 1.36 x 0.41 x 1.83 m
+  thalune / thalune_suit1 [hero]  tris LOD0 116,780, LOD1 31,625, LOD2 10,385, LOD3 3,968  size 1.36 x 0.35 x 1.80 m
+  thalune / thalune_suit2 [hero]  tris LOD0 114,500, LOD1 31,198, LOD2 10,324, LOD3 3,889  size 1.36 x 0.36 x 1.80 m
+  thalune / thalune_suit3 [hero]  tris LOD0 138,532, LOD1 38,409, LOD2 12,726, LOD3 4,706  size 1.36 x 0.35 x 1.80 m
+  thalune / thalune_suit4 [hero]  tris LOD0 119,560, LOD1 32,943, LOD2 11,090, LOD3 4,064  size 1.36 x 0.36 x 1.80 m
+  PASS  naming
+        ok    thalune.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    thalune/thalune_head1: LOD0 97,326 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    thalune/thalune_head2: LOD0 91,524 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    thalune/thalune_head3: LOD0 90,998 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    thalune/thalune_head1: 97,326 > 24,916 > 7,599 > 3,309 triangles; LOD3 3.4% of LOD0
+        ok    thalune/thalune_head2: 91,524 > 23,395 > 7,026 > 3,110 triangles; LOD3 3.4% of LOD0
+        ok    thalune/thalune_head3: 90,998 > 23,242 > 6,931 > 3,093 triangles; LOD3 3.4% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Eye (TH_Eye): pbr: base colour, roughness, normal, AO
+        ok    Bio (TH_Fin): pbr: base colour, roughness, normal, AO, emissive
+        ok    Skin (TH_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    thalune/thalune_head1: z extent 1.80 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/reports/characters__thalune.blend.json
+
+1 of 1 file(s) passed validation

@@ -1,0 +1,60 @@
+{
+  "key": "grid",
+  "utc": "2026-11-02T04:16:11.538567+00:00",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend",
+    "assets/renders/characters",
+    "--samples",
+    "48",
+    "--grid",
+    "10",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ixari-grid-turntables.json"
+  ],
+  "source_sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+  "export_sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+  "device": "CPU",
+  "threads": 2,
+  "samples": 48,
+  "status": "complete and verified at grid boundary",
+  "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5-cpu-grid-resume.log",
+  "session": 77438,
+  "pid": 2386,
+  "pgid": 2386,
+  "caffeinate_pid": 3274,
+  "caffeinate_session": 44732,
+  "exit_code": 0,
+  "completed_utc": "2026-11-02T04:19:26.296422+00:00",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ixari_turntable.png",
+      "sha256": "146f8e8444a40bae1b58826c5dc13aa50e5a0c33d47d4efeb88e084fc4422788",
+      "bytes": 4295803
+    },
+    {
+      "path": "assets/renders/characters/ixari_materials.png",
+      "sha256": "8cc7eff9777a66eea5b77e672921fce7d262060b3d8edb2f8e2da046914bc296",
+      "bytes": 1289634
+    },
+    {
+      "path": "assets/renders/characters/ixari_materials.txt",
+      "sha256": "dfb813f45fc5c15665c0b6b6e3598188c1254b79f9edd9a58818bf98e547dbcf",
+      "bytes": 454
+    },
+    {
+      "path": "assets/renders/characters/validate/ixari-grid-turntables.json",
+      "sha256": "5bf9bb11b1578e40df1f7efecbef62333595567d07d302d0a84d47310a0ba562",
+      "bytes": 1527
+    }
+  ]
+}

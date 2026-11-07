@@ -1,0 +1,56 @@
+{
+  "key": "heads",
+  "utc": "2026-11-02T04:20:12.214815+00:00",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_heads.blend",
+    "assets/renders/characters",
+    "--samples",
+    "48",
+    "--family",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ixari-heads-family.json"
+  ],
+  "source_sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+  "export_sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+  "render_input": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_heads.blend",
+  "render_input_sha256": "8a93169a4ce9192b74315c218f554c700221ce60ed4de88fdd0fb9ad5a31f342",
+  "device": "CPU",
+  "threads": 2,
+  "samples": 48,
+  "status": "complete and verified at heads-family boundary",
+  "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5-cpu-heads-resume.log",
+  "session": 79419,
+  "pid": 19073,
+  "pgid": 19073,
+  "caffeinate_pid": 19147,
+  "caffeinate_session": 98189,
+  "exit_code": 0,
+  "completed_utc": "2026-11-02T04:23:10.865146+00:00",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ixari_heads_family.png",
+      "sha256": "271b51adc5c2fa985f8d14d4d54988a82aee103f378bd16aa45f2ad7d79f642b",
+      "bytes": 5219121
+    },
+    {
+      "path": "assets/renders/characters/ixari_heads_family.txt",
+      "sha256": "0c1cc17ce909dfad75420426910bc5b03d00d0086669f616201343e24e6dec62",
+      "bytes": 684
+    },
+    {
+      "path": "assets/renders/characters/validate/ixari-heads-family.json",
+      "sha256": "1c7d4b8d707d6962a5de8540ac4246946079b5c2bbd5e3a4d2c32b70cec75da4",
+      "bytes": 2984
+    }
+  ]
+}

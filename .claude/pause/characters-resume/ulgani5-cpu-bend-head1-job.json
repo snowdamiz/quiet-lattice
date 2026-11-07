@@ -1,0 +1,73 @@
+{
+  "key": "bend-head1",
+  "utc": "2026-11-02T10:18:16.188339+00:00",
+  "controller_pid": 63378,
+  "controller_pgid": 63378,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/render_details.py",
+    "--",
+    "bendtest",
+    "CPU",
+    "ulgani",
+    "head1",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ulgani-review5/ulgani_bendtest_head1.png"
+  ],
+  "cwd": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "export_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+  "render_input": "assets/blend/characters/ulgani.blend",
+  "render_input_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "device": "CPU",
+  "threads": 2,
+  "scripts": {
+    "packages/tools/blender/characters/render_details.py": "8a732fa6622aebc3402d1cee0703d66bdf1122d7735e07593dcee67a6089aa8f",
+    "packages/tools/blender/characters/cpu_turntables.py": "e4a869dba224c542110e096838f4068d30342f6bfcdbc8f00173a8fc26a746cc",
+    "packages/tools/blender/turntable.py": "3ef601868211b89a616e25242963acd2aa2a452d546bf63c3007debcf71c2161"
+  },
+  "runner_sha256": "c8248bc688681fb0311a89321a85434fe80d078ede9268d4cf123789322ecf11",
+  "log": ".claude/pause/characters-resume/ulgani5-cpu-bend-head1-20261102T101816Z.log",
+  "backup": ".claude/pause/characters-resume/ulgani5-prior-artifacts/bend-head1-20261102T101816Z",
+  "status": "complete;controller/render/idle assertion and all owned groups drained",
+  "timeout_seconds": 900,
+  "pid": 63389,
+  "pgid": 63389,
+  "caffeinate_pid": 63390,
+  "caffeinate_pgid": 63390,
+  "render_end_utc": "2026-11-02T10:18:36.869286+00:00",
+  "exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T10:18:36.869650+00:00",
+  "duration_seconds": 20.61,
+  "timing_scope": "Scheduling record only; functional art generation, no performance claim.",
+  "log_sha256": "0d4b37cbfd22544dcf01bc1e9369770d5aee78e85eaf07ddf95edc2ef3901133",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_bendtest_head1.png",
+      "sha256": "a14b3106758e96b819447eed17e50751c1df3bae937c06bdb7f747573b735ae1",
+      "bytes": 3578475
+    }
+  ],
+  "session": 19262,
+  "controller_exit_code": 0,
+  "drain_verified_utc": "2026-11-02T10:22:56.212902+00:00",
+  "png_decode": [
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_bendtest_head1.png",
+      "size": [
+        1920,
+        1800
+      ],
+      "mode": "RGBA",
+      "full_decode_pass": true
+    }
+  ],
+  "visual_inspected_utc": "2026-11-02T10:22:56.212902+00:00"
+}

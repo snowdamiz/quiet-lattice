@@ -1,0 +1,19 @@
+[
+  [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/export_ulgani5_saved.py",
+    "--",
+    "--input",
+    ".claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.blend",
+    "--report",
+    ".claude/pause/characters-resume/ulgani5-export/preflight.json",
+    "--preflight-only"
+  ]
+]

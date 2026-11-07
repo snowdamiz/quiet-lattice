@@ -1,0 +1,102 @@
+{
+  "start_utc": "2026-11-02T09:57:02.242855+00:00",
+  "controller_pid": 29844,
+  "controller_pgid": 29844,
+  "scope": "Bounded CPU2 filtered family review-copy preparation only;no canonical source edits,authoring,bake,export,render,browser/GPU",
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "2",
+    "OMP_NUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+    "UV_THREADPOOL_SIZE": "2",
+    "BLENDER": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/blender_cpu2.py"
+  },
+  "steps": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "assets/blend/characters/ulgani.blend",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/characters/family_copy.py",
+        "--",
+        "ulgani",
+        "heads",
+        ".claude/pause/characters-resume/ulgani5-review-cache/ulgani_heads.blend"
+      ],
+      "start_utc": "2026-11-02T09:57:02.244545+00:00",
+      "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-review-cache/family-copies-0.log",
+      "timeout_seconds": 1800,
+      "pid": 29856,
+      "pgid": 29856,
+      "caffeinate_pid": 29857,
+      "caffeinate_pgid": 29857,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "end_utc": "2026-11-02T09:57:05.286104+00:00",
+      "log_sha256": "ed9226fe76bbe24cf981ab6cc4c54cc8940da1aedca2d877e8841ebf0ed4ac91"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "assets/blend/characters/ulgani.blend",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/characters/family_copy.py",
+        "--",
+        "ulgani",
+        "suits",
+        ".claude/pause/characters-resume/ulgani5-review-cache/ulgani_suits.blend"
+      ],
+      "start_utc": "2026-11-02T09:57:05.288226+00:00",
+      "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-review-cache/family-copies-1.log",
+      "timeout_seconds": 1800,
+      "pid": 29882,
+      "pgid": 29882,
+      "caffeinate_pid": 29883,
+      "caffeinate_pgid": 29883,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "end_utc": "2026-11-02T09:57:07.855644+00:00",
+      "log_sha256": "ea48a243020660b71559e8af0aeb72d0e23a9b80fae6d6f41453b689f0965854"
+    }
+  ],
+  "known_pids": [
+    29844,
+    29856,
+    29857,
+    29882,
+    29883
+  ],
+  "known_pgids": [
+    29844,
+    29856,
+    29857,
+    29882,
+    29883
+  ],
+  "frozen_canonical_hashes": {
+    "assets/blend/characters/thalune.blend": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b",
+    "packages/client/public/models/characters/thalune.glb": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+    "assets/blend/characters/ixari.blend": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+    "packages/client/public/models/characters/ixari.glb": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+    "assets/blend/characters/ulgani.blend": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+    "packages/client/public/models/characters/ulgani.glb": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682"
+  },
+  "status": "Fresh fifth family review copies complete;all owned processes/groups/assertions drained",
+  "exit_code": 0,
+  "frozen_canonical_unchanged": true,
+  "end_utc": "2026-11-02T09:57:08.102999+00:00",
+  "tool_session": 33251,
+  "drain_verified_utc": "2026-11-02T09:57:19.880237+00:00",
+  "process_and_group_absence": true,
+  "assertions_drained": true
+}

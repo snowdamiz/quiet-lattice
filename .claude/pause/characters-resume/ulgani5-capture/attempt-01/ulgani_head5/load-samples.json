@@ -1,0 +1,1247 @@
+{
+  "scope": "Observed host load and owned capture process snapshots around the single Ulgani review capture session; no performance comparison. Command arguments recorded only for the owned controller descendant tree.",
+  "controller_pid": 16667,
+  "logical_cpu_cores": 15,
+  "samples": [
+    {
+      "utc": "2026-11-02T15:36:52.739333+00:00",
+      "phase": "before",
+      "uptime": "10:36  up 21 days,  1:59, 1 user, load averages: 6.70 5.62 4.52",
+      "load_average": [
+        6.6962890625,
+        5.62255859375,
+        4.52490234375
+      ],
+      "processes": [
+        {
+          "pid": 16667,
+          "ppid": 17818,
+          "pgid": 16667,
+          "cpu_percent": 12.4,
+          "elapsed": "00:01",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u packages/tools/blender/characters/capture_ulgani5.py --variant ulgani_head5 --attempt attempt-01"
+        },
+        {
+          "pid": 16686,
+          "ppid": 16667,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "00:00",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/sample_ulgani5_capture.py"
+        },
+        {
+          "pid": 16687,
+          "ppid": 16667,
+          "pgid": 16687,
+          "cpu_percent": 0.0,
+          "elapsed": "00:00",
+          "command": "(ps)"
+        },
+        {
+          "pid": 16689,
+          "ppid": 16686,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "00:00",
+          "command": "ps -axo pid=,ppid=,pgid=,pcpu=,etime=,command="
+        }
+      ],
+      "top_cpu_processes": [
+        {
+          "pid": 16565,
+          "ppid": 16564,
+          "cpu_percent": 137.7,
+          "rss_kib": 88016,
+          "elapsed": "00:04",
+          "executable": "pnpm-native"
+        },
+        {
+          "pid": 21642,
+          "ppid": 1,
+          "cpu_percent": 125.2,
+          "rss_kib": 1282736,
+          "elapsed": "19-21:36:16",
+          "executable": "com.apple.Virtualization.VirtualMachine"
+        },
+        {
+          "pid": 417,
+          "ppid": 1,
+          "cpu_percent": 105.1,
+          "rss_kib": 8745296,
+          "elapsed": "21-01:56:26",
+          "executable": "fseventsd"
+        },
+        {
+          "pid": 483,
+          "ppid": 1,
+          "cpu_percent": 61.0,
+          "rss_kib": 152624,
+          "elapsed": "21-01:56:26",
+          "executable": "WindowServer"
+        },
+        {
+          "pid": 931,
+          "ppid": 1,
+          "cpu_percent": 35.3,
+          "rss_kib": 73328,
+          "elapsed": "21-01:56:13",
+          "executable": "ControlCenter"
+        },
+        {
+          "pid": 51426,
+          "ppid": 1,
+          "cpu_percent": 26.3,
+          "rss_kib": 12256,
+          "elapsed": "01-18:33:35",
+          "executable": "SimRenderServer"
+        },
+        {
+          "pid": 51430,
+          "ppid": 1,
+          "cpu_percent": 10.9,
+          "rss_kib": 8800,
+          "elapsed": "01-18:33:35",
+          "executable": "SimMetalHost"
+        },
+        {
+          "pid": 53770,
+          "ppid": 53735,
+          "cpu_percent": 10.9,
+          "rss_kib": 22256,
+          "elapsed": "01-18:32:28",
+          "executable": "backboardd"
+        },
+        {
+          "pid": 16667,
+          "ppid": 17818,
+          "cpu_percent": 10.1,
+          "rss_kib": 139296,
+          "elapsed": "00:01",
+          "executable": "Python"
+        },
+        {
+          "pid": 17817,
+          "ppid": 17689,
+          "cpu_percent": 9.1,
+          "rss_kib": 1501104,
+          "elapsed": "05-14:30:59",
+          "executable": "Codex (Renderer)"
+        },
+        {
+          "pid": 38456,
+          "ppid": 38439,
+          "cpu_percent": 8.8,
+          "rss_kib": 76768,
+          "elapsed": "01:09:18",
+          "executable": "Acid (Beta) Helper"
+        },
+        {
+          "pid": 690,
+          "ppid": 1,
+          "cpu_percent": 7.8,
+          "rss_kib": 43328,
+          "elapsed": "21-01:56:24",
+          "executable": "AppleCentauriAlpha"
+        },
+        {
+          "pid": 16686,
+          "ppid": 16667,
+          "cpu_percent": 7.8,
+          "rss_kib": 18848,
+          "elapsed": "00:00",
+          "executable": "Python"
+        },
+        {
+          "pid": 38536,
+          "ppid": 38439,
+          "cpu_percent": 7.5,
+          "rss_kib": 287600,
+          "elapsed": "01:09:18",
+          "executable": "Acid (Beta) Helper (Renderer)"
+        },
+        {
+          "pid": 622,
+          "ppid": 1,
+          "cpu_percent": 6.8,
+          "rss_kib": 26144,
+          "elapsed": "21-01:56:25",
+          "executable": "coreaudiod"
+        },
+        {
+          "pid": 3961,
+          "ppid": 83928,
+          "cpu_percent": 5.0,
+          "rss_kib": 362048,
+          "elapsed": "03:39",
+          "executable": "Brave Browser Helper (Renderer)"
+        },
+        {
+          "pid": 17818,
+          "ppid": 17689,
+          "cpu_percent": 4.6,
+          "rss_kib": 331536,
+          "elapsed": "05-14:30:59",
+          "executable": "codex"
+        },
+        {
+          "pid": 957,
+          "ppid": 1,
+          "cpu_percent": 4.0,
+          "rss_kib": 24032,
+          "elapsed": "21-01:56:11",
+          "executable": "MenuBarAgent"
+        },
+        {
+          "pid": 91699,
+          "ppid": 1,
+          "cpu_percent": 3.4,
+          "rss_kib": 13136,
+          "elapsed": "01-11:48:03",
+          "executable": "mds"
+        },
+        {
+          "pid": 83934,
+          "ppid": 83928,
+          "cpu_percent": 2.8,
+          "rss_kib": 104272,
+          "elapsed": "09-00:32:27",
+          "executable": "Brave Browser Helper"
+        }
+      ],
+      "test_related_processes": [],
+      "cpu_counter_note": "ps pcpu is a process-lifetime average snapshot, not instantaneous host utilization or per-pair attribution."
+    },
+    {
+      "utc": "2026-11-02T15:37:07.995158+00:00",
+      "phase": "during",
+      "uptime": "10:37  up 21 days,  1:59, 1 user, load averages: 8.35 6.06 4.70",
+      "load_average": [
+        8.34619140625,
+        6.0595703125,
+        4.70068359375
+      ],
+      "processes": [
+        {
+          "pid": 16667,
+          "ppid": 17818,
+          "pgid": 16667,
+          "cpu_percent": 0.7,
+          "elapsed": "00:16",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u packages/tools/blender/characters/capture_ulgani5.py --variant ulgani_head5 --attempt attempt-01"
+        },
+        {
+          "pid": 16686,
+          "ppid": 16667,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "00:15",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/sample_ulgani5_capture.py"
+        },
+        {
+          "pid": 16691,
+          "ppid": 16667,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:15",
+          "command": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node /Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/node_modules/pnpm/bin/pnpm.mjs exec tsx packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16699,
+          "ppid": 16667,
+          "pgid": 16699,
+          "cpu_percent": 0.0,
+          "elapsed": "00:15",
+          "command": "/usr/bin/caffeinate -i -w 16691"
+        },
+        {
+          "pid": 16706,
+          "ppid": 16691,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:14",
+          "command": "node /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.bin/../.pnpm/tsx@4.23.15/node_modules/tsx/dist/cli.mjs packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16714,
+          "ppid": 16706,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:14",
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --require /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/preflight.cjs --import file:///Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16721,
+          "ppid": 16714,
+          "pgid": 16721,
+          "cpu_percent": 0.0,
+          "elapsed": "00:13",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --use-angle=metal --enable-gpu --ignore-gpu-blocklist --user-data-dir=/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/playwright_chromiumdev_profile-IadPRc --remote-debugging-pipe --no-startup-window"
+        },
+        {
+          "pid": 16725,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 13.9,
+          "elapsed": "00:12",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=gpu-process --gpu-recent-crash-count=0 --no-sandbox --disable-breakpad --headless --use-angle=metal --enable-unsafe-swiftshader --enable-gpu --gpu-preferences=WAAAAAAAAAAgAAAMAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708988185955192"
+        },
+        {
+          "pid": 16726,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 0.0,
+          "elapsed": "00:12",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --use-angle=metal --mute-audio --headless=old --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708989122997041"
+        },
+        {
+          "pid": 16727,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 35.2,
+          "elapsed": "00:12",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=4 --launch-time-ticks=1605845528130 --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708990060038890"
+        },
+        {
+          "pid": 16740,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 0.3,
+          "elapsed": "00:09",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=audio --no-sandbox --use-angle=metal --mute-audio --message-loop-type-ui --headless=old --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708990997080739"
+        },
+        {
+          "pid": 17239,
+          "ppid": 16686,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "00:00",
+          "command": "ps -axo pid=,ppid=,pgid=,pcpu=,etime=,command="
+        }
+      ],
+      "top_cpu_processes": [
+        {
+          "pid": 417,
+          "ppid": 1,
+          "cpu_percent": 100.7,
+          "rss_kib": 7215280,
+          "elapsed": "21-01:56:41",
+          "executable": "fseventsd"
+        },
+        {
+          "pid": 21642,
+          "ppid": 1,
+          "cpu_percent": 92.7,
+          "rss_kib": 571120,
+          "elapsed": "19-21:36:31",
+          "executable": "com.apple.Virtualization.VirtualMachine"
+        },
+        {
+          "pid": 17218,
+          "ppid": 17043,
+          "cpu_percent": 71.9,
+          "rss_kib": 233680,
+          "elapsed": "00:00",
+          "executable": "claude"
+        },
+        {
+          "pid": 581,
+          "ppid": 1,
+          "cpu_percent": 66.6,
+          "rss_kib": 16752,
+          "elapsed": "21-01:56:40",
+          "executable": "syspolicyd"
+        },
+        {
+          "pid": 3961,
+          "ppid": 83928,
+          "cpu_percent": 55.1,
+          "rss_kib": 383808,
+          "elapsed": "03:54",
+          "executable": "Brave Browser Helper (Renderer)"
+        },
+        {
+          "pid": 16727,
+          "ppid": 16721,
+          "cpu_percent": 35.2,
+          "rss_kib": 287232,
+          "elapsed": "00:12",
+          "executable": "chrome-headless-shell"
+        },
+        {
+          "pid": 51426,
+          "ppid": 1,
+          "cpu_percent": 25.7,
+          "rss_kib": 11472,
+          "elapsed": "01-18:33:50",
+          "executable": "SimRenderServer"
+        },
+        {
+          "pid": 17043,
+          "ppid": 3413,
+          "cpu_percent": 24.6,
+          "rss_kib": 372416,
+          "elapsed": "00:05",
+          "executable": "node"
+        },
+        {
+          "pid": 483,
+          "ppid": 1,
+          "cpu_percent": 16.1,
+          "rss_kib": 120688,
+          "elapsed": "21-01:56:41",
+          "executable": "WindowServer"
+        },
+        {
+          "pid": 16725,
+          "ppid": 16721,
+          "cpu_percent": 13.9,
+          "rss_kib": 318592,
+          "elapsed": "00:12",
+          "executable": "chrome-headless-shell"
+        },
+        {
+          "pid": 51430,
+          "ppid": 1,
+          "cpu_percent": 11.8,
+          "rss_kib": 7552,
+          "elapsed": "01-18:33:50",
+          "executable": "SimMetalHost"
+        },
+        {
+          "pid": 83934,
+          "ppid": 83928,
+          "cpu_percent": 10.7,
+          "rss_kib": 95664,
+          "elapsed": "09-00:32:42",
+          "executable": "Brave Browser Helper"
+        },
+        {
+          "pid": 690,
+          "ppid": 1,
+          "cpu_percent": 10.4,
+          "rss_kib": 42560,
+          "elapsed": "21-01:56:39",
+          "executable": "AppleCentauriAlpha"
+        },
+        {
+          "pid": 53770,
+          "ppid": 53735,
+          "cpu_percent": 9.7,
+          "rss_kib": 21808,
+          "elapsed": "01-18:32:43",
+          "executable": "backboardd"
+        },
+        {
+          "pid": 17213,
+          "ppid": 17043,
+          "cpu_percent": 6.8,
+          "rss_kib": 80032,
+          "elapsed": "00:00",
+          "executable": "codex"
+        },
+        {
+          "pid": 38536,
+          "ppid": 38439,
+          "cpu_percent": 4.8,
+          "rss_kib": 286288,
+          "elapsed": "01:09:33",
+          "executable": "Acid (Beta) Helper (Renderer)"
+        },
+        {
+          "pid": 38456,
+          "ppid": 38439,
+          "cpu_percent": 4.5,
+          "rss_kib": 80288,
+          "elapsed": "01:09:33",
+          "executable": "Acid (Beta) Helper"
+        },
+        {
+          "pid": 17756,
+          "ppid": 17689,
+          "cpu_percent": 4.4,
+          "rss_kib": 66944,
+          "elapsed": "05-14:31:16",
+          "executable": "Codex (Service)"
+        },
+        {
+          "pid": 17817,
+          "ppid": 17689,
+          "cpu_percent": 4.3,
+          "rss_kib": 322784,
+          "elapsed": "05-14:31:14",
+          "executable": "Codex (Renderer)"
+        },
+        {
+          "pid": 89776,
+          "ppid": 1,
+          "cpu_percent": 3.7,
+          "rss_kib": 212240,
+          "elapsed": "12:05",
+          "executable": "WhatsApp"
+        }
+      ],
+      "test_related_processes": [],
+      "cpu_counter_note": "ps pcpu is a process-lifetime average snapshot, not instantaneous host utilization or per-pair attribution."
+    },
+    {
+      "utc": "2026-11-02T15:37:23.206670+00:00",
+      "phase": "during",
+      "uptime": "10:37  up 21 days, 2 hrs, 1 user, load averages: 7.85 6.06 4.72",
+      "load_average": [
+        7.85009765625,
+        6.056640625,
+        4.72265625
+      ],
+      "processes": [
+        {
+          "pid": 16667,
+          "ppid": 17818,
+          "pgid": 16667,
+          "cpu_percent": 0.5,
+          "elapsed": "00:32",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u packages/tools/blender/characters/capture_ulgani5.py --variant ulgani_head5 --attempt attempt-01"
+        },
+        {
+          "pid": 16686,
+          "ppid": 16667,
+          "pgid": 16686,
+          "cpu_percent": 0.5,
+          "elapsed": "00:31",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/sample_ulgani5_capture.py"
+        },
+        {
+          "pid": 16691,
+          "ppid": 16667,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:31",
+          "command": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node /Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/node_modules/pnpm/bin/pnpm.mjs exec tsx packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16699,
+          "ppid": 16667,
+          "pgid": 16699,
+          "cpu_percent": 0.0,
+          "elapsed": "00:31",
+          "command": "/usr/bin/caffeinate -i -w 16691"
+        },
+        {
+          "pid": 16706,
+          "ppid": 16691,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:30",
+          "command": "node /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.bin/../.pnpm/tsx@4.23.15/node_modules/tsx/dist/cli.mjs packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16714,
+          "ppid": 16706,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:30",
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --require /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/preflight.cjs --import file:///Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16721,
+          "ppid": 16714,
+          "pgid": 16721,
+          "cpu_percent": 0.3,
+          "elapsed": "00:29",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --use-angle=metal --enable-gpu --ignore-gpu-blocklist --user-data-dir=/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/playwright_chromiumdev_profile-IadPRc --remote-debugging-pipe --no-startup-window"
+        },
+        {
+          "pid": 16725,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 6.8,
+          "elapsed": "00:28",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=gpu-process --gpu-recent-crash-count=0 --no-sandbox --disable-breakpad --headless --use-angle=metal --enable-unsafe-swiftshader --enable-gpu --gpu-preferences=WAAAAAAAAAAgAAAMAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708988185955192"
+        },
+        {
+          "pid": 16726,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 0.0,
+          "elapsed": "00:28",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --use-angle=metal --mute-audio --headless=old --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708989122997041"
+        },
+        {
+          "pid": 16727,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 16.7,
+          "elapsed": "00:28",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=4 --launch-time-ticks=1605845528130 --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708990060038890"
+        },
+        {
+          "pid": 16740,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 0.1,
+          "elapsed": "00:25",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=audio --no-sandbox --use-angle=metal --mute-audio --message-loop-type-ui --headless=old --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708990997080739"
+        },
+        {
+          "pid": 17516,
+          "ppid": 16686,
+          "pgid": 16686,
+          "cpu_percent": 0.6,
+          "elapsed": "00:00",
+          "command": "ps -axo pid=,ppid=,pgid=,pcpu=,etime=,command="
+        }
+      ],
+      "top_cpu_processes": [
+        {
+          "pid": 417,
+          "ppid": 1,
+          "cpu_percent": 99.3,
+          "rss_kib": 8209776,
+          "elapsed": "21-01:56:57",
+          "executable": "fseventsd"
+        },
+        {
+          "pid": 21642,
+          "ppid": 1,
+          "cpu_percent": 42.9,
+          "rss_kib": 989456,
+          "elapsed": "19-21:36:47",
+          "executable": "com.apple.Virtualization.VirtualMachine"
+        },
+        {
+          "pid": 38536,
+          "ppid": 38439,
+          "cpu_percent": 33.5,
+          "rss_kib": 320768,
+          "elapsed": "01:09:49",
+          "executable": "Acid (Beta) Helper (Renderer)"
+        },
+        {
+          "pid": 51426,
+          "ppid": 1,
+          "cpu_percent": 28.9,
+          "rss_kib": 11424,
+          "elapsed": "01-18:34:06",
+          "executable": "SimRenderServer"
+        },
+        {
+          "pid": 21598,
+          "ppid": 21579,
+          "cpu_percent": 28.3,
+          "rss_kib": 224912,
+          "elapsed": "19-21:36:48",
+          "executable": "com.docker.backend"
+        },
+        {
+          "pid": 483,
+          "ppid": 1,
+          "cpu_percent": 20.4,
+          "rss_kib": 117872,
+          "elapsed": "21-01:56:57",
+          "executable": "WindowServer"
+        },
+        {
+          "pid": 16727,
+          "ppid": 16721,
+          "cpu_percent": 16.7,
+          "rss_kib": 371584,
+          "elapsed": "00:28",
+          "executable": "chrome-headless-shell"
+        },
+        {
+          "pid": 690,
+          "ppid": 1,
+          "cpu_percent": 15.0,
+          "rss_kib": 42592,
+          "elapsed": "21-01:56:55",
+          "executable": "AppleCentauriAlpha"
+        },
+        {
+          "pid": 17817,
+          "ppid": 17689,
+          "cpu_percent": 15.0,
+          "rss_kib": 513008,
+          "elapsed": "05-14:31:30",
+          "executable": "Codex (Renderer)"
+        },
+        {
+          "pid": 3961,
+          "ppid": 83928,
+          "cpu_percent": 13.8,
+          "rss_kib": 268304,
+          "elapsed": "04:10",
+          "executable": "Brave Browser Helper (Renderer)"
+        },
+        {
+          "pid": 53770,
+          "ppid": 53735,
+          "cpu_percent": 12.0,
+          "rss_kib": 23056,
+          "elapsed": "01-18:32:59",
+          "executable": "backboardd"
+        },
+        {
+          "pid": 51430,
+          "ppid": 1,
+          "cpu_percent": 11.9,
+          "rss_kib": 8416,
+          "elapsed": "01-18:34:06",
+          "executable": "SimMetalHost"
+        },
+        {
+          "pid": 83934,
+          "ppid": 83928,
+          "cpu_percent": 10.3,
+          "rss_kib": 87296,
+          "elapsed": "09-00:32:58",
+          "executable": "Brave Browser Helper"
+        },
+        {
+          "pid": 16725,
+          "ppid": 16721,
+          "cpu_percent": 6.8,
+          "rss_kib": 329232,
+          "elapsed": "00:28",
+          "executable": "chrome-headless-shell"
+        },
+        {
+          "pid": 17756,
+          "ppid": 17689,
+          "cpu_percent": 5.3,
+          "rss_kib": 64512,
+          "elapsed": "05-14:31:32",
+          "executable": "Codex (Service)"
+        },
+        {
+          "pid": 29740,
+          "ppid": 29728,
+          "cpu_percent": 4.1,
+          "rss_kib": 143600,
+          "elapsed": "01:10:19",
+          "executable": "t3"
+        },
+        {
+          "pid": 38456,
+          "ppid": 38439,
+          "cpu_percent": 3.0,
+          "rss_kib": 73520,
+          "elapsed": "01:09:49",
+          "executable": "Acid (Beta) Helper"
+        },
+        {
+          "pid": 622,
+          "ppid": 1,
+          "cpu_percent": 2.9,
+          "rss_kib": 16336,
+          "elapsed": "21-01:56:56",
+          "executable": "coreaudiod"
+        },
+        {
+          "pid": 20947,
+          "ppid": 1,
+          "cpu_percent": 2.9,
+          "rss_kib": 15824,
+          "elapsed": "01:16:52",
+          "executable": "VTDecoderXPCService"
+        },
+        {
+          "pid": 412,
+          "ppid": 1,
+          "cpu_percent": 2.5,
+          "rss_kib": 10080,
+          "elapsed": "21-01:56:57",
+          "executable": "logd"
+        }
+      ],
+      "test_related_processes": [],
+      "cpu_counter_note": "ps pcpu is a process-lifetime average snapshot, not instantaneous host utilization or per-pair attribution."
+    },
+    {
+      "utc": "2026-11-02T15:37:38.677686+00:00",
+      "phase": "during",
+      "uptime": "10:37  up 21 days, 2 hrs, 1 user, load averages: 7.07 5.97 4.72",
+      "load_average": [
+        7.0703125,
+        5.9716796875,
+        4.71533203125
+      ],
+      "processes": [
+        {
+          "pid": 16667,
+          "ppid": 17818,
+          "pgid": 16667,
+          "cpu_percent": 1.8,
+          "elapsed": "00:47",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u packages/tools/blender/characters/capture_ulgani5.py --variant ulgani_head5 --attempt attempt-01"
+        },
+        {
+          "pid": 16686,
+          "ppid": 16667,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "00:46",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/sample_ulgani5_capture.py"
+        },
+        {
+          "pid": 16691,
+          "ppid": 16667,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:46",
+          "command": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node /Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/node_modules/pnpm/bin/pnpm.mjs exec tsx packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16699,
+          "ppid": 16667,
+          "pgid": 16699,
+          "cpu_percent": 0.0,
+          "elapsed": "00:46",
+          "command": "/usr/bin/caffeinate -i -w 16691"
+        },
+        {
+          "pid": 16706,
+          "ppid": 16691,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:45",
+          "command": "node /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.bin/../.pnpm/tsx@4.23.15/node_modules/tsx/dist/cli.mjs packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16714,
+          "ppid": 16706,
+          "pgid": 16691,
+          "cpu_percent": 0.0,
+          "elapsed": "00:45",
+          "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --require /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/preflight.cjs --import file:///Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs packages/tools/src/capture/ulgani5-review.ts --variant ulgani_head5 --out-dir assets/renders/review/characters/ulgani-review5/attempt-01 --written /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5/written.json"
+        },
+        {
+          "pid": 16721,
+          "ppid": 16714,
+          "pgid": 16721,
+          "cpu_percent": 0.0,
+          "elapsed": "00:44",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --use-angle=metal --enable-gpu --ignore-gpu-blocklist --user-data-dir=/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/playwright_chromiumdev_profile-IadPRc --remote-debugging-pipe --no-startup-window"
+        },
+        {
+          "pid": 16725,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 12.5,
+          "elapsed": "00:43",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=gpu-process --gpu-recent-crash-count=0 --no-sandbox --disable-breakpad --headless --use-angle=metal --enable-unsafe-swiftshader --enable-gpu --gpu-preferences=WAAAAAAAAAAgAAAMAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708988185955192"
+        },
+        {
+          "pid": 16726,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 0.0,
+          "elapsed": "00:43",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --use-angle=metal --mute-audio --headless=old --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708989122997041"
+        },
+        {
+          "pid": 16727,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 27.8,
+          "elapsed": "00:43",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=4 --launch-time-ticks=1605845528130 --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708990060038890"
+        },
+        {
+          "pid": 16740,
+          "ppid": 16721,
+          "pgid": 16721,
+          "cpu_percent": 0.4,
+          "elapsed": "00:40",
+          "command": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=audio --no-sandbox --use-angle=metal --mute-audio --message-loop-type-ui --headless=old --shared-files --field-trial-handle=1718379636,r,14139884308132065596,11566821499952752137,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,1344888071460050175,12676262454088058950,4 --trace-process-track-uuid=3190708990997080739"
+        },
+        {
+          "pid": 17646,
+          "ppid": 16686,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "00:00",
+          "command": "ps -axo pid=,ppid=,pgid=,pcpu=,etime=,command="
+        }
+      ],
+      "top_cpu_processes": [
+        {
+          "pid": 17612,
+          "ppid": 17611,
+          "cpu_percent": 391.1,
+          "rss_kib": 1152816,
+          "elapsed": "00:03",
+          "executable": "node"
+        },
+        {
+          "pid": 21642,
+          "ppid": 1,
+          "cpu_percent": 102.3,
+          "rss_kib": 976704,
+          "elapsed": "19-21:37:02",
+          "executable": "com.apple.Virtualization.VirtualMachine"
+        },
+        {
+          "pid": 417,
+          "ppid": 1,
+          "cpu_percent": 100.2,
+          "rss_kib": 8077152,
+          "elapsed": "21-01:57:12",
+          "executable": "fseventsd"
+        },
+        {
+          "pid": 16727,
+          "ppid": 16721,
+          "cpu_percent": 27.8,
+          "rss_kib": 379680,
+          "elapsed": "00:43",
+          "executable": "chrome-headless-shell"
+        },
+        {
+          "pid": 51426,
+          "ppid": 1,
+          "cpu_percent": 23.8,
+          "rss_kib": 11040,
+          "elapsed": "01-18:34:21",
+          "executable": "SimRenderServer"
+        },
+        {
+          "pid": 483,
+          "ppid": 1,
+          "cpu_percent": 16.6,
+          "rss_kib": 113824,
+          "elapsed": "21-01:57:12",
+          "executable": "WindowServer"
+        },
+        {
+          "pid": 16725,
+          "ppid": 16721,
+          "cpu_percent": 12.3,
+          "rss_kib": 302000,
+          "elapsed": "00:43",
+          "executable": "chrome-headless-shell"
+        },
+        {
+          "pid": 53770,
+          "ppid": 53735,
+          "cpu_percent": 11.3,
+          "rss_kib": 22160,
+          "elapsed": "01-18:33:14",
+          "executable": "backboardd"
+        },
+        {
+          "pid": 51430,
+          "ppid": 1,
+          "cpu_percent": 11.1,
+          "rss_kib": 7248,
+          "elapsed": "01-18:34:21",
+          "executable": "SimMetalHost"
+        },
+        {
+          "pid": 83934,
+          "ppid": 83928,
+          "cpu_percent": 10.6,
+          "rss_kib": 91776,
+          "elapsed": "09-00:33:13",
+          "executable": "Brave Browser Helper"
+        },
+        {
+          "pid": 3961,
+          "ppid": 83928,
+          "cpu_percent": 10.4,
+          "rss_kib": 336720,
+          "elapsed": "04:25",
+          "executable": "Brave Browser Helper (Renderer)"
+        },
+        {
+          "pid": 17817,
+          "ppid": 17689,
+          "cpu_percent": 7.0,
+          "rss_kib": 649552,
+          "elapsed": "05-14:31:45",
+          "executable": "Codex (Renderer)"
+        },
+        {
+          "pid": 17756,
+          "ppid": 17689,
+          "cpu_percent": 5.6,
+          "rss_kib": 65904,
+          "elapsed": "05-14:31:47",
+          "executable": "Codex (Service)"
+        },
+        {
+          "pid": 38536,
+          "ppid": 38439,
+          "cpu_percent": 4.6,
+          "rss_kib": 233568,
+          "elapsed": "01:10:04",
+          "executable": "Acid (Beta) Helper (Renderer)"
+        },
+        {
+          "pid": 38456,
+          "ppid": 38439,
+          "cpu_percent": 3.4,
+          "rss_kib": 71040,
+          "elapsed": "01:10:04",
+          "executable": "Acid (Beta) Helper"
+        },
+        {
+          "pid": 622,
+          "ppid": 1,
+          "cpu_percent": 3.0,
+          "rss_kib": 16336,
+          "elapsed": "21-01:57:11",
+          "executable": "coreaudiod"
+        },
+        {
+          "pid": 20947,
+          "ppid": 1,
+          "cpu_percent": 2.4,
+          "rss_kib": 15360,
+          "elapsed": "01:17:07",
+          "executable": "VTDecoderXPCService"
+        },
+        {
+          "pid": 89776,
+          "ppid": 1,
+          "cpu_percent": 2.0,
+          "rss_kib": 190880,
+          "elapsed": "12:36",
+          "executable": "WhatsApp"
+        },
+        {
+          "pid": 412,
+          "ppid": 1,
+          "cpu_percent": 1.9,
+          "rss_kib": 9168,
+          "elapsed": "21-01:57:12",
+          "executable": "logd"
+        },
+        {
+          "pid": 581,
+          "ppid": 1,
+          "cpu_percent": 1.6,
+          "rss_kib": 13952,
+          "elapsed": "21-01:57:11",
+          "executable": "syspolicyd"
+        }
+      ],
+      "test_related_processes": [
+        {
+          "pid": 17612,
+          "ppid": 17611,
+          "cpu_percent": 390.8,
+          "elapsed": "00:03",
+          "kind": "test-related process; command arguments omitted"
+        }
+      ],
+      "cpu_counter_note": "ps pcpu is a process-lifetime average snapshot, not instantaneous host utilization or per-pair attribution."
+    },
+    {
+      "utc": "2026-11-02T15:37:53.877208+00:00",
+      "phase": "after",
+      "uptime": "10:37  up 21 days, 2 hrs, 1 user, load averages: 7.73 6.17 4.81",
+      "load_average": [
+        7.7255859375,
+        6.16845703125,
+        4.806640625
+      ],
+      "processes": [
+        {
+          "pid": 16667,
+          "ppid": 17818,
+          "pgid": 16667,
+          "cpu_percent": 0.0,
+          "elapsed": "01:02",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u packages/tools/blender/characters/capture_ulgani5.py --variant ulgani_head5 --attempt attempt-01"
+        },
+        {
+          "pid": 16686,
+          "ppid": 16667,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "01:01",
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/sample_ulgani5_capture.py"
+        },
+        {
+          "pid": 16699,
+          "ppid": 16667,
+          "pgid": 16699,
+          "cpu_percent": 0.0,
+          "elapsed": "01:01",
+          "command": "<defunct>"
+        },
+        {
+          "pid": 17964,
+          "ppid": 16686,
+          "pgid": 16686,
+          "cpu_percent": 0.0,
+          "elapsed": "00:00",
+          "command": "ps -axo pid=,ppid=,pgid=,pcpu=,etime=,command="
+        }
+      ],
+      "top_cpu_processes": [
+        {
+          "pid": 21642,
+          "ppid": 1,
+          "cpu_percent": 114.7,
+          "rss_kib": 2428720,
+          "elapsed": "19-21:37:17",
+          "executable": "com.apple.Virtualization.VirtualMachine"
+        },
+        {
+          "pid": 417,
+          "ppid": 1,
+          "cpu_percent": 100.7,
+          "rss_kib": 9481376,
+          "elapsed": "21-01:57:27",
+          "executable": "fseventsd"
+        },
+        {
+          "pid": 17937,
+          "ppid": 17810,
+          "cpu_percent": 32.1,
+          "rss_kib": 272704,
+          "elapsed": "00:01",
+          "executable": "claude"
+        },
+        {
+          "pid": 51426,
+          "ppid": 1,
+          "cpu_percent": 30.1,
+          "rss_kib": 11328,
+          "elapsed": "01-18:34:36",
+          "executable": "SimRenderServer"
+        },
+        {
+          "pid": 17810,
+          "ppid": 3413,
+          "cpu_percent": 22.3,
+          "rss_kib": 530720,
+          "elapsed": "00:04",
+          "executable": "node"
+        },
+        {
+          "pid": 483,
+          "ppid": 1,
+          "cpu_percent": 19.7,
+          "rss_kib": 125312,
+          "elapsed": "21-01:57:27",
+          "executable": "WindowServer"
+        },
+        {
+          "pid": 51430,
+          "ppid": 1,
+          "cpu_percent": 11.2,
+          "rss_kib": 7344,
+          "elapsed": "01-18:34:36",
+          "executable": "SimMetalHost"
+        },
+        {
+          "pid": 53770,
+          "ppid": 53735,
+          "cpu_percent": 10.8,
+          "rss_kib": 22336,
+          "elapsed": "01-18:33:29",
+          "executable": "backboardd"
+        },
+        {
+          "pid": 83934,
+          "ppid": 83928,
+          "cpu_percent": 10.4,
+          "rss_kib": 92544,
+          "elapsed": "09-00:33:28",
+          "executable": "Brave Browser Helper"
+        },
+        {
+          "pid": 3961,
+          "ppid": 83928,
+          "cpu_percent": 8.6,
+          "rss_kib": 312912,
+          "elapsed": "04:40",
+          "executable": "Brave Browser Helper (Renderer)"
+        },
+        {
+          "pid": 17935,
+          "ppid": 17810,
+          "cpu_percent": 7.6,
+          "rss_kib": 101264,
+          "elapsed": "00:01",
+          "executable": "(codex)"
+        },
+        {
+          "pid": 17756,
+          "ppid": 17689,
+          "cpu_percent": 4.1,
+          "rss_kib": 66096,
+          "elapsed": "05-14:32:02",
+          "executable": "Codex (Service)"
+        },
+        {
+          "pid": 17817,
+          "ppid": 17689,
+          "cpu_percent": 3.7,
+          "rss_kib": 374448,
+          "elapsed": "05-14:32:00",
+          "executable": "Codex (Renderer)"
+        },
+        {
+          "pid": 690,
+          "ppid": 1,
+          "cpu_percent": 2.9,
+          "rss_kib": 43440,
+          "elapsed": "21-01:57:25",
+          "executable": "AppleCentauriAlpha"
+        },
+        {
+          "pid": 20947,
+          "ppid": 1,
+          "cpu_percent": 2.8,
+          "rss_kib": 16112,
+          "elapsed": "01:17:22",
+          "executable": "VTDecoderXPCService"
+        },
+        {
+          "pid": 412,
+          "ppid": 1,
+          "cpu_percent": 2.6,
+          "rss_kib": 15472,
+          "elapsed": "21-01:57:27",
+          "executable": "logd"
+        },
+        {
+          "pid": 38456,
+          "ppid": 38439,
+          "cpu_percent": 2.0,
+          "rss_kib": 76432,
+          "elapsed": "01:10:19",
+          "executable": "Acid (Beta) Helper"
+        },
+        {
+          "pid": 622,
+          "ppid": 1,
+          "cpu_percent": 1.7,
+          "rss_kib": 26064,
+          "elapsed": "21-01:57:26",
+          "executable": "coreaudiod"
+        },
+        {
+          "pid": 89776,
+          "ppid": 1,
+          "cpu_percent": 1.7,
+          "rss_kib": 191504,
+          "elapsed": "12:51",
+          "executable": "WhatsApp"
+        },
+        {
+          "pid": 38536,
+          "ppid": 38439,
+          "cpu_percent": 1.6,
+          "rss_kib": 321984,
+          "elapsed": "01:10:19",
+          "executable": "Acid (Beta) Helper (Renderer)"
+        }
+      ],
+      "test_related_processes": [],
+      "cpu_counter_note": "ps pcpu is a process-lifetime average snapshot, not instantaneous host utilization or per-pair attribution."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "cleanup": [],
+  "processes": [
+    {
+      "pid": 16209,
+      "ppid": 17818,
+      "pgid": 16209,
+      "fingerprint": "Mon Nov 2 11:14:58 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "profiles": [],
+  "observer_lifecycles": [
+    {
+      "started_utc": "2026-11-02T16:15:00.053736+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 16273,
+      "pgid": 16273,
+      "group_probes": [
+        {
+          "pid": 16274,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T16:15:00.156700+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 16273
+    },
+    {
+      "started_utc": "2026-11-02T16:15:00.157282+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 16275,
+      "pgid": 16275,
+      "group_probes": [
+        {
+          "pid": 16276,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T16:15:00.251746+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 16275
+    },
+    {
+      "started_utc": "2026-11-02T16:15:01.271228+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 16284,
+      "pgid": 16284,
+      "group_probes": [
+        {
+          "pid": 16286,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T16:15:01.573359+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 16284
+    }
+  ],
+  "child_exit_codes": [],
+  "children_and_profiles_drained_utc": "2026-11-02T16:15:01.584262+00:00"
+}

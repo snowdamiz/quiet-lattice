@@ -1,0 +1,70 @@
+RUN ['/Applications/Blender.app/Contents/MacOS/Blender', '-b', '--factory-startup', '-t', '2', '--python-exit-code', '1', '-P', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/revision_invariants.py', '--', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/ixari_final.blend', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/revision-invariants.json']
+00:00.454  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend"
+00:03.095  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/ixari_final.blend"
+REVISION_INVARIANTS_PASS 96 /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/revision-invariants.json
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+RUN ['/Applications/Blender.app/Contents/MacOS/Blender', '-b', '--factory-startup', '-t', '2', '--python-exit-code', '1', '-P', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/validate.py', '--', '--family', 'characters', '--report', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/source-validation.json', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/ixari_final.blend']
+00:00.327  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/ixari_final.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate .claude/pause/characters-resume/ixari5/ixari_final.blend  (family characters, source .blend)
+  ixari / ixari_head1 [hero]  tris LOD0 84,668, LOD1 22,239, LOD2 7,734, LOD3 2,875  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_head2 [hero]  tris LOD0 85,104, LOD1 22,420, LOD2 7,921, LOD3 2,890  size 1.36 x 0.58 x 2.09 m
+  ixari / ixari_head3 [hero]  tris LOD0 86,274, LOD1 22,827, LOD2 8,256, LOD3 2,930  size 1.36 x 0.58 x 1.98 m
+  ixari / ixari_head4 [hero]  tris LOD0 84,930, LOD1 22,325, LOD2 7,787, LOD3 2,884  size 1.36 x 0.58 x 1.97 m
+  ixari / ixari_head5 [hero]  tris LOD0 85,964, LOD1 22,693, LOD2 8,095, LOD3 2,919  size 1.36 x 0.58 x 1.99 m
+  ixari / ixari_head6 [hero]  tris LOD0 85,104, LOD1 22,415, LOD2 7,898, LOD3 2,890  size 1.36 x 0.58 x 2.09 m
+  ixari / ixari_suit1 [hero]  tris LOD0 98,338, LOD1 27,372, LOD2 10,125, LOD3 3,272  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_suit2 [hero]  tris LOD0 104,680, LOD1 29,273, LOD2 10,732, LOD3 3,429  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_suit3 [hero]  tris LOD0 106,320, LOD1 29,786, LOD2 10,944, LOD3 3,439  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_suit4 [hero]  tris LOD0 96,876, LOD1 27,802, LOD2 10,655, LOD3 3,209  size 1.36 x 0.58 x 2.07 m
+  PASS  naming
+        ok    ixari_final.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    ixari/ixari_head1: LOD0 84,668 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head2: LOD0 85,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head3: LOD0 86,274 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    ixari/ixari_head1: 84,668 > 22,239 > 7,734 > 2,875 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head2: 85,104 > 22,420 > 7,921 > 2,890 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head3: 86,274 > 22,827 > 8,256 > 2,930 triangles; LOD3 3.4% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Bio (IX_Crystal): pbr: base colour, roughness, normal, AO, emissive
+        ok    Eye (IX_Eye): pbr: base colour, roughness, normal, AO
+        ok    Skin (IX_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ixari/ixari_head1: z extent 2.07 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: .claude/pause/characters-resume/ixari5/source-validation.json
+
+1 of 1 file(s) passed validation
+RUN ['/Applications/Blender.app/Contents/MacOS/Blender', '-b', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/ixari_final.blend', '-t', '2', '--python-exit-code', '1', '-P', '/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/probe_ixari5_final.py', '--']
+00:00.311  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/ixari_final.blend"
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/probe_ixari5_final.py:10: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.view_settings.view_transform='AgX';w=bpy.data.worlds.get('pv_world') or bpy.data.worlds.new('pv_world');w.use_nodes=True;bg=next(n for n in w.node_tree.nodes if n.type=='BACKGROUND');bg.inputs['Color'].default_value=(.05,.055,.06,1);bg.inputs['Strength'].default_value=1;scene.world=w
+00:05.129  render           | Saved: '.claude/pause/characters-resume/ixari5-final-preview/mapped_hand.png.v0.png'
+00:06.169  render           | Saved: '.claude/pause/characters-resume/ixari5-final-preview/mapped_toes.png.v0.png'
+BlenderMCP addon registered
+preview: wrote .claude/pause/characters-resume/ixari5-final-preview/mapped_hand.png
+preview: wrote .claude/pause/characters-resume/ixari5-final-preview/mapped_toes.png
+preview: wrote .claude/pause/characters-resume/ixari5-final-preview/comparison.png
+IXARI_PROBE_DONE
+00:09.765  render           | Saved: '.claude/pause/characters-resume/ixari5-final-preview/head1_full.png.v0.png'
+00:12.020  render           | Saved: '.claude/pause/characters-resume/ixari5-final-preview/suit3_full.png.v0.png'
+00:14.612  render           | Saved: '.claude/pause/characters-resume/ixari5-final-preview/head1_face.png.v0.png'
+preview: wrote .claude/pause/characters-resume/ixari5-final-preview/head1_full.png
+preview: wrote .claude/pause/characters-resume/ixari5-final-preview/suit3_full.png
+preview: wrote .claude/pause/characters-resume/ixari5-final-preview/head1_face.png
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+IXARI_FIFTH_SOURCE_VERIFIED 9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c

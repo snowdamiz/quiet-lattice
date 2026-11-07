@@ -1,0 +1,829 @@
+{
+  "cleanup": [
+    {
+      "utc": "2026-11-02T17:28:46.323033+00:00",
+      "pgid": 6701,
+      "signal": "SIGTERM"
+    },
+    {
+      "utc": "2026-11-02T17:28:46.961249+00:00",
+      "pgid": 6701,
+      "signal": "SIGKILL"
+    }
+  ],
+  "status": "fixture-starting",
+  "terminal": false,
+  "processes": [
+    {
+      "pid": 5048,
+      "ppid": 5038,
+      "pgid": 5048,
+      "fingerprint": "Mon Nov 2 12:28:16 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 6692,
+      "ppid": 5048,
+      "pgid": 6692,
+      "fingerprint": "wrong birth identity",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 6694,
+      "ppid": 6692,
+      "pgid": 6692,
+      "fingerprint": "Mon Nov 2 12:28:45 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 6701,
+      "ppid": 5048,
+      "pgid": 6701,
+      "fingerprint": "Mon Nov 2 12:28:45 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 6703,
+      "ppid": 6701,
+      "pgid": 6701,
+      "fingerprint": "Mon Nov 2 12:28:45 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "profiles": [],
+  "observer_lifecycles": [
+    {
+      "started_utc": "2026-11-02T17:28:45.765597+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6689,
+      "pgid": 6689,
+      "group_probes": [
+        {
+          "pid": 6691,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:45.830637+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6689
+    },
+    {
+      "started_utc": "2026-11-02T17:28:45.832159+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6693,
+      "pgid": 6693,
+      "group_probes": [
+        {
+          "pid": 6695,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:45.895429+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6693
+    },
+    {
+      "started_utc": "2026-11-02T17:28:45.901886+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6697,
+      "pgid": 6697,
+      "group_probes": [
+        {
+          "pid": 6699,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:45.960693+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6697
+    },
+    {
+      "started_utc": "2026-11-02T17:28:45.968496+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6702,
+      "pgid": 6702,
+      "group_probes": [
+        {
+          "pid": 6704,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:46.024970+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6702
+    },
+    {
+      "started_utc": "2026-11-02T17:28:46.032631+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6706,
+      "pgid": 6706,
+      "group_probes": [
+        {
+          "pid": 6708,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:46.099091+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6706
+    },
+    {
+      "started_utc": "2026-11-02T17:28:46.105414+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6710,
+      "pgid": 6710,
+      "group_probes": [
+        {
+          "pid": 6711,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:46.170544+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6710
+    },
+    {
+      "started_utc": "2026-11-02T17:28:46.176826+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6713,
+      "pgid": 6713,
+      "group_probes": [
+        {
+          "pid": 6715,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:46.239885+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6713
+    },
+    {
+      "started_utc": "2026-11-02T17:28:46.246229+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6718,
+      "pgid": 6718,
+      "group_probes": [
+        {
+          "pid": 6720,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:46.313822+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6718
+    },
+    {
+      "started_utc": "2026-11-02T17:28:46.828140+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6738,
+      "pgid": 6738,
+      "group_probes": [
+        {
+          "pid": 6739,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:46.891973+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6738
+    },
+    {
+      "started_utc": "2026-11-02T17:28:46.899299+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6741,
+      "pgid": 6741,
+      "group_probes": [
+        {
+          "pid": 6742,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:46.954589+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6741
+    },
+    {
+      "started_utc": "2026-11-02T17:28:49.465429+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6994,
+      "pgid": 6994,
+      "group_probes": [
+        {
+          "pid": 6995,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:49.527261+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6994
+    },
+    {
+      "started_utc": "2026-11-02T17:28:49.558844+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 6997,
+      "pgid": 6997,
+      "group_probes": [
+        {
+          "pid": 6998,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:49.614702+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 6997
+    },
+    {
+      "started_utc": "2026-11-02T17:28:49.646455+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7001,
+      "pgid": 7001,
+      "group_probes": [
+        {
+          "pid": 7002,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:49.706289+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7001
+    },
+    {
+      "started_utc": "2026-11-02T17:28:49.738055+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7004,
+      "pgid": 7004,
+      "group_probes": [
+        {
+          "pid": 7006,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:49.803117+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7004
+    },
+    {
+      "started_utc": "2026-11-02T17:28:49.834344+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7008,
+      "pgid": 7008,
+      "group_probes": [
+        {
+          "pid": 7009,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:49.892327+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7008
+    },
+    {
+      "started_utc": "2026-11-02T17:28:49.918470+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7012,
+      "pgid": 7012,
+      "group_probes": [
+        {
+          "pid": 7013,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:49.979543+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7012
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.011028+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7015,
+      "pgid": 7015,
+      "group_probes": [
+        {
+          "pid": 7017,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.091891+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7015
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.123453+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7019,
+      "pgid": 7019,
+      "group_probes": [
+        {
+          "pid": 7020,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.193755+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7019
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.225417+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7023,
+      "pgid": 7023,
+      "group_probes": [
+        {
+          "pid": 7024,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.292533+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7023
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.319836+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7026,
+      "pgid": 7026,
+      "group_probes": [
+        {
+          "pid": 7028,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.394460+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7026
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.425364+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7030,
+      "pgid": 7030,
+      "group_probes": [
+        {
+          "pid": 7031,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.495040+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7030
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.528440+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7035,
+      "pgid": 7035,
+      "group_probes": [
+        {
+          "pid": 7037,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.594411+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7035
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.625353+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7039,
+      "pgid": 7039,
+      "group_probes": [
+        {
+          "pid": 7041,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.722839+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7039
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.757105+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7043,
+      "pgid": 7043,
+      "group_probes": [
+        {
+          "pid": 7053,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:50.896647+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7043
+    },
+    {
+      "started_utc": "2026-11-02T17:28:50.929773+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7055,
+      "pgid": 7055,
+      "group_probes": [
+        {
+          "pid": 7056,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.001974+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7055
+    },
+    {
+      "started_utc": "2026-11-02T17:28:51.033868+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7059,
+      "pgid": 7059,
+      "group_probes": [
+        {
+          "pid": 7061,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.104760+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7059
+    },
+    {
+      "started_utc": "2026-11-02T17:28:51.132877+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7063,
+      "pgid": 7063,
+      "group_probes": [
+        {
+          "pid": 7066,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.208777+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7063
+    },
+    {
+      "started_utc": "2026-11-02T17:28:51.236048+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7078,
+      "pgid": 7078,
+      "group_probes": [
+        {
+          "pid": 7080,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.306909+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7078
+    },
+    {
+      "started_utc": "2026-11-02T17:28:51.333891+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7085,
+      "pgid": 7085,
+      "group_probes": [
+        {
+          "pid": 7086,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.400849+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7085
+    },
+    {
+      "started_utc": "2026-11-02T17:28:51.432993+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7089,
+      "pgid": 7089,
+      "group_probes": [
+        {
+          "pid": 7091,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.501992+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7089
+    },
+    {
+      "started_utc": "2026-11-02T17:28:51.533026+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7093,
+      "pgid": 7093,
+      "group_probes": [
+        {
+          "pid": 7094,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.592686+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7093
+    }
+  ],
+  "cleanup_runs": [
+    {
+      "started_utc": "2026-11-02T17:28:46.105388+00:00",
+      "completed_utc": "2026-11-02T17:28:51.601746+00:00",
+      "settled": false,
+      "error_count": 4
+    }
+  ],
+  "owned_cleanup_settled": false,
+  "cleanup_errors": [
+    {
+      "utc": "2026-11-02T17:28:46.246190+00:00",
+      "stage": "ownership",
+      "error": "RuntimeError('Group contains unowned/reused process;manual drain required')",
+      "pgid": 6692
+    },
+    {
+      "utc": "2026-11-02T17:28:46.899256+00:00",
+      "stage": "ownership",
+      "error": "RuntimeError('Group contains unowned/reused process;manual drain required')",
+      "pgid": 6692
+    },
+    {
+      "utc": "2026-11-02T17:28:49.465347+00:00",
+      "stage": "wait",
+      "error": "TimeoutExpired(['/opt/homebrew/opt/python@3.14/bin/python3.14', '-c', \"import subprocess,sys,signal,time,json,os;signal.signal(signal.SIGTERM,signal.SIG_IGN);p=subprocess.Popen([sys.executable,'-c','import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(60)']);open('/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-cleanup-controls-run2/ownership/guarded.json','w').write(json.dumps({'pid':os.getpid(),'descendant':p.pid}));time.sleep(60)\"], 1.9999950828496367)",
+      "pid": 6692
+    },
+    {
+      "utc": "2026-11-02T17:28:51.601667+00:00",
+      "stage": "survivors",
+      "error": "RuntimeError('Owned process/group settlement incomplete')",
+      "survivors": [
+        {
+          "pid": 6692,
+          "ppid": 5048,
+          "pgid": 6692,
+          "fingerprint": "Mon Nov 2 12:28:45 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6694,
+          "ppid": 6692,
+          "pgid": 6692,
+          "fingerprint": "Mon Nov 2 12:28:45 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    }
+  ],
+  "child_exit_codes": [
+    {
+      "pid": 6692,
+      "exit_code": null
+    },
+    {
+      "pid": 6701,
+      "exit_code": -9
+    }
+  ]
+}

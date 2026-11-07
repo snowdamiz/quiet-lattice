@@ -1,0 +1,50 @@
+{
+  "paused_by_user": true,
+  "utc": "2026-11-02T02:06:17.155686+00:00",
+  "worktree": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "branch": "task/P1-E05-T01",
+  "last_known_commit": "98c3bf711f0299961542397d70daff4e5070bafc",
+  "source_export_commit": "a578015756118f443b66dad4e39750d788694bfc",
+  "ulgani": {
+    "session": 34271,
+    "pid_group": 9760,
+    "log": ".claude/pause/characters-resume/ulgani-recovery.log",
+    "bake_start_utc": "2026-11-02T01:46:35.930769+00:00",
+    "bake_end_utc": null,
+    "parent_action": "SIGSTOP group; preserve in-memory bake; do not restart or resume",
+    "checkpoint": ".claude/pause/characters-resume/ulgani_before_bake.blend",
+    "postprocess_not_started": true
+  },
+  "ixari_studio": {
+    "session": 25346,
+    "pid_group": 37495,
+    "log": ".claude/pause/characters-resume/ixari5-cpu-studio.log",
+    "completed_keys": [
+      "head1",
+      "head2",
+      "head3",
+      "head4",
+      "head5",
+      "head6"
+    ],
+    "parent_action": "SIGSTOP group; preserve render state; do not restart or resume"
+  },
+  "auxiliary_watcher_stopped": [
+    {
+      "pid": 92598,
+      "group": 92598,
+      "previous_state": "Ss"
+    }
+  ],
+  "caffeinate": {
+    "session": 30761,
+    "parent_action": "Stopping owned idle-sleep assertion"
+  },
+  "notes": [
+    "No validations, renders or commits were started after pause.",
+    "Thalune remains frozen after its fifth grade.",
+    "Ixari fifth source/export and CPU closeups/bends are committed; studio outputs after the last checkpoint remain saved but may be uncommitted.",
+    "GPU capture controllers are not running.",
+    "Resume only after explicit user authorization and verify live process states before acting."
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "utc": "2026-11-02T09:01:18.627333+00:00",
+  "pid": 37991,
+  "pgid": 37991,
+  "threads": 2,
+  "source": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend",
+  "source_sha256": "be08a7c2dfcbb5697325be289d232e3853dc4e0afd8b7cc2cd20062afea514ed",
+  "helper_sha256": "05b439a409b74df3c73ffbf709f33d4831b836c4f8c08bc06df0c50943ad65c4",
+  "old_guard_false_positive_reproduced": true,
+  "corrected_guard_accepts_saved_neutral": true,
+  "excluded_reference_entries": [
+    {
+      "object": "UL_Head1_head1_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit1_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit2_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit3_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit4_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head2_head2_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head3_head3_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head4_head4_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head5_head5_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head6_head6_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    }
+  ],
+  "negative_control": {
+    "object": "UL_Head1_head1_L0",
+    "key": "vis_FV",
+    "value": 0.25,
+    "corrected_guard_rejected": true,
+    "message": "UL_Head1_head1_L0: bake requires neutral non-reference morphs;found [('vis_FV', 0.25)]",
+    "restored_original_value": 0.0
+  },
+  "source_and_every_morph_data_geometry_uv_weights_material_bindings_packed_images_69bone_rest_unchanged": true,
+  "saved_pose_values_animation_settings_unchanged": true,
+  "evaluated_pose_restored_exactly": true,
+  "scope": "CPU-only guard extraction and tests;no bake helper module execution,no source save,no render/export/browser/GPU"
+}

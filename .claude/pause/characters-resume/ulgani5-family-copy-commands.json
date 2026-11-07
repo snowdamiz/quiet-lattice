@@ -1,0 +1,32 @@
+[
+  [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "assets/blend/characters/ulgani.blend",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/family_copy.py",
+    "--",
+    "ulgani",
+    "heads",
+    ".claude/pause/characters-resume/ulgani5-review-cache/ulgani_heads.blend"
+  ],
+  [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "assets/blend/characters/ulgani.blend",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/family_copy.py",
+    "--",
+    "ulgani",
+    "suits",
+    ".claude/pause/characters-resume/ulgani5-review-cache/ulgani_suits.blend"
+  ]
+]

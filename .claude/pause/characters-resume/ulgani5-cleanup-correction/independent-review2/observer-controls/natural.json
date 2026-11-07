@@ -1,0 +1,121 @@
+{
+  "cleanup": [],
+  "processes": [
+    {
+      "pid": 55268,
+      "ppid": 17818,
+      "pgid": 55268,
+      "fingerprint": "Mon Nov 2 12:05:39 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 55549,
+      "ppid": 55268,
+      "pgid": 55549,
+      "fingerprint": "Mon Nov 2 12:05:42 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "profiles": [],
+  "observer_lifecycles": [
+    {
+      "started_utc": "2026-11-02T17:05:41.986746+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 55547,
+      "pgid": 55547,
+      "group_probes": [
+        {
+          "pid": 55548,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:05:42.037403+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 55547
+    },
+    {
+      "started_utc": "2026-11-02T17:05:42.039088+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 55550,
+      "pgid": 55550,
+      "group_probes": [
+        {
+          "pid": 55551,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:05:42.087085+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 55550
+    },
+    {
+      "started_utc": "2026-11-02T17:05:42.159746+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 55552,
+      "pgid": 55552,
+      "group_probes": [
+        {
+          "pid": 55553,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:05:42.216392+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 55552
+    },
+    {
+      "started_utc": "2026-11-02T17:05:43.229661+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 55556,
+      "pgid": 55556,
+      "group_probes": [
+        {
+          "pid": 55557,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:05:43.307856+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 55556
+    }
+  ],
+  "child_exit_codes": [
+    {
+      "pid": 55549,
+      "exit_code": 0
+    }
+  ],
+  "children_and_profiles_drained_utc": "2026-11-02T17:05:43.310931+00:00"
+}

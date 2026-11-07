@@ -1,0 +1,112 @@
+{
+  "attempt": 2,
+  "session": 11202,
+  "pid": 19514,
+  "pgid": 19514,
+  "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5-gpu-pack.log",
+  "status": "GPU capture complete;all browser/controller/sampler/assertion groups absent",
+  "authorized_scope": "single standard browser capture only; GPU owner until capture/sampler/browser/assertion drain",
+  "preserved_failed_attempt": "assets/renders/characters/validate/ixari-review5-startup-failure.json",
+  "sampler_pid": 19659,
+  "sampler_pgid": 19659,
+  "sampler_session": 18213,
+  "caffeinate_pid": 19675,
+  "caffeinate_session": 99391,
+  "gate_released_utc": "2026-11-02T04:44:58.425903+00:00",
+  "browser_capture_begin_utc": "2026-11-02T04:44:58.702107+00:00",
+  "observed_descendants": [
+    {
+      "pid": 19514,
+      "ppid": 17818,
+      "pgid": 19514,
+      "state": "Ss",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -u .claude/pause/characters-resume/ixari5_gpu_pack.py",
+      "metal_flag_present": false,
+      "observed_utc": "2026-11-02T04:48:58.068140+00:00"
+    },
+    {
+      "pid": 19701,
+      "ppid": 19514,
+      "pgid": 19514,
+      "state": "S",
+      "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node /Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/node_modules/pnpm/bin/pnpm.mjs capture",
+      "metal_flag_present": false,
+      "observed_utc": "2026-11-02T04:48:58.068477+00:00"
+    },
+    {
+      "pid": 19798,
+      "ppid": 19701,
+      "pgid": 19514,
+      "state": "S",
+      "executable": "node /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/.bin/../.pnpm/tsx@4.23.15/node_modules/tsx/dist/cli.mjs packages/tools/src/capture/capture.ts",
+      "metal_flag_present": false,
+      "observed_utc": "2026-11-02T04:48:58.068481+00:00"
+    },
+    {
+      "pid": 19806,
+      "ppid": 19798,
+      "pgid": 19514,
+      "state": "S",
+      "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "metal_flag_present": false,
+      "observed_utc": "2026-11-02T04:48:58.068484+00:00"
+    },
+    {
+      "pid": 19811,
+      "ppid": 19806,
+      "pgid": 19811,
+      "state": "Ss",
+      "executable": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "metal_flag_present": true,
+      "observed_utc": "2026-11-02T04:48:58.068487+00:00"
+    },
+    {
+      "pid": 19812,
+      "ppid": 19811,
+      "pgid": 19811,
+      "state": "R",
+      "executable": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "metal_flag_present": true,
+      "observed_utc": "2026-11-02T04:48:58.068490+00:00"
+    },
+    {
+      "pid": 19813,
+      "ppid": 19811,
+      "pgid": 19811,
+      "state": "S",
+      "executable": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "metal_flag_present": true,
+      "observed_utc": "2026-11-02T04:48:58.068492+00:00"
+    },
+    {
+      "pid": 19814,
+      "ppid": 19811,
+      "pgid": 19811,
+      "state": "R",
+      "executable": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "metal_flag_present": false,
+      "observed_utc": "2026-11-02T04:48:58.068495+00:00"
+    },
+    {
+      "pid": 19834,
+      "ppid": 19811,
+      "pgid": 19811,
+      "state": "S",
+      "executable": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "metal_flag_present": true,
+      "observed_utc": "2026-11-02T04:48:58.068497+00:00"
+    }
+  ],
+  "fresh_completed_variants": [
+    "ixari_head1",
+    "ixari_head2",
+    "ixari_head3"
+  ],
+  "gpu_end_utc": "2026-11-02T05:00:45.475038+00:00",
+  "drain_verified_utc": "2026-11-02T05:01:10.283588+00:00",
+  "controller_exit_code": 0,
+  "sampler_exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "consumed_release_marker": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/gpu-review-release-ixari5.consumed-20261102T050045Z",
+  "load_sample_count": 64
+}

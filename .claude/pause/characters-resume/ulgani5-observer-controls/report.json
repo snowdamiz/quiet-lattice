@@ -1,0 +1,173 @@
+{
+  "start_utc": "2026-11-02T10:51:18.388440+00:00",
+  "pid": 15265,
+  "pgid": 15265,
+  "scope": "Real owned ps/Python child lifecycle controls only;no browser/GPU/Blender",
+  "old_helper_sha256": "8ad21d3e8df837960413079b988d22dcf6d72611211821d800674e07f3f09358",
+  "new_helper_sha256": "23f824b67b4fa2c1f48aeebefd13689a4bdfc68b247ec71a698c4c3a8a780149",
+  "checks": [
+    {
+      "name": "actual_old_ps_self_survivor_reproduced",
+      "start_utc": "2026-11-02T10:51:18.388862+00:00",
+      "end_utc": "2026-11-02T10:51:19.608517+00:00",
+      "status": "PASS",
+      "detail": {
+        "actual_old_error": "Owned process survived cleanup",
+        "reaped_ps_rows_in_old_known": [
+          {
+            "pid": 15276,
+            "ppid": 15265,
+            "pgid": 15265,
+            "fingerprint": "Mon Nov 2 05:51:18 2026",
+            "executable": "ps"
+          },
+          {
+            "pid": 15278,
+            "ppid": 15265,
+            "pgid": 15265,
+            "fingerprint": "Mon Nov 2 05:51:19 2026",
+            "executable": "ps"
+          }
+        ],
+        "independent_all_absent": true
+      }
+    },
+    {
+      "name": "specific_reaped_observer_excluded",
+      "start_utc": "2026-11-02T10:51:19.608533+00:00",
+      "end_utc": "2026-11-02T10:51:20.764427+00:00",
+      "status": "PASS",
+      "detail": {
+        "events": [
+          {
+            "started_utc": "2026-11-02T10:51:19.611211+00:00",
+            "command": [
+              "ps",
+              "-axo",
+              "pid=,ppid=,pgid=,lstart=,comm="
+            ],
+            "pid": 15283,
+            "pgid": 15283,
+            "completed_utc": "2026-11-02T10:51:19.645552+00:00",
+            "exit_code": 0,
+            "reaped": true,
+            "group_absent": true,
+            "self_row_present": true,
+            "excluded_reaped_observer_pid": 15283
+          },
+          {
+            "started_utc": "2026-11-02T10:51:19.645836+00:00",
+            "command": [
+              "ps",
+              "-axo",
+              "pid=,ppid=,pgid=,lstart=,comm="
+            ],
+            "pid": 15285,
+            "pgid": 15285,
+            "completed_utc": "2026-11-02T10:51:19.680366+00:00",
+            "exit_code": 0,
+            "reaped": true,
+            "group_absent": true,
+            "self_row_present": true,
+            "excluded_reaped_observer_pid": 15285
+          },
+          {
+            "started_utc": "2026-11-02T10:51:20.692760+00:00",
+            "command": [
+              "ps",
+              "-axo",
+              "pid=,ppid=,pgid=,lstart=,comm="
+            ],
+            "pid": 15290,
+            "pgid": 15290,
+            "completed_utc": "2026-11-02T10:51:20.759573+00:00",
+            "exit_code": 0,
+            "reaped": true,
+            "group_absent": true,
+            "self_row_present": true,
+            "excluded_reaped_observer_pid": 15290
+          }
+        ],
+        "cleanup": []
+      }
+    },
+    {
+      "name": "positive_natural_owned_child_exit",
+      "start_utc": "2026-11-02T10:51:20.764453+00:00",
+      "end_utc": "2026-11-02T10:51:22.063466+00:00",
+      "status": "PASS",
+      "detail": {
+        "pid": 15293,
+        "exit_code": 0,
+        "events": [
+          {
+            "started_utc": "2026-11-02T10:51:20.767257+00:00",
+            "command": [
+              "ps",
+              "-axo",
+              "pid=,ppid=,pgid=,lstart=,comm="
+            ],
+            "pid": 15292,
+            "pgid": 15292,
+            "completed_utc": "2026-11-02T10:51:20.808719+00:00",
+            "exit_code": 0,
+            "reaped": true,
+            "group_absent": true,
+            "self_row_present": true,
+            "excluded_reaped_observer_pid": 15292
+          },
+          {
+            "started_utc": "2026-11-02T10:51:20.811271+00:00",
+            "command": [
+              "ps",
+              "-axo",
+              "pid=,ppid=,pgid=,lstart=,comm="
+            ],
+            "pid": 15294,
+            "pgid": 15294,
+            "completed_utc": "2026-11-02T10:51:20.849642+00:00",
+            "exit_code": 0,
+            "reaped": true,
+            "group_absent": true,
+            "self_row_present": true,
+            "excluded_reaped_observer_pid": 15294
+          },
+          {
+            "started_utc": "2026-11-02T10:51:20.934211+00:00",
+            "command": [
+              "ps",
+              "-axo",
+              "pid=,ppid=,pgid=,lstart=,comm="
+            ],
+            "pid": 15295,
+            "pgid": 15295,
+            "completed_utc": "2026-11-02T10:51:20.977928+00:00",
+            "exit_code": 0,
+            "reaped": true,
+            "group_absent": true,
+            "self_row_present": true,
+            "excluded_reaped_observer_pid": 15295
+          },
+          {
+            "started_utc": "2026-11-02T10:51:21.995409+00:00",
+            "command": [
+              "ps",
+              "-axo",
+              "pid=,ppid=,pgid=,lstart=,comm="
+            ],
+            "pid": 15297,
+            "pgid": 15297,
+            "completed_utc": "2026-11-02T10:51:22.058390+00:00",
+            "exit_code": 0,
+            "reaped": true,
+            "group_absent": true,
+            "self_row_present": true,
+            "excluded_reaped_observer_pid": 15297
+          }
+        ]
+      }
+    }
+  ],
+  "end_utc": "2026-11-02T10:51:22.872201+00:00",
+  "all_fixture_children_reaped": true
+}

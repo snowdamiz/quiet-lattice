@@ -1,0 +1,295 @@
+{"utc": "2026-11-01T22:50:08.060202+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend", "-t", "2", "--python-exit-code", "1", "-P", "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/trim_suits.py", "--", "ixari", "146000", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"], "script_sha256": "9abfc9d3a1a4107ac7925c29048fe13e8d29470475da6d31607351c6b57acfe4"}
+00:01.469  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+BlenderMCP addon registered
+ok ixari_suit1_LOD0 98338
+ok ixari_suit2_LOD0 104680
+ok ixari_suit3_LOD0 106320
+ok ixari_suit4_LOD0 96876
+Info: Saved as "ixari.blend"
+saved /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+{"utc": "2026-11-01T22:50:12.332559+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend", "-t", "2", "--python-exit-code", "1", "-P", "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/fill_bg.py", "--", "ixari", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ixari", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"], "script_sha256": "7ada8f864386e264fae65508bbd8b4c94a348328eda48463db5a79ab9954576e"}
+00:01.608  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+BlenderMCP addon registered
+fill: IX_Crystal_base 31.1% of texels filled
+fill: nothing to fill in IX_Crystal_normal
+fill: IX_Crystal_orm 20.6% of texels filled
+fill: IX_Eye_base 29.7% of texels filled
+fill: nothing to fill in IX_Eye_normal
+fill: nothing to fill in IX_Eye_orm
+fill: IX_Skin_base 40.2% of texels filled
+fill: nothing to fill in IX_Skin_normal
+fill: IX_Skin_orm 30.8% of texels filled
+fill: IX_SuitA_base 30.7% of texels filled
+fill: nothing to fill in IX_SuitA_normal
+fill: IX_SuitA_orm 24.9% of texels filled
+fill: IX_SuitB_base 32.5% of texels filled
+fill: nothing to fill in IX_SuitB_normal
+fill: IX_SuitB_orm 26.3% of texels filled
+Info: Saved as "ixari.blend"
+saved /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+{"utc": "2026-11-01T22:50:51.928181+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend", "-t", "2", "--python-exit-code", "1", "-P", "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/ao_floor.py", "--", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ixari", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend", "IX_Crystal=0.5", "IX_SuitA=0.4", "IX_SuitB=0.4", "IX_Skin=0.55"], "script_sha256": "1fa11113393f146defa5ed5ef10a31cf4752a23c459d374804c4dbacae2ecd97"}
+00:01.545  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+BlenderMCP addon registered
+ao: IX_Crystal_orm mean occlusion 0.45 -> 0.73 (floor 0.5)
+ao: IX_SuitA_orm mean occlusion 0.48 -> 0.69 (floor 0.4)
+ao: IX_SuitB_orm mean occlusion 0.41 -> 0.65 (floor 0.4)
+ao: IX_Skin_orm mean occlusion 0.75 -> 0.89 (floor 0.55)
+Info: Saved as "ixari.blend"
+saved /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+{"utc": "2026-11-01T22:50:57.889342+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend", "-t", "2", "--python-exit-code", "1", "-P", "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/fix_meshes.py", "--", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"], "script_sha256": "ccacb993cf4d0a3aaeea83b4fc4bfe8e0150f6d50bc9bba0fceff2b4011a29dc"}
+00:01.587  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+BlenderMCP addon registered
+fixed 8 ['_BodyS4_L3', '_Suit1_L2', '_Suit1_L3', '_Suit2_L2', '_Suit2_L3', '_Suit3_L2', '_Suit3_L3', '_Suit4_L3']
+Info: Saved as "ixari.blend"
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+{"utc": "2026-11-01T22:51:02.757126+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "--factory-startup", "-t", "2", "--python-exit-code", "1", "-P", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/validate.py", "--", "--family", "characters", "--report", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari-source-validation.json", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"], "script_sha256": "d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704"}
+00:02.125  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate .claude/pause/characters-resume/ixari.blend  (family characters, source .blend)
+  ixari / ixari_head1 [hero]  tris LOD0 84,668, LOD1 22,239, LOD2 7,734, LOD3 2,875  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_head2 [hero]  tris LOD0 85,104, LOD1 22,420, LOD2 7,921, LOD3 2,890  size 1.36 x 0.44 x 2.00 m
+  ixari / ixari_head3 [hero]  tris LOD0 86,274, LOD1 22,827, LOD2 8,256, LOD3 2,930  size 1.36 x 0.44 x 1.92 m
+  ixari / ixari_head4 [hero]  tris LOD0 84,930, LOD1 22,325, LOD2 7,787, LOD3 2,884  size 1.36 x 0.44 x 1.92 m
+  ixari / ixari_head5 [hero]  tris LOD0 85,964, LOD1 22,693, LOD2 8,095, LOD3 2,919  size 1.36 x 0.44 x 1.95 m
+  ixari / ixari_head6 [hero]  tris LOD0 85,104, LOD1 22,415, LOD2 7,898, LOD3 2,890  size 1.36 x 0.44 x 2.00 m
+  ixari / ixari_suit1 [hero]  tris LOD0 98,338, LOD1 27,372, LOD2 10,125, LOD3 3,272  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit2 [hero]  tris LOD0 104,680, LOD1 29,273, LOD2 10,732, LOD3 3,429  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit3 [hero]  tris LOD0 106,320, LOD1 29,786, LOD2 10,944, LOD3 3,439  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit4 [hero]  tris LOD0 96,876, LOD1 27,802, LOD2 10,655, LOD3 3,209  size 1.36 x 0.45 x 1.99 m
+  PASS  naming
+        ok    ixari.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    ixari/ixari_head1: LOD0 84,668 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head2: LOD0 85,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head3: LOD0 86,274 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    ixari/ixari_head1: 84,668 > 22,239 > 7,734 > 2,875 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head2: 85,104 > 22,420 > 7,921 > 2,890 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head3: 86,274 > 22,827 > 8,256 > 2,930 triangles; LOD3 3.4% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Bio (IX_Crystal): pbr: base colour, roughness, normal, AO, emissive
+        ok    Eye (IX_Eye): pbr: base colour, roughness, normal, AO
+        ok    Skin (IX_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ixari/ixari_head1: z extent 1.99 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: .claude/pause/characters-resume/ixari-source-validation.json
+
+1 of 1 file(s) passed validation
+{"utc": "2026-11-01T22:51:17.587954+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend", "-t", "2", "--python-exit-code", "1", "-P", "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/embed_save.py", "--", "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend"], "script_sha256": "2a75939cab25ca2829e3aa3c8b5747f295d4154459604abf55736fe1466869de"}
+00:01.694  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+BlenderMCP addon registered
+Info: Saved as "ixari.blend"
+embedded 70 scripts -> /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+IXARI_SOURCE_READY 2026-11-01T22:51:23.099630+00:00
+$ tsx packages/tools/src/art/cli.ts export -- characters --only ixari
+
+export assets/blend/characters/ixari.blend -> packages/client/public/models/characters/ixari.glb
+
+validate assets/blend/characters/ixari.blend  (family characters, source .blend)
+  ixari / ixari_head1 [hero]  tris LOD0 84,668, LOD1 22,239, LOD2 7,734, LOD3 2,875  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_head2 [hero]  tris LOD0 85,104, LOD1 22,420, LOD2 7,921, LOD3 2,890  size 1.36 x 0.44 x 2.00 m
+  ixari / ixari_head3 [hero]  tris LOD0 86,274, LOD1 22,827, LOD2 8,256, LOD3 2,930  size 1.36 x 0.44 x 1.92 m
+  ixari / ixari_head4 [hero]  tris LOD0 84,930, LOD1 22,325, LOD2 7,787, LOD3 2,884  size 1.36 x 0.44 x 1.92 m
+  ixari / ixari_head5 [hero]  tris LOD0 85,964, LOD1 22,693, LOD2 8,095, LOD3 2,919  size 1.36 x 0.44 x 1.95 m
+  ixari / ixari_head6 [hero]  tris LOD0 85,104, LOD1 22,415, LOD2 7,898, LOD3 2,890  size 1.36 x 0.44 x 2.00 m
+  ixari / ixari_suit1 [hero]  tris LOD0 98,338, LOD1 27,372, LOD2 10,125, LOD3 3,272  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit2 [hero]  tris LOD0 104,680, LOD1 29,273, LOD2 10,732, LOD3 3,429  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit3 [hero]  tris LOD0 106,320, LOD1 29,786, LOD2 10,944, LOD3 3,439  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit4 [hero]  tris LOD0 96,876, LOD1 27,802, LOD2 10,655, LOD3 3,209  size 1.36 x 0.45 x 1.99 m
+  PASS  naming
+        ok    ixari.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    ixari/ixari_head1: LOD0 84,668 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head2: LOD0 85,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head3: LOD0 86,274 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    ixari/ixari_head1: 84,668 > 22,239 > 7,734 > 2,875 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head2: 85,104 > 22,420 > 7,921 > 2,890 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head3: 86,274 > 22,827 > 8,256 > 2,930 triangles; LOD3 3.4% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Bio (IX_Crystal): pbr: base colour, roughness, normal, AO, emissive
+        ok    Eye (IX_Eye): pbr: base colour, roughness, normal, AO
+        ok    Skin (IX_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ixari/ixari_head1: z extent 1.99 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/reports/characters__ixari.blend.json
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:38 | WARNING: Armature must be the parent of skinned meshArmature is selected by its name, but may be false in case of instances
+17:51:39 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:51:41 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:51:42 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:51:43 | WARNING: There are more than 4 joint vertex influences.The 4 with highest weight will be used (and normalized).
+17:51:49 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:51:51 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+
+  145.2 MB with PNG textures; encoding KTX2 (6 at a time)
+  compressed 18 texture(s) to KTX2 (5 UASTC, 13 ETC1S): 144.5 -> 122.2 MB of buffers
+  meshopt (high, quantized): geometry 168.1 -> 8.8 MB; file 123.0 -> 44.3 MB
+
+validate packages/client/public/models/characters/ixari.glb  (family characters, export .glb)
+  ixari / ixari_head1 [hero]  tris LOD0 84,668, LOD1 22,239, LOD2 7,734, LOD3 2,875  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_head2 [hero]  tris LOD0 85,104, LOD1 22,420, LOD2 7,921, LOD3 2,890  size 1.36 x 0.44 x 2.00 m
+  ixari / ixari_head3 [hero]  tris LOD0 86,274, LOD1 22,827, LOD2 8,256, LOD3 2,930  size 1.36 x 0.44 x 1.92 m
+  ixari / ixari_head4 [hero]  tris LOD0 84,930, LOD1 22,325, LOD2 7,787, LOD3 2,884  size 1.36 x 0.44 x 1.92 m
+  ixari / ixari_head5 [hero]  tris LOD0 85,964, LOD1 22,693, LOD2 8,095, LOD3 2,919  size 1.36 x 0.44 x 1.95 m
+  ixari / ixari_head6 [hero]  tris LOD0 85,104, LOD1 22,415, LOD2 7,898, LOD3 2,890  size 1.36 x 0.44 x 2.00 m
+  ixari / ixari_suit1 [hero]  tris LOD0 98,338, LOD1 27,372, LOD2 10,125, LOD3 3,272  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit2 [hero]  tris LOD0 104,680, LOD1 29,273, LOD2 10,732, LOD3 3,429  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit3 [hero]  tris LOD0 106,320, LOD1 29,786, LOD2 10,943, LOD3 3,439  size 1.36 x 0.44 x 1.99 m
+  ixari / ixari_suit4 [hero]  tris LOD0 96,876, LOD1 27,802, LOD2 10,655, LOD3 3,209  size 1.36 x 0.45 x 1.99 m
+  PASS  naming
+        ok    ixari.glb: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    ixari/ixari_head1: LOD0 84,668 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head2: LOD0 85,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head3: LOD0 86,274 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 8 more
+  PASS  LODs
+        ok    ixari/ixari_head1: 84,668 > 22,239 > 7,734 > 2,875 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head2: 85,104 > 22,420 > 7,921 > 2,890 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head3: 86,274 > 22,827 > 8,256 > 2,930 triangles; LOD3 3.4% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Bio: pbr: base colour, roughness, normal, AO, emissive
+        ok    Eye: pbr: base colour, roughness, normal, AO
+        ok    Skin: pbr: base colour, roughness, normal, AO
+        ok    ... 13 more
+  PASS  scale references
+        ok    source: assets/blend/characters/ixari.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    ixari/ixari_head1: z extent 1.99 m within 1.5-2.4 m
+        ok    ixari/ixari_head2: z extent 2.00 m within 1.5-2.4 m
+        ok    ... 8 more
+RESULT: PASS (5 of 5 checks passed)
+  report: packages/tools/blender/reports/characters__ixari.glb.json
+  wrote packages/client/public/models/characters/ixari.glb (44,323,840 bytes)
+
+export characters: 1 of 1 source(s) exported
+IXARI_EXPORT_READY 2026-11-01T22:54:56.439397+00:00

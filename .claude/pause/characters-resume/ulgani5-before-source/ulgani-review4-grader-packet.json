@@ -1,0 +1,1224 @@
+{
+  "read_only": true,
+  "purpose": "Fresh independent FOURTH visual grade of the current Ulgani component. Read only task/spec/art bible/rubric/artifacts, not worker chat, operational handoff or authoring rationale. Do not edit assets, self-assign a fifth revision, regrade frozen peers or mark the whole three-species task complete.",
+  "task": "P1.E05.T01 (art) Shared skeleton and three base bodies \u00b7 deps:E14.T02 \u00b7 spec:DESIGN5,19.2 \u00b7 done: assets/blend/characters/ with one skeleton, Thalune, Ixari and Ulgani bodies (LOD0 60\u2013150k tris,4 LODs,4k PBR), facial blendshapes, six head or crest variants each, four suit sets each. verify: pnpm art:validate -- characters; turntables; review scene.",
+  "component": "Ulgani, fourth review; shared lineups provide frozen-peer context only.",
+  "round": 4,
+  "worktree": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "spec_refs": {
+    "design": "docs/DESIGN.md sections5 and19.2",
+    "art_bible": "docs/art-bible.md",
+    "rubric": "docs/IMPLEMENTATION_PLAN.md section0.10.2",
+    "grader_input_rules": "docs/IMPLEMENTATION_PLAN.md section0.10.3"
+  },
+  "source": {
+    "path": "assets/blend/characters/ulgani.blend",
+    "sha256": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+    "bytes": 71272778,
+    "commit": "c8a90a0eb8a55529099e34bfd797c3e77533cd71"
+  },
+  "export": {
+    "path": "packages/client/public/models/characters/ulgani.glb",
+    "sha256": "14d386eefd291892f3b3f2f0072c640e37a6f267fe73e4a4cb757c49db1caece",
+    "bytes": 48894624,
+    "commit": "c8a90a0eb8a55529099e34bfd797c3e77533cd71"
+  },
+  "cpu_artifact_checkpoint": "d3b36e44e2958fdf6b2eecd7bc5658280e4c1391",
+  "inventory": {
+    "path": "assets/renders/characters/validate/ulgani-review4-inventory.json",
+    "sha256": "96dffca25e1a7224e585e9027ef0d6bf475c77c74340b358c4d68771ee131643",
+    "bytes": 69172,
+    "artifact_count": 179
+  },
+  "validators": [
+    {
+      "path": "assets/renders/characters/validate/characters__ulgani.blend.json",
+      "sha256": "cae00a9732eeda1505aca62ae3d28f0e527edd53dbaca68e6448bb3b500d5563",
+      "bytes": 12195,
+      "status": "PASS",
+      "checks_passed": 5,
+      "fail": 0,
+      "warn": 0
+    },
+    {
+      "path": "assets/renders/characters/validate/characters__ulgani.glb.json",
+      "sha256": "1977aa5fc24d4441bf8c7118b6a7c00263fc808b2914609c8b17cc1db0bdf67b",
+      "bytes": 14919,
+      "status": "PASS",
+      "checks_passed": 5,
+      "fail": 0,
+      "warn": 0
+    }
+  ],
+  "capture_run": {
+    "path": "assets/renders/characters/validate/ulgani-review4-run.json",
+    "sha256": "2ad4c1eab0c4aa12de31294ce238a32ee2db5934c6d146d28719337d9fea082e",
+    "bytes": 58222
+  },
+  "performance_context": {
+    "path": "assets/renders/characters/validate/ulgani-review4-performance-context.json",
+    "sha256": "f09388a6144d926a9bd6f3467faf82454f440d6e66ce0b9340f54e98cf9d5457",
+    "bytes": 81753
+  },
+  "placement_context": {
+    "path": "assets/renders/characters/validate/ulgani-review4-placement-context.json",
+    "sha256": "9c47003c16ecde62d742a790042234df2e3b58b3bd7918247c3b2b119eca872d",
+    "bytes": 21692
+  },
+  "capture_facts": {
+    "variants": 10,
+    "lighting_records": 30,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "graphics_api": "Metal",
+    "page_errors": 0,
+    "raw_reliable_false_records": [],
+    "qualification": "All30 nominal flags true is not a performance pass: T13 attribution remains unresolved. Host load and placement limits are recorded without pair-level attribution."
+  },
+  "required_artifacts": [
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head1_turntable.png",
+      "sha256": "ec3ea8f3610d37fc87051a2d4f98789d57bf26b26d50180f2ec3db727846df00",
+      "bytes": 4276337,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head1_materials.png",
+      "sha256": "21d8fce793788673801e23b1389f2da480af3eb70d0a9c5ecbf80eb68a858820",
+      "bytes": 751418,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head1_materials.txt",
+      "sha256": "4a6f250bf782ce4b0b3169c3730131406e95528b413aa1ffedfb0956c60def9b",
+      "bytes": 270,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/noon-lush_lod0.png",
+      "sha256": "8c4817a4d7a1d184db515e4210851e5c0cb151be585b360a9e530c889e37cef5",
+      "bytes": 4295696,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/noon-lush_lod2.png",
+      "sha256": "b3da8f89074b30c808ab84b0492e66016ebbd2f201f2dee6c83ed79f0c1666b0",
+      "bytes": 4296965,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/night-exotic_lod0.png",
+      "sha256": "73cbe8a37c804e2a0e927ea4e2aa200acbadf68ac58f5ffee35edff359d5b7fa",
+      "bytes": 3186822,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/night-exotic_lod2.png",
+      "sha256": "769267173af60e00307a18dc0c9433496fe37f9cd4f7e93fae7dfeb3fc4eac7b",
+      "bytes": 3185339,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/open-space_lod0.png",
+      "sha256": "12526c585cc21eb44c211fec8ffcc4f178e1aacfb3f5a4e493575b152f0f0c3d",
+      "bytes": 2905450,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/open-space_lod2.png",
+      "sha256": "197a619d0a0879f49b939bbbeef39214bbacef7cf3df1b345af28538cc08671a",
+      "bytes": 2909766,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/wireframe_lod0.png",
+      "sha256": "37a8c2456feb71209cf86e44f6028a8912016b68d290b81e70aef190b03726c7",
+      "bytes": 4408236,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/wireframe_lod2.png",
+      "sha256": "06c4107fba9a4d9e67293faae20a9f5ea6f14fdcd3202020845db6b210c372e3",
+      "bytes": 4351538,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/overlay.png",
+      "sha256": "37553a8fcf211e25b21a5c67fcbc471579f7fa2b82479d946ddc337635338b5c",
+      "bytes": 4284881,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/far_lod2.png",
+      "sha256": "f81cb0b4f4e7477780412671b8390796a43b41836e49fbd9e2020e52eb8ea9d1",
+      "bytes": 4387440,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/far200_lod2.png",
+      "sha256": "fab251aadf464e6d63d877ce24becd3cffe17dea6fdb3470d4cd01cc8dd907ae",
+      "bytes": 4260662,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/perf.json",
+      "sha256": "b685cbd1e203705881f1b2d606a44c99b48977c9793ef7867f1b37db0c502dbf",
+      "bytes": 8868,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head1/sheet.png",
+      "sha256": "a1b98b3a990fc48f262e92cc4b230ff60a2fe44d438e38aed4116fc083b176e3",
+      "bytes": 8869113,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head2_turntable.png",
+      "sha256": "4c1c2985ae8b8d67e1fcf6770e1350e7b83cfeafcf02e4c3f61a8c7835aad444",
+      "bytes": 4242217,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head2_materials.png",
+      "sha256": "822e979967a78744c8e743f47ef5d2f5380ae113c6a2a57bac687fd3ffcce87e",
+      "bytes": 732239,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head2_materials.txt",
+      "sha256": "26b27a7465b0b4df4050d345ad6779043b69ad97ea881acd9a0000cb82941d70",
+      "bytes": 270,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/noon-lush_lod0.png",
+      "sha256": "d552a42b2368cd779b9a2a0f2b38ac8fbfa9d98471f970a51fe1cb1fac82ed65",
+      "bytes": 4303476,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/noon-lush_lod2.png",
+      "sha256": "e2f925cb5ecee3f8821b1cb93d7f7b8f70bc8f498420feeb21ec90fefaaad831",
+      "bytes": 4300546,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/night-exotic_lod0.png",
+      "sha256": "38886423d4b191b8672f5332f69e31e80d6ba7adf7744fd539121fa32ccd502e",
+      "bytes": 3186622,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/night-exotic_lod2.png",
+      "sha256": "7bdc94585f70155bd5c67f0d7655f3492cad15b86af647b8cf6f0df724226c34",
+      "bytes": 3181322,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/open-space_lod0.png",
+      "sha256": "a5c88d84c873381413196ef9ce2503849349a46182c8290b466f177179152157",
+      "bytes": 2909776,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/open-space_lod2.png",
+      "sha256": "4e06c5770ce73e66ce7421cb67d45db3c2ea86ecf217c33b87015b766fb44b74",
+      "bytes": 2903824,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/wireframe_lod0.png",
+      "sha256": "29bd105fdd67f84b991ec8ab24db5539daa5e5a8249473290683d908116fba5c",
+      "bytes": 4419806,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/wireframe_lod2.png",
+      "sha256": "a0114f255aff33f736c8a62e8ba365867bfdd248be24edd6ea74e4388e2a17a7",
+      "bytes": 4354195,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/overlay.png",
+      "sha256": "ce34cccebe9a8093752411a339b8dcd520a56d60a072066ca19a3a87c5a9736d",
+      "bytes": 4292379,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/far_lod2.png",
+      "sha256": "a5548f90b38b83a06c3740683272243fd46a53bc2a19b44cba789244436eb8a4",
+      "bytes": 4386009,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/far200_lod2.png",
+      "sha256": "f0486873c7b7c4cf0b959db20de33a8764f8222ccfbcd61448b9714695232eb9",
+      "bytes": 4261309,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/perf.json",
+      "sha256": "c1f53425966deceef2509b48828780f4c7b4966997383a5e00838a5f0a7e0286",
+      "bytes": 8862,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head2/sheet.png",
+      "sha256": "fbfa281cf4dc6e5c79cc5b6620217f3c9d871f9c1d8e8dec0466a73d90fd98f6",
+      "bytes": 8757456,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head3_turntable.png",
+      "sha256": "292ec58ab6489b4efe210c13232c78a4941a34645a3abf6ae9a87a6a95efc4f6",
+      "bytes": 4299898,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head3_materials.png",
+      "sha256": "153c0b6d8459528d337e6b773fa2719ccda8befe1ab65f8c9334d9f7f5f3692e",
+      "bytes": 747963,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head3_materials.txt",
+      "sha256": "0d082a77bb55bb3695deb60f1c87bb47d3bf7dbab4371ffe53ee05ad7eb624f5",
+      "bytes": 270,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/noon-lush_lod0.png",
+      "sha256": "f3789ed5b2d29dedba53d30eb635ee04ddc8a9df229e0cf1f05b06e72162055f",
+      "bytes": 4303176,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/noon-lush_lod2.png",
+      "sha256": "fe314d290e91e40e727aecdbf960dfdf18f575235f44414d455d73016c8a1b9c",
+      "bytes": 4296860,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/night-exotic_lod0.png",
+      "sha256": "7c042744dbc7b8c4c2b64020a7f7e97f7c500d03a2af0b458cff69d0231fa4a7",
+      "bytes": 3190483,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/night-exotic_lod2.png",
+      "sha256": "c667e1a30055d73b2c65bc53e4dee88c21eda4b09982a887a6173cb457d66aa0",
+      "bytes": 3177609,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/open-space_lod0.png",
+      "sha256": "221be769fdc6108338a3befe491bba087df1a5566fc40039118532b56db5376d",
+      "bytes": 2908096,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/open-space_lod2.png",
+      "sha256": "3c836819abab1f69562194dcd8415ea5ecea2697348efe4df2ee5a0a12f530fb",
+      "bytes": 2901654,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/wireframe_lod0.png",
+      "sha256": "3623e15b95bffd7dae06129b4effd45e4477abdba8601d9daa83370454d50aa2",
+      "bytes": 4414512,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/wireframe_lod2.png",
+      "sha256": "c6f87657546310f950fb90bbec247c42a3cde25acb4999f83b96878df6984047",
+      "bytes": 4348171,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/overlay.png",
+      "sha256": "8e7ef002622c52deac7c64b1379f73a144e0e0faaf310cfb2a2b68b45b650721",
+      "bytes": 4292572,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/far_lod2.png",
+      "sha256": "0a93907687759d9df8570807d567a59b6a3b919f745d0d6fd8908f814d06cd1e",
+      "bytes": 4387892,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/far200_lod2.png",
+      "sha256": "ad77643ac1796d2e8c412458093f6f138d3bed42ad9308506c7ce44a9e6c967f",
+      "bytes": 4260472,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/perf.json",
+      "sha256": "02c50faab6bfde3352d5c4e5aff0bdf8f48bfa72e0aa0ee1a79ce68b2ae68457",
+      "bytes": 8868,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head3/sheet.png",
+      "sha256": "79b1990b34bd1268d1823c0b2fb72452a1c2a1a5cf2b5c19bcec2d912e212005",
+      "bytes": 9006164,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head4_turntable.png",
+      "sha256": "590ca5a42039a040d3260b671697a0b38fd190b14238a31c2944f124b1bed799",
+      "bytes": 4298449,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head4_materials.png",
+      "sha256": "a2380787e0fe3fd42aa0a3a26803e9e4f24ee66f2971998880b7e94f6a23adf7",
+      "bytes": 750944,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head4_materials.txt",
+      "sha256": "6355f8e81612c00c3356f2421af2e3877cbe8279f08b9fcf5374311f8a904e4e",
+      "bytes": 270,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/noon-lush_lod0.png",
+      "sha256": "19e384051d0174c8bb6ed506feabb6f9dca9f5a783ad69ef5b7abc854b21f888",
+      "bytes": 4312405,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/noon-lush_lod2.png",
+      "sha256": "07bbb9427e8ac1c6fb165f89235093b5c56b74c875e9f417420dfe1ceeef3432",
+      "bytes": 4307236,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/night-exotic_lod0.png",
+      "sha256": "54f9bfcba6782448f91d0deb0f69c9403f2d4aba0bb38d51fe5ceec86694363b",
+      "bytes": 3184455,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/night-exotic_lod2.png",
+      "sha256": "9364b297b8d252aa1ef4d4e3d81362b0bf8463bc639d438ca2f1fd493a3889dc",
+      "bytes": 3172500,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/open-space_lod0.png",
+      "sha256": "cb2ced5caf9ee5e63fc3b8001d2240e37271d405b1110a571eed0ecdfb794c5c",
+      "bytes": 2911823,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/open-space_lod2.png",
+      "sha256": "17db9ec438e613c004bb35d6f0ace2c91dfb2fad54c532609c0decf2befe74df",
+      "bytes": 2904935,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/wireframe_lod0.png",
+      "sha256": "9dbda33a7f98dda1f94df15509a0716504c7b0783d6f06a254f43cc6bfd92f77",
+      "bytes": 4430398,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/wireframe_lod2.png",
+      "sha256": "31e0f9dfd4f994c244fb35739c1fac60673f2e3aaac390adec49787240705dd5",
+      "bytes": 4360194,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/overlay.png",
+      "sha256": "134f951012c254014832a7f14ba9f4f93807209b65fecbfe014b84cbace86032",
+      "bytes": 4301522,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/far_lod2.png",
+      "sha256": "e577c9f271d25da7acfc9bb44aa1b0d336c9c78aeb2dbcd5eb6d8850879ef1fb",
+      "bytes": 4387866,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/far200_lod2.png",
+      "sha256": "11fb3f1f1c607d1ddf21c1c3d11d687f129f9b161fc40fab3c9de36ed8950991",
+      "bytes": 4259058,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/perf.json",
+      "sha256": "3da8c9943fc74ab528ba37a664db5b7d3a00f8a3e7cd84dafd99ebc62c55a912",
+      "bytes": 8860,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head4/sheet.png",
+      "sha256": "b4f88bc7c9afd0c56495f5fc47e4adbc384e6a4893fc0d7a1113963c31c3f799",
+      "bytes": 8712289,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head5_turntable.png",
+      "sha256": "cb089fd385243346efd955e7c2ea37be9fba46ad4be0f5e1c1d2c2a5036b8b15",
+      "bytes": 4209600,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head5_materials.png",
+      "sha256": "7b556878c9aa311f09d41f569df49381d1d03ccb690eb2a35c3441e44138fef2",
+      "bytes": 745391,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head5_materials.txt",
+      "sha256": "218eac2cfdfc62021b8ea13112b3a74185165e6163c14b03d798b0a4ce57c43c",
+      "bytes": 270,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/noon-lush_lod0.png",
+      "sha256": "c3976db13b90fdf3123c14bf499920521669f3fb10e5d91b4afc93edbe539e74",
+      "bytes": 4302611,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/noon-lush_lod2.png",
+      "sha256": "97087ee3950460c0db34d2a089dc94999241c9fba130f404b627a359f247b57a",
+      "bytes": 4300343,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/night-exotic_lod0.png",
+      "sha256": "3004ffb66c87ccb715bd3ca33d6009b76ff23c9bffffd845f31fc2f7eac2505d",
+      "bytes": 3173265,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/night-exotic_lod2.png",
+      "sha256": "78d0425f092a0aa28200f333f7cee22b6b4834c92d9af914c4e55035c5b925d6",
+      "bytes": 3168230,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/open-space_lod0.png",
+      "sha256": "c81deb1796d905449567e1af7baa3a5df77663fe50238ee037c7203dc01842cf",
+      "bytes": 2900743,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/open-space_lod2.png",
+      "sha256": "252d32360a88f15a84d1a87af206355377e808ae9cb9b281aebb2ff73f61e478",
+      "bytes": 2897300,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/wireframe_lod0.png",
+      "sha256": "fab44491513c17f747f3256107af2ee8e5179643d28fba6f20eb54bb50ec95d8",
+      "bytes": 4421685,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/wireframe_lod2.png",
+      "sha256": "a14c2a2bbb4030887336828c18737fb34c15e93a1e673802e43bcc5240f08777",
+      "bytes": 4355844,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/overlay.png",
+      "sha256": "14da532415e0ea0a212d8c9fd9399f99f9496d7063fc33f9a057782647bbfae9",
+      "bytes": 4291967,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/far_lod2.png",
+      "sha256": "4d13085aed163c82b764efbe8258a5500945bbf942123c40d002bfc5abc1d09e",
+      "bytes": 4387582,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/far200_lod2.png",
+      "sha256": "540311f23c8cea68fb6cc18e6c9e41bdb34abf573d50bf5c3649f77691814cb9",
+      "bytes": 4259962,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/perf.json",
+      "sha256": "58ebb859f696d755b34e6512556ca96915cc9f270e97583b883c36a618eb4806",
+      "bytes": 8840,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head5/sheet.png",
+      "sha256": "12b514bc608ed09ab5aeb505bc7a894a18c695dc440c5ae3d0eb305f0bb0f123",
+      "bytes": 8693427,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head6_turntable.png",
+      "sha256": "514360a651bd00164240c2f8aa41b812470abb84ac0f04aff837e3ef993a104c",
+      "bytes": 4295852,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head6_materials.png",
+      "sha256": "333181284df826ad717c1a1abed8554933548f24ac8d7a371e24a9e54b8d5508",
+      "bytes": 750670,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_head6_materials.txt",
+      "sha256": "088d40d20799f94ae94d3cc9b4814a6a8e7c8cb691fc06044fc54dcb58cc5415",
+      "bytes": 270,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/noon-lush_lod0.png",
+      "sha256": "32a314fa7b607821687f07e1850d058d2964e84bcbe0d068e278a5886c45420a",
+      "bytes": 4302480,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/noon-lush_lod2.png",
+      "sha256": "6436121a10596ab048344a12e309a2d355d30a61352901a35a29fbdf09d72004",
+      "bytes": 4298919,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/night-exotic_lod0.png",
+      "sha256": "57d7f6df8c5f6f4952419a0dfbeee3dd1ae09000cadd1d2af5424f3a76136023",
+      "bytes": 3183980,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/night-exotic_lod2.png",
+      "sha256": "e25b740df8d25c30ea0d5e1e284f87dad67e2f397c937f900d711743a2f7f2f0",
+      "bytes": 3175900,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/open-space_lod0.png",
+      "sha256": "6b6c91c7ab20e4e147fc5573978cd1ec596d8299bdf42cd1d6eb9bef8b31b8f7",
+      "bytes": 2913221,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/open-space_lod2.png",
+      "sha256": "5a7d6abe9214223db55058d69f30dc7296b68d43100a6d96cdf23fa2b929eff5",
+      "bytes": 2907091,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/wireframe_lod0.png",
+      "sha256": "4b161cca7f488c8b9e52f6c2e6099f35526e32c26d542e9d6e9badd9a854a077",
+      "bytes": 4418018,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/wireframe_lod2.png",
+      "sha256": "e1d65fa1b171220e8a813db770e3787aa6daba5eebdcea64a3afacd07c3f5935",
+      "bytes": 4353252,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/overlay.png",
+      "sha256": "36824d06317ed17c4e1c9264a82187105eec32f67080b530bb38d8c51a7c314c",
+      "bytes": 4291920,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/far_lod2.png",
+      "sha256": "ea690c03313e68c05a2dca8c7b798ffc8ccdbb48095f1a0ff7bc4f66956d8af2",
+      "bytes": 4386902,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/far200_lod2.png",
+      "sha256": "e62c21f0fbc971b46b75a5309e30a93f36156c2d4e049f266387fb028a3d088c",
+      "bytes": 4260569,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/perf.json",
+      "sha256": "bf1afecf37b480ce75aef3825eb490725abdba2e96aab4dc7e2394b52bcea3ce",
+      "bytes": 8856,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_head6/sheet.png",
+      "sha256": "ae62b14881db3672dc37f94026caf3a19d72eef4e4dbaaf3c939f7be1624cd16",
+      "bytes": 8919196,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit1_turntable.png",
+      "sha256": "bda50adbd47d18a21d3764561adb2d16a66fa5a452d5040e247c7477a97225c9",
+      "bytes": 4472133,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit1_materials.png",
+      "sha256": "b2c558a1dc5748d7f017ff0ede1dea639cefd8f3d34e4ecd2901394f8625a9fc",
+      "bytes": 1033091,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit1_materials.txt",
+      "sha256": "9b77f3346b51e0cb09822e0e43a9aabc9ea620b185c60d0e41c39cdab9e37c9c",
+      "bytes": 361,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/noon-lush_lod0.png",
+      "sha256": "eb16e1143e905709f07b622618258ccb6d1a2808580d701ea7efd5cd8868e281",
+      "bytes": 4310440,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/noon-lush_lod2.png",
+      "sha256": "1fe4b84b81d6ac76ec0c90439f191c20f2245fb75514235286faa896c6baadcb",
+      "bytes": 4310620,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/night-exotic_lod0.png",
+      "sha256": "ff1095b3252529de0f25ca59702167fb2ac9d9197a750c0f2fc1895eab7e757f",
+      "bytes": 3206969,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/night-exotic_lod2.png",
+      "sha256": "6596f8f1ffe76e038ae3c32a70c7cbb523113bd3236e0c5c01be78e8750eb066",
+      "bytes": 3205442,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/open-space_lod0.png",
+      "sha256": "0905ee3f8ad1d03c5b43f007b0350442f50e71d1cfb07c184b2ddbc7eea43164",
+      "bytes": 2942211,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/open-space_lod2.png",
+      "sha256": "53cf7f05af1900f98a221eea7a6f90cc56a286b675f21ce1b42daa5f1f2611c5",
+      "bytes": 2947111,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/wireframe_lod0.png",
+      "sha256": "f7f3c546c7f31b1af41b0945f6762faaa07422da5d8206494a0738abf6ec0b3a",
+      "bytes": 4417274,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/wireframe_lod2.png",
+      "sha256": "c7fca2922e980a6fca0130b0b441bfdd638d6feb6544bdbb6446cc5015065d9e",
+      "bytes": 4366182,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/overlay.png",
+      "sha256": "12ae73b0578b85d46e198764296419d815d7600208582fc7f397bb4adde88d11",
+      "bytes": 4299106,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/far_lod2.png",
+      "sha256": "be102f37096ed7266d9f8eecd4782048ebae2fbc10c1987e0fdc7b9cd1b71a6a",
+      "bytes": 4388177,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/far200_lod2.png",
+      "sha256": "bcabf38061b23f12e89d1f0a56c2725a7980526f46ff07271c73d6466d28fc18",
+      "bytes": 4260529,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/perf.json",
+      "sha256": "05878509ada98528a7d259eab102224b7e4b489cf6c4e731e5d12245dd9b499b",
+      "bytes": 8939,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit1/sheet.png",
+      "sha256": "5a08b68c3b85ee699a53554ba32f00c01e91ae3a6ff44582a3bb03d5322990c2",
+      "bytes": 8945993,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit2_turntable.png",
+      "sha256": "e54b9e74a8a79c40d709051eb92f2fe997cc9f67c328bb43edac5017bbe80c0d",
+      "bytes": 4523376,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit2_materials.png",
+      "sha256": "9963939ad8140e6240e837e875c885ffc0d86aa9c8e580fde3a2b46c89e1e20a",
+      "bytes": 1033411,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit2_materials.txt",
+      "sha256": "7a5702d47cb033dc5a885ae33bdbdb5f93ad94bbb6d91cdcd35ebf6e00fff6c6",
+      "bytes": 361,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/noon-lush_lod0.png",
+      "sha256": "b8b8f4ab22985b0e1bc95d1266428a27254acb5522d337dbfe090ab736c51c75",
+      "bytes": 4324001,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/noon-lush_lod2.png",
+      "sha256": "dae019a703608ba365e24bbd0f237f60ad1c420125763e02c77fb488c0a06988",
+      "bytes": 4324762,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/night-exotic_lod0.png",
+      "sha256": "7e962b2641b9ebd87c039e83bec665452ac80109ce3a986ce190c29cc38ee1fb",
+      "bytes": 3213560,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/night-exotic_lod2.png",
+      "sha256": "c1f01b97bb3d08123aaa4a540e447a5777cb36f8d6b07014633d763cd1cdf0d9",
+      "bytes": 3212985,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/open-space_lod0.png",
+      "sha256": "9f17a0f3c2c15de06e0b387ea49e27a49743932baf4dda32827a515c8803d988",
+      "bytes": 2956320,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/open-space_lod2.png",
+      "sha256": "09d91af55d53de26bfae6170c3ab740c5bc0829678b1128afbd21f897bc5638a",
+      "bytes": 2958351,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/wireframe_lod0.png",
+      "sha256": "c43811cd741f205221256c0deb61f7c03a085d680defe402a0e625163fdb6d35",
+      "bytes": 4426936,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/wireframe_lod2.png",
+      "sha256": "bf4842b211a841b96e953724c2fd64e8e21eccc63ebe909a91adf5361298f4b1",
+      "bytes": 4380458,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/overlay.png",
+      "sha256": "8c2460cf70b6b9971d8d7e066bc110b9f120183be4a32a7929e198c51aecbdbb",
+      "bytes": 4312966,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/far_lod2.png",
+      "sha256": "8c3e1f6283c8144d6567044f4c1417d5c7b4c1ebbd28774cf0348feea19baa01",
+      "bytes": 4387343,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/far200_lod2.png",
+      "sha256": "587dc56c1c4482266d508dc0217ebb21af3ad99250b414e9fe7cdf909047bb32",
+      "bytes": 4260093,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/perf.json",
+      "sha256": "0ddea14c1dfd5262e9686c03b099d79c1a7c2b075313052645b55ed51d26acd2",
+      "bytes": 8944,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit2/sheet.png",
+      "sha256": "ac7dc98cc209ad38cabb29899394e558bfd944bf08cbd628ef65d1e9e8c5da00",
+      "bytes": 8954690,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit3_turntable.png",
+      "sha256": "38a2dd31f1e50ad4b7291b8f4fdb7a170427039c500b8bca4a4ca29f07ce1e69",
+      "bytes": 4661963,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit3_materials.png",
+      "sha256": "6ae07dce45f524e9b1d9fd830666d79ef0b234c2be1c635fc30ab4dfc2fd6ac2",
+      "bytes": 1005360,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit3_materials.txt",
+      "sha256": "666f00c6483a3dddbe8dfc3766efad6c3ed9692ccd19134daf909462c9b4e64b",
+      "bytes": 361,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/noon-lush_lod0.png",
+      "sha256": "e510cfbfaaccc6567ad21b521482f7ec7de2707c023460b8bb2c5b461bebdd02",
+      "bytes": 4331433,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/noon-lush_lod2.png",
+      "sha256": "5f4cd152f7293abb90a726eecc46599fba87cb070dfe92eca1525f680eb84638",
+      "bytes": 4330544,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/night-exotic_lod0.png",
+      "sha256": "e7edc587a79c85422e1805e9f444cda906ac979fd5c2ac757c9abb99794006d1",
+      "bytes": 3221356,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/night-exotic_lod2.png",
+      "sha256": "fbe102f1efe01d15a75f1e1048a8ddc6183dc0bcaf939fd791bda8c58f5bfec2",
+      "bytes": 3218937,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/open-space_lod0.png",
+      "sha256": "4767c2806c8e9a01382cc23bde7bef920e6f88f7ed9c940363e311d2a2e00b1c",
+      "bytes": 2981082,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/open-space_lod2.png",
+      "sha256": "0c84e488fbf3cbc79b111d3a1c3d96e79f6bb821f9ca85d6d88a94e034c13a30",
+      "bytes": 2984578,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/wireframe_lod0.png",
+      "sha256": "97180bf64d6d0d2edeb28619fb231f26abee16569c781a0579a7486652a2d480",
+      "bytes": 4427324,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/wireframe_lod2.png",
+      "sha256": "d28781da35f972bd53c3cc3d168e4aa4be6d3bd1d13f5c363e9c15dbf2851060",
+      "bytes": 4386117,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/overlay.png",
+      "sha256": "6d3a57e76857fe534fc42f9848ca6352e8147de9551782a704f3ec3f2ff56bb0",
+      "bytes": 4320495,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/far_lod2.png",
+      "sha256": "a44d18702fe987f837774f7f9ffb1dffe0fd4137fb5868023c6a02f8f17b734e",
+      "bytes": 4387861,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/far200_lod2.png",
+      "sha256": "ca62cbca48af43f60206e9dc94b60109569ce7f181c153c5004cd77b6e6ccc4e",
+      "bytes": 4260468,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/perf.json",
+      "sha256": "9568ca1c3ec73f28f2d030850717570fe4919b973c661bf55204992c11370aaa",
+      "bytes": 8939,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit3/sheet.png",
+      "sha256": "8e3b85d5a4e7077e9a3283ae010732c476b320fc2b508121fb8ed721ec9df19c",
+      "bytes": 8997077,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit4_turntable.png",
+      "sha256": "89fd00eb500f253f715ad4aa6119a4a2e32dda3ef59aad19086a8d683aacd577",
+      "bytes": 4620935,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit4_materials.png",
+      "sha256": "b4aa2ddd2c903df180f2e1029c969df1f1db44e6c7959f25b900f28cb1a83634",
+      "bytes": 1006649,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_ulgani_ulgani_suit4_materials.txt",
+      "sha256": "32221a09b14278877b40d73ddaef06b0eac9b236bf71cd99ab419c72c4a48682",
+      "bytes": 361,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/noon-lush_lod0.png",
+      "sha256": "9b17cf388202c95035e824f53163fc9d9fb42c2bef2727410c80c35064d44de7",
+      "bytes": 4324448,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/noon-lush_lod2.png",
+      "sha256": "437f8421fd717dbd0838ed10904897ba5445b453546a34c760f9ecd7c260eeec",
+      "bytes": 4324360,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/night-exotic_lod0.png",
+      "sha256": "f9d0780afcc8581ec1199385db757e13718001f1ada8f8d445ad1ba720cbd0d8",
+      "bytes": 3215922,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/night-exotic_lod2.png",
+      "sha256": "d6c19fe5c40813cb6910c9662b9d0329811c7da49a2c7384533cfee55e1531d1",
+      "bytes": 3214785,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/open-space_lod0.png",
+      "sha256": "2b858c8d500361cab0322565cd9474fc86e8387af9d383a3131938fdcf9fa2ef",
+      "bytes": 2965986,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/open-space_lod2.png",
+      "sha256": "99baaa9cea3ed36bc4df65a8cc02f9b1f0dd25ba311a00ed25e8a09ae79a34db",
+      "bytes": 2969987,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/wireframe_lod0.png",
+      "sha256": "d2a8da0523f97fcdc8a0fc9bb775ed54933403d36444782088c4fe5fd7d72eb6",
+      "bytes": 4421506,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/wireframe_lod2.png",
+      "sha256": "c619eb912f298591be800e680fc4363da6d35fc13bd4990d7c5eb47f58974056",
+      "bytes": 4378337,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/overlay.png",
+      "sha256": "c23cd859d8d63fac9d764af71e29c4d9020f178be8117a1b936c7135cc48006e",
+      "bytes": 4313127,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/far_lod2.png",
+      "sha256": "76e7aa78eaa7fd22182a68f2bc1d199d419aa8851e7a8aa280fd8cdb9ae91826",
+      "bytes": 4387708,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/far200_lod2.png",
+      "sha256": "49a68c161460dbd116df5704f6dc8d9ba6e50f8d34128a6de21c38636d91c6a9",
+      "bytes": 4260568,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/perf.json",
+      "sha256": "ef04d45f364eae624af3840dee8a58b31430bb23c0bf6a3f93d9b5733c1dee43",
+      "bytes": 8937,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani/ulgani/ulgani_suit4/sheet.png",
+      "sha256": "eab2df2cf51f959d1bb1156e5538dc4b0cf33882e535e86e485afe539a4a2616",
+      "bytes": 8973438,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_turntable.png",
+      "sha256": "c9c824d041e655eff041db472fd21a0562babef67d9d0edacdfe212ada81a46b",
+      "bytes": 4251005,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_materials.png",
+      "sha256": "c87e7656302e402791152fa4bc4e6adba1b1d69ed79e505ff18745d4354c8c90",
+      "bytes": 1284663,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_materials.txt",
+      "sha256": "cd62fb5e8a26ad8db2e407ea4c9f9afa767810d778ede910ebcdcf6e89c438bf",
+      "bytes": 452,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_heads_family.png",
+      "sha256": "0f6037861b76292ca39887ece4e5d7380582bca39f046b23034f8979a61348e6",
+      "bytes": 5129349,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_heads_family.txt",
+      "sha256": "4cd61a3444845b9c968fcca9e60e2872f72e2403ceb441ad97d6e77ca7ac190e",
+      "bytes": 702,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_suits_family.png",
+      "sha256": "e55f3bd8c6d7706987254e2937e7fc324f519663fbb5181280f85e340d5cf34e",
+      "bytes": 3642407,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_suits_family.txt",
+      "sha256": "56c1e6da3d70494457bae92c7d10a1fa55d6004cb981a7d7d8ea06db9d324d5d",
+      "bytes": 468,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_heads_closeup.png",
+      "sha256": "f0f01478d9648caafa8e53472a0981fa33ad6053b538f51140de9d837351e576",
+      "bytes": 6700691,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_blendshapes.png",
+      "sha256": "63bde22e419da9a650c4f28aac0a8a27b47f245ed9f085f642be2ee6a10672e0",
+      "bytes": 4403924,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_blendshapes.txt",
+      "sha256": "e32a6131340aa33e5dc32037859abda5e6d8967e76d678554a07b0cea002cb7f",
+      "bytes": 482,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_hands_feet.png",
+      "sha256": "38b5b091fbe99a9af2f754896dc996bfc74f09c4d7f466b4af2d1d2a7cd1f44c",
+      "bytes": 2181582,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_bendtest_head1.png",
+      "sha256": "20dfb7ee159c702d06e274efbb818a5813b9d759813ccaa633eb5fb312dcaa73",
+      "bytes": 3576552,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/ulgani_bendtest_suit3.png",
+      "sha256": "b4d8954670228a376eae76c7e4fc4426caf3de9d95004f9341e468788dbf0234",
+      "bytes": 3738826,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani_lineup_far_lod2.png",
+      "sha256": "8f29757f36ee78d552b2ae4dac769e181f1cbea2c8a72655809c8d6ae3efaacf",
+      "bytes": 538275,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani_lineup_far_lod2.json",
+      "sha256": "495fc1ce3d9a4a44163fda55b18f7d7af077494e0b06bc963c0f24669679c3a5",
+      "bytes": 4889,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani_lineup_far_lod2_grayscale.png",
+      "sha256": "e505320ac7b6f4472d4f3c4b306ba76704c3f5baf125daa166dfd5acb498d7a9",
+      "bytes": 311284,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/review/characters/ulgani_lineup_far_lod2_grayscale.json",
+      "sha256": "affc52533ad7ffb5ef922bc536aa961bcd0d2506ab092ce8f222b38c46df2cf2",
+      "bytes": 4888,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    },
+    {
+      "path": "assets/renders/characters/validate/characters__ulgani.blend.json",
+      "sha256": "cae00a9732eeda1505aca62ae3d28f0e527edd53dbaca68e6448bb3b500d5563",
+      "bytes": 12195,
+      "input": "assets/blend/characters/ulgani.blend"
+    },
+    {
+      "path": "assets/renders/characters/validate/characters__ulgani.glb.json",
+      "sha256": "1977aa5fc24d4441bf8c7118b6a7c00263fc808b2914609c8b17cc1db0bdf67b",
+      "bytes": 14919,
+      "input": "packages/client/public/models/characters/ulgani.glb"
+    }
+  ],
+  "supporting_artifacts": [
+    {
+      "path": "assets/renders/characters/validate/source-audit.json",
+      "sha256": "a2ffe3eee7c4683e791191afc419cb22fe42acf7853ad217d245980284480b85",
+      "bytes": 29125
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review4-performance-context.json",
+      "sha256": "f09388a6144d926a9bd6f3467faf82454f440d6e66ce0b9340f54e98cf9d5457",
+      "bytes": 81753
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review4-placement-context.json",
+      "sha256": "9c47003c16ecde62d742a790042234df2e3b58b3bd7918247c3b2b119eca872d",
+      "bytes": 21692
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review4-capture-preflight.json",
+      "sha256": "3e65535d85fa9fb6db123363d47164157f51c679ba5126292f83d06f443f76dc",
+      "bytes": 2929
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review4-capture-session.json",
+      "sha256": "f1fbaa9d693b5e0030efffc5bb2aa22dffbde3255d1666f61bd3e9a02b2ecd5e",
+      "bytes": 6185
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review4-load-samples.json",
+      "sha256": "37155a4546d1e057d2bd54b2f035672d921e328805148b69574e5dbe9d3a3329",
+      "bytes": 755015
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review4-lineup-reference-check.json",
+      "sha256": "e0ea74274c59197b9fb64074081538354431c02272c727de287b69086879caba",
+      "bytes": 3968
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review4-lineup-generation.json",
+      "sha256": "d58616e1c552d5291d345ec9d86b580e18c8170d6326effef3282e7e56b58612",
+      "bytes": 15272
+    },
+    {
+      "path": "assets/renders/review/characters/lineup_far_lod2.png",
+      "sha256": "29657f8753cb8a5378a8afa60d979be42b6856195d7e9a33a3f9d9e9f382d9e6",
+      "bytes": 220875
+    },
+    {
+      "path": "assets/renders/review/characters/lineup_far_lod2.json",
+      "sha256": "ea7ac6db1578da136d4bf3f21c74caf212e45a13d7b5810ebf134bce7c2c3768",
+      "bytes": 1927
+    },
+    {
+      "path": "assets/renders/review/characters/lineup_far_lod2_grayscale.png",
+      "sha256": "cef547983d4d45963a0f0586842553d2e3c7ee5f40986467d3062482933f93f2",
+      "bytes": 122426
+    },
+    {
+      "path": "assets/renders/review/characters/lineup_far_lod2_grayscale.json",
+      "sha256": "8c86ff955a11fda71bd310c4a6a4a6870565a555201500cc4715ee6e61c06cca",
+      "bytes": 1926
+    }
+  ],
+  "excluded_from_this_grade": [
+    "worker chat/reasoning, operational handoffs and authoring rationale",
+    "old captures, backups and partial/failure recovery files",
+    "Ixari and Thalune fifth verdict histories and follow-up tasks; their current-source captures are frozen context",
+    "a combined three-species completion decision or any performance-repair/60fps conclusion"
+  ]
+}

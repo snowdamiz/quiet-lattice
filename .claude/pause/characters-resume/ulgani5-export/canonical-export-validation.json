@@ -1,0 +1,555 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/characters/ulgani.glb",
+  "family": "characters",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-02T09:20:26Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ulgani",
+      "variants": [
+        {
+          "id": "ulgani_head1",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 104834,
+            "1": 29142,
+            "2": 9320,
+            "3": 4382
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.426,
+            2.183
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio"
+          ],
+          "gpuTextureMB": 213.3
+        },
+        {
+          "id": "ulgani_head2",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 97842,
+            "1": 29927,
+            "2": 11579,
+            "3": 4344
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.706,
+            2.06
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio"
+          ],
+          "gpuTextureMB": 213.3
+        },
+        {
+          "id": "ulgani_head3",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 88288,
+            "1": 28912,
+            "2": 11816,
+            "3": 4160
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.357,
+            2.094
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio"
+          ],
+          "gpuTextureMB": 213.3
+        },
+        {
+          "id": "ulgani_head4",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 87666,
+            "1": 29356,
+            "2": 12178,
+            "3": 3278
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.558,
+            2.038
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio"
+          ],
+          "gpuTextureMB": 213.3
+        },
+        {
+          "id": "ulgani_head5",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 89050,
+            "1": 31541,
+            "2": 16371,
+            "3": 3877
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.406,
+            2.001
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio"
+          ],
+          "gpuTextureMB": 213.3
+        },
+        {
+          "id": "ulgani_head6",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 95682,
+            "1": 28868,
+            "2": 10698,
+            "3": 4126
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.46,
+            2.1
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio"
+          ],
+          "gpuTextureMB": 213.3
+        },
+        {
+          "id": "ulgani_suit1",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 132496,
+            "1": 37580,
+            "2": 12409,
+            "3": 5211
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.426,
+            2.183
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio",
+            "SuitA"
+          ],
+          "gpuTextureMB": 277.3
+        },
+        {
+          "id": "ulgani_suit2",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 141320,
+            "1": 40267,
+            "2": 13366,
+            "3": 5461
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.448,
+            2.183
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio",
+            "SuitA"
+          ],
+          "gpuTextureMB": 277.3
+        },
+        {
+          "id": "ulgani_suit3",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 146000,
+            "1": 49010,
+            "2": 17034,
+            "3": 6299
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.426,
+            2.183
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio",
+            "SuitB"
+          ],
+          "gpuTextureMB": 277.3
+        },
+        {
+          "id": "ulgani_suit4",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 146000,
+            "1": 46261,
+            "2": 16016,
+            "3": 6026
+          },
+          "implicitLods": false,
+          "dims": [
+            1.35,
+            0.426,
+            2.183
+          ],
+          "materials": [
+            "Skin",
+            "Eye",
+            "Bio",
+            "SuitB"
+          ],
+          "gpuTextureMB": 277.3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani.glb",
+          "message": "10 variant(s) in 1 asset(s) follow the characters rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani/ulgani_head1",
+          "message": "LOD0 104,834 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_head2",
+          "message": "LOD0 97,842 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_head3",
+          "message": "LOD0 88,288 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_head4",
+          "message": "LOD0 87,666 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_head5",
+          "message": "LOD0 89,050 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_head6",
+          "message": "LOD0 95,682 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_suit1",
+          "message": "LOD0 132,496 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_suit2",
+          "message": "LOD0 141,320 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_suit3",
+          "message": "LOD0 146,000 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani/ulgani_suit4",
+          "message": "LOD0 146,000 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 12.2 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani/ulgani_head1",
+          "message": "104,834 > 29,142 > 9,320 > 4,382 triangles; LOD3 4.2% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_head2",
+          "message": "97,842 > 29,927 > 11,579 > 4,344 triangles; LOD3 4.4% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_head3",
+          "message": "88,288 > 28,912 > 11,816 > 4,160 triangles; LOD3 4.7% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_head4",
+          "message": "87,666 > 29,356 > 12,178 > 3,278 triangles; LOD3 3.7% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_head5",
+          "message": "89,050 > 31,541 > 16,371 > 3,877 triangles; LOD3 4.4% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_head6",
+          "message": "95,682 > 28,868 > 10,698 > 4,126 triangles; LOD3 4.3% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_suit1",
+          "message": "132,496 > 37,580 > 12,409 > 5,211 triangles; LOD3 3.9% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_suit2",
+          "message": "141,320 > 40,267 > 13,366 > 5,461 triangles; LOD3 3.9% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_suit3",
+          "message": "146,000 > 49,010 > 17,034 > 6,299 triangles; LOD3 4.3% of LOD0"
+        },
+        {
+          "subject": "ulgani/ulgani_suit4",
+          "message": "146,000 > 46,261 > 16,016 > 6,026 triangles; LOD3 4.1% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Bio",
+          "message": "pbr: base colour, roughness, normal, AO, emissive"
+        },
+        {
+          "subject": "Eye",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Skin",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "SuitA",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "SuitB",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "textures",
+          "message": "16 KTX2 map(s) (5 UASTC, 11 ETC1S) with full mip chains, 34.8 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_head1",
+          "message": "textures take 213 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_head2",
+          "message": "textures take 213 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_head3",
+          "message": "textures take 213 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_head4",
+          "message": "textures take 213 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_head5",
+          "message": "textures take 213 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_head6",
+          "message": "textures take 213 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_suit1",
+          "message": "textures take 277 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_suit2",
+          "message": "textures take 277 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_suit3",
+          "message": "textures take 277 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "ulgani/ulgani_suit4",
+          "message": "textures take 277 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/characters/ulgani.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "ulgani/ulgani_head1",
+          "message": "z extent 2.18 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_head2",
+          "message": "z extent 2.06 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_head3",
+          "message": "z extent 2.09 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_head4",
+          "message": "z extent 2.04 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_head5",
+          "message": "z extent 2.00 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_head6",
+          "message": "z extent 2.10 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_suit1",
+          "message": "z extent 2.18 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_suit2",
+          "message": "z extent 2.18 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_suit3",
+          "message": "z extent 2.18 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ulgani/ulgani_suit4",
+          "message": "z extent 2.18 m within 1.5-2.4 m"
+        }
+      ]
+    }
+  ]
+}

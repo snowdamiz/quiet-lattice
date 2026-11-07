@@ -1,0 +1,185 @@
+[
+  {
+    "case": "exited-direct",
+    "controller_pid": 38422,
+    "helper_source_sha256": "76d0d6caf5f54b7cdc7580b2fa240ae3c9f9df3e2f7a8b7f1b148c29135876ed",
+    "exited_unreaped_pid": 38427,
+    "known_before": [
+      {
+        "pid": 38422,
+        "ppid": 17818,
+        "pgid": 38422,
+        "fingerprint": "Mon Nov 2 11:59:34 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 38427,
+        "ppid": 38422,
+        "pgid": 38427,
+        "fingerprint": "Mon Nov 2 11:59:34 2026",
+        "executable": "/usr/bin/caffeinate"
+      }
+    ],
+    "cleanup_result": "raised",
+    "error": "PermissionError(1, 'Operation not permitted')",
+    "owned_rows_after_cleanup": [
+      "38427 38422 38427 Z    <defunct>"
+    ],
+    "cleanup_signals": [],
+    "children_returncodes_before_fixture_drain": [
+      {
+        "pid": 38427,
+        "returncode": null
+      }
+    ],
+    "fixture_final_drain": {
+      "remaining": [],
+      "direct_children_reaped": [
+        {
+          "pid": 38426,
+          "exit_code": 0
+        },
+        {
+          "pid": 38427,
+          "exit_code": 0
+        }
+      ]
+    }
+  },
+  {
+    "case": "live-direct",
+    "controller_pid": 38422,
+    "helper_source_sha256": "76d0d6caf5f54b7cdc7580b2fa240ae3c9f9df3e2f7a8b7f1b148c29135876ed",
+    "live_fixture": {
+      "pid": 38445,
+      "descendant": 38448
+    },
+    "known_before": [
+      {
+        "pid": 38422,
+        "ppid": 17818,
+        "pgid": 38422,
+        "fingerprint": "Mon Nov 2 11:59:34 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 38445,
+        "ppid": 38422,
+        "pgid": 38445,
+        "fingerprint": "Mon Nov 2 11:59:35 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 38448,
+        "ppid": 38445,
+        "pgid": 38445,
+        "fingerprint": "Mon Nov 2 11:59:35 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      }
+    ],
+    "cleanup_result": "completed",
+    "owned_rows_after_cleanup": [],
+    "cleanup_signals": [
+      {
+        "utc": "2026-11-02T16:59:35.624865+00:00",
+        "pgid": 38445,
+        "signal": "SIGTERM"
+      },
+      {
+        "utc": "2026-11-02T16:59:36.213824+00:00",
+        "pgid": 38445,
+        "signal": "SIGKILL"
+      }
+    ],
+    "children_returncodes_before_fixture_drain": [
+      {
+        "pid": 38445,
+        "returncode": -9
+      }
+    ],
+    "fixture_final_drain": {
+      "remaining": [],
+      "direct_children_reaped": [
+        {
+          "pid": 38445,
+          "exit_code": -9
+        }
+      ]
+    }
+  },
+  {
+    "case": "error-exited-plus-resistant-descendant",
+    "controller_pid": 38422,
+    "helper_source_sha256": "76d0d6caf5f54b7cdc7580b2fa240ae3c9f9df3e2f7a8b7f1b148c29135876ed",
+    "exited_unreaped_pid": 38481,
+    "live_fixture": {
+      "pid": 38500,
+      "descendant": 38501
+    },
+    "known_before": [
+      {
+        "pid": 38422,
+        "ppid": 17818,
+        "pgid": 38422,
+        "fingerprint": "Mon Nov 2 11:59:34 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 38481,
+        "ppid": 38422,
+        "pgid": 38481,
+        "fingerprint": "Mon Nov 2 11:59:36 2026",
+        "executable": "<defunct>"
+      },
+      {
+        "pid": 38500,
+        "ppid": 38422,
+        "pgid": 38500,
+        "fingerprint": "Mon Nov 2 11:59:37 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 38501,
+        "ppid": 38500,
+        "pgid": 38500,
+        "fingerprint": "Mon Nov 2 11:59:37 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      }
+    ],
+    "cleanup_result": "raised",
+    "error": "PermissionError(1, 'Operation not permitted')",
+    "owned_rows_after_cleanup": [
+      "38481 38422 38481 Z    <defunct>",
+      "38500 38422 38500 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "38501 38500 38500 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    ],
+    "cleanup_signals": [],
+    "children_returncodes_before_fixture_drain": [
+      {
+        "pid": 38481,
+        "returncode": null
+      },
+      {
+        "pid": 38500,
+        "returncode": null
+      }
+    ],
+    "fixture_final_drain": {
+      "remaining": [],
+      "direct_children_reaped": [
+        {
+          "pid": 38480,
+          "exit_code": 0
+        },
+        {
+          "pid": 38481,
+          "exit_code": 0
+        },
+        {
+          "pid": 38500,
+          "exit_code": -9
+        }
+      ]
+    }
+  }
+]

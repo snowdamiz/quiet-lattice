@@ -1,0 +1,60 @@
+{
+  "key": "suit4",
+  "utc": "2026-11-02T04:11:31.005113+00:00",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend",
+    "assets/renders/characters",
+    "--samples",
+    "48",
+    "--variant",
+    "ixari_suit4",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ixari-review5-cpu-suit4-turntable.json"
+  ],
+  "source_sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+  "export_sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+  "device": "CPU",
+  "threads": 2,
+  "samples": 48,
+  "status": "complete and verified; waiting for parent timing status",
+  "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5-cpu-suit4-resume.log",
+  "session": 1451,
+  "pid": 91640,
+  "pgid": 91640,
+  "caffeinate_pid": 92333,
+  "caffeinate_session": 96792,
+  "exit_code": 0,
+  "completed_utc": "2026-11-02T04:14:55.207066+00:00",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ixari_ixari_ixari_suit4_turntable.png",
+      "sha256": "da6c576c484fa11a606a6c9366dd620fef9ece742c7508f07024a206fc0530c6",
+      "bytes": 4398192
+    },
+    {
+      "path": "assets/renders/characters/ixari_ixari_ixari_suit4_materials.png",
+      "sha256": "932fb14198234ecac65efc75c902213437066fe710dccfb848e824157e0437db",
+      "bytes": 1026050
+    },
+    {
+      "path": "assets/renders/characters/ixari_ixari_ixari_suit4_materials.txt",
+      "sha256": "a6ed724a5def3bba2f83f9847ebf33e40b6c45f64d2195911ae9c74c3fff6b76",
+      "bytes": 363
+    },
+    {
+      "path": "assets/renders/characters/validate/ixari-review5-cpu-suit4-turntable.json",
+      "sha256": "0b156f2d48268ab542b54dea0a5e959f912b4cc701918e0f13974c9a4046a8b1",
+      "bytes": 1293
+    }
+  ]
+}

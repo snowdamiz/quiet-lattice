@@ -1,0 +1,364 @@
+{
+  "started_utc": "2026-11-02T16:44:20.635160+00:00",
+  "controller_pid": 93886,
+  "controller_pgid": 93886,
+  "scope": "CPU-only maxonecheckatonce;OMP/OPENBLAS2;Vitest1worker;no Blender/GPU/browser",
+  "steps": [
+    {
+      "name": "lint",
+      "started_utc": "2026-11-02T16:44:20.635414+00:00",
+      "command": [
+        "pnpm",
+        "exec",
+        "eslint",
+        "packages/client/src/characters/sharedRig.js",
+        "packages/client/src/characters/sharedRig.test.js",
+        "packages/client/test/characters/loadActualRig.js"
+      ],
+      "processes": [
+        {
+          "pid": 93896,
+          "ppid": 93886,
+          "pgid": 93896,
+          "fingerprint": "Mon Nov 2 11:44:20 2026",
+          "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node"
+        },
+        {
+          "pid": 93897,
+          "ppid": 93886,
+          "pgid": 93897,
+          "fingerprint": "Mon Nov 2 11:44:20 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 93899,
+          "ppid": 93896,
+          "pgid": 93896,
+          "fingerprint": "Mon Nov 2 11:44:20 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 93900,
+          "ppid": 93899,
+          "pgid": 93896,
+          "fingerprint": "Mon Nov 2 11:44:20 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 93901,
+          "ppid": 93900,
+          "pgid": 93896,
+          "fingerprint": "Mon Nov 2 11:44:20 2026",
+          "executable": "(dirname)"
+        },
+        {
+          "pid": 93910,
+          "ppid": 93896,
+          "pgid": 93896,
+          "fingerprint": "Mon Nov 2 11:44:21 2026",
+          "executable": "node"
+        }
+      ],
+      "pid": 93896,
+      "pgid": 93896,
+      "caffeinate_pid": 93897,
+      "caffeinate_pgid": 93897,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T16:44:21.719217+00:00",
+      "log": ".claude/pause/characters-resume/shared-rig-contract/final-lint.log"
+    },
+    {
+      "name": "format",
+      "started_utc": "2026-11-02T16:44:21.719664+00:00",
+      "command": [
+        "pnpm",
+        "exec",
+        "prettier",
+        "--check",
+        "--ignore-path",
+        "/dev/null",
+        "packages/client/src/characters/sharedRig.js",
+        "packages/client/src/characters/sharedRig.test.js",
+        "packages/client/test/characters/loadActualRig.js"
+      ],
+      "processes": [
+        {
+          "pid": 93936,
+          "ppid": 93935,
+          "pgid": 93931,
+          "fingerprint": "Mon Nov 2 11:44:21 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 93937,
+          "ppid": 93936,
+          "pgid": 93931,
+          "fingerprint": "Mon Nov 2 11:44:21 2026",
+          "executable": "(dirname)"
+        },
+        {
+          "pid": 93931,
+          "ppid": 93886,
+          "pgid": 93931,
+          "fingerprint": "Mon Nov 2 11:44:21 2026",
+          "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node"
+        },
+        {
+          "pid": 93933,
+          "ppid": 93886,
+          "pgid": 93933,
+          "fingerprint": "Mon Nov 2 11:44:21 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 93935,
+          "ppid": 93931,
+          "pgid": 93931,
+          "fingerprint": "Mon Nov 2 11:44:21 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 93944,
+          "ppid": 93931,
+          "pgid": 93931,
+          "fingerprint": "Mon Nov 2 11:44:21 2026",
+          "executable": "(node)"
+        }
+      ],
+      "pid": 93931,
+      "pgid": 93931,
+      "caffeinate_pid": 93933,
+      "caffeinate_pgid": 93933,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T16:44:22.175026+00:00",
+      "log": ".claude/pause/characters-resume/shared-rig-contract/final-format.log"
+    },
+    {
+      "name": "units",
+      "started_utc": "2026-11-02T16:44:22.175396+00:00",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "packages/client/src/characters/sharedRig.test.js",
+        "packages/client/src/dev/review.test.js",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "processes": [
+        {
+          "pid": 93955,
+          "ppid": 93886,
+          "pgid": 93955,
+          "fingerprint": "Mon Nov 2 11:44:22 2026",
+          "executable": "(node)"
+        },
+        {
+          "pid": 93956,
+          "ppid": 93886,
+          "pgid": 93956,
+          "fingerprint": "Mon Nov 2 11:44:22 2026",
+          "executable": "(caffeinate)"
+        },
+        {
+          "pid": 93958,
+          "ppid": 93955,
+          "pgid": 93955,
+          "fingerprint": "Mon Nov 2 11:44:22 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 93964,
+          "ppid": 93955,
+          "pgid": 93955,
+          "fingerprint": "Mon Nov 2 11:44:22 2026",
+          "executable": "(node)"
+        },
+        {
+          "pid": 93976,
+          "ppid": 93964,
+          "pgid": 93955,
+          "fingerprint": "Mon Nov 2 11:44:22 2026",
+          "executable": "(node)"
+        },
+        {
+          "pid": 94027,
+          "ppid": 93964,
+          "pgid": 93955,
+          "fingerprint": "Mon Nov 2 11:44:23 2026",
+          "executable": "(node)"
+        }
+      ],
+      "pid": 93955,
+      "pgid": 93955,
+      "caffeinate_pid": 93956,
+      "caffeinate_pgid": 93956,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T16:44:23.813007+00:00",
+      "log": ".claude/pause/characters-resume/shared-rig-contract/final-units.log"
+    },
+    {
+      "name": "client-typecheck",
+      "started_utc": "2026-11-02T16:44:23.813532+00:00",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@astra/client",
+        "typecheck"
+      ],
+      "processes": [
+        {
+          "pid": 94041,
+          "ppid": 93886,
+          "pgid": 94041,
+          "fingerprint": "Mon Nov 2 11:44:23 2026",
+          "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node"
+        },
+        {
+          "pid": 94042,
+          "ppid": 93886,
+          "pgid": 94042,
+          "fingerprint": "Mon Nov 2 11:44:23 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 94044,
+          "ppid": 94041,
+          "pgid": 94041,
+          "fingerprint": "Mon Nov 2 11:44:23 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 94045,
+          "ppid": 94044,
+          "pgid": 94041,
+          "fingerprint": "Mon Nov 2 11:44:23 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 94046,
+          "ppid": 94045,
+          "pgid": 94041,
+          "fingerprint": "Mon Nov 2 11:44:23 2026",
+          "executable": "(dirname)"
+        },
+        {
+          "pid": 94062,
+          "ppid": 94041,
+          "pgid": 94041,
+          "fingerprint": "Mon Nov 2 11:44:24 2026",
+          "executable": "node"
+        }
+      ],
+      "pid": 94041,
+      "pgid": 94041,
+      "caffeinate_pid": 94042,
+      "caffeinate_pgid": 94042,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T16:44:26.064312+00:00",
+      "log": ".claude/pause/characters-resume/shared-rig-contract/final-client-typecheck.log"
+    },
+    {
+      "name": "tools-typecheck",
+      "started_utc": "2026-11-02T16:44:26.064844+00:00",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@astra/tools",
+        "typecheck"
+      ],
+      "processes": [
+        {
+          "pid": 94137,
+          "ppid": 93886,
+          "pgid": 94137,
+          "fingerprint": "Mon Nov 2 11:44:26 2026",
+          "executable": "(node)"
+        },
+        {
+          "pid": 94138,
+          "ppid": 93886,
+          "pgid": 94138,
+          "fingerprint": "Mon Nov 2 11:44:26 2026",
+          "executable": "(caffeinate)"
+        },
+        {
+          "pid": 94141,
+          "ppid": 94137,
+          "pgid": 94137,
+          "fingerprint": "Mon Nov 2 11:44:26 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 94142,
+          "ppid": 94141,
+          "pgid": 94137,
+          "fingerprint": "Mon Nov 2 11:44:26 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 94143,
+          "ppid": 94142,
+          "pgid": 94137,
+          "fingerprint": "Mon Nov 2 11:44:26 2026",
+          "executable": "(dirname)"
+        },
+        {
+          "pid": 94156,
+          "ppid": 94137,
+          "pgid": 94137,
+          "fingerprint": "Mon Nov 2 11:44:26 2026",
+          "executable": "(node)"
+        }
+      ],
+      "pid": 94137,
+      "pgid": 94137,
+      "caffeinate_pid": 94138,
+      "caffeinate_pgid": 94138,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T16:44:27.702743+00:00",
+      "log": ".claude/pause/characters-resume/shared-rig-contract/final-tools-typecheck.log"
+    },
+    {
+      "name": "diff-check",
+      "started_utc": "2026-11-02T16:44:27.703208+00:00",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "processes": [
+        {
+          "pid": 94416,
+          "ppid": 93886,
+          "pgid": 94416,
+          "fingerprint": "Mon Nov 2 11:44:27 2026",
+          "executable": "(caffeinate)"
+        },
+        {
+          "pid": 94415,
+          "ppid": 93886,
+          "pgid": 94415,
+          "fingerprint": "Mon Nov 2 11:44:27 2026",
+          "executable": "(git)"
+        }
+      ],
+      "pid": 94415,
+      "pgid": 94415,
+      "caffeinate_pid": 94416,
+      "caffeinate_pgid": 94416,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T16:44:27.869809+00:00",
+      "log": ".claude/pause/characters-resume/shared-rig-contract/final-diff-check.log"
+    }
+  ],
+  "completed_utc": "2026-11-02T16:44:27.870209+00:00",
+  "exit_code": 0
+}

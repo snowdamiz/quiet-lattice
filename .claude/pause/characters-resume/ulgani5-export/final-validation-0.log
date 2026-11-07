@@ -1,0 +1,111 @@
+$ tsx packages/tools/src/art/cli.ts validate -- characters --report-dir .claude/pause/characters-resume/ulgani5-export/family-validation
+
+validate assets/blend/characters/ixari.blend  (family characters, source .blend)
+  ixari / ixari_head1 [hero]  tris LOD0 84,668, LOD1 22,239, LOD2 7,734, LOD3 2,875  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_head2 [hero]  tris LOD0 85,104, LOD1 22,420, LOD2 7,921, LOD3 2,890  size 1.36 x 0.58 x 2.09 m
+  ixari / ixari_head3 [hero]  tris LOD0 86,274, LOD1 22,827, LOD2 8,256, LOD3 2,930  size 1.36 x 0.58 x 1.98 m
+  ixari / ixari_head4 [hero]  tris LOD0 84,930, LOD1 22,325, LOD2 7,787, LOD3 2,884  size 1.36 x 0.58 x 1.97 m
+  ixari / ixari_head5 [hero]  tris LOD0 85,964, LOD1 22,693, LOD2 8,095, LOD3 2,919  size 1.36 x 0.58 x 1.99 m
+  ixari / ixari_head6 [hero]  tris LOD0 85,104, LOD1 22,415, LOD2 7,898, LOD3 2,890  size 1.36 x 0.58 x 2.09 m
+  ixari / ixari_suit1 [hero]  tris LOD0 98,338, LOD1 27,372, LOD2 10,125, LOD3 3,272  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_suit2 [hero]  tris LOD0 104,680, LOD1 29,273, LOD2 10,732, LOD3 3,429  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_suit3 [hero]  tris LOD0 106,320, LOD1 29,786, LOD2 10,944, LOD3 3,439  size 1.36 x 0.58 x 2.06 m
+  ixari / ixari_suit4 [hero]  tris LOD0 96,876, LOD1 27,802, LOD2 10,655, LOD3 3,209  size 1.36 x 0.58 x 2.07 m
+  PASS  naming
+        ok    ixari.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    ixari/ixari_head1: LOD0 84,668 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head2: LOD0 85,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ixari/ixari_head3: LOD0 86,274 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    ixari/ixari_head1: 84,668 > 22,239 > 7,734 > 2,875 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head2: 85,104 > 22,420 > 7,921 > 2,890 triangles; LOD3 3.4% of LOD0
+        ok    ixari/ixari_head3: 86,274 > 22,827 > 8,256 > 2,930 triangles; LOD3 3.4% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Bio (IX_Crystal): pbr: base colour, roughness, normal, AO, emissive
+        ok    Eye (IX_Eye): pbr: base colour, roughness, normal, AO
+        ok    Skin (IX_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ixari/ixari_head1: z extent 2.07 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: .claude/pause/characters-resume/ulgani5-export/family-validation/characters__ixari.blend.json
+
+validate assets/blend/characters/thalune.blend  (family characters, source .blend)
+  thalune / thalune_head1 [hero]  tris LOD0 97,326, LOD1 24,916, LOD2 7,599, LOD3 3,351  size 1.36 x 0.41 x 1.80 m
+  thalune / thalune_head2 [hero]  tris LOD0 91,524, LOD1 23,395, LOD2 7,026, LOD3 3,118  size 1.36 x 0.41 x 1.87 m
+  thalune / thalune_head3 [hero]  tris LOD0 90,998, LOD1 23,242, LOD2 6,931, LOD3 3,119  size 1.36 x 0.41 x 1.80 m
+  thalune / thalune_head4 [hero]  tris LOD0 100,142, LOD1 25,620, LOD2 7,795, LOD3 3,420  size 1.36 x 0.41 x 1.80 m
+  thalune / thalune_head5 [hero]  tris LOD0 90,998, LOD1 23,242, LOD2 6,931, LOD3 3,107  size 1.36 x 0.41 x 1.81 m
+  thalune / thalune_head6 [hero]  tris LOD0 92,228, LOD1 23,573, LOD2 7,074, LOD3 3,135  size 1.36 x 0.41 x 1.83 m
+  thalune / thalune_suit1 [hero]  tris LOD0 116,780, LOD1 31,625, LOD2 10,385, LOD3 4,010  size 1.36 x 0.35 x 1.80 m
+  thalune / thalune_suit2 [hero]  tris LOD0 114,500, LOD1 31,198, LOD2 10,324, LOD3 3,931  size 1.36 x 0.36 x 1.80 m
+  thalune / thalune_suit3 [hero]  tris LOD0 138,532, LOD1 38,409, LOD2 12,726, LOD3 4,748  size 1.36 x 0.35 x 1.80 m
+  thalune / thalune_suit4 [hero]  tris LOD0 119,560, LOD1 32,943, LOD2 11,090, LOD3 4,106  size 1.36 x 0.36 x 1.80 m
+  PASS  naming
+        ok    thalune.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    thalune/thalune_head1: LOD0 97,326 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    thalune/thalune_head2: LOD0 91,524 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    thalune/thalune_head3: LOD0 90,998 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    thalune/thalune_head1: 97,326 > 24,916 > 7,599 > 3,351 triangles; LOD3 3.4% of LOD0
+        ok    thalune/thalune_head2: 91,524 > 23,395 > 7,026 > 3,118 triangles; LOD3 3.4% of LOD0
+        ok    thalune/thalune_head3: 90,998 > 23,242 > 6,931 > 3,119 triangles; LOD3 3.4% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Eye (TH_Eye): pbr: base colour, roughness, normal, AO
+        ok    Bio (TH_Fin): pbr: base colour, roughness, normal, AO, emissive
+        ok    Skin (TH_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    thalune/thalune_head1: z extent 1.80 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: .claude/pause/characters-resume/ulgani5-export/family-validation/characters__thalune.blend.json
+
+validate assets/blend/characters/ulgani.blend  (family characters, source .blend)
+  ulgani / ulgani_head1 [hero]  tris LOD0 104,834, LOD1 29,142, LOD2 9,320, LOD3 4,382  size 1.35 x 0.43 x 2.18 m
+  ulgani / ulgani_head2 [hero]  tris LOD0 97,842, LOD1 29,927, LOD2 11,579, LOD3 4,344  size 1.35 x 0.71 x 2.06 m
+  ulgani / ulgani_head3 [hero]  tris LOD0 88,288, LOD1 28,912, LOD2 11,816, LOD3 4,164  size 1.35 x 0.36 x 2.09 m
+  ulgani / ulgani_head4 [hero]  tris LOD0 87,666, LOD1 29,356, LOD2 12,178, LOD3 3,278  size 1.35 x 0.56 x 2.04 m
+  ulgani / ulgani_head5 [hero]  tris LOD0 89,050, LOD1 31,542, LOD2 16,371, LOD3 3,877  size 1.35 x 0.41 x 2.00 m
+  ulgani / ulgani_head6 [hero]  tris LOD0 95,682, LOD1 28,868, LOD2 10,698, LOD3 4,134  size 1.35 x 0.46 x 2.10 m
+  ulgani / ulgani_suit1 [hero]  tris LOD0 132,496, LOD1 37,580, LOD2 12,409, LOD3 5,211  size 1.35 x 0.43 x 2.18 m
+  ulgani / ulgani_suit2 [hero]  tris LOD0 141,320, LOD1 40,267, LOD2 13,366, LOD3 5,461  size 1.35 x 0.45 x 2.18 m
+  ulgani / ulgani_suit3 [hero]  tris LOD0 146,000, LOD1 49,010, LOD2 17,034, LOD3 6,299  size 1.35 x 0.43 x 2.18 m
+  ulgani / ulgani_suit4 [hero]  tris LOD0 146,000, LOD1 46,261, LOD2 16,016, LOD3 6,026  size 1.35 x 0.43 x 2.18 m
+  PASS  naming
+        ok    ulgani.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    ulgani/ulgani_head1: LOD0 104,834 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ulgani/ulgani_head2: LOD0 97,842 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ulgani/ulgani_head3: LOD0 88,288 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    ulgani/ulgani_head1: 104,834 > 29,142 > 9,320 > 4,382 triangles; LOD3 4.2% of LOD0
+        ok    ulgani/ulgani_head2: 97,842 > 29,927 > 11,579 > 4,344 triangles; LOD3 4.4% of LOD0
+        ok    ulgani/ulgani_head3: 88,288 > 28,912 > 11,816 > 4,164 triangles; LOD3 4.7% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Eye (UL_Eye): pbr: base colour, roughness, normal, AO
+        ok    Bio (UL_Frond): pbr: base colour, roughness, normal, AO, emissive
+        ok    Skin (UL_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ulgani/ulgani_head1: z extent 2.18 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: .claude/pause/characters-resume/ulgani5-export/family-validation/characters__ulgani.blend.json
+
+3 of 3 file(s) passed validation

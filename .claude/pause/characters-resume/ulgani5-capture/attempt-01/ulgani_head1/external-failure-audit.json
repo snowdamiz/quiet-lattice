@@ -1,0 +1,169 @@
+{
+  "utc": "2026-11-02T10:44:48.921079+00:00",
+  "status": "CAPTURE_CLI0_AND13FILES_VALID;CONTROLLER_FALSE_OBSERVER_DRAIN_FAILURE;STOPPED_NO_RETRY",
+  "identity": {
+    "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+    "export_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+    "cpu_ready_sha256": "5591147d82e5d9b855133ade5cc103693f6e2f33d71ef90adef029c01bc48ef9",
+    "harness_sha256": "3a934c2a963bcfae471561ffcf9384fe0d8ebe708abfc9ed36ccddbe0934dbcc"
+  },
+  "failed_report": {
+    "path": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head1/report.json",
+    "sha256": "cdd145b28e05d2015eaba755dd1adcc31ddafd9edbcc52fa61401f0f09d27a7d"
+  },
+  "capture_started_utc": "2026-11-02T10:41:33.747138+00:00",
+  "cli_end_utc": "2026-11-02T10:42:39.608180+00:00",
+  "cli_exit_code": 0,
+  "controller_exit_code": 1,
+  "error": "AssertionError('Owned process survived cleanup')",
+  "actual_owned_process_count": 132,
+  "known_groups": [
+    3848,
+    3858,
+    3862,
+    3868,
+    3885
+  ],
+  "all_owned_pids_and_groups_absent": true,
+  "all_owned_profiles_absent": true,
+  "gpu_released_utc": "2026-11-02T10:44:48.921079+00:00",
+  "port_note": "No listening port was recorded while active. Post-exit owned-PID lsof produced no listeners;all recorded process groups absent,so no owned server remains. Exact port number unavailable.",
+  "artifacts": [
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/noon-lush_lod0.png",
+      "sha256": "973a5b0a8261a21cb993e07682ab9504bda7d128b5b9961552f38bf9edead5e1",
+      "bytes": 4301909,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/noon-lush_lod2.png",
+      "sha256": "fffb4ea50ac5d3213f38de4ffb397a2c532869f53fb241b837e4b13606b14b2d",
+      "bytes": 4303006,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/wireframe_lod0.png",
+      "sha256": "266a4dd45955d81bba2ae5b4777741cbe8e1f2b34536b4a3e79e92791687e19d",
+      "bytes": 4412819,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/wireframe_lod2.png",
+      "sha256": "f83c84046910f1e2275767048fff5f4c50e9f02b789ab267a8093739e139be9e",
+      "bytes": 4355773,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/overlay.png",
+      "sha256": "0418117b0fe4b0a0b79ee8901336a5fe728ae240e4d0808145b427b2e2fa41dc",
+      "bytes": 4290980,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/far_lod2.png",
+      "sha256": "ddb5c770a4c7bbd3e006038f1518cc17d52e7d71ab433816706eda0b45cc9f17",
+      "bytes": 4387454,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/far200_lod2.png",
+      "sha256": "364ee9bbcdd516d54e53fd83d8a0ddc4ffe739bbb0b318a9dcde017fc93238d3",
+      "bytes": 4259718,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/night-exotic_lod0.png",
+      "sha256": "3ab3272e20542bf248ca2b456e55511fdffbe5ccf00b5f2f20929a2d215e8679",
+      "bytes": 3188421,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/night-exotic_lod2.png",
+      "sha256": "0148831eea8da591f9ae04eb84a3b72f3f5723d2f69bd6c9f887e6179b2a03a6",
+      "bytes": 3187444,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/open-space_lod0.png",
+      "sha256": "6d2bc3df599cf5e223f4ea97157b73a1493bc97fccf4ea53a086d45819b0fdda",
+      "bytes": 2909947,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/open-space_lod2.png",
+      "sha256": "b3a188bfe8fb549baee45021208b2ce82797157d0e87470d13924cde63ec5e1c",
+      "bytes": 2913782,
+      "size": [
+        1920,
+        1080
+      ],
+      "complete_crc_zlib_decode": true
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/perf.json",
+      "sha256": "2d826c0f3c6c22edae2028b4e72685d1d3efc7097e2662ced289f380620f9275",
+      "bytes": 8867
+    },
+    {
+      "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1/sheet.png",
+      "sha256": "00b4acc9e0cbf2ca208334df1a7db01cacc56613c81364202dbe9c1ca54e9d73",
+      "bytes": 8878215,
+      "size": [
+        1920,
+        3444
+      ],
+      "complete_crc_zlib_decode": true
+    }
+  ],
+  "perf_case_count": 3,
+  "page_errors": [],
+  "configured_gl": "metal",
+  "sampler": {
+    "path": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head1/load-samples.json",
+    "sha256": "2543052679d0dbbfa94aa55193cdfa6619c211d6159be751c3b2ecf3822e2411",
+    "samples": 6
+  },
+  "remaining_variants": "head2\u20136,suit1\u20134 not started;head1 requires CPU-only salvage/finalization after approved narrow cleanup-guard correction;do not recapture current-source files",
+  "no_helper_source_harness_changes": true,
+  "no_automatic_retry": true
+}

@@ -1,0 +1,90 @@
+[
+  {
+    "case": "normal-node-exit-sampler-timeout",
+    "controller_pid": 46242,
+    "helper_source_sha256": "76d0d6caf5f54b7cdc7580b2fa240ae3c9f9df3e2f7a8b7f1b148c29135876ed",
+    "exited_unreaped_pid": 46247,
+    "live_fixture": {
+      "pid": 46250,
+      "descendant": 46251
+    },
+    "known_before": [
+      {
+        "pid": 46242,
+        "ppid": 17818,
+        "pgid": 46242,
+        "fingerprint": "Mon Nov 2 12:01:39 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 46247,
+        "ppid": 46242,
+        "pgid": 46247,
+        "fingerprint": "Mon Nov 2 12:01:39 2026",
+        "executable": "<defunct>"
+      },
+      {
+        "pid": 46250,
+        "ppid": 46242,
+        "pgid": 46250,
+        "fingerprint": "Mon Nov 2 12:01:39 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      },
+      {
+        "pid": 46251,
+        "ppid": 46250,
+        "pgid": 46250,
+        "fingerprint": "Mon Nov 2 12:01:39 2026",
+        "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      }
+    ],
+    "normal_wait_outcome": "sampler timeout skips caffeinate wait",
+    "cleanup_result": "raised",
+    "error": "PermissionError(1, 'Operation not permitted')",
+    "except_cleanup_retry": "PermissionError(1, 'Operation not permitted')",
+    "owned_rows_after_cleanup": [
+      "46247 46242 46247 Z    <defunct>",
+      "46250 46242 46250 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "46251 46250 46250 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    ],
+    "cleanup_signals": [
+      {
+        "utc": "2026-11-02T17:01:45.124324+00:00",
+        "pgid": 46250,
+        "signal": "SIGTERM"
+      },
+      {
+        "utc": "2026-11-02T17:01:45.286879+00:00",
+        "pgid": 46250,
+        "signal": "SIGTERM"
+      }
+    ],
+    "children_returncodes_before_fixture_drain": [
+      {
+        "pid": 46247,
+        "returncode": null
+      },
+      {
+        "pid": 46250,
+        "returncode": null
+      }
+    ],
+    "fixture_final_drain": {
+      "remaining": [],
+      "direct_children_reaped": [
+        {
+          "pid": 46246,
+          "exit_code": 0
+        },
+        {
+          "pid": 46247,
+          "exit_code": 0
+        },
+        {
+          "pid": 46250,
+          "exit_code": -9
+        }
+      ]
+    }
+  }
+]

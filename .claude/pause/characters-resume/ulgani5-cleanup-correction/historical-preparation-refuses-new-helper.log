@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/capture_ulgani5.py", line 18, in <module>
+    for item in prep['helpers']+prep['harness']:assert sha(root/item['path'])==item['sha256'],item['path']
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: packages/tools/blender/characters/capture_ulgani5.py

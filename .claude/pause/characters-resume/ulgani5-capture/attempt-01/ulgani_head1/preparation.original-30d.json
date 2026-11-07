@@ -1,0 +1,366 @@
+{
+  "prepared_utc": "2026-11-02T10:34:45.264530+00:00",
+  "status": "CPU_READY_CAPTURE_PLAN_ONLY;GPU_HELD;NO_CAPTURE_RUNTIME_STARTED",
+  "cpu_artifact_commit": "6f7c74886",
+  "source_export_commit": "ef78fa7fae8634912a210adc20b48139fd8e0de7",
+  "cpu_ready": {
+    "path": "assets/renders/characters/validate/ulgani-review5-cpu-ready.json",
+    "sha256": "5591147d82e5d9b855133ade5cc103693f6e2f33d71ef90adef029c01bc48ef9",
+    "stages": 16,
+    "primary_artifact_hashes": 61
+  },
+  "identity": {
+    "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+    "export_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+    "cpu_ready_sha256": "5591147d82e5d9b855133ade5cc103693f6e2f33d71ef90adef029c01bc48ef9",
+    "harness_sha256": "3a934c2a963bcfae471561ffcf9384fe0d8ebe708abfc9ed36ccddbe0934dbcc"
+  },
+  "helpers": [
+    {
+      "path": "packages/tools/blender/characters/capture_ulgani5.py",
+      "sha256": "8ad21d3e8df837960413079b988d22dcf6d72611211821d800674e07f3f09358"
+    },
+    {
+      "path": "packages/tools/blender/characters/sample_ulgani5_capture.py",
+      "sha256": "c1a96c9f69a0d3c4521f233b4023314cf005868d5e65a3ccd7ae8fc30e95b61a"
+    },
+    {
+      "path": "packages/tools/src/capture/ulgani5-review.ts",
+      "sha256": "5b63b1bb3b668005d313b08ecbf7c2566f0bfb328181a5419d28914fe8b21d00"
+    }
+  ],
+  "harness": [
+    {
+      "path": "packages/tools/src/capture/capture.ts",
+      "sha256": "3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc"
+    },
+    {
+      "path": "packages/tools/src/capture/classes.ts",
+      "sha256": "3aac3f7be1fa76bd8fe8138e189b86acf25c2b725f37a1d572fcf2a4f8aba4ff"
+    },
+    {
+      "path": "packages/tools/src/capture/screens.ts",
+      "sha256": "1cd9f45432e4045cd3ec35e3373defab66bb997d614005de60828e9b8317c42d"
+    },
+    {
+      "path": "packages/client/src/dev/review.js",
+      "sha256": "6e7b1690953c6c96a8e1db99048b3dc1faae1547f308b6bfcdbdc7a15f3bda02"
+    },
+    {
+      "path": "packages/client/vite.config.js",
+      "sha256": "d9ad7b3b5e27e07791fd1ae60320483ed594a0208e2d3136d1a8ecc735a2885e"
+    },
+    {
+      "path": "packages/tools/blender/families.json",
+      "sha256": "2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f"
+    },
+    {
+      "path": "packages/tools/src/capture/ulgani5-review.ts",
+      "sha256": "5b63b1bb3b668005d313b08ecbf7c2566f0bfb328181a5419d28914fe8b21d00"
+    }
+  ],
+  "verify_only_command": [
+    "python3",
+    "packages/tools/blender/characters/capture_ulgani5.py",
+    "--verify-only"
+  ],
+  "variants": [
+    "ulgani_head1",
+    "ulgani_head2",
+    "ulgani_head3",
+    "ulgani_head4",
+    "ulgani_head5",
+    "ulgani_head6",
+    "ulgani_suit1",
+    "ulgani_suit2",
+    "ulgani_suit3",
+    "ulgani_suit4"
+  ],
+  "one_variant_invocations": [
+    {
+      "variant": "ulgani_head1",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_head1",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_head1",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_head1.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head1",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head1"
+    },
+    {
+      "variant": "ulgani_head2",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_head2",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_head2",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_head2.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head2",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head2"
+    },
+    {
+      "variant": "ulgani_head3",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_head3",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_head3",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_head3.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head3",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head3"
+    },
+    {
+      "variant": "ulgani_head4",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_head4",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_head4",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_head4.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head4",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head4"
+    },
+    {
+      "variant": "ulgani_head5",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_head5",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_head5",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_head5.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head5",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head5"
+    },
+    {
+      "variant": "ulgani_head6",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_head6",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_head6",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_head6.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_head6",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head6"
+    },
+    {
+      "variant": "ulgani_suit1",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_suit1",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_suit1",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_suit1.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_suit1",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_suit1"
+    },
+    {
+      "variant": "ulgani_suit2",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_suit2",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_suit2",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_suit2.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_suit2",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_suit2"
+    },
+    {
+      "variant": "ulgani_suit3",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_suit3",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_suit3",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_suit3.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_suit3",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_suit3"
+    },
+    {
+      "variant": "ulgani_suit4",
+      "capture_argv": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--variant",
+        "ulgani_suit4",
+        "--attempt",
+        "attempt-01"
+      ],
+      "finalize_argv": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--finalize",
+        "--variant",
+        "ulgani_suit4",
+        "--attempt",
+        "attempt-01"
+      ],
+      "gate": ".claude/pause/characters-resume/gpu-review-release-ulgani5-ulgani_suit4.json",
+      "output_dir": "assets/renders/review/characters/ulgani-review5/attempt-01/ulgani/ulgani_suit4",
+      "job_dir": ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_suit4"
+    }
+  ],
+  "gate_schema": {
+    "parent_gpu_go": true,
+    "authorization_id": "actual parent subset GO identifier",
+    "allowed_variants": "exact defined parent-authorized subset of variants",
+    "identity": {
+      "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+      "export_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+      "cpu_ready_sha256": "5591147d82e5d9b855133ade5cc103693f6e2f33d71ef90adef029c01bc48ef9",
+      "harness_sha256": "3a934c2a963bcfae471561ffcf9384fe0d8ebe708abfc9ed36ccddbe0934dbcc"
+    },
+    "preparation_sha256": "compute SHA256 of this exact preparation JSON at future GO"
+  },
+  "semantics": [
+    "No watcher:each invocation requires its own existing gate,archives it at start,and runs one variant only. No alive browser/controller between completed invocations.",
+    "A defined parent subset authorizes each passing invocation without asking again;check hold/messages and full drain at each boundary before creating its next per-invocation gate.",
+    "Existing unchanged captureReview API uses asset ulgani,one variant,and fresh fifth-only outDir. All standard1920x1080,three lights,LOD0/2,wireframes,overlay,100m+200m and raw perf cases remain unchanged.",
+    "API finally closes browser and Vite. Controller bounds Node480s,tracks actual owned child identities/groups/profiles,sampler and idle-only assertion,cleans only verified owned groups and archives leftover owned profiles;external controller-exit finalize then verifies13output hashes and direct process absence.",
+    "Only finalized matching source/export/CPUready/harness captures may be reused. Existing completed,old orfailed target/job paths reject overwrite. Retry after a failure requires a separately authorized new attempt id,with all failed evidence retained.",
+    "All13current-case files include12PNG files with fullCRC/zlib decode and one raw perf.json;unreliable timing records are retained. No repaired-performance,60fps,budget,regression or pair-level attribution claim.",
+    "Worker rationale/reports and prior verdict text are outside the eventual artifact/spec/rubric-only grader manifest. Frozen peers are lineup context only."
+  ],
+  "standard_api_argv_example": [
+    "pnpm",
+    "exec",
+    "tsx",
+    "packages/tools/src/capture/ulgani5-review.ts",
+    "--variant",
+    "ulgani_head1",
+    "--out-dir",
+    "assets/renders/review/characters/ulgani-review5/attempt-01",
+    "--written",
+    ".claude/pause/characters-resume/ulgani5-capture/attempt-01/ulgani_head1/written.json"
+  ],
+  "no_gpu_gate_present": true,
+  "no_live_jobs": true,
+  "runtime_validation": "NOT RUN;only CPU cache verification,TypeScript typecheck and CLI plan/negative controls are authorized now.",
+  "preparation_checks": {
+    "path": "assets/renders/characters/validate/ulgani-review5-capture-preparation-checks.json",
+    "sha256": "b7d54039defdb09802f9b1f1bf869f97d421b5fcd4e21e0512a65c6bb950bca4",
+    "result": "TypeScript andAPIplan pass;bad variant/outside-root/closed GPU gate refused;16/61 CPU verification pass;no GPU runtime."
+  }
+}

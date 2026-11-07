@@ -1,0 +1,61 @@
+{
+  "case": "live-direct",
+  "controller_pid": 38422,
+  "helper_source_sha256": "76d0d6caf5f54b7cdc7580b2fa240ae3c9f9df3e2f7a8b7f1b148c29135876ed",
+  "live_fixture": {
+    "pid": 38445,
+    "descendant": 38448
+  },
+  "known_before": [
+    {
+      "pid": 38422,
+      "ppid": 17818,
+      "pgid": 38422,
+      "fingerprint": "Mon Nov 2 11:59:34 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 38445,
+      "ppid": 38422,
+      "pgid": 38445,
+      "fingerprint": "Mon Nov 2 11:59:35 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 38448,
+      "ppid": 38445,
+      "pgid": 38445,
+      "fingerprint": "Mon Nov 2 11:59:35 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "cleanup_result": "completed",
+  "owned_rows_after_cleanup": [],
+  "cleanup_signals": [
+    {
+      "utc": "2026-11-02T16:59:35.624865+00:00",
+      "pgid": 38445,
+      "signal": "SIGTERM"
+    },
+    {
+      "utc": "2026-11-02T16:59:36.213824+00:00",
+      "pgid": 38445,
+      "signal": "SIGKILL"
+    }
+  ],
+  "children_returncodes_before_fixture_drain": [
+    {
+      "pid": 38445,
+      "returncode": -9
+    }
+  ],
+  "fixture_final_drain": {
+    "remaining": [],
+    "direct_children_reaped": [
+      {
+        "pid": 38445,
+        "exit_code": -9
+      }
+    ]
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "started_utc": "2026-11-02T07:53:14.242016+00:00",
+  "controller_pid": 27072,
+  "controller_pgid": 27072,
+  "scope": "ONE CPU-only Ulgani saved-source patch and exact staging-source validation;no bake/export/render/browser/GPU.",
+  "threads": 2,
+  "patch_sha256": "686d2920cbddecca968e1430ae11d148cb95ca3eeb0809a35122f7c16dab8fa5",
+  "frozen_canonical_hashes": {
+    "assets/blend/characters/thalune.blend": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b",
+    "packages/client/public/models/characters/thalune.glb": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+    "assets/blend/characters/ixari.blend": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+    "packages/client/public/models/characters/ixari.glb": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+    "assets/blend/characters/ulgani.blend": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+    "packages/client/public/models/characters/ulgani.glb": "14d386eefd291892f3b3f2f0072c640e37a6f267fe73e4a4cb757c49db1caece"
+  },
+  "steps": [
+    {
+      "key": "patch",
+      "utc": "2026-11-02T07:53:14.242785+00:00",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/revise_ulgani5.py",
+        "--",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-before-source/ulgani.blend",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source.blend",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/source-patch.json"
+      ],
+      "log": ".claude/pause/characters-resume/ulgani5/patch.log",
+      "threads": 2,
+      "pid": 27083,
+      "pgid": 27072,
+      "caffeinate_pid": 27084,
+      "caffeinate_pgid": 27072,
+      "exit_code": 0,
+      "completed_utc": "2026-11-02T07:53:22.584330+00:00",
+      "caffeinate_exit_code": 0,
+      "log_sha256": "41f1aba9c457cec4d57273d9fadc3536b97e4e472f37804af8891d1e8c53716c"
+    },
+    {
+      "key": "validation",
+      "utc": "2026-11-02T07:53:22.584928+00:00",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/validate.py",
+        "--",
+        "--family",
+        "characters",
+        "--report",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/source-validation.json",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source.blend"
+      ],
+      "log": ".claude/pause/characters-resume/ulgani5/validation.log",
+      "threads": 2,
+      "pid": 28176,
+      "pgid": 27072,
+      "caffeinate_pid": 28177,
+      "caffeinate_pgid": 27072,
+      "exit_code": 1,
+      "completed_utc": "2026-11-02T07:53:25.292761+00:00",
+      "caffeinate_exit_code": 0,
+      "log_sha256": "e98029ce280ff3af34de58f839043f9f12f8438d10ba7537585c0c97c73666d2"
+    }
+  ],
+  "status": "Saved fifth source and internal invariants PASS;source validator naming FAIL;all owned jobs drained",
+  "completed_utc": "2026-11-02T07:53:25.517179+00:00",
+  "exit_code": 1,
+  "artifacts": [
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/patch.log",
+      "sha256": "41f1aba9c457cec4d57273d9fadc3536b97e4e472f37804af8891d1e8c53716c",
+      "bytes": 4615
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-patch.json",
+      "sha256": "9c6d73455fe47994cd8c916c5f8495677a283d26fc310ef8edc18b427b35967c",
+      "bytes": 17529
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-validation.json",
+      "sha256": "f5332c882419cdd45e08cfb3baaa6146c407aa3ee6f97f38470559453dd221f6",
+      "bytes": 13104
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/ulgani5-source.blend",
+      "sha256": "f9493e205382a8668b3e543b01c01b71bb5af8797ffd73e63b9d6f7c7793ccf9",
+      "bytes": 74127134
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/ulgani5-source.sculpt.blend",
+      "sha256": "9c915a87c182527d4ae889c2022add274055d29c4931c0654c192d5b683cd04e",
+      "bytes": 72828726
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/validation.log",
+      "sha256": "e98029ce280ff3af34de58f839043f9f12f8438d10ba7537585c0c97c73666d2",
+      "bytes": 3192
+    }
+  ],
+  "tool_session": 84557,
+  "drain_verified_utc": "2026-11-02T07:54:20.025546+00:00",
+  "known_pids": [
+    27072,
+    27083,
+    27084,
+    28176,
+    28177
+  ],
+  "known_pgids": [
+    27072
+  ],
+  "controller_exit_code": 1
+}

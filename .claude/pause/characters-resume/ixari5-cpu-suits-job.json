@@ -1,0 +1,56 @@
+{
+  "key": "suits",
+  "utc": "2026-11-02T04:23:50.844233+00:00",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_suits.blend",
+    "assets/renders/characters",
+    "--samples",
+    "48",
+    "--family",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ixari-suits-family.json"
+  ],
+  "source_sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+  "export_sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+  "render_input": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_suits.blend",
+  "render_input_sha256": "6232189bb4f3ef95b2cfa9deb374cf509889ef0a3158e687ad1f4827b03cd8d8",
+  "device": "CPU",
+  "threads": 2,
+  "samples": 48,
+  "status": "complete and verified; all13 Ixari studio stages complete",
+  "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5-cpu-suits-resume.log",
+  "session": 42278,
+  "pid": 27679,
+  "pgid": 27679,
+  "caffeinate_pid": 27783,
+  "caffeinate_session": 33597,
+  "exit_code": 0,
+  "completed_utc": "2026-11-02T04:26:34.312093+00:00",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ixari_suits_family.png",
+      "sha256": "6971958e5cdf8e3b04218c7763627706a5d247a61d7a6753bb7fddd42efc9a45",
+      "bytes": 3560527
+    },
+    {
+      "path": "assets/renders/characters/ixari_suits_family.txt",
+      "sha256": "240930813d6a42d37e86638cc3507c5c4bb4cd425e2594ddc992fa4f90d9d858",
+      "bytes": 456
+    },
+    {
+      "path": "assets/renders/characters/validate/ixari-suits-family.json",
+      "sha256": "999f30fcdd64520f3b24bc6bc613a428b812c367ac7f19a445d53b5cd692fbbd",
+      "bytes": 2290
+    }
+  ]
+}

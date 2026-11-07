@@ -1,0 +1,1573 @@
+{
+  "started_utc": "2026-11-02T17:28:16.980061+00:00",
+  "controller_pid": 5038,
+  "controller_pgid": 5038,
+  "scope": "Serialized CPUchecks,max2environment/1Vitestworker,no GPU/browser/artwork",
+  "steps": [
+    {
+      "name": "new-cleanup-controls",
+      "started_utc": "2026-11-02T17:28:16.981141+00:00",
+      "command": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/test_ulgani5_cleanup.py",
+        "ulgani5-cleanup-controls-run2"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 5048,
+          "ppid": 5038,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:16 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 5049,
+          "ppid": 5038,
+          "pgid": 5049,
+          "fingerprint": "Mon Nov 2 12:28:16 2026",
+          "executable": "(caffeinate)"
+        },
+        {
+          "pid": 5054,
+          "ppid": 5048,
+          "pgid": 5054,
+          "fingerprint": "Mon Nov 2 12:28:17 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 5055,
+          "ppid": 5048,
+          "pgid": 5055,
+          "fingerprint": "Mon Nov 2 12:28:17 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5066,
+          "ppid": 5048,
+          "pgid": 5066,
+          "fingerprint": "Mon Nov 2 12:28:17 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 5077,
+          "ppid": 5048,
+          "pgid": 5077,
+          "fingerprint": "Mon Nov 2 12:28:17 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5165,
+          "ppid": 5048,
+          "pgid": 5165,
+          "fingerprint": "Mon Nov 2 12:28:18 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 5191,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:18 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5235,
+          "ppid": 5048,
+          "pgid": 5235,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 5236,
+          "ppid": 5048,
+          "pgid": 5236,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 5242,
+          "ppid": 5048,
+          "pgid": 5242,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5383,
+          "ppid": 5363,
+          "pgid": 5363,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 5363,
+          "ppid": 5048,
+          "pgid": 5363,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 5364,
+          "ppid": 5048,
+          "pgid": 5364,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5530,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5552,
+          "ppid": 5048,
+          "pgid": 5552,
+          "fingerprint": "Mon Nov 2 12:28:19 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5562,
+          "ppid": 5048,
+          "pgid": 5562,
+          "fingerprint": "Mon Nov 2 12:28:20 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5581,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:20 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5590,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:20 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 5658,
+          "ppid": 5048,
+          "pgid": 5658,
+          "fingerprint": "Mon Nov 2 12:28:21 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5673,
+          "ppid": 5048,
+          "pgid": 5673,
+          "fingerprint": "Mon Nov 2 12:28:21 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5680,
+          "ppid": 5048,
+          "pgid": 5680,
+          "fingerprint": "Mon Nov 2 12:28:21 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 5681,
+          "ppid": 5048,
+          "pgid": 5681,
+          "fingerprint": "Mon Nov 2 12:28:21 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 5679,
+          "ppid": 5048,
+          "pgid": 5679,
+          "fingerprint": "Mon Nov 2 12:28:21 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 5687,
+          "ppid": 5048,
+          "pgid": 5687,
+          "fingerprint": "Mon Nov 2 12:28:21 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 5689,
+          "ppid": 5687,
+          "pgid": 5687,
+          "fingerprint": "Mon Nov 2 12:28:22 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 5692,
+          "ppid": 5048,
+          "pgid": 5692,
+          "fingerprint": "Mon Nov 2 12:28:22 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5808,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:27 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5816,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:27 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5826,
+          "ppid": 5048,
+          "pgid": 5826,
+          "fingerprint": "Mon Nov 2 12:28:28 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5843,
+          "ppid": 5048,
+          "pgid": 5843,
+          "fingerprint": "Mon Nov 2 12:28:28 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5850,
+          "ppid": 5048,
+          "pgid": 5850,
+          "fingerprint": "Mon Nov 2 12:28:28 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5876,
+          "ppid": 5048,
+          "pgid": 5876,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5884,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5888,
+          "ppid": 5048,
+          "pgid": 5888,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 5893,
+          "ppid": 5048,
+          "pgid": 5893,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 5894,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 5895,
+          "ppid": 5893,
+          "pgid": 5893,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 5902,
+          "ppid": 5048,
+          "pgid": 5902,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 5910,
+          "ppid": 5048,
+          "pgid": 5910,
+          "fingerprint": "Mon Nov 2 12:28:30 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5927,
+          "ppid": 5048,
+          "pgid": 5927,
+          "fingerprint": "Mon Nov 2 12:28:31 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 5964,
+          "ppid": 5048,
+          "pgid": 5964,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6024,
+          "ppid": 5048,
+          "pgid": 6024,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6023,
+          "ppid": 5048,
+          "pgid": 6023,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6025,
+          "ppid": 6023,
+          "pgid": 6023,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6034,
+          "ppid": 5048,
+          "pgid": 6034,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 6035,
+          "ppid": 5048,
+          "pgid": 6035,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6036,
+          "ppid": 6034,
+          "pgid": 6034,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 6044,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6052,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:32 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6117,
+          "ppid": 5048,
+          "pgid": 6117,
+          "fingerprint": "Mon Nov 2 12:28:33 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6125,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:33 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6325,
+          "ppid": 5048,
+          "pgid": 6325,
+          "fingerprint": "Mon Nov 2 12:28:36 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6391,
+          "ppid": 5048,
+          "pgid": 6391,
+          "fingerprint": "Mon Nov 2 12:28:36 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6406,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:37 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 6416,
+          "ppid": 5048,
+          "pgid": 6416,
+          "fingerprint": "Mon Nov 2 12:28:37 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 6420,
+          "ppid": 5048,
+          "pgid": 6420,
+          "fingerprint": "Mon Nov 2 12:28:37 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6457,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:37 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6463,
+          "ppid": 5048,
+          "pgid": 6463,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6477,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6483,
+          "ppid": 5048,
+          "pgid": 6483,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6488,
+          "ppid": 6486,
+          "pgid": 6486,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6486,
+          "ppid": 5048,
+          "pgid": 6486,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 6491,
+          "ppid": 5048,
+          "pgid": 6491,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6500,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6512,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:38 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 6531,
+          "ppid": 5048,
+          "pgid": 6531,
+          "fingerprint": "Mon Nov 2 12:28:40 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6549,
+          "ppid": 5048,
+          "pgid": 6549,
+          "fingerprint": "Mon Nov 2 12:28:41 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 6552,
+          "ppid": 5048,
+          "pgid": 6552,
+          "fingerprint": "Mon Nov 2 12:28:41 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 6554,
+          "ppid": 6552,
+          "pgid": 6552,
+          "fingerprint": "Mon Nov 2 12:28:41 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6557,
+          "ppid": 5048,
+          "pgid": 6557,
+          "fingerprint": "Mon Nov 2 12:28:41 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6564,
+          "ppid": 5048,
+          "pgid": 6564,
+          "fingerprint": "Mon Nov 2 12:28:41 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6583,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:42 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6601,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:42 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6615,
+          "ppid": 5048,
+          "pgid": 6615,
+          "fingerprint": "Mon Nov 2 12:28:43 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6621,
+          "ppid": 5048,
+          "pgid": 6621,
+          "fingerprint": "Mon Nov 2 12:28:43 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6626,
+          "ppid": 5048,
+          "pgid": 6626,
+          "fingerprint": "Mon Nov 2 12:28:44 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 6628,
+          "ppid": 6626,
+          "pgid": 6626,
+          "fingerprint": "Mon Nov 2 12:28:44 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6630,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:44 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6638,
+          "ppid": 5048,
+          "pgid": 6638,
+          "fingerprint": "Mon Nov 2 12:28:44 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6692,
+          "ppid": 5048,
+          "pgid": 6692,
+          "fingerprint": "Mon Nov 2 12:28:45 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6694,
+          "ppid": 6692,
+          "pgid": 6692,
+          "fingerprint": "Mon Nov 2 12:28:45 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 6697,
+          "ppid": 5048,
+          "pgid": 6697,
+          "fingerprint": "Mon Nov 2 12:28:45 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6701,
+          "ppid": 5048,
+          "pgid": 6701,
+          "fingerprint": "Mon Nov 2 12:28:45 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 6703,
+          "ppid": 6701,
+          "pgid": 6701,
+          "fingerprint": "Mon Nov 2 12:28:45 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 6706,
+          "ppid": 5048,
+          "pgid": 6706,
+          "fingerprint": "Mon Nov 2 12:28:46 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6713,
+          "ppid": 5048,
+          "pgid": 6713,
+          "fingerprint": "Mon Nov 2 12:28:46 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6742,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:46 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 6998,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:49 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7004,
+          "ppid": 5048,
+          "pgid": 7004,
+          "fingerprint": "Mon Nov 2 12:28:49 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 7011,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:49 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 7015,
+          "ppid": 5048,
+          "pgid": 7015,
+          "fingerprint": "Mon Nov 2 12:28:50 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7022,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:50 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7026,
+          "ppid": 5048,
+          "pgid": 7026,
+          "fingerprint": "Mon Nov 2 12:28:50 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7033,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:50 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7039,
+          "ppid": 5048,
+          "pgid": 7039,
+          "fingerprint": "Mon Nov 2 12:28:50 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7043,
+          "ppid": 5048,
+          "pgid": 7043,
+          "fingerprint": "Mon Nov 2 12:28:50 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7057,
+          "ppid": 5048,
+          "pgid": 5048,
+          "fingerprint": "Mon Nov 2 12:28:51 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7063,
+          "ppid": 5048,
+          "pgid": 7063,
+          "fingerprint": "Mon Nov 2 12:28:51 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7089,
+          "ppid": 5048,
+          "pgid": 7089,
+          "fingerprint": "Mon Nov 2 12:28:51 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7096,
+          "ppid": 5048,
+          "pgid": 7096,
+          "fingerprint": "Mon Nov 2 12:28:51 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7101,
+          "ppid": 5048,
+          "pgid": 7101,
+          "fingerprint": "Mon Nov 2 12:28:51 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7107,
+          "ppid": 5048,
+          "pgid": 7107,
+          "fingerprint": "Mon Nov 2 12:28:51 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7158,
+          "ppid": 5048,
+          "pgid": 7158,
+          "fingerprint": "Mon Nov 2 12:28:53 2026",
+          "executable": "(ps)"
+        }
+      ],
+      "pid": 5048,
+      "pgid": 5048,
+      "caffeinate_pid": 5049,
+      "caffeinate_pgid": 5049,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:28:53.649329+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/new-cleanup-controls.log"
+    },
+    {
+      "name": "existing-observer-controls",
+      "started_utc": "2026-11-02T17:28:53.649870+00:00",
+      "command": [
+        "python3",
+        "-u",
+        "packages/tools/blender/characters/test_ulgani5_observer.py",
+        "ulgani5-observer-controls-cleanup-review2"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 7170,
+          "ppid": 5038,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:28:53 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 7171,
+          "ppid": 5038,
+          "pgid": 7171,
+          "fingerprint": "Mon Nov 2 12:28:53 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 7174,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:28:53 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7182,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:28:54 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7189,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:28:55 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7193,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:28:55 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7204,
+          "ppid": 7170,
+          "pgid": 7204,
+          "fingerprint": "Mon Nov 2 12:28:56 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7210,
+          "ppid": 7170,
+          "pgid": 7210,
+          "fingerprint": "Mon Nov 2 12:28:56 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 7212,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:28:56 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7215,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:28:56 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7247,
+          "ppid": 7170,
+          "pgid": 7247,
+          "fingerprint": "Mon Nov 2 12:28:57 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 7253,
+          "ppid": 7170,
+          "pgid": 7253,
+          "fingerprint": "Mon Nov 2 12:28:57 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7259,
+          "ppid": 7170,
+          "pgid": 7259,
+          "fingerprint": "Mon Nov 2 12:28:57 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 7260,
+          "ppid": 7170,
+          "pgid": 7260,
+          "fingerprint": "Mon Nov 2 12:28:57 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7265,
+          "ppid": 7170,
+          "pgid": 7265,
+          "fingerprint": "Mon Nov 2 12:28:58 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7321,
+          "ppid": 7170,
+          "pgid": 7321,
+          "fingerprint": "Mon Nov 2 12:28:59 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 7520,
+          "ppid": 7170,
+          "pgid": 7520,
+          "fingerprint": "Mon Nov 2 12:28:59 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 7514,
+          "ppid": 7170,
+          "pgid": 7514,
+          "fingerprint": "Mon Nov 2 12:28:59 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 7516,
+          "ppid": 7514,
+          "pgid": 7514,
+          "fingerprint": "Mon Nov 2 12:28:59 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 7525,
+          "ppid": 7170,
+          "pgid": 7525,
+          "fingerprint": "Mon Nov 2 12:28:59 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7594,
+          "ppid": 7170,
+          "pgid": 7594,
+          "fingerprint": "Mon Nov 2 12:29:01 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7604,
+          "ppid": 7170,
+          "pgid": 7604,
+          "fingerprint": "Mon Nov 2 12:29:01 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7617,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:29:01 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7640,
+          "ppid": 7170,
+          "pgid": 7640,
+          "fingerprint": "Mon Nov 2 12:29:02 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 7646,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:29:02 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7659,
+          "ppid": 7170,
+          "pgid": 7659,
+          "fingerprint": "Mon Nov 2 12:29:03 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 7669,
+          "ppid": 7170,
+          "pgid": 7170,
+          "fingerprint": "Mon Nov 2 12:29:03 2026",
+          "executable": "(ps)"
+        }
+      ],
+      "pid": 7170,
+      "pgid": 7170,
+      "caffeinate_pid": 7171,
+      "caffeinate_pgid": 7171,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:03.982639+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/existing-observer-controls.log"
+    },
+    {
+      "name": "reviewer-entry-after",
+      "started_utc": "2026-11-02T17:29:03.983085+00:00",
+      "command": [
+        "python3",
+        "-u",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-cleanup-correction/cleanup-entry-fixture-after/cleanup-entry-fixture.py"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 7688,
+          "ppid": 5038,
+          "pgid": 7688,
+          "fingerprint": "Mon Nov 2 12:29:03 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 7687,
+          "ppid": 5038,
+          "pgid": 7687,
+          "fingerprint": "Mon Nov 2 12:29:03 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 7692,
+          "ppid": 7687,
+          "pgid": 7692,
+          "fingerprint": "Mon Nov 2 12:29:04 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 7693,
+          "ppid": 7687,
+          "pgid": 7693,
+          "fingerprint": "Mon Nov 2 12:29:04 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 7709,
+          "ppid": 7687,
+          "pgid": 7709,
+          "fingerprint": "Mon Nov 2 12:29:04 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 7710,
+          "ppid": 7709,
+          "pgid": 7709,
+          "fingerprint": "Mon Nov 2 12:29:04 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 7711,
+          "ppid": 7687,
+          "pgid": 7711,
+          "fingerprint": "Mon Nov 2 12:29:04 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8172,
+          "ppid": 7687,
+          "pgid": 7687,
+          "fingerprint": "Mon Nov 2 12:29:09 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8184,
+          "ppid": 7687,
+          "pgid": 8184,
+          "fingerprint": "Mon Nov 2 12:29:10 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8198,
+          "ppid": 7687,
+          "pgid": 7687,
+          "fingerprint": "Mon Nov 2 12:29:10 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8214,
+          "ppid": 7687,
+          "pgid": 8214,
+          "fingerprint": "Mon Nov 2 12:29:11 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8220,
+          "ppid": 7687,
+          "pgid": 8220,
+          "fingerprint": "Mon Nov 2 12:29:11 2026",
+          "executable": "(ps)"
+        }
+      ],
+      "pid": 7687,
+      "pgid": 7687,
+      "caffeinate_pid": 7688,
+      "caffeinate_pgid": 7688,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:11.628046+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/reviewer-entry-after.log"
+    },
+    {
+      "name": "reviewer-controls-after",
+      "started_utc": "2026-11-02T17:29:11.628686+00:00",
+      "command": [
+        "python3",
+        "-u",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-cleanup-correction/cleanup-fixtures-after/cleanup-fixtures.py"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 8227,
+          "ppid": 5038,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:11 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 8228,
+          "ppid": 5038,
+          "pgid": 8228,
+          "fingerprint": "Mon Nov 2 12:29:11 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 8232,
+          "ppid": 8227,
+          "pgid": 8232,
+          "fingerprint": "Mon Nov 2 12:29:11 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 8233,
+          "ppid": 8227,
+          "pgid": 8233,
+          "fingerprint": "Mon Nov 2 12:29:11 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 8235,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:11 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8254,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:12 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8285,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:13 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8289,
+          "ppid": 8227,
+          "pgid": 8289,
+          "fingerprint": "Mon Nov 2 12:29:13 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8296,
+          "ppid": 8227,
+          "pgid": 8296,
+          "fingerprint": "Mon Nov 2 12:29:13 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 8317,
+          "ppid": 8296,
+          "pgid": 8296,
+          "fingerprint": "Mon Nov 2 12:29:13 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 8318,
+          "ppid": 8227,
+          "pgid": 8318,
+          "fingerprint": "Mon Nov 2 12:29:13 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 8376,
+          "ppid": 8227,
+          "pgid": 8376,
+          "fingerprint": "Mon Nov 2 12:29:14 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8390,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:14 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8480,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:15 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8487,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:15 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8489,
+          "ppid": 8227,
+          "pgid": 8489,
+          "fingerprint": "Mon Nov 2 12:29:15 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 8490,
+          "ppid": 8227,
+          "pgid": 8490,
+          "fingerprint": "Mon Nov 2 12:29:15 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 8503,
+          "ppid": 8227,
+          "pgid": 8503,
+          "fingerprint": "Mon Nov 2 12:29:16 2026",
+          "executable": "<defunct>"
+        },
+        {
+          "pid": 8504,
+          "ppid": 8503,
+          "pgid": 8503,
+          "fingerprint": "Mon Nov 2 12:29:16 2026",
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 8508,
+          "ppid": 8227,
+          "pgid": 8508,
+          "fingerprint": "Mon Nov 2 12:29:16 2026",
+          "executable": "ps"
+        },
+        {
+          "pid": 8515,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:16 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8523,
+          "ppid": 8227,
+          "pgid": 8523,
+          "fingerprint": "Mon Nov 2 12:29:16 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8536,
+          "ppid": 8227,
+          "pgid": 8227,
+          "fingerprint": "Mon Nov 2 12:29:17 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8547,
+          "ppid": 8227,
+          "pgid": 8547,
+          "fingerprint": "Mon Nov 2 12:29:17 2026",
+          "executable": "(ps)"
+        },
+        {
+          "pid": 8603,
+          "ppid": 8227,
+          "pgid": 8603,
+          "fingerprint": "Mon Nov 2 12:29:18 2026",
+          "executable": "(ps)"
+        }
+      ],
+      "pid": 8227,
+      "pgid": 8227,
+      "caffeinate_pid": 8228,
+      "caffeinate_pgid": 8228,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:18.264716+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/reviewer-controls-after.log"
+    },
+    {
+      "name": "rig-review-units",
+      "started_utc": "2026-11-02T17:29:18.265438+00:00",
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "packages/client/src/characters/sharedRig.test.js",
+        "packages/client/src/dev/review.test.js",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 8608,
+          "ppid": 5038,
+          "pgid": 8608,
+          "fingerprint": "Mon Nov 2 12:29:18 2026",
+          "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node"
+        },
+        {
+          "pid": 8609,
+          "ppid": 5038,
+          "pgid": 8609,
+          "fingerprint": "Mon Nov 2 12:29:18 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 8626,
+          "ppid": 8608,
+          "pgid": 8608,
+          "fingerprint": "Mon Nov 2 12:29:18 2026",
+          "executable": "node"
+        },
+        {
+          "pid": 8638,
+          "ppid": 8626,
+          "pgid": 8608,
+          "fingerprint": "Mon Nov 2 12:29:18 2026",
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 8662,
+          "ppid": 8626,
+          "pgid": 8608,
+          "fingerprint": "Mon Nov 2 12:29:19 2026",
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        }
+      ],
+      "pid": 8608,
+      "pgid": 8608,
+      "caffeinate_pid": 8609,
+      "caffeinate_pgid": 8609,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:19.737145+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/rig-review-units.log"
+    },
+    {
+      "name": "client-typecheck",
+      "started_utc": "2026-11-02T17:29:19.737715+00:00",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@astra/client",
+        "typecheck"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 8664,
+          "ppid": 5038,
+          "pgid": 8664,
+          "fingerprint": "Mon Nov 2 12:29:19 2026",
+          "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node"
+        },
+        {
+          "pid": 8665,
+          "ppid": 5038,
+          "pgid": 8665,
+          "fingerprint": "Mon Nov 2 12:29:19 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 8667,
+          "ppid": 8664,
+          "pgid": 8664,
+          "fingerprint": "Mon Nov 2 12:29:19 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 8668,
+          "ppid": 8667,
+          "pgid": 8664,
+          "fingerprint": "Mon Nov 2 12:29:19 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 8679,
+          "ppid": 8664,
+          "pgid": 8664,
+          "fingerprint": "Mon Nov 2 12:29:19 2026",
+          "executable": "node"
+        }
+      ],
+      "pid": 8664,
+      "pgid": 8664,
+      "caffeinate_pid": 8665,
+      "caffeinate_pgid": 8665,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:21.743293+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/client-typecheck.log"
+    },
+    {
+      "name": "tools-typecheck",
+      "started_utc": "2026-11-02T17:29:21.743827+00:00",
+      "command": [
+        "pnpm",
+        "--filter",
+        "@astra/tools",
+        "typecheck"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 8704,
+          "ppid": 8701,
+          "pgid": 8701,
+          "fingerprint": "Mon Nov 2 12:29:21 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 8705,
+          "ppid": 8704,
+          "pgid": 8701,
+          "fingerprint": "Mon Nov 2 12:29:21 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 8701,
+          "ppid": 5038,
+          "pgid": 8701,
+          "fingerprint": "Mon Nov 2 12:29:21 2026",
+          "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback/../../node/bin/node"
+        },
+        {
+          "pid": 8702,
+          "ppid": 5038,
+          "pgid": 8702,
+          "fingerprint": "Mon Nov 2 12:29:21 2026",
+          "executable": "/usr/bin/caffeinate"
+        },
+        {
+          "pid": 8717,
+          "ppid": 8701,
+          "pgid": 8701,
+          "fingerprint": "Mon Nov 2 12:29:21 2026",
+          "executable": "node"
+        }
+      ],
+      "pid": 8701,
+      "pgid": 8701,
+      "caffeinate_pid": 8702,
+      "caffeinate_pgid": 8702,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:23.197533+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/tools-typecheck.log"
+    },
+    {
+      "name": "focused-eslint",
+      "started_utc": "2026-11-02T17:29:23.198067+00:00",
+      "command": [
+        "pnpm",
+        "exec",
+        "eslint",
+        "packages/client/src/characters/sharedRig.js",
+        "packages/client/src/characters/sharedRig.test.js",
+        "packages/client/test/characters/loadActualRig.js"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 8761,
+          "ppid": 5038,
+          "pgid": 8761,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(node)"
+        },
+        {
+          "pid": 8762,
+          "ppid": 5038,
+          "pgid": 8762,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(caffeinate)"
+        },
+        {
+          "pid": 8764,
+          "ppid": 8761,
+          "pgid": 8761,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 8765,
+          "ppid": 8764,
+          "pgid": 8761,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 8766,
+          "ppid": 8765,
+          "pgid": 8761,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(bash)"
+        },
+        {
+          "pid": 8771,
+          "ppid": 8761,
+          "pgid": 8761,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(node)"
+        }
+      ],
+      "pid": 8761,
+      "pgid": 8761,
+      "caffeinate_pid": 8762,
+      "caffeinate_pgid": 8762,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:23.910850+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/focused-eslint.log"
+    },
+    {
+      "name": "historical-preparation-refuses-new-helper",
+      "started_utc": "2026-11-02T17:29:23.911489+00:00",
+      "command": [
+        "python3",
+        "packages/tools/blender/characters/capture_ulgani5.py",
+        "--verify-only"
+      ],
+      "expected_exit_code": 1,
+      "processes": [
+        {
+          "pid": 8786,
+          "ppid": 5038,
+          "pgid": 8786,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(Python)"
+        },
+        {
+          "pid": 8787,
+          "ppid": 5038,
+          "pgid": 8787,
+          "fingerprint": "Mon Nov 2 12:29:23 2026",
+          "executable": "(caffeinate)"
+        }
+      ],
+      "pid": 8786,
+      "pgid": 8786,
+      "caffeinate_pid": 8787,
+      "caffeinate_pgid": 8787,
+      "exit_code": 1,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:24.212054+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/historical-preparation-refuses-new-helper.log"
+    },
+    {
+      "name": "diff-check",
+      "started_utc": "2026-11-02T17:29:24.212773+00:00",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "expected_exit_code": 0,
+      "processes": [
+        {
+          "pid": 8792,
+          "ppid": 5038,
+          "pgid": 8792,
+          "fingerprint": "Mon Nov 2 12:29:24 2026",
+          "executable": "(git)"
+        },
+        {
+          "pid": 8793,
+          "ppid": 5038,
+          "pgid": 8793,
+          "fingerprint": "Mon Nov 2 12:29:24 2026",
+          "executable": "(caffeinate)"
+        }
+      ],
+      "pid": 8792,
+      "pgid": 8792,
+      "caffeinate_pid": 8793,
+      "caffeinate_pgid": 8793,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "completed_utc": "2026-11-02T17:29:24.379527+00:00",
+      "log": ".claude/pause/characters-resume/ulgani5-cleanup-correction/diff-check.log"
+    }
+  ],
+  "exit_code": 0,
+  "completed_utc": "2026-11-02T17:29:24.379956+00:00"
+}

@@ -1,0 +1,33 @@
+[
+  [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/verify_ulgani5_pose_guard.py",
+    "--",
+    ".claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend",
+    ".claude/pause/characters-resume/ulgani5-pose/guard-validation.json"
+  ],
+  [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/validate.py",
+    "--",
+    "--family",
+    "characters",
+    "--report",
+    ".claude/pause/characters-resume/ulgani5-pose/source-validation-guardfix.json",
+    ".claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend"
+  ]
+]

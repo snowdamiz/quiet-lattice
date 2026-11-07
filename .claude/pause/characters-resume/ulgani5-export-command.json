@@ -1,0 +1,22 @@
+[
+  [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/export_ulgani5_saved.py",
+    "--",
+    "--input",
+    "assets/blend/characters/ulgani.blend",
+    "--report",
+    ".claude/pause/characters-resume/ulgani5-export/export.json",
+    "--report-dir",
+    ".claude/pause/characters-resume/ulgani5-export/reports",
+    "--out-dir",
+    ".claude/pause/characters-resume/ulgani5-export/models"
+  ]
+]

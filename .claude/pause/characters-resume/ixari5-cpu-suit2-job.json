@@ -1,0 +1,60 @@
+{
+  "key": "suit2",
+  "utc": "2026-11-02T03:56:26.008235+00:00",
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend",
+    "assets/renders/characters",
+    "--samples",
+    "48",
+    "--variant",
+    "ixari_suit2",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ixari-review5-cpu-suit2-turntable.json"
+  ],
+  "source_sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+  "export_sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+  "device": "CPU",
+  "threads": 2,
+  "samples": 48,
+  "status": "complete and verified",
+  "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5-cpu-suit2-resume.log",
+  "session": 99847,
+  "pid": 14307,
+  "pgid": 14307,
+  "caffeinate_pid": 14520,
+  "caffeinate_session": 24322,
+  "exit_code": 0,
+  "completed_utc": "2026-11-02T03:58:59.222678+00:00",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ixari_ixari_ixari_suit2_turntable.png",
+      "sha256": "93e676c2b7aca67b31d9b899a2a6cf64580330cb05726c34de4978f9508820a6",
+      "bytes": 4420079
+    },
+    {
+      "path": "assets/renders/characters/ixari_ixari_ixari_suit2_materials.png",
+      "sha256": "a6a72a9bb5a3b44775606ea03c8094d60899ca2204baf9a552bf1462b95f5c44",
+      "bytes": 1020784
+    },
+    {
+      "path": "assets/renders/characters/ixari_ixari_ixari_suit2_materials.txt",
+      "sha256": "f0292be776f9e6ce2951586b64cfde6d3c52fb8e09b8ef691ce208d57e6482fa",
+      "bytes": 363
+    },
+    {
+      "path": "assets/renders/characters/validate/ixari-review5-cpu-suit2-turntable.json",
+      "sha256": "fdfb098cde2dfa622fb587e191460ae8abeeacf849842f0756ecc023fcf67152",
+      "bytes": 1293
+    }
+  ]
+}

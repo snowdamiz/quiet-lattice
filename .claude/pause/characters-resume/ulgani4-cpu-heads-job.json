@@ -1,0 +1,72 @@
+{
+  "key": "heads",
+  "utc": "2026-11-02T05:56:38.467514+00:00",
+  "controller_pid": 22813,
+  "controller_pgid": 22813,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_heads.blend",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters",
+    "--samples",
+    "48",
+    "--family",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ulgani-heads-family.json"
+  ],
+  "cwd": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "source_sha256": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+  "export_sha256": "14d386eefd291892f3b3f2f0072c640e37a6f267fe73e4a4cb757c49db1caece",
+  "render_input": ".claude/pause/characters-resume/ulgani_heads.blend",
+  "render_input_sha256": "95a159c0854d77db0867a67d469446fbddd6455fb272683bfcee4abf97ddfa5d",
+  "device": "CPU",
+  "threads": 2,
+  "scripts": {
+    "packages/tools/blender/characters/render_details.py": "8a732fa6622aebc3402d1cee0703d66bdf1122d7735e07593dcee67a6089aa8f",
+    "packages/tools/blender/characters/cpu_turntables.py": "e4a869dba224c542110e096838f4068d30342f6bfcdbc8f00173a8fc26a746cc",
+    "packages/tools/blender/turntable.py": "3ef601868211b89a616e25242963acd2aa2a452d546bf63c3007debcf71c2161"
+  },
+  "runner_sha256": "913aa4b7ed3abbba7ac505e741b4db53cb628f50d23f28a3add798a98fff0f36",
+  "log": ".claude/pause/characters-resume/ulgani4-cpu-heads-20261102T055638Z.log",
+  "backup": ".claude/pause/characters-resume/ulgani4-prior-artifacts/heads-20261102T055638Z",
+  "status": "complete; controller/render/idle assertion and owned group drained",
+  "pid": 22823,
+  "pgid": 22813,
+  "caffeinate_pid": 22824,
+  "caffeinate_pgid": 22813,
+  "render_end_utc": "2026-11-02T05:58:27.988051+00:00",
+  "exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T05:58:27.989507+00:00",
+  "duration_seconds": 109.46,
+  "timing_scope": "Scheduling record only; functional art generation, no performance claim.",
+  "log_sha256": "5681b16e2c53cd25845de1566717e4a05537a67d3f2320fb92f4da39937b3a01",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ulgani_heads_family.png",
+      "sha256": "0f6037861b76292ca39887ece4e5d7380582bca39f046b23034f8979a61348e6",
+      "bytes": 5129349
+    },
+    {
+      "path": "assets/renders/characters/ulgani_heads_family.txt",
+      "sha256": "4cd61a3444845b9c968fcca9e60e2872f72e2403ceb441ad97d6e77ca7ac190e",
+      "bytes": 702
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-heads-family.json",
+      "sha256": "af1635e2218a36a403ed83299ea9f1d99e1d65194ebdc34b12e215733f671074",
+      "bytes": 3020
+    }
+  ],
+  "session": 89274,
+  "drain_verified_utc": "2026-11-02T05:58:56.518259+00:00",
+  "controller_exit_code": 0
+}

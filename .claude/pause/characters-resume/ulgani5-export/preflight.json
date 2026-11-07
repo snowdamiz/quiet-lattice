@@ -1,0 +1,577 @@
+{
+  "started_utc": "2026-11-02T09:13:11.094221+00:00",
+  "pid": 55859,
+  "pgid": 55859,
+  "threads": 2,
+  "source": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.blend",
+  "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "scope": "CPU-only saved source preflight or unchanged exporter;no bake/LOD generation/peer export",
+  "preflight_only": true,
+  "exporter_sha256": "a776e5cf1882da493ae7ece35dbb2bd1cd917e24f47d5805036f2cf5d292335c",
+  "entrypoint_sha256": "0f19d71909d5c6c18b5403874fdacc1025246c9d870d454fa3400e5d28304639",
+  "children": [],
+  "forbidden_calls": [],
+  "status": "preflight_pass",
+  "material_plans": [
+    {
+      "variant": "ulgani_head1",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head1",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head1",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head2",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head2",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head2",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head3",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head3",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head3",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head4",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head4",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head4",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head5",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head5",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head5",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head6",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head6",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head6",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_SuitA",
+      "engine_name": "SuitA",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_SuitA",
+      "engine_name": "SuitA",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_SuitB",
+      "engine_name": "SuitB",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_SuitB",
+      "engine_name": "SuitB",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    }
+  ],
+  "variants": [
+    "ulgani_head1",
+    "ulgani_head2",
+    "ulgani_head3",
+    "ulgani_head4",
+    "ulgani_head5",
+    "ulgani_head6",
+    "ulgani_suit1",
+    "ulgani_suit2",
+    "ulgani_suit3",
+    "ulgani_suit4"
+  ],
+  "explicit_four_lods_all_variants": true,
+  "no_material_bake_needed": true,
+  "saved_reopened_geometry_uv_weights_all_morphs_material_bindings_packed_images_69bone_rest_identical": true,
+  "preflight_completed_utc": "2026-11-02T09:13:19.677427+00:00"
+}

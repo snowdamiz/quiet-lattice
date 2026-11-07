@@ -1,0 +1,22 @@
+{
+  "started_utc": "2026-11-02T16:39:45.031475+00:00",
+  "controller_pid": 75779,
+  "controller_pgid": 75779,
+  "scope": "CPU-only shared-rig unit/actualGLB tests;two thread environment,one Vitest worker",
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "packages/client/src/characters/sharedRig.test.js",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "pid": 75788,
+  "pgid": 75788,
+  "caffeinate_pid": 75789,
+  "caffeinate_pgid": 75789,
+  "exit_code": 1,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T16:39:46.143975+00:00"
+}

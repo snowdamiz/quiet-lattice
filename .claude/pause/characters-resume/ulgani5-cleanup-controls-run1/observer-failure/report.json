@@ -1,0 +1,265 @@
+{
+  "cleanup": [
+    {
+      "utc": "2026-11-02T17:22:44.468909+00:00",
+      "pgid": 89977,
+      "signal": "SIGTERM"
+    },
+    {
+      "utc": "2026-11-02T17:22:45.063852+00:00",
+      "pgid": 89977,
+      "signal": "SIGKILL"
+    }
+  ],
+  "status": "FAILED_PRESERVED_NO_AUTOMATIC_RETRY",
+  "terminal": true,
+  "processes": [
+    {
+      "pid": 89573,
+      "ppid": 89563,
+      "pgid": 89573,
+      "fingerprint": "Mon Nov 2 12:22:23 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 89977,
+      "ppid": 89573,
+      "pgid": 89977,
+      "fingerprint": "Mon Nov 2 12:22:44 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 89979,
+      "ppid": 89977,
+      "pgid": 89977,
+      "fingerprint": "Mon Nov 2 12:22:44 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "profiles": [],
+  "observer_lifecycles": [
+    {
+      "started_utc": "2026-11-02T17:22:44.055965+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 89975,
+      "pgid": 89975,
+      "group_probes": [
+        {
+          "pid": 89976,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:22:44.105913+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 89975
+    },
+    {
+      "started_utc": "2026-11-02T17:22:44.107332+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 89978,
+      "pgid": 89978,
+      "group_probes": [
+        {
+          "pid": 89980,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:22:44.159370+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 89978
+    },
+    {
+      "started_utc": "2026-11-02T17:22:44.165150+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 89982,
+      "pgid": 89982,
+      "group_probes": [
+        {
+          "pid": 89983,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:22:44.214993+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 89982
+    },
+    {
+      "started_utc": "2026-11-02T17:22:44.221525+00:00",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-c",
+        "import subprocess,sys;subprocess.Popen([sys.executable,'-c',\"import time;from pathlib import Path;time.sleep(.5);Path('/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-cleanup-controls-run1/observer-failure/late-observer').write_text('late')\"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);sys.exit(9)"
+      ],
+      "pid": 89985,
+      "pgid": 89985,
+      "group_probes": [
+        {
+          "pid": 89987,
+          "exit_code": 0,
+          "reaped": true
+        },
+        {
+          "pid": 89988,
+          "exit_code": 0,
+          "reaped": true
+        },
+        {
+          "pid": 89989,
+          "exit_code": 0,
+          "reaped": true
+        },
+        {
+          "pid": 89990,
+          "exit_code": 0,
+          "reaped": true
+        },
+        {
+          "pid": 89991,
+          "exit_code": 0,
+          "reaped": true
+        },
+        {
+          "pid": 89992,
+          "exit_code": 0,
+          "reaped": true
+        },
+        {
+          "pid": 89993,
+          "exit_code": 0,
+          "reaped": true
+        },
+        {
+          "pid": 89994,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:22:44.380585+00:00",
+      "exit_code": 9,
+      "reaped": true,
+      "group_absent": true,
+      "error": "CalledProcessError(9, ['/opt/homebrew/opt/python@3.14/bin/python3.14', '-c', 'import subprocess,sys;subprocess.Popen([sys.executable,\\'-c\\',\"import time;from pathlib import Path;time.sleep(.5);Path(\\'/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-cleanup-controls-run1/observer-failure/late-observer\\').write_text(\\'late\\')\"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);sys.exit(9)'], '', '')"
+    },
+    {
+      "started_utc": "2026-11-02T17:22:44.401433+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 89995,
+      "pgid": 89995,
+      "group_probes": [
+        {
+          "pid": 89998,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:22:44.461855+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 89995
+    },
+    {
+      "started_utc": "2026-11-02T17:22:44.974061+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 90000,
+      "pgid": 90000,
+      "group_probes": [
+        {
+          "pid": 90001,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:22:45.055617+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 90000
+    },
+    {
+      "started_utc": "2026-11-02T17:22:45.569051+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 90004,
+      "pgid": 90004,
+      "group_probes": [
+        {
+          "pid": 90005,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:22:45.650700+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 90004
+    }
+  ],
+  "error": "ValueError('original node error')",
+  "exit_code": 3,
+  "failed_utc": "2026-11-02T17:22:44.221412+00:00",
+  "cleanup_runs": [
+    {
+      "started_utc": "2026-11-02T17:22:44.221508+00:00",
+      "completed_utc": "2026-11-02T17:22:45.654617+00:00",
+      "settled": true,
+      "error_count": 1
+    }
+  ],
+  "owned_cleanup_settled": true,
+  "cleanup_errors": [
+    {
+      "utc": "2026-11-02T17:22:44.401366+00:00",
+      "stage": "observe",
+      "error": "CalledProcessError(9, ['/opt/homebrew/opt/python@3.14/bin/python3.14', '-c', 'import subprocess,sys;subprocess.Popen([sys.executable,\\'-c\\',\"import time;from pathlib import Path;time.sleep(.5);Path(\\'/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-cleanup-controls-run1/observer-failure/late-observer\\').write_text(\\'late\\')\"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);sys.exit(9)'], '', '')"
+    }
+  ],
+  "child_exit_codes": [
+    {
+      "pid": 89977,
+      "exit_code": -9
+    }
+  ],
+  "children_and_profiles_drained_utc": "2026-11-02T17:22:45.654595+00:00",
+  "drain_error": "RuntimeError('Owned cleanup reported errors;see cleanup_errors and owned_cleanup_settled')",
+  "cleanup_finished_utc": "2026-11-02T17:22:45.654786+00:00"
+}

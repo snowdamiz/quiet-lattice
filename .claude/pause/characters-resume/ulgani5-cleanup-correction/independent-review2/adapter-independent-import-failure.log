@@ -1,0 +1,13 @@
+(node:48799) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+Replace `const THREE = require("three")` with `import * as THREE from "three"`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+file:///private/tmp/characters-whole-review2-sol-20261102/adapter-independent.mjs:13
+ all.push({name,scene,profile,meshes,proof:gltf.proof,rest:meshes.map(m=>{const a=[];for(let i=0;i<m.geometry.attributes.position.count;i++)a.push(m.getVertexPosition(i,new T.Vector3()).applyMatrix4(m.matrixWorld));return a;})});
+                                                                                                                                                                         ^
+
+TypeError: T.Vector3 is not a constructor
+    at file:///private/tmp/characters-whole-review2-sol-20261102/adapter-independent.mjs:13:170
+    at Array.map (<anonymous>)
+    at file:///private/tmp/characters-whole-review2-sol-20261102/adapter-independent.mjs:13:67
+
+Node.js v26.12.1

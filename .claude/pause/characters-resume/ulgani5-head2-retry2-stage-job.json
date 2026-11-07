@@ -1,0 +1,181 @@
+{
+  "started_utc": "2026-11-02T08:18:13.962591+00:00",
+  "controller_pid": 68115,
+  "controller_pgid": 68115,
+  "scope": "ONE CPU-only existing Head2 nodule LOD restoration and staging-source validation;no body/jaw/morph replay;no bake/export/render/browser/GPU.",
+  "threads": 2,
+  "patch_sha256": "e8d8df85ca235e6aa4558e25ebdb016017ed2daee972408607fbf99f44d859da",
+  "frozen_canonical_hashes": {
+    "assets/blend/characters/thalune.blend": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b",
+    "packages/client/public/models/characters/thalune.glb": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+    "assets/blend/characters/ixari.blend": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+    "packages/client/public/models/characters/ixari.glb": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+    "assets/blend/characters/ulgani.blend": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+    "packages/client/public/models/characters/ulgani.glb": "14d386eefd291892f3b3f2f0072c640e37a6f267fe73e4a4cb757c49db1caece"
+  },
+  "steps": [
+    {
+      "key": "head2-retry2",
+      "utc": "2026-11-02T08:18:13.963247+00:00",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/restore_ulgani5_head2.py",
+        "--",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source-clean.blend",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/source-head2.json"
+      ],
+      "log": ".claude/pause/characters-resume/ulgani5/head2-retry2.log",
+      "threads": 2,
+      "pid": 68127,
+      "pgid": 68115,
+      "caffeinate_pid": 68128,
+      "caffeinate_pgid": 68115,
+      "exit_code": 0,
+      "completed_utc": "2026-11-02T08:18:23.909860+00:00",
+      "caffeinate_exit_code": 0,
+      "log_sha256": "0138c7c7c21a9f2b24e892da14bfb0a0e67677d9fe4c21047b1c48e863d409d0"
+    },
+    {
+      "key": "validation-head2-retry2",
+      "utc": "2026-11-02T08:18:23.910346+00:00",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/validate.py",
+        "--",
+        "--family",
+        "characters",
+        "--report",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/source-validation-head2.json",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend"
+      ],
+      "log": ".claude/pause/characters-resume/ulgani5/validation-head2-retry2.log",
+      "threads": 2,
+      "pid": 68201,
+      "pgid": 68115,
+      "caffeinate_pid": 68202,
+      "caffeinate_pgid": 68115,
+      "exit_code": 0,
+      "completed_utc": "2026-11-02T08:18:26.575475+00:00",
+      "caffeinate_exit_code": 0,
+      "log_sha256": "b35f7086cc74043edc0f82f0c224f422d89ed9edcca676c644763bf445ba80bc"
+    }
+  ],
+  "status": "Head2 source nodule correction/invariants/validation PASS;all owned processes/assertions drained",
+  "completed_utc": "2026-11-02T08:18:26.799729+00:00",
+  "exit_code": 0,
+  "artifacts": [
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/cleanup.log",
+      "sha256": "bb6f68d8774e8549d6d753e0bd27dbcf3067217f897b0ef0a2caf339842bc541",
+      "bytes": 627
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/head2-retry2.log",
+      "sha256": "0138c7c7c21a9f2b24e892da14bfb0a0e67677d9fe4c21047b1c48e863d409d0",
+      "bytes": 540
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/head2.log",
+      "sha256": "3cb7a550a0b8d263077b496767c0b026c29273006989772857b2fed4fc8f92d1",
+      "bytes": 895
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/patch.log",
+      "sha256": "41f1aba9c457cec4d57273d9fadc3536b97e4e472f37804af8891d1e8c53716c",
+      "bytes": 4615
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-cleanup.json",
+      "sha256": "69109132fee3984716ee14568412de9f8bfe40eeb42c596e588633abf85a6d45",
+      "bytes": 95417
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-head2.json",
+      "sha256": "8977224f168500c4bb658f29ac343b4912c6a45a03a71e0d30e115bc90e9c110",
+      "bytes": 81017
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-patch.json",
+      "sha256": "9c6d73455fe47994cd8c916c5f8495677a283d26fc310ef8edc18b427b35967c",
+      "bytes": 17529
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-validation-clean.json",
+      "sha256": "750b51bd9eaa6c99fca16f8af0b4e88b700d63b79af89805f8351abe607f5d2b",
+      "bytes": 12709
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-validation-head2.json",
+      "sha256": "2c074e8e952dad3b67c4c4cf5013d8fe2608fb72bbfb888b91a7432b2bad135d",
+      "bytes": 12711
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/source-validation.json",
+      "sha256": "f5332c882419cdd45e08cfb3baaa6146c407aa3ee6f97f38470559453dd221f6",
+      "bytes": 13104
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/ulgani5-source-clean.blend",
+      "sha256": "b332440a309c2c555ca5c8726ed05ab572e7e788e0fffa0938cd9ee018a4c919",
+      "bytes": 74136138
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend",
+      "sha256": "be08a7c2dfcbb5697325be289d232e3853dc4e0afd8b7cc2cd20062afea514ed",
+      "bytes": 74427580
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/ulgani5-source.blend",
+      "sha256": "f9493e205382a8668b3e543b01c01b71bb5af8797ffd73e63b9d6f7c7793ccf9",
+      "bytes": 74127134
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/ulgani5-source.sculpt.blend",
+      "sha256": "9c915a87c182527d4ae889c2022add274055d29c4931c0654c192d5b683cd04e",
+      "bytes": 72828726
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/validation-clean.log",
+      "sha256": "7ed1e1648efed5ec2ec0c28a276ca3df094795fa2dfcd5e0cc1088ee74ace869",
+      "bytes": 2972
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/validation-head2-retry2.log",
+      "sha256": "b35f7086cc74043edc0f82f0c224f422d89ed9edcca676c644763bf445ba80bc",
+      "bytes": 2974
+    },
+    {
+      "path": ".claude/pause/characters-resume/ulgani5/validation.log",
+      "sha256": "e98029ce280ff3af34de58f839043f9f12f8438d10ba7537585c0c97c73666d2",
+      "bytes": 3192
+    }
+  ],
+  "tool_session": 85378,
+  "controller_exit_code": 0,
+  "drain_verified_utc": "2026-11-02T08:19:25.201796+00:00",
+  "known_pids": [
+    68115,
+    68127,
+    68128,
+    68201,
+    68202
+  ],
+  "known_pgids": [
+    68115
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "cleanup": [],
+  "status": "fixture-starting",
+  "terminal": false,
+  "cleanup_runs": [
+    {
+      "started_utc": "2026-11-02T17:28:51.979675+00:00",
+      "completed_utc": "2026-11-02T17:28:53.175288+00:00",
+      "settled": true,
+      "error_count": 2
+    }
+  ],
+  "owned_cleanup_settled": true,
+  "processes": [
+    {
+      "pid": 5048,
+      "ppid": 5038,
+      "pgid": 5048,
+      "fingerprint": "Mon Nov 2 12:28:16 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 999999999,
+      "pgid": 0,
+      "fingerprint": "corrupted fixture metadata",
+      "executable": "fixture"
+    }
+  ],
+  "profiles": [],
+  "observer_lifecycles": [
+    {
+      "started_utc": "2026-11-02T17:28:51.908924+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7105,
+      "pgid": 7105,
+      "group_probes": [
+        {
+          "pid": 7106,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:51.979500+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7105
+    },
+    {
+      "started_utc": "2026-11-02T17:28:51.979692+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7107,
+      "pgid": 7107,
+      "group_probes": [
+        {
+          "pid": 7140,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:52.072530+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7107
+    },
+    {
+      "started_utc": "2026-11-02T17:28:53.087452+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7155,
+      "pgid": 7155,
+      "group_probes": [
+        {
+          "pid": 7156,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:53.170350+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7155
+    }
+  ],
+  "cleanup_errors": [
+    {
+      "utc": "2026-11-02T17:28:52.077198+00:00",
+      "stage": "group-guard",
+      "error": "RuntimeError('Refuse zero/system/controller process group')",
+      "pgid": 0
+    },
+    {
+      "utc": "2026-11-02T17:28:52.582378+00:00",
+      "stage": "group-guard",
+      "error": "RuntimeError('Refuse zero/system/controller process group')",
+      "pgid": 0
+    }
+  ],
+  "child_exit_codes": [],
+  "children_and_profiles_drained_utc": "2026-11-02T17:28:53.175259+00:00"
+}

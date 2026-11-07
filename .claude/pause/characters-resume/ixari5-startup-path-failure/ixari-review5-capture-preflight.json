@@ -1,0 +1,49 @@
+{
+  "prepared_utc": "2026-11-02T04:39:59.460528+00:00",
+  "worktree": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "branch": "task/P1-E05-T01",
+  "head": "38657e31f2a75f6c2c169a5d1e5c446203431f9c",
+  "claim_scope": "One standard 1920x1080 art review run. Capture correctness/completeness and raw whole-scene/asset observations only. No repaired-performance, comparative speedup or scene-budget claim.",
+  "known_limitation": "T13 pass-attribution problem remains unresolved; nominal reliability flags do not establish valid cost attribution.",
+  "source_sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+  "export_sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+  "verified_cpu_studio_keys": [
+    "grid",
+    "head1",
+    "head2",
+    "head3",
+    "head4",
+    "head5",
+    "head6",
+    "heads",
+    "suit1",
+    "suit2",
+    "suit3",
+    "suit4",
+    "suits"
+  ],
+  "verified_cpu_details_artifacts": 6,
+  "cpu_studio_sha256": "1242bad0b1e4f4391e22800ce716766bb4b49e5e89b5f3f8a21b1c21a402d1c3",
+  "cpu_details_sha256": "d2f7a809cc7f35177b7a273cf860da592e65c51a8ebe83048a916d5526b636e8",
+  "controller_sha256": "0370d898fa341cc59564b4c43784a1a1627ba2fb58b6d4e80328855e729074f2",
+  "sampler_sha256": "2a9fd5589dd4fadfe5a41bd6ad8a8a7efcef17af67842b7ca3cc4ccf163fbf01",
+  "measurement_sources": {
+    "packages/tools/src/capture/capture.ts": "3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc",
+    "packages/client/src/dev/review.js": "6e7b1690953c6c96a8e1db99048b3dc1faae1547f308b6bfcdbdc7a15f3bda02",
+    "packages/client/src/core/Engine.js": "36705414064d04cfaa744d554c0549365316e56f0b2bda139c5f0ccc9e213661",
+    "packages/tools/blender/characters/cpu_turntables.py": "e4a869dba224c542110e096838f4068d30342f6bfcdbc8f00173a8fc26a746cc",
+    "pnpm-lock.yaml": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f"
+  },
+  "expected_remaining_commands": [
+    [
+      "pnpm",
+      "capture",
+      "--",
+      "--review",
+      "characters/ixari"
+    ]
+  ],
+  "other_gpu_gate_released": false,
+  "parent_authorized_competing_work": "Hazard code/tests on CPU and performance CPU-only analysis; unrelated host activity remains.",
+  "initial_load_snapshot_utc": "2026-11-02T04:41:16.233706+00:00"
+}

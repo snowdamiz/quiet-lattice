@@ -1,0 +1,75 @@
+{
+  "key": "portraits",
+  "utc": "2026-11-02T09:27:24.209857+00:00",
+  "controller_pid": 80610,
+  "controller_pgid": 80610,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/render_details.py",
+    "--",
+    "portraits",
+    "CPU",
+    "ulgani",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ulgani-review5"
+  ],
+  "cwd": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "export_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+  "render_input": "assets/blend/characters/ulgani.blend",
+  "render_input_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "device": "CPU",
+  "threads": 2,
+  "scripts": {
+    "packages/tools/blender/characters/render_details.py": "8a732fa6622aebc3402d1cee0703d66bdf1122d7735e07593dcee67a6089aa8f",
+    "packages/tools/blender/characters/cpu_turntables.py": "e4a869dba224c542110e096838f4068d30342f6bfcdbc8f00173a8fc26a746cc",
+    "packages/tools/blender/turntable.py": "3ef601868211b89a616e25242963acd2aa2a452d546bf63c3007debcf71c2161"
+  },
+  "runner_sha256": "2e1b6382aeac89b67d6fd4f048b05e70e65985c1687eac78be270b16d813d370",
+  "log": ".claude/pause/characters-resume/ulgani5-cpu-portraits-20261102T092724Z.log",
+  "backup": ".claude/pause/characters-resume/ulgani5-prior-artifacts/portraits-20261102T092724Z",
+  "status": "complete;controller/render/idle assertion and all3owned groups drained",
+  "timeout_seconds": 900,
+  "pid": 80625,
+  "pgid": 80625,
+  "caffeinate_pid": 80626,
+  "caffeinate_pgid": 80626,
+  "render_end_utc": "2026-11-02T09:31:55.454258+00:00",
+  "exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T09:31:55.462409+00:00",
+  "duration_seconds": 271.18,
+  "timing_scope": "Scheduling record only; functional art generation, no performance claim.",
+  "log_sha256": "54796d07e598a639fadb8c65bc77446ce36979ed2500c4d7660d76d6a44d778f",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_heads_closeup.png",
+      "sha256": "75dd33739843149db168bfb31642eb364debfc10768da53030defab41f4d6435",
+      "bytes": 6716149
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_blendshapes.png",
+      "sha256": "3ec1ac06c018167298b6073e55ae44ed5623ac1381e9f83ed4f601651c377563",
+      "bytes": 4408838
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_blendshapes.txt",
+      "sha256": "e32a6131340aa33e5dc32037859abda5e6d8967e76d678554a07b0cea002cb7f",
+      "bytes": 482
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_hands_feet.png",
+      "sha256": "eb9446baac6c3ceee3fae6b60ae73c00a7d534eb3817ade3e3f9cab173f79747",
+      "bytes": 2172518
+    }
+  ],
+  "session": 26207,
+  "controller_exit_code": 0,
+  "drain_verified_utc": "2026-11-02T09:32:56.900149+00:00"
+}

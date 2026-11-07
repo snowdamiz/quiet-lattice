@@ -1,0 +1,435 @@
+{
+  "file": "characters/ulgani",
+  "asset": "ulgani",
+  "variant": "ulgani_head4",
+  "class": "hero",
+  "gl": "metal",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "stats": {
+    "file": "characters/ulgani",
+    "asset": "ulgani",
+    "variant": "ulgani_head4",
+    "lod": 0,
+    "shown": 0,
+    "lods": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "triangles": 96494,
+    "meshes": 4,
+    "materials": [
+      "Skin",
+      "Eye",
+      "Bio"
+    ],
+    "size": [
+      1.35,
+      2.08,
+      0.63
+    ],
+    "colliders": 0,
+    "markers": 0,
+    "kinds": {},
+    "textures": {
+      "shown": {
+        "count": 10,
+        "compressed": 10,
+        "mb": 138.7
+      },
+      "file": {
+        "count": 16,
+        "compressed": 16,
+        "mb": 224
+      }
+    }
+  },
+  "spots": {
+    "noon-lush": {
+      "relief": 0.51,
+      "offset": 32,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    },
+    "night-exotic": {
+      "relief": 0.89,
+      "offset": 66,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 161
+      }
+    },
+    "open-space": {
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    }
+  },
+  "perf": [
+    {
+      "case": "noon-lush",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 61,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 37.9,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 8.3,
+        "cpuMsP95": 9.8,
+        "gpuMsMedian": 28.274,
+        "gpuMsP95": 33.864,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 650,
+        "triangles": 3786351
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 8.1,
+        "cpuMsP95": 9.5,
+        "gpuMsMedian": 27.689,
+        "gpuMsP95": 34.913,
+        "gpuSamples": 720,
+        "disjoint": 0,
+        "drawCalls": 646,
+        "triangles": 3689857
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 0.659,
+        "drawCalls": 4,
+        "triangles": 96494,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 720,
+        "blocks": 360,
+        "gpuMsIqr": [
+          -0.349,
+          1.555
+        ],
+        "gpuMsCi95": [
+          0.441,
+          0.861
+        ],
+        "cpuMsIqr": [
+          -0.35,
+          0.8
+        ],
+        "spreadMs": 1.904,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 0.585
+        }
+      },
+      "stats": {
+        "file": "characters/ulgani",
+        "asset": "ulgani",
+        "variant": "ulgani_head4",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 96494,
+        "meshes": 4,
+        "materials": [
+          "Skin",
+          "Eye",
+          "Bio"
+        ],
+        "size": [
+          1.35,
+          2.08,
+          0.63
+        ],
+        "colliders": 0,
+        "markers": 0,
+        "kinds": {},
+        "textures": {
+          "shown": {
+            "count": 10,
+            "compressed": 10,
+            "mb": 138.7
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 224
+          }
+        }
+      }
+    },
+    {
+      "case": "night-exotic",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 108,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 37.4,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 11.1,
+        "cpuMsP95": 13.6,
+        "gpuMsMedian": 24.185,
+        "gpuMsP95": 27.255,
+        "gpuSamples": 480,
+        "disjoint": 0,
+        "drawCalls": 1013,
+        "triangles": 1621546
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 11,
+        "cpuMsP95": 13.3,
+        "gpuMsMedian": 23.401,
+        "gpuMsP95": 26.65,
+        "gpuSamples": 480,
+        "disjoint": 0,
+        "drawCalls": 1009,
+        "triangles": 1525052
+      },
+      "asset": {
+        "cpuMs": 0.1,
+        "gpuMs": 0.763,
+        "drawCalls": 4,
+        "triangles": 96494,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 480,
+        "blocks": 240,
+        "gpuMsIqr": [
+          0.065,
+          1.438
+        ],
+        "gpuMsCi95": [
+          0.578,
+          0.989
+        ],
+        "cpuMsIqr": [
+          -0.462,
+          0.7
+        ],
+        "spreadMs": 1.373,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 0.784
+        }
+      },
+      "stats": {
+        "file": "characters/ulgani",
+        "asset": "ulgani",
+        "variant": "ulgani_head4",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 96494,
+        "meshes": 4,
+        "materials": [
+          "Skin",
+          "Eye",
+          "Bio"
+        ],
+        "size": [
+          1.35,
+          2.08,
+          0.63
+        ],
+        "colliders": 0,
+        "markers": 0,
+        "kinds": {},
+        "textures": {
+          "shown": {
+            "count": 10,
+            "compressed": 10,
+            "mb": 138.7
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 224
+          }
+        }
+      }
+    },
+    {
+      "case": "open-space",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 30,
+        "underBudget": true,
+        "stable": true,
+        "frameMs": 6.8,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 1.9,
+        "cpuMsP95": 2.5,
+        "gpuMsMedian": 4.658,
+        "gpuMsP95": 8.012,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 36,
+        "triangles": 145099
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 1.7,
+        "cpuMsP95": 2.3,
+        "gpuMsMedian": 3.831,
+        "gpuMsP95": 6.173,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48605
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 0.906,
+        "drawCalls": 4,
+        "triangles": 96494,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          0.68,
+          1.558
+        ],
+        "gpuMsCi95": [
+          0.762,
+          1.152
+        ],
+        "cpuMsIqr": [
+          0.1,
+          0.363
+        ],
+        "spreadMs": 0.878,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 0.827
+        }
+      },
+      "stats": {
+        "file": "characters/ulgani",
+        "asset": "ulgani",
+        "variant": "ulgani_head4",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 96494,
+        "meshes": 4,
+        "materials": [
+          "Skin",
+          "Eye",
+          "Bio"
+        ],
+        "size": [
+          1.35,
+          2.08,
+          0.63
+        ],
+        "colliders": 0,
+        "markers": 0,
+        "kinds": {},
+        "textures": {
+          "shown": {
+            "count": 10,
+            "compressed": 10,
+            "mb": 138.7
+          },
+          "file": {
+            "count": 16,
+            "compressed": 16,
+            "mb": 224
+          }
+        }
+      }
+    }
+  ],
+  "far": [
+    {
+      "range": 100,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 127,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 41
+      }
+    },
+    {
+      "range": 200,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 47,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 31
+      }
+    }
+  ],
+  "overlay": {
+    "counts": {},
+    "labelled": [],
+    "offscreen": 0
+  },
+  "errors": []
+}

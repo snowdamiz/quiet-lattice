@@ -1,0 +1,15 @@
+{
+  "head": "33c30cbb5dfc391e7d4617c5e18cc27c48e5008a",
+  "verified_utc": "2026-11-02T18:04:50.302559+00:00",
+  "worktree_clean": true,
+  "report_sha256": "f8e0da5adcb296c9b51a65b9a8d02bf9adc05cdad2e3544895854faeca34ca86",
+  "evidence_tracked_hashes_pass": 119,
+  "committed_lfs_pointers_and_exact_local_objects_verified": 107,
+  "source_archives_in_lfs_with_expected_sha256_and_sizes": 5,
+  "review3_original_files_still_exact": 94,
+  "recorded_pid_count": 594,
+  "recorded_group_count": 290,
+  "remaining": [],
+  "live_jobs": [],
+  "initial_postcommit_verifier_correction": "Raw git show returns LFS pointers for assets/renders. The archive check was corrected to verify committed pointer OID/size plus exact local LFS object bytes; no archive/source/proof mutation was needed."
+}

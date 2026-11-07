@@ -1,0 +1,23 @@
+{
+  "started_utc": "2026-11-02T16:48:41.815305+00:00",
+  "controller_pid": 10514,
+  "controller_pgid": 10514,
+  "scope": "Final exactsource unit rerun after precisioncoverage/title clarification;CPUonlyVitest1worker",
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "packages/client/src/characters/sharedRig.test.js",
+    "packages/client/src/dev/review.test.js",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "pid": 10524,
+  "pgid": 10524,
+  "caffeinate_pid": 10525,
+  "caffeinate_pgid": 10525,
+  "exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T16:48:43.479014+00:00"
+}

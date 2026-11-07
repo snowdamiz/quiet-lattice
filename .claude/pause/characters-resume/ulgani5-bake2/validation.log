@@ -1,0 +1,40 @@
+00:00.354  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate .claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.blend  (family characters, source .blend)
+  ulgani / ulgani_head1 [hero]  tris LOD0 104,834, LOD1 29,142, LOD2 9,320, LOD3 4,382  size 1.35 x 0.43 x 2.18 m
+  ulgani / ulgani_head2 [hero]  tris LOD0 97,842, LOD1 29,927, LOD2 11,579, LOD3 4,344  size 1.35 x 0.71 x 2.06 m
+  ulgani / ulgani_head3 [hero]  tris LOD0 88,288, LOD1 28,912, LOD2 11,816, LOD3 4,164  size 1.35 x 0.36 x 2.09 m
+  ulgani / ulgani_head4 [hero]  tris LOD0 87,666, LOD1 29,356, LOD2 12,178, LOD3 3,278  size 1.35 x 0.56 x 2.04 m
+  ulgani / ulgani_head5 [hero]  tris LOD0 89,050, LOD1 31,542, LOD2 16,371, LOD3 3,877  size 1.35 x 0.41 x 2.00 m
+  ulgani / ulgani_head6 [hero]  tris LOD0 95,682, LOD1 28,868, LOD2 10,698, LOD3 4,134  size 1.35 x 0.46 x 2.10 m
+  ulgani / ulgani_suit1 [hero]  tris LOD0 132,496, LOD1 37,580, LOD2 12,409, LOD3 5,211  size 1.35 x 0.43 x 2.18 m
+  ulgani / ulgani_suit2 [hero]  tris LOD0 141,320, LOD1 40,267, LOD2 13,366, LOD3 5,461  size 1.35 x 0.45 x 2.18 m
+  ulgani / ulgani_suit3 [hero]  tris LOD0 146,000, LOD1 49,010, LOD2 17,034, LOD3 6,299  size 1.35 x 0.43 x 2.18 m
+  ulgani / ulgani_suit4 [hero]  tris LOD0 146,000, LOD1 46,261, LOD2 16,016, LOD3 6,026  size 1.35 x 0.43 x 2.18 m
+  PASS  naming
+        ok    ulgani5-baked.blend: 10 variant(s) in 1 asset(s) follow the characters rules
+  PASS  triangle budget
+        ok    ulgani/ulgani_head1: LOD0 104,834 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ulgani/ulgani_head2: LOD0 97,842 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ulgani/ulgani_head3: LOD0 88,288 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    ... 7 more
+  PASS  LODs
+        ok    ulgani/ulgani_head1: 104,834 > 29,142 > 9,320 > 4,382 triangles; LOD3 4.2% of LOD0
+        ok    ulgani/ulgani_head2: 97,842 > 29,927 > 11,579 > 4,344 triangles; LOD3 4.4% of LOD0
+        ok    ulgani/ulgani_head3: 88,288 > 28,912 > 11,816 > 4,164 triangles; LOD3 4.7% of LOD0
+        ok    ... 7 more
+  PASS  materials
+        ok    Eye (UL_Eye): pbr: base colour, roughness, normal, AO
+        ok    Bio (UL_Frond): pbr: base colour, roughness, normal, AO, emissive
+        ok    Skin (UL_Skin): pbr: base colour, roughness, normal, AO
+        ok    ... 2 more
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    ulgani/ulgani_head1: z extent 2.18 m within 1.5-2.4 m
+        ok    ... 9 more
+RESULT: PASS (5 of 5 checks passed)
+  report: .claude/pause/characters-resume/ulgani5-bake2/source-validation-baked.json
+
+1 of 1 file(s) passed validation

@@ -1,0 +1,76 @@
+{
+  "note": "CPU-only native and4x-nearest arrangement of the ten current100m captures, not a new rendering or altered silhouette.",
+  "inputs": {
+    "assets/renders/review/characters/ixari/ixari/ixari_head1/far_lod2.png": "b705c9f4eb7efe88332583e9ebbfb3ac64c846847c0a71df2988497234c7a2db",
+    "assets/renders/review/characters/ixari/ixari/ixari_head2/far_lod2.png": "548b493dfd549f2bb4a6ea6d959ab1b9acb5c8fab5410d7fce8bdaa3d03b0468",
+    "assets/renders/review/characters/ixari/ixari/ixari_head3/far_lod2.png": "227b5a8d24dcfd37d1aae15b1192018f8240fd18fa2b5bf3807665b720c5c4a8",
+    "assets/renders/review/characters/ixari/ixari/ixari_head4/far_lod2.png": "581c9ebff0e61c96c646d3f1ecc94aca9f86ef5d0595e52258b87bfe89c2aa36",
+    "assets/renders/review/characters/ixari/ixari/ixari_head5/far_lod2.png": "d83e09c4f2213c1f1ad80cb30ab72422bfc7c46ab9e0283902681a661116bcec",
+    "assets/renders/review/characters/ixari/ixari/ixari_head6/far_lod2.png": "d9e44602b7ebad6b58ad647604b3d3c72e89b372806f2b872afa19fb0b9ddaca",
+    "assets/renders/review/characters/ixari/ixari/ixari_suit1/far_lod2.png": "da3cc9d92c4f7f2fbeeb0242991dfa8714869c393739b684f54a08b9734dac73",
+    "assets/renders/review/characters/ixari/ixari/ixari_suit2/far_lod2.png": "44f04af21ba3a2701a60cde86662776af1949882f7d0771c8fa7df431a644141",
+    "assets/renders/review/characters/ixari/ixari/ixari_suit3/far_lod2.png": "bb1a5a429ada0bd1ae3dedafc51e956f54a05c87deabacc231d8ea79b53c194f",
+    "assets/renders/review/characters/ixari/ixari/ixari_suit4/far_lod2.png": "c9b8be3f6ac5dcc07259a2b2700f8e7cd1c3ddf86fcb56833fe84ef67e5cb49c"
+  },
+  "steps": [
+    {
+      "utc": "2026-11-02T05:03:23.148438+00:00",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/characters/lineup.py",
+        "--",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari_lineup_far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/far_lod2.png"
+      ],
+      "exit_code": 0,
+      "output_sha256": "3af34119c8e1a727bdd241e579f874e5fcfbd28ec9a5107f2d087123915bc2c4",
+      "sidecar_sha256": "f0789aa9c80ae23de3bf0a8105307df0c80d46ce3a3fb64aeed84433d561d5b0"
+    },
+    {
+      "utc": "2026-11-02T05:03:25.079674+00:00",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/characters/lineup.py",
+        "--",
+        "--grayscale",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari_lineup_far_lod2_grayscale.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/far_lod2.png",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/far_lod2.png"
+      ],
+      "exit_code": 0,
+      "output_sha256": "7d66e2a32f9020e6e4cf8ffa676432496187dc2e818cb0ffbcc5599bc4ed3f18",
+      "sidecar_sha256": "a4932af59ea6de930a5e00e23a3ddef5be1089af617f75d10538a2a9f82a0f25"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/src/capture/ulgani5-review.ts:19
+if (!variant || !isUlganiVariant(variant) || !outArg || !writtenArg) throw new Error('Give --variant ulgani_head1…6|ulgani_suit1…4 --out-dir FIFTH_ATTEMPT_DIR --written NEW_JSON');
+                                                                           ^
+
+Error: Give --variant ulgani_head1…6|ulgani_suit1…4 --out-dir FIFTH_ATTEMPT_DIR --written NEW_JSON
+    at <anonymous> (/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/src/capture/ulgani5-review.ts:19:76)
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5)
+
+Node.js v26.12.1

@@ -1,0 +1,176 @@
+{
+  "cleanup": [],
+  "cleanup_runs": [
+    {
+      "started_utc": "2026-11-02T17:28:56.602320+00:00",
+      "completed_utc": "2026-11-02T17:28:57.900568+00:00",
+      "settled": true,
+      "error_count": 0
+    }
+  ],
+  "owned_cleanup_settled": true,
+  "processes": [
+    {
+      "pid": 7170,
+      "ppid": 5038,
+      "pgid": 7170,
+      "fingerprint": "Mon Nov 2 12:28:53 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 7210,
+      "ppid": 7170,
+      "pgid": 7210,
+      "fingerprint": "Mon Nov 2 12:28:56 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "profiles": [],
+  "observer_lifecycles": [
+    {
+      "started_utc": "2026-11-02T17:28:56.406057+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7208,
+      "pgid": 7208,
+      "group_probes": [
+        {
+          "pid": 7209,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:56.464083+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7208
+    },
+    {
+      "started_utc": "2026-11-02T17:28:56.466489+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7211,
+      "pgid": 7211,
+      "group_probes": [
+        {
+          "pid": 7212,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:56.527165+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7211
+    },
+    {
+      "started_utc": "2026-11-02T17:28:56.602345+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7214,
+      "pgid": 7214,
+      "group_probes": [
+        {
+          "pid": 7215,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:56.668043+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7214
+    },
+    {
+      "started_utc": "2026-11-02T17:28:56.672510+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7218,
+      "pgid": 7218,
+      "group_probes": [
+        {
+          "pid": 7219,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:56.731203+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7218
+    },
+    {
+      "started_utc": "2026-11-02T17:28:57.237008+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7247,
+      "pgid": 7247,
+      "group_probes": [
+        {
+          "pid": 7248,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:57.310663+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7247
+    },
+    {
+      "started_utc": "2026-11-02T17:28:57.821778+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 7253,
+      "pgid": 7253,
+      "group_probes": [
+        {
+          "pid": 7255,
+          "exit_code": 0,
+          "reaped": true
+        }
+      ],
+      "completed_utc": "2026-11-02T17:28:57.895508+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 7253
+    }
+  ],
+  "child_exit_codes": [
+    {
+      "pid": 7210,
+      "exit_code": 0
+    }
+  ],
+  "children_and_profiles_drained_utc": "2026-11-02T17:28:57.900544+00:00"
+}

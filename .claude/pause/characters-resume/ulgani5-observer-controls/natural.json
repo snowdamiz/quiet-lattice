@@ -1,0 +1,93 @@
+{
+  "cleanup": [],
+  "processes": [
+    {
+      "pid": 15265,
+      "ppid": 17818,
+      "pgid": 15265,
+      "fingerprint": "Mon Nov 2 05:51:18 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 15293,
+      "ppid": 15265,
+      "pgid": 15293,
+      "fingerprint": "Mon Nov 2 05:51:20 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "profiles": [],
+  "observer_lifecycles": [
+    {
+      "started_utc": "2026-11-02T10:51:20.767257+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 15292,
+      "pgid": 15292,
+      "completed_utc": "2026-11-02T10:51:20.808719+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 15292
+    },
+    {
+      "started_utc": "2026-11-02T10:51:20.811271+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 15294,
+      "pgid": 15294,
+      "completed_utc": "2026-11-02T10:51:20.849642+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 15294
+    },
+    {
+      "started_utc": "2026-11-02T10:51:20.934211+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 15295,
+      "pgid": 15295,
+      "completed_utc": "2026-11-02T10:51:20.977928+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 15295
+    },
+    {
+      "started_utc": "2026-11-02T10:51:21.995409+00:00",
+      "command": [
+        "ps",
+        "-axo",
+        "pid=,ppid=,pgid=,lstart=,comm="
+      ],
+      "pid": 15297,
+      "pgid": 15297,
+      "completed_utc": "2026-11-02T10:51:22.058390+00:00",
+      "exit_code": 0,
+      "reaped": true,
+      "group_absent": true,
+      "self_row_present": true,
+      "excluded_reaped_observer_pid": 15297
+    }
+  ],
+  "child_exit_codes": [
+    {
+      "pid": 15293,
+      "exit_code": 0
+    }
+  ],
+  "children_and_profiles_drained_utc": "2026-11-02T10:51:22.063240+00:00"
+}

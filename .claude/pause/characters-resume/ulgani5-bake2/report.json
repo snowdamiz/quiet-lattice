@@ -1,0 +1,277 @@
+{
+  "started_utc": "2026-11-02T09:04:54.885657+00:00",
+  "pid": 40820,
+  "pgid": 40820,
+  "source": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend",
+  "source_sha256": "be08a7c2dfcbb5697325be289d232e3853dc4e0afd8b7cc2cd20062afea514ed",
+  "source_validation_sha256": "cb68796f9c2a42c24433ef82873807b5e9339a84777e8668c6d0dae96713e90f",
+  "saved_bake_library_sha256": "7f4bf709469d5c5e95f701c1d97c4f7633a9aa8b1dd8904db5272f861a7b3e90",
+  "groups": [
+    "Skin",
+    "SuitA",
+    "SuitB"
+  ],
+  "scope": "Existing saved fifth geometry and authored material masks only;no authoring/LOD/export/render/browser stage.",
+  "threads": 2,
+  "resolution": {
+    "base": 4096,
+    "roughness": 4096,
+    "normal": 4096,
+    "ao": 2048,
+    "packed_orm": 4096
+  },
+  "samples": {
+    "base_emit": 1,
+    "roughness_emit": 1,
+    "normal": 4,
+    "ao": 32
+  },
+  "ao_floor_inherited_from_fourth": {
+    "Skin": 0.6,
+    "SuitA": 0.4,
+    "SuitB": 0.4
+  },
+  "jpeg_quality": {
+    "base_orm": 92,
+    "normal": 95
+  },
+  "reused_eye_frond_packed_image_sha256": {
+    "UL_Eye_base": "5ac51026147f7a07f829aef7080f6ea3807387bbe4ac35a67dcc3570fd9a4e65",
+    "UL_Eye_normal": "e7c0c47bfdd63b34964ddea9edc44520aed5551e85e0561c6372de87d9a09c6c",
+    "UL_Eye_orm": "17bf2c1ebaeb08993d3e920548916b143301094933b47f24c152131c8792d3a9",
+    "UL_Frond_base": "d0aa2ae83089cd867d565d6823d54dd4c289a3724338897f18f5b3f5afe54697",
+    "UL_Frond_emissive": "849ed1db7ea26acd59bdfe721f388ea3bb8c80d016cae14dfe1d6be4400b67ce",
+    "UL_Frond_normal": "0cb4cc8e88f7101f0b47a7bcdd189246f188b3375e60196a4fd49d492af55095",
+    "UL_Frond_orm": "b5350c574258ef44ecf345a8a0adbfcc241f26b768b7ba4151aec3675af0e251"
+  },
+  "steps": [
+    {
+      "material": "Skin",
+      "started_utc": "2026-11-02T09:04:55.327994+00:00",
+      "objects": [
+        "UL_Body_head1_L0",
+        "UL_Head1_head1_L0",
+        "UL_Head2_head2_L0",
+        "UL_Head3_head3_L0",
+        "UL_Head4_head4_L0",
+        "UL_Head5_head5_L0",
+        "UL_Head6_head6_L0"
+      ],
+      "maps": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_Skin_base.jpg",
+          "sha256": "f679ebc76491da63cf1c09425f8ac5dc192b7ecae341a00ae9f6705f8ad4115a",
+          "bytes": 1020948,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "sRGB",
+          "decoded_finite": true
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_Skin_orm.jpg",
+          "sha256": "24ce08c27e7b454f62df86ea4e03f2cb4aa7cba88033446c7f1f4f4c9b6e7698",
+          "bytes": 1653888,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "Non-Color",
+          "decoded_finite": true
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_Skin_normal.jpg",
+          "sha256": "d5517615b7dfa73b9099b6a7c6f371168efa1219f6ea9bc78cba855cc4d2e11b",
+          "bytes": 1113072,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "Non-Color",
+          "decoded_finite": true
+        }
+      ],
+      "completed_utc": "2026-11-02T09:06:30.414951+00:00",
+      "checkpoint": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.Skin.blend",
+      "checkpoint_sha256": "3e01da9184b94523c1881d77654f70b5256500abef00a85ef551da30ecc62ba9",
+      "geometry_rig_invariants_pass": true,
+      "eye_frond_packed_images_unchanged": true
+    },
+    {
+      "material": "SuitA",
+      "started_utc": "2026-11-02T09:06:30.849103+00:00",
+      "objects": [
+        "UL_Suit1_suit1_L0",
+        "UL_Suit2_suit2_L0"
+      ],
+      "maps": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_SuitA_base.jpg",
+          "sha256": "e2fc66bbc549d25923e86d82c9daaddd52dca9944285640c9187665874773430",
+          "bytes": 1187423,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "sRGB",
+          "decoded_finite": true
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_SuitA_orm.jpg",
+          "sha256": "602159eaae08c77d9c05abf1d2889c3a1a3bf2ba87ec3dad683e58d0a4ca6c88",
+          "bytes": 1781525,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "Non-Color",
+          "decoded_finite": true
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_SuitA_normal.jpg",
+          "sha256": "77eb425904b96f511521133b845ca58a13634bf3d65f011552f47dd3d12b576b",
+          "bytes": 2108687,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "Non-Color",
+          "decoded_finite": true
+        }
+      ],
+      "completed_utc": "2026-11-02T09:07:01.538291+00:00",
+      "checkpoint": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.SuitA.blend",
+      "checkpoint_sha256": "68bd99ce4b0989c8a1125e83326cb3b975e8f6b40c44bf4d26b90b5e203a36a8",
+      "geometry_rig_invariants_pass": true,
+      "eye_frond_packed_images_unchanged": true
+    },
+    {
+      "material": "SuitB",
+      "started_utc": "2026-11-02T09:07:01.967838+00:00",
+      "objects": [
+        "UL_Suit3_suit3_L0",
+        "UL_Suit4_suit4_L0"
+      ],
+      "maps": [
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_SuitB_base.jpg",
+          "sha256": "e6902a07ef5d4c1409f2663ca1c7f4163a3eca3237643d51eedf04a17eed0c51",
+          "bytes": 436185,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "sRGB",
+          "decoded_finite": true
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_SuitB_orm.jpg",
+          "sha256": "83156d7f65b70a193677ac3eeb23907b708b967e21d44bc0b4dcb3691dac0ae2",
+          "bytes": 448174,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "Non-Color",
+          "decoded_finite": true
+        },
+        {
+          "path": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani5-material-bake2/UL5_SuitB_normal.jpg",
+          "sha256": "b53593303ec5758f0c15abcfef0cf2d2c8d01db58e7d9f3ebf958b808a1ba2b3",
+          "bytes": 443506,
+          "size": [
+            4096,
+            4096
+          ],
+          "colorspace": "Non-Color",
+          "decoded_finite": true
+        }
+      ],
+      "completed_utc": "2026-11-02T09:07:30.084896+00:00",
+      "checkpoint": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.SuitB.blend",
+      "checkpoint_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+      "geometry_rig_invariants_pass": true,
+      "eye_frond_packed_images_unchanged": true
+    }
+  ],
+  "status": "MATERIAL_BAKE_SAVED;export/render/browser/visual-grade still pending",
+  "neutral_morph_references": [
+    {
+      "object": "UL_Head1_head1_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit1_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit2_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit3_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head1_suit4_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head2_head2_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head3_head3_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head4_head4_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head5_head5_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    },
+    {
+      "object": "UL_Head6_head6_L0",
+      "key": "Basis",
+      "value": 1.0,
+      "excluded_reference": true
+    }
+  ],
+  "devices": [
+    {
+      "name": "Apple M5 Pro",
+      "type": "CPU",
+      "use": false
+    },
+    {
+      "name": "Apple M5 Pro (GPU - 16 cores)",
+      "type": "METAL",
+      "use": true
+    }
+  ],
+  "bake_end_utc": "2026-11-02T09:07:30.519391+00:00",
+  "authoring_saved_utc": "2026-11-02T09:07:30.785860+00:00",
+  "output": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.blend",
+  "output_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b"
+}

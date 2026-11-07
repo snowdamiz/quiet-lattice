@@ -1,0 +1,174 @@
+[
+  {
+    "utc": "2026-11-02T03:37:30.734972+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/trim_suits.py",
+      "--",
+      "ulgani",
+      "146000",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend"
+    ],
+    "script_sha256": "9abfc9d3a1a4107ac7925c29048fe13e8d29470475da6d31607351c6b57acfe4"
+  },
+  {
+    "utc": "2026-11-02T03:37:32.500666+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/fill_bg.py",
+      "--",
+      "ulgani",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani-postprocess2",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend"
+    ],
+    "script_sha256": "7ada8f864386e264fae65508bbd8b4c94a348328eda48463db5a79ab9954576e"
+  },
+  {
+    "utc": "2026-11-02T03:37:44.570298+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/ao_floor.py",
+      "--",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ulgani-postprocess2",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend",
+      "UL_Frond=0.65",
+      "UL_SuitA=0.4",
+      "UL_SuitB=0.4",
+      "UL_Skin=0.6"
+    ],
+    "script_sha256": "1fa11113393f146defa5ed5ef10a31cf4752a23c459d374804c4dbacae2ecd97"
+  },
+  {
+    "utc": "2026-11-02T03:37:46.180656+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/fix_meshes.py",
+      "--",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend"
+    ],
+    "script_sha256": "ccacb993cf4d0a3aaeea83b4fc4bfe8e0150f6d50bc9bba0fceff2b4011a29dc"
+  },
+  {
+    "utc": "2026-11-02T03:37:47.391010+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/validate.py",
+      "--",
+      "--family",
+      "characters",
+      "--report",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani-source-validation2.json",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend"
+    ],
+    "script_sha256": "d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704"
+  },
+  {
+    "utc": "2026-11-02T03:37:50.115565+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_postprocess2.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/embed_save.py",
+      "--",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend"
+    ],
+    "script_sha256": "2a75939cab25ca2829e3aa3c8b5747f295d4154459604abf55736fe1466869de"
+  },
+  {
+    "utc": "2026-11-02T03:44:23.219772+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/audit.py",
+      "--",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/source-audit.json"
+    ],
+    "script_sha256": "751c49d545e0ba43fcabb1352ad8090858220716e68d273d044fe2076ddde1e3"
+  },
+  {
+    "utc": "2026-11-02T03:44:30.071324+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/family_copy.py",
+      "--",
+      "ulgani",
+      "heads",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_heads.blend"
+    ],
+    "script_sha256": "f9a23616ea0b8bf1e5148967d52c1a24a7efc43ca2526c3e0330f729958ef34e"
+  },
+  {
+    "utc": "2026-11-02T03:44:32.405093+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/family_copy.py",
+      "--",
+      "ulgani",
+      "suits",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani_suits.blend"
+    ],
+    "script_sha256": "f9a23616ea0b8bf1e5148967d52c1a24a7efc43ca2526c3e0330f729958ef34e"
+  }
+]

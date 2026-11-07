@@ -1,0 +1,41 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41
+
+ ❯ |@astra/client| src/characters/sharedRig.test.js (21 tests | 2 failed) 504ms
+   ❯ shared rig supported contract (18)
+     × preserves noncommuting local rotation and component scale changes, including STEP and one-key clips 2ms
+   ❯ all three frozen actual exports (3)
+     × preserves nonneutral relative TRS and interpolated motion for all nine source/target pairs 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/client| src/characters/sharedRig.test.js > shared rig supported contract > preserves noncommuting local rotation and component scale changes, including STEP and one-key clips
+AssertionError: expected 0.0004277087051968743 to be less than 0.000001
+ ❯ src/characters/sharedRig.test.js:43:116
+     41|     const output = adapt(input, source, target);
+     42|     expect(output.tracks.every((track) => track.getInterpolation() ===…
+     43|     expect(new Quaternion().fromArray(output.tracks[0].values).angleTo…
+       |                                                                                                                    ^
+     44|     arrayClose(Array.from(output.tracks[1].values), [3.3, 3.6, 6]);
+     45|     expect(adapt(clip([], 0), source, target).tracks).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |@astra/client| src/characters/sharedRig.test.js > all three frozen actual exports > preserves nonneutral relative TRS and interpolated motion for all nine source/target pairs
+AssertionError: expected 0.00013883431639076697 to be less than 0.000002
+ ❯ src/characters/sharedRig.test.js:177:51
+    175|         arrayClose(node.scale.toArray(), targetBind.scale.map((x, i) =…
+    176|         const expected = new Quaternion().fromArray(targetBind.quatern…
+    177|         expect(node.quaternion.angleTo(expected)).toBeLessThan(2e-6); …
+       |                                                   ^
+    178|         const roundtrip = adapt(adapted, target.profile, source.profil…
+    179|         for (let i = 0; i < animation.tracks.length; i++) arrayClose(A…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 19 passed (21)
+   Start at  11:39:45
+   Duration  606ms (tests 92%, import 4%, transform 4%)
+

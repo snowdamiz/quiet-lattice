@@ -1,0 +1,99 @@
+def processes(observer_command=None, observer_timeout=2):
+ # This exact helper appears in its own snapshot. Exclude its PID only after
+ # communicate() has completed and reaped it; all other process rows stay live data.
+ command=observer_command or ['ps','-axo','pid=,ppid=,pgid=,lstart=,comm=']
+ event={'started_utc':utc(),'command':command}
+ observer=subprocess.Popen(command,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+ event.update(pid=observer.pid,pgid=observer.pid)
+ def group_members():
+  # Signal permission is not process-group liveness on Darwin. A bounded
+  # secondary ps probe is reaped first; it is in our controller group, not
+  # this dedicated observer group, so it cannot count itself as a member.
+  probe=subprocess.Popen(['ps','-axo','pid=,pgid=,stat='],text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  try:output,error=probe.communicate(timeout=1)
+  except subprocess.TimeoutExpired:
+   probe.kill();probe.communicate(timeout=1);raise
+  event.setdefault('group_probes',[]).append({'pid':probe.pid,'exit_code':probe.returncode,'reaped':True})
+  if probe.returncode:raise subprocess.CalledProcessError(probe.returncode,probe.args,output,error)
+  return [{'pid':int(a[0]),'state':a[2]} for line in output.splitlines() if len(a:=line.split())==3 and int(a[1])==observer.pid]
+ def group_exists():return bool(group_members())
+ def drain_helper():
+  for sig in (signal.SIGTERM,signal.SIGKILL):
+   members=group_members()
+   if not members:break
+   if all(x['state'].startswith('Z') for x in members):continue
+   try:os.killpg(observer.pid,sig)
+   except ProcessLookupError:pass
+   except PermissionError:
+    remaining=group_members()
+    if any(not x['state'].startswith('Z') for x in remaining):raise
+   try:observer.communicate(timeout=.2)
+   except subprocess.TimeoutExpired:pass
+  observer.communicate(timeout=1)
+  deadline=time.monotonic()+2
+  while group_exists() and time.monotonic()<deadline:time.sleep(.02)
+  assert not group_exists(),'Observation helper group survived its bounded cleanup'
+ try:
+  output,error=observer.communicate(timeout=observer_timeout)
+  if observer.returncode!=0:
+   drain_helper();raise subprocess.CalledProcessError(observer.returncode,command,output,error)
+  if group_exists():
+   drain_helper();raise RuntimeError('Observation helper exited but left a live child')
+ except BaseException as exc:
+  try:drain_helper()
+  finally:
+   event.update(completed_utc=utc(),exit_code=observer.returncode,reaped=observer.returncode is not None,group_absent=not group_exists(),error=repr(exc));observer_events.append(event)
+  raise
+ rows={}
+ for line in output.splitlines():
+  a=line.strip().split(None,8)
+  if len(a)==9:rows[int(a[0])]={'pid':int(a[0]),'ppid':int(a[1]),'pgid':int(a[2]),'fingerprint':' '.join(a[3:8]),'executable':a[8]}
+ contained_self=observer.pid in rows
+ rows.pop(observer.pid,None)
+ event.update(completed_utc=utc(),exit_code=observer.returncode,reaped=True,group_absent=True,self_row_present=contained_self,excluded_reaped_observer_pid=observer.pid);observer_events.append(event)
+ return rows
+
+def save():report['processes']=list(known.values());report['profiles']=sorted(profiles);report['observer_lifecycles']=observer_events.copy();report_path.write_text(json.dumps(report,indent=2)+'\n')
+
+def observe():
+ rows=processes();owned={pid for pid,item in known.items() if pid in rows and rows[pid]['fingerprint']==item['fingerprint']}
+ while True:
+  found={pid for pid,item in rows.items() if item['ppid'] in owned}
+  if found<=owned:break
+  owned|=found
+ for pid in owned:
+  if pid in rows and (pid not in known or rows[pid]['fingerprint']==known[pid]['fingerprint']):known[pid]=rows[pid]
+ ids=[str(pid) for pid in owned if pid in rows]
+ if ids:
+  commands=subprocess.run(['ps','-p',','.join(ids),'-o','command='],capture_output=True,text=True).stdout
+  for name in re.findall(r'--user-data-dir=([^\s]+)',commands):
+   path=Path(name)
+   if path.name.startswith('playwright_chromiumdev_profile-'):profiles.add(str(path))
+ save();return rows
+
+def cleanup():
+ rows=observe();groups={item['pgid'] for pid,item in known.items() if pid!=os.getpid() and pid in rows and rows[pid]['fingerprint']==item['fingerprint']};groups.discard(os.getpgrp())
+ for sig in (signal.SIGTERM,signal.SIGKILL):
+  for group in groups:
+   rows=observe();members=[x for x in rows.values() if x['pgid']==group]
+   if not members:continue
+   assert all(x['pid'] in known and x['fingerprint']==known[x['pid']]['fingerprint'] for x in members),'Group contains unowned/reused process;manual drain required'
+   try:os.killpg(group,sig)
+   except ProcessLookupError:continue
+   report['cleanup'].append({'utc':utc(),'pgid':group,'signal':sig.name})
+  time.sleep(.5)
+  # poll() reaps only our completed direct Popen children before escalation.
+  # A still-running descendant remains in the fresh identity/group check.
+  for child in children:child.poll()
+ for child in children:
+  try:child.wait(timeout=5)
+  except subprocess.TimeoutExpired:raise RuntimeError('Owned child did not drain')
+ rows=observe()
+ assert all(pid==os.getpid() or pid not in rows or rows[pid]['fingerprint']!=item['fingerprint'] for pid,item in known.items()),'Owned process survived cleanup'
+ for name in profiles:
+  path=Path(name)
+  if path.exists():
+   recovery=jobdir/'profile-recovery';recovery.mkdir(exist_ok=True);shutil.move(str(path),str(recovery/path.name));report['cleanup'].append({'utc':utc(),'preserved_profile':name})
+ assert not any(Path(name).exists() for name in profiles)
+ report['child_exit_codes']=[{'pid':child.pid,'exit_code':child.returncode} for child in children]
+ report['children_and_profiles_drained_utc']=utc();save()

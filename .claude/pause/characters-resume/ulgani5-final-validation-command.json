@@ -1,0 +1,27 @@
+[
+  [
+    "pnpm",
+    "art:validate",
+    "--",
+    "characters",
+    "--report-dir",
+    ".claude/pause/characters-resume/ulgani5-export/family-validation"
+  ],
+  [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/validate.py",
+    "--",
+    "--family",
+    "characters",
+    "--report",
+    ".claude/pause/characters-resume/ulgani5-export/canonical-export-validation.json",
+    "packages/client/public/models/characters/ulgani.glb"
+  ]
+]

@@ -1,0 +1,7 @@
+00:00.660  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend"
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/inspect_ulgani5.py:52: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  result['materials'].append({'name': material.name, 'nodes': [{'name': n.name, 'type': n.type, 'image': n.image.name if n.type == 'TEX_IMAGE' and n.image else None, 'inputs': {socket.name: list(socket.default_value) if hasattr(socket.default_value, '__len__') else socket.default_value for socket in n.inputs if hasattr(socket, 'default_value') and socket.type in ('VALUE', 'RGBA')}} for n in material.node_tree.nodes] if material.use_nodes else [], 'links': [(l.from_node.name, l.from_socket.name, l.to_node.name, l.to_socket.name) for l in material.node_tree.links] if material.use_nodes else []})
+ULGANI5_LIGHT_INSPECT_DONE 98 meshes 71 embedded scripts;source unchanged
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

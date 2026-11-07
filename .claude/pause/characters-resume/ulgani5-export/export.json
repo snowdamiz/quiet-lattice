@@ -1,0 +1,1208 @@
+{
+  "started_utc": "2026-11-02T09:14:35.511782+00:00",
+  "pid": 57513,
+  "pgid": 57513,
+  "threads": 2,
+  "source": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+  "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "scope": "CPU-only saved source preflight or unchanged exporter;no bake/LOD generation/peer export",
+  "preflight_only": false,
+  "exporter_sha256": "a776e5cf1882da493ae7ece35dbb2bd1cd917e24f47d5805036f2cf5d292335c",
+  "entrypoint_sha256": "0f19d71909d5c6c18b5403874fdacc1025246c9d870d454fa3400e5d28304639",
+  "children": [
+    {
+      "pid": 57672,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:14:53.864617+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "uastc",
+        "--uastc-quality",
+        "2",
+        "--uastc-rdo",
+        "--uastc-rdo-l",
+        "4.0",
+        "--zstd",
+        "18",
+        "--normalize",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/0.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/0.ktx2"
+      ]
+    },
+    {
+      "pid": 61573,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:15:16.348029+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/1.png",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/1.ktx2"
+      ]
+    },
+    {
+      "pid": 61587,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:15:21.451599+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_SRGB",
+        "--assign-tf",
+        "srgb",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/2.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/2.ktx2"
+      ]
+    },
+    {
+      "pid": 61706,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:15:27.807280+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "uastc",
+        "--uastc-quality",
+        "2",
+        "--uastc-rdo",
+        "--uastc-rdo-l",
+        "4.0",
+        "--zstd",
+        "18",
+        "--normalize",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/3.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/3.ktx2"
+      ]
+    },
+    {
+      "pid": 61862,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:15:58.917840+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/4.png",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/4.ktx2"
+      ]
+    },
+    {
+      "pid": 61866,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:16:03.144207+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_SRGB",
+        "--assign-tf",
+        "srgb",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/5.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/5.ktx2"
+      ]
+    },
+    {
+      "pid": 61871,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:16:09.768960+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_SRGB",
+        "--assign-tf",
+        "srgb",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/6.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/6.ktx2"
+      ]
+    },
+    {
+      "pid": 62517,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:16:15.795765+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "uastc",
+        "--uastc-quality",
+        "2",
+        "--uastc-rdo",
+        "--uastc-rdo-l",
+        "4.0",
+        "--zstd",
+        "18",
+        "--normalize",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/7.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/7.ktx2"
+      ]
+    },
+    {
+      "pid": 62698,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:16:49.047087+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/8.png",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/8.ktx2"
+      ]
+    },
+    {
+      "pid": 62713,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:16:55.314568+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_SRGB",
+        "--assign-tf",
+        "srgb",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/9.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/9.ktx2"
+      ]
+    },
+    {
+      "pid": 62816,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:17:09.511212+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "uastc",
+        "--uastc-quality",
+        "2",
+        "--uastc-rdo",
+        "--uastc-rdo-l",
+        "4.0",
+        "--zstd",
+        "18",
+        "--normalize",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/10.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/10.ktx2"
+      ]
+    },
+    {
+      "pid": 63324,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:17:36.924512+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/11.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/11.ktx2"
+      ]
+    },
+    {
+      "pid": 63340,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:17:42.144696+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_SRGB",
+        "--assign-tf",
+        "srgb",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/12.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/12.ktx2"
+      ]
+    },
+    {
+      "pid": 63346,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:17:49.984219+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "uastc",
+        "--uastc-quality",
+        "2",
+        "--uastc-rdo",
+        "--uastc-rdo-l",
+        "4.0",
+        "--zstd",
+        "18",
+        "--normalize",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/13.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/13.ktx2"
+      ]
+    },
+    {
+      "pid": 63347,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:17:53.226514+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_UNORM",
+        "--assign-tf",
+        "linear",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/14.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/14.ktx2"
+      ]
+    },
+    {
+      "pid": 63349,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:17:56.787387+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "create",
+        "--format",
+        "R8G8B8_SRGB",
+        "--assign-tf",
+        "srgb",
+        "--generate-mipmap",
+        "--threads",
+        "15",
+        "--encode",
+        "basis-lz",
+        "--clevel",
+        "2",
+        "--qlevel",
+        "128",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/15.jpg",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-ktx-puqw8evg/15.ktx2"
+      ]
+    },
+    {
+      "pid": 63376,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:00.171961+00:00",
+      "command": [
+        "/Users/andreyyurlov/.local/state/fnm_multishells/17783_1793149551924/bin/node",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/node_modules/tsx/dist/cli.mjs",
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/src/art/meshopt.ts",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-export-l5ihns70/ktx2/ulgani.glb",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-export-l5ihns70/meshopt/ulgani.glb",
+        "{\"level\": \"high\", \"quantize\": true, \"positionBits\": 14, \"texcoordBits\": 14}"
+      ]
+    },
+    {
+      "pid": 63448,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:04.177354+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/1.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/1.png"
+      ]
+    },
+    {
+      "pid": 63449,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:04.177950+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/0.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/0.png"
+      ]
+    },
+    {
+      "pid": 63450,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:05.229477+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/2.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/2.png"
+      ]
+    },
+    {
+      "pid": 63451,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:05.767026+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/3.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/3.png"
+      ]
+    },
+    {
+      "pid": 63452,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:06.090770+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/4.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/4.png"
+      ]
+    },
+    {
+      "pid": 63454,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:07.085334+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/5.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/5.png"
+      ]
+    },
+    {
+      "pid": 63455,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:07.595887+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/6.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/6.png"
+      ]
+    },
+    {
+      "pid": 63456,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:07.894419+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/7.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/7.png"
+      ]
+    },
+    {
+      "pid": 63457,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:08.565063+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/8.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/8.png"
+      ]
+    },
+    {
+      "pid": 63462,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:09.939771+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/9.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/9.png"
+      ]
+    },
+    {
+      "pid": 63474,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:10.206940+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/10.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/10.png"
+      ]
+    },
+    {
+      "pid": 63475,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:11.489850+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/11.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/11.png"
+      ]
+    },
+    {
+      "pid": 63476,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:11.898106+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/12.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/12.png"
+      ]
+    },
+    {
+      "pid": 63478,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:12.643726+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/13.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/13.png"
+      ]
+    },
+    {
+      "pid": 63479,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:12.751916+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/14.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/14.png"
+      ]
+    },
+    {
+      "pid": 63480,
+      "pgid": 57513,
+      "start_observed_utc": "2026-11-02T09:18:13.338657+00:00",
+      "command": [
+        "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+        "extract",
+        "--transcode",
+        "rgba8",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/15.ktx2",
+        "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/art-unktx-6ifcoi2f/15.png"
+      ]
+    }
+  ],
+  "forbidden_calls": [],
+  "status": "EXPORTED_CPU_ONLY_NO_BAKE_NO_GENERATION",
+  "material_plans": [
+    {
+      "variant": "ulgani_head1",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head1",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head1",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head2",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head2",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head2",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head3",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head3",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head3",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head4",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head4",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head4",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head5",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head5",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head5",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_head6",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head6",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_head6",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit1",
+      "material": "UL_SuitA",
+      "engine_name": "SuitA",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit2",
+      "material": "UL_SuitA",
+      "engine_name": "SuitA",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit3",
+      "material": "UL_SuitB",
+      "engine_name": "SuitB",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_Skin",
+      "engine_name": "Skin",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_Eye",
+      "engine_name": "Eye",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_Frond",
+      "engine_name": "Bio",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "constant",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "image"
+      }
+    },
+    {
+      "variant": "ulgani_suit4",
+      "material": "UL_SuitB",
+      "engine_name": "SuitB",
+      "ao_to_bake": false,
+      "channels_to_bake": [],
+      "linked": false,
+      "channels": {
+        "baseColor": "image",
+        "roughness": "image",
+        "metallic": "image",
+        "normal": "image",
+        "occlusion": "image",
+        "emissive": "constant"
+      }
+    }
+  ],
+  "variants": [
+    "ulgani_head1",
+    "ulgani_head2",
+    "ulgani_head3",
+    "ulgani_head4",
+    "ulgani_head5",
+    "ulgani_head6",
+    "ulgani_suit1",
+    "ulgani_suit2",
+    "ulgani_suit3",
+    "ulgani_suit4"
+  ],
+  "explicit_four_lods_all_variants": true,
+  "no_material_bake_needed": true,
+  "saved_reopened_geometry_uv_weights_all_morphs_material_bindings_packed_images_69bone_rest_identical": true,
+  "preflight_completed_utc": "2026-11-02T09:14:43.705929+00:00",
+  "export_started_utc": "2026-11-02T09:14:43.706426+00:00",
+  "export_completed_utc": "2026-11-02T09:18:20.611240+00:00",
+  "output": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-export/models/characters/ulgani.glb",
+  "output_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+  "output_bytes": 47796920
+}

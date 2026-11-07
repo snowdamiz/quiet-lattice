@@ -1,0 +1,244 @@
+WAITING_FOR_IXARI_REVIEW_GPU /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/gpu-review-release-ixari
+IXARI_GPU_BEGIN 2026-11-01T23:32:57.326532+00:00
+{"utc": "2026-11-01T23:32:57.326855+00:00", "command": ["pnpm", "-s", "turntable", "--", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend", "assets/renders/characters", "--samples", "48", "--manifest", "assets/renders/characters/validate/ixari-turntables.json"]}
+$ tsx packages/tools/src/capture/turntable.ts -- /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend assets/renders/characters --samples 48 --manifest assets/renders/characters/validate/ixari-turntables.json
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:361: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:386: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:407: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head1_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head1_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head2_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head2_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head3_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head3_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head4_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head4_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head5_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head5_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head6_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_head6_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit1_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit1_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit2_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit2_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit3_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit3_materials.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit4_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_ixari_ixari_suit4_materials.png
+
+{"utc": "2026-11-01T23:39:56.015782+00:00", "command": ["pnpm", "-s", "turntable", "--", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend", "assets/renders/characters", "--samples", "48", "--grid", "10", "--manifest", "assets/renders/characters/validate/ixari-grid-turntables.json"]}
+$ tsx packages/tools/src/capture/turntable.ts -- /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend assets/renders/characters --samples 48 --grid 10 --manifest assets/renders/characters/validate/ixari-grid-turntables.json
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:361: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:386: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:407: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_turntable.png
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_materials.png
+
+{"utc": "2026-11-01T23:41:09.777667+00:00", "command": ["pnpm", "-s", "turntable", "--", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_heads.blend", "assets/renders/characters", "--samples", "48", "--family", "--manifest", "assets/renders/characters/validate/ixari-heads-family.json"]}
+$ tsx packages/tools/src/capture/turntable.ts -- /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_heads.blend assets/renders/characters --samples 48 --family --manifest assets/renders/characters/validate/ixari-heads-family.json
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:450: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:407: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:361: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:386: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_heads_family.png
+
+{"utc": "2026-11-01T23:42:29.476182+00:00", "command": ["pnpm", "-s", "turntable", "--", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_suits.blend", "assets/renders/characters", "--samples", "48", "--family", "--manifest", "assets/renders/characters/validate/ixari-suits-family.json"]}
+$ tsx packages/tools/src/capture/turntable.ts -- /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari_suits.blend assets/renders/characters --samples 48 --family --manifest assets/renders/characters/validate/ixari-suits-family.json
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:450: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:407: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:361: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/turntable.py:386: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+turntable: wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ixari_suits_family.png
+
+{"utc": "2026-11-01T23:43:03.993342+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend", "-t", "4", "--python-exit-code", "1", "-P", "packages/tools/blender/characters/render_details.py", "--", "bendtest", "GPU", "ixari", "head1", "assets/renders/characters/ixari_bendtest_head1.png"]}
+00:00.467  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend"
+BlenderMCP addon registered
+CHARACTER_DETAIL_DEVICE GPU SCRIPT bendtest
+00:03.252  render           | Saved: 'assets/renders/characters/ixari_bendtest_head1.png.0.png.v0.png'
+00:05.226  render           | Saved: 'assets/renders/characters/ixari_bendtest_head1.png.0.png.v1.png'
+00:07.274  render           | Saved: 'assets/renders/characters/ixari_bendtest_head1.png.0.png.v2.png'
+00:09.529  render           | Saved: 'assets/renders/characters/ixari_bendtest_head1.png.1.png.v0.png'
+00:11.612  render           | Saved: 'assets/renders/characters/ixari_bendtest_head1.png.1.png.v1.png'
+00:13.599  render           | Saved: 'assets/renders/characters/ixari_bendtest_head1.png.1.png.v2.png'
+preview: wrote assets/renders/characters/ixari_bendtest_head1.png.0.png
+preview: wrote assets/renders/characters/ixari_bendtest_head1.png.1.png
+preview: wrote assets/renders/characters/ixari_bendtest_head1.png
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+{"utc": "2026-11-01T23:43:18.329217+00:00", "command": ["/Applications/Blender.app/Contents/MacOS/Blender", "-b", "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend", "-t", "4", "--python-exit-code", "1", "-P", "packages/tools/blender/characters/render_details.py", "--", "bendtest", "GPU", "ixari", "suit3", "assets/renders/characters/ixari_bendtest_suit3.png"]}
+00:00.380  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend"
+BlenderMCP addon registered
+CHARACTER_DETAIL_DEVICE GPU SCRIPT bendtest
+00:02.866  render           | Saved: 'assets/renders/characters/ixari_bendtest_suit3.png.0.png.v0.png'
+00:04.871  render           | Saved: 'assets/renders/characters/ixari_bendtest_suit3.png.0.png.v1.png'
+00:07.111  render           | Saved: 'assets/renders/characters/ixari_bendtest_suit3.png.0.png.v2.png'
+00:09.613  render           | Saved: 'assets/renders/characters/ixari_bendtest_suit3.png.1.png.v0.png'
+00:11.639  render           | Saved: 'assets/renders/characters/ixari_bendtest_suit3.png.1.png.v1.png'
+00:14.178  render           | Saved: 'assets/renders/characters/ixari_bendtest_suit3.png.1.png.v2.png'
+preview: wrote assets/renders/characters/ixari_bendtest_suit3.png.0.png
+preview: wrote assets/renders/characters/ixari_bendtest_suit3.png.1.png
+preview: wrote assets/renders/characters/ixari_bendtest_suit3.png
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit
+IXARI_BROWSER_CAPTURE_BEGIN 2026-11-01T23:43:33.313039+00:00
+{"utc": "2026-11-01T23:43:33.313103+00:00", "command": ["pnpm", "capture", "--", "--review", "characters/ixari"]}
+$ tsx packages/tools/src/capture/capture.ts -- --review characters/ixari
+review characters/ixari: ixari / ixari_head1
+review characters/ixari: ixari / ixari_head2
+review characters/ixari: ixari / ixari_head3
+review characters/ixari: ixari / ixari_head4
+review characters/ixari: ixari / ixari_head5
+review characters/ixari: ixari / ixari_head6
+review characters/ixari: ixari / ixari_suit1
+review characters/ixari: ixari / ixari_suit2
+review characters/ixari: ixari / ixari_suit3
+review characters/ixari: ixari / ixari_suit4
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head1/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head2/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head3/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head4/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head5/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_head6/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit1/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit2/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit3/sheet.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/noon-lush_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/noon-lush_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/wireframe_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/wireframe_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/overlay.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/far_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/far200_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/night-exotic_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/night-exotic_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/open-space_lod0.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/open-space_lod2.png
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/perf.json
+wrote /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/review/characters/ixari/ixari/ixari_suit4/sheet.png
+IXARI_GPU_END 2026-11-01T23:55:52.193344+00:00

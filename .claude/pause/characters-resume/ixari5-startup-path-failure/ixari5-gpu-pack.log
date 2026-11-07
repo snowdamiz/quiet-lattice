@@ -1,0 +1,9 @@
+WAITING_FOR_IXARI_REVIEW_GPU /Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/gpu-review-release-ixari5
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5_gpu_pack.py", line 18, in <module>
+    assert event['exit_code']==0 and all(sha(root[item['path']])==item['sha256'] for item in event['artifacts'])
+                                     ^^^
+  File "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5_gpu_pack.py", line 18, in <genexpr>
+    assert event['exit_code']==0 and all(sha(root[item['path']])==item['sha256'] for item in event['artifacts'])
+                                             ~~~~^^^^^^^^^^^^^^
+TypeError: 'PosixPath' object is not subscriptable

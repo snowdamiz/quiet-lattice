@@ -1,0 +1,47 @@
+{
+  "case": "exited-direct",
+  "controller_pid": 38422,
+  "helper_source_sha256": "76d0d6caf5f54b7cdc7580b2fa240ae3c9f9df3e2f7a8b7f1b148c29135876ed",
+  "exited_unreaped_pid": 38427,
+  "known_before": [
+    {
+      "pid": 38422,
+      "ppid": 17818,
+      "pgid": 38422,
+      "fingerprint": "Mon Nov 2 11:59:34 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 38427,
+      "ppid": 38422,
+      "pgid": 38427,
+      "fingerprint": "Mon Nov 2 11:59:34 2026",
+      "executable": "/usr/bin/caffeinate"
+    }
+  ],
+  "cleanup_result": "raised",
+  "error": "PermissionError(1, 'Operation not permitted')",
+  "owned_rows_after_cleanup": [
+    "38427 38422 38427 Z    <defunct>"
+  ],
+  "cleanup_signals": [],
+  "children_returncodes_before_fixture_drain": [
+    {
+      "pid": 38427,
+      "returncode": null
+    }
+  ],
+  "fixture_final_drain": {
+    "remaining": [],
+    "direct_children_reaped": [
+      {
+        "pid": 38426,
+        "exit_code": 0
+      },
+      {
+        "pid": 38427,
+        "exit_code": 0
+      }
+    ]
+  }
+}

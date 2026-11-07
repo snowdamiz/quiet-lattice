@@ -1,0 +1,501 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/characters/thalune.blend",
+  "family": "characters",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-02T03:44:21Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "thalune",
+      "variants": [
+        {
+          "id": "thalune_head1",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 97326,
+            "1": 24916,
+            "2": 7599,
+            "3": 3351
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.407,
+            1.799
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye"
+          ]
+        },
+        {
+          "id": "thalune_head2",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 91524,
+            "1": 23395,
+            "2": 7026,
+            "3": 3118
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.407,
+            1.871
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye"
+          ]
+        },
+        {
+          "id": "thalune_head3",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 90998,
+            "1": 23242,
+            "2": 6931,
+            "3": 3119
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.407,
+            1.805
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye"
+          ]
+        },
+        {
+          "id": "thalune_head4",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 100142,
+            "1": 25620,
+            "2": 7795,
+            "3": 3420
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.407,
+            1.799
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye"
+          ]
+        },
+        {
+          "id": "thalune_head5",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 90998,
+            "1": 23242,
+            "2": 6931,
+            "3": 3107
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.407,
+            1.81
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye"
+          ]
+        },
+        {
+          "id": "thalune_head6",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 92228,
+            "1": 23573,
+            "2": 7074,
+            "3": 3135
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.407,
+            1.831
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye"
+          ]
+        },
+        {
+          "id": "thalune_suit1",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 116780,
+            "1": 31625,
+            "2": 10385,
+            "3": 4010
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.352,
+            1.799
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye",
+            "TH_SuitA"
+          ]
+        },
+        {
+          "id": "thalune_suit2",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 114500,
+            "1": 31198,
+            "2": 10324,
+            "3": 3931
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.363,
+            1.799
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye",
+            "TH_SuitA"
+          ]
+        },
+        {
+          "id": "thalune_suit3",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 138532,
+            "1": 38409,
+            "2": 12726,
+            "3": 4748
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.352,
+            1.799
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye",
+            "TH_SuitB"
+          ]
+        },
+        {
+          "id": "thalune_suit4",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 119560,
+            "1": 32943,
+            "2": 11090,
+            "3": 4106
+          },
+          "implicitLods": false,
+          "dims": [
+            1.359,
+            0.362,
+            1.799
+          ],
+          "materials": [
+            "TH_Skin",
+            "TH_Fin",
+            "TH_Eye",
+            "TH_SuitB"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune.blend",
+          "message": "10 variant(s) in 1 asset(s) follow the characters rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune/thalune_head1",
+          "message": "LOD0 97,326 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_head2",
+          "message": "LOD0 91,524 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_head3",
+          "message": "LOD0 90,998 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_head4",
+          "message": "LOD0 100,142 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_head5",
+          "message": "LOD0 90,998 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_head6",
+          "message": "LOD0 92,228 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_suit1",
+          "message": "LOD0 116,780 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_suit2",
+          "message": "LOD0 114,500 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_suit3",
+          "message": "LOD0 138,532 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "thalune/thalune_suit4",
+          "message": "LOD0 119,560 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune/thalune_head1",
+          "message": "97,326 > 24,916 > 7,599 > 3,351 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_head2",
+          "message": "91,524 > 23,395 > 7,026 > 3,118 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_head3",
+          "message": "90,998 > 23,242 > 6,931 > 3,119 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_head4",
+          "message": "100,142 > 25,620 > 7,795 > 3,420 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_head5",
+          "message": "90,998 > 23,242 > 6,931 > 3,107 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_head6",
+          "message": "92,228 > 23,573 > 7,074 > 3,135 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_suit1",
+          "message": "116,780 > 31,625 > 10,385 > 4,010 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_suit2",
+          "message": "114,500 > 31,198 > 10,324 > 3,931 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_suit3",
+          "message": "138,532 > 38,409 > 12,726 > 4,748 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "thalune/thalune_suit4",
+          "message": "119,560 > 32,943 > 11,090 > 4,106 triangles; LOD3 3.4% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Eye (TH_Eye)",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Bio (TH_Fin)",
+          "message": "pbr: base colour, roughness, normal, AO, emissive"
+        },
+        {
+          "subject": "Skin (TH_Skin)",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "SuitA (TH_SuitA)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "SuitB (TH_SuitB)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "thalune/thalune_head1",
+          "message": "z extent 1.80 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_head2",
+          "message": "z extent 1.87 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_head3",
+          "message": "z extent 1.80 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_head4",
+          "message": "z extent 1.80 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_head5",
+          "message": "z extent 1.81 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_head6",
+          "message": "z extent 1.83 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_suit1",
+          "message": "z extent 1.80 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_suit2",
+          "message": "z extent 1.80 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_suit3",
+          "message": "z extent 1.80 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "thalune/thalune_suit4",
+          "message": "z extent 1.80 m within 1.5-2.4 m"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+[
+  {
+    "utc": "2026-11-01T22:50:08.060202+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/trim_suits.py",
+      "--",
+      "ixari",
+      "146000",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+    ],
+    "script_sha256": "9abfc9d3a1a4107ac7925c29048fe13e8d29470475da6d31607351c6b57acfe4"
+  },
+  {
+    "utc": "2026-11-01T22:50:12.332559+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/fill_bg.py",
+      "--",
+      "ixari",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ixari",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+    ],
+    "script_sha256": "7ada8f864386e264fae65508bbd8b4c94a348328eda48463db5a79ab9954576e"
+  },
+  {
+    "utc": "2026-11-01T22:50:51.928181+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/r3/ao_floor.py",
+      "--",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/textures/ixari",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend",
+      "IX_Crystal=0.5",
+      "IX_SuitA=0.4",
+      "IX_SuitB=0.4",
+      "IX_Skin=0.55"
+    ],
+    "script_sha256": "1fa11113393f146defa5ed5ef10a31cf4752a23c459d374804c4dbacae2ecd97"
+  },
+  {
+    "utc": "2026-11-01T22:50:57.889342+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/fix_meshes.py",
+      "--",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+    ],
+    "script_sha256": "ccacb993cf4d0a3aaeea83b4fc4bfe8e0150f6d50bc9bba0fceff2b4011a29dc"
+  },
+  {
+    "utc": "2026-11-01T22:51:02.757126+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/validate.py",
+      "--",
+      "--family",
+      "characters",
+      "--report",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari-source-validation.json",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend"
+    ],
+    "script_sha256": "d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704"
+  },
+  {
+    "utc": "2026-11-01T22:51:17.587954+00:00",
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari.blend",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies/embed_save.py",
+      "--",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/pause/art-bodies",
+      "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ixari.blend"
+    ],
+    "script_sha256": "2a75939cab25ca2829e3aa3c8b5747f295d4154459604abf55736fe1466869de"
+  }
+]

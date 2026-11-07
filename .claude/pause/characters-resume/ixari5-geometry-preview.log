@@ -1,0 +1,22 @@
+00:01.588  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ixari5/ixari.blend"
+/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/probe_ixari5_geometry.py:10: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.view_settings.view_transform='AgX';w=bpy.data.worlds.get('pv_world') or bpy.data.worlds.new('pv_world');w.use_nodes=True;bg=next(n for n in w.node_tree.nodes if n.type=='BACKGROUND');bg.inputs['Color'].default_value=(.05,.055,.06,1);bg.inputs['Strength'].default_value=1;scene.world=w
+00:15.276  render           | Saved: '.claude/pause/characters-resume/ixari5-geometry-preview/mapped_hand.png.v0.png'
+00:18.133  render           | Saved: '.claude/pause/characters-resume/ixari5-geometry-preview/mapped_toes.png.v0.png'
+00:20.013  render           | Saved: '.claude/pause/characters-resume/ixari5-geometry-preview/normal_disconnected_hand.png.v0.png'
+00:21.668  render           | Saved: '.claude/pause/characters-resume/ixari5-geometry-preview/normal_disconnected_toes.png.v0.png'
+00:22.955  render           | Saved: '.claude/pause/characters-resume/ixari5-geometry-preview/clay_hand.png.v0.png'
+00:24.353  render           | Saved: '.claude/pause/characters-resume/ixari5-geometry-preview/clay_toes.png.v0.png'
+BlenderMCP addon registered
+preview: wrote .claude/pause/characters-resume/ixari5-geometry-preview/mapped_hand.png
+preview: wrote .claude/pause/characters-resume/ixari5-geometry-preview/mapped_toes.png
+preview: wrote .claude/pause/characters-resume/ixari5-geometry-preview/normal_disconnected_hand.png
+preview: wrote .claude/pause/characters-resume/ixari5-geometry-preview/normal_disconnected_toes.png
+preview: wrote .claude/pause/characters-resume/ixari5-geometry-preview/clay_hand.png
+preview: wrote .claude/pause/characters-resume/ixari5-geometry-preview/clay_toes.png
+preview: wrote .claude/pause/characters-resume/ixari5-geometry-preview/comparison.png
+IXARI_PROBE_DONE
+BlenderMCP addon unregistered
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

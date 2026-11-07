@@ -1,0 +1,65 @@
+{
+  "updated_utc": "2026-11-02T02:01:32.443170+00:00",
+  "worktree": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "branch": "task/P1-E05-T01",
+  "commit": "98c3bf711f0299961542397d70daff4e5070bafc",
+  "thalune": "Frozen after fifth fresh REVISE mean3.3; parent filing remaining notes. No sixth revision.",
+  "ixari": {
+    "owner": "characters_worker",
+    "status": "User-paused; parent is SIGSTOP-suspending studio group 37495. Do not kill, resume or restart.",
+    "source_commit": "a578015756118f443b66dad4e39750d788694bfc",
+    "source_sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+    "export_sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+    "cpu_portraits_session": 68710,
+    "cpu_portraits_log": ".claude/pause/characters-resume/ixari5-portraits.log",
+    "gpu_controller": ".claude/pause/characters-resume/ixari5_gpu_pack.py",
+    "gpu_controller_started": false,
+    "gpu_release": ".claude/pause/characters-resume/gpu-review-release-ixari5",
+    "gpu_release_exists": false,
+    "prior_round_commit": "6be95980aadbbd69544c141cf3b2b2e5e586e5bb",
+    "prior_round_verdict": "Fourth fresh REVISE mean 3.6; one fifth revision authorized",
+    "cpu_portraits_exit": 0,
+    "cpu_deformation_session": 80894,
+    "cpu_deformation_exit": 0,
+    "cpu_details_commit": "6768905ba8dcdffa89248c969746ffd240c71596",
+    "cpu_studio_session": 25346,
+    "cpu_studio_log": ".claude/pause/characters-resume/ixari5-cpu-studio.log",
+    "cpu_studio_stop_marker": ".claude/pause/characters-resume/stop-ixari5-cpu-studio",
+    "cpu_studio_completed_keys": [
+      "head1",
+      "head2",
+      "head3",
+      "head4",
+      "head5"
+    ]
+  },
+  "ulgani": {
+    "owner": "characters_worker",
+    "session": 34271,
+    "pid": 9760,
+    "log": ".claude/pause/characters-resume/ulgani-recovery.log",
+    "checkpoint": ".claude/pause/characters-resume/ulgani_before_bake.blend",
+    "release": ".claude/pause/characters-resume/gpu-release-ulgani",
+    "release_exists": true,
+    "status": "User-paused; parent is SIGSTOP-suspending process group 9760. Do not kill, resume or restart.",
+    "postprocess": ".claude/pause/characters-resume/finish_ulgani_source.py",
+    "warning": "Postprocess requires successful recovery completion and original output SHA; do not restart midway blindly.",
+    "gpu_review_controller": ".claude/pause/characters-resume/ulgani_gpu_pack.py",
+    "gpu_review_release": ".claude/pause/characters-resume/gpu-review-release-ulgani",
+    "gpu_review_controller_started": false,
+    "postprocess_hold": "No further work until explicit user resume. Previously deferred until performance CPU release.",
+    "gpu_begin_utc": "2026-11-02T01:46:35.930769+00:00",
+    "caffeinate_session": 30761,
+    "second_gpu_sample_utc": "2026-11-02T01:58:31.619+00:00"
+  },
+  "paused_by_user": true,
+  "pause_observed_utc": "2026-11-02T02:06:17.155686+00:00",
+  "resume_requires_explicit_user_authorization": true,
+  "auxiliary_watcher_stopped": [
+    {
+      "pid": 92598,
+      "group": 92598,
+      "previous_state": "Ss"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "key": "bend-head1",
+  "utc": "2026-11-02T06:00:38.382130+00:00",
+  "controller_pid": 30798,
+  "controller_pgid": 30798,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/render_details.py",
+    "--",
+    "bendtest",
+    "CPU",
+    "ulgani",
+    "head1",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ulgani_bendtest_head1.png"
+  ],
+  "cwd": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "source_sha256": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+  "export_sha256": "14d386eefd291892f3b3f2f0072c640e37a6f267fe73e4a4cb757c49db1caece",
+  "render_input": "assets/blend/characters/ulgani.blend",
+  "render_input_sha256": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+  "device": "CPU",
+  "threads": 2,
+  "scripts": {
+    "packages/tools/blender/characters/render_details.py": "8a732fa6622aebc3402d1cee0703d66bdf1122d7735e07593dcee67a6089aa8f",
+    "packages/tools/blender/characters/cpu_turntables.py": "e4a869dba224c542110e096838f4068d30342f6bfcdbc8f00173a8fc26a746cc",
+    "packages/tools/blender/turntable.py": "3ef601868211b89a616e25242963acd2aa2a452d546bf63c3007debcf71c2161"
+  },
+  "runner_sha256": "913aa4b7ed3abbba7ac505e741b4db53cb628f50d23f28a3add798a98fff0f36",
+  "log": ".claude/pause/characters-resume/ulgani4-cpu-bend-head1-20261102T060038Z.log",
+  "backup": ".claude/pause/characters-resume/ulgani4-prior-artifacts/bend-head1-20261102T060038Z",
+  "status": "complete; controller/render/idle assertion and owned group drained",
+  "pid": 30808,
+  "pgid": 30798,
+  "caffeinate_pid": 30809,
+  "caffeinate_pgid": 30798,
+  "render_end_utc": "2026-11-02T06:01:00.551575+00:00",
+  "exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T06:01:00.553087+00:00",
+  "duration_seconds": 22.1,
+  "timing_scope": "Scheduling record only; functional art generation, no performance claim.",
+  "log_sha256": "6445a0c81d91108e25ce3998584623b4469278682df33bbec619971cee89443e",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ulgani_bendtest_head1.png",
+      "sha256": "20dfb7ee159c702d06e274efbb818a5813b9d759813ccaa633eb5fb312dcaa73",
+      "bytes": 3576552
+    }
+  ],
+  "session": 61669,
+  "drain_verified_utc": "2026-11-02T06:01:45.805638+00:00",
+  "controller_exit_code": 0
+}

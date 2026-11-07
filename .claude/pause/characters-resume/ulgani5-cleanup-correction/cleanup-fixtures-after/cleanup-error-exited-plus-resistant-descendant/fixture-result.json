@@ -1,0 +1,81 @@
+{
+  "case": "error-exited-plus-resistant-descendant",
+  "controller_pid": 8227,
+  "helper_source_sha256": "b8d51efeee87303af650cfb75b64d2c7e82aaa86be3ffffa93be5564b2355728",
+  "exited_unreaped_pid": 8490,
+  "live_fixture": {
+    "pid": 8503,
+    "descendant": 8504
+  },
+  "known_before": [
+    {
+      "pid": 8227,
+      "ppid": 5038,
+      "pgid": 8227,
+      "fingerprint": "Mon Nov 2 12:29:11 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 8490,
+      "ppid": 8227,
+      "pgid": 8490,
+      "fingerprint": "Mon Nov 2 12:29:15 2026",
+      "executable": "<defunct>"
+    },
+    {
+      "pid": 8503,
+      "ppid": 8227,
+      "pgid": 8503,
+      "fingerprint": "Mon Nov 2 12:29:16 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 8504,
+      "ppid": 8503,
+      "pgid": 8503,
+      "fingerprint": "Mon Nov 2 12:29:16 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "cleanup_result": "completed",
+  "owned_rows_after_cleanup": [],
+  "cleanup_signals": [
+    {
+      "utc": "2026-11-02T17:29:16.747774+00:00",
+      "pgid": 8503,
+      "signal": "SIGTERM"
+    },
+    {
+      "utc": "2026-11-02T17:29:17.426487+00:00",
+      "pgid": 8503,
+      "signal": "SIGKILL"
+    }
+  ],
+  "children_returncodes_before_fixture_drain": [
+    {
+      "pid": 8490,
+      "returncode": 0
+    },
+    {
+      "pid": 8503,
+      "returncode": -9
+    }
+  ],
+  "fixture_final_drain": {
+    "remaining": [],
+    "direct_children_reaped": [
+      {
+        "pid": 8489,
+        "exit_code": 0
+      },
+      {
+        "pid": 8490,
+        "exit_code": 0
+      },
+      {
+        "pid": 8503,
+        "exit_code": -9
+      }
+    ]
+  }
+}

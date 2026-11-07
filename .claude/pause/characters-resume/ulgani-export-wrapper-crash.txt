@@ -1,0 +1,16 @@
+# Blender 5.2.3, Commit date: 2026-10-21 09:21, Hash e13b728c6880
+
+# backtrace
+0   Blender                             0x000000010572f70c _ZN7blender33BLI_system_backtrace_with_os_infoEP7__sFILEPKv + 56
+1   Blender                             0x0000000104e2b184 _ZNSt3__117__call_once_proxyB8ne200100INS_5tupleIJRZN7blenderL19sig_handle_crash_fnEiE3$_0EEEEEvPv + 376
+2   libc++.1.dylib                      0x00000001969b645c _ZNSt3__111__call_onceERVmPvPFvS2_E + 196
+3   Blender                             0x0000000104e2af80 _ZN7blenderL19sig_handle_crash_fnEi + 84
+4   libsystem_platform.dylib            0x0000000196ab4144 _sigtramp + 56
+5   Blender                             0x00000001067643a4 _ZN7blender16BPy_init_modulesEPNS_8bContextE + 484
+6   Blender                             0x00000001067643a4 _ZN7blender16BPy_init_modulesEPNS_8bContextE + 484
+7   Blender                             0x000000010676c448 _ZN7blender16BPY_python_startEPNS_8bContextEiPPKc + 1084
+8   Blender                             0x0000000105c23e44 _ZN7blender7WM_initEPNS_8bContextEiPPKc + 456
+9   Blender                             0x0000000104e25740 main + 928
+10  dyld                                0x00000001966d3e80 start + 6688
+
+# Python backtrace

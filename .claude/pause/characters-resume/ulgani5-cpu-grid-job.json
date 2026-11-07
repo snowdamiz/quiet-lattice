@@ -1,0 +1,100 @@
+{
+  "key": "grid",
+  "utc": "2026-11-02T10:09:21.854287+00:00",
+  "controller_pid": 47771,
+  "controller_pgid": 47771,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ulgani-review5",
+    "--samples",
+    "48",
+    "--grid",
+    "10",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ulgani-review5-grid-turntables.json"
+  ],
+  "cwd": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "export_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+  "render_input": "assets/blend/characters/ulgani.blend",
+  "render_input_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "device": "CPU",
+  "threads": 2,
+  "scripts": {
+    "packages/tools/blender/characters/render_details.py": "8a732fa6622aebc3402d1cee0703d66bdf1122d7735e07593dcee67a6089aa8f",
+    "packages/tools/blender/characters/cpu_turntables.py": "e4a869dba224c542110e096838f4068d30342f6bfcdbc8f00173a8fc26a746cc",
+    "packages/tools/blender/turntable.py": "3ef601868211b89a616e25242963acd2aa2a452d546bf63c3007debcf71c2161"
+  },
+  "runner_sha256": "c8248bc688681fb0311a89321a85434fe80d078ede9268d4cf123789322ecf11",
+  "log": ".claude/pause/characters-resume/ulgani5-cpu-grid-20261102T100921Z.log",
+  "backup": ".claude/pause/characters-resume/ulgani5-prior-artifacts/grid-20261102T100921Z",
+  "status": "complete;controller/render/idle assertion and all owned groups drained",
+  "timeout_seconds": 900,
+  "pid": 47782,
+  "pgid": 47782,
+  "caffeinate_pid": 47783,
+  "caffeinate_pgid": 47783,
+  "render_end_utc": "2026-11-02T10:11:30.438467+00:00",
+  "exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T10:11:30.438655+00:00",
+  "duration_seconds": 128.52,
+  "timing_scope": "Scheduling record only; functional art generation, no performance claim.",
+  "log_sha256": "03cc4813b9626246f8e3cef6118934fcaae5a9f8068f0b778da013f289048386",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_turntable.png",
+      "sha256": "74d3e0d7c6d85193ffe3bca2029ebae58f36249888c300a5475b05312fe46a4e",
+      "bytes": 4254135
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_materials.png",
+      "sha256": "d531de64408e0213786d4a5f5fb3bc226dc711e9ccb47fc2444e8bdc723ec64d",
+      "bytes": 1274578
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_materials.txt",
+      "sha256": "cd62fb5e8a26ad8db2e407ea4c9f9afa767810d778ede910ebcdcf6e89c438bf",
+      "bytes": 452
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review5-grid-turntables.json",
+      "sha256": "4509b58519c0941037312320d0fcc1d60df1a75e6cb26535754a5c63c10db4a6",
+      "bytes": 1546
+    }
+  ],
+  "session": 49075,
+  "controller_exit_code": 0,
+  "drain_verified_utc": "2026-11-02T10:12:06.583977+00:00",
+  "png_decode": [
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_turntable.png",
+      "size": [
+        3200,
+        1200
+      ],
+      "mode": "RGBA",
+      "full_decode_pass": true
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_materials.png",
+      "size": [
+        2400,
+        360
+      ],
+      "mode": "RGBA",
+      "full_decode_pass": true
+    }
+  ],
+  "visual_inspected_utc": "2026-11-02T10:12:06.583977+00:00"
+}

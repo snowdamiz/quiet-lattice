@@ -1,0 +1,11 @@
+00:00.997  blend            | Read blend: "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend"
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/packages/tools/blender/characters/bake_ulgani5.py", line 45, in <module>
+    assert all(abs(key.value) < 1e-7 for key in obj.data.shape_keys.key_blocks), 'Bake requires the saved neutral morph pose'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Bake requires the saved neutral morph pose
+
+Error: script failed, file: 'packages/tools/blender/characters/bake_ulgani5.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

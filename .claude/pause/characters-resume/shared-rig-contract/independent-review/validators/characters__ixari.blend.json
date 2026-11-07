@@ -1,0 +1,501 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/characters/ixari.blend",
+  "family": "characters",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-02T16:15:07Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ixari",
+      "variants": [
+        {
+          "id": "ixari_head1",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 84668,
+            "1": 22239,
+            "2": 7734,
+            "3": 2875
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            2.065
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye"
+          ]
+        },
+        {
+          "id": "ixari_head2",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 85104,
+            "1": 22420,
+            "2": 7921,
+            "3": 2890
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            2.088
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye"
+          ]
+        },
+        {
+          "id": "ixari_head3",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 86274,
+            "1": 22827,
+            "2": 8256,
+            "3": 2930
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            1.975
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye"
+          ]
+        },
+        {
+          "id": "ixari_head4",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 84930,
+            "1": 22325,
+            "2": 7787,
+            "3": 2884
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            1.968
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye"
+          ]
+        },
+        {
+          "id": "ixari_head5",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 85964,
+            "1": 22693,
+            "2": 8095,
+            "3": 2919
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            1.993
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye"
+          ]
+        },
+        {
+          "id": "ixari_head6",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 85104,
+            "1": 22415,
+            "2": 7898,
+            "3": 2890
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            2.086
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye"
+          ]
+        },
+        {
+          "id": "ixari_suit1",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 98338,
+            "1": 27372,
+            "2": 10125,
+            "3": 3272
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            2.065
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye",
+            "IX_SuitA"
+          ]
+        },
+        {
+          "id": "ixari_suit2",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 104680,
+            "1": 29273,
+            "2": 10732,
+            "3": 3429
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            2.065
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye",
+            "IX_SuitA"
+          ]
+        },
+        {
+          "id": "ixari_suit3",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 106320,
+            "1": 29786,
+            "2": 10944,
+            "3": 3439
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.577,
+            2.065
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye",
+            "IX_SuitB"
+          ]
+        },
+        {
+          "id": "ixari_suit4",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 96876,
+            "1": 27802,
+            "2": 10655,
+            "3": 3209
+          },
+          "implicitLods": false,
+          "dims": [
+            1.358,
+            0.585,
+            2.071
+          ],
+          "materials": [
+            "IX_Skin",
+            "IX_Crystal",
+            "IX_Eye",
+            "IX_SuitB"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari.blend",
+          "message": "10 variant(s) in 1 asset(s) follow the characters rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari/ixari_head1",
+          "message": "LOD0 84,668 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_head2",
+          "message": "LOD0 85,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_head3",
+          "message": "LOD0 86,274 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_head4",
+          "message": "LOD0 84,930 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_head5",
+          "message": "LOD0 85,964 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_head6",
+          "message": "LOD0 85,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_suit1",
+          "message": "LOD0 98,338 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_suit2",
+          "message": "LOD0 104,680 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_suit3",
+          "message": "LOD0 106,320 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari/ixari_suit4",
+          "message": "LOD0 96,876 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari/ixari_head1",
+          "message": "84,668 > 22,239 > 7,734 > 2,875 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_head2",
+          "message": "85,104 > 22,420 > 7,921 > 2,890 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_head3",
+          "message": "86,274 > 22,827 > 8,256 > 2,930 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_head4",
+          "message": "84,930 > 22,325 > 7,787 > 2,884 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_head5",
+          "message": "85,964 > 22,693 > 8,095 > 2,919 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_head6",
+          "message": "85,104 > 22,415 > 7,898 > 2,890 triangles; LOD3 3.4% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_suit1",
+          "message": "98,338 > 27,372 > 10,125 > 3,272 triangles; LOD3 3.3% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_suit2",
+          "message": "104,680 > 29,273 > 10,732 > 3,429 triangles; LOD3 3.3% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_suit3",
+          "message": "106,320 > 29,786 > 10,944 > 3,439 triangles; LOD3 3.2% of LOD0"
+        },
+        {
+          "subject": "ixari/ixari_suit4",
+          "message": "96,876 > 27,802 > 10,655 > 3,209 triangles; LOD3 3.3% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Bio (IX_Crystal)",
+          "message": "pbr: base colour, roughness, normal, AO, emissive"
+        },
+        {
+          "subject": "Eye (IX_Eye)",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Skin (IX_Skin)",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "SuitA (IX_SuitA)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "SuitB (IX_SuitB)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ixari/ixari_head1",
+          "message": "z extent 2.07 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_head2",
+          "message": "z extent 2.09 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_head3",
+          "message": "z extent 1.97 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_head4",
+          "message": "z extent 1.97 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_head5",
+          "message": "z extent 1.99 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_head6",
+          "message": "z extent 2.09 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_suit1",
+          "message": "z extent 2.07 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_suit2",
+          "message": "z extent 2.07 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_suit3",
+          "message": "z extent 2.07 m within 1.5-2.4 m"
+        },
+        {
+          "subject": "ixari/ixari_suit4",
+          "message": "z extent 2.07 m within 1.5-2.4 m"
+        }
+      ]
+    }
+  ]
+}

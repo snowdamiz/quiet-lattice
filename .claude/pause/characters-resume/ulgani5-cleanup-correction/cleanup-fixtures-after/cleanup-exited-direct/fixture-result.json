@@ -1,0 +1,44 @@
+{
+  "case": "exited-direct",
+  "controller_pid": 8227,
+  "helper_source_sha256": "b8d51efeee87303af650cfb75b64d2c7e82aaa86be3ffffa93be5564b2355728",
+  "exited_unreaped_pid": 8233,
+  "known_before": [
+    {
+      "pid": 8227,
+      "ppid": 5038,
+      "pgid": 8227,
+      "fingerprint": "Mon Nov 2 12:29:11 2026",
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    },
+    {
+      "pid": 8233,
+      "ppid": 8227,
+      "pgid": 8233,
+      "fingerprint": "Mon Nov 2 12:29:11 2026",
+      "executable": "/usr/bin/caffeinate"
+    }
+  ],
+  "cleanup_result": "completed",
+  "owned_rows_after_cleanup": [],
+  "cleanup_signals": [],
+  "children_returncodes_before_fixture_drain": [
+    {
+      "pid": 8233,
+      "returncode": 0
+    }
+  ],
+  "fixture_final_drain": {
+    "remaining": [],
+    "direct_children_reaped": [
+      {
+        "pid": 8232,
+        "exit_code": 0
+      },
+      {
+        "pid": 8233,
+        "exit_code": 0
+      }
+    ]
+  }
+}

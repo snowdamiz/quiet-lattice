@@ -1,0 +1,68 @@
+{
+  "start_utc": "2026-11-02T09:13:10.194534+00:00",
+  "controller_pid": 55849,
+  "controller_pgid": 55849,
+  "scope": "Bounded CPU-only source-pose inspection/targeted correction/validation;no GPU,bake,export,render,browser",
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "2",
+    "OMP_NUM_THREADS": "2"
+  },
+  "steps": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/characters/export_ulgani5_saved.py",
+        "--",
+        "--input",
+        ".claude/pause/characters-resume/ulgani5-bake2/ulgani5-baked.blend",
+        "--report",
+        ".claude/pause/characters-resume/ulgani5-export/preflight.json",
+        "--preflight-only"
+      ],
+      "start_utc": "2026-11-02T09:13:10.195578+00:00",
+      "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-pose/export-preflight-0.log",
+      "timeout_seconds": 600,
+      "pid": 55859,
+      "pgid": 55859,
+      "caffeinate_pid": 55860,
+      "caffeinate_pgid": 55860,
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "end_utc": "2026-11-02T09:13:19.808435+00:00",
+      "log_sha256": "5d5543b6f0ced0aab9f730ee8c065778afb1b6d12cc07f1692e600660e7288e8"
+    }
+  ],
+  "known_pids": [
+    55849,
+    55859,
+    55860
+  ],
+  "known_pgids": [
+    55849,
+    55859,
+    55860
+  ],
+  "frozen_canonical_hashes": {
+    "assets/blend/characters/thalune.blend": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b",
+    "packages/client/public/models/characters/thalune.glb": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+    "assets/blend/characters/ixari.blend": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+    "packages/client/public/models/characters/ixari.glb": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+    "assets/blend/characters/ulgani.blend": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+    "packages/client/public/models/characters/ulgani.glb": "14d386eefd291892f3b3f2f0072c640e37a6f267fe73e4a4cb757c49db1caece"
+  },
+  "status": "complete;direct controller/group drain pending",
+  "exit_code": 0,
+  "frozen_canonical_unchanged": true,
+  "end_utc": "2026-11-02T09:13:19.997965+00:00",
+  "tool_session": 67183,
+  "drain_verified_utc": "2026-11-02T09:14:34.079902+00:00",
+  "process_and_group_absence": true,
+  "assertions_drained": true
+}

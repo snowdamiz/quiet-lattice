@@ -1,0 +1,152 @@
+{
+  "first_gray_check": "assert max difference<=1 failed; observed max9/255,14273 of14400 pixels differ",
+  "color_comparison_max_difference": 0,
+  "scope": "Comparison against frozen existing Ixari grayscale derived sheet only. No capture, source, or frozen lineup modified.",
+  "corrected_method": "Direct normalized PNG channel Rec709 weighting, matching existing lineup.py output. No sRGB decode/encode in grayscale stage.",
+  "reference_checks": [
+    {
+      "species": "thalune",
+      "variant": "head1",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "head2",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "head3",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "head4",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "head5",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "head6",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "suit1",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "suit2",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "suit3",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "thalune",
+      "variant": "suit4",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "head1",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "head2",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "head3",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "head4",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "head5",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "head6",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "suit1",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "suit2",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "suit3",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    },
+    {
+      "species": "ixari",
+      "variant": "suit4",
+      "max_difference_8bit": 0,
+      "differing_pixels": 0,
+      "total_pixels": 14400
+    }
+  ],
+  "all20_color_crops_exact": true,
+  "all20_grayscale_crops_within_1_of255": true,
+  "preserved_first_script_sha256": "cbfc74a2b18578ede981f803bbcaaef9c2d694c3f47936ffaf4b55b0580f5189",
+  "note": "Initial linear-light interpretation failed the frozen-reference check (max9/255). No final image had been produced and no input changed. Corrected direct-channel method is verified on every frozen peer variant."
+}

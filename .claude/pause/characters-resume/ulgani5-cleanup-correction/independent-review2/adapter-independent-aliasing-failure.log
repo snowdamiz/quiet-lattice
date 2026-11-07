@@ -1,0 +1,15 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: {"rotationError":0.014799860414955244,"pair":{"source":"thalune","target":"thalune","bones":70,"meshes":216,"allVertexCount":796268,"neutral":{"time":0.37,"maxShiftM":1.721342403375977e-8,"localError":0,"rotationErrorRad":7.300048299977715e-8}},"motion":true}
+    at file:///private/tmp/characters-whole-review2-sol-20261102/adapter-independent.mjs:42:68 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v26.12.1

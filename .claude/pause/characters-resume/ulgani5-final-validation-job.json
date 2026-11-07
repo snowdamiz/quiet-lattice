@@ -1,0 +1,277 @@
+{
+  "start_utc": "2026-11-02T09:20:02.306586+00:00",
+  "controller_pid": 65179,
+  "controller_pgid": 65179,
+  "scope": "Bounded CPU2 official characters source validation and canonical Ulgani export validation;no export,bake,generation,render,browser/GPU",
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "2",
+    "OMP_NUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ktx_cpu2.py",
+    "UV_THREADPOOL_SIZE": "2",
+    "BLENDER": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/blender_cpu2.py"
+  },
+  "steps": [
+    {
+      "command": [
+        "pnpm",
+        "art:validate",
+        "--",
+        "characters",
+        "--report-dir",
+        ".claude/pause/characters-resume/ulgani5-export/family-validation"
+      ],
+      "start_utc": "2026-11-02T09:20:02.307579+00:00",
+      "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-export/final-validation-0.log",
+      "timeout_seconds": 1800,
+      "pid": 65189,
+      "pgid": 65189,
+      "caffeinate_pid": 65190,
+      "caffeinate_pgid": 65190,
+      "observed_descendants": [
+        {
+          "pid": 65192,
+          "ppid": 65189,
+          "pgid": 65189,
+          "executable": "(bash)",
+          "observed_utc": "2026-11-02T09:20:02.345885+00:00"
+        },
+        {
+          "pid": 65193,
+          "ppid": 65192,
+          "pgid": 65189,
+          "executable": "(bash)",
+          "observed_utc": "2026-11-02T09:20:02.346617+00:00"
+        },
+        {
+          "pid": 65194,
+          "ppid": 65193,
+          "pgid": 65189,
+          "executable": "(dirname)",
+          "observed_utc": "2026-11-02T09:20:02.347034+00:00"
+        },
+        {
+          "pid": 65204,
+          "ppid": 65189,
+          "pgid": 65189,
+          "executable": "node",
+          "observed_utc": "2026-11-02T09:20:02.835959+00:00"
+        },
+        {
+          "pid": 65212,
+          "ppid": 65204,
+          "pgid": 65189,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+          "observed_utc": "2026-11-02T09:20:02.837036+00:00"
+        },
+        {
+          "pid": 65213,
+          "ppid": 65212,
+          "pgid": 65189,
+          "executable": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "observed_utc": "2026-11-02T09:20:02.837462+00:00"
+        }
+      ],
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "end_utc": "2026-11-02T09:20:10.805079+00:00",
+      "log_sha256": "ad9f4fbe5641f34e63278006874fff37441e86a1839cced6570e4d218fa7d044"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/validate.py",
+        "--",
+        "--family",
+        "characters",
+        "--report",
+        ".claude/pause/characters-resume/ulgani5-export/canonical-export-validation.json",
+        "packages/client/public/models/characters/ulgani.glb"
+      ],
+      "start_utc": "2026-11-02T09:20:10.806275+00:00",
+      "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-export/final-validation-1.log",
+      "timeout_seconds": 1800,
+      "pid": 65434,
+      "pgid": 65434,
+      "caffeinate_pid": 65435,
+      "caffeinate_pgid": 65435,
+      "observed_descendants": [
+        {
+          "pid": 65440,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:11.581929+00:00"
+        },
+        {
+          "pid": 65441,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:11.582835+00:00"
+        },
+        {
+          "pid": 65449,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:12.543127+00:00"
+        },
+        {
+          "pid": 65452,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:13.027194+00:00"
+        },
+        {
+          "pid": 65455,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:13.516276+00:00"
+        },
+        {
+          "pid": 65469,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:14.486389+00:00"
+        },
+        {
+          "pid": 65472,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:14.974912+00:00"
+        },
+        {
+          "pid": 65474,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:15.233842+00:00"
+        },
+        {
+          "pid": 65492,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:15.957189+00:00"
+        },
+        {
+          "pid": 67887,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:17.226701+00:00"
+        },
+        {
+          "pid": 69218,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:17.473687+00:00"
+        },
+        {
+          "pid": 69331,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:18.939624+00:00"
+        },
+        {
+          "pid": 69333,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:19.190867+00:00"
+        },
+        {
+          "pid": 69339,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:19.942083+00:00"
+        },
+        {
+          "pid": 69342,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:20.189954+00:00"
+        },
+        {
+          "pid": 69346,
+          "ppid": 65434,
+          "pgid": 65434,
+          "executable": "ktx",
+          "observed_utc": "2026-11-02T09:20:20.677988+00:00"
+        }
+      ],
+      "exit_code": 0,
+      "caffeinate_exit_code": 0,
+      "end_utc": "2026-11-02T09:20:27.177190+00:00",
+      "log_sha256": "81e9678e0cd23ec15b3f78936c862763920cbacddbd8a26bf5a9f4cfde5488c6"
+    }
+  ],
+  "known_pids": [
+    65179,
+    65189,
+    65190,
+    65192,
+    65193,
+    65194,
+    65204,
+    65212,
+    65213,
+    65434,
+    65435,
+    65440,
+    65441,
+    65449,
+    65452,
+    65455,
+    65469,
+    65472,
+    65474,
+    65492,
+    67887,
+    69218,
+    69331,
+    69333,
+    69339,
+    69342,
+    69346
+  ],
+  "known_pgids": [
+    65179,
+    65189,
+    65190,
+    65434,
+    65435
+  ],
+  "frozen_canonical_hashes": {
+    "assets/blend/characters/thalune.blend": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b",
+    "packages/client/public/models/characters/thalune.glb": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+    "assets/blend/characters/ixari.blend": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+    "packages/client/public/models/characters/ixari.glb": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+    "assets/blend/characters/ulgani.blend": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+    "packages/client/public/models/characters/ulgani.glb": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682"
+  },
+  "status": "Official family source gate/canonical GLB validation PASS;all owned groups/assertions drained",
+  "exit_code": 0,
+  "frozen_canonical_unchanged": true,
+  "end_utc": "2026-11-02T09:20:27.391741+00:00",
+  "tool_session": 63042,
+  "drain_verified_utc": "2026-11-02T09:21:32.102483+00:00",
+  "process_and_group_absence": true,
+  "assertions_drained": true
+}

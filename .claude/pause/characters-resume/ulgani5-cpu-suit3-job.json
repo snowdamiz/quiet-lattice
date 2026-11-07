@@ -1,0 +1,100 @@
+{
+  "key": "suit3",
+  "utc": "2026-11-02T10:03:40.850632+00:00",
+  "controller_pid": 38765,
+  "controller_pgid": 38765,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/characters/cpu_turntables.py",
+    "--",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/blend/characters/ulgani.blend",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/ulgani-review5",
+    "--samples",
+    "48",
+    "--variant",
+    "ulgani_suit3",
+    "--manifest",
+    "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/assets/renders/characters/validate/ulgani-review5-cpu-suit3-turntable.json"
+  ],
+  "cwd": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41",
+  "source_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "export_sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+  "render_input": "assets/blend/characters/ulgani.blend",
+  "render_input_sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+  "device": "CPU",
+  "threads": 2,
+  "scripts": {
+    "packages/tools/blender/characters/render_details.py": "8a732fa6622aebc3402d1cee0703d66bdf1122d7735e07593dcee67a6089aa8f",
+    "packages/tools/blender/characters/cpu_turntables.py": "e4a869dba224c542110e096838f4068d30342f6bfcdbc8f00173a8fc26a746cc",
+    "packages/tools/blender/turntable.py": "3ef601868211b89a616e25242963acd2aa2a452d546bf63c3007debcf71c2161"
+  },
+  "runner_sha256": "c8248bc688681fb0311a89321a85434fe80d078ede9268d4cf123789322ecf11",
+  "log": ".claude/pause/characters-resume/ulgani5-cpu-suit3-20261102T100340Z.log",
+  "backup": ".claude/pause/characters-resume/ulgani5-prior-artifacts/suit3-20261102T100340Z",
+  "status": "complete;controller/render/idle assertion and all owned groups drained",
+  "timeout_seconds": 900,
+  "pid": 38794,
+  "pgid": 38794,
+  "caffeinate_pid": 38795,
+  "caffeinate_pgid": 38795,
+  "render_end_utc": "2026-11-02T10:05:45.326446+00:00",
+  "exit_code": 0,
+  "caffeinate_exit_code": 0,
+  "completed_utc": "2026-11-02T10:05:45.326674+00:00",
+  "duration_seconds": 124.4,
+  "timing_scope": "Scheduling record only; functional art generation, no performance claim.",
+  "log_sha256": "e03f52c7b4247bc1710e13bd60155b35724c7260259cbfbc2e3633248b03d680",
+  "artifacts": [
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_ulgani_ulgani_suit3_turntable.png",
+      "sha256": "042091133b00b410a74f5883e7ee1447ed5c4eb64b74da64f439ad065bdd41c4",
+      "bytes": 4649222
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_ulgani_ulgani_suit3_materials.png",
+      "sha256": "368a2df0703b6e00082b7a7edbc83feecbd535cb09609fa0e454253f1dc284fe",
+      "bytes": 1000676
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_ulgani_ulgani_suit3_materials.txt",
+      "sha256": "666f00c6483a3dddbe8dfc3766efad6c3ed9692ccd19134daf909462c9b4e64b",
+      "bytes": 361
+    },
+    {
+      "path": "assets/renders/characters/validate/ulgani-review5-cpu-suit3-turntable.json",
+      "sha256": "d6f876b349e81c2d53ad2d6ce32d3070b5093df1a9210bfa62adb06f0ad1fc2a",
+      "bytes": 1350
+    }
+  ],
+  "session": 77857,
+  "controller_exit_code": 0,
+  "drain_verified_utc": "2026-11-02T10:06:11.811568+00:00",
+  "png_decode": [
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_ulgani_ulgani_suit3_turntable.png",
+      "size": [
+        3200,
+        1200
+      ],
+      "mode": "RGBA",
+      "full_decode_pass": true
+    },
+    {
+      "path": "assets/renders/characters/ulgani-review5/ulgani_ulgani_ulgani_suit3_materials.png",
+      "size": [
+        1920,
+        360
+      ],
+      "mode": "RGBA",
+      "full_decode_pass": true
+    }
+  ],
+  "visual_inspected_utc": "2026-11-02T10:06:11.811568+00:00"
+}

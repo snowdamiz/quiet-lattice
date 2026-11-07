@@ -1,0 +1,107 @@
+{
+  "started_utc": "2026-11-02T08:48:18.813620+00:00",
+  "controller_pid": 16523,
+  "controller_pgid": 16523,
+  "scope": "Exact manifest saved-source Skin/SuitA/SuitB Metal-only bake;CPU2 source validation;no authoring/export/render/browser/native recording",
+  "manifest_sha256": "18925ca6e5195fbdd063d5a0e7b5c62bdae57b55903392240f90f626689587b0",
+  "frozen_canonical_hashes": {
+    "assets/blend/characters/thalune.blend": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b",
+    "packages/client/public/models/characters/thalune.glb": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+    "assets/blend/characters/ixari.blend": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+    "packages/client/public/models/characters/ixari.glb": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+    "assets/blend/characters/ulgani.blend": "d0ab87a61e5b50ccb336c03b14a1553b7b2b063c7935af334ba12218bc013bc7",
+    "packages/client/public/models/characters/ulgani.glb": "14d386eefd291892f3b3f2f0072c640e37a6f267fe73e4a4cb757c49db1caece"
+  },
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "2",
+    "OMP_NUM_THREADS": "2"
+  },
+  "steps": [
+    {
+      "key": "bake",
+      "start_utc": "2026-11-02T08:48:18.848694+00:00",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "--factory-startup",
+        "-t",
+        "2",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/characters/bake_ulgani5.py",
+        "--",
+        "--input",
+        ".claude/pause/characters-resume/ulgani5/ulgani5-source-head2.blend",
+        "--expected-input-sha256",
+        "be08a7c2dfcbb5697325be289d232e3853dc4e0afd8b7cc2cd20062afea514ed",
+        "--source-validation",
+        ".claude/pause/characters-resume/ulgani5/source-validation-head2.json",
+        "--output",
+        ".claude/pause/characters-resume/ulgani5-bake/ulgani5-baked.blend",
+        "--textures",
+        ".claude/pause/characters-resume/textures/ulgani5-material-bake",
+        "--report",
+        ".claude/pause/characters-resume/ulgani5-bake/report.json",
+        "--release-file",
+        ".claude/pause/characters-resume/gpu-release-ulgani5-bake",
+        "--groups",
+        "Skin,SuitA,SuitB"
+      ],
+      "log": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake/bake.log",
+      "timeout_seconds": 7200,
+      "pid": 16536,
+      "pgid": 16536,
+      "caffeinate_pid": 16537,
+      "caffeinate_pgid": 16537,
+      "exit_code": 1,
+      "end_utc": "2026-11-02T08:48:20.909542+00:00",
+      "caffeinate_exit_code": 0,
+      "log_sha256": "13f1aa64cd7a7629f1ac021ef859bb89a47ab78a23f0244a1340236e3b1877de"
+    }
+  ],
+  "known_pids": [
+    16523,
+    16536,
+    16537
+  ],
+  "known_pgids": [
+    16523,
+    16536,
+    16537
+  ],
+  "status": "FAILED neutral-morph precondition;no bake started;all owned processes/groups/assertions drained;GPU released",
+  "host_observations": "/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5-bake/host-process-observations.jsonl",
+  "unrelated_baseline_browser": {
+    "pids": [
+      3340,
+      3341,
+      3342
+    ],
+    "pgid": 3340,
+    "cwd": "/Users/andreyyurlov/.t3",
+    "parent_pid": 71847,
+    "start": "Nov1;outside art/native task;not inspected arguments or stopped"
+  },
+  "completed_utc": "2026-11-02T08:48:20.910701+00:00",
+  "exit_code": 1,
+  "error": "RuntimeError('bake failed exit 1;preserve output;no automatic retry')",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5_bake_stage.py\", line 70, in <module>\n    save();observe();run('bake',cmd,7200)\n                     ~~~^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/agent-a2adce75319812d41/.claude/pause/characters-resume/ulgani5_bake_stage.py\", line 57, in run\n    if p.returncode:raise RuntimeError(f'{key} failed exit {p.returncode};preserve output;no automatic retry')\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: bake failed exit 1;preserve output;no automatic retry\n",
+  "tool_session": 70350,
+  "drain_verified_utc": "2026-11-02T08:49:01.649550+00:00",
+  "gpu_released_utc": "2026-11-02T08:49:01.649550+00:00",
+  "process_absence_pass": true,
+  "groups_absence_pass": true,
+  "assertions_drained": true,
+  "gate_consumed": ".claude/pause/characters-resume/ulgani5-bake/gpu-release-ulgani5-bake.consumed.json",
+  "metal_setup_reached": false,
+  "actual_gpu_bake_started": false,
+  "completed_materials": [],
+  "remaining_materials": [
+    "Skin",
+    "SuitA",
+    "SuitB"
+  ],
+  "output_source": null,
+  "frozen_canonical_hashes_unchanged": true
+}
