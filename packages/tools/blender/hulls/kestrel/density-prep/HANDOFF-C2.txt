@@ -1,0 +1,231 @@
+TASK: P1.E12.T02 — Kestrel round3 CURRENT-EXPORT density correction preparation
+STATUS: DONE (this authorized preparation only). Heavy source correction is HELD.
+SUMMARY: Prepared a concrete two-atlas source correction plan, a bounded read-only
+actual-export checker for later release, and 15 codec-free analytic fixtures.
+Verified/retained the independent current-export REVISE; no blend, GLB, old tool,
+old packet or image changed. The actual compressed-export checker was NOT run.
+The historical structural SOURCE PASS is not a density or visual qualification.
+The new saved-blend density remains NOT MEASURED. No new visual round occurred.
+
+PROVENANCE:
+  CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118
+  Branch: task/P1-E12-T02-kestrel-r3
+  Original base: e397f3d8db6717aac59b068aa5941af5999b0c06
+  Recovery: 9571dce6466063984967189d6363c989255b3b9c
+  Retained round3 content: c46e864028b32cea22622f5b1ffc19a95f99120e
+  Incoming reviewed HEAD: f80a78c02ffe0ba158691fedc9a57ced2d56a885
+  Incoming tree: 8fecccea75d2d682890bb3d0fbd91f8fc7689ae4
+  Preparation content HEAD: 6222dc2ab11ad04b9bc074c502e2442a78b12425
+  Preparation content tree: ba26c04b9818f3a67c0ee85d9aa2b5b00b3e759d
+  Content commit command (exit 0):
+    git commit -m "P1.E12.T02: prepare bounded Kestrel density correction"
+  This HANDOFF is a separate documentation-only delivery commit, after that
+  immutable content commit. Its exact HEAD/tree are returned in the final reply.
+  A committed file cannot include the hash of the commit containing itself.
+  Resolve the delivery later with git log -1 --format=%H -- <this file> and
+  git rev-parse <delivery>^{tree}. No amend, push, PR, merge or main action.
+
+EXACT CANONICAL BYTES (unchanged):
+  Source SHA256: 18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65
+  Source bytes: 78976965
+  Export SHA256: 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb
+  Export bytes: 20931568
+  Old packet seal SHA256:
+    5bbd23ae990b0c585bdf77cd1a8290c6f3031bf3c0cbcc0c21dd5141b360e090
+  Preparation seal SHA256:
+    b9aeae294c2d29a481527b28fbb9ce73c3a0e4ae559ed823693b0d41aa2fde9d
+  Preparation seal covers 47 files / 1658364 payload bytes,
+  excludes itself and this separate handoff. All covered files are committed,
+  including eleven child.log files force-added despite the repository's log
+  ignore rule. No failed attempt/output was dropped from this preparation.
+
+DECISIONS:
+  4096 image dimensions versus physical density -> accept the REVISE and use
+  world/normalized-UV measurement -> a map-size check cannot prove px/m.
+  One tile versus required density -> two atlas families with explicit authored
+  trim reuse -> even ideal unique packing of 345.212 m² yields only 220.453 px/m.
+  A needs 83.0792% allocation for unique Hull; B requires about 14.98 mean reuse
+  of structural cells after unique outfits/contact reservations. This is a
+  candidate feasibility hypothesis, not an approved layout or art-quality claim.
+  No silent repeating noise, chart deletion, relaxed budgets, geometry rebuild,
+  shader substitute or shared exporter change. Stop if the reuse/packing fails.
+  Budget -> 23 proposed unique 4K maps / 6 active maps, 514,501,904 / 134,217,888
+  compressed GPU-accounted bytes. Per-variant cap remains 512 MiB. Whole-file
+  512 MiB is a conservative planning reserve, not a new spec. B base/damaged
+  color sharing needs real authored/byte identity proof; otherwise replan.
+  Exact-area technique -> preserve the independent integer-lattice/cofactor
+  method -> avoids spurious density on quantized collinear triangles.
+  Texture bindings -> aggregate each slot separately -> a color allocation
+  cannot hide under-density in a differently bound normal/ORM map.
+  Heavy hold -> run only analytic fixtures/syntax and tiny supervisor probes ->
+  no Meshopt/NodeIO or image codec import occurred in these fixture executions.
+  Parent owns new saved-source review, actual measurements after release,
+  GPU/performance work and blind visual grading. Other components stay frozen.
+
+LIMITS / FUTURE FOOTPRINT:
+  See PLAN.txt and allocation.json for the numeric breakdown and stop gates.
+  Later REQUESTED envelope: 8 GiB incremental disk reserve; one CPU Blender -t2;
+  math threads 2; codec threads 2; ART_KTX_JOBS=1. Overall 90-minute stop;
+  per-phase sum 82 minutes; peak process-group RSS ceiling 6 GiB. These are
+  requested limits, not measured ETA/RSS or authorization to execute.
+  New candidate/checkpoint blend <=512 MiB each; bake scratch <=2 GiB; raw
+  export <=2 GiB; compressed GLB <=128 MiB; reports <=64 MiB; encoded new CPU
+  images <=128 MiB. No .blend1 or bulk frames. Candidate uses existing exporter
+  --src-root/--out-dir/--report-dir/--only flags, exact task-local paths.
+  Optional later seven CPU image files would bring 39 to 46; decoded aggregate
+  would be 331,936,000 bytes. Present 39 remain 67,408,889 encoded and 250,374,400
+  decoded RGBA bytes, verified by hashes/header dimensions without decoding.
+  Future export density substep: 90s, 768 MiB sampled group RSS, 512 MiB V8 heap,
+  32 MiB child output. No image transcode. Current light fixture limits: 10s,
+  256 MiB sampled group RSS, 96 MiB heap, 1 MiB child output. Sampling may miss
+  brief peaks; these are detection limits, not instantaneous OS quotas.
+  Cleanup <=20s after child deadline, owned group only, quarantine on uncertainty.
+  Final fixture resourceUsage reports maxRSS=54224; sampled RSS undercounted the
+  short-lived fixture, so do not quote the ~0.6 MiB sample as its true maximum.
+  RSS-limit enforcement branch was NOT independently forced; timeout, output and
+  signal/descendant cleanup were exercised at the real subprocess boundary.
+
+VERIFY (fresh preparation scope, not validate/review completion):
+  python3 packages/tools/blender/hulls/kestrel/density-prep/run.py fixtures --label fixtures-final
+    exit 0 (expected 0).
+  python3 packages/tools/blender/hulls/kestrel/density-prep/run.py syntax --label syntax-final
+    exit 0 (expected 0).
+  python3 packages/tools/blender/hulls/kestrel/density-prep/run.py probe-timeout --label timeout-final
+    exit 124 (expected 124).
+  python3 packages/tools/blender/hulls/kestrel/density-prep/run.py probe-output --label output-final
+    exit 125 (expected 125).
+  python3 packages/tools/blender/hulls/kestrel/density-prep/run.py probe-signal --label signal-descendant-final
+    exit 143 (expected 143).
+  python3 packages/tools/blender/hulls/kestrel/density-prep/run.py measure --label hold-rejection-final
+    exit 2 (expected 2).
+  fixtures-final: 15 PASS analytic cases using the same pure math as the prepared
+  checker. Includes low-density 4K, wrong raw integer interpretation, missing
+  world scale, signed endpoints, KHR UV transforms/selection, shear/nonsquare,
+  exact collinearity, zero UV, weighted statistics and distinct map bindings.
+  No glTF library integration or saved-source measurement is inferred.
+  syntax-final: Node --check on measure_export.cjs, no imports/decode, exit 0.
+  timeout-final: actual deadline exit 124, process group confirmed absent.
+  output-final: 2048-byte child log exceeded a 1024-byte probe cap, exit 125;
+  the log is retained, not truncated to make the receipt appear compliant.
+  signal-descendant-final: actual SIGTERM exit 143; emitted descendant PID was
+  observed in the sampled owned group, then the whole group was proven absent.
+  hold-rejection-final: exit 2 before codec import/spawn/output allocation.
+  All eleven owned run groups were freshly confirmed absent before committing.
+  No unrelated Blender/MCP/creature process was signalled or interpreted as ours.
+
+  python3 packages/tools/blender/hulls/kestrel/density-prep/verify_preservation.py preserved-before-commit
+    exit 0: exact canonical hashes; 213 old packet files; 23 old tools; all 39
+    images; all ten selected upstream records unchanged. Read-only hashes and
+    PNG headers only. Selected upstream copy followed verification of all 46
+    original manifest entries; no network recovery/fetch.
+  Python AST parse + final tested-tool hash comparison + ps group inventory:
+    exit 0; evidence/precommit-static.json. No candidate or new image created.
+  git diff --cached --check
+    exit 2: original whitespace in byte-identical copied contract-evidence.txt.
+  git diff --cached --check -- . ':!packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt'
+    exit 0: authored files and every other copied record are clean.
+  git status --porcelain after preparation content commit: exit 0, empty.
+  All committed changes are additions under density-prep; incoming canonical
+    assets, shared code, other hulls and parent docs have no diff.
+
+FAILURE TAILS / RETAINED LIMITS:
+  The following whitespace exception remains, deliberately preserving original
+  independent evidence bytes. Full command/exit/output in whitespace-check.json.
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:5: trailing whitespace.
+    +42: [trailing space in original]
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:26: trailing whitespace.
+    +792: [trailing space in original]
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:53: trailing whitespace.
+    +85: [trailing space in original]
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:90: trailing whitespace.
+    +4: [trailing space in original]
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:100: trailing whitespace.
+    +14: [trailing space in original]
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:106: trailing whitespace.
+    +85: [trailing space in original]
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:118: trailing whitespace.
+    +97: [trailing space in original]
+    packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:122: new blank line at EOF.
+  Expected hold rejection tail:
+    run.py: error: HOLD: parent must release actual compressed-export decoding first
+  Expected output probe tail: child.log contains exactly 2048 literal x bytes;
+    receipt records output-limit exit 125, not PASS. Timeout/signal logs retain
+    their original empty/emitted-PID content and separate receipts.
+  Minor initial read-only discovery failure (exit 1):
+    zsh:7: no matches found: docs/PLAN*
+    Corrected to docs/IMPLEMENTATION_PLAN.md; no file/process mutation occurred.
+  Copied independent REPORT records the first inventory assertion failure,
+    superseded float-area attempt and first raw-crosscheck import failure. Their
+    original upstream files remain immutable; attempt3 is authoritative. No
+    historical failure or structural receipt has been rewritten as current PASS.
+
+OUT OF SCOPE FOUND:
+  Actual source density, candidate UV packing/reuse feasibility, compressed GLB
+  rerun across nine livery/state combinations, lower-LOD density comparisons,
+  visual detail/repeat quality and runtime GPU draws/performance remain unproved.
+  Preserved original known navigation/LOD qualifications are not repaired here.
+  No global budget or parent plan/PROGRESS/DECISIONS/VISUAL-REVIEW update.
+
+ARTIFACTS:
+  PLAN.txt: concrete source correction, allocation, reserve and future sequence.
+  allocation.json / pins.json: exact current bytes and derived capacity math.
+  evidence/independent/: selected exact audit, full density inventory/method.
+  density_math.cjs / fixtures.cjs: shared CPU arithmetic and negative controls.
+  measure_export.cjs / run.py: future held actual-export path and bounded runner.
+  runs/* / evidence/*: every executed light attempt, failure and preservation.
+  preparation-seal.json: complete immutable preparation payload inventory.
+  Existing assets/renders/hulls/kestrel-round3-current/ and its parent-owned
+  future GPU review inventory are unchanged. No new render/capture artifact.
+
+FILES CHANGED (preparation content commit):
+  packages/tools/blender/hulls/kestrel/density-prep/.gitignore
+  packages/tools/blender/hulls/kestrel/density-prep/PLAN.txt
+  packages/tools/blender/hulls/kestrel/density-prep/allocation.json
+  packages/tools/blender/hulls/kestrel/density-prep/density_math.cjs
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/MANIFEST.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/REPORT.txt
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/attempt3/density.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/attempt3/measure.cjs
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/attempt3/oracle.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/attempt3/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/attempt3/run.py
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/crosscheck.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/crosscheck2.cjs
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/precommit-static.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/preserved-before-commit.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/provenance.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/verification-commands.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/verification-final.json
+  packages/tools/blender/hulls/kestrel/density-prep/evidence/whitespace-check.json
+  packages/tools/blender/hulls/kestrel/density-prep/fixtures.cjs
+  packages/tools/blender/hulls/kestrel/density-prep/measure_export.cjs
+  packages/tools/blender/hulls/kestrel/density-prep/pins.json
+  packages/tools/blender/hulls/kestrel/density-prep/preparation-seal.json
+  packages/tools/blender/hulls/kestrel/density-prep/run.py
+  packages/tools/blender/hulls/kestrel/density-prep/runs/fixtures-01/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/fixtures-01/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/fixtures-02/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/fixtures-02/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/fixtures-final/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/fixtures-final/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/output-01/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/output-01/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/output-final/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/output-final/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/signal-descendant-01/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/signal-descendant-01/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/signal-descendant-final/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/signal-descendant-final/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/syntax-01/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/syntax-01/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/syntax-final/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/syntax-final/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/timeout-01/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/timeout-01/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/runs/timeout-final/child.log
+  packages/tools/blender/hulls/kestrel/density-prep/runs/timeout-final/receipt.json
+  packages/tools/blender/hulls/kestrel/density-prep/verify_preservation.py
+
+DELIVERY-ONLY FILE:
+  packages/tools/blender/hulls/kestrel/density-prep/HANDOFF-C2.txt
