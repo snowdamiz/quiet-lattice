@@ -1,0 +1,46 @@
+$ pnpm --filter @astra/tools smoke -- --list
+$ tsx src/smoke/run.ts -- --list
+Listing tests:
+  smoke/account.spec.ts:76:1 › title → a new account → a refused name, then a character of the people picked → enter, by keyboard
+  smoke/account.spec.ts:149:1 › a wrong password is refused on its field; Esc steps back; the session lasts until signing out
+  smoke/account.spec.ts:190:1 › dev scenarios go through the dev login: ?dev#foot on foot in its home hangar
+  smoke/account.spec.ts:211:1 › ?dev=<name>&people=<id>: that people's dev character, in its home system
+  smoke/account.spec.ts:226:1 › #foot without ?dev is still the offline sandbox: no sign-in, no socket
+  smoke/boot.spec.ts:4:1 › client boots and renders
+  smoke/compressed.spec.ts:38:1 › a KTX2 and meshopt model loads and draws through the game loader
+  smoke/cross-engine.spec.ts:58:1 › world generation in Chromium gives Node’s bits
+  smoke/cross-engine.spec.ts:67:3 › world generation in Firefox gives Node’s bits
+  smoke/cross-engine.spec.ts:67:3 › world generation in WebKit gives Node’s bits
+  smoke/cutscene-online.spec.ts:69:1 › plays the test cutscene in the story phase the server places the player in
+  smoke/cutscene-online.spec.ts:103:1 › plays the first cutscene of a session when the server starts it from a quest step, and its done ends the step
+  smoke/cutscene.spec.ts:23:1 › plays the test cutscene end to end, and skips it
+  smoke/den-pad.spec.ts:70:1 › a Tier 1 den pad is levelled in the engine, and nothing is drawn for the den
+  smoke/edge.spec.ts:39:1 › the galaxy map and the sky draw the Edge where the Count puts it, at three Counts
+  smoke/edge.spec.ts:103:1 › the galaxy map marks the dark Waystations the server names, and says so for the system selected, after frames have run
+  smoke/fauna-online.spec.ts:77:1 › two clients draw the same herd from the server’s snapshots, and analyzing a drawn creature works
+  smoke/handoff-online.spec.ts:38:1 › flies from one star through deep space into another, then warps without duplicating its entity
+  smoke/harness-hang.spec.ts:12:1 › a page that never answers
+  smoke/harness-hang.spec.ts:21:1 › the next test gets a working browser
+  smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 15 s, cleanup true, CI false, and the next test still runs
+  smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 1 s, cleanup false, CI false, and the next test still runs
+  smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 1 s, cleanup true, CI true, and the next test still runs
+  smoke/mining-online.spec.ts:232:1 › two clients mine one node and a third watches: all see it vanish, none asks for it while it is gone, all see it grow back
+  smoke/movement-online.spec.ts:196:1 › takes off, flies out of the Waystation, boosts and engages the pulse drive without a correction
+  smoke/movement-online.spec.ts:208:1 › flies on through page stalls of 4 s and 9 s and a hidden tab’s 40 s pause without a correction
+  smoke/online.spec.ts:90:1 › sign up, make a character and spawn docked at the home Waystation
+  smoke/online.spec.ts:136:1 › a reload resumes the character where the server holds it
+  smoke/online.spec.ts:196:1 › a server restart: the client reconnects, its snapshot store starts over, and it stays where it was
+  smoke/online.spec.ts:234:1 › a page stalled for 9 s keeps its session: the snapshots it missed are acknowledged once
+  smoke/online.spec.ts:274:1 › a frame loop stopped for a while (a hidden tab) comes back on the server's clock at once, and so do its inputs
+  smoke/prediction-online.spec.ts:293:1 › in flight: out of the Waystation into its world’s frame, boosting and on the pulse drive, within 0.5 m of the server
+  smoke/prediction-online.spec.ts:327:1 › on an empty Charge in its world’s shadow: the engage refused by the client, corrections blended or shown, a mispredicted engage rewound
+  smoke/prediction-online.spec.ts:449:1 › on foot in the hangar: walking, sprinting and jumping within 0.5 m, a small correction blended and a large one shown
+  smoke/remote-markers.spec.ts:25:3 › remote-ships: pilots' marks and labels keep off the HUD, the local ship and each other in every frame
+  smoke/remote-markers.spec.ts:25:3 › remote-ships-crowd: pilots' marks and labels keep off the HUD, the local ship and each other in every frame
+  smoke/remote-markers.spec.ts:25:3 › remote-ships-pads: pilots' marks and labels keep off the HUD, the local ship and each other in every frame
+  smoke/remote-markers.spec.ts:25:3 › remote-ships-surface: pilots' marks and labels keep off the HUD, the local ship and each other in every frame
+  smoke/remote-markers.spec.ts:25:3 › remote-ships-bay: pilots' marks and labels keep off the HUD, the local ship and each other in every frame
+  smoke/remote-online.spec.ts:242:1 › two clients each see the other's ship move, across a frame change
+  smoke/review.spec.ts:27:1 › review scene loads an asset and switches LOD
+  smoke/social-online.spec.ts:109:1 › two pilots chat on the shard, party up from an invite card, hand the lead on and part
+Total: 42 tests in 20 files

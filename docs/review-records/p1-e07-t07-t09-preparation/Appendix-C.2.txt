@@ -1,0 +1,88 @@
+TASK: P1.E07.T07 + P1.E08.T09 — combined source preparation for real two-client QA
+STATUS: DONE (source preparation only). RUNTIME EXECUTION PENDING.
+
+SUMMARY:
+Recovered the exact complete reviewed T07 and T09 product/test/documentation deltas into this new isolated checkout, then committed a focused real-server Bond smoke fixture. The test uses the current hang-aware Playwright test, real dev login, pre-join fragment staging, actual gateway unlock/buy/slot requests, production analysis/castIntent/Abilities.cast, authoritative snapshots, RemoteEntities and Fauna instancing/picking. No gameplay code was changed beyond the exact reviewed integrations. Independent source review, actual GPU execution and independent pixel/CPU inspection belong to the parent after the fauna capture slot is released. This report claims no live pass.
+
+PROVENANCE:
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Git branch: t3/P1-E07-T07-T09-live-qa (current t3/ prefix retained).
+Acid confirmed attached=true at that exact isolated path. Its branch metadata retains the initial lowercase t3/p1-e07-t07-t09-live-qa after the Git case rename. There is no exposed branch-metadata rename API. Git HEAD/ref, not that cached case, identifies the commits below.
+Parent: bd44b70d9c6712f4216a0027f4c56ca7079b7e9e
+Combined reviewed integration HEAD: 74360adf8cfb8e0d5ee7c7e0dbee07de02808904
+Combined reviewed integration tree: 1412b00e663b1d7f996a8073cdede83ca53cbce0
+New QA fixture SOURCE HEAD: 55f357cf01da755b07ed0e9a3b074cd6d0dfb7f4
+New QA fixture SOURCE tree: 589c20a836ed318c563d714f2f8905fa049769a0
+This report/evidence is a subsequent documentation-only commit. Its enclosing commit is obtained with git rev-parse HEAD; the final handoff provides that full HEAD/tree. Report bytes cannot contain their own commit hash.
+
+Reviewed source ranges:
+- T07: 634c51d2378748c6a514af2a792ee4500b912643..bf09bc72543ed74b7dc7386415471d26a36a4b6d, reviewed final tree b5456a8f82c498ee5bb7e35836bd35fd4c425c41.
+- T09: e1ed4752805ee92be561db81910ee1bc1a87b1d9..d688579adf31c2a8ee9836495ba6b32708b99ccd. No later capture caller commit was integrated.
+- Exact cherry-picks: be2d4704b -> 99b8bd9e8; c0b9c9ba9 -> 20984163e; 52da4eff0 -> 1189e1c5d; bf09bc725 -> 079ee3795; d688579ad -> 74360adf8. Full IDs are in provenance.json.
+- All five individual stable patch IDs match. Cumulative T07 patch ID on both original and combined bases: 086880307379fb409d59983981d5fc9b50ff5568. T09 patch ID: b1fd1004af535769c57ece4b9bd4ce4095358a28.
+- All 55 distinct reviewed files are accounted for. Every integrated product/test file is blob-identical to its reviewed final. ARCHITECTURE.md alone combines both reviewed documentation deltas; both original patch IDs still match. Git auto-merged it while applying T09. Manual conflicts/resolutions: NONE.
+- Capture screens.ts/screens.test.ts and replay/dev code were retained because they are in the reviewed d688579ad product commit. No historical capture helper, packet or art/screenshot tree was recovered or hydrated.
+- Protected parent objects match: plan/progress/decisions, shared Exo-suit and skill rules, server persistence, gatewayPersistence.test.ts and test helpers, skills/reputation and live eligibility tests, Engine, modelLibrary, render/material code, art tools, all assets/Blender/public trees, package manifest and lockfile. T07's intentional overlapping gateway/combat/ability changes exactly match reviewed source; current Exo-suit/T16 focused tests pass; E16.T10 gatewayPersistence is blob-preserved but was not executed because it opens a loopback server. No unexpected changed path exists outside reviewed deltas and the six new QA files.
+
+FILES CHANGED:
+The 55 reviewed integration paths are enumerated with original/combined blob IDs in provenance.json.
+New QA commit, six paths:
+- packages/tools/src/smoke/symbiotic-online.spec.ts
+- packages/tools/src/smoke/symbiotic-private.ts
+- packages/tools/src/smoke/symbiotic-private.test.ts
+- packages/tools/src/smoke/symbiotic.config.ts
+- packages/tools/src/smoke/online.ts
+- packages/tools/playwright.config.ts
+This evidence directory is the only subsequent addition. Orchestration documents and original task/main worktrees were not edited.
+
+TEST PLAN / ORACLES:
+One required Chromium test, two independent contexts/pages, each 1280x720; one private server, one loopback Vite, existing stepped server clock. The real-time clock runs during analysis, Bond and keyboard movement. It freezes to take an untouched target HP baseline and to retain combat evidence after actual health loss; it never injects a combat outcome.
+1. Create two fresh dev accounts. Before first join stage one Symbiotic fragment for the owner using the real v2 stored skill shape; no bought skill, analysis, companion or health is seeded. Unlock Bond, buy it and equip ground slot 0 through actual skills requests; assert each server response.
+2. Select a live tier-one lush world with a docile non-heavy/non-flyer companion and territorial opponent from shared generation and the live tier map. Find a broad dry terrain patch. Teleport through the production admin channel; spawn a single real herd member after the world's fauna appear.
+3. On BOTH clients assert entity ID, species/name, world body and exact frame; server snapshots, actual RemoteEntities record, InstancedMesh slot/matrix/scale, main-camera render callback, on-screen anchor and the production camera-ray Fauna.pick ID. Assert no offline/replay store.
+4. Actual production Bond intent before analysis must be refused for target eligibility. Analyze that drawn ID through Game.analyze; await a server new analysis. Cast through actual production castIntent and Abilities.cast, whose picked target must equal that ID. Both client snapshots must name the owner's entity, distinct from observer.
+5. Move owner backward with real keyboard input until its acknowledged server position moves >14 m. Both clients must observe companion convergence within 8 m, >6 m displacement in both authoritative and rendered positions, continuing owner identity, increasing snapshot ticks and another actual companion pick.
+6. Spawn the real territorial enemy with the clock frozen, advance 50 ms for snapshot publication, and require HP=1 on both clients before thaw. Require positive combat events with source=companion and target=enemy AND lower authoritative target HP on BOTH clients. Attack-phase alone cannot pass. Freeze only after both clients meet those assertions. Both target and companion must still be actual drawn instances in each client's viewport. Enemy picking is not required through an intervening companion; the owned companion's picks are explicitly proved separately.
+7. Before release, observer re-aims and picks the same companion. Close owner's actual network connection. Observer must remain joined and retain the enemy (positive control), while owner and companion leave snapshots, RemoteEntities and Fauna. The prior ray cannot pick the retired companion, and targets no longer includes it.
+8. Test-owned screenshot attachments: bond-owner/observer, follow-owner/observer, combat-owner/observer, disconnect-owner/observer (8 PNGs maximum on success, no raw frame sequence/video/trace). Bounded control/event evidence plus concrete IDs/matrices/HP/ticks is attached as JSON, and server output as text, including on failures after both walkers are created. These pixels do not exist yet and require subsequent independent inspection.
+
+VERIFY:
+Node v22.23.3 from /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin; pnpm 12.15.0. Dependencies installed offline with --frozen-lockfile --ignore-scripts: 239 reused, zero downloads. No asset hydration.
+- pnpm --workspace-concurrency=2 -r typecheck: PASS, shared/client/server/tools. Final tools typecheck after fixture-only edits: PASS.
+- Focused combined CPU suite, maxWorkers=2 and --no-file-parallelism: PASS, 348 tests / 17 files, 0 failed/pending/todo. Paths, exact argument vector, output and reporter JSON are retained. Includes Symbiotic, retirement, Thermal, live eligibility, wake/regen, suit meters, event objectives, Game/Fauna/RemoteEntities/abilities/HUD/Universe, removal gate tests and new route/harness tests. No full unit suite rerun.
+- Final route + hang-harness import subset after the Node-version guard: PASS, 30 tests / 2 files (8 route refusal/acceptance cases, 22 harness inventory/import checks). These repeat a subset; do not sum them into 378 unique tests.
+- Scoped ESLint and Prettier: PASS. git diff --check: PASS.
+- pnpm gate:removed: PASS. T09 remains [R] in the untouched parent plan; this does not mark its task complete.
+- Dedicated Playwright --list: exactly 1 test / 1 file; this lists source only. No browser/server/DB was opened. Dedicated config removes the redundant default webServer and has no skip/fixme path. Ordinary smoke config excludes only this private test and still lists 42 tests / 20 files; invoke the dedicated config for required QA.
+- Default harness-hang deliberately skips unless its child-test flag is set. Existing cross-engine tests may skip for missing or unlaunchable Firefox/WebKit. Static executable-path inventory finds Chromium, Firefox and WebKit installed, but no launchability claim is made. None of those conditional skips can skip the required dedicated test.
+- CPU generation inventory at the default tier map found eligible arenas (system31/body7, system58/body2). Live selection still consumes the server's current tier map and fails explicitly if none qualify. This was a CPU-only shared-data query, not live world validation.
+- Patch parity and 20 protected-object comparisons: PASS. The first audit command named a nonexistent packages/client/src/shaders path and exited128; corrected inventory uses the actual render tree (terrainMaterial.js/panelMaterial.js), which is unchanged. This diagnostic correction changed no source or assertion.
+
+DECISIONS:
+Private routing -> externally preclaimed fresh database and Redis8 passed explicitly to startOnline -> avoids its existing default Redis7 route and leaves cleanup with the parent owner. Default online specs retain their scratch-database/Redis7 behavior.
+Dedicated opt-in config -> omit new private fixture from ordinary smoke discovery -> no unexpected Redis8 claim requirement for existing callers; the required dedicated run cannot silently skip.
+Server clock -> existing stepped-server fixture only -> stable pre-hit baseline and screenshots, with real server AI/combat and no authored snapshots.
+T09 scale -> retain species-size rendering/picking convention -> per-creature quantized scale is E08.T02, not a test-only correction here.
+No new gameplay/spec interpretation was needed. No product fallback or fake client authority was added.
+
+BOUNDS / OWNERSHIP:
+Source inspection establishes these limits; teardown has NOT been exercised live in this unit.
+- Dedicated Playwright global timeout 420 s, test body 300 s, setup hook 120 s, one worker, retries0, repeat1, maximum failures1. Actual execution requires the parent's process supervisor with an outer deadline <=450 s plus <=20 s owned-process drain.
+- Current hang-aware fixture covers both manually created contexts; context/browser closure grace 15 s then owned browser process-tree kill. Parent must retain PID/start-time/argv/cwd/process-tree/profile/listener receipts and prove all descendants exited; PIDs alone are not ownership evidence.
+- Private preclaim probe 15 s; SQL helper 30 s; migration 60 s; each health fetch 1 s within a 60 s health loop; admin fetch 10 s; clock fetch 5 s; page navigation 60 s; screenshot 15 s. Server SIGTERM waits10 s, then SIGKILL and an actual exit wait5 s. Vite close is bounded10 s. Stop attempts server and Vite closure even if one fails; errors remain failures.
+- startOnline borrows the claimed DB and does not create/drop it. It does not clear Redis. Parent must close application clients first, verify exact namespace/marker ownership, drop only that fresh database, and explicitly delete only proven-owned Redis8 keys (including marker) after an atomic ownership/keyset recheck. No FLUSH, no Redis7, no container/service reset, no unrelated cleanup. Unknown clients/keys or lost ownership block cleanup and require reporting.
+- The route helper verifies actual SQL db/user/port and empty public schema, plus Redis CLIENT INFO db8 and an atomic single-key matching claim, before migrations/application startup. It is admission validation, not a socket-level sandbox. Parent supplies its current private-route guard/supervisor before application entry and verifies actual runtime routes.
+- Fresh output and TMPDIR only. Playwright deletes/recreates its output path: it must be a new child of an exclusively created QA directory, never any existing screenshot or results tree. Parent archives assertions/screenshots/reporter/route and process receipts before removing only this run's disposable compiler caches/browser profile/temp files. No screenshot cleanup is authorized by this report.
+
+OUT OF SCOPE FOUND:
+No concrete unsupported required product behavior was established by source inspection. A live failure (including no eligible arena, scene/pick/camera coverage or source-attributed HP loss) must be reported, not bypassed with replay, fabricated snapshots, a phase-only assertion or product changes. Whole-task visual acceptance, performance measurements, live combat-feedback grading, full smoke, independent review and merged-tree checks remain open. No runtime fixture has been claimed here.
+
+ARTIFACTS:
+- provenance.json: exact source/integration pins, five patch comparisons, all per-file blobs, protected parent object IDs, QA scope and binding caveat.
+- source-sha256.json: exact source file bytes at the QA source pin.
+- verification-summary.json, focused-cpu.json, focused-cpu.txt: actual 348-test result.
+- commands.json and individual *.txt outputs: permitted CPU/static checks and inventories. final-fixture-cpu.raw.txt.gz preserves exact stdout; its readable .txt copy trims surplus trailing blank lines caught by the staged whitespace check.
+- future-qa.txt: exact future launch command and mandatory fresh claim/cleanup preconditions.
+- SHA256SUMS: evidence hashes, excluding the checksum file itself.
+
+No browser, GPU, server, DB, Redis, smoke execution, full-suite rerun, screenshot cleanup, push, PR or main merge occurred. Source preparation only; the parent schedules the independent review and runtime QA after its fauna packet.

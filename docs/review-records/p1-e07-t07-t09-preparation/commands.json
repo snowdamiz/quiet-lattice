@@ -1,0 +1,258 @@
+[
+  {
+    "label": "typecheck",
+    "argv": [
+      "pnpm",
+      "--workspace-concurrency=2",
+      "-r",
+      "typecheck"
+    ],
+    "exit": 0,
+    "seconds": 7.141
+  },
+  {
+    "label": "focused-cpu",
+    "argv": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--passWithNoTests=false",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/docs/review-records/p1-e07-t07-t09-preparation/focused-cpu.json",
+      "packages/server/src/abilities/symbiotic.test.ts",
+      "packages/server/src/abilities/retirement.test.ts",
+      "packages/server/src/abilities/thermal.test.ts",
+      "packages/server/src/abilities/eligibility.test.ts",
+      "packages/server/src/zones/wake.test.ts",
+      "packages/server/src/zones/regen.test.ts",
+      "packages/server/src/meters/suit.test.ts",
+      "packages/server/src/events/service.test.ts",
+      "packages/client/src/gameplay/Fauna.test.js",
+      "packages/client/src/remote/RemoteEntities.test.js",
+      "packages/client/src/net/abilities.test.js",
+      "packages/client/src/ui/HUD.test.js",
+      "packages/client/src/Game.test.js",
+      "packages/client/src/universe/Universe.test.js",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/harness-imports.test.ts",
+      "packages/tools/src/gates/removed.test.ts"
+    ],
+    "exit": 0,
+    "seconds": 9.658
+  },
+  {
+    "label": "inventory",
+    "argv": [
+      "pnpm",
+      "--filter",
+      "@astra/tools",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "src/smoke/symbiotic.config.ts",
+      "--list"
+    ],
+    "exit": 0,
+    "seconds": 1.028
+  },
+  {
+    "label": "removed-gate",
+    "argv": [
+      "pnpm",
+      "gate:removed"
+    ],
+    "exit": 0,
+    "seconds": 0.231
+  },
+  {
+    "label": "eslint",
+    "argv": [
+      "pnpm",
+      "exec",
+      "eslint",
+      "packages/tools/src/smoke/online.ts",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-private.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic.config.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.448
+  },
+  {
+    "label": "format",
+    "argv": [
+      "pnpm",
+      "exec",
+      "prettier",
+      "--check",
+      "packages/tools/src/smoke/online.ts",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-private.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic.config.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.28
+  },
+  {
+    "label": "whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.021
+  },
+  {
+    "label": "final-typecheck",
+    "argv": [
+      "pnpm",
+      "--filter",
+      "@astra/tools",
+      "typecheck"
+    ],
+    "exit": 0,
+    "seconds": 2.591
+  },
+  {
+    "label": "focused-inventory-final",
+    "argv": [
+      "pnpm",
+      "--filter",
+      "@astra/tools",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "src/smoke/symbiotic.config.ts",
+      "--list"
+    ],
+    "exit": 0,
+    "seconds": 0.651
+  },
+  {
+    "label": "default-smoke-inventory",
+    "argv": [
+      "pnpm",
+      "smoke",
+      "--",
+      "--list"
+    ],
+    "exit": 0,
+    "seconds": 1.288
+  },
+  {
+    "label": "final-eslint",
+    "argv": [
+      "pnpm",
+      "exec",
+      "eslint",
+      "packages/tools/playwright.config.ts",
+      "packages/tools/src/smoke/online.ts",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-private.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic.config.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.927
+  },
+  {
+    "label": "final-format",
+    "argv": [
+      "pnpm",
+      "exec",
+      "prettier",
+      "--check",
+      "packages/tools/playwright.config.ts",
+      "packages/tools/src/smoke/online.ts",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-private.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic.config.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.443
+  },
+  {
+    "label": "final-typecheck",
+    "argv": [
+      "pnpm",
+      "--filter",
+      "@astra/tools",
+      "typecheck"
+    ],
+    "exit": 0,
+    "seconds": 2.755
+  },
+  {
+    "label": "final-fixture-cpu",
+    "argv": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--passWithNoTests=false",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/harness-imports.test.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.595
+  },
+  {
+    "label": "focused-inventory-final",
+    "argv": [
+      "pnpm",
+      "--filter",
+      "@astra/tools",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "src/smoke/symbiotic.config.ts",
+      "--list"
+    ],
+    "exit": 0,
+    "seconds": 0.634
+  },
+  {
+    "label": "final-eslint",
+    "argv": [
+      "pnpm",
+      "exec",
+      "eslint",
+      "packages/tools/playwright.config.ts",
+      "packages/tools/src/smoke/online.ts",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-private.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic.config.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.697
+  },
+  {
+    "label": "browser-payload-inventory",
+    "argv": [
+      "pnpm",
+      "--filter",
+      "@astra/tools",
+      "exec",
+      "node",
+      "--input-type=module",
+      "-e",
+      "import {chromium,firefox,webkit} from '@playwright/test'; import {existsSync} from 'node:fs'; console.log(JSON.stringify(Object.fromEntries(Object.entries({chromium,firefox,webkit}).map(([name,engine]) => [name,{path:engine.executablePath(),exists:existsSync(engine.executablePath())}]))));"
+    ],
+    "exit": 0,
+    "seconds": 0.315
+  }
+]
