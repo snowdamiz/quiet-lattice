@@ -182,7 +182,9 @@ class NativeAdapter(caller.StationAdapter):
         if failure.exists():
             assert failure.stat().st_size<=2*1024**2,'Native failure record ceiling'
             receipt['workerFailure']=load(failure)
-            receipt['primaryFailure']=receipt['workerFailure']['primaryFailure']
+            if receipt['primaryFailure'] is None:
+                receipt['primaryFailure']=receipt['workerFailure']['primaryFailure']
+            else:receipt.setdefault('secondaryFailures',[]).append(receipt['workerFailure']['primaryFailure'])
 
     def stage_observer(self,*args):return None
 

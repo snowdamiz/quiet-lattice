@@ -1,0 +1,242 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/first",
+        "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/second"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338070,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988618212346,
+            "ctime": 1794033988618212346,
+            "links": 3
+          },
+          {
+            "path": "large",
+            "dev": 16777232,
+            "ino": 482338072,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 402653184,
+            "mtime": 1794033988618245888,
+            "ctime": 1794033988618245888,
+            "links": 1
+          }
+        ],
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338071,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988618288347,
+            "ctime": 1794033988618288347,
+            "links": 3
+          },
+          {
+            "path": "extra",
+            "dev": 16777232,
+            "ino": 482338073,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 1,
+            "mtime": 1794033988618331013,
+            "ctime": 1794033988618331013,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 4,
+      "statBytes": 402653185,
+      "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/second/extra",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/first",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338070,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988618212346,
+            "ctime": 1794033988618212346,
+            "links": 3
+          },
+          "after": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338070,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988618212346,
+            "ctime": 1794033988618212346,
+            "links": 3
+          }
+        },
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/second",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338071,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988618288347,
+            "ctime": 1794033988618288347,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {}
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Vite snapshot exceeds archive reserve",
+      "details": {
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/first",
+            "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/second"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338070,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988618212346,
+                "ctime": 1794033988618212346,
+                "links": 3
+              },
+              {
+                "path": "large",
+                "dev": 16777232,
+                "ino": 482338072,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 402653184,
+                "mtime": 1794033988618245888,
+                "ctime": 1794033988618245888,
+                "links": 1
+              }
+            ],
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338071,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988618288347,
+                "ctime": 1794033988618288347,
+                "links": 3
+              },
+              {
+                "path": "extra",
+                "dev": 16777232,
+                "ino": 482338073,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 1,
+                "mtime": 1794033988618331013,
+                "ctime": 1794033988618331013,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 4,
+          "statBytes": 402653185,
+          "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/second/extra",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/first",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338070,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988618212346,
+                "ctime": 1794033988618212346,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338070,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988618212346,
+                "ctime": 1794033988618212346,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-bytes/second",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338071,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988618288347,
+                "ctime": 1794033988618288347,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,4158 @@
+[
+  {
+    "name": "timeout-normal",
+    "status": "PASS",
+    "original": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-rss']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "inert-rss"
+        ],
+        "timeout": 2,
+        "output": "b'PARTIAL\\x00\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": 17
+        }
+      }
+    },
+    "primary": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-rss']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "inert-rss"
+        ],
+        "timeout": 2,
+        "output": "b'PARTIAL\\x00\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": 17
+        }
+      }
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "TimeoutExpired",
+        "message": "Command '['inert-rss']' timed out after 2 seconds",
+        "details": {
+          "cmd": [
+            "inert-rss"
+          ],
+          "timeout": 2,
+          "output": "b'PARTIAL\\x00\\xff'",
+          "stderr": "b'ERR\\x80'",
+          "unknown": {
+            "keep": 17
+          }
+        }
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.00408716598758474,
+      "outputBytes": 0,
+      "freeBytesAfter": 46466514944,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "464fa60a626f7bbbd175dcd3a5890f0148d305a0f7ab46e2bd2f347b6154ad75"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/result.json",
+          "status": "written",
+          "sha256": "2de6db7eee5d46f5c188c3849bfe6f028d7ad92e5cc3363cc2822186e1fc3186",
+          "bytes": 2106
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "33047812abd904dd5c3916fa39e8e54668e570d6976a571c8c331c62d92d6ec4",
+          "bytes": 2204
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "TimeoutExpired",
+        "message": "Command '['inert-rss']' timed out after 2 seconds",
+        "details": {
+          "cmd": [
+            "inert-rss"
+          ],
+          "timeout": 2,
+          "output": "b'PARTIAL\\x00\\xff'",
+          "stderr": "b'ERR\\x80'",
+          "unknown": {
+            "keep": 17
+          }
+        }
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265683.833703625,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265683.833755958,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-rss']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "inert-rss"
+              ],
+              "timeout": 2,
+              "output": "b'PARTIAL\\x00\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": 17
+              }
+            }
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "TimeoutExpired",
+          "message": "Command '['inert-rss']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "inert-rss"
+            ],
+            "timeout": 2,
+            "output": "b'PARTIAL\\x00\\xff'",
+            "stderr": "b'ERR\\x80'",
+            "unknown": {
+              "keep": 17
+            }
+          }
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 3281,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "timeout-receipt-fail",
+    "status": "DEFECT_REPRODUCED",
+    "original": {
+      "type": "TimeoutExpired",
+      "message": "Command '['inert-rss']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "inert-rss"
+        ],
+        "timeout": 2,
+        "output": "b'PARTIAL\\x00\\xff'",
+        "stderr": "b'ERR\\x80'",
+        "unknown": {
+          "keep": 17
+        }
+      }
+    },
+    "primary": {
+      "type": "OSError",
+      "message": "POST_WAIT_RECEIPT_FAILURE",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.0028693750500679016,
+      "outputBytes": 0,
+      "freeBytesAfter": 46466465792,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "OSError",
+              "message": "POST_WAIT_RECEIPT_FAILURE",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 265683.83885475,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 265683.838899,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "failure": {
+                  "type": "TimeoutExpired",
+                  "message": "Command '['inert-rss']' timed out after 2 seconds",
+                  "details": {
+                    "cmd": [
+                      "inert-rss"
+                    ],
+                    "timeout": 2,
+                    "output": "b'PARTIAL\\x00\\xff'",
+                    "stderr": "b'ERR\\x80'",
+                    "unknown": {
+                      "keep": 17
+                    }
+                  }
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "TimeoutExpired",
+                "message": "Command '['inert-rss']' timed out after 2 seconds",
+                "details": {
+                  "cmd": [
+                    "inert-rss"
+                  ],
+                  "timeout": 2,
+                  "output": "b'PARTIAL\\x00\\xff'",
+                  "stderr": "b'ERR\\x80'",
+                  "unknown": {
+                    "keep": 17
+                  }
+                }
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 448,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "1e092eac757a734f2d49ac5216f07a6f61e03a14ed188d494d46bf919ed63d47"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "14de0c412998856f675652c0ae4e6a3c84830b14bcda527b0cc7076e1089bc77",
+          "bytes": 9514
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "c217293fbb0892c297253bacc40cdcf3b3e6656fd2d2f14475e1767214ebc2f7",
+          "bytes": 9612
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265683.83885475,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265683.838899,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-rss']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "inert-rss"
+              ],
+              "timeout": 2,
+              "output": "b'PARTIAL\\x00\\xff'",
+              "stderr": "b'ERR\\x80'",
+              "unknown": {
+                "keep": 17
+              }
+            }
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "TimeoutExpired",
+          "message": "Command '['inert-rss']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "inert-rss"
+            ],
+            "timeout": 2,
+            "output": "b'PARTIAL\\x00\\xff'",
+            "stderr": "b'ERR\\x80'",
+            "unknown": {
+              "keep": 17
+            }
+          }
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 448,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/timeout-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "missing-normal",
+    "status": "PASS",
+    "original": {
+      "type": "AssertionError",
+      "message": "RSS missing identity",
+      "details": {}
+    },
+    "primary": {
+      "type": "AssertionError",
+      "message": "RSS missing identity",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "RSS missing identity",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.00299295800505206,
+      "outputBytes": 0,
+      "freeBytesAfter": 46466396160,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "118e63d67b4e3b9ddc61317bc967a78435558292d0b5d48a0d1a14db606a7238"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/result.json",
+          "status": "written",
+          "sha256": "9b6c2c156b0e6bd8b3612d06c797057baf4cb742edacbc40cfe123c680b6a8e3",
+          "bytes": 1891
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "518d9527f8f144ec1ff9dfb7a41659a1ddfa3007c60363130267863f84f63417",
+          "bytes": 1989
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "RSS missing identity",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265683.843755666,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265683.843792291,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {},
+            "unknown": [
+              "keep",
+              null
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS missing identity",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "RSS missing identity",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 3450,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "missing-receipt-fail",
+    "status": "DEFECT_REPRODUCED",
+    "original": {
+      "type": "AssertionError",
+      "message": "RSS missing identity",
+      "details": {}
+    },
+    "primary": {
+      "type": "OSError",
+      "message": "POST_WAIT_RECEIPT_FAILURE",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.002581499982625246,
+      "outputBytes": 0,
+      "freeBytesAfter": 46466347008,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "OSError",
+              "message": "POST_WAIT_RECEIPT_FAILURE",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 265683.848125333,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 265683.84816125,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {},
+                  "unknown": [
+                    "keep",
+                    null
+                  ]
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "failure": {
+                  "type": "AssertionError",
+                  "message": "RSS missing identity",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "AssertionError",
+                "message": "RSS missing identity",
+                "details": {}
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 448,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "428007115dac8020ea4584324b308909d530dc39905a7a0359fb73c35ccd9a84"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "f0b877867b71d8ec2a56a2073d2db89a6a85fef10a47cd602f13929e7d93a6ac",
+          "bytes": 9793
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "417dcf17ba9dc974ea340d3c15162f1ff75462333adeea67bddfa4a325de1b6c",
+          "bytes": 9891
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265683.848125333,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265683.84816125,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {},
+            "unknown": [
+              "keep",
+              null
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS missing identity",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "RSS missing identity",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 448,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/missing-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "excess-normal",
+    "status": "PASS",
+    "original": {
+      "type": "AssertionError",
+      "message": "Aggregate owned RSS exceeds 8 GiB",
+      "details": {}
+    },
+    "primary": {
+      "type": "AssertionError",
+      "message": "Aggregate owned RSS exceeds 8 GiB",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "Aggregate owned RSS exceeds 8 GiB",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.0026492499746382236,
+      "outputBytes": 0,
+      "freeBytesAfter": 46466273280,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "7bd3b7622120367ee1cf0f91901c2fddc1c80f1a0119d7e18fe547c9ef5bf5b6"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/result.json",
+          "status": "written",
+          "sha256": "a7a3a0e6c01ec7cefde1248caf2b10aa76769db46c8d5b0c036bc205a6d05cbc",
+          "bytes": 1902
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "c21a03e41220ff5d7ee7f0c87c0d4d308a50804658ca15d1ad226a69a3ab736e",
+          "bytes": 2000
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "Aggregate owned RSS exceeds 8 GiB",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265683.853265625,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265683.853299416,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 8589934593
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 8589934593,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Aggregate owned RSS exceeds 8 GiB",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Aggregate owned RSS exceeds 8 GiB",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 3483,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "excess-receipt-fail",
+    "status": "DEFECT_REPRODUCED",
+    "original": {
+      "type": "AssertionError",
+      "message": "Aggregate owned RSS exceeds 8 GiB",
+      "details": {}
+    },
+    "primary": {
+      "type": "OSError",
+      "message": "POST_WAIT_RECEIPT_FAILURE",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.00256358296610415,
+      "outputBytes": 0,
+      "freeBytesAfter": 46466224128,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "OSError",
+              "message": "POST_WAIT_RECEIPT_FAILURE",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 265683.85891025,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 265683.858943666,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 8589934593
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 8589934593,
+                "failure": {
+                  "type": "AssertionError",
+                  "message": "Aggregate owned RSS exceeds 8 GiB",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "AssertionError",
+                "message": "Aggregate owned RSS exceeds 8 GiB",
+                "details": {}
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 447,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "b3bb243caf0d8aaeaa52bd3d3458af8db06d8bee032c45d02892fb6d15de4720"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "df548bb65b73afc83b41016c68d205e8a0f64aca753e9ebca70fc4861ff69d81",
+          "bytes": 9808
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "cc9165503c6a1d8d5becee813af165ddf3643d58a99446cefabf61917c5cf1f9",
+          "bytes": 9906
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265683.85891025,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265683.858943666,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 8589934593
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 8589934593,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Aggregate owned RSS exceeds 8 GiB",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Aggregate owned RSS exceeds 8 GiB",
+          "details": {}
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 447,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/excess-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "deadline-normal",
+    "status": "PASS",
+    "original": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "primary": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "DeadlineExpired",
+        "message": "station phase deadline expired",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 1,
+      "pipelineSeconds": 3.008497582981363,
+      "outputBytes": 0,
+      "freeBytesAfter": 46465884160,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "f9c2b84b299c9ca033d98532c4aa0676ecdfc21f48da5d9308784427ddc510c1"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/result.json",
+          "status": "written",
+          "sha256": "4b8d48a42184459a416bd919fab5903c2758ef4719f9a74e2c56b6a3d97d2e25",
+          "bytes": 1904
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "828bcf86939f366df6de7c5e6eca6107803d4ad1f5f1a45a036980ce445c543f",
+          "bytes": 2002
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "DeadlineExpired",
+        "message": "station phase deadline expired",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265683.86439175,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265683.864422583,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "DeadlineExpired",
+          "message": "station phase deadline expired",
+          "details": {}
+        }
+      ],
+      "outcome": "timed_out",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 2807,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-normal/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "deadline-receipt-fail",
+    "status": "DEFECT_REPRODUCED",
+    "original": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "primary": {
+      "type": "OSError",
+      "message": "POST_WAIT_RECEIPT_FAILURE",
+      "details": {}
+    },
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Attempt receipt persistence failed: /private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json"
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 3.0089122080244124,
+      "outputBytes": 0,
+      "freeBytesAfter": 46444457984,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "OSError",
+              "message": "POST_WAIT_RECEIPT_FAILURE",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "POST_WAIT_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknown": "keep"
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/private",
+              "admission": {
+                "unknownAllocation": [
+                  "keep",
+                  null
+                ]
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 265686.875789083,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 1
+                  }
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 1,
+                "accepted": true
+              },
+              {
+                "monotonic": 265686.875834541,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 99,
+                    "pgid": 100,
+                    "sid": 100
+                  }
+                ],
+                "failure": {
+                  "type": "DeadlineExpired",
+                  "message": "station phase deadline expired",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "DeadlineExpired",
+                "message": "station phase deadline expired",
+                "details": {}
+              }
+            ],
+            "outcome": "timed_out",
+            "exits": {},
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknown": "keep"
+            },
+            "profiles": {
+              "all_absent": true
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 449,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknown": "keep"
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "f5e09423f6ddb1a443d39134a9425c5c00d395b8a0f783a48b16cfb75d99437a"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/result.json",
+          "status": "written",
+          "sha256": "80071f291e3e3e0c63891abd2a0f7735c7f6741ce8b2ff63a049f6d1d4f7a41b",
+          "bytes": 8933
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "22f3a674f889de725ecd9c688c878e17d04c8a396a200224349603cde7e145bf",
+          "bytes": 9031
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "POST_WAIT_RECEIPT_FAILURE",
+        "details": {}
+      },
+      "cleanupFailure": null,
+      "persistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "POST_WAIT_RECEIPT_FAILURE",
+          "details": {}
+        }
+      ],
+      "terminal": {
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknown": "keep"
+        },
+        "registrationAbsent": true,
+        "scratchAndTmpAbsent": true,
+        "audit": {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      },
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/private",
+        "admission": {
+          "unknownAllocation": [
+            "keep",
+            null
+          ]
+        }
+      },
+      "actualExecutables": {},
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 265686.875789083,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 1
+            }
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "kernelAfter": {
+            "live": 1
+          },
+          "aggregateBytes": 1,
+          "accepted": true
+        },
+        {
+          "monotonic": 265686.875834541,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 99,
+              "pgid": 100,
+              "sid": 100
+            }
+          ],
+          "failure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          }
+        }
+      ],
+      "resourceFailures": [
+        {
+          "type": "DeadlineExpired",
+          "message": "station phase deadline expired",
+          "details": {}
+        }
+      ],
+      "outcome": "timed_out",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/owned-job/scratch",
+        "target": "inert",
+        "coalition_id": "123"
+      },
+      "drain": {
+        "drained": true,
+        "clean": true
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknown": "keep"
+      },
+      "profiles": {
+        "all_absent": true
+      },
+      "cache": {
+        "all_bytes_preserved": true,
+        "namespace_removed": true
+      },
+      "taskRelease": null,
+      "archiveBytesObservedAfterRelease": 449,
+      "releaseAudits": [
+        {
+          "attemptPath": "/private/tmp/t02-r5-correction-vaiwi043/adverse-v2/deadline-receipt-fail/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknown": "keep"
+          },
+          "members": [],
+          "births": [],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "inert"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "raw registration",
+          "registrationStderr": "",
+          "scratchAbsent": true,
+          "privateTmpAbsent": true
+        }
+      ]
+    },
+    "events": [
+      "start",
+      "drain",
+      "archive"
+    ]
+  },
+  {
+    "name": "rss-parser-missing",
+    "status": "PASS",
+    "result": {
+      "type": "AssertionError",
+      "message": "Missing/duplicate RSS identities",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-parser-duplicate",
+    "status": "PASS",
+    "result": {
+      "type": "AssertionError",
+      "message": "Missing/duplicate RSS identities",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-parser-bad",
+    "status": "PASS",
+    "result": {
+      "type": "AssertionError",
+      "message": "Unreadable RSS",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-parser-happy",
+    "status": "PASS",
+    "result": {
+      "bytesByPid": {
+        "100": 5120,
+        "101": 2048
+      },
+      "stdout": "100 5\n101 2\n",
+      "stderr": ""
+    }
+  },
+  {
+    "name": "rss-empty",
+    "status": "PASS",
+    "observations": [
+      {
+        "monotonic": 265689.896201291,
+        "limitBytes": 8589934592,
+        "quota": false,
+        "kernelBefore": {
+          "live": 0
+        },
+        "members": [],
+        "failure": {
+          "type": "AssertionError",
+          "message": "Empty/duplicate owned cohort",
+          "details": {}
+        }
+      }
+    ],
+    "result": {
+      "type": "AssertionError",
+      "message": "Empty/duplicate owned cohort",
+      "details": {}
+    }
+  },
+  {
+    "name": "rss-duplicate-after",
+    "status": "DEFECT_REPRODUCED",
+    "observations": [
+      {
+        "monotonic": 265689.898494041,
+        "limitBytes": 8589934592,
+        "quota": false,
+        "kernelBefore": {
+          "live": 1
+        },
+        "members": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "before": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "rss": {
+          "bytesByPid": {
+            "100": 1
+          }
+        },
+        "after": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "membersAfter": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          },
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "kernelAfter": {
+          "live": 1
+        },
+        "aggregateBytes": 1,
+        "accepted": true
+      }
+    ],
+    "result": {
+      "accepted": true
+    }
+  },
+  {
+    "name": "rss-uid-after",
+    "status": "PASS",
+    "observations": [
+      {
+        "monotonic": 265689.900819791,
+        "limitBytes": 8589934592,
+        "quota": false,
+        "kernelBefore": {
+          "live": 1
+        },
+        "members": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "before": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "rss": {
+          "bytesByPid": {
+            "100": 1
+          }
+        },
+        "after": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 502,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "membersAfter": [
+          {
+            "pid": 100,
+            "birth": [
+              11,
+              22
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 99,
+            "pgid": 100,
+            "sid": 100
+          }
+        ],
+        "kernelAfter": {
+          "live": 1
+        },
+        "failure": {
+          "type": "AssertionError",
+          "message": "RSS reuse/departure",
+          "details": {}
+        }
+      }
+    ],
+    "result": {
+      "type": "AssertionError",
+      "message": "RSS reuse/departure",
+      "details": {}
+    }
+  },
+  {
+    "name": "cache-over-limit-reads-to-eof",
+    "status": "DEFECT_REPRODUCED",
+    "readBytes": 402653185,
+    "opens": 1,
+    "size": 402653185,
+    "failure": {
+      "type": "AssertionError",
+      "message": "Vite snapshot exceeds archive reserve",
+      "details": {}
+    }
+  },
+  {
+    "name": "cache-stat-open-FIFO",
+    "status": "DEFECT_REPRODUCED",
+    "failure": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {}
+    },
+    "observations": [
+      {
+        "failure": {
+          "type": "DeadlineExpired",
+          "message": "station phase deadline expired",
+          "details": {}
+        }
+      }
+    ]
+  }
+]

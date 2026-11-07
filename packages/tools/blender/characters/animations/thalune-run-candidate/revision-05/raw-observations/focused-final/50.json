@@ -1,0 +1,210 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338018,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988568766047,
+            "ctime": 1794033988568766047,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482338019,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794033988568804380,
+            "ctime": 1794033988568804380,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 8,
+      "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache/data",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338018,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988568766047,
+            "ctime": 1794033988568766047,
+            "links": 3
+          },
+          "after": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338018,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988568766047,
+            "ctime": 1794033988568766047,
+            "links": 3
+          }
+        },
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache/data",
+          "operation": "content",
+          "closed": true,
+          "opened": {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482338020,
+            "uid": 501,
+            "gid": 0,
+            "mode": 4516,
+            "bytes": 0,
+            "mtime": 1794033988569121339,
+            "ctime": 1794033988569136881,
+            "links": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor type refused",
+            "details": {}
+          }
+        }
+      ],
+      "files": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache/data",
+          "readBytes": 0,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor type refused",
+            "details": {}
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Cache descriptor type refused",
+      "details": {
+        "cacheRead": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338018,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988568766047,
+                "ctime": 1794033988568766047,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482338019,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794033988568804380,
+                "ctime": 1794033988568804380,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338018,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988568766047,
+                "ctime": 1794033988568766047,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338018,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988568766047,
+                "ctime": 1794033988568766047,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache/data",
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482338020,
+                "uid": 501,
+                "gid": 0,
+                "mode": 4516,
+                "bytes": 0,
+                "mtime": 1794033988569121339,
+                "ctime": 1794033988569136881,
+                "links": 1
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {}
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-replace-fifo/cache/data",
+              "readBytes": 0,
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor type refused",
+                "details": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

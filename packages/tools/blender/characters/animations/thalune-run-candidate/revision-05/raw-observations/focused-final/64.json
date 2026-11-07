@@ -1,0 +1,108 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/first",
+        "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/second"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482342962,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033989141307397,
+            "ctime": 1794033989141307397,
+            "links": 3
+          }
+        ]
+      ],
+      "entriesSeen": 1,
+      "statBytes": 0,
+      "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/first",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/first",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482342962,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033989141307397,
+            "ctime": 1794033989141307397,
+            "links": 3
+          },
+          "failure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "DeadlineExpired",
+      "message": "station phase deadline expired",
+      "details": {
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/first",
+            "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/second"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482342962,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033989141307397,
+                "ctime": 1794033989141307397,
+                "links": 3
+              }
+            ]
+          ],
+          "entriesSeen": 1,
+          "statBytes": 0,
+          "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/first",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-deadline/first",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482342962,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033989141307397,
+                "ctime": 1794033989141307397,
+                "links": 3
+              },
+              "failure": {
+                "type": "DeadlineExpired",
+                "message": "station phase deadline expired",
+                "details": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

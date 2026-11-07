@@ -1,0 +1,236 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338062,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988615472591,
+            "ctime": 1794033988615472591,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482338063,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794033988615524342,
+            "ctime": 1794033988615524342,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 8,
+      "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache/data",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338062,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988615472591,
+            "ctime": 1794033988615472591,
+            "links": 3
+          },
+          "after": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338062,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988615472591,
+            "ctime": 1794033988615472591,
+            "links": 3
+          }
+        },
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache/data",
+          "operation": "content",
+          "closed": false,
+          "opened": {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482338063,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794033988615524342,
+            "ctime": 1794033988615524342,
+            "links": 1
+          },
+          "after": {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482338063,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794033988615524342,
+            "ctime": 1794033988615524342,
+            "links": 1
+          },
+          "closeFailure": {
+            "type": "OSError",
+            "message": "DESCRIPTOR_CLOSE_FAILURE",
+            "details": {}
+          }
+        }
+      ],
+      "files": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache/data",
+          "readBytes": 8,
+          "failure": {
+            "type": "OSError",
+            "message": "DESCRIPTOR_CLOSE_FAILURE",
+            "details": {}
+          }
+        }
+      ],
+      "contentBytesRead": 8
+    },
+    "failure": {
+      "type": "OSError",
+      "message": "DESCRIPTOR_CLOSE_FAILURE",
+      "details": {
+        "cacheRead": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338062,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988615472591,
+                "ctime": 1794033988615472591,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482338063,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794033988615524342,
+                "ctime": 1794033988615524342,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338062,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988615472591,
+                "ctime": 1794033988615472591,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338062,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988615472591,
+                "ctime": 1794033988615472591,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache/data",
+              "operation": "content",
+              "closed": false,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482338063,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794033988615524342,
+                "ctime": 1794033988615524342,
+                "links": 1
+              },
+              "after": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482338063,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794033988615524342,
+                "ctime": 1794033988615524342,
+                "links": 1
+              },
+              "closeFailure": {
+                "type": "OSError",
+                "message": "DESCRIPTOR_CLOSE_FAILURE",
+                "details": {}
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-close-error/cache/data",
+              "readBytes": 8,
+              "failure": {
+                "type": "OSError",
+                "message": "DESCRIPTOR_CLOSE_FAILURE",
+                "details": {}
+              }
+            }
+          ],
+          "contentBytesRead": 8
+        }
+      }
+    }
+  }
+]

@@ -229,6 +229,7 @@ class StationAdapter:
                        persistenceFailures=[], terminal=None)
         handle['receipt'] = receipt  # Available to terminal accounting even if no receipt write succeeds.
         job = private = admission = None
+        primary_error = None
         def persist():
             try: write(paths['receipt'], receipt)
             except BaseException as error:
@@ -259,10 +260,15 @@ class StationAdapter:
                 observer = self.stage_observer(definition, job, private)
                 resource_observer = self.resource_observer(job, receipt)
                 def observe():
+                    nonlocal primary_error
                     try:
                         if resource_observer: resource_observer()
                     except BaseException as error:
-                        receipt.setdefault('resourceFailures', []).append(error_receipt(error))
+                        failure = error_receipt(error)
+                        receipt.setdefault('resourceFailures', []).append(failure)
+                        if receipt['primaryFailure'] is None:
+                            primary_error = error
+                            receipt['primaryFailure'] = failure
                         raise
                     observe_executables(job, ready['process_binary_sha256'], admitted, events,
                                         self.core.identity, self.temp.executable_path, on_event=persist)
@@ -271,12 +277,12 @@ class StationAdapter:
                 receipt['outcome'] = job.wait(max(.001, ready['captureSeconds']-(time.monotonic()-started)), observe)
                 receipt['exits'] = dict(job.state['exits']); persist()
                 self.record_worker_result(definition, paths, receipt)
-                if receipt.get('resourceFailures'):
-                    receipt['primaryFailure'] = receipt['resourceFailures'][0]
                 assert receipt['outcome'] == 'completed' and receipt['exits'].get('capture') == 0
                 if observer: observer.require_browser()
         except BaseException as error:
             if receipt['primaryFailure'] is None: receipt['primaryFailure'] = error_receipt(error)
+            elif error is not primary_error:
+                receipt.setdefault('secondaryFailures', []).append(error_receipt(error))
         finally:
             receipt['ownedAllocation'] = {key: str(value) for key in ['out', 'scratch', 'target', 'coalition_id', 'registered']
                                          if (value := getattr(job, key, None)) is not None}

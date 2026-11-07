@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py", line 245, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+                                             ^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py", line 239, in main
+    record=consume(ready,plan,args.grant)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py", line 87, in consume
+    verify_sources(ready,snapshots);check_plan(plan)  # Zero grant reads / allocations while disabled.
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py", line 31, in verify_sources
+    assert current['nativeFixtureAuthorization'] is True and current['runtimeAuthorization'] is False,'NATIVE189_DISABLED'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: NATIVE189_DISABLED

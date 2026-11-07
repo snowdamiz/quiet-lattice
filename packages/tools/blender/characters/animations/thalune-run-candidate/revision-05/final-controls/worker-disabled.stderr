@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py", line 167, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py", line 163, in main
+    assert json.loads((Path(__file__).resolve().parent/'readiness.json').read_text())['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SOURCE_ONLY_RUNTIME_DISABLED

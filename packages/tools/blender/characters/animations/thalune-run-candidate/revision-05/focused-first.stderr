@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision05-controls.py", line 231, in <module>
+    case('cache '+mode,lambda mode=mode:cache_boundary(mode))
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision05-controls.py", line 22, in case
+    result=fn();RESULTS.append(dict(name=name,status='PASS_EXPECTED_RED' if args.expect_red else 'PASS',details=result))
+           ^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision05-controls.py", line 231, in <lambda>
+    case('cache '+mode,lambda mode=mode:cache_boundary(mode))
+                                        ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision05-controls.py", line 170, in cache_boundary
+    else:error=refuse(lease.check)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision05-controls.py", line 19, in refuse
+    raise AssertionError('Expected boundary refusal')
+AssertionError: Expected boundary refusal

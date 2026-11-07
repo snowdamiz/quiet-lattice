@@ -1,0 +1,130 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-fjo4rnsi/cache-fifo/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 481644579,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033705054047919,
+            "ctime": 1794033705054047919,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 481644581,
+            "uid": 501,
+            "gid": 0,
+            "mode": 4516,
+            "bytes": 0,
+            "mtime": 1794033705054046627,
+            "ctime": 1794033705054057377,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 0,
+      "lastEntry": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-fifo/cache/data",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-fifo/cache",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 481644579,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033705054047919,
+            "ctime": 1794033705054047919,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Special cache file",
+            "details": {}
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Special cache file",
+      "details": {
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-fjo4rnsi/cache-fifo/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 481644579,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033705054047919,
+                "ctime": 1794033705054047919,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 481644581,
+                "uid": 501,
+                "gid": 0,
+                "mode": 4516,
+                "bytes": 0,
+                "mtime": 1794033705054046627,
+                "ctime": 1794033705054057377,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 0,
+          "lastEntry": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-fifo/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-fifo/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 481644579,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033705054047919,
+                "ctime": 1794033705054047919,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Special cache file",
+                "details": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

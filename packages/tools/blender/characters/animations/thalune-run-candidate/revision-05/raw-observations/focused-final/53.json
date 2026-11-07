@@ -1,0 +1,212 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338033,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988573533430,
+            "ctime": 1794033988573533430,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482338034,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794033988574700891,
+            "ctime": 1794033988574700891,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 8,
+      "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache/data",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338033,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988573533430,
+            "ctime": 1794033988573533430,
+            "links": 3
+          },
+          "after": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482338033,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033988573533430,
+            "ctime": 1794033988573533430,
+            "links": 3
+          }
+        },
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache/data",
+          "operation": "content",
+          "closed": true,
+          "opened": {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482338034,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794033988574700891,
+            "ctime": 1794033988574700891,
+            "links": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache file grew beyond admitted bytes",
+            "details": {}
+          }
+        }
+      ],
+      "files": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache/data",
+          "readBytes": 9,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache file grew beyond admitted bytes",
+            "details": {}
+          }
+        }
+      ],
+      "contentBytesRead": 9
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Cache file grew beyond admitted bytes",
+      "details": {
+        "cacheRead": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338033,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988573533430,
+                "ctime": 1794033988573533430,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482338034,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794033988574700891,
+                "ctime": 1794033988574700891,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338033,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988573533430,
+                "ctime": 1794033988573533430,
+                "links": 3
+              },
+              "after": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482338033,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033988573533430,
+                "ctime": 1794033988573533430,
+                "links": 3
+              }
+            },
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache/data",
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482338034,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794033988574700891,
+                "ctime": 1794033988574700891,
+                "links": 1
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache file grew beyond admitted bytes",
+                "details": {}
+              }
+            }
+          ],
+          "files": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-growth/cache/data",
+              "readBytes": 9,
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache file grew beyond admitted bytes",
+                "details": {}
+              }
+            }
+          ],
+          "contentBytesRead": 9
+        }
+      }
+    }
+  }
+]

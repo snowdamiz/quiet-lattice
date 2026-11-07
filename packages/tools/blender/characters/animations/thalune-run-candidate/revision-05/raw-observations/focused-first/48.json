@@ -1,0 +1,130 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-fjo4rnsi/cache-symlink/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 481644574,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794033705053451834,
+            "ctime": 1794033705053451834,
+            "links": 4
+          },
+          {
+            "path": "link",
+            "dev": 16777232,
+            "ino": 481644576,
+            "uid": 501,
+            "gid": 0,
+            "mode": 41453,
+            "bytes": 62,
+            "mtime": 1794033705053450584,
+            "ctime": 1794033705053463043,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 0,
+      "lastEntry": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-symlink/cache/link",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-symlink/cache",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 481644574,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794033705053451834,
+            "ctime": 1794033705053451834,
+            "links": 4
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Unowned cache path",
+            "details": {}
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Unowned cache path",
+      "details": {
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-fjo4rnsi/cache-symlink/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 481644574,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 128,
+                "mtime": 1794033705053451834,
+                "ctime": 1794033705053451834,
+                "links": 4
+              },
+              {
+                "path": "link",
+                "dev": 16777232,
+                "ino": 481644576,
+                "uid": 501,
+                "gid": 0,
+                "mode": 41453,
+                "bytes": 62,
+                "mtime": 1794033705053450584,
+                "ctime": 1794033705053463043,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 0,
+          "lastEntry": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-symlink/cache/link",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-fjo4rnsi/cache-symlink/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 481644574,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 128,
+                "mtime": 1794033705053451834,
+                "ctime": 1794033705053451834,
+                "links": 4
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Unowned cache path",
+                "details": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

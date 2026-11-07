@@ -1,0 +1,130 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-ywl50m4o/cache-over-limit/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482329676,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033987740086014,
+            "ctime": 1794033987740086014,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 482329677,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 402653185,
+            "mtime": 1794033987740195723,
+            "ctime": 1794033987740195723,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 402653185,
+      "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-over-limit/cache/data",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-over-limit/cache",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482329676,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033987740086014,
+            "ctime": 1794033987740086014,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {}
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Vite snapshot exceeds archive reserve",
+      "details": {
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-ywl50m4o/cache-over-limit/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482329676,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033987740086014,
+                "ctime": 1794033987740086014,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 482329677,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 402653185,
+                "mtime": 1794033987740195723,
+                "ctime": 1794033987740195723,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 402653185,
+          "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/cache-over-limit/cache/data",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/cache-over-limit/cache",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482329676,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033987740086014,
+                "ctime": 1794033987740086014,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]

@@ -5,6 +5,7 @@ from assertion_guard import require_assertions
 require_assertions(__debug__)
 import hashlib, json, os, shutil, stat, subprocess, time
 from pathlib import Path
+from contextlib import contextmanager
 from inspector import error_receipt, sha, write
 from release_accounting import identity_key
 
@@ -12,26 +13,173 @@ RSS_LIMIT = 8 * 1024**3
 COMBINED_RESERVE = 22066626560
 
 
-def tree(path):
-    """No links, special files, foreign owners, or unstable file reads."""
-    path = Path(path)
-    assert path.absolute()==path.resolve(), 'Cache path alias refused'
-    if not path.exists() and not path.is_symlink(): return None
-    rows = []
-    for item in [path, *sorted(path.rglob('*'))]:
-        before = item.lstat()
-        assert not stat.S_ISLNK(before.st_mode) and before.st_uid == os.getuid(), 'Unowned cache path'
-        assert stat.S_ISDIR(before.st_mode) or stat.S_ISREG(before.st_mode), 'Special cache file'
-        row = dict(path=str(item.relative_to(path)), dev=before.st_dev, ino=before.st_ino,
-                   uid=before.st_uid, mode=before.st_mode, bytes=before.st_size, mtime=before.st_mtime_ns)
-        if item.is_file(): row['sha256'] = sha(item)
-        assert item.lstat() == before, 'Cache changed while inventorying'
-        rows.append(row)
+CACHE_BYTES = 384 * 1024**2
+CACHE_ENTRIES = 4096
+STAT_KEYS = ('dev','ino','uid','gid','mode','bytes','mtime','ctime','links')
+
+
+def stat_row(name, info):
+    return dict(path=name,dev=info.st_dev,ino=info.st_ino,uid=info.st_uid,gid=info.st_gid,
+                mode=info.st_mode,bytes=info.st_size,mtime=info.st_mtime_ns,
+                ctime=info.st_ctime_ns,links=info.st_nlink)
+
+
+def same_stat(info, expected):
+    actual=stat_row(expected['path'],info)
+    return all(actual[k]==expected[k] for k in STAT_KEYS)
+
+
+@contextmanager
+def descriptor(path, expected, facts, directory=False):
+    event=dict(path=str(path),operation='directory' if directory else 'content',closed=False)
+    facts.setdefault('descriptors',[]).append(event)
+    fd=None;primary=None
+    try:
+        flags=os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK
+        if directory:flags|=os.O_DIRECTORY
+        fd=os.open(path,flags)
+        opened=os.fstat(fd);event['opened']=stat_row(expected['path'],opened)
+        assert (stat.S_ISDIR(opened.st_mode) if directory else stat.S_ISREG(opened.st_mode)), 'Cache descriptor type refused'
+        assert same_stat(opened,expected), 'Cache descriptor identity/size changed'
+        yield fd
+        event['after']=stat_row(expected['path'],os.fstat(fd))
+        assert all(event['after'][k]==expected[k] for k in STAT_KEYS), 'Cache descriptor changed during read'
+    except BaseException as error:
+        primary=error;event['failure']=error_receipt(error);raise
+    finally:
+        if fd is not None:
+            try:os.close(fd);event['closed']=True
+            except BaseException as error:
+                event['closeFailure']=error_receipt(error)
+                if primary is None:raise
+                primary.descriptorCloseFailures=[*getattr(primary,'descriptorCloseFailures',[]),error_receipt(error)]
+
+
+def inventory(paths, facts):
+    """Admit all roots jointly by bounded enumeration/stat before content I/O."""
+    trees=[];facts.update(paths=list(map(str,paths)),trees=trees,entriesSeen=0,statBytes=0)
+    try:
+        for path in map(Path,paths):
+            assert path.absolute()==path.resolve(), 'Cache path alias refused'
+            try:info=path.lstat()
+            except FileNotFoundError:trees.append(None);continue
+            rows=[];trees.append(rows)
+            def add(name, info):
+                row=stat_row(name,info);rows.append(row)
+                assert info.st_uid==os.getuid() and not stat.S_ISLNK(info.st_mode), 'Unowned cache path'
+                assert stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode), 'Special cache file'
+                if stat.S_ISREG(info.st_mode):
+                    facts['statBytes']+=info.st_size
+                    assert facts['statBytes']<=CACHE_BYTES, 'Vite snapshot exceeds archive reserve'
+                return row
+            def count(name):
+                facts['entriesSeen']+=1
+                facts['lastEntry']=str(path/name)
+                assert facts['entriesSeen']<=CACHE_ENTRIES, 'Vite cache inventory file ceiling'
+            count('.');root=add('.',info)
+            assert stat.S_ISDIR(info.st_mode),'Cache root is not a directory'
+            pending=[root]
+            while pending:
+                parent=pending.pop()
+                with descriptor(path/parent['path'],parent,facts,directory=True) as fd:
+                    with os.scandir(fd) as entries:
+                        for entry in entries:
+                            name=str(Path(parent['path'])/entry.name)
+                            count(name)  # Stop at the first surplus entry, before even its stat.
+                            row=add(name,entry.stat(follow_symlinks=False))
+                            if stat.S_ISDIR(row['mode']):pending.append(row)
+            rows.sort(key=lambda row:row['path'])  # At most 4096 already-admitted rows.
+        return trees
+    except BaseException as error:
+        error.cacheInventory=facts
+        raise
+
+
+def metadata(rows):
+    return None if rows is None else [{k:r[k] for k in ('path',*STAT_KEYS)} for r in rows]
+
+
+def read_file(path, row, facts, consume=lambda data:None):
+    item=dict(path=str(path),readBytes=0);facts.setdefault('files',[]).append(item)
+    digest=hashlib.sha256();remaining=row['bytes']
+    try:
+        with descriptor(path,row,facts) as fd:
+            while True:
+                data=os.read(fd,min(1024**2,remaining+1))
+                item['readBytes']+=len(data)
+                facts['contentBytesRead']=facts.get('contentBytesRead',0)+len(data)
+                assert len(data)<=remaining, 'Cache file grew beyond admitted bytes'
+                if not data:
+                    assert remaining==0,'Cache file truncated during read'
+                    break
+                digest.update(data);consume(data);remaining-=len(data)
+        assert same_stat(Path(path).lstat(),row), 'Cache pathname replaced during read'
+        item['sha256']=digest.hexdigest()
+        return item['sha256']
+    except BaseException as error:
+        item['failure']=error_receipt(error);error.cacheRead=facts;raise
+
+
+def trees(paths, facts):
+    rows=inventory(paths,facts)
+    for path,group in zip(map(Path,paths),rows):
+        for row in group or []:
+            if stat.S_ISREG(row['mode']):row['sha256']=read_file(path/row['path'],row,facts)
+    after={};facts['afterInventory']=after
+    current=inventory(paths,after)
+    assert list(map(metadata,current))==list(map(metadata,rows)), 'Cache changed while inventorying'
     return rows
+
+
+def tree(path):
+    return trees([path],{})[0]
 
 
 def content(rows):
     return None if rows is None else [{k:r[k] for k in ['path','mode','sha256'] if k in r} for r in rows]
+
+
+def copy_tree(source, destination, rows, facts):
+    """Only admitted rows are copied; every source read uses the bounded FD path."""
+    parents={}
+    for row in rows:
+        relative=Path(row['path']);target=destination/relative
+        if stat.S_ISDIR(row['mode']):
+            target.mkdir(mode=stat.S_IMODE(row['mode']))
+            os.chmod(target,stat.S_IMODE(row['mode']),follow_symlinks=False)
+            parents[str(relative)]=stat_row(str(relative),target.lstat())
+            continue
+        # The new destination parent is held by identity while creating the file.
+        parent=parents[str(relative.parent)]
+        # Directory mtime/size changes as our previous children are added.
+        current=target.parent.lstat()
+        assert (current.st_dev,current.st_ino,current.st_uid)==(parent['dev'],parent['ino'],parent['uid']), 'Archive parent replaced'
+        parent=stat_row(parent['path'],current)
+        fd=None;primary=None;event=dict(path=str(target),closed=False)
+        facts.setdefault('destinations',[]).append(event)
+        try:
+            # Source descriptor admission occurs in read_file before any content is copied.
+            with descriptor(target.parent,parent,facts,directory=True) as parent_fd:
+                fd=os.open(target.name,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_NONBLOCK,0o600,dir_fd=parent_fd)
+                event['opened']=stat_row(row['path'],os.fstat(fd))
+                assert stat.S_ISREG(event['opened']['mode']) and event['opened']['uid']==os.getuid(), 'Archive descriptor refused'
+                def output(data):
+                    assert os.write(fd,data)==len(data),'Incomplete cache copy write'
+                digest=read_file(source/relative,row,facts,output)
+                assert digest==row['sha256'], 'Cache changed before copy'
+                os.fchmod(fd,stat.S_IMODE(row['mode']))
+                # Updating our directory is expected; retain its observed identity.
+                parent.update(stat_row(parent['path'],os.fstat(parent_fd)))
+                assert (parent['dev'],parent['ino'],parent['uid'])==(current.st_dev,current.st_ino,current.st_uid)
+        except BaseException as error:
+            primary=error;event['failure']=error_receipt(error);raise
+        finally:
+            if fd is not None:
+                try:os.close(fd);event['closed']=True
+                except BaseException as error:
+                    event['closeFailure']=error_receipt(error)
+                    if primary is None:raise
+                    primary.descriptorCloseFailures=[*getattr(primary,'descriptorCloseFailures',[]),error_receipt(error)]
 
 
 def rss_read(pids):
@@ -69,7 +217,8 @@ class CohortRSS:
                 item['membersAfter'] = job.members()
                 item['kernelAfter'] = self.core.kernel_tasks(job.coalition_id)
                 assert all(r is not None for r in item['after']) and [identity_key(r) for r in item['after']]==keys, 'RSS reuse/departure'
-                assert set(map(identity_key,item['membersAfter']))==set(keys), 'RSS cohort birth/departure during sample'
+                after_keys=list(map(identity_key,item['membersAfter']))
+                assert len(after_keys)==len(set(after_keys))==len(keys) and set(after_keys)==set(keys), 'RSS cohort birth/departure/duplicate during sample'
                 assert item['kernelAfter']['live']==len(keys), 'RSS kernel drift'
                 values = item['rss']['bytesByPid']
                 assert set(values)=={r['pid'] for r in item['members']}, 'RSS missing identity'
@@ -133,14 +282,14 @@ class CacheLease:
     def check(self, allowed=()):
         item = {}; self.observations.append(item)
         try:
-            item['treesBefore'] = [tree(p) for p in self.paths]
-            assert sum(r['bytes'] for rows in item['treesBefore'] if rows for r in rows if 'sha256' in r)<=384*1024**2, 'Vite snapshot exceeds archive reserve'
-            assert sum(len(rows) for rows in item['treesBefore'] if rows)<=4096, 'Vite cache inventory file ceiling'
+            item['beforeInventory']={}
+            item['treesBefore'] = trees(self.paths,item['beforeInventory'])
             item['openFiles'] = self.owners(self.paths, self.checkout)
             allowed = set(map(identity_key,allowed))
             for row in item['openFiles']['owners']:
                 assert identity_key(row['before'])==identity_key(row['after']) and identity_key(row['after']) in allowed, 'Unknown Vite cache owner'
-            item['treesAfter'] = [tree(p) for p in self.paths]
+            item['afterInventory']={}
+            item['treesAfter'] = trees(self.paths,item['afterInventory'])
             assert item['treesBefore']==item['treesAfter'], 'Cache admission race'
             if self.lock_identity is not None:
                 info=self.lock.lstat()
@@ -165,13 +314,23 @@ class CacheLease:
         self.copy('before', self.initial)
 
     def copy(self, name, observed):
-        destination=self.archive/name; destination.mkdir()
-        for i,(path,rows) in enumerate(zip(self.paths,observed)):
-            if rows is None: continue
-            shutil.copytree(path,destination/str(i),symlinks=True)
-            assert content(tree(destination/str(i)))==content(rows), 'Cache archive bytes differ'
-        assert [tree(p) for p in self.paths]==observed, 'Cache changed during archive'
-        write(destination/'inventory.json',observed)
+        facts=dict(name=name,destination=str(self.archive/name))
+        self.observations.append({'copy':facts})
+        try:
+            facts['beforeInventory']={}
+            before=inventory(self.paths,facts['beforeInventory'])
+            assert list(map(metadata,before))==list(map(metadata,observed)), 'Cache changed before copy admission'
+            destination=self.archive/name;destination.mkdir()
+            for i,(path,rows) in enumerate(zip(self.paths,observed)):
+                if rows is None:continue
+                copy_tree(path,destination/str(i),rows,facts)
+                assert content(tree(destination/str(i)))==content(rows), 'Cache archive bytes differ'
+            facts['afterInventory']={}
+            after=inventory(self.paths,facts['afterInventory'])
+            assert list(map(metadata,after))==list(map(metadata,observed)), 'Cache changed during archive'
+            write(destination/'inventory.json',observed)
+        except BaseException as error:
+            facts['failure']=error_receipt(error);raise
 
     def finish(self):
         current=self.check()  # Only after positive owned cohort release; no live owners allowed.

@@ -1,0 +1,128 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/first",
+        "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/second"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482343079,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033989180478469,
+            "ctime": 1794033989180478469,
+            "links": 3
+          }
+        ]
+      ],
+      "entriesSeen": 1,
+      "statBytes": 0,
+      "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/first",
+      "descriptors": [
+        {
+          "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/first",
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 482343079,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794033989180478469,
+            "ctime": 1794033989180478469,
+            "links": 3
+          },
+          "failure": {
+            "type": "OSError",
+            "message": "ENUMERATION_FAILURE",
+            "details": {
+              "unknown": {
+                "raw": [
+                  null,
+                  55
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "OSError",
+      "message": "ENUMERATION_FAILURE",
+      "details": {
+        "unknown": {
+          "raw": [
+            null,
+            55
+          ]
+        },
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/first",
+            "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/second"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482343079,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033989180478469,
+                "ctime": 1794033989180478469,
+                "links": 3
+              }
+            ]
+          ],
+          "entriesSeen": 1,
+          "statBytes": 0,
+          "lastEntry": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/first",
+          "descriptors": [
+            {
+              "path": "/private/tmp/t02-r5-controls-ywl50m4o/aggregate-scan-error/first",
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 482343079,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794033989180478469,
+                "ctime": 1794033989180478469,
+                "links": 3
+              },
+              "failure": {
+                "type": "OSError",
+                "message": "ENUMERATION_FAILURE",
+                "details": {
+                  "unknown": {
+                    "raw": [
+                      null,
+                      55
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+]
