@@ -22,7 +22,7 @@
 //   sends is that much larger and its enemies' health that much greater, as the level stands when the wave comes.
 //   Enemies are the world's own creatures (fauna's `spawnHerd`), made the instance's own (`PhaseManager.adopt`: only its
 //   members see them, and they go with it; fauna keeps their cell loaded while they are, and they hunt only its members)
-//   and their health scaled (`ZoneCombat.scaleHealth`). A wave is cleared when all of it has been killed.
+//   and their health scaled (`ZoneCombat.scaleHealth`). A wave clears when its hostile objectives are gone or converted.
 // - Contribution, per instance and character: the health its hits took from the instance's enemies (combat's `hit` news,
 //   only while it is a member of that instance), objective points (`credit`, for events whose objectives are not
 //   enemies) and seconds inside the place while the instance ran. Each member is sent its `event_status` (the level, the
@@ -137,6 +137,7 @@ interface Instance {
   cleared: number;
   /** its living enemies of the wave out */
   readonly mobs: Set<number>;
+  readonly unbindBond: () => void;
   nextWaveAt: number;
   /** each participant's contribution, by character, in the order it joined */
   readonly scores: Map<string, Contribution>;
@@ -451,6 +452,7 @@ export class EventService {
           wave: 0,
           cleared: 0,
           mobs: new Set(),
+          unbindBond: zone.fauna?.subscribeBond((owner, target) => this.converted(zone, owner, target)) ?? (() => {}),
           nextWaveAt: zone.time + occ.def.waves.firstS,
           scores: new Map(),
           sent: new Map(),
@@ -589,6 +591,7 @@ export class EventService {
   private finish(inst: Instance, zone: Zone, outcome: EventOutcome, viewers: ReadonlyMap<number, ZoneViewer>): void {
     if (inst.done) return;
     inst.done = true;
+    inst.unbindBond();
     const { occ, phase } = inst;
     const def = occ.def;
     occ.instances.delete(phase.id);
@@ -665,6 +668,7 @@ export class EventService {
   private drop(occ: Occurrence, why: string): void {
     for (const inst of occ.instances.values()) {
       inst.done = true;
+      inst.unbindBond();
       for (const id of inst.mobs) this.mobs.get(occ.zoneId)?.delete(id);
     }
     this.forget(occ);
@@ -678,6 +682,23 @@ export class EventService {
   }
 
   // ---------- contribution ----------
+
+  private converted(zone: Zone, owner: number, target: number): void {
+    const inst = this.mobs.get(zone.id)?.get(target);
+    if (
+      !inst ||
+      inst.done ||
+      !inst.phase.open ||
+      !inst.phase.members.has(owner) ||
+      zone.phases.phaseOf(owner) !== inst.phase.id ||
+      zone.phases.phaseOf(target) !== inst.phase.id ||
+      zone.fauna?.ownerOf(target) !== owner ||
+      !inst.mobs.delete(target)
+    )
+      return;
+    this.mobs.get(zone.id)?.delete(target);
+    this.credit(zone.id, owner, 1);
+  }
 
   private hit(r: HitReport): void {
     if (r.attacker === null || r.source === null) return;

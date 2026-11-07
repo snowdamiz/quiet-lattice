@@ -226,7 +226,8 @@ export class ZoneManager {
     }
     if (slot.asleep) {
       // Refresh clock, frames and their tick-keyed consumers before accepting a placement or a hit.
-      slot.zone.step(this.clock.now());
+      this.lastTime = Math.max(this.lastTime, this.clock.now(), slot.zone.time);
+      slot.zone.step(this.lastTime);
       this.log?.debug({ zone: id }, 'zone woken');
     }
     slot.asleep = false;

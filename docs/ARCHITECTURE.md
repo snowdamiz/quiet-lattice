@@ -1691,6 +1691,8 @@ is worth. Clients fire their tracers at once for feel and are told what happened
   regeneration. Ship hits reset the delay; suit damage does not reset the parked ship's timer.
   `shipStats.shieldRegenPerS` consumes `ship.shield_regen`; Symbiont Hull makes this 7.5/s and multiplies capacity by 1.25.
   New zones start on the world clock, and sleeping zones step to that clock before accepting a placement or hit.
+  Wake advances the scheduler's time floor; zone frames and all tick consumers reject older scheduled times. Combat also
+  clamps explicitly dated hits to its current authority and never replaces a newer hit timestamp with an older one.
   Transfers preserve the last hit and never rewind the elapsed-time cursor, even if the destination clock is stale,
   so first ticks and handoffs grant no catch-up repair. Repair Drones adds one hull/s for 20 seconds in flight (`ship`),
   ending on leaving that mode; station crews still repair 20 hull/s. Retuning preserves each pool's fraction.
@@ -2191,7 +2193,11 @@ own shape (the station raid, the full Hollow tide, the superstorm rescue, the co
   reach another phase's creature (§20). Fauna keeps a cell holding a phase's creatures loaded (it may sleep while nobody
   is near, but neither unloads nor gives way to the creature cap), and runs them apart: they notice the phase's members
   only and prey only on its creatures, and the shared world's herds neither hunt nor flee them. So a wave is cleared
-  only when all of it has been killed.
+  when all hostile objectives have been killed, removed or converted by Bond. Fauna reports a completed conversion
+  synchronously to the event owner. EventService verifies the owner and target belong to that instance, consumes the
+  enemy's objective membership once and calls its trusted `credit` path for exactly one objective point. Conversion
+  creates no hit, kill XP, loot or kill quest event. The companion retains its entity and phase until normal dismissal
+  or phase closure; subsequent replacement/despawn cannot award the objective again.
 - **Contribution** is kept per instance and character: the health its hits took from the instance's enemies (combat's
   `hit` news, counted only while the attacker is a member of that instance), objective points (`credit(zone, entity,
   points)`, for events whose objectives are not enemies) and the seconds it spent inside the place while the instance
@@ -2362,6 +2368,11 @@ effects; this runtime casts them all.
   removed, or ended a second ago) and kept when a later application extends it: the effect ticking it ends when it reads
   another, so one status never has two tick loops. Statuses are kept per zone and caster, pruned a second after their end, and
   all a caster's are dropped when it leaves play (`left`, with its timers).
+  Each application also retains its own producer, power and expiry. `status.damage` runs one shared damage clock with
+  the first still-valid producer's combat authority, transferring it when that producer retires. Ordinary overlapping
+  burns keep their greater power until the later end, including after the shorter contribution's natural expiry.
+  Revocation subtracts only that producer and recomputes power/end from the remaining contributions; it cannot stack
+  ticks, inherit a revoked duration, erase another producer or revive an older generation.
 - **Thermal I–II** (`@astra/shared/abilities/thermal.ts`, `abilities/thermal.ts`; DESIGN 9.3). Lance is a toggle on the
   multitool beam: the heat is the beam's own 32 a second (the meters', §19), and while it is on every 0.25 s the effect
   deals `12 ×` the beam seconds the meters judged since the last tick to the nearest creature on the look ray within 30 m and
@@ -2434,8 +2445,10 @@ effects; this runtime casts them all.
   depend on an ability timer observing the transient state. No companion or active effect is persisted across reconnect.
   `CastService` retains lifetimes while they own timers, statuses, toggles or fauna control. Synchronous skill notifications
   latch ownership or eligibility loss before a refund/rebuy can hide it; unrelated skill changes preserve valid work.
-  Retiring a producer removes only its own status generations, so a fresh burn can start without losing a newer producer's
-  mark. Toggle validity uses the same lifetime as its callbacks; retirement ends and notifies once, and the next cast activates anew.
+  Retiring a producer removes only its own status contributions, so overlapping valid burns and fresh generations survive.
+  Call contact enumerates fauna on the caster's world and uses the caster's phase visibility, including visible shared herds
+  hitting visible event enemies. It never adopts the controlled herd into a phase; ordinary AI partitions remain isolated.
+  Toggle validity uses the same lifetime as its callbacks; retirement ends and notifies once, and the next cast activates anew.
 - **Cooldowns and toggles** are kept by character for the server's run, so a reconnect does not clear them (a restart
   does); `state(id)` is the `abilities` message, at most one cooldown for every clock of the web (`COOLDOWNS_MAX`: a
   cooldown outlives its node leaving the bar) and a toggle for every slot of both bars (`TOGGLES_MAX`). A toggle holds

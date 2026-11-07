@@ -845,6 +845,7 @@ export class FaunaSim {
   private stars: { time: number; at: Vec3[] } | null = null;
   private lastTime: number | null = null;
   private readonly companions = new Map<number, { creature: Creature; frame: string; phase: number | null; valid: () => boolean }>();
+  private readonly bondListeners = new Set<(owner: number, target: number) => void>();
   private readonly calls = new Map<
     number,
     {
@@ -1160,7 +1161,14 @@ export class FaunaSim {
     this.dismissOwner(owner);
     this.companions.set(owner, { creature: bound, frame: info.frame, phase, valid });
     this.zone.patch(target, { owner, mode: 'follow' }, ['attack']);
+    for (const fn of this.bondListeners) fn(owner, target);
     return true;
+  }
+
+  /** Objective owners observe a completed conversion, without inventing a hit or kill. */
+  subscribeBond(fn: (owner: number, target: number) => void): () => void {
+    this.bondListeners.add(fn);
+    return () => this.bondListeners.delete(fn);
   }
 
   /** Nearest herd on this world and phase, never a companion or somebody else's running Call. */
@@ -1231,8 +1239,8 @@ export class FaunaSim {
     const from: Vec3 = [...c.pos];
     move(c, ctx, { to, speed: c.species.run, altitude: N.bond.flyerAltitudeM });
     if (!stunned(c, ctx.now))
-      for (const target of ctx.creatures.values()) {
-        if (target.herd === c.herd || call.hit.has(target.id) || !this.mayStrike(call.owner, target.id)) continue;
+      for (const target of this.creaturesIn(call.frame)) {
+        if (call.paths.has(target.id) || call.hit.has(target.id) || !this.mayStrike(call.owner, target.id)) continue;
         const sphere = creatureSphere(target);
         if (segmentDistance(sphere.pos, from, c.pos) > N.call.contactRadiusM + sphere.radius) continue;
         call.hit.add(target.id);

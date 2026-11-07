@@ -18,21 +18,7 @@ export const BURNING = 'burning';
  * safe zone is not alight). A target already burning from this caster burns for the later of the two ends at the greater rate,
  * with the ticks it already has. */
 function ignite(ctx: CastContext, target: number, dps: number, durationS: number): void {
-  if (!ctx.status.apply(target, BURNING, durationS, dps)) return;
-  const began = ctx.status.get(target, BURNING)!;
-  // (from the moment the status began, which the status was given, not from a clock read a moment later)
-  let last = began.until - durationS;
-  const tick = (): void => {
-    const s = ctx.status.get(target, BURNING);
-    if (!s || s.gen !== began.gen) return;
-    const at = Math.min(ctx.time(), s.until);
-    const out = at > last ? ctx.damage(target, s.power * (at - last)) : null;
-    const stopped = at > last && out === null;
-    last = at;
-    if (stopped || out?.killed || at >= s.until) return void ctx.status.remove(target, BURNING);
-    ctx.after(N.burnTickS, tick);
-  };
-  ctx.after(N.burnTickS, tick);
+  ctx.status.damage(target, BURNING, durationS, dps, N.burnTickS);
 }
 
 /** What a held Lance has done: the beam time it has already dealt for, and whether it is still on. */

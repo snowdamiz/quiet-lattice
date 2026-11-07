@@ -170,7 +170,7 @@ export class CastService {
   private interval: NodeJS.Timeout | null = null;
   private lastPrune = -Infinity;
   private readonly listeners = new Set<CastListener>();
-  private readonly statuses: Statuses;
+  private readonly statuses: Statuses<CastContext>;
 
   constructor(opts: CastServiceOptions) {
     this.zones = opts.zones;
@@ -184,7 +184,7 @@ export class CastService {
     this.deposits = opts.deposits;
     this.mayHarm = opts.mayHarm ?? mayHarm;
     this.log = opts.log;
-    this.statuses = new Statuses(opts.now);
+    this.statuses = new Statuses<CastContext>(opts.now);
   }
 
   stats(): CastStats {
@@ -347,7 +347,7 @@ export class CastService {
     let required = () => true;
     let held = () => false;
     let release = () => {};
-    const produced: { target: number; id: string; gen: number }[] = [];
+    const produced: { target: number; id: string }[] = [];
     const live = (): boolean => {
       if (
         !ended &&
@@ -364,7 +364,7 @@ export class CastService {
           !required())
       ) {
         ended = true;
-        for (const s of produced) this.statuses.remove(zone.id, characterId, s.target, s.id, s.gen);
+        for (const s of produced) this.statuses.revoke(zone.id, characterId, s.target, s.id, ctx);
         produced.length = 0;
         release();
       }
@@ -511,11 +511,30 @@ export class CastService {
         },
       },
       status: {
+        damage: (target, id, durationS, power, tickS) => {
+          if (!ctx.status.apply(target, id, durationS, power)) return;
+          const began = ctx.status.get(target, id)!;
+          let last = began.until - durationS;
+          const tick = (): void => {
+            // The shared clock outlives any one producer. Revoke stale contributions before choosing its authority.
+            for (const producer of this.statuses.producers(zone.id, characterId, target, id)) this.lifetimes.get(producer)?.live();
+            const s = ctx.status.get(target, id);
+            if (!s || s.gen !== began.gen) return;
+            const producer = this.statuses.producers(zone.id, characterId, target, id)[0];
+            if (!producer) return;
+            const at = Math.min(this.now(), s.until);
+            const out = at > last ? producer.damage(target, s.power * (at - last)) : null;
+            const stopped = at > last && out === null;
+            last = at;
+            if (stopped || out?.killed || at >= s.until) return void this.statuses.remove(zone.id, characterId, target, id, began.gen);
+            this.after(characterId, tickS, tick);
+          };
+          this.after(characterId, tickS, tick);
+        },
         apply: (target, id, durationS, power) => {
           if (!live()) return false;
-          const fresh = this.statuses.apply(zone.id, characterId, target, id, durationS, power);
-          const status = this.statuses.get(zone.id, characterId, target, id);
-          if (fresh && status) produced.push({ target, id, gen: status.gen });
+          const fresh = this.statuses.apply(zone.id, characterId, target, id, durationS, power, ctx);
+          produced.push({ target, id });
           return fresh;
         },
         get: (target, id) => this.statuses.get(zone.id, characterId, target, id),
@@ -552,7 +571,9 @@ export class CastService {
         pending > 0 ||
         held() ||
         this.on.get(characterId)?.get(msg.node)?.ctx === ctx ||
-        produced.some((s) => this.statuses.get(zone.id, characterId, s.target, s.id)?.gen === s.gen),
+        produced.some(
+          (s) => this.statuses.get(zone.id, characterId, s.target, s.id) && this.statuses.producers(zone.id, characterId, s.target, s.id).includes(ctx),
+        ),
     });
     return ctx;
   }

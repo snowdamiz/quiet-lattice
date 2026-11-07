@@ -538,6 +538,7 @@ export class Zone {
   /** Runs one tick at world time `time` and sends every session its snapshot. Returns how long it took, in ms. */
   step(time: number): number {
     const started = performance.now();
+    time = Math.max(this.time, time);
     this.tick++;
     this.time = time;
 

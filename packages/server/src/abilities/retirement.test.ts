@@ -1,5 +1,6 @@
 import { SkillService } from '../skills/service.ts';
 import { getSkillNode } from '@astra/shared/data';
+import { creatureSphere } from '@astra/shared/combat';
 import { emptySkillState } from '@astra/shared/skills';
 import type { ServerMessage } from '@astra/shared/protocol';
 import { describe, expect, it } from 'vitest';
@@ -142,4 +143,88 @@ describe('cast retirement through real skill-service notifications', () => {
     r.pass(6.1);
     expect(r.w.zone.combat.creatureHealth(enemy)!.hp).toBe(hp);
   });
+});
+
+function aimTo(r: ReturnType<typeof rig>, to: readonly number[]): [number, number, number] {
+  const from = r.w.zone.entity(r.w.player)!.fields.pos;
+  const radius = Math.hypot(...from);
+  const d = [to[0]! - from[0] - (from[0] / radius) * 1.6, to[1]! - from[1] - (from[1] / radius) * 1.6, to[2]! - from[2] - (from[2] / radius) * 1.6];
+  const length = Math.hypot(...d);
+  return [d[0]! / length, d[1]! / length, d[2]! / length];
+}
+
+describe.each([
+  ['sear', 'flare'],
+  ['flare', 'sear'],
+] as const)('shared burn: %s then %s', (first, second) => {
+  it.each(['none', 'unrelated', 'first', 'second'] as const)('retains one burn after revoking %s', (revoked) => {
+    const r = rig(['lance', 'sear', 'flare']);
+    const target = r.spawn(5);
+    r.w.zone.fauna!.stun(target, 30);
+    const hp = () => r.w.zone.combat.creatureHealth(target)!.hp;
+    const start = hp();
+    const ignite = (node: 'sear' | 'flare') => r.cast(node, { target, aim: aimTo(r, creatureSphere(r.w.zone.fauna!.creature(target)!).pos) });
+    expect(ignite(first).result).toBe('cast');
+    r.pass(0.5);
+    expect(ignite(second).result).toBe('cast');
+    const afterBurst = hp();
+    expect(start - afterBurst).toBeCloseTo(18 + (first === 'sear' ? 5 : 6) * 0.5, 6);
+    if (revoked === 'first' || revoked === 'second') expect(r.skills.respec(r.viewer.characterId, [revoked === 'first' ? first : second]).ok).toBe(true);
+    if (revoked === 'unrelated') {
+      expect(r.skills.buy(r.viewer.characterId, 'second_lung').ok).toBe(true);
+      expect(r.skills.respec(r.viewer.characterId, ['second_lung']).ok).toBe(true);
+    }
+    const surviving = revoked === 'first' ? second : revoked === 'second' ? first : null;
+    const power = surviving === 'sear' ? 5 : 6;
+    const until = surviving ? (surviving === second ? 0.5 : 0) + (surviving === 'sear' ? 8 : 4) : second === 'sear' ? 8.5 : 8;
+    r.pass(0.5);
+    expect(afterBurst - hp()).toBeCloseTo(power * 0.5, 6);
+    r.pass(until - 1);
+    expect(afterBurst - hp()).toBeCloseTo(power * (until - 0.5), 6);
+    const ended = hp();
+    r.pass(2);
+    expect(hp()).toBeCloseTo(ended, 6);
+  });
+});
+
+describe('Call contact follows caster visibility', () => {
+  it.each(['shared', 'same_event', 'split_event', 'hidden_event'] as const)('hits only caster-visible fauna in %s', (phaseMode) => {
+    const r = rig(['bond', 'call']);
+    const herd = r.spawn(5);
+    const target = r.spawn(26);
+    r.w.zone.fauna!.stun(target, 10);
+    if (phaseMode !== 'shared') {
+      const phase = r.w.zone.phases.phaseFor(r.viewer, 'event', { key: 'caller-event', frame: r.w.frame, center: r.w.at(0, 0), radius: 100 });
+      if (phaseMode === 'same_event') r.w.zone.phases.adopt(phase.id, herd);
+      if (phaseMode === 'same_event' || phaseMode === 'split_event') r.w.zone.phases.adopt(phase.id, target);
+      if (phaseMode === 'hidden_event') {
+        const viewer = { id: 100, characterId: 'other', sendBinary() {} };
+        r.w.zone.join(viewer, { kind: 'player', frame: r.w.frame, pos: r.w.at(2, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+        const hidden = r.w.zone.phases.phaseFor(viewer, 'event', { key: 'other-event', frame: r.w.frame, center: r.w.at(0, 0), radius: 100 });
+        r.w.zone.phases.adopt(hidden.id, target);
+      }
+    }
+    const herdPhase = r.w.zone.phases.phaseOf(herd);
+    expect(r.w.zone.phases.canSee(r.w.player, herd)).toBe(true);
+    const hp = r.w.zone.combat.creatureHealth(target)!.hp;
+    expect(r.cast('call', { aim: aimTo(r, r.w.at(30, 0)) }).result).toBe('cast');
+    r.pass(6.1);
+    expect(r.w.zone.combat.creatureHealth(target)!.hp).toBeCloseTo(hp - (phaseMode === 'hidden_event' ? 0 : 12), 6);
+    expect(r.w.zone.phases.phaseOf(herd)).toBe(herdPhase);
+  });
+});
+
+it('Call never turns shared-herd control into player or companion damage', () => {
+  const r = rig(['bond', 'call']);
+  r.spawn(5);
+  const target = r.spawn(26);
+  const viewer = { id: 100, characterId: 'other', sendBinary() {} };
+  const owner = r.w.zone.join(viewer, { kind: 'player', frame: r.w.frame, pos: r.w.at(26, 0), quat: [0, 0, 0, 1], vel: [0, 0, 0], mode: 'foot' });
+  expect(r.w.zone.fauna!.bond(owner, target, () => true)).toBe(true);
+  const hp = r.w.zone.combat.creatureHealth(target)!.hp;
+  const suit = r.w.zone.combat.playerHealth(owner)!.suit;
+  expect(r.cast('call', { aim: aimTo(r, r.w.at(30, 0)) }).result).toBe('cast');
+  r.pass(6.1);
+  expect(r.w.zone.combat.creatureHealth(target)!.hp).toBe(hp);
+  expect(r.w.zone.combat.playerHealth(owner)!.suit).toBe(suit);
 });

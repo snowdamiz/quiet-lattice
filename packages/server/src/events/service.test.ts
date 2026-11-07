@@ -1,3 +1,9 @@
+import { emptySkillState } from '@astra/shared/skills';
+import { SkillService } from '../skills/service.ts';
+import { CodexService } from '../codex/service.ts';
+import { MeterService } from '../meters/service.ts';
+import { CastService } from '../abilities/service.ts';
+import { nodeGroundsHere } from '../resources/ground.ts';
 // The event service (P2.E21.T01) on a real zone of system 0 with its fauna at Tier 3, sessions stood in for and the clock
 // driven by hand: the schedule and its news, placement into instances of 12 (a 13th opens another), presence scaling of
 // each instance's waves and their health, contribution by damage, objectives and presence, rewards by share, and the end.
@@ -7,11 +13,11 @@ import { decodeServerMessage, type ServerMessage } from '@astra/shared/protocol'
 import type { QuestWorldEvent } from '@astra/shared/quests';
 import { Random } from '@astra/shared/world';
 import { describe, expect, it } from 'vitest';
-import type { CombatHooks } from '../combat/zone.ts';
+import type { KillReport, CombatHooks } from '../combat/zone.ts';
 import { MAX_CREATURES } from '../fauna/sim.ts';
 import { planHere, type GroundSource } from '../fauna/terrain.ts';
-import { InventoryService } from '../inventory/service.ts';
-import { CharacterProgress } from '../persistence/components.ts';
+import { DEFAULT_LOADOUT, InventoryService } from '../inventory/service.ts';
+import { ShipLoadouts, CharacterProgress } from '../persistence/components.ts';
 import { ReputationService } from '../reputation/service.ts';
 import { splitByDamage } from '../resources/service.ts';
 import { describeZoneSystem } from '../zones/system.ts';
@@ -57,7 +63,8 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
   const lines: { msg: string; obj: object }[] = [];
   const log = { info: (obj: object, msg: string) => lines.push({ obj, msg }), warn: () => {}, debug: () => {} };
   const made: { events: EventService | null } = { events: null };
-  const hooks: CombatHooks = { hit: (r) => made.events?.combat({ kind: 'hit', report: r }) };
+  const kills: KillReport[] = [];
+  const hooks: CombatHooks = { killed: (r) => kills.push(r), hit: (r) => made.events?.combat({ kind: 'hit', report: r }) };
   const zone = new Zone({
     id: 'sys:0',
     systemIndex: 0,
@@ -95,6 +102,7 @@ function setup(opts: { catalog?: EventDef[]; grounds?: GroundSource; rep?: boole
     quests,
     reputation,
     payouts,
+    kills,
     get now() {
       return now;
     },
@@ -575,5 +583,142 @@ describe('one occurrence, one instance, one payout', () => {
     const next = eventWindow(def, 0, w.ends);
     restarted.sweep(next.announce + 1);
     expect(restarted.list()).toMatchObject([{ event: 'drill', starts: next.starts }]);
+  });
+});
+
+function bondService(s: ReturnType<typeof setup>, a: ReturnType<ReturnType<typeof setup>['join']>) {
+  const id = a.viewer.characterId;
+  const ships = new ShipLoadouts();
+  ships.set(id, DEFAULT_LOADOUT.ship);
+  s.progress.set(id, { level: 29, xp: 0, homeSystem: 0 });
+  const skills = new SkillService({ inventory: s.inventory, ships, progress: s.progress });
+  skills.open(id, emptySkillState(), 'thalune');
+  for (const node of ['bond', 'big_game']) {
+    expect(skills.unlock(id, node, { kind: 'dev' }).ok).toBe(true);
+    expect(skills.buy(id, node).ok).toBe(true);
+  }
+  expect(skills.request(id, 1, { op: 'slot', bar: 'ground', index: 0, node: 'bond' }).error).toBeUndefined();
+  const codex = new CodexService({ progress: s.progress, skills });
+  codex.open(id);
+  const meters = new MeterService({ skills, ships, zones: { zoneOf: () => s.zone } });
+  meters.open(id, { heat: 0, overheated: false, charge: 100, lifeSupport: 100, hazard: 100, at: s.now });
+  meters.locate(id, a.viewer, s.now);
+  s.zone.combat.joined(a.entity, { characterId: id, ship: DEFAULT_LOADOUT.ship, skills: ['bond', 'big_game'] });
+  const casts = new CastService({ zones: { zoneOf: () => s.zone, tier: () => TIER }, skills, codex, meters, grounds: nodeGroundsHere, now: () => s.now });
+  skills.subscribe((ch) => casts.skillsChanged(ch));
+  let seq = 0;
+  const analyze = (target: number) => {
+    const c = s.zone.fauna!.creature(target)!;
+    codex.record(
+      id,
+      { system: s.zone.systemIndex, world: c.frame, index: c.species.index, bodyPlan: c.species.bodyPlan, temperament: c.species.temperament },
+      s.now,
+    );
+    return c;
+  };
+  return {
+    analyze,
+    cast(target: number) {
+      const c = analyze(target);
+      return casts.cast(a.viewer, { t: 'cast', seq: ++seq, time: s.now, node: 'bond', slot: 0, frame: c.frame, aim: [0, 0, -1], target });
+    },
+  };
+}
+
+const bondDrill = (count = 1): EventDef =>
+  drill({
+    place: { kind: 'surface', radius: 100 },
+    waves: { count, size: 1, firstS: 1, gapS: 1 },
+    enemies: { kind: 'fauna', temperaments: ['territorial', 'predator'], level: 5 },
+  });
+
+describe('event-owned hostile conversion', () => {
+  it('consumes a final enemy once for one objective point, unchanged HP and no kill rewards', () => {
+    const s = setup();
+    const a = s.join();
+    const def = bondDrill();
+    started(s, def, [a]);
+    s.run(1.2);
+    const target = s.occurrence().instances[0]!.mobs[0]!;
+    const b = bondService(s, a);
+    b.analyze(target);
+    const hp = s.zone.combat.creatureHealth(target)!.hp;
+    const inventory = structuredClone(s.inventory.get(a.viewer.characterId));
+    const xp = s.progress.get(a.viewer.characterId)!.xp;
+    const quests = s.quests.length;
+    expect(b.cast(target).result).toBe('cast');
+    expect(s.occurrence().instances[0]!.mobs).toEqual([]);
+    expect(s.occurrence().instances[0]!.scores.get(a.viewer.characterId)).toMatchObject({ objective: 1, damage: 0 });
+    expect(s.zone.combat.creatureHealth(target)!.hp).toBe(hp);
+    expect(s.zone.combat.applyDamage(a.entity, target, { base: 10000, kind: 'weapon' })).toBeNull();
+    expect(s.zone.fauna!.bond(a.entity, target, () => true)).toBe(false);
+    expect(s.progress.get(a.viewer.characterId)!.xp).toBe(xp);
+    expect(s.inventory.get(a.viewer.characterId)).toEqual(inventory);
+    expect(s.quests).toHaveLength(quests);
+    expect(s.kills).toEqual([]);
+    s.run(1);
+    expect(s.payouts).toEqual([[expect.objectContaining({ character: a.viewer.characterId, xp: 1000, units: 300, share: 1 })]]);
+    expect(s.zone.entity(target)).toBeUndefined(); // Event owner closes its phase, dismissing the companion.
+    expect(s.kills).toEqual([]);
+    s.run(5);
+    expect(s.payouts).toHaveLength(1);
+  });
+
+  it.each(['dismiss', 'replace'] as const)('does not credit an old companion again after %s across two waves', (action) => {
+    const s = setup();
+    const a = s.join();
+    const def = bondDrill(2);
+    started(s, def, [a]);
+    s.run(1.2);
+    const first = s.occurrence().instances[0]!.mobs[0]!;
+    const b = bondService(s, a);
+    expect(b.cast(first).result).toBe('cast');
+    s.zone.fauna!.stun(first, 100);
+    if (action === 'dismiss') s.zone.fauna!.dismissOwner(a.entity);
+    s.run(1.5);
+    const second = s.occurrence().instances[0]!.mobs[0]!;
+    s.zone.fauna!.stun(second, 100);
+    expect(s.occurrence().instances[0]!.cleared).toBe(1);
+    expect(s.occurrence().instances[0]!.scores.get(a.viewer.characterId)).toMatchObject({ objective: 1, damage: 0 });
+    expect(s.payouts).toEqual([]);
+    s.run(60);
+    expect(b.cast(second).result).toBe('cast');
+    expect(s.zone.entity(first)).toBeUndefined();
+    expect(s.occurrence().instances[0]!.scores.get(a.viewer.characterId)).toMatchObject({ objective: 2, damage: 0 });
+    s.run(1);
+    expect(s.payouts).toEqual([[expect.objectContaining({ xp: 1000, units: 300, share: 1 })]]);
+    expect(s.kills).toEqual([]);
+  });
+
+  it('pays only the cleared wave on expiry and dismisses the phase-bound companion without kill credit', () => {
+    const s = setup();
+    const a = s.join();
+    const def = { ...bondDrill(2), schedule: { ...bondDrill(2).schedule, durationS: 30 } };
+    started(s, def, [a]);
+    s.run(1.2);
+    const target = s.occurrence().instances[0]!.mobs[0]!;
+    expect(bondService(s, a).cast(target).result).toBe('cast');
+    s.zone.fauna!.stun(target, 100);
+    s.run(61);
+    expect(s.payouts).toEqual([[expect.objectContaining({ xp: 500, units: 150, share: 1 })]]);
+    expect(a.viewer.of('event_reward').at(-1)).toMatchObject({ outcome: 'expired' });
+    expect(s.zone.entity(target)).toBeUndefined();
+    expect(s.kills).toEqual([]);
+  });
+
+  it('refuses another phase’s enemy before conversion or objective credit', () => {
+    const s = setup();
+    const a = s.join();
+    const other = s.join('other');
+    const { place } = started(s, bondDrill(), [a]);
+    s.run(1.2);
+    s.move(other.entity, place.frame, place.center);
+    s.zone.phases.phaseFor(other.viewer, 'event', { ...place.location, key: 'other-event' });
+    const target = s.occurrence().instances[0]!.mobs[0]!;
+    expect(bondService(s, other).cast(target)).toMatchObject({ result: 'refused', reason: 'unseen' });
+    expect(s.zone.fauna!.ownerOf(target)).toBeNull();
+    expect(s.occurrence().instances[0]!.mobs).toEqual([target]);
+    expect(s.occurrence().instances[0]!.scores.get(other.viewer.characterId)).toBeUndefined();
+    expect(s.payouts).toEqual([]);
   });
 });

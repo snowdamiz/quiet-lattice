@@ -533,9 +533,10 @@ describe('Deep Sweep', () => {
   });
 
   it('puts pirates on the radar at 5 km for the radar window, on the caster’s ship', () => {
-    const apply = vi.spyOn(Statuses.prototype, 'apply');
     cast('deep_sweep', 0);
-    expect(apply).toHaveBeenCalledWith(w.zone.id, 'c1', w.player, DEEP_SWEEP, N.deepSweep.radarS, getSkillNode('deep_sweep').params.radarRangeM);
+    const statuses: unknown = Reflect.get(svc, 'statuses');
+    if (!(statuses instanceof Statuses)) throw new Error('missing authoritative statuses');
+    expect(statuses.get(w.zone.id, 'c1', w.player, DEEP_SWEEP)).toMatchObject({ until: now + N.deepSweep.radarS, power: 5000 });
     expect(getSkillNode('deep_sweep').params.radarRangeM).toBe(5000);
   });
 

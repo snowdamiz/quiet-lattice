@@ -433,6 +433,7 @@ export class ZoneCombat {
    * Null when the target is no combatant (not a creature or player, dead, down, gone); otherwise what it took.
    */
   applyDamage(source: number | null, target: number, packet: DamagePacket, now = Math.max(this.zone.time, this.steppedAt)): DamageOutcome | null {
+    now = Math.max(now, this.zone.time, this.steppedAt);
     const sourceOwner = source === null ? null : this.zone.fauna?.ownerOf?.(source);
     const targetOwner = this.zone.fauna?.ownerOf?.(target);
     // Companions are player-owned combatants: neither side opens a route around the current no-PvP policy.
@@ -473,7 +474,7 @@ export class ZoneCombat {
       this.zone.patch(target, { hp });
     } else {
       dealt = amount;
-      if (amount > 0 && (packet.pool === 'ship' || !this.onFoot(target))) v.regen.hitAt = now;
+      if (amount > 0 && (packet.pool === 'ship' || !this.onFoot(target))) v.regen.hitAt = Math.max(v.regen.hitAt, now);
       hp = this.takePlayer(v, target, amount, packet.pool);
       killed = v.down !== null;
     }
@@ -496,6 +497,7 @@ export class ZoneCombat {
   /** Applies ship hazards from the accepted pose on the server clock, despawns corpses, and keeps the pool in use on the
    * entity. The zone calls this each tick after its fauna, before snapshots. Silent clients still take sky damage. */
   step(time: number): void {
+    time = Math.max(time, this.zone.time, this.steppedAt);
     this.steppedAt = Math.max(this.steppedAt, time);
     while (this.corpses.length && this.corpses[0]!.until <= time) {
       const { id } = this.corpses.shift()!;
