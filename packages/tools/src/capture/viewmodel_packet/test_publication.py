@@ -29,6 +29,9 @@ def child(root, mode):
             def capture(r, s, ps, rec):
                 for name in s['files']:
                     (Path(ps['output']) / name).write_text('INERT '+name)
+                from observations import Journal
+                facts={'phase':'cleanup'};journal=Journal(Path(ps['evidence'])/'helper-observations',facts);journal.finish()
+                rec['helperEvidence']=journal.manifest
                 trace.append('inert-released')
                 return {'released': True}
             def decoder(*_):

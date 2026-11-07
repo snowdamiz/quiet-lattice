@@ -14,6 +14,7 @@ import sys
 from boundary import (CONSUMPTION_SCHEMA, RESULT_SCHEMA, FAILURE_SUMMARY_CAP, MIB, canonical, deadline, encoded, exclusive_bytes, exclusive_json, failure_summary, git, json_snapshot,
                       output_manifest, persist, require, snapshot, validate_inventory, verify_worktree)
 import bindings
+from observations import validate as validate_helper_evidence
 
 HERE = Path(__file__).resolve().parent
 RUNTIME_ENABLED = True
@@ -31,16 +32,16 @@ def terminal_paths(paths):
 def prepare():
     inventory = plan()
     root = bindings.ROOT
-    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1')
+    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-observations-7o2wl_r3')
     ready_path = str(evidence.with_name(evidence.name + '-readiness.json'))
     paths = {}
     for spec in inventory['units']:
         unit = spec['id']
         paths[unit] = {'ready': ready_path, 'grant': str(evidence.with_name(evidence.name + '-' + unit + '.grant.json')),
             'consumption': str(evidence.with_name(evidence.name + '-' + unit + '.consumed.json')),
-            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-live-qsu7czb1' / unit)}
+            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-observations-7o2wl_r3' / unit)}
     canonical(evidence, absent=True)
-    canonical(root / 'assets/renders/review/viewmodel-packet-live-qsu7czb1', absent=True)
+    canonical(root / 'assets/renders/review/viewmodel-packet-observations-7o2wl_r3', absent=True)
     for row in paths.values():
         for path in [*row.values(), *terminal_paths(row)]:
             canonical(path, absent=True)
@@ -48,7 +49,7 @@ def prepare():
     return {'version': 1, 'runtimeEnabled': RUNTIME_ENABLED, 'entryEnabled': inventory['entryEnabled'],
             'executionStatus': 'ENABLED_AWAITING_PARENT_GRANT', 'nativeQualified': False,
             'inventorySha256': json_snapshot(HERE / 'inventory.json')[1], 'paths': paths,
-            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-live-qsu7czb1')},
+            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-observations-7o2wl_r3')},
             'bindings': pinned, 'cacheOwnerFreezeObservation': bindings.cache_owners(),
             'pythonSelfObservation': {'scope': 'CPU_SELF_PROCESS_ONLY', 'pid': os.getpid(), 'uid': os.getuid(),
                                       'launcher': pinned['python'], 'kernelExecutable': pinned['pythonKernel']},
@@ -93,6 +94,8 @@ def admit(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bin
             require(obj.get('unit') == ref['unit'] and obj.get('sourceHead') == grant['authorizedHead'] and obj.get('readySha256') == ready_hash, 'Predecessor identity/pin')
         require(result['authorizationId'] == consumed['authorizationId'] and result['consumptionSha256'] == ref['consumptionSha256'], 'Predecessor consumption mismatch')
         require(result['output'] == old_paths['output'], 'Predecessor output path')
+        require(type(result.get('helperEvidence')) is dict, 'Missing predecessor helper evidence')
+        validate_helper_evidence(Path(old_paths['evidence']) / 'helper-observations', result['helperEvidence'])
         for copy_name in ('decode-copy', 'verified-copy'):
             output_manifest(expected_spec, Path(old_paths['evidence']) / copy_name, result['outputManifest'])
         previous_ids.add(consumed['authorizationId'])
@@ -262,6 +265,8 @@ def run_unit(ready, spec, paths, record, *, capture=None, decoder=decode, cache_
     native = capture(ready, spec, paths, record)
     require(native['released'] is True, 'Capture cohort not positively released')
     record['released'] = True
+    require(type(record.get('helperEvidence')) is dict, 'Missing helper evidence')
+    record['helperEvidenceValidation'] = validate_helper_evidence(evidence / 'helper-observations', record['helperEvidence'])
     # No copy or CPU decoder while capture cohort ownership is unresolved.
     with deadline(45):
         frozen = evidence / 'decode-copy'
@@ -291,11 +296,11 @@ def main(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bind
         data = encoded(value)
         amount = len(data)
         metadata_attempted += amount
-        require(metadata_attempted <= 40 * MIB - 65536, 'Caller metadata attempt ceiling')
-        require(amount <= 20 * MIB, 'Metadata cap exceeded')
+        require(metadata_attempted <= 32 * MIB - 65536, 'Caller metadata attempt ceiling')
+        require(amount <= 14 * MIB, 'Metadata cap exceeded')
         metadata_dispatched += amount
         if writer is exclusive_json:
-            return exclusive_bytes(path, data, cap=20 * MIB)
+            return exclusive_bytes(path, data, cap=14 * MIB)
         return writer(path, value)
     consumption_hash = metadata_write(Path(paths['consumption']), consumed)
     record = {**consumed, 'schema': RESULT_SCHEMA, 'consumptionSha256': consumption_hash, 'accepted': False, 'checksPassed': False,
@@ -314,7 +319,7 @@ def main(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bind
         amount = len(data)
         require(amount <= FAILURE_SUMMARY_CAP, 'Failure summary ceiling')
         metadata_attempted += amount
-        require(metadata_dispatched + amount <= 40 * MIB, 'Caller failure reserve exhausted')
+        require(metadata_dispatched + amount <= 32 * MIB, 'Caller failure reserve exhausted')
         metadata_dispatched += amount
         # The 64 KiB withheld from ordinary receipts covers this one 16 KiB sink.
         # Failed full writes stay charged; no allocation or capture is retried.
@@ -325,7 +330,10 @@ def main(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bind
             writer(path, value)
         return str(path)
     result = persist(record, terminal_paths(paths)[:2], write=metadata_write, emit=emit, emergency=emergency)
-    result['metadataBytes'] = {'attempted': metadata_attempted, 'dispatched': metadata_dispatched}
+    result['metadataBytes'] = {'attempted': metadata_attempted, 'dispatched': metadata_dispatched,
+        'journalAttempted': record.get('native', {}).get('journalIndexAttempt', {}).get('totalAttemptedBytes',
+            record.get('helperEvidence', {}).get('attemptedBytes', 0)),
+        'callerCeiling': 32 * MIB, 'journalCeiling': 8 * MIB}
     return (0 if record['checksPassed'] and not record['persistenceErrors'] and result['durable'] else 1), result
 
 

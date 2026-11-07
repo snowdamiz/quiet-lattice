@@ -1,6 +1,7 @@
 """Adapter to the four recovered helpers. Imported only after grant consumption."""
 from contextlib import contextmanager
 import copy
+import json
 import os
 from pathlib import Path
 import stat
@@ -147,36 +148,57 @@ def sample_usage(roots, evidence):
 
 
 @contextmanager
-def observed_helpers(modules, evidence):
+def observed_helpers(modules, evidence, *, journal=None):
     """Retain return values before helper assertions, including unknown fields/bytes."""
     restored = []
     metadata_bytes = 0
+    metadata_storage = {}
+    evidence['helperMetadataStorage'] = metadata_storage
     observation_bytes = 0
+    call_sequence = 0
     def wrap(owner, name, *, receipt=False):
         original = getattr(owner, name)
         def call(*args, **kwargs):
-            nonlocal metadata_bytes, observation_bytes
-            event = {'operation': name}
-            evidence['helperCalls'].append(event)
+            nonlocal metadata_bytes, observation_bytes, call_sequence
+            event = {'operation': name, 'callSequence': call_sequence}
+            call_sequence += 1
+            if journal is None: evidence['helperCalls'].append(event)
             observed = retain(evidence, event, 'args', args, encoder=raw)
             observed &= retain(evidence, event, 'kwargs', kwargs, encoder=raw)
-            if evidence.get('phase') != 'cleanup':
-                require(observed, 'Helper argument observation failed')
+            if evidence.get('phase') != 'cleanup' and not observed:
+                failure = evidence['unencodedFacts'][-1]['encodingError']
+                evidence.setdefault('collectionFailure', failure)
+                raise failure
             try:
                 if receipt:
-                    data = encoded(args[1])
-                    metadata_bytes += len(data)  # Failed/repeated attempts count too.
+                    try:
+                        data = (json.dumps(args[1], indent=2) + '\n').encode()
+                        event['writerBytesKnown'] = True
+                    except Exception as error:
+                        # The unchanged writer owns serialization failure. Keep
+                        # injected/unknown non-JSON facts and let it report it.
+                        event['writerEncodingUnavailable'] = raw(error)
+                        data = encoded(args[1])
+                        event['writerBytesKnown'] = False
+                    metadata_bytes += len(data)  # All traffic, including failures/overwrites.
                     event['attemptedBytes'] = len(data)
-                    require(len(data) <= 2 * MIB and metadata_bytes <= 16 * MIB, 'Helper metadata ceiling')
+                    key = str(args[0])
+                    metadata_storage[key] = max(metadata_storage.get(key, 0), len(data))
+                    # Every logical destination reserves its largest target AND
+                    # its .writing temporary, including failed partial writes.
+                    reserved = 2 * sum(metadata_storage.values())
+                    event['storageReservedBytes'] = reserved
+                    require(len(data) <= 2 * MIB and reserved <= 16 * MIB, 'Helper metadata ceiling')
                 value = original(*args, **kwargs)
                 if isinstance(value, subprocess.CompletedProcess):
                     observed = retain(evidence, event, 'value', vars(value), encoder=raw)
                 else:
                     observed = retain(evidence, event, 'value', value, encoder=raw)
-                if evidence.get('phase') != 'cleanup':
-                    require(observed, 'Helper result observation failed')
+                if evidence.get('phase') != 'cleanup' and not observed:
+                    raise evidence['unencodedFacts'][-1]['encodingError']
                 return value
             except BaseException as error:
+                if evidence.get('phase') != 'cleanup': evidence.setdefault('collectionFailure', error)
                 retain(evidence, event, 'error', error, encoder=raw)
                 if receipt and evidence.get('phase') == 'cleanup' and isinstance(error, Exception):
                     evidence.setdefault('cleanupReceiptFailures', []).append(event)
@@ -185,12 +207,17 @@ def observed_helpers(modules, evidence):
             finally:
                 unwinding = sys.exc_info()[0] is not None
                 try:
-                    observation_bytes += len(encoded(event))
-                except Exception as error:
+                    observation_bytes += journal.append(event) if journal is not None else len(encoded(event))
+                except BaseException as error:
+                    if journal is not None: journal.fail(event, error)
                     evidence.setdefault('unencodedFacts', []).append({'key': 'helper-event', 'original': event, 'encodingError': error})
-                    if not unwinding and evidence.get('phase') != 'cleanup':
+                    if evidence.get('phase') != 'cleanup':
+                        evidence.setdefault('collectionFailure', error)
+                    else:
+                        evidence.setdefault('secondaryFailures', []).append(error)
+                    if not unwinding and (evidence.get('phase') != 'cleanup' or not isinstance(error, Exception)):
                         raise
-                if observation_bytes > 12 * MIB and evidence.get('phase') != 'cleanup' and sys.exc_info()[0] is None:
+                if journal is None and observation_bytes > 12 * MIB and evidence.get('phase') != 'cleanup' and sys.exc_info()[0] is None:
                     raise ValueError('Raw helper observation ceiling exceeded')
         restored.append((owner, name, original))
         setattr(owner, name, call)
@@ -209,7 +236,15 @@ def observed_helpers(modules, evidence):
         for owner, name, original in reversed(restored):
             setattr(owner, name, original)
         evidence['helperMetadataAttemptedBytes'] = metadata_bytes
+        evidence['helperMetadataReservedBytes'] = 2 * sum(metadata_storage.values())
         evidence['helperObservationBytes'] = observation_bytes
+        if journal is not None:
+            unwinding = sys.exc_info()[0] is not None
+            try: journal.finish()
+            except BaseException as error:
+                evidence.setdefault('secondaryFailures', []).append(error)
+                evidence['journalFinishFailure'] = error
+                if not unwinding: raise
 
 
 def capture(ready, spec, paths, record):
@@ -227,7 +262,10 @@ def capture(ready, spec, paths, record):
            'VIEWMODEL_UNIT': spec['id'], 'VIEWMODEL_ENTRY_TOKEN': record['entryToken'],
            'VIEWMODEL_SOURCE_HEAD': record['sourceHead'], 'VIEWMODEL_CONSUMPTION_SHA256': record['consumptionSha256'], 'PYTHONDONTWRITEBYTECODE': '1'}
     argv = [ready['bindings']['node'], str(Path(__file__).with_name('entry.mjs'))]
-    with observed_helpers((boundary, proof, stages), evidence):
+    from observations import Journal
+    journal = Journal(Path(paths['evidence']) / 'helper-observations', evidence)
+    record['helperEvidence'] = journal.manifest
+    with observed_helpers((boundary, proof, stages), evidence, journal=journal):
         try:
             with deadline(600):
                 evidence['allocations'].append({'operation': 'create_private_tmp', 'state': 'attempting'})
@@ -260,6 +298,7 @@ def capture(ready, spec, paths, record):
                 job.start()
                 outcome = job.wait(600, observer=observe)
                 evidence['wait'] = outcome
+                if callback_failure is None: callback_failure = evidence.get('collectionFailure')
                 if callback_failure is not None:
                     evidence.setdefault('secondaryFailures', []).append({
                         'type': 'HelperWaitOutcome', 'outcome': outcome, 'errors': raw(job.state.get('errors', []))})
@@ -314,6 +353,9 @@ def capture(ready, spec, paths, record):
         if primary is not None:
             primary.evidence = evidence
             raise primary
+    if evidence.get('journalFailure') is not None:
+        evidence['journalFailure'].evidence = evidence
+        raise evidence['journalFailure']
     require(not evidence.get('unencodedFacts'), 'Observation encoding failed; originals retained in memory')
     require(evidence['released'], 'Release must precede decoder')
     return evidence

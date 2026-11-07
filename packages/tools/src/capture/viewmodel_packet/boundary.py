@@ -187,7 +187,7 @@ RESULT_SCHEMA = 'viewmodel-result/1'
 CONSUMPTION_FIELDS = frozenset(('schema', 'authorizationId', 'unit', 'sourceHead', 'readySha256',
     'grantSha256', 'grantPath', 'entryToken', 'freeBytesAtAdmission', 'admission', 'previousOutputs'))
 RESULT_FIELDS = CONSUMPTION_FIELDS | frozenset(('consumptionSha256', 'accepted', 'checksPassed', 'status',
-    'released', 'output', 'outputManifest'))
+    'released', 'output', 'outputManifest', 'helperEvidence'))
 FAILURE_FIELDS = frozenset(('primaryFailure', 'secondaryFailures', 'persistenceErrors'))
 
 

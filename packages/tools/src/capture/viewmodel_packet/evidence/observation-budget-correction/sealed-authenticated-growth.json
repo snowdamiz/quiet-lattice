@@ -1,0 +1,28 @@
+{
+  "actualCallerExit": 0,
+  "resultSha256": "5da4cd1191922e9b3cef849986fee64650b4cf7810aef61cb412e5f39db8ac4a",
+  "consumptionSha256": "0c5f2b87c5ca3b23c6aaa2c7cbc0f5544a66d6615b997619c56feb3a1db381ee",
+  "resultBytes": 146179,
+  "consumptionBytes": 652,
+  "helperAttemptedBytes": 5024005,
+  "helperReservedBytes": 28758,
+  "journal": {
+    "valid": true,
+    "events": 191937,
+    "expandedBytes": 8057563,
+    "logicalBytes": 22113800,
+    "storedBytes": 234331
+  },
+  "successorAdmittedWithoutDispatch": true,
+  "sourceHead": "bd44f573689b39bced88cc5cdd6c970a12780d6a",
+  "realNative": false,
+  "limits": {
+    "metadataBytes": 67108864,
+    "helperPhysical": 16777216,
+    "node": 8388608,
+    "journal": 8388608,
+    "callerAttempts": 33554432,
+    "callerSingleSink": 14680064
+  },
+  "capacityNote": "Finite observed data admission; 600-second timeout does not reserve unbounded event volume. This CPU count expansion is not a native workload forecast."
+}

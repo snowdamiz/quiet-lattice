@@ -8,6 +8,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import zlib
 
 from boundary import canonical, git, require, snapshot
 
@@ -174,7 +175,8 @@ def discover():
     python = file_binding(sys.executable)
     kernel = self_kernel()
     files = [HELPERS / n for n in HELPER_HASHES] + [ROOT / 'pnpm-lock.yaml', ROOT / 'package.json', Path(node), DECODER, Path('/usr/bin/caffeinate'), Path(VT_ENCODER), Path(MTL_COMPILER), Path('/usr/bin/codesign')]
-    files += [HERE / n for n in ('caller.py', 'boundary.py', 'bindings.py', 'native.py', 'entry.mjs', 'fixture.mjs', 'inspect_packet.py', 'resolve.mjs', 'inventory.json')]
+    files += [HERE / n for n in ('caller.py', 'boundary.py', 'bindings.py', 'native.py', 'observations.py', 'entry.mjs', 'fixture.mjs', 'inspect_packet.py', 'resolve.mjs', 'inventory.json')]
+    files += [Path(zlib.__file__)]
     files += [Path(routes[n]) for n in ('tsxApi', 'playwright', 'esbuild', 'browserBinary')]
     bindings = [file_binding(p) for p in files]
     for name, digest in HELPER_HASHES.items():
@@ -203,7 +205,7 @@ def discover():
             process[str(p)] = file_binding(p)['sha256']
     return {'version': 1, 'root': str(ROOT), 'reviewedSource': '05909e4f74d1c6acf64a5be110f3e44af18b7bc5',
             'branch': git(ROOT, 'branch', '--show-current').decode().strip(), 'bindings': bindings, 'trees': trees,
-            'sourceDigest': source.hexdigest(), 'python': python, 'pythonKernel': kernel,
+            'sourceDigest': source.hexdigest(), 'zlibRuntimeVersion': zlib.ZLIB_RUNTIME_VERSION, 'python': python, 'pythonKernel': kernel,
             'node': node, **routes, 'decoderPython': str(DECODER), 'decoderSite': str(DECODER_SITE),
             'process_binary_sha256': process, 'appleEncoder': encoder, 'appleMetalCompiler': metal_compiler, 'browser_binary': routes['browserBinary'],
             'path': os.environ['PATH'], 'generatedCaches': [str(p) for p in CACHES],

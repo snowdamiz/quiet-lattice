@@ -32,6 +32,9 @@ caller.HERE = Path(sys.argv[2])
 def capture(ready, spec, paths, record):
     for name in spec['files']:
         (Path(paths['output']) / name).write_text('INERT BOUNDARY FIXTURE '+name)
+    from observations import Journal
+    facts={'phase':'cleanup'};journal=Journal(Path(paths['evidence'])/'helper-observations',facts);journal.finish()
+    record['helperEvidence']=journal.manifest
     record['ports'] = ['capture', 'release']
     return {'released': True}
 def decoder(ready, spec, paths, record, frozen):
