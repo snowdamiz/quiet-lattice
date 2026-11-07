@@ -1,0 +1,208 @@
+review-red
+{"name": "review-red", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs", "run", "--config", "/private/tmp/symbiotic-r7-fix-4z__e8gq/review.config.mjs", "--reporter=json", "--outputFile=/private/tmp/symbiotic-r7-fix-4z__e8gq/review-red.json"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 8881, "exit": 1, "seconds": 1.3049061298370361, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/review-red.log"}
+LAST OUTPUT LINES:
+JSON report written to /private/tmp/symbiotic-r7-fix-4z__e8gq/review-red.json
+post-retirement capture interval fault: before
+AssertionError: expected undefined to be defined
+    at /private/tmp/symbiotic-r7-fix-4z__e8gq/review.test.ts:380:292
+    at async file:///Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:20
+post-retirement capture interval fault: during
+AssertionError: expected undefined to be defined
+    at /private/tmp/symbiotic-r7-fix-4z__e8gq/review.test.ts:380:292
+    at async file:///Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:20
+
+review-green
+{"name": "review-green", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs", "run", "--config", "/private/tmp/symbiotic-r7-fix-4z__e8gq/review.config.mjs", "--reporter=json", "--outputFile=/private/tmp/symbiotic-r7-fix-4z__e8gq/review-green.json"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 13673, "exit": 0, "seconds": 0.7518582344055176, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/review-green.log"}
+LAST OUTPUT LINES:
+JSON report written to /private/tmp/symbiotic-r7-fix-4z__e8gq/review-green.json
+
+focused-first
+{"name": "focused-first", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs", "run", "--config", "/private/tmp/symbiotic-r7-fix-4z__e8gq/cpu.config.mjs", "--reporter=json", "--outputFile=/private/tmp/symbiotic-r7-fix-4z__e8gq/focused-first.json"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 29000, "exit": 1, "seconds": 6.573653936386108, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/focused-first.log"}
+LAST OUTPUT LINES:
+JSON report written to /private/tmp/symbiotic-r7-fix-4z__e8gq/focused-first.json
+actual walk/event/replication/freeze order with 0s freeze latency
+AssertionError: expected 0.06403279650825529 to be greater than 0.1
+    at /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-visibility.test.ts:754:74
+    at async file:///Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:20
+actual walk/event/replication/freeze order with 0.2s freeze latency
+AssertionError: expected [ 'PASS', 'REJECT' ] to deeply equal [ 'PASS', 'PASS' ]
+    at /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-visibility.test.ts:774:38
+    at async file:///Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:20
+
+types-first
+{"name": "types-first", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/private/tmp/symbiotic-r7-fix-4z__e8gq/types.mjs"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 30636, "exit": 0, "seconds": 2.7665388584136963, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/types-first.log"}
+LAST OUTPUT LINES:
+
+{"diagnostics":0,"actualCheckout":true,"emit":false}
+
+timing-measure
+{"name": "timing-measure", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs", "run", "--config", "/private/tmp/symbiotic-r7-fix-4z__e8gq/cpu.config.mjs", "--reporter=verbose", "--reporter=json", "--outputFile=/private/tmp/symbiotic-r7-fix-4z__e8gq/timing-measure.json", "-t", "actual walk/event/replication/freeze"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 30904, "exit": 1, "seconds": 1.8208487033843994, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/timing-measure.log"}
+LAST OUTPUT LINES:
+[31m+   "REJECT",[39m
+[2m  ][22m
+
+[36m [2m❯[22m packages/tools/src/smoke/symbiotic-visibility.test.ts:[2m774:38[22m[39m
+    [90m772|[39m     }
+    [90m773|[39m     console.log('CONCURRENT_COMBAT_CPU', JSON.stringify({ delay, hitAt…
+    [90m774|[39m     expect(views.map(v => v.result)).toEqual(delay < 0.5 ? ['PASS', 'P…
+    [90m   |[39m                                      [31m^[39m
+    [90m775|[39m   } finally { s.close(); }
+    [90m776|[39m });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[33m3 skipped[39m[90m (4)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[2m | [22m[33m126 skipped[39m[90m (130)[39m
+[2m   Start at [22m 07:24:27
+[2m   Duration [22m 1.66s[2m (import 73%, tests 16%, transform 11%)[22m
+
+JSON report written to /private/tmp/symbiotic-r7-fix-4z__e8gq/timing-measure.json
+actual walk/event/replication/freeze order with 0.2s freeze latency
+AssertionError: expected [ 'PASS', 'REJECT' ] to deeply equal [ 'PASS', 'PASS' ]
+    at /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-visibility.test.ts:774:38
+    at async file:///Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2801:20
+
+format-candidate
+{"name": "format-candidate", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/private/tmp/symbiotic-r7-fix-4z__e8gq/format.mjs"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 33961, "exit": 0, "seconds": 0.25382184982299805, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/format-candidate.log"}
+LAST OUTPUT LINES:
+format PASS
+
+focused-final
+{"name": "focused-final", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs", "run", "--config", "/private/tmp/symbiotic-r7-fix-4z__e8gq/cpu.config.mjs", "--reporter=verbose", "--reporter=json", "--outputFile=/private/tmp/symbiotic-r7-fix-4z__e8gq/focused-final.json"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 34745, "exit": 0, "seconds": 6.148409843444824, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/focused-final.log"}
+LAST OUTPUT LINES:
+ [32m✓[39m packages/client/src/net/Net.test.js[2m > [22mNet: losing the connection[2m > [22mcloses for good on close(), even while waiting to reconnect[32m 0[2mms[22m[39m
+ [32m✓[39m packages/client/src/net/Net.test.js[2m > [22mClockSync[2m > [22mkeeps the offset of the shortest of its recent round trips[32m 0[2mms[22m[39m
+ [32m✓[39m packages/client/src/net/Net.test.js[2m > [22mSnapshotStore[2m > [22mdrops ticks older than it keeps, and ignores a repeated or old tick[32m 0[2mms[22m[39m
+ [32m✓[39m packages/client/src/net/Net.test.js[2m > [22mSnapshotStore[2m > [22mrefuses a delta that names an entity it never sent whole, and strips clear from a new one[32m 0[2mms[22m[39m
+ [32m✓[39m packages/client/src/net/Net.test.js[2m > [22mzone handoff[2m > [22mresets entity snapshots at a handoff without resetting session request or input sequences[32m 0[2mms[22m[39m
+ [32m✓[39m packages/client/src/net/Net.test.js[2m > [22mzone handoff[2m > [22mmakes world tiers available before the first welcome listener builds a system[32m 0[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mreproduces Net.close -> Game reload -> missing game -> online dev rejoin[32m 6[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mdispatches target close before thaw, without executing Net.close or rejoining[33m 948[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mwaits for the closed receipt, not just command acceptance[33m 963[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mrejects a failed close without thawing or claiming retirement[33m 904[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mretains a capture failure before closing the owner[33m 901[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mcaptures post-retirement pixels from the surviving observer only[32m 9[2mms[22m[39m
+ [32m✓[39m packages/tools/src/smoke/symbiotic-lifetime.test.ts[2m > [22mowner disconnect uses terminal page lifetime[2m > [22mdoes not evaluate the closed owner again during existing final cleanup[32m 6[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m130 passed[39m[22m[90m (130)[39m
+[2m   Start at [22m 07:25:56
+[2m   Duration [22m 5.99s[2m (tests 81%, import 17%, transform 2%)[22m
+
+JSON report written to /private/tmp/symbiotic-r7-fix-4z__e8gq/focused-final.json
+
+review-final
+{"name": "review-final", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs", "run", "--config", "/private/tmp/symbiotic-r7-fix-4z__e8gq/review.config.mjs", "--reporter=verbose", "--reporter=json", "--outputFile=/private/tmp/symbiotic-r7-fix-4z__e8gq/review-final.json"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 35798, "exit": 0, "seconds": 0.8588910102844238, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/review-final.log"}
+LAST OUTPUT LINES:
+[90mstdout[2m | review.test.ts[2m > [22m[2mpost-retirement capture interval fault: during
+[22m[39mCALLER_RESULT {"fault":"during","error":"AssertionError: expected 0 to be greater than 0"}
+RETIREMENT_CAPTURE {"fault":"during","hash":"172f21fe6d7f4dff29500574f7e0c989f949e32a892007ddf1f03cddcb9cfea7","before":{"tick":32,"subjects":[{"id":1,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":2,"wire":{"id":2,"kind":"player","frame":"1262081916:7","pos":[-77292.13594032457,31570.802805808005,-43156.849541078074],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","hp":1},"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":3,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":4,"wire":{"id":4,"kind":"mob","frame":"1262081916:7","pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"quat":[-0.30825049048640846,0.7184317765304369,-0.4867678516603024,-0.3897364188476911],"vel":[0,0,0],"mode":"alert","species":4,"level":2,"hp":0.7000000000000001},"remote":true,"shown":true,"drawn":true,"faunaShown":true,"targeted":true,"pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"world":[-77287.80847520386,31586.453716365104,-43153.147429315206]}]},"after":{"tick":33,"subjects":[{"id":1,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":2,"wire":{"id":2,"kind":"player","frame":"1262081916:7","pos":[-77292.13594032457,31570.802805808005,-43156.849541078074],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","hp":1},"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":3,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":4,"wire":{"id":4,"kind":"mob","frame":"1262081916:7","pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"quat":[-0.30825049048640846,0.7184317765304369,-0.4867678516603024,-0.3897364188476911],"vel":[0,0,0],"mode":"dead","species":4,"level":2,"hp":0},"remote":true,"shown":true,"drawn":true,"faunaShown":true,"targeted":true,"pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"world":[-77287.80847520386,31586.453716365104,-43153.147429315206]}]},"sameCamera":true}
+
+[90mstdout[2m | review.test.ts[2m > [22m[2mpost-retirement capture interval fault: camera
+[22m[39mCALLER_RESULT {"fault":"camera","error":"AssertionError: expected false to be true // Object.is equality"}
+RETIREMENT_CAPTURE {"fault":"camera","hash":"172f21fe6d7f4dff29500574f7e0c989f949e32a892007ddf1f03cddcb9cfea7","before":{"tick":32,"subjects":[{"id":1,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":2,"wire":{"id":2,"kind":"player","frame":"1262081916:7","pos":[-77292.13594032457,31570.802805808005,-43156.849541078074],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","hp":1},"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":3,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":4,"wire":{"id":4,"kind":"mob","frame":"1262081916:7","pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"quat":[-0.30825049048640846,0.7184317765304369,-0.4867678516603024,-0.3897364188476911],"vel":[0,0,0],"mode":"alert","species":4,"level":2,"hp":0.7000000000000001},"remote":true,"shown":true,"drawn":true,"faunaShown":true,"targeted":true,"pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"world":[-77287.80847520386,31586.453716365104,-43153.147429315206]}]},"after":{"tick":32,"subjects":[{"id":1,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":2,"wire":{"id":2,"kind":"player","frame":"1262081916:7","pos":[-77292.13594032457,31570.802805808005,-43156.849541078074],"quat":[0,0,0,1],"vel":[0,0,0],"mode":"foot","hp":1},"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":3,"wire":null,"remote":false,"shown":false,"drawn":false,"faunaShown":false,"targeted":false,"pos":null,"world":null},{"id":4,"wire":{"id":4,"kind":"mob","frame":"1262081916:7","pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"quat":[-0.30825049048640846,0.7184317765304369,-0.4867678516603024,-0.3897364188476911],"vel":[0,0,0],"mode":"alert","species":4,"level":2,"hp":0.7000000000000001},"remote":true,"shown":true,"drawn":true,"faunaShown":true,"targeted":true,"pos":[-77287.80847520386,31586.453716365104,-43153.147429315206],"world":[-77287.80847520386,31586.453716365104,-43153.147429315206]}]},"sameCamera":false}
+
+ [32m✓[39m review.test.ts[2m > [22mreal hostile combat with 1s post-hit scheduler delay[32m 33[2mms[22m[39m
+ [32m✓[39m review.test.ts[2m > [22mpost-retirement capture interval fault: none[32m 16[2mms[22m[39m
+ [32m✓[39m review.test.ts[2m > [22mpost-retirement capture interval fault: before[32m 14[2mms[22m[39m
+ [32m✓[39m review.test.ts[2m > [22mpost-retirement capture interval fault: during[32m 14[2mms[22m[39m
+ [32m✓[39m review.test.ts[2m > [22mpost-retirement capture interval fault: camera[32m 13[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 07:26:08
+[2m   Duration [22m 690ms[2m (import 43%, tests 40%, transform 17%)[22m
+
+JSON report written to /private/tmp/symbiotic-r7-fix-4z__e8gq/review-final.json
+
+lint-final
+{"name": "lint-final", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/private/tmp/symbiotic-r7-fix-4z__e8gq/lint.mjs"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 35891, "exit": 0, "seconds": 0.70979905128479, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/lint-final.log"}
+LAST OUTPUT LINES:
+
+{"errors":0,"warnings":0}
+
+types-final
+{"name": "types-final", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/private/tmp/symbiotic-r7-fix-4z__e8gq/types.mjs"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 35890, "exit": 0, "seconds": 2.700749158859253, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/types-final.log"}
+LAST OUTPUT LINES:
+
+{"diagnostics":0,"actualCheckout":true,"emit":false}
+
+format-final
+{"name": "format-final", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/private/tmp/symbiotic-r7-fix-4z__e8gq/format.mjs", "--check"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 36218, "exit": 0, "seconds": 0.26240992546081543, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/format-final.log"}
+LAST OUTPUT LINES:
+format PASS
+
+assertions-final
+{"name": "assertions-final", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/private/tmp/symbiotic-r7-fix-4z__e8gq/assertions.mjs"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 47038, "exit": 0, "seconds": 0.23975586891174316, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/assertions-final.log"}
+LAST OUTPUT LINES:
+{
+  "baseSha256": "e0e93db3515ea2362d85a24942ecf3e4b2abebb24ed3e60a78411c114b234ab1",
+  "currentSha256": "0ac7a011179f0f43505c93c608228941e328197d6e79eb7cfc8ae5787c4a0605",
+  "priorExpectCalls": 122,
+  "currentExpectCalls": 194,
+  "missingPriorExpectCalls": [],
+  "preservedTokenExactBlocks": [
+    "authoritative retirement wait",
+    "terminal owner page closure",
+    "original owner movement",
+    "original observer/target lifetime assertions"
+  ],
+  "limits": "Token equality preserves prior assertions. New capture framing/placement calls remain a separate native acceptance gate."
+}
+{"r7Preserved":174,"current":194,"unchangedFunctions":19}
+
+inventory-final
+{"name": "inventory-final", "argv": ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/node_modules/@playwright/test/cli.js", "test", "--config", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic.config.ts", "--list"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 47043, "exit": 0, "seconds": 0.9990730285644531, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/inventory-final.log"}
+LAST OUTPUT LINES:
+Listing tests:
+  symbiotic-online.spec.ts:627:1 › Bond is eligible, rendered, picked, follows, damages and retires on two real clients
+Total: 1 test in 1 file
+
+preservation-final
+{"name": "preservation-final", "argv": ["/opt/homebrew/bin/python3", "/private/tmp/symbiotic-r7-fix-4z__e8gq/audit-final.py"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 47317, "exit": 0, "seconds": 5.866130828857422, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/preservation-final.log"}
+LAST OUTPUT LINES:
+{"preserved": 21680, "r7ReviewFiles": 646, "patchPairs": 5, "objects": 75, "changedSource": ["packages/tools/src/smoke/symbiotic-online.spec.ts", "packages/tools/src/smoke/symbiotic-visibility.test.ts"], "accounting": {"fresh": 130, "priorFreshIdentitiesRetained": 118, "new": 12, "historicalUnchangedNotRerun": 345, "catalogTotal": 475}}
+
+source-whitespace
+{"name": "source-whitespace", "argv": ["git", "-C", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521", "diff", "--check"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 51111, "exit": 0, "seconds": 0.03892803192138672, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/source-whitespace.log"}
+LAST OUTPUT LINES:
+
+
+source-stage
+{"name": "source-stage", "argv": ["git", "-C", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521", "add", "packages/tools/src/smoke/symbiotic-online.spec.ts", "packages/tools/src/smoke/symbiotic-visibility.test.ts"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 51115, "exit": 0, "seconds": 0.020573854446411133, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/source-stage.log"}
+LAST OUTPUT LINES:
+
+
+source-commit
+{"name": "source-commit", "argv": ["git", "-C", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521", "-c", "core.hooksPath=/dev/null", "commit", "-m", "test: validate living retirement subjects across capture interval"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 51119, "exit": 0, "seconds": 0.04375910758972168, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/source-commit.log"}
+LAST OUTPUT LINES:
+[t3/P1-E07-T07-T09-live-qa ecf792131] test: validate living retirement subjects across capture interval
+ Committer: Andrey Yurlov <andreyyurlov@Andreys-MacBook-Pro.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 369 insertions(+), 3 deletions(-)
+
+report-stage
+{"name": "report-stage", "argv": ["git", "-C", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521", "add", "docs/review-records/p1-e07-t07-t09-r7-capture-endpoints"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 54819, "exit": 0, "seconds": 0.13935208320617676, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/report-stage.log"}
+
+
+report-whitespace
+{"name": "report-whitespace", "argv": ["git", "-C", "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521", "diff", "--cached", "--check"], "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq", "env": {"PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs", "GIT_OPTIONAL_LOCKS": "0", "COREPACK_ENABLE_NETWORK": "0", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache", "PYTHONDONTWRITEBYTECODE": "1"}, "pid": 54824, "exit": 2, "seconds": 0.023265838623046875, "timeout": false, "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/report-whitespace.log"}
+docs/review-records/p1-e07-t07-t09-r7-capture-endpoints/commands.txt:195: new blank line at EOF.
+docs/review-records/p1-e07-t07-t09-r7-capture-endpoints/source.patch:7: trailing whitespace.
++ 
+docs/review-records/p1-e07-t07-t09-r7-capture-endpoints/source.patch:113: trailing whitespace.
++ 
+docs/review-records/p1-e07-t07-t09-r7-capture-endpoints/source.patch:127: trailing whitespace.
++

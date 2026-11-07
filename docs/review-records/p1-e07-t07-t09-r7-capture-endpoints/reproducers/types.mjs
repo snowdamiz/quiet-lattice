@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import ts from '/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/typescript/lib/typescript.js';
+const repo='/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521';
+const root=path.dirname(new URL(import.meta.url).pathname);
+const config=ts.readConfigFile(repo+'/packages/tools/tsconfig.json',ts.sys.readFile);
+const parsed=ts.parseJsonConfigFileContent(config.config,ts.sys,repo+'/packages/tools');
+const options={...parsed.options,noEmit:true,incremental:false,tsBuildInfoFile:undefined};
+const host=ts.createCompilerHost(options);host.getCurrentDirectory=()=>repo;
+host.writeFile=()=>{throw new Error('READ_ONLY_BOUNDARY: TypeScript emit prohibited');};
+const program=ts.createProgram({rootNames:parsed.fileNames,options,host});
+const diagnostics=ts.getPreEmitDiagnostics(program);
+console.log(ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:p=>p,getCurrentDirectory:()=>root,getNewLine:()=> '\n'}));
+console.log(JSON.stringify({diagnostics:diagnostics.length,actualCheckout:true,emit:false}));process.exitCode=diagnostics.length?1:0;

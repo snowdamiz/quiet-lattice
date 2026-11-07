@@ -1,0 +1,188 @@
+{
+  "baseHead": "c57896661481836571a80e50ab6bbd657dbffe43",
+  "baseTree": "8a317228ab2ce9ba8f24234020605019bfb186f3",
+  "sourceHead": "ecf7921318812fec732c1bca89a725e69dd16104",
+  "sourceTree": "2909c7636976e8c27356434d67ad58208e624734",
+  "sourcePatchId": "f476cde68bca8b4e957f23af6476e71cd6689a30",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+  "branch": "t3/P1-E07-T07-T09-live-qa",
+  "sourceFiles": {
+    "packages/tools/src/smoke/symbiotic-online.spec.ts": {
+      "baseBlob": "eea247ba8dcec69ef02e784603e459eeb2f808a7",
+      "sha256": "0ac7a011179f0f43505c93c608228941e328197d6e79eb7cfc8ae5787c4a0605",
+      "blob": "07ea5ef4534f0d6d04f4b1816047f06850fca50d"
+    },
+    "packages/tools/src/smoke/symbiotic-visibility.test.ts": {
+      "baseBlob": "1603283992e0fdc2516fa1f530f280e8cfe300e9",
+      "sha256": "299ac0fb0ef79e74457456150794475248042dce7940b77700f20b2a7f928235",
+      "blob": "a682e3a54bcec6c5912cc92bf4b1215e64e40116"
+    }
+  },
+  "changedSourceFiles": [
+    "packages/tools/src/smoke/symbiotic-online.spec.ts",
+    "packages/tools/src/smoke/symbiotic-visibility.test.ts"
+  ],
+  "priorManifest": {
+    "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/docs/review-records/p1-e07-t07-t09-visibility-fix/manifest.json",
+    "sha256": "2c8b9431e50114816c9099e2f9b8775f15ac3112d17e4e2bc5a7a3af1a5dbc10"
+  },
+  "r7Review": {
+    "path": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8",
+    "seal": {
+      "utc": "2026-11-07T12:15:25.660501+00:00",
+      "report": "/private/tmp/symbiotic-source-review-c5789666-gseoebo8/Appendix-C.2.txt",
+      "reportSha256": "691e4b43d9a6dfe3a6bf4efec811a69f1a54a418556cbaa2815d0be7491db92b",
+      "manifestSha256": "6bc58becae2d1f8bfa5d3ee64a6d5a08c07472ee556dbd7d14ba3bd95b657849",
+      "sealedFileCount": 644,
+      "regularBytesExcludingSeal": 27774122,
+      "budgetBytes": 268435456,
+      "readOnly": true,
+      "immutableFiles": [
+        "Appendix-C.2.txt",
+        "SHA256SUMS",
+        "SEAL.json"
+      ],
+      "sourceHead": "c57896661481836571a80e50ab6bbd657dbffe43",
+      "sourceTree": "8a317228ab2ce9ba8f24234020605019bfb186f3"
+    }
+  },
+  "protectedReceipt": "protected-after.json",
+  "protectedFilesUnchanged": 21680,
+  "r7SealedFilesVerified": 646,
+  "integrationPatches": [
+    {
+      "reviewed": "be2d4704b8d5ba837a2da28ac106cdfaf81b38c9",
+      "integrated": "99b8bd9e8067c4c6f0d619a5afebf2d45e6ec7af",
+      "reviewedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151",
+      "integratedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151"
+    },
+    {
+      "reviewed": "c0b9c9ba966302b3e7b960129e1c8307e35b7667",
+      "integrated": "20984163e9af0e2586a5be2add6e41e28727c1b0",
+      "reviewedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b",
+      "integratedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b"
+    },
+    {
+      "reviewed": "52da4eff0d2f354cb18198232a7c8a37c9529a41",
+      "integrated": "1189e1c5d33a1bbf3f4ecf741158ba396835ab1d",
+      "reviewedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a",
+      "integratedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a"
+    },
+    {
+      "reviewed": "bf09bc72543ed74b7dc7386415471d26a36a4b6d",
+      "integrated": "079ee3795e213a308b1e43244500fa4bdf4cc81f",
+      "reviewedPatchId": "9900bb683d95590d018b572060e6f99728521657",
+      "integratedPatchId": "9900bb683d95590d018b572060e6f99728521657"
+    },
+    {
+      "reviewed": "d688579adf31c2a8ee9836495ba6b32708b99ccd",
+      "integrated": "74360adf8cfb8e0d5ee7c7e0dbee07de02808904",
+      "reviewedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28",
+      "integratedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28"
+    }
+  ],
+  "protectedObjects": {
+    "docs/ARCHITECTURE.md": "db72a4273c3859a7063a1622871e16e197ecbf65",
+    "docs/DESIGN.md": "fa1a4fb6c67f1efd72e1b711948d4382f9fa6e77",
+    "packages/client/src/Game.js": "f0dacdfb6745be09bbfa2eb8ce092430b997b5a2",
+    "packages/client/src/Game.test.js": "51c947fc63800fbb0b04206c9c03eba73b888556",
+    "packages/client/src/dev/playthrough.js": "964479aa7ddaa599a6c9b3ccf7af6612ae1da396",
+    "packages/client/src/dev/review.js": "8b5ccb2b1b02adcc25c3ca5e5f4fb71bb8567f9d",
+    "packages/client/src/dev/take.js": "eb2b5a5f1558137df57a19794d57f897fc1acad4",
+    "packages/client/src/gameplay/Fauna.js": "e08a6274038c5afab73bbb1b9fef460e4c5a82e5",
+    "packages/client/src/gameplay/Fauna.test.js": "05e13ce623896a5f2ea10ad07c0d06c028694eaa",
+    "packages/client/src/net/abilities.js": "90f6ed17f2885d193331ff3ef8ee728ff5681bb5",
+    "packages/client/src/net/abilities.test.js": "c49d687d2f37e2400df41b71ddc36161579e94d6",
+    "packages/client/src/remote/RemoteEntities.js": "f88e41069540022d1e8fdfa4aead0606557d8de0",
+    "packages/client/src/remote/RemoteEntities.test.js": "34f78d0e612a1a352482dbff31184d551c276c37",
+    "packages/client/src/remote/RemoteShips.js": "f3ce9cb36cf45421fb5993eefb352e7f1aba6421",
+    "packages/client/src/remote/RemoteShips.test.js": "4dcae71ab25fefba1a495147554722da6ace7f63",
+    "packages/client/src/remote/replay.js": "36bf465ad93b284926ea2281fc9d3b38db2eec75",
+    "packages/client/src/ui/HUD.js": "1d8a20c26a98420fec0de18901e558a535d96607",
+    "packages/client/src/ui/HUD.test.js": "3347f941d21f17f7e68a8d4976d5337b4f8bb0e4",
+    "packages/client/src/ui/style.css": "fb7c106c674278af133c9a91681b00d13b7387b6",
+    "packages/client/src/universe/Universe.test.js": "2d818f390ef087f0563220058d3b2fcc700462d1",
+    "packages/server/src/abilities/book.ts": "2cbe1ad9d882da6d5023a3837a58a468eb7badfa",
+    "packages/server/src/abilities/resonance.test.ts": "d0a5bd6bde6eaf0ad5b7c468828fc4a4aed935ef",
+    "packages/server/src/abilities/retirement.test.ts": "fbd1a6bfd62c6cf4aa7675b76d86ae616e2d57b4",
+    "packages/server/src/abilities/service.test.ts": "7f723a2ae3c5b5fb315499f23cd026dfe8c90926",
+    "packages/server/src/abilities/service.ts": "c5ab5b0e7120105fb0a4ed48586ff9c8054a7082",
+    "packages/server/src/abilities/statuses.ts": "6fd2c50e06f64e19cdc4116f717c006c39c7f568",
+    "packages/server/src/abilities/symbiotic.test.ts": "a1db9ca3bcf7122d61d83f7e0c973785a6ccd024",
+    "packages/server/src/abilities/symbiotic.ts": "f9f6b361105a93be96629f58b195b68ef33c3fe0",
+    "packages/server/src/abilities/thermal.test.ts": "afddacad1f6753b467d039590716f4cc449abe21",
+    "packages/server/src/abilities/thermal.ts": "276f6b1b5bd07b974a97633a905d638b0607ed9a",
+    "packages/server/src/combat/zone.ts": "2912d5d947e42f2a4a6a8ea04b006d1c86613051",
+    "packages/server/src/events/service.test.ts": "09dd5b86e1c4a3432c2adb1ea0faaf37e368f922",
+    "packages/server/src/events/service.ts": "65f1f545b44dbf604d1ad3b217965821a66b424c",
+    "packages/server/src/fauna/ai.ts": "688ee63a8b8e1e28f88018cb64ce2afc5f45933b",
+    "packages/server/src/fauna/sim.ts": "f86ca789e3ac16532c8afb78547a951a523664ad",
+    "packages/server/src/fauna/symbiotic.ts": "2f75653add237c20609178d8716504572d4b9339",
+    "packages/server/src/gateway/ws.ts": "75b5f605d6885baf2f567a489a609329edf0772f",
+    "packages/server/src/meters/suit.test.ts": "5bf252d62f8c20fbe03782b6637ea96e2f0f707e",
+    "packages/server/src/phases/manager.ts": "2d386d8645c90dd9fb6ed1364fdf0e9d7a9067c0",
+    "packages/server/src/zones/manager.test.ts": "c07ac1a28f00de13de833671c1647229cde4a5f3",
+    "packages/server/src/zones/manager.ts": "a26db1b4044ae052496e583e824b8ae982337aed",
+    "packages/server/src/zones/regen.test.ts": "b6037c54f704b3b7a2241acbc6509839a40dd61a",
+    "packages/server/src/zones/wake.test.ts": "10f03923c5c0c3d205cdf74c60ac40394073a37c",
+    "packages/server/src/zones/zone.ts": "ed00736267f2e1803849989902b21178d3c48487",
+    "packages/server/test/pilot.ts": "a00853be53b6eabdd945d88f588293b1628c1d4d",
+    "packages/server/test/symbiotic.int.test.ts": "d2a170d5d259bc52fa9637a08fc42768410067c6",
+    "packages/shared/src/abilities/index.ts": "984e9708be93898c9907bde86dc4e851730bf2e3",
+    "packages/shared/src/abilities/symbiotic.ts": "940d1e6e88b28a1a3da48cce6b79e28355b6423c",
+    "packages/shared/src/data/skills/symbiotic.ts": "dee8a4167944d535c569482382d6076f8a9f3193",
+    "packages/shared/src/ships/stats.ts": "d573cf00241d22ebe120c417109ea9b16cc8c4e3",
+    "packages/tools/src/capture/screens.test.ts": "c28ea23974ed1be43ecbcba2da3fe76120c4ab37",
+    "packages/tools/src/capture/screens.ts": "42cb996338dc630e320ae7e8975f175fea6fa618",
+    "packages/tools/src/gates/removed.test.ts": "045f9f106da8b3f118243fed6978286e650eec85",
+    "packages/tools/src/gates/removed.ts": "9639556690a847385ac6273d63b4d8b3dae80088",
+    "packages/tools/src/smoke/fauna-online.spec.ts": "d13e819e84f11ab547b47b5a7426fc6feb845636",
+    "docs/IMPLEMENTATION_PLAN.md": "1ca913f0df6ef614a984b5de8781efc88ac1e3a1",
+    "docs/PROGRESS.md": "c7e6b14b17ac8a9203eb58347d4f0075cdbd48f7",
+    "docs/DECISIONS.md": "83e40a48971117f2432fb2abe41ad7f6f8171670",
+    "packages/shared/src/exosuit": "79a0be9c0369da5271703ad1105eb8f2e9506662",
+    "packages/shared/src/skills": "af5017b78aeabd5368daa3907f188d38491a8bce",
+    "packages/server/test/gatewayPersistence.test.ts": "248c4fffc4f426834fca3e83a7d69bc2379c0995",
+    "packages/server/test/helpers.ts": "aac3bb9825ed2123770c2e14cc7e880e072018e6",
+    "packages/server/src/persistence": "43222c5370f3ae1b0ca359b9104dba190fba7747",
+    "packages/server/src/skills": "8f624842495713517e4b95152670e1e4768271b7",
+    "packages/server/src/reputation": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2",
+    "packages/server/src/abilities/eligibility.test.ts": "6f36f19d1429cb8c40ee0c4a2b35c66e0d585b39",
+    "packages/client/src/core/Engine.js": "60a5f814df184642b88d3a1366618aa57d6b4ba9",
+    "packages/client/src/gameplay/modelLibrary.js": "385a7f97014afe0072baefe0234d592d7b70b5b9",
+    "packages/client/src/render": "006eba39102137053d1e14f2a4df412f200391d0",
+    "packages/tools/src/art": "3450d02662eb45c9f48be5de33eb3a0bf00b7742",
+    "assets": "b9780f893547190dd896e2735e406f73e9c4ed6b",
+    "blender": "af124f3e13df0e47bb44a77df96adf2c74e6bc15",
+    "packages/client/public": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1",
+    "package.json": "c865f10af15c363e52a00d52ec9bf895c4ff1ea9",
+    "pnpm-lock.yaml": "fa850c2e93a386a217a116f9c1d7f5d2bafffcd6"
+  },
+  "assertionReceipt": "r7-assertion-preservation.json",
+  "priorOriginalAssertions": 122,
+  "priorR7Assertions": 174,
+  "currentAssertions": 194,
+  "freshFocusedTests": 130,
+  "freshRetainedReviewControls": 10,
+  "reviewRed": {
+    "pass": 8,
+    "fail": 2
+  },
+  "newPermanentTests": 12,
+  "history": {
+    "reusedUnchangedTestIdentities": 345,
+    "catalogTotal": 475
+  },
+  "imageCap": 8,
+  "newRuntime": false,
+  "newImages": 0,
+  "newClaimOrGrant": false,
+  "conflictResolutions": [],
+  "scope": "fixture + focused CPU tests + exclusive evidence only; no product/assets/harness changes",
+  "pending": [
+    "independent R8 source review",
+    "parent fresh one-shot admission and native visible capture",
+    "independent pixels/art acceptance"
+  ],
+  "finalDeliveryPinReceipt": "/private/tmp/symbiotic-r7-fix-4z__e8gq/final-receipt.json"
+}

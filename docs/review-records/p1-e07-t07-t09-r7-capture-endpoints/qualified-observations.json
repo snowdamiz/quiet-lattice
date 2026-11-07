@@ -1,0 +1,4231 @@
+{
+  "CALLER_RESULT": [
+    {
+      "fault": "none",
+      "error": "undefined"
+    },
+    {
+      "fault": "before",
+      "error": "AssertionError: expected 0 to be greater than 0"
+    },
+    {
+      "fault": "during",
+      "error": "AssertionError: expected 0 to be greater than 0"
+    },
+    {
+      "fault": "camera",
+      "error": "AssertionError: expected false to be true // Object.is equality"
+    }
+  ],
+  "RETIREMENT_CAPTURE": [
+    {
+      "fault": "none",
+      "hash": "172f21fe6d7f4dff29500574f7e0c989f949e32a892007ddf1f03cddcb9cfea7",
+      "before": {
+        "tick": 32,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "alert",
+              "species": 4,
+              "level": 2,
+              "hp": 0.7000000000000001
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "after": {
+        "tick": 32,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "alert",
+              "species": 4,
+              "level": 2,
+              "hp": 0.7000000000000001
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "sameCamera": true
+    },
+    {
+      "fault": "before",
+      "hash": "172f21fe6d7f4dff29500574f7e0c989f949e32a892007ddf1f03cddcb9cfea7",
+      "before": {
+        "tick": 33,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "dead",
+              "species": 4,
+              "level": 2,
+              "hp": 0
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "after": {
+        "tick": 33,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "dead",
+              "species": 4,
+              "level": 2,
+              "hp": 0
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "sameCamera": true
+    },
+    {
+      "fault": "during",
+      "hash": "172f21fe6d7f4dff29500574f7e0c989f949e32a892007ddf1f03cddcb9cfea7",
+      "before": {
+        "tick": 32,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "alert",
+              "species": 4,
+              "level": 2,
+              "hp": 0.7000000000000001
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "after": {
+        "tick": 33,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "dead",
+              "species": 4,
+              "level": 2,
+              "hp": 0
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "sameCamera": true
+    },
+    {
+      "fault": "camera",
+      "hash": "172f21fe6d7f4dff29500574f7e0c989f949e32a892007ddf1f03cddcb9cfea7",
+      "before": {
+        "tick": 32,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "alert",
+              "species": 4,
+              "level": 2,
+              "hp": 0.7000000000000001
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "after": {
+        "tick": 32,
+        "subjects": [
+          {
+            "id": 1,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 2,
+            "wire": {
+              "id": 2,
+              "kind": "player",
+              "frame": "1262081916:7",
+              "pos": [
+                -77292.13594032457,
+                31570.802805808005,
+                -43156.849541078074
+              ],
+              "quat": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "foot",
+              "hp": 1
+            },
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 3,
+            "wire": null,
+            "remote": false,
+            "shown": false,
+            "drawn": false,
+            "faunaShown": false,
+            "targeted": false,
+            "pos": null,
+            "world": null
+          },
+          {
+            "id": 4,
+            "wire": {
+              "id": 4,
+              "kind": "mob",
+              "frame": "1262081916:7",
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "quat": [
+                -0.30825049048640846,
+                0.7184317765304369,
+                -0.4867678516603024,
+                -0.3897364188476911
+              ],
+              "vel": [
+                0,
+                0,
+                0
+              ],
+              "mode": "alert",
+              "species": 4,
+              "level": 2,
+              "hp": 0.7000000000000001
+            },
+            "remote": true,
+            "shown": true,
+            "drawn": true,
+            "faunaShown": true,
+            "targeted": true,
+            "pos": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ],
+            "world": [
+              -77287.80847520386,
+              31586.453716365104,
+              -43153.147429315206
+            ]
+          }
+        ]
+      },
+      "sameCamera": false
+    }
+  ],
+  "REAL_COMBAT": [
+    {
+      "delay": 0,
+      "hitAt": 1001.8999999999983,
+      "now": 1001.8999999999983,
+      "health": 0.7000000000000001,
+      "modes": [
+        "attack",
+        "alert"
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "PASS",
+          "bounds": [
+            {
+              "id": 3,
+              "min": [
+                -0.2699137687646345,
+                -0.43405741777523665,
+                0.9517080135540337
+              ],
+              "max": [
+                -0.07319179152238241,
+                0.40847490571015066,
+                0.9710668185251742
+              ],
+              "centre": [
+                -77304.63608518972,
+                31556.87332425511,
+                -43148.312769948905
+              ],
+              "species": 0,
+              "size": 1.3059523050673307
+            },
+            {
+              "id": 4,
+              "min": [
+                0.036606115716154394,
+                -0.3534567562603886,
+                0.9628289306569395
+              ],
+              "max": [
+                0.19129105837536,
+                0.2870776592446169,
+                0.9781187496728306
+              ],
+              "centre": [
+                -77306.04291116062,
+                31556.288466754253,
+                -43146.03262634371
+              ],
+              "species": 4,
+              "size": 1.7251082592643798
+            }
+          ]
+        },
+        {
+          "role": "observer",
+          "result": "PASS",
+          "bounds": [
+            {
+              "id": 3,
+              "min": [
+                -0.18594969285157611,
+                -0.2380063900293128,
+                0.9775777783248751
+              ],
+              "max": [
+                -0.04144880812234124,
+                0.2351063675236913,
+                0.9824585153652861
+              ],
+              "centre": [
+                -77304.63608518972,
+                31556.87332425511,
+                -43148.312769948905
+              ],
+              "species": 0,
+              "size": 1.3059523050673307
+            },
+            {
+              "id": 4,
+              "min": [
+                0.02717670946666085,
+                -0.22870546828439206,
+                0.9787396145891493
+              ],
+              "max": [
+                0.1497366137510567,
+                0.19545543489160896,
+                0.9843283848921485
+              ],
+              "centre": [
+                -77306.04291116062,
+                31556.288466754253,
+                -43146.03262634371
+              ],
+              "species": 4,
+              "size": 1.7251082592643798
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "delay": 0.2,
+      "hitAt": 1001.8999999999983,
+      "now": 1002.0999999999981,
+      "health": 0.7000000000000001,
+      "modes": [
+        "attack",
+        "charge"
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "PASS",
+          "bounds": [
+            {
+              "id": 3,
+              "min": [
+                -0.24483647588510743,
+                -0.4320899688115466,
+                0.9521015323918974
+              ],
+              "max": [
+                -0.05028174867400049,
+                0.4072504821792339,
+                0.9711559056161483
+              ],
+              "centre": [
+                -77304.63608518972,
+                31556.87332425511,
+                -43148.312769948905
+              ],
+              "species": 0,
+              "size": 1.3059523050673307
+            },
+            {
+              "id": 4,
+              "min": [
+                0.018284825850903557,
+                -0.37896174793300047,
+                0.9596268330306372
+              ],
+              "max": [
+                0.18269434736447251,
+                0.30342104956692706,
+                0.977002399863518
+              ],
+              "centre": [
+                -77305.76671290604,
+                31556.320913062922,
+                -43146.5037648969
+              ],
+              "species": 4,
+              "size": 1.7251082592643798
+            }
+          ]
+        },
+        {
+          "role": "observer",
+          "result": "PASS",
+          "bounds": [
+            {
+              "id": 3,
+              "min": [
+                -0.1670073317339293,
+                -0.23739652878932577,
+                0.977675350703023
+              ],
+              "max": [
+                -0.02333862178012759,
+                0.23477733661717703,
+                0.9824774439502386
+              ],
+              "centre": [
+                -77304.63608518972,
+                31556.87332425511,
+                -43148.312769948905
+              ],
+              "species": 0,
+              "size": 1.3059523050673307
+            },
+            {
+              "id": 4,
+              "min": [
+                0.00407260305047153,
+                -0.2353724285485749,
+                0.9781216533022421
+              ],
+              "max": [
+                0.13775182266903072,
+                0.20041418619289147,
+                0.9839423629342267
+              ],
+              "centre": [
+                -77305.76671290604,
+                31556.320913062922,
+                -43146.5037648969
+              ],
+              "species": 4,
+              "size": 1.7251082592643798
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "delay": 0.5,
+      "hitAt": 1001.8999999999983,
+      "now": 1002.3999999999978,
+      "health": 0.7000000000000001,
+      "modes": [
+        "attack",
+        "attack"
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "REJECT",
+          "error": "AssertionError: full projected combatant bodies must be separated: expected 0.2660297544014467 to be greater than 8"
+        },
+        {
+          "role": "observer",
+          "result": "REJECT",
+          "error": "AssertionError: full projected combatant bodies must be separated: expected -19.152453070215486 to be greater than 8"
+        }
+      ]
+    },
+    {
+      "delay": 1,
+      "hitAt": 1001.8999999999983,
+      "now": 1002.8999999999974,
+      "health": 0.7000000000000001,
+      "modes": [
+        "attack",
+        "attack"
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "REJECT",
+          "error": "AssertionError: full projected combatant bodies must be separated: expected -4.287558538989289 to be greater than 8"
+        },
+        {
+          "role": "observer",
+          "result": "REJECT",
+          "error": "AssertionError: full projected combatant bodies must be separated: expected -22.821390433424988 to be greater than 8"
+        }
+      ]
+    }
+  ],
+  "RETIREMENT_INTERVAL_CPU": [
+    {
+      "fault": "none",
+      "error": "undefined",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1587.076667,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1587.108084,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    },
+    {
+      "fault": "before",
+      "error": "AssertionError: expected 0 to be greater than 0",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 33,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1601.977209,
+          "rendererFrame": 5,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "dead",
+                "species": 4,
+                "level": 2,
+                "hp": 0
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 33,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1601.993667,
+          "rendererFrame": 5,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "dead",
+                "species": 4,
+                "level": 2,
+                "hp": 0
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    },
+    {
+      "fault": "during",
+      "error": "AssertionError: expected 0 to be greater than 0",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1614.581625,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 33,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1614.827959,
+          "rendererFrame": 5,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "dead",
+                "species": 4,
+                "level": 2,
+                "hp": 0
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    },
+    {
+      "fault": "camera",
+      "error": "AssertionError: expected false to be true // Object.is equality",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1626.832917,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1627.121584,
+          "rendererFrame": 13,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              -0.2731600026804073,
+              -0.008597539245111736,
+              0.5064352335917457,
+              0.817822138017456
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              -0.2731600026804073,
+              -0.008597539245111736,
+              0.5064352335917457,
+              0.817822138017456
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    },
+    {
+      "fault": "observer-before",
+      "error": "AssertionError: expected 0 to be greater than 0",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 33,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1639.554334,
+          "rendererFrame": 5,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 0
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 33,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1639.570292,
+          "rendererFrame": 5,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 0
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    },
+    {
+      "fault": "observer-during",
+      "error": "AssertionError: expected 0 to be greater than 0",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1651.477084,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 33,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1651.728334,
+          "rendererFrame": 5,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 0
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    },
+    {
+      "fault": "undrawn-before",
+      "error": "AssertionError: expected { id: 4, wire: { id: 4, \u2026(9) }, \u2026(7) } to match object { remote: true, shown: true, \u2026(3) }\n(14 matching properties omitted from actual)",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1662.975375,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1662.995334,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    },
+    {
+      "fault": "undrawn-during",
+      "error": "AssertionError: expected { id: 4, wire: { id: 4, \u2026(9) }, \u2026(7) } to match object { remote: true, shown: true, \u2026(3) }\n(14 matching properties omitted from actual)",
+      "binding": {
+        "name": "disconnect-observer",
+        "role": "observer",
+        "pngSha256": "231e7062e6187bb5efe1c3f2ddfe3392b6a84a3f0e75450de4d707f5aa0f30c9",
+        "before": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1673.893875,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": true,
+              "faunaShown": true,
+              "targeted": true,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        },
+        "after": {
+          "joined": true,
+          "clientId": 2,
+          "tick": 32,
+          "serverTime": 1001.7499999999986,
+          "ack": 20,
+          "sampledAt": 1673.91575,
+          "rendererFrame": 4,
+          "frame": "1262081916:7",
+          "cameraBody": 7,
+          "camera": {
+            "pos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "quat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "worldPos": [
+              -77293.53399016235,
+              31571.37385427502,
+              -43157.630156411906
+            ],
+            "worldQuat": [
+              0.1441028233094097,
+              -0.5930789380005107,
+              0.5393313842377196,
+              0.5801839428928282
+            ],
+            "projection": [
+              0.8033332537924395,
+              0,
+              0,
+              0,
+              0,
+              1.4281480067421146,
+              0,
+              0,
+              0,
+              0,
+              -1.00000002,
+              -1,
+              0,
+              0,
+              -0.200000002,
+              0
+            ],
+            "fov": 70,
+            "near": 0.1,
+            "far": 10000000,
+            "aspect": 1.7777777777777777
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "pixelRatio": 1
+          },
+          "subjects": [
+            {
+              "id": 1,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 2,
+              "wire": {
+                "id": 2,
+                "kind": "player",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77292.13594032457,
+                  31570.802805808005,
+                  -43156.849541078074
+                ],
+                "quat": [
+                  0,
+                  0,
+                  0,
+                  1
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "foot",
+                "hp": 1
+              },
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 3,
+              "wire": null,
+              "remote": false,
+              "shown": false,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": null,
+              "world": null
+            },
+            {
+              "id": 4,
+              "wire": {
+                "id": 4,
+                "kind": "mob",
+                "frame": "1262081916:7",
+                "pos": [
+                  -77287.80847520386,
+                  31586.453716365104,
+                  -43153.147429315206
+                ],
+                "quat": [
+                  -0.30825049048640846,
+                  0.7184317765304369,
+                  -0.4867678516603024,
+                  -0.3897364188476911
+                ],
+                "vel": [
+                  0,
+                  0,
+                  0
+                ],
+                "mode": "alert",
+                "species": 4,
+                "level": 2,
+                "hp": 0.7000000000000001
+              },
+              "remote": true,
+              "shown": true,
+              "drawn": false,
+              "faunaShown": false,
+              "targeted": false,
+              "pos": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ],
+              "world": [
+                -77287.80847520386,
+                31586.453716365104,
+                -43153.147429315206
+              ]
+            }
+          ],
+          "picked": null,
+          "bannerOpacity": 0,
+          "overlay": null
+        }
+      }
+    }
+  ],
+  "CONCURRENT_COMBAT_CPU": [
+    {
+      "delay": 0,
+      "hitAt": 1001.8999999999983,
+      "walkingTicks": 11,
+      "enemyTravel": 0.06403279650825529,
+      "eventToFreeze": 0.049999999999954525,
+      "stages": [
+        {
+          "kind": "thaw",
+          "time": 1000.1499999999999,
+          "tick": 3
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1000.6999999999994,
+          "tick": 14
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1001.099999999999,
+          "tick": 22
+        },
+        {
+          "kind": "event-hp-0",
+          "time": 1001.8999999999983,
+          "tick": 38
+        },
+        {
+          "kind": "event-hp-1",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-request",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-effective",
+          "time": 1001.9499999999982,
+          "tick": 39
+        }
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "PASS",
+          "detail": {
+            "bounds": [
+              {
+                "id": 3,
+                "min": [
+                  -0.2684617852378322,
+                  -0.4338996736545194,
+                  0.951731276573824
+                ],
+                "max": [
+                  -0.07186683208155586,
+                  0.40843866768346426,
+                  0.9710722175199753
+                ],
+                "centre": [
+                  -77304.63601762852,
+                  31556.87335095277,
+                  -43148.312871466165
+                ],
+                "species": 0,
+                "size": 1.3059523050673307
+              },
+              {
+                "id": 4,
+                "min": [
+                  0.03579564125200797,
+                  -0.35682753644556997,
+                  0.9623985515674265
+                ],
+                "max": [
+                  0.1918633638079878,
+                  0.2892819430935994,
+                  0.9779680781390439
+                ],
+                "centre": [
+                  -77306.01893985247,
+                  31556.27002196761,
+                  -43146.089066618435
+                ],
+                "species": 4,
+                "size": 1.7251082592643798
+              }
+            ],
+            "surroundings": {
+              "clientId": 1,
+              "ships": [
+                {
+                  "distance": 57.773910275316226,
+                  "angle": 148.16176036947445
+                },
+                {
+                  "distance": 53.492889129752875,
+                  "angle": 164.11727747708656
+                }
+              ],
+              "paving": 1
+            }
+          }
+        },
+        {
+          "role": "observer",
+          "result": "PASS",
+          "detail": {
+            "bounds": [
+              {
+                "id": 3,
+                "min": [
+                  -0.18435366296465522,
+                  -0.23794075716901317,
+                  0.9775863866417558
+                ],
+                "max": [
+                  -0.039926618040884015,
+                  0.23508519618165707,
+                  0.9824603831912877
+                ],
+                "centre": [
+                  -77304.63601762852,
+                  31556.87335095277,
+                  -43148.312871466165
+                ],
+                "species": 0,
+                "size": 1.3059523050673307
+              },
+              {
+                "id": 4,
+                "min": [
+                  0.02536085661730374,
+                  -0.2298721763397707,
+                  0.9786259104771018
+                ],
+                "max": [
+                  0.14909074054656443,
+                  0.1963175366859434,
+                  0.9842624681484872
+                ],
+                "centre": [
+                  -77306.01893985247,
+                  31556.27002196761,
+                  -43146.089066618435
+                ],
+                "species": 4,
+                "size": 1.7251082592643798
+              }
+            ],
+            "surroundings": {
+              "clientId": 2,
+              "ships": [
+                {
+                  "distance": 56.8779366821913,
+                  "angle": 123.22345200238952
+                },
+                {
+                  "distance": 51.24603956431902,
+                  "angle": 139.18559138290522
+                }
+              ],
+              "paving": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "delay": 0.2,
+      "hitAt": 1001.8999999999983,
+      "walkingTicks": 11,
+      "enemyTravel": 0.7865371119823616,
+      "eventToFreeze": 0.24999999999977263,
+      "stages": [
+        {
+          "kind": "thaw",
+          "time": 1000.1499999999999,
+          "tick": 3
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1000.6999999999994,
+          "tick": 14
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1001.099999999999,
+          "tick": 22
+        },
+        {
+          "kind": "event-hp-0",
+          "time": 1001.8999999999983,
+          "tick": 38
+        },
+        {
+          "kind": "event-hp-1",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-request",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-effective",
+          "time": 1002.149999999998,
+          "tick": 43
+        }
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "PASS",
+          "detail": {
+            "bounds": [
+              {
+                "id": 3,
+                "min": [
+                  -0.23121204037553705,
+                  -0.4312478579526621,
+                  0.952299272747971
+                ],
+                "max": [
+                  -0.0377002528569307,
+                  0.4066318738285299,
+                  0.971195128678555
+                ],
+                "centre": [
+                  -77304.63608518972,
+                  31556.87332425511,
+                  -43148.312769948905
+                ],
+                "species": 0,
+                "size": 1.3059523050673307
+              },
+              {
+                "id": 4,
+                "min": [
+                  0.0070831472899692514,
+                  -0.38911012551896496,
+                  0.9583654152509649
+                ],
+                "max": [
+                  0.17496524111569978,
+                  0.3097749420483524,
+                  0.9765695467633824
+                ],
+                "centre": [
+                  -77305.63437757816,
+                  31556.378585303908,
+                  -43146.698689863944
+                ],
+                "species": 4,
+                "size": 1.7251082592643798
+              }
+            ],
+            "surroundings": {
+              "clientId": 1,
+              "ships": [
+                {
+                  "distance": 57.77391027771198,
+                  "angle": 145.74106892921074
+                },
+                {
+                  "distance": 53.4928891305291,
+                  "angle": 161.69664727946005
+                }
+              ],
+              "paving": 1
+            }
+          }
+        },
+        {
+          "role": "observer",
+          "result": "REJECT",
+          "detail": "AssertionError: full projected combatant bodies must be separated: expected 4.404890588496145 to be greater than 8"
+        }
+      ]
+    },
+    {
+      "delay": 0.5,
+      "hitAt": 1001.8999999999983,
+      "walkingTicks": 11,
+      "enemyTravel": 1.2324352309591509,
+      "eventToFreeze": 0.5499999999994998,
+      "stages": [
+        {
+          "kind": "thaw",
+          "time": 1000.1499999999999,
+          "tick": 3
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1000.6999999999994,
+          "tick": 14
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1001.099999999999,
+          "tick": 22
+        },
+        {
+          "kind": "event-hp-0",
+          "time": 1001.8999999999983,
+          "tick": 38
+        },
+        {
+          "kind": "event-hp-1",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-request",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-effective",
+          "time": 1002.4499999999978,
+          "tick": 49
+        }
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "REJECT",
+          "detail": "AssertionError: full projected combatant bodies must be separated: expected -1.25745565498954 to be greater than 8"
+        },
+        {
+          "role": "observer",
+          "result": "REJECT",
+          "detail": "AssertionError: full projected combatant bodies must be separated: expected -20.383170812664545 to be greater than 8"
+        }
+      ]
+    },
+    {
+      "delay": 1,
+      "hitAt": 1001.8999999999983,
+      "walkingTicks": 11,
+      "enemyTravel": 1.2758009577054752,
+      "eventToFreeze": 1.049999999999045,
+      "stages": [
+        {
+          "kind": "thaw",
+          "time": 1000.1499999999999,
+          "tick": 3
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1000.6999999999994,
+          "tick": 14
+        },
+        {
+          "kind": "walk-wait",
+          "time": 1001.099999999999,
+          "tick": 22
+        },
+        {
+          "kind": "event-hp-0",
+          "time": 1001.8999999999983,
+          "tick": 38
+        },
+        {
+          "kind": "event-hp-1",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-request",
+          "time": 1001.9499999999982,
+          "tick": 39
+        },
+        {
+          "kind": "freeze-effective",
+          "time": 1002.9499999999973,
+          "tick": 59
+        }
+      ],
+      "views": [
+        {
+          "role": "owner",
+          "result": "REJECT",
+          "detail": "AssertionError: full projected combatant bodies must be separated: expected -4.234986922898446 to be greater than 8"
+        },
+        {
+          "role": "observer",
+          "result": "REJECT",
+          "detail": "AssertionError: full projected combatant bodies must be separated: expected -22.779191792664072 to be greater than 8"
+        }
+      ]
+    }
+  ]
+}
