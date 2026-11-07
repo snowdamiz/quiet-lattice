@@ -1,0 +1,181 @@
+TASK: P1.E07.T14 — R2 combined source correction and exact reviewed T15 adoption
+
+STATUS: DONE for this authorized source unit. All four R2 findings are addressed in the combined source. Fresh independent R3, native ownership/capture and visual acceptance remain separate pending gates.
+
+SUMMARY: Reproduced all four R2 findings before edits, then fixed original callback/error retention, bounded cache acquisition/verification and PNG critical-palette ordering. Adopted the parent-approved T15 two-file commit separately without modification, and proved original cleanup reproductions GREEN through actual entry/default loader/captureReview. A further actual-entry RED exposed undefined-value loss in JSON; the task-local serializer now preserves it. Both runtime flags and readiness stay false; no real grant or native capture.
+
+Exact provenance:
+- worktree: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`
+- branch: `task/P1-E07-T14-effects`
+- base: `4ec25fcef7d7cedada964bbef986c30459eedcc0`
+- baseTree: `0e20b55d8ac055f34a1f4d26964c3c0220848a03`
+- taskLocalFixCommit: `c48df848e654ff40e86011dc5013c3391fc26b62`
+- reviewedSharedCommit: `38b6c4b58db43146df20cd760808d1461d7a667b`
+- sharedAdoptionCommit: `18add9e19f65260d4201be1b23344ead827dd32e`
+- sharedAdoptionTree: `108669143dbf57c2d51808e0731a8fb527c8332b`
+- head: `587989af34fab480703f282084d20e2a27bbee48`
+- tree: `4d87ff72f0a72dbbcbbfde0fcc4ba3ede41d89c5`
+- readinessSha256: `7978e31584c5152eca089fb1b6d2838c8f2ff2acf88d7be3908b008bfa76fa8b`
+- patchSha256: `965d9a5b7d4a532957ced981d4e184014816039fab021dd621cd4c5160680569`
+- protectedManifestSha256: `5e011c032acf0c38f7293405e52fdf5e718397e8cbf0b96b970aa5091673b47c`
+- assetHead: `2643aca9d8b85a45498d85eb637d20260ebf06d1`
+- assetTree: `6038b7d94b0208f3173d2449df5d7578fb4c2aa0`
+- helperRecoveryCommit: `22506166571d4045eeb4902b1f278bdcafa2ad19`
+- helperOriginalCommit: `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9`
+- Git status: clean, including all untracked files. Separate T15 cherry-pick has exact reviewed Git blobs and byte-identical full-index patch; original review PASS was not widened to caller/native acceptance.
+
+FILES CHANGED:
+- `packages/tools/src/capture/capture.lifecycle.test.ts` — exact reviewed T15 adoption, no local modification
+- `packages/tools/src/capture/capture.ts` — exact reviewed T15 adoption, no local modification
+- `packages/tools/src/capture/effects_packet/README.md`
+- `packages/tools/src/capture/effects_packet/cache_io.py`
+- `packages/tools/src/capture/effects_packet/caller.py`
+- `packages/tools/src/capture/effects_packet/capture_controls.mjs`
+- `packages/tools/src/capture/effects_packet/check_ready.py`
+- `packages/tools/src/capture/effects_packet/entry.mjs`
+- `packages/tools/src/capture/effects_packet/freeze.py`
+- `packages/tools/src/capture/effects_packet/inspect_packet.py`
+- `packages/tools/src/capture/effects_packet/native_ports.py`
+- `packages/tools/src/capture/effects_packet/readiness.json`
+- `packages/tools/src/capture/effects_packet/revision_controls.py`
+- `packages/tools/src/capture/effects_packet/shared_capture.json`
+
+VERIFY:
+- Existing controls: Python26 + original boundary12 + Node9 =47 PASS on combined code. New revision tests:9 PASS covering39 fault/valid subcases. Actual-entry integration:13 PASS. Logs and exact command argv/cwd/exits/durations are in commands.json; failed attempts are retained.
+- R2-1 RED: red/native-cross.py.log, actual caller/NativePorts resource lstat and unchanged StationJob.wait/save lose original structured facts and select helper-save or generic failure. GREEN: green/native-cross.py.log plus revision suite preserve first complete resource/StageReceipts exception, NUL/non-UTF8 and unknown fields, before helper normalization. Helper-save, later receipt, cleanup and all publication sink failures remain secondary. Actual helper SIGALRM retains original DeadlineExpired while distinct ObservationUnwind exits before its post-deadline save. Timers/ports restore; no relaunch or decoder after uncertainty.
+- R2-3 RED: red/cache-cross.py.log, actual source hash follows a replacement symlink; one admitted byte then permits67,108,865 hash bytes; FIFO is interrupted only by shortened phase. GREEN: shared cache_io acquisition walks all ancestor components with descriptor-relative no-follow/nonblocking opens and reconciles route/descriptor identities. Copy/source verification/destination verification share read_cache. Actual leaf/ancestor symlink, FIFO, same-byte inode replacement and oversized growth refuse before payload reads at all three stages. Growth after descriptor admission reads at most admitted+1 (two bytes for one admitted byte). Inventory/attempted copies are bounded and charged, and failed partials remain. Real access-time change is accepted without weakening inode/content/mtime/ctime checks.
+- R2-4 RED: red/png-cross.py.log, authenticated full packet with duplicate/empty PLTE accepted. GREEN: green/png-cross.py.log and revision suite refuse duplicate/empty/oversized/partial/late palettes and IDAT interruption even after an empty first IDAT. Full RGB/RGBA packets with valid optional1/256-entry palettes and consecutive empty IDATs pass. Four inherited zlib/IHDR/unknown-critical adverse cases remain refused. Normative palette/chunk ordering checked against [W3C PNG](https://www.w3.org/TR/png-3/#11PLTE); strict full bounded zlib/filter/CRC checks retained.
+- R2-2 RED: red/capture-cross.mjs.log and pre-adoption green/capture-cross.mjs.isolated.log retain original cleanup-loss reproductions. GREEN after exact T15 adoption: t15-adoption/capture-cross-green.log executes original three cases through actual entry.execute DEFAULT loadCapture, original classes and reviewed captureReview/openReview/finishCapture. Navigation cause/raw bytes survive browser/Vite cleanup failures; both cleanup calls occur exactly once. No production consumer replacement or method interception workaround.
+- Additional serialization RED: actual combined entry with thrown undefined plus both cleanup failures has an in-memory cause but no durable cause, and null in the persisted error array. entry-integration-first.log and undefined-red.log retain it; the latter loads exact prior entry bytes at their original module identity. One task-local raw() case now tags undefined explicitly.13 combined entry cases validate ordered standard errors/cause, partial listen/launch, both closes, all-sink failure and undefined/null/false/0/empty-string/frozen-object causes in memory and durable receipts. Shared T15 bytes remain unchanged.
+- Combined positive default-loader/original-consumer flow writes exact12-file inventory; actual CPU inspector fully decodes11 PNGs, with actual perf/material/texture/LOD checks. This is synthetic CPU content, no browser or native cohort was created, and no visual grade.
+- Retained safe matrix40, prior actual R1 constructor/bootstrap2, original Node matrix10, allocation2, exact-metadata/consume checks, five actual inert OS exits0/1/1/1/1 and real harmless O_RDWR holder all pass. FIFO-safe same-snapshot metadata admission and parent-observed OS exit0 plus receipt hashes remain unchanged.
+- Combined typecheck, scoped ESLint/Prettier,13-source Python compile, source diff, disabled actual Python/Node exits78/78, six dependency-tree parity and exact-head disabled readiness pass. Readiness binds412 files and six dependency trees; latest actual owner audit is CLEAR. No successful native/caller acceptance is inferred from this audit.
+- Parent T15 report is SOURCE PASS for325 focused/supplemental assertions and68 expected baseline RED failures. These are retained parent-review results, not claimed rerun here. Our fresh combined evidence is the actual-entry faults/positive flow and source/static checks above.
+
+Failures and adaptations retained:
+- Initial revision suite had five failing subcases: missing inert StageReceipts resolver data and an actual helper deadline caught before unwind. Resolver fixture corrected; callback now uses ObservationUnwind for BaseException while preserving the original deadline. revision-first.log remains, revision-second and combined revision pass.
+- Original retained metadata and process-publication controls encountered host Node churn. The retained return proves an unrelated Node disappeared between census and lsof, causing the existing correct uncertainty refusal before consumption. Those non-owner matrices now use an explicit inert owner port; target assertions stay unchanged. Production owner guard and real-holder/R1 controls are unchanged. green/adaptations.json records exact changes; all failed logs/fixtures remain.
+- Combined boundary suite initially refused the unrelated-holder positive case due the same partial census. Fresh complete12-case run passes with the real guard unchanged; both logs remain. No real/spent pilot was retried.
+
+DECISIONS:
+- Preserve first callback failure before crossing the frozen wait helper; record partial writer counters/unknown probes before I/O. Do not infer zero totals, registration or release from incomplete observations.
+- Use a single task-local cache acquisition contract for copy and verification, including every ancestor, finite admitted+1 reads and8,192-entry enumeration cap. No EOF hashing in this cache path. Original metadata snapshot contract is unchanged.
+- Fix shared lifecycle at its owner via exact reviewed T15 adoption; entry simply serializes standard cause/errors. No Playwright/page/browser method monkeypatch in production.
+- Mark undefined explicitly to prevent JSON from dropping actual captured cause/error values. Tests exercise the actual consumer and receipt writer, including all-sink failure.
+- Keep source/runtime flags false, freeze current local executable/kernel/dependency/helper/source/asset bytes, and bind independent reports. The parent already owns runtime authority; next gates are exact combined R3 correctness review and serialized slot, not a new human permission request.
+
+OUT OF SCOPE FOUND:
+- No native StationJob, launchctl, GPU/browser/application Vite/DB/Blender/codec process, server, network fetch/hydration, real grant, screenshot cleanup, push, PR or merge. Test external ports are inert; real harmless holder and bounded read-only probes are owned/reaped. At most two active CPU test workloads; suites run serially.
+- All64 reviewed asset files and four helpers are unchanged. R1 tests/owner guard and original reports are unchanged. Other shared/client/server/Review/Engine/screens/gameplay/library/exporter/orchestration files unchanged; the only scope exception is the specifically authorized two-file T15 adoption.
+- All59 roots still await applicable native/static visual acceptance; this pilot names only gravitic_pull.32 proposed motion records require gameplay/Recall playback. No batch/motion/atlas/overlap/21:9 generator added. Existing CPU previews remain iteration evidence, not independent grades.
+
+ARTIFACTS:
+- Report: `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/APPENDIX-C2.md`.
+- Exact pins, file hashes/protected Git blobs and cumulative patch: `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/pins-final.json`, `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/protected-final.json`, `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/source.patch`.
+- Exact shared-adoption patch and review/provenance: `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/adoption.patch`, `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/t15-adoption/adopted-pins.json`, `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/t15-adoption/REPORT.txt`.
+- Commands/exit/log ledger and source evidence: `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/commands.json`; originals, RED, GREEN and all failed attempts under `/private/tmp/p1-e07-t14-r2-fix-qto9bskm`. `evidence-hashes.json` inventories the retained local evidence files.
+- Final exact-head audit: `/private/tmp/p1-e07-t14-r2-fix-qto9bskm/t15-adoption/final-readiness.json`; committed readiness: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json`.
+- Unchanged full asset mapping: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/manifest.json`; full remaining GPU inventory: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/gpu-inventory.json`.
+- Existing preview directory (unchanged): `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/`. New native capture/preview paths: none.
+
+Verification command exits (exact argv and log paths in commands.json):
+- RED / native-cross.py: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/red/native-cross.py`
+- RED / capture-cross.mjs: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-r2-fix-qto9bskm/red/capture-cross.mjs`
+- RED / cache-cross.py: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/red/cache-cross.py`
+- RED / png-cross.py: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/red/png-cross.py`
+- ITERATION / revision-first: exit1; `python3 -B packages/tools/src/capture/effects_packet/revision_controls.py`
+- ITERATION / revision-second: exit0; `python3 -B packages/tools/src/capture/effects_packet/revision_controls.py`
+- GREEN / prior-python: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/controls.py`
+- GREEN / prior-boundary: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/boundary_controls.py`
+- GREEN / revision-controls: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/revision_controls.py`
+- GREEN / prior-node: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/src/capture/effects_packet/controls.mjs`
+- GREEN / native-cross.py: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/native-cross.py`
+- GREEN / png-cross.py: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/png-cross.py`
+- GREEN / retained-safe-matrix.py: exit1; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/retained-safe-matrix.py`
+- GREEN / retained-safe-matrix.py-final: exit1; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/retained-safe-matrix.py`
+- GREEN / retained-safe-matrix.py-bounded: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/retained-safe-matrix.py`
+- GREEN / original-r1-r2-green.py-bounded: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/original-r1-r2-green.py`
+- GREEN / allocation-cross.py-bounded: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/allocation-cross.py`
+- GREEN / additional.py-bounded: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/additional.py`
+- GREEN / process-boundaries-green.py-bounded: exit1; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/process-boundaries-green.py`
+- GREEN / process-boundaries-green.py-isolated: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/process-boundaries-green.py`
+- GREEN / independent-node.mjs-isolated: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/independent-node.mjs`
+- PENDING_T15_REPRO / capture-cross.mjs-isolated: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/capture-cross.mjs`
+- GREEN / capture-positive.mjs-isolated: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-r2-fix-qto9bskm/green/capture-positive.mjs`
+- FINAL / freeze: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py`
+- FINAL / format-readiness: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --write /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json`
+- FINAL / eslint: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/eslint/bin/eslint.js /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs`
+- FINAL / prettier: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --check /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/recovery.json`
+- FINAL / source-compile: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'from pathlib import Path; p=list(Path('"'"'packages/tools/src/capture/effects_packet'"'"').glob('"'"'*.py'"'"')); [compile(x.read_text(),str(x),'"'"'exec'"'"') for x in p];print('"'"'PASS'"'"',len(p),'"'"'sources; no bytecode'"'"')'`
+- FINAL / disabled-python: exit78; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py`
+- FINAL / disabled-node: exit78; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs`
+- FINAL / diff-check: exit0; `git diff --check`
+- COMMITTED / readiness-exact-head: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/check_ready.py`
+- COMMITTED / dependency-parity: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --input-type=module -e 'import fs from '"'"'node:fs'"'"';import assert from '"'"'node:assert/strict'"'"';import{treeBinding}from'"'"'./packages/tools/src/capture/effects_packet/entry.mjs'"'"';const r=JSON.parse(fs.readFileSync('"'"'packages/tools/src/capture/effects_packet/readiness.json'"'"'));for(const x of r.dependencyTrees)assert.deepEqual(treeBinding(x.path),x);console.log('"'"'PASS six dependency tree bindings; no capture import'"'"');'`
+- COMMITTED / committed-diff-check: exit0; `git diff 4ec25fcef7d7cedada964bbef986c30459eedcc0 HEAD --check`
+- COMMITTED / clean-source-status: exit0; `git status --porcelain --untracked-files=all`
+- ADOPTION / T15-exact-cherry-pick: exit0; `git cherry-pick -x 38b6c4b58db43146df20cd760808d1461d7a667b`
+- T15_INTEGRATION / original-shared-cleanup-green: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-r2-fix-qto9bskm/t15-adoption/capture-cross-green.mjs`
+- T15_INTEGRATION / combined-undefined-first: exit1; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/src/capture/effects_packet/capture_controls.mjs`
+- T15_INTEGRATION / combined-undefined-exact-baseline-red: exit1; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-r2-fix-qto9bskm/t15-adoption/undefined-red.mjs`
+- T15_INTEGRATION / entry-integration-green: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/src/capture/effects_packet/capture_controls.mjs`
+- COMBINED / combined-python: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/controls.py`
+- COMBINED / combined-boundary: exit1; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/boundary_controls.py`
+- COMBINED / combined-boundary-fresh: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/boundary_controls.py`
+- COMBINED / combined-revision: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/revision_controls.py`
+- COMBINED / combined-node: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/src/capture/effects_packet/controls.mjs`
+- COMBINED / combined-entry: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/src/capture/effects_packet/capture_controls.mjs`
+- COMBINED / combined-positive: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-r2-fix-qto9bskm/t15-adoption/capture-positive.mjs`
+- FINAL_COMBINED / combined-positive-inspection: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/t15-adoption/inspect_positive.py`
+- FINAL_COMBINED / freeze: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py`
+- FINAL_COMBINED / format-json: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --write /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/shared_capture.json`
+- FINAL_COMBINED / eslint: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/eslint/bin/eslint.js /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/capture_controls.mjs packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts`
+- FINAL_COMBINED / prettier: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --check /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/capture_controls.mjs /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/shared_capture.json /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/recovery.json packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts`
+- FINAL_COMBINED / typecheck: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/tools`
+- FINAL_COMBINED / source-compile: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'from pathlib import Path; p=list(Path('"'"'packages/tools/src/capture/effects_packet'"'"').glob('"'"'*.py'"'"'));[compile(x.read_text(),str(x),'"'"'exec'"'"') for x in p];print('"'"'PASS'"'"',len(p),'"'"'sources; no bytecode'"'"')'`
+- FINAL_COMBINED / disabled-python: exit78; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py`
+- FINAL_COMBINED / disabled-node: exit78; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs`
+- FINAL_COMBINED / diff-check: exit0; `git diff --check`
+- FINAL_COMMITTED / final-readiness: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B packages/tools/src/capture/effects_packet/check_ready.py`
+- FINAL_COMMITTED / dependency-parity: exit0; `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --input-type=module -e 'import fs from '"'"'node:fs'"'"';import assert from '"'"'node:assert/strict'"'"';import{treeBinding}from'"'"'./packages/tools/src/capture/effects_packet/entry.mjs'"'"';const r=JSON.parse(fs.readFileSync('"'"'packages/tools/src/capture/effects_packet/readiness.json'"'"'));for(const x of r.dependencyTrees)assert.deepEqual(treeBinding(x.path),x);console.log('"'"'PASS six dependency tree bindings; disabled entry import only'"'"');'`
+- FINAL_COMMITTED / final-diff: exit0; `git diff 4ec25fcef7d7cedada964bbef986c30459eedcc0 HEAD --check`
+- FINAL_COMMITTED / final-clean: exit0; `git status --porcelain --untracked-files=all`
+- COMMIT / task-local-correction: exit0; `git commit -m 'P1.E07.T14: harden observer cache and PNG boundaries'`
+- COMMIT / combined-bindings-and-raw-cause: exit0; `git commit -m 'P1.E07.T14: bind reviewed capture lifecycle and retain raw causes'`
+- FINAL / finalize-evidence: exit0; `/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-r2-fix-qto9bskm/finalize.py`
+
+Unused real pilot identities:
+- grant: `/private/tmp/egg-be606b3443e34d99ad10334183b84f3e.json` — absent.
+- consumption: `/private/tmp/egc-be606b3443e34d99ad10334183b84f3e.json` — absent.
+- evidence: `/private/tmp/egp-be606b3443e34d99ad10334183b84f3e` — absent.
+- output: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-be606b3443e34d99ad10334183b84f3e` — absent.
+
+Pilot inventory: existing captureReview("effects/gravitic",{asset:"gravitic_pull",outDir}),1920x1080 views plus1920x2876 sheet; requestedLOD2 selects authoredLOD0, shown0/lods[0],576 triangles,one primitive,LIB_FX_Gravitic and nonzero compressed filament texture observations.
+- `gravitic_pull/noon-lush_lod0.png`
+- `gravitic_pull/noon-lush_lod2.png`
+- `gravitic_pull/wireframe_lod0.png`
+- `gravitic_pull/wireframe_lod2.png`
+- `gravitic_pull/overlay.png`
+- `gravitic_pull/far_lod2.png`
+- `gravitic_pull/night-exotic_lod0.png`
+- `gravitic_pull/night-exotic_lod2.png`
+- `gravitic_pull/open-space_lod0.png`
+- `gravitic_pull/open-space_lod2.png`
+- `gravitic_pull/perf.json`
+- `gravitic_pull/sheet.png`
+
+Exact unchanged budget ledger:
+- capture_outputs: 184,565,760 bytes — 11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root.
+- future_lfs_copy: 184,565,760 bytes — Reserved for later Git LFS adoption; this pilot performs no git add or LFS write.
+- future_main_hydration: 184,565,760 bytes — Reserved for later parent hydration; this pilot makes no main-worktree copy.
+- controlled_metadata: 67,108,864 bytes — Node and Python each reserve attempted receipt bytes before writing, 32 MiB each.
+- cache_snapshot: 67,108,864 bytes — One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained.
+- profile_work_and_archive: 2,147,483,648 bytes — StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive.
+- private_tmp_work_and_archive: 1,073,741,824 bytes — preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles.
+- helper_logs_work_and_archive: 134,217,728 bytes — StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job.
+- generated_cache_growth: 268,435,456 bytes — Observed additional Vite cache growth; original cache bytes already reduce free space.
+- filesystem_metadata: 16,777,216 bytes — Directory and filesystem overhead reserve.
+- safety: 1,073,741,824 bytes — Fresh disk safety reserve, checked at admission and while observing.
+- Output184,565,760 bytes; admission5,402,312,704 bytes. No image staging/archive copies. Capture600s, cleanup60s (drain45 inside), CPU decoder45s after positive release, cache snapshot64MiB/30s. Owner checks10s with256KiB command/384KiB total output and0.5s owned probe reap. Native thresholds are observations, not OS quotas.
+
+Readiness: PASS_SOURCE_ONLY_DISABLED at final combined head. Ready for parent independent R3; native and visual acceptance are not supplied.

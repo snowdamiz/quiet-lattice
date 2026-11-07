@@ -1,0 +1,126 @@
+# P1.E12.T02 Lark R3 — source/CPU review
+
+Verdict: **REVISE** (source only).
+
+This is not a visual grade, not a native/GPU/browser/service/DB result, and not whole-task acceptance. Parent Trunk policy: no push, no PR, no `/trunk merge`.
+
+## Blocking
+
+### Texel density is ~35 px/m against the art-bible hull target of ~512 px/m
+
+`docs/art-bible.md:221-222` (DESIGN 19.2 / plan 0.4 quality bar): hulls ~512 px/m. Map resolution is not that number. Stock `artlib` checks never measure px/m, so the worker's stock PASS does not cover it. `assets/renders/hulls/lark-round3-current/REPORT.md` records 4096 atlases and does not record a reading of the px/m line. Plan 0.9.5 (`docs/IMPLEMENTATION_PLAN.md:97`) makes an unlogged spec interpretation a mandatory REVISE. This is not a style note.
+
+Saved source, Body, active UV, Hull/Accent/Trim/Dark edges, 4096 (`/tmp/lark-r3-review/inspect_source.py:119-149`, receipt `inspect/20261107T073229404409Z-source-inspect.json`):
+
+| | |
+|---|---|
+| edges | 242134 |
+| median | 35.21 px/m |
+| p10 / p90 | 28.28 / 37.12 |
+| base Hull area | 130.4705 m² (23468 tris) |
+
+Dequantized exported GLB, LOD0, node world matrix applied, normalized accessors decoded (`/tmp/lark-r3-review/export-density.json`). A first pass that treated meshopt int16/uint16 values as floats reported ~468 px/m and billions of m². That pass is discarded. Accessors are normalized (`POSITION` 5122, `TEXCOORD_0` 5123); the mesh node scale is 6.7608 m. After decode, base Hull area is 130.471 m², matching the source.
+
+| state / material | triangles | area m² | UV area | area px/m | median edge px/m | p10 | p90 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| base Hull | 23468 | 130.471 | 0.00871 | 33.46 | 34.65 | 27.41 | 38.78 |
+| base Accent | 8536 | 32.313 | 0.00219 | 33.74 | 35.34 | 27.33 | 38.57 |
+| base Trim | 32622 | 58.771 | 0.00394 | 33.54 | 35.16 | 27.32 | 40.65 |
+| base Dark | 41762 | 313.681 | 0.02213 | 34.40 | 37.65 | 29.07 | 117.89 |
+| damaged Hull | 22012 | 124.371 | 0.00558 | 27.44 | 28.49 | 23.58 | 30.58 |
+| husked Hull | 18910 | 101.796 | 0.00271 | 21.14 | 22.16 | 18.56 | 25.98 |
+
+Base Hull/Accent/Trim/Dark together occupy 0.0370 of the 0–1 atlas (3.7% of the 4K). The inspect's `atlas_bbox_coverage` 0.713 is a 128² cell mark of each triangle's UV box, not texel coverage. Ignore it.
+
+What the worker can do: scale those islands up so the atlas is actually used, then rebake. Filling this atlas is about a 5× linear gain (~180 px/m), still under ~512. A perfectly packed 4K over the 130.47 m² hull alone tops out near 359 px/m (`4096 / sqrt(130.47)`). ~512 px/m on that unique area needs mirroring or more than one unique atlas. Log that reading if it remains after the islands fill the map. Do not treat another resolution bump as the fix. `artlib/meshopt.py:29-31` quantizes texcoords to an eighth of a 4K texel (14 bits). Quantization did not create a 15× gap; the source UVs and the dequantized export agree.
+
+Repro, no bake and no export:
+
+```
+TMPDIR=/tmp/lark-r3-review/tmp \
+  /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node \
+  /tmp/lark-r3-review/export_density.mjs
+```
+
+Node v22.23.3. `createRequire` from `/Users/andreyyurlov/Documents/dev/space/packages/tools/package.json`. No install.
+
+## What passed
+
+Pins, re-hashed at the end, nlink 1, same before and after every lane receipt:
+
+- `assets/blend/hulls/lark.blend` `bc08c784ef37413cd3b51c593c4109a340a8d99edc15f5da30e3dcfaba04ff75` 65357176 bytes
+- `packages/client/public/models/hulls/lark.glb` `7f11e2bd2818045c1a861d4e959f2a985828bdcc9b60d44ed2fda8ff41300bad` 25633924 bytes
+
+HEAD `a89dd7f8a2d9375ed5df94f77e6c83d972f42f73`, tree `2354e2c110975902183ccde1103fc78495f9bf83`. Diff vs parent `0c4396a9194a5f7c99352f630ea7e66514b61115` is only `lark.blend`, `lark.glb`, `packages/tools/blender/hulls/lark-round3/`, and `assets/renders/hulls/lark-round3-current/`. Artlib, families, Ship.js, other hulls, and docs are unchanged. Task export patches `glb.finalize` and `meshopt._command` in the task process (`export_source.py:29-73`). It does not edit the protected modules.
+
+Structural contract, source inspect and the earlier GLB header parse, agreeing on counts:
+
+- 3 states, 4 LODs. LOD0 tris 107054 / 111862 / 117702, all inside 60k–150k. LOD3 is 2.72% / 2.49% / 2.54% of LOD0.
+- Draws with all parts visible: base 12/12/12/11, damaged 12/12/12/10, husked 12/12/12/10. Cap is 12.
+- 17 KTX2 images, all 4096², 13 mips. Normals UASTC. Colour, ORM, emissive, and the two extra liveries ETC1S. `KHR_texture_basisu`, `KHR_mesh_quantization`, `EXT_meshopt_compression` required. Variants 0,1,2 on base Hull/Accent/Trim only.
+- Y length 12.380 m (band 12–14). X span 13.522 m. Z 4.285 m (damaged Z 4.490).
+- Husk Hull area 101.80 / 130.47 m² = 22.0% loss, inside 15–30%. Husk bounds stay on the same silhouette. Husk total area rises because plates were added. Hull-only area is the loss figure.
+- `REF_Biped` height 1.850 m. Not in the GLB, which is expected for a source reference.
+- `HP_S_1` and `HP_S_2` are 0.0658 m from the nearest Body vertex.
+- Colliders: COL_Body 460, COL_NacelleL/R 470, COL_WingL/R 108, all ≤512. 7143/7143 sampled Body vertices (every 7th) are inside some collider with 12 mm slack.
+- Rigid skins, one weight, other-part motion 0. CockpitStick 208 verts / 0.194 m, CockpitThrottle 88 / 0.088 m, GearFront 1262 / 0.458 m, GearLeft 3822 / 1.725 m, GearRight 1262 / 0.502 m.
+- Markers present: Gear*, Canopy*, CockpitInterior*, HP_S_*, COL_*, Interact, BoardingFoot, BoardingSill, PilotSeat.
+- `mesh.validate()` repaired nothing. The blend was not saved. Hash unchanged. Stock source checks PASS, zero failures.
+- Packed source images for base, damaged, husked, both liveries, and glass are 4096 and packed. Hull base color, ORM (green roughness, blue metallic), and normal trace to those images.
+- GPU-memory rough total at 8 bits/texel with mips is about 17 × 21.3 MiB, under the 512 MB hero cap. Exact stock sum was not recomputed.
+
+Liveries differ by role inside each atlas. Dark is shared across Thalune, Compact, and Working (same samples), which is correct. Thalune mid-panel linear ~[0.825, 0.795, 0.721], accent ~[0.187, 0.555, 0.517]. Working mid-panel ~[0.403, 0.395, 0.393].
+
+Resource guards, one factory Blender `-b -t 2` at a time, evidence under `/tmp`, assets unchanged:
+
+- Codec: two python processes whose `ps` command contains `/ktx `. Supervisor exit 124, reason `codec concurrency limit`, `peak_codec_processes` 2, elapsed 1.440 s. Receipt `codec-limit3/20261107T073112207530Z-codec-limit.json`. `run.py:85-100`.
+- RSS: `--rss-mib 800`, peak 1051584 KiB, reason `RSS limit`, exit 124, elapsed 2.378 s. Receipt `rss-limit/20261107T073127270332Z-rss-limit.json`.
+- Watchdog: supervisor pid 28745 SIGKILLed after Blender was up. Receipt reason `supervisor exited`, group 28754, `remaining_members` []. `watchdog-death2/20261107T073156425964Z-watchdog-death.watchdog.json`.
+- Inside the inspect process, `configure()` bound `decoded_copy`'s pool to `SingleCodecPool` max_workers 1, and `encode_args` threads was `"2"` (`runtime_limits.py:4-13`).
+
+Husk emission floor is honest. Independent Node probe (`signal_probe.mjs`, host `@gltf-transform`, Node 22.23.3): factors whose max is 1e-4, and a factor whose max is 6.4e-5, are written; a factor peaking at 1e-6 is written `null`. Saved husk EngineGlow / Nav peaks are 1e-4, so they survive. The earlier failed export used strength 1e-4 on near-black Nav RGB (effective ~1e-6) and those factors were elided. The v2 normalization matches the probe. The shorttmp receipt's 720 KiB RSS is not a measurement; the worker said the RSS variable was shadowed, and this review's real load peaked at 2183488 KiB.
+
+Failure handling, from current `artlib/export.py` (unchanged in this diff):
+
+- No blends: `export.py:62-64` returns 0 and does not delete a stale model.
+- LFS pointer or missing file: `core.py:114-119` sets `report.error`. `export.py:99-103` then returns failure and does **not** delete the shipped model. `main` returns 1 when a listed source fails (`export.py:84`).
+- A readable source that fails checks or crashes does call `_drop_stale` (`export.py:101-102` and `80`).
+- Direct `validate_path` of a missing file: FAIL, `file not found`. Direct `_drop_stale` removed an existing file.
+
+The live "missing source" and "LFS pointer" calls in the inspect both returned 0 and left the planted GLB. They passed `--src-root` as the directory that already held `lark.blend`. `export.py:57` appends `/hulls`, so both calls saw an empty directory and took the nothing-to-export path. They did not exercise the pointer branch. The code above is the evidence. Not a product defect.
+
+## Advisory (does not block)
+
+- Intact hull wear is small. Leading roughness mean 0.411 vs mid-panel 0.392 vs contact 0.389. Albedo luminance mid 0.796, leading 0.786, contact 0.806 (contact is not darker). Damaged contact luminance is 0.388, about 48% of the intact contact. The darkening lives on the damaged state. Hand-painted wear remains a visual-rubric item (`IMPLEMENTATION_PLAN.md:116`).
+- Compact hull paint is essentially white: mid-panel linear luminance 0.986, leading edge 1.000. The art-bible cap of 0.9 albedo luminance is for metallic surfaces (`art-bible.md:225`). Hull metallic is ~0.003–0.066 and hull roughness is ~0.39, so that metal rule does not fire. Compact's own target `#F4F4F0` is already near the ceiling. Worth a visual look, not a source block.
+- No object name contains mount, socket, jaw, or rail. `HP_S_*` empties, `BoardingFoot`, `BoardingSill`, and `PilotSeat` exist, and the hardpoints sit on the body. Saddle geometry was not isolated from Body. DESIGN 19.4's machine contract is the empties.
+- Husk glass has roughness and normal and no baseColor. Glass is exempt from the full map set. Husk loss is geometric (area above), not a recolour.
+
+## Commands
+
+Lane launches (options before the label; evidence redirected outside the worktree). Supervisor is Homebrew Python 3.14. `PYTHONDONTWRITEBYTECODE=1`.
+
+```
+export PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/lark-r3-review/tmp
+export LANE_EVIDENCE=/tmp/lark-r3-review/<dir>
+python3 /tmp/lark-r3-review/launch_lane.py --seconds N --rss-mib M <label> -- -P /tmp/lark-r3-review/<script>.py
+```
+
+| label | N | MiB | script | result |
+|---|---:|---:|---|---|
+| source-inspect | 900 | 12000 | inspect_source.py | exit 0, 7.669 s, peak 2183488 KiB, codecs 0 |
+| codec-limit | 25 | 8000 | codec_child.py | exit -15, reason codec concurrency limit, 1.440 s |
+| rss-limit | 40 | 800 | rss_child.py | exit -15, reason RSS limit, 2.378 s |
+
+Watchdog: SIGKILL of the supervisor after `ps` showed `Blender .*sleep_child.py`. Blender command in that run was factory `-b -t 2`.
+
+Invalid harness runs, not product failures: `codec-limit/` (argparse `REMAINDER` swallowed `--seconds` because the label came first; receipt writer then died on `Path.relative_to` outside the worktree), `codec-limit2/` (fake `ktx` was `exec /bin/sleep`, so `ps` did not contain `/ktx `), `watchdog-death/` (supervisor killed before Blender started).
+
+## Limits
+
+- No bake, no export, no asset rewrite, no hydration, no fetch, no screenshot cleanup, no source or doc edit, no commit.
+- KTX2 payloads were not transcoded to pixels. Density uses decoded UV and the confirmed 4096 edge. Compressed texel values were not compared to the packed PNGs.
+- No second Blender after the inspect. During the Node decode, Swift Blender pid 61001 (~4.1 GiB, `t3-38ed9196`) and Mule Blender pid 68793 (~3.5 GiB, `t3-6a5efbfc`) were already running. This review did not signal them.
+- The worker's eight negative exports were not re-run. Independent edges were the codec kill, the RSS kill, the watchdog reap, missing-file validate, `_drop_stale`, and the emissive-factor probe.
+- No visual read of the PNGs. Qualified previews predate the husk emission tweak and the lower-LOD duplicate repair, as the worker said.
+- This review did not move the parent checkout. At report time `/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab` is clean on `t3/continue-implementation-plan-1` at `21eab1f74110c8f7120013ebc4e119f4cc45a824`. Target worktree status is clean at the pinned HEAD.

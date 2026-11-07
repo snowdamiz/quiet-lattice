@@ -1,0 +1,186 @@
+VERDICT: SOURCE PASS
+TASK: P1.E14.T15 — fresh independent read-only source review.
+Findings: no blocking correctness findings; no advisory finding requiring a source change.
+Native capture/smoke, GPU/visual qualification, caller adoption and rebinding remain UNOBSERVED and parent-owned.
+
+PROVENANCE
+Target: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+Branch: task/P1-E14-T15-capture-lifecycle
+Base: 7af58d4d3122a00fc6afde63f8b2480c3c6eda7b
+Base tree: 35d426da86f29a76f9146072f56d1635d526a450
+HEAD: 38b6c4b58db43146df20cd760808d1461d7a667b
+HEAD tree: b8ba53c6acdf6eb604b9c046a8165f1985634be8
+HEAD parent: 7af58d4d3122a00fc6afde63f8b2480c3c6eda7b (exact requested parent plan/decision commit).
+Stable patch-id: 8e90cd71186b236a00402a6bd9b985256e9b5ec7
+Fresh full-index binary patch SHA256: febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345
+Worker abbreviated-index patch SHA256: 9e097486791fdaabc3bcd6fd55899805d4e55788e9824f2353e4b82a7743537b
+The two patches differ ONLY in index-line abbreviation; stable patch-id and all other bytes agree.
+Changed files: packages/tools/src/capture/capture.ts; packages/tools/src/capture/capture.lifecycle.test.ts.
+capture.ts SHA256: 42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d
+lifecycle test SHA256: ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18
+Base capture.ts SHA256: 3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc
+Working status before/after: clean; branch, HEAD and tree unchanged.
+
+REVIEW BASIS
+Read plan 0.3, 0.9.5, T15 at docs/IMPLEMENTATION_PLAN.md:352-353, and the parent T15 decision at docs/DECISIONS.md:1384-1388. The four root defects and the exact owned two-file scope are consistent with the task. Read both supplied reports, focusing on T03 R3 and T14 R2-2's concrete original navigation/cleanup failures. Their other StationJob, cache and decoder findings are outside this shared source review and receive no new disposition here.
+Applied the specified bundled TypeScript and type-system-discipline SKILL.md files plus the read-only review skill. No AGENTS.md was found in the target ancestor chain or under packages. The explicit source-only brief controls the native/build/smoke hold despite plan-wide runtime gates.
+
+ROOT DEFECT DISPOSITIONS — ALL FIXED IN THIS SOURCE UNIT
+1. Created Vite server lost on listen rejection: FIXED at capture.ts:60-70. startVite closes the exact returned server once on listen failure. A lone rejection is the original raw value; a close fault adds a standard AggregateError with ordered [listen, close] values and cause=listen, including undefined. It does not invent ownership if createServer itself fails. Stock async cases and fresh sync cases exercise this real export.
+2. Browser acquired outside the cleanup scope: FIXED at capture.ts:211-219 and :357-365. Vite is retained before glArgs/launch; the browser is assigned only after successful launch. Actual Review and UI glArgs and launch failures stop Vite exactly once without closing an unacquired browser. Falsy/synchronous values plus failed stop retain both values.
+3. Browser-close fault replaced the work error and skipped Vite cleanup: FIXED at capture.ts:75-92, :331-334 and :390-393. finishCapture catches the two cleanup operations independently in the existing browser-then-Vite order. Explicit CaptureOutcome distinguishes success from a failure whose value is false, 0, '', null or undefined. One failure is thrown unchanged; multiple errors preserve every element by identity, in encounter order, in AggregateError.errors and the first in cause. Frozen errors/objects with raw byte and unknown ownership facts are retained without cloning, mutation, stringification or normalization. NewPage, shot, navigation and readiness failures all reach the real capture function. A UI page.close rejection is also preserved and both owning-resource cleanups are attempted.
+   This resolves the common capture.ts cause of T03 R3 / T14 R2-2. It does NOT qualify their frozen caller source, receipt serialization, helper lifecycle or native release; those callers must adopt and inspect the aggregated values.
+4. UI logged page failure established only after shared cleanup: FIXED at capture.ts:389. The collected error is established inside the work try before finishCapture. Both pageerror and console-error callbacks are exercised with simultaneous browser/Vite cleanup faults; the page diagnostic remains first, and both raw cleanup values remain inspectable. Existing expected-error filtering is unchanged.
+
+SUCCESS/OUTPUT CONTRACT
+Fresh byte comparisons in source-equivalence.json confirm exact equality of:
+- Review work from spec selection through the existing final page-error check;
+- the UI two-aspect work loop, including its existing page.close calls;
+- UI pre-acquisition validation and _frames preparation;
+- the contact-sheet/openReview supporting code;
+- the entire clip and CLI suffix, including timing and screenshot/write order.
+The stock success tests execute real captureReview and captureUi('title'), real class rules and screen definitions, filesystem writes and applicable evaluate callbacks. They check lights, asset/variant selection, LODs, wireframes, overlay, far100/far200, paired perf parameters, stats, names/order, both UI aspect sizes and 216 frame steps. Rendering/pixel quality is not claimed: canvas encoding and screenshot bytes are inert. No new screenshot cleanup behavior was introduced; original _frames preparation is unchanged and exercised only inside fresh test-owned temporary output directories.
+The CLI still prints only .message for Error objects, as before. Complete multi-failure consumers must inspect errors and cause; this source review does not certify downstream packet serialization or adoption.
+
+FRESH EXECUTION
+Pinned direct Node: v22.23.3; direct Vitest: 5.0.5 darwin-arm64. Tool paths/SHA256 in toolchain-and-policy-pins.json.
+- Focused checked-out tests: 145 PASS in six files, including all 100 lifecycle tests plus 45 capture-class/smoke-rule/art-target regressions. This is not native smoke execution.
+- Scratch-only supplemental probes: 180 PASS. They import the exact target capture.ts exports. The worker fixture scaffold is copied only to supply inert external ports; the supplemental assertions are new. Coverage: synchronous create/listen/close; newPage and shot failures through both Review/UI, synchronous and asynchronous, alone and with both cleanup faults; raw launch/glArgs failures; successful work with synchronous cleanup faults; console errors, readiness faults and UI page-close failures. Raw values include '', null, undefined, false, 0, frozen non-Error objects and frozen Error objects with bytes/unknown ownership fields. Combined failure assertions check exact identity, cause ownership even for undefined, ordered errors and exactly-one browser/Vite cleanup call in the original order.
+- Fresh old-source control: EXPECTED RED, exit 1, 68 failed / 32 passed of the same 100 tests. The test copy changes only its import path. A scratch Vite transform plugin supplies the exact git-show base bytes at the original capture module identity, retaining original relative imports and ROOT. baseline-load.json records original source id, length and SHA256. No checkout source is overwritten. The old failures hit missing listen cleanup, skipped Vite stop and replaced/lost errors; this is actual exported-function RED, not a detached finishCapture/helper assertion.
+- Worker retained base source equals git base; retained red test bytes equal the committed test bytes. Fresh old RED matches the worker's reported count.
+- Tools TypeScript check: PASS, noEmit inherited from tsconfig.base.json.
+- Scoped ESLint: PASS.
+- Scoped Prettier --check: PASS.
+- Exact base..HEAD git diff --check: PASS.
+Total final-head green assertions: 325 (145 supplied focused + 180 additional). Baseline RED is separately retained and never counted as candidate failure or success.
+
+TEST BOUNDARY / NO HIDDEN NATIVE CAPTURE
+Both test harnesses hoist mocks for @playwright/test chromium.launch and the dynamically imported vite.createServer BEFORE loading actual capture.ts. Their returned server/browser/page objects are controlled ports. No production function is replaced on the final-head run. The original freePort briefly binds/closes an ephemeral 127.0.0.1 socket; no real application Vite server is started. Vitest uses its normal Vite transform machinery, not application capture startup.
+Original classes.ts only reads the existing families JSON. screens.ts has CPU-only shared imports and deferred page callbacks; selected title callbacks run against controlled window/document. Other screen dynamic imports and the SOCIAL_STAGE source string are not executed. The CLI direct-entry guard is false. The smoke harness-import regression only reads spec text, and the smoke/art target tests only exercise argument/path helpers; no spec, browser, Blender or service launcher is called. Date.now is controlled to avoid clip wall waits.
+No GPU, browser, Vite application server, native capture, service, DB, StationJob, runtime assets, hydration or real screenshots were launched/generated. No package manager, dependency installation or repair ran. MaxWorkers=2 and no-fileParallelism were set on every Vitest run; only one test file ran at a time. No whole suite or new worktree was created.
+
+PRESERVATION
+All verification processes run under readonly.sb: writes to the target checkout and the external linked node_modules tree are denied; outbound networking is denied. Direct pinned executables are used with offline/ignore-scripts environment settings. TMPDIR, XDG_CACHE_HOME, Node compile cache and fsModuleCachePath are under this fresh /tmp report directory; both Vitest result and fs module caches are disabled and configLoader=runner avoids bundled config writes. Scratch-local node_modules only links to pre-existing dependencies.
+Fresh before/after inventories match exactly:
+- 4116 tracked files: content SHA256, mode, size, mtime.
+- 4533 checkout entries including ignored dependency links: set/mode/size/mtime/link target for nondirectories; directory set/mode.
+- 17264 external node_modules entries: byte SHA256 for regular files, set/mode/size/mtime/link targets; directory set/mode.
+Atime is deliberately excluded. preservation.json reports unchanged=true with no differences. All three supplied report hashes also still match. Sandbox write prevention plus these inventories support the no-write claim; no before/after inventory of unrelated host files is claimed.
+No source edits, checkout dependency changes, commits, branch changes, push, PR, merge, native launch, cloud launch or cleanup of existing captures occurred. All additions are under this fresh report directory; test fixtures remove only their own temporary directories. No sub-reviewer was delegated.
+
+ERRORS / LIMITS
+The only nonzero fresh verification command is the expected baseline RED (exit 1). No fresh type/static/test setup failure or timeout occurred. During read-only inspection, an initial large combined source/report output was truncated; relevant sections were re-read with bounded ranges. The first scratch directory allocation inherited macOS TMPDIR and was immediately moved to /tmp before tests; it is not a worktree.
+The worker's retained initial ERR_LOAD_URL from duplicated packages/tools in --config was a harness startup error, not product RED; its corrected boundary run is the valid baseline evidence. The worker's initial preserve-caught-error lint failure was corrected before this HEAD; fresh scoped lint is clean. Both historical errors remain documented in the immutable worker report.
+This is SOURCE PASS for the pinned two-file commit only. It authorizes no merge and establishes no native/browser/GPU, timing-budget, visual grade or release result. Parent adoption and regenerated bindings must name these reviewed source bytes before the separately authorized native qualification.
+
+ARTIFACTS
+REPORT.txt — this report.
+provenance.json; change.patch; base-capture.ts; source-equivalence.json.
+commands.json; COMMANDS.txt; per-command .json and .log files (exact argv/cwd/env/exits/error tails).
+before.json; after.json; preservation.json; toolchain-and-policy-pins.json.
+supplement/supplement.test.ts; supplement/vitest.config.mjs; supplement-adaptations.json.
+baseline/baseline.test.ts; baseline/vitest.config.mjs; baseline-load.json.
+review.py and checks.py retain the exact inventory and verification launch logic.
+
+EXACT COMMANDS / FAILURE TAILS
+
+COMMAND node-version
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --version
+EXIT: 0; duration seconds: 0.023
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/node-version.log
+
+COMMAND vitest-version
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs --version
+EXIT: 0; duration seconds: 0.044
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/vitest-version.log
+
+COMMAND focused
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run --config vitest.config.ts --root packages/tools --maxWorkers 2 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/vitest --configLoader runner src/capture/capture.lifecycle.test.ts src/capture/classes.test.ts src/smoke/gl.test.ts src/smoke/targets.test.ts src/smoke/harness-imports.test.ts src/art/targets.test.ts
+EXIT: 0; duration seconds: 0.975
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/focused.log
+
+COMMAND typecheck
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/tools
+EXIT: 0; duration seconds: 2.012
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/typecheck.log
+
+COMMAND lint
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/eslint/bin/eslint.js packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+EXIT: 0; duration seconds: 0.485
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/lint.log
+
+COMMAND format
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+EXIT: 0; duration seconds: 0.198
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/format.log
+
+COMMAND diff-check
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /usr/bin/git diff --check 7af58d4d3122a00fc6afde63f8b2480c3c6eda7b 38b6c4b58db43146df20cd760808d1461d7a667b
+EXIT: 0; duration seconds: 0.022
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/diff-check.log
+
+COMMAND supplement
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf/node_modules/vitest/vitest.mjs run --root /private/tmp/p1-e14-t15-independent-gzn1kbbe/supplement --config vitest.config.mjs --maxWorkers 2 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/supplement --configLoader runner supplement.test.ts
+EXIT: 0; duration seconds: 0.754
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/supplement.log
+
+COMMAND baseline-red
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf
+ENV OVERRIDES: {"NODE_COMPILE_CACHE": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/node", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/47811_1794036823759/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/tmp", "XDG_CACHE_HOME": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/cache", "npm_config_ignore_scripts": "true", "npm_config_offline": "true"}
+/usr/bin/sandbox-exec -f /private/tmp/p1-e14-t15-independent-gzn1kbbe/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-a842e4cf/node_modules/vitest/vitest.mjs run --root /private/tmp/p1-e14-t15-independent-gzn1kbbe/baseline --config vitest.config.mjs --maxWorkers 2 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /private/tmp/p1-e14-t15-independent-gzn1kbbe/cache/baseline --configLoader runner baseline.test.ts
+EXIT: 1; duration seconds: 0.93
+LOG: /private/tmp/p1-e14-t15-independent-gzn1kbbe/baseline-red.log
+
+LAST 35 LINES:
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/68]⎯
+
+ FAIL  baseline.test.ts > Review capture ownership > retains both cleanup failures after successful work
+ FAIL  baseline.test.ts > UI capture ownership > retains both cleanup failures after successful work
+AssertionError: expected undefined to be an instance of AggregateError
+ ❯ aggregate baseline.test.ts:28:17
+     26|
+     27| function aggregate(error: unknown, expected: unknown[]) {
+     28|   expect(error).toBeInstanceOf(AggregateError);
+       |                 ^
+     29|   if (!(error instanceof AggregateError)) throw new Error('missing Agg…
+     30|   expect(Object.hasOwn(error, 'cause')).toBe(true);
+ ❯ baseline.test.ts:279:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/68]⎯
+
+ FAIL  baseline.test.ts > Review capture ownership > retains page errors together with both cleanup failures
+ FAIL  baseline.test.ts > UI capture ownership > retains page errors together with both cleanup failures
+AssertionError: expected Error: browser close { facts: { …(2) } } to be an instance of AggregateError
+ ❯ baseline.test.ts:291:19
+    289|     stop.mockRejectedValueOnce(viteFailure);
+    290|     const error = await rejected(run());
+    291|     expect(error).toBeInstanceOf(AggregateError);
+       |                   ^
+    292|     if (!(error instanceof AggregateError)) throw new Error('missing A…
+    293|     expect(error.cause).toBeInstanceOf(Error);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/68]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  68 failed | 32 passed (100)
+   Start at  02:38:10
+   Duration  718ms (transform 52%, tests 32%, import 16%)
+
+

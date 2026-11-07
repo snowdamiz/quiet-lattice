@@ -1,0 +1,82 @@
+TASK: Fresh independent SOURCE/CPU R2 — P1.E07.T07 / P1.E08.T09 companion two-client QA fixture
+VERDICT: PASS — SOURCE/CPU ONLY. All three R1 P2 findings FIXED. No new blocking findings.
+
+PIN / SCOPE
+Read-only worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Git branch: t3/P1-E07-T07-T09-live-qa
+Final HEAD: d3985b2e3c52e3f9b28771b0b4dea143be20d9b1
+Final tree: 4b6db1cab2ba0016c8dcff0b20cdfb07638e8f63
+Source commit: d8f3f41caba90e5d5250dca033af907d28bef605
+Source tree: 3192e439a08b853a4345cfae88724ba16a841fd6
+R1 base: c115e93786890160fcc0592aeb3bc15934343fd3
+R1 base tree: 9bd3faef187925791573d86c4673922df099c5f6
+Product integration: 74360adf8cfb8e0d5ee7c7e0dbee07de02808904
+Product integration tree: 1412b00e663b1d7f996a8073cdede83ca53cbce0
+Original reviewed T07: bf09bc72543ed74b7dc7386415471d26a36a4b6d
+Original reviewed T09: d688579adf31c2a8ee9836495ba6b32708b99ccd
+
+The source delta is exactly online.ts, symbiotic-online.spec.ts and symbiotic-private.test.ts under packages/tools/src/smoke. The final commit adds only docs/review-records/p1-e07-t07-t09-r1/. There is no product delta hidden in this fix round. This is a fresh reviewer context, with no nested agents or Potato mode.
+
+Read the full original R1 review and actual nine-control repro, the corrected import context, current Appendix-C.2/manifest/future-QA/verification-summary/commands and evidence, old preparation Appendix/provenance/source hashes, plan 0.3/0.9.5/T07/T09/T02, and the failed prior live-attempt report. Reviewed the complete changed online.ts and permanent test source, the complete live spec, private routes, dedicated/default configs and hang harness. Traced the relevant production connection-close, zone leave/despawn, companion dismissal, snapshot/remote ingestion and stepped clock paths. No new five-patch product review was necessary after exact parity proof.
+
+R1 DISPOSITIONS
+
+F1 — P2 retirement vacuity — FIXED.
+Locations: symbiotic-online.spec.ts:409-426,440-499 (especially 467-472 and 474-499).
+The combat wait on BOTH clients still requires an actual received positive combat event attributed to the exact companion and selected enemy, AND authoritative HP below that client's baseline. The fix adds hp > 0; after freezing, each client's target is rechecked as alive with lower HP, and its companion is checked alive. Nothing substitutes attack phase, a fabricated message, or a health write for damage.
+Before close, the observer still picks the exact living owned companion. The release snapshot validates the exact living observer/player/foot identity in the arena frame and exact living enemy/mob/species/frame, with remaining reduced HP. The owner closes through production Net.close while the server clock is frozen; local closed state is awaited before thaw. Local close is not treated as server receipt.
+Retirement then requires joined=true, the original observer identity, tick strictly greater than the release snapshot, that same living foot observer and same selected living enemy in the arena frame. Owner and companion must leave authoritative entities; the companion must also leave RemoteEntities and shown fauna. The subsequent SINGLE page.evaluate captures identity/tick/survivors plus snapshot/remote/drawn/target/pick absence, and every captured condition is asserted again. Thus a change after the wait cannot silently pass from a previous observation. The pre-close companion pick is retained as the picking positive control.
+Independent evidence: exact old predicate still reproduces the corpse/missing-observer false positive; the corrected literal rejects it. Permanent cases reject all previously named vacuity variants. Additional controls execute the actual wait expressions and the exact transpiled post-wait evaluation AND assertions with the real EntityState schema: missing/wrong identities, non-foot observer, absent/NaN/negative/dead HP, stale/backward ticks, wrong enemy species/frame, retained owner/companion snapshot, companion remote/drawn/targets/pick all fail. Correct living/fresh controls pass. Both combat client baseline contexts reject wrong source/target/event kind, zero/negative damage, phase-only activity, missing target and no health loss.
+These are CPU falsification inputs to the source oracle, not synthetic live gameplay evidence. The live fixture contains no injected observer/world snapshot or health repair.
+
+F2 — P2 primary/secondary cleanup failures discarded — FIXED.
+Locations: online.ts:142-172,175-187,234-240.
+Vite close is deferred into a promise, so a synchronous throw cannot skip stopServer. Promise.allSettled captures both results; every rejected reason is retained by count rather than truthiness. An owned scratch DROP is attempted afterward and its error retained as well. A single failure is rethrown by identity; multiple failures remain in AggregateError.errors. Startup wraps its original caught value and the cleanup failure with cause, so all nested reasons survive without replacing the primary.
+Borrowed database URLs bypass CREATE/DROP. Ordinary scratch ownership begins only after successful CREATE within the guarded path; migration/setup failures attempt owned cleanup. Successful DROP clears ownership. A failed CREATE is not followed by a speculative DROP. External uncertainty about whether a real timed-out CREATE completed still requires external ownership/session evidence; the CPU tests make no such claim.
+TERM waits 10s for an exit event, then KILL has a 5s exit wait. Failed TERM/KILL deadlines are both retained; successful KILL escalation is recorded in serverOutput. A synchronous TERM error is reported, not converted into an exit claim. Vite has its separate 10s deadline. An error does not prove a handle/process is gone.
+Independent evidence: old source loses the primary startup error and second stop error; corrected source preserves both. Actual imported startOnline is exercised with inert OS/service ports. Supplemental tests preserve undefined, null, false, zero, empty string, an object and a symbol as startup/close/listen errors, including synchronous close/listen and simultaneous server/DROP failures. They check borrowed routing, failed CREATE, migration-plus-DROP errors, no duplicate successful DROP, pending TERM before the deadline, successful KILL exit-event handling, and KILL failure alongside TERM/Vite errors. Permanent tests retain Vite/TERM/KILL deadline failures together. No real service process, database or listener was started.
+
+F3 — P2 Vite handle lost after listen failure — FIXED.
+Location: online.ts:203-210.
+The createVite result is assigned to the owned vite variable immediately, before listen. A rejected or synchronously throwing listen now attempts close and server stop, preserving the original error by identity when cleanup succeeds, and the primary plus every cleanup error when it fails. The exact original listen-failure repro fails on old source and passes here. Supplemental sync-listen controls include falsy and non-Error reasons. Real Vite binding/shutdown was not exercised.
+
+ASSERTION / AUTHORITY PRESERVATION
+The original eight route tests retain their assertions; all original 348 test names remain and exactly 30 permanent cases are added. No product, existing test, skip or required-test assertion was weakened to reach the worker's 378 count. The diff strengthens combat/retirement and changes cleanup ownership/error behavior only.
+The unchanged live sequence uses a pre-join fragment, real skills requests, real target refusal before analysis, Game.analyze and production castIntent/Abilities.cast. Admin operations only arrange actors before the measured behavior. Follow still uses actual KeyS down/up, acknowledged owner displacement >14m, companion convergence <8m on both clients, and >6m authoritative/rendered displacement with increased ticks and the same companion picks. Damage remains source-attributed AND HP-based on both clients. Remote/instance matrices and main-camera submission assertions remain. No snapshot replay, local fauna authority, purchased Bond seeding, healing/respawn or outcome injection was added.
+Production Net.close -> gateway ws close -> zones.leave -> Zone.leave/despawn -> FaunaSim.dismissOwner remains the retirement owner. A later authoritative snapshot is necessary in the fixture; local closure alone does not satisfy it. CPU source checks do not prove visible pixels, real combat, real removal or game performance.
+
+INDEPENDENT PARITY / INTEGRITY
+audit.py independently runs and records Git commands and their exits in initial-audit.json and final-audit.json. Every checked command exits 0; both audit invocations exit 0.
+- All five original/integrated stable patch IDs freshly recomputed and equal: 84c0d407d1c7361376096923d91d1bf2ee559151, a0279407a28857321ca8ee915d0d483398fee03b, 666b348ec5a3f5b3edc109c4f63a083af222ae7a, 9900bb683d95590d018b572060e6f99728521657, b1fd1004af535769c57ece4b9bd4ce4095358a28.
+- All 55 reviewed integration paths have identical blobs at integration, R1 base, source and final HEAD, and match current working bytes. Compared the old preparation's original reviewed blobs too; ARCHITECTURE.md retains the documented combined-document exception, with both patch IDs matching.
+- All 20 protected object IDs match the integration parent, base, source and HEAD, including plan/progress/decisions, protected persistence/skills/exosuit tests and code, render/model/assets/public/Blender trees, manifest and lockfile.
+- All 23 old preparation files remain byte-identical by SHA256 and Git blob, with their original tree intact. The entire current R1 packet passes its SHA256SUMS.
+- Every final six-file source hash matches the source commit and manifest. Only the three authorized source paths changed; only the new report directory follows them.
+- All 4,228 tracked-file hashes match before/after this review. HEAD/tree/branch remain pinned; final git status is empty, no special index flags, and git diff --check base..HEAD passes.
+
+EXECUTION / COUNT ACCOUNTING
+Pinned executable: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node
+Observed version: v22.23.3. Direct installed Vitest reports 5.0.5. No pnpm/Corepack/npx/install invocation. Node/CLI hashes are in tool-hashes.json.
+All Vitest commands use --configLoader=runner --maxWorkers=2 --no-file-parallelism --no-cache, scratch fsModuleCachePath/cacheDir and a pre-import TCP/TLS/UDP/listen/fetch denial boundary. Tests were read before execution. Each process ran under run.py with a 120s outer bound and observed exit; no timeout occurred. Caches, output and temporary files stay in this fresh /private/tmp root. Service adapters are inert; no Vite runtime/server, database or browser was launched.
+
+Fresh R2 results (actual child exits, not a wrapper-success inference):
+1. permanent: actual symbiotic-private.test.ts — 38 passed, exit 0.
+2. harness-imports: actual harness-imports.test.ts — 22 passed, exit 0.
+3. r1-red: original nine controls against byte-identical base source copies under /tmp — 4 failed / 5 passed, exit 1, reproducing all three P2s (two assertions for F2). Only file references change for the old-source copies; external ports remain inert. This is the intended RED, not a final-source failure.
+4. r1-controls: same nine assertions against actual final source — 9 passed, exit 0. The only predicate adaptation supplies the new required observer/frame/species/tick context; verified against the saved exact context-only diff.
+5. supplemental: 95 additional independent actual-port/predicate/evidence checks — 95 passed, exit 0.
+6. tools-typecheck: direct tsc -p packages/tools — PASS, exit 0; repository config is noEmit.
+7. discovery: direct installed Playwright CLI test --config packages/tools/src/smoke/symbiotic.config.ts --list, output under this review root — exactly 1 test / 1 file, exit 0. This imports/lists only; no hooks or gameplay run.
+
+Focused 378-case qualification uses the user's explicitly permitted reuse: 60 freshly passing cases plus 318 unchanged previously passing cases after exact test/source/config hash and diff proof. The reused cases are listed individually in verification-summary.json, sourced from the original independent R1 focused.json. All relevant source outside the three inspected files is unchanged; the 22 spec-import inventory checks were rerun despite their unchanged test source. The union equals the exact worker 378 inventory, retains all 348 originals and adds exactly 30. This is NOT a fresh 378-case execution, and the 9/95 supplementary controls are NOT added into that 378 count. All final-source runs have 0 failed/pending/todo. The saved 19-fail/19-pass permanent RED, worker final 378 PASS and worker static check results were inspected and hash-verified, not relabeled as fresh R2 runs.
+
+Exact argv, cwd, non-secret environment overrides and child results: commands.json and *-command.json / *-result.json. Full stdout and Vitest JSON are retained, including the expected RED. Minimal rerun entry is python3 run.py LABEL '<the exact argv JSON from commands.json>'; run.py propagates child exit codes. audit.py contains the exact pin/parity/hash commands. The scratch supplemental source extracts the actual post-wait block, compiles TypeScript syntax without changing its logic, and executes all original acceptance assertions with EntityState.parse.
+
+PARENT HANDOFF / LIMITS
+SOURCE/CPU PASS clears the fresh source-review gate for the parent to proceed with its separately authorized one-test live launch, subject to its current serial GPU admission and corrected /tmp-only QA harness. No permission request or further source correction is needed from this review. The parent's fresh claim, final route guard/environment qualification and runtime supervision remain its own gates. Do not reuse the failed attempt's claim.
+The previous /tmp/space-symbiotic-live-20261107_070646_2f0be248/REPORT.txt remains COULD NOT RUN: Corepack failed before Playwright, zero tests/pixels, with documented verified cleanup. It is unchanged. This review neither alters a test for that harness failure nor claims the concurrently prepared harness's proof.
+The source's configured TERM/KILL/close bounds and mocked exit events are not observations of real OS/application shutdown. Before deleting the borrowed database or Redis keys, the live owner must still verify owned descendants/listeners/profile/application sessions and exact fresh namespace/marker/key ownership. Source PASS is not permission to infer cleanup from JS completion alone.
+Historical bf09 final 226/38 integration PASS and original T09 live fauna result remain retained historical evidence; neither was rerun or upgraded to this two-client fixture's live result. Full smoke, independently inspected drawn-companion pixels, required runtime no-skip success, real combat/follow/retirement, performance and any whole-task/merged gates remain separate. No browser/GPU/native capture, service/DB/Vite launch, asset hydration/write, screenshot cleanup, source commit, push, PR or merge occurred.
+
+ARTIFACTS
+review.txt; verification-summary.json; commands.json; initial-audit.json; final-audit.json; audit.py; run.py; boundary.mjs; tool-hashes.json; permanent/harness-imports/r1-red/r1-controls/supplemental JSON and logs; exact old-source copies; control sources/configs; typecheck/discovery logs; SHA256SUMS. All new artifacts are under /private/tmp/symbiotic-r2-d3985b2-y4j6rdho.

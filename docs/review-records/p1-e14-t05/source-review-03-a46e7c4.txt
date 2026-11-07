@@ -1,0 +1,98 @@
+P1.E14.T05 — fresh independent SOURCE/CPU R3 review
+VERDICT: PASS for this source/CPU revision of the R2 file-identity and archive contract.
+This does not grade GPU appearance, native performance, T07 runtime adoption, CI, or the whole task. No merge.
+
+PIN
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f
+Branch: task/P1-E14-T05
+HEAD: a46e7c4d444befd6efe6e06b9134b3a41abcb639
+Tree: d975bba10ccd2269d62242a19397e7127cb35571
+Parent: 653e76823efbbe7ef69032f58ec6b3660ab63443
+Reviewed shared pin: 515ba1f00810a50b499970b5468ef7bf0af84c32
+Evidence: /tmp/t05-r3-review-a46e7c4d
+Host: macOS 27.0.1, Darwin arm64. /tmp and /private/tmp are the same directory.
+Python used for the flora modules: /opt/homebrew/opt/python@3.14/bin/python3.14 (3.14.8).
+Xcode /usr/bin/python3 is 3.9 and cannot import datetime.UTC. Those first three commands exited 1 on import and were rerun. That is a harness pin, not a product defect.
+Node for consumers: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node (v22.23.3). Default shell node is v26.12.1 and was not used.
+pnpm 12.15.0 is installed and was not invoked.
+Vitest entry: node_modules/vitest/vitest.mjs, package version 5.0.5, sha256 39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6.
+Launcher node_modules/.bin/vitest sha256 before and after: 7de22f0fa8465e3480cb4b5396d7e1d1ad87c8cb34a6e679508696be4a549639. Regular file, not a symlink.
+Blender: /Applications/Blender.app/Contents/MacOS/Blender 5.2.3 LTS e13b728c6880. One factory-startup process at a time, -t 2. Other Blender jobs were already running for other tasks; they were not signalled.
+
+WHAT WAS REVIEWED
+Plan 0.3, 0.4, 0.9.5, T05, Appendix C. R2 report /tmp/t05-r2-review-653e768-l2zog4x7/REPORT.txt and its old alias/quarantine reproducers. Handoff /tmp/t05-r3-a46e7c4d-HANDOFF.txt.
+Diff vs 653e768 is the file protocol, receipt schema 2, export failure archive, direct Node/Vitest launch, two new test modules, and revision8 evidence. No art source or export bytes changed. No active flora material_trace.py. Import of material_trace from the flora directory raises ModuleNotFoundError. A gitignored __pycache__/material_trace.cpython-313.pyc is older than this review and is not an importable module.
+
+0.9.5
+No client authority over server-owned state. The new protocol has executable filesystem and consumer tests. This revision does not leave a replaced demo path as a second validator. It is not a perf-budget task. The alias and archive decisions are recorded in the worker handoff. No REVISE condition in 0.9.5 is present.
+
+PRIOR FINDINGS
+R1 runner signals: FIXED. run_cpu.py was not changed in this commit. Fresh unit test exits: SIGTERM 143, repeated SIGINT 130, timeout 124, exited leader 0. Child and grandchild were reaped. Private-lock contender return code 73 is asserted by test_revision.py:342 while the incumbent log bytes stay unchanged; that suite exited 0.
+R2 log ownership: FIXED. Same unchanged runner. Reusing a completed log is rejected without truncation. The global /tmp/astra-flora-t05-blender.lock file was present and there was no .blocked marker. This review did not acquire that global lock; it launched Blender directly.
+R3 unreadable prior output (R2 F2): FIXED. Quarantine of every removable owned name happens before any content read (file_protocol.py:82-125). A read error is recorded and the sweep continues (file_protocol.py:130-159). export_transaction.py:13-14 archives before snapshots.
+R4 archived symlink bytes (R2 F3): FIXED. Readable payloads are written to exclusive regular files and the relocated alias is unlinked, not kept as the archive (file_protocol.py:136-168).
+R5 caller alias retarget (R2 F1): FIXED. snapshot keeps the absolute caller path and the canonical target (receipts.py:98-118, file_protocol.py:19-50). verify_bound rechecks resolved path and bytes (file_protocol.py:53-57). Seal and consume repeat that check (receipts.py:156-162, 262-266, 325-330). Callers pass the requested path through without resolving it first: validate_exports.py:100-107, export_transaction.py:15-18, export_saved.py:134-140, audit_saved.py:23-24, material_controls.py:19-25.
+R6 stock material route: FIXED. Baseline PASS and six malformed material controls rejected on the stock route. Shared mask selftest 34/34. Nearby assertions 53/53.
+
+FRESH CONTRACT CHECKS
+Independent probe, real copied GLBs, scratch only, exit 0:
+- Unreadable resources GLB mode 000, missing stone source: latest FAIL, runtime names left 0, all three rows invalidated, blocked errno 13, payload hash absent, closure hash null with PermissionError, foliage and stone archive hashes match the saved GLBs, quarantined resources bytes match the saved GLB after the scratch fixture's own mode restore. No hash invented for the unreadable entry.
+- Runtime names were absolute symlinks to separate backing GLBs. After FAIL, each prior-assets GLB is a regular file, nlink 1, different inode. Replacing the foliage backing with stone bytes left the archived foliage hash at 925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d.
+- Absolute symlink plus a chain through another owned output: runtime cleared, three distinct regular nlink-1 copies, all hashed to the foliage target.
+- Equal-byte ancestor swap rejected. /tmp caller path kept, canonical path /private/tmp, same bytes accepted.
+- Forced seal failure after a successful staged publish: latest FAIL, runtime empty, prior GLB hashes preserved, failed-publication holds the new bytes as regular nlink-1 files.
+- Committed revision8 validation receipt schema 2 consumed as PASS. Paths are the six repo assets. Revision7 schema 1 receipt rejected: ValueError receipt identity mismatch.
+
+Stock and loader, one Blender each:
+- test_alias_cpu.py exit 0 in 50.459s, max RSS 849616 KiB. ACTUAL_ALIAS_CONTROLS_PASS 8. Leaf source and export retargets change bytes and are rejected both after a sealed PASS and after the real consumer returns, before seal. Ancestor source and export retargets keep equal bytes and are still rejected on target identity. Repo asset hashes unchanged. A recorded consumer: Node v22.23.3, Vitest 5.0.5, entry hash above, 130 passed, 0 failed.
+- test_revision_cpu.py exit 0 in 32.522s, max RSS 817072 KiB. REAL_REGRESSIONS_PASS 9 STOCK PASS. Matching stock PASS and content PASS, fresh source manifest 124 meshes and 31 base names, consumer 130/130. Three wrong collection pairs rejected by the loader. Source and export replacement races rejected. Missing, LFS-pointer, and corrupt sources leave 0 runtime GLBs and preserve 3 prior GLBs.
+- Controls exit 0 in 21.153s, max RSS 767744 KiB. Source audit PASS, receipt meshes 124, controls 6. Material controls PASS on the stock route. 34/34 mask controls. SUITE 53/53, selftest exit 0.
+- Filesystem unittest: 7 tests, 0.361s, exit 0, evidence under /tmp so the /tmp canonical branch ran.
+- Runner unittest: 8 tests, 11.883s, exit 0.
+- Direct Vitest, maxWorkers 1, no file parallelism: ktx, meshopt, targets, 28 passed, 0 failed, exit 0, 0.875s.
+
+Protected bytes after every run: 6 current assets, 3 shared files, and 592 historical files match protected-hashes.json (601 comparisons, 0 mismatches). 46 PNGs remain. Manifest sha256_manifest.json remains ff88a23e403e86f326f400dbcad8310a55c6000eb8c5b60b92b909661feac842. git status --porcelain=v1 --untracked-files=all is empty. HEAD and tree unchanged.
+
+Shared checks.py, materials.py, and material_mask_selftest.py still hash to the 515ba1f bytes recorded in R2. Ruff was not re-executed. Those unchanged files are the source of the known seven Ruff findings. This review does not call lint green.
+
+Ignored state: the Vitest launcher and vitest.mjs bytes did not change. pnpm did not run. Direct consumer runs rewrote the ignored cache file node_modules/.vite/vitest/da39a3ee5e6b4b0d3255bfef95601890afd80709/results.json. It was left in place. No package install and no lockfile edit.
+
+EXACT COMMANDS
+Mis-pin, exit 1 each, Python 3.9 import error, no product assertion:
+  /usr/bin/python3 -B /tmp/t05-r3-review-a46e7c4d/probe.py
+  /usr/bin/python3 -B -m unittest discover -s packages/tools/blender/flora -p test_file_protocol.py -v
+  /usr/bin/python3 -B -m unittest discover -s packages/tools/blender/flora -p test_revision.py -v
+Successful rerun from the worktree, Python 3.14.8, PYTHONDONTWRITEBYTECODE=1, thread caps 2, ART_KTX_JOBS=1, TMPDIR=/tmp/t05-r3-review-a46e7c4d/tmp:
+  T05_PROBE_OUT=/tmp/t05-r3-review-a46e7c4d/probe python3.14 -B /tmp/t05-r3-review-a46e7c4d/probe.py
+    exit 0
+  T05_TEST_EVIDENCE=/tmp/t05-r3-review-a46e7c4d/files python3.14 -B -m unittest discover -s packages/tools/blender/flora -p test_file_protocol.py -v
+    exit 0
+  T05_TEST_EVIDENCE=/tmp/t05-r3-review-a46e7c4d/unit python3.14 -B -m unittest discover -s packages/tools/blender/flora -p test_revision.py -v
+    exit 0
+  node v22.23.3 node_modules/vitest/vitest.mjs run packages/tools/src/art/ktx.test.ts packages/tools/src/art/meshopt.test.ts packages/tools/src/art/targets.test.ts --maxWorkers=1 --no-file-parallelism --reporter=json --outputFile=/tmp/t05-r3-review-a46e7c4d/pipeline-tests.json
+    exit 0, 28/28
+Blender -b -t 2 --factory-startup --python-exit-code 1 -P, PATH node 22 first, same thread caps, deadline 600s, process group reaped:
+  test_alias_cpu.py -- --report-dir /tmp/t05-r3-review-a46e7c4d/alias
+    exit 0
+  test_revision_cpu.py -- --report-dir /tmp/t05-r3-review-a46e7c4d/real
+    exit 0
+  /tmp/t05-r3-review-a46e7c4d/run_controls.py -- /tmp/t05-r3-review-a46e7c4d/controls
+    exit 0
+Review Blender pgids 96493, 98677, and 12976 were gone afterward.
+
+SIX ART SHA256, UNCHANGED
+assets/blend/flora/non_tree_stone.blend 436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15
+assets/blend/flora/non_tree_foliage.blend 5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456
+assets/blend/flora/non_tree_resources.blend 03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9
+packages/client/public/models/flora/non_tree_stone.glb a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9
+packages/client/public/models/flora/non_tree_foliage.glb 925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d
+packages/client/public/models/flora/non_tree_resources.glb 7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725
+
+FINDINGS
+None at P1 or P2 inside the specified contract.
+
+ADVISORY
+None.
+
+NOT ESTABLISHED
+Live flora.glb and fallback retirement, resource identity, LOD and scale adoption, material appearance, collision, far silhouette, LOD popping, and 60 fps remain outside this source/CPU pass. T07 still owns that adoption. No screenshot cleanup, hydrate, capture, GPU, browser, service, or database work was done. No commit, push, PR, or merge.

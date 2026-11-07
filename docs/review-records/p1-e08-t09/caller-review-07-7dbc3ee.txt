@@ -1,0 +1,143 @@
+TASK: P1.E08.T09 — fresh independent R7 disabled-caller SOURCE/CPU review, Appendix C.2/C.4
+STATUS: DONE — VERDICT: REVISE (six reproduced P2 findings). Review complete; whole T09/native/visual acceptance is not complete.
+SUMMARY: The original R6 metadata/artifact/cache-read cases are fixed at their reported caller sites. Exact-base red replay and candidate process controls prove this independently. The complete current fauna route still has an unanchored cache-copy destination, loss of bootstrap and observer producer facts, loss/replacement of the navigation primary in the actual fauna entry, malformed PNG palette acceptance, and an inspector content read outside its admitted byte bound. These are concrete contract failures, not style findings or a general content-privacy/security proposal. No repository file was changed.
+
+Pinned review:
+- Worktree: `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`
+- Branch: `task/P1-E08-T09-current-base`
+- HEAD: `7dbc3eeb832dbfcfdc92ada434913f75edd9aa75`
+- Tree: `d7f022e45d87e752c8b07389e7b3b68a561c7ed5`
+- Base: `372bd7367f8d817e7b78043bfbc1be459c00ded7`
+- Base tree: `54069a676f327dc48e73d2a077b98395eb53d6c8`
+- Reviewed both commits: `7a4b22016674f7f82f36da59629230dfbe9c41af`, `7dbc3eeb832dbfcfdc92ada434913f75edd9aa75`.
+- Exact binary delta SHA256: `fcc70697b840a43b25cb3b84593941e76e74428b537a14bbba7f84aaff1cf7ad`.
+- Disabled readiness SHA256: `8cb8c952de28e5a347d347a042bf4fb19605e2d31991ab410ecab5da1ed0f328`.
+- Evidence: `/private/tmp/p1-e08-t09-r7-independent-RAzrya`.
+
+FILES CHANGED: None in the reviewed or parent checkout. Candidate delta is exactly fauna_packet/{caller.py,controls.py,freeze.py,readiness.json}. Only fresh review scripts, logs, disposable Git fixtures, synthetic grants and evidence were written under this review root. Plan 0.3/0.9.5, T09 and Appendix C, packet README, complete caller, changed controls/freezer/readiness, entry/inspector and concrete shared consumers were inspected. Prior R1–R6 reports and supplied cross-lane reports were used as hypotheses, then checked against actual fauna paths. The supplied `...r6-independent-hTgUsK/reproducers` subdirectory does not exist; its original reproducers are at that evidence root and were copied from there. The on-repo directory is `docs/review-records/p1-e08-t09-da01f7c6c`; it contains historical visual/QA records, not the later caller-review reports.
+
+FINDING R7-1 — P2 — Cache-copy destination traversal is not descriptor anchored.
+
+Location: `packages/tools/src/capture/fauna_packet/caller.py:569-578`, especially `target.open('xb', buffering=0)` at 576. Reachable from actual main -> consume -> run_unit -> snapshot_caches after a real predecessor caller OS exit 0.
+
+The source is guarded, but creating the destination parents and opening the exclusive leaf still follows a full pathname. Exclusive creation does not prevent following an ancestor symlink. In `green/cross-boundaries.py`, `copy-destination-ancestor`, the actual copy parent is renamed and replaced by a real symlink immediately before the actual destination open. The caller writes all 20 admitted source bytes into a separate fixture directory outside its intended cache-before tree. Only the subsequent copied-tree verification rejects the symlink. Main returns 1 and dispatch never happens, but the unintended write has already happened; the copy record names the intended path rather than an independently anchored destination. Source bytes and the escaped partial copy are retained.
+
+Evidence: `green/cross-boundaries-results.json`, matching case, exact fixture/event/resolved destination and producer/caller records; `logs/cross-boundaries-corrected.*`. This is a filesystem fault entirely within fresh scratch; no real foreign cache or private content was accessed.
+
+Correction: anchor the created destination directory chain with no-follow directory descriptors, create each exclusive leaf relative to its pinned parent, validate its actual descriptor, and retain destination identity/close/partial-write facts. Keep current source and copied-plan verification; post-copy refusal cannot substitute for safe destination acquisition. Contract: explicit ancestor traversal requirement including copy destinations, with preserved copies only in the admitted owned destination. This is a remaining copy-write gap adjacent to the new reader, not recurrence of R6's source-read failure.
+
+FINDING R7-2 — P2 — The first observer failure loses its raw facts and primary position before the caller records it.
+
+Location: `caller.py:713-720`. Immutable crossing: `round4_job_boundary.py:286-303`. The ordinary `StageReceipts.observe` path is actually used; no assumed shared-helper defect is substituted for a fauna finding.
+
+`green/cross-boundaries.py` executes current fauna main/run_unit and the exact extracted StationJob.wait/save bodies. For `observer-timeout` and `observer-timeout-save`, actual StageReceipts.observe -> _observe -> actual current_commands reaches its subprocess producer port. That inert port raises TimeoutExpired with NUL/non-UTF8 output/stderr and a nested unknown field. The unchanged wait reduces it to a type/message string, then saves. Fauna subsequently selects generic `Capture returned failure`; when boundary.json persistence also fails, `SECONDARY_HELPER_RECEIPT_WRITE` becomes primary instead. Neither returned nor durable fauna records retain the original partial output or unknown field.
+
+Two additional whole-caller cases inject a one-shot OSError with raw/unknown fields at actual cache enumeration inside observed_thresholds. They demonstrate the same loss through the other branch of the real callback. A positive cancellation control preserves KeyboardInterrupt and its attached facts, skips cache-after inventory, and never decodes. Thus this finding is specifically ordinary first-error retention/precedence, not a claim that all cancellation paths fail.
+
+Evidence: `green/cross-boundaries-results.json`, cases observer-timeout, observer-timeout-save, budget-failure, budget-failure-save, observer-cancel. Each begins after a real successful first process. Native ports are inert; real wait/observer/threshold and filesystem bodies execute. All negative caller outcomes remain refused.
+
+Correction: save the complete first callback exception at the fauna callback boundary before rethrowing across wait. Cover both observer and resource-threshold calls. Select that saved original before post-wait normalization/receipt work; retain helper-save and cleanup failures separately. Preserve BaseException/deadline unwind and avoid new work in an expired phase. Contract: original/unknown observations and primary/secondary ordering. Original R1/R2 release instrumentation remains fixed; this is a separate inherited capture-observation crossing.
+
+FINDING R7-3 — P2 — Bootstrap command results disappear when the helper's first receipt fails.
+
+Location: `caller.py:710`; exact helper body at `round4_job_boundary.py:216-221`.
+
+The actual caller invokes job.start without the producer instrumentation used during release. The unchanged start body obtains its CompletedProcess, writes bootstrap.json, checks exit, then sets registered. In two actual whole-caller cases, that producer returns exit 0 or exit 17 with distinct stdout, stderr, NUL and an unknown byte-valued field. Injecting failure at the actual bootstrap receipt write leaves only `SECONDARY_HELPER_RECEIPT_WRITE` in the caller. Both producer outputs and the unknown field are absent from all returned/durable fauna JSON. There is exactly one inert bootstrap attempt, no decoder, and main returns 1.
+
+Evidence: `green/cross-boundaries-results.json`, bootstrap0-write and bootstrap17-write, with independent producerOracle, actual helper-write events and all caller receipts. The current helper's registered assignment comes after the failed write; successful-registration uncertainty must not be inferred away. No actual launchctl call or physical registration/leak is claimed.
+
+Correction: observe the actual start-command return/exception in the task-local adapter before the unchanged helper can discard it. Preserve complete bounded raw fields and uncertainty separately from receipt failure; do not retry start or change immutable helper bytes. Contract: all attempted work and raw outcomes must remain accounted for through receipt failure. Cross-lane bootstrap hypothesis is reproduced on fauna, not automatically imported.
+
+FINDING R7-4 — P2 — Fauna entry loses raw navigation facts and lets capture cleanup replace the navigation primary.
+
+Locations: `entry.mjs:194`, `:334-340`. Concrete shared consumer: `packages/tools/src/capture/capture.ts:336`, `:354-355`.
+
+`green/capture-cross.mjs` runs actual fauna main -> actual unmodified captureUi, with inert Playwright/Vite/net ports and real scratch receipts. Node's built-in type stripping changes only loading of the pinned TypeScript source. Product-method and screen-definition fixtures satisfy the fauna wrapper; the capture consumer body is not replaced. All child-process APIs are forbidden.
+
+- goto-only: PRIMARY_PAGE_GOTO survives as a message, but its byte-valued partial data and unknown field are removed by describe.
+- goto plus browser-close failure: SECONDARY_BROWSER_CLOSE becomes fauna's primary; the original navigation failure is absent from returned and durable entry results. Vite close is not attempted after browser close throws.
+- goto plus Vite-close failure: SECONDARY_VITE_CLOSE becomes primary and the original is absent.
+
+Each actual attempted entry is refused with pages=1/launched=1, and final entry-result.json is written. These counters describe inert external ports, not a real browser. Original R1 catch-write/final-write regression cases still pass; they replaced the capture function with a direct throw and therefore did not exercise this crossing.
+
+Evidence: `green/capture-cross-results.json`, full loaded-source hashes and traces; `logs/capture-cross.*`, Node v26.12.1.
+
+Correction: retain the first failure at fauna's existing page/browser-operation boundary before the unchanged common finally can replace it, preserve bounded raw/cause attributes, and account for close failures separately. Preserve the standard captureUi route. Shared T15 correction38b6c4b was neither adopted nor assumed; this finding is against the requested candidate's actual pinned consumer. Contract: primary/unknown-fact preservation and attempted cleanup accounting, not a request for a new framework.
+
+FINDING R7-5 — P2 — Full fauna inspection accepts malformed PNG palette critical chunks.
+
+Location: `inspect.py:87-96`; full caller consumer `caller.py:781-786`.
+
+The inspector relies on Pillow verify/load and terminal bytes without checking these critical-chunk invariants. The actual caller, using pinned Python3.14.8, invokes the real pinned Python3.10.22 inspector subprocess after positive inert capture/release. Starting from a complete valid 82-file correction packet, the producer inserts either two valid-CRC PLTE chunks or one zero-entry PLTE into the first 1920x1080 RGB PNG, updating both the actual entry byte/hash manifest and the corresponding observation hash. Both cases return main 0, checksPassed:true, accepted:true in memory; the decoder exits 0 and fully decodes all 81 images. Final output-manifest revalidation also succeeds. Baseline valid packet succeeds through the same route. Disk result remains provisional accepted:false as designed.
+
+These are invalid PNG datastreams: a PLTE, if present, has 1–256 entries and appears at most once, including in truecolor images. Primary standard checked live: [W3C PNG Third Edition, section11.2.2](https://www.w3.org/TR/png-3/#11PLTE). This is container-validation failure with unchanged pixels, not claimed visual corruption, native capture success or a decompression exploit.
+
+Evidence: `green/png-cross-launcher-results.json`, `green/png-cross-from-template.py`, `logs/png-cross-launcher.*`. Initial decoder-interpreter-driver results are also retained at png-cross-results.json; the final run uses the actual frozen caller launcher plus actual frozen decoder subprocess. All imagery is explicitly synthetic CPU evidence.
+
+Correction: validate PLTE presence/count/nonempty legal length and placement before decoding the same bounded image bytes, retaining ordinary valid truecolor optional palettes. Add complete caller/manifest controls. Contract: the explicitly requested PNG hypothesis and complete artifact validity gate, not a product/art change.
+
+FINDING R7-6 — P2 — The real inspector still reads content beyond the charged image size and per-file allowance.
+
+Location: `inspect.py:225-228`, specifically stat/check followed by unbounded file.read_bytes at227. Other image reopens at89/91/94 and metadata load have the same separate-path structure, but the proven finding is this exact full-caller artifact read.
+
+In `green/inspector-read-cross.py` the actual caller launches its real decoder subprocess under the existing45-second timeout. A small instrumentation driver runs the unchanged inspector CLI with runpy and schedules a real source growth at Path.read_bytes, after the inspector's actual size check. The 8,594-byte PNG grows to33,554,439 bytes. The actual read returns every byte, exceeding both its charged size and the16,777,216-byte image cap plus any one-byte sentinel. Only the following digest/manifest check rejects it. Decoder exits1; caller returns1 with complete failure publication. No timeout fires and no false acceptance is claimed.
+
+Evidence: `green/inspector-read-cross-results.json`, readMeasurements; `green/inspector-read-child.py`; `logs/inspector-read-launcher.*`. The command record and inspectionCommand retain both the normal inspector argv and the instrumented child argv. Both use the frozen decoder; final caller driver uses frozen Python3.14.8. The earlier16MiB+1 probe is retained separately; the decisive probe exceeds cap+1.
+
+Correction: make inspector-controlled content acquisition a bounded regular-descriptor snapshot reconciled with admitted identity/size; hash and decode those same bytes rather than reopening unchecked paths. Keep independent semantic/oracle checks and the existing45-second deadline. No general framework or changes to immutable dependency/source hash routes are required. Contract: all controlled artifact reads consume charged size/identity and a finite allowance. R6's original caller artifact and cache sites are fixed; the stronger whole-route coverage claim remains incomplete because inspection is a real subsequent consumer.
+
+PRIOR FINDING DISPOSITIONS:
+
+- R1-F1, Node receipt errors mask capture primary: FIXED at the originally reported boundary. Seven stock Node tests plus both original actual-main catch/final-write controls pass. R7-4 is the distinct actual capture cleanup crossing and raw-description loss.
+- R1-F2, release assertions discard raw command observations: FIXED. Exact archive/terminal bodies retain returned observations, raw fields and predicates through failure. R7-2/R7-3 concern other uninstrumented producer boundaries.
+- R1-F3, contradictory clocks/incomplete broad feed journal: FIXED. Original four full-inspector mutations freshly refuse; complete219-image broad and81-image correction software controls pass. No visual grade follows.
+- R2-A, swallowed cleanup DeadlineExpired/cancellation: FIXED. All38 real SIGALRM/KeyboardInterrupt cases at19 cleanup receipt boundaries preserve phase unwind: calls at interruption equal final calls, no decoder resumes, timers clear and incomplete ownership remains retained. Cache-after failure/cancellation/deadline controls also pass. No old cleanup-deadline regression reopened.
+- R2-B, failed final publication authorizes successor: FIXED. Eight original publication-process cases and seven reference mutations pass. Additional six actual two-process fixtures observe first exits[0,1,7,0,0,0] and successor exits[0,2,2,2,2,2] for success, failed complete final close, failure after main returned, wrong result hash, wrong consumption hash and boolean exit. Failed cases allocate no successor paths or dispatch. Only actual observed OS0 plus exact references admits the positive control; disk checksPassed alone does not.
+- R2-C, lost exception bytes/allocation ownership: FIXED at release/allocation boundaries. Six original producer/all-sinks cases retain raw bytes/unknown facts and original path/dev/inode/UID. Exact32MiB receipt-boundary test still charges close-failed bytes before refusing the next receipt.
+- R3 source-only PASS was a historical disposition, not a blanket guarantee. Its six original accepted fixes above remain preserved.
+- R4-1, separately authenticated/semantic metadata and manifest reread: FIXED. Fresh authenticated-snapshot swaps refuse, completed snapshots retain original coherent object/digest, validated manifests travel through GrantAdmission.
+- R4-2, metadata EOF hash before cap: FIXED for root grant/result/consumption/caller review.29 metadata cases/242 snapshots and exact-cap/growth/truncation/encoding/hash/unknown-field controls pass. R7-6 is the distinct later inspector read.
+- R5-1, metadata FIFO between lstat/open: FIXED.14 fresh schedules cover FIFO, symlink, different inode, authenticated failure/success swaps and completed snapshots. No alarm or payload on unsafe admission; descriptors and close-error ownership controls pass.
+- R6-1, artifact open and owned-cache pre-cap/after reads: FIXED AT THE REPORTED SITES. Unchanged original scripts on exact372bd reproduce artifact FIFO block, raced symlink successor OS0,64MiB+1 eager hashing, aggregate partial copy, working snapshot deadline and untimed cache-after FIFO. Candidate seven actual artifact-successor process schedules refuse with exits[2,2,1,2,2,2,1], no successor allocation/dispatch and unchanged predecessor hashes.23 actual cache-main cases pass, including current64MiB+1 and aggregate overflow with zero payload/copy, exact boundary, leaf/ancestor races, after growth, real deadline, cancellation, close/receipt and all-sinks combinations. Copy writes remain bounded. The copy-destination gap and later inspector are separately R7-1/R7-6.
+- Same-HEAD serial sequence: PRESERVED. Six actual children exit0 at scratch HEAD031702ffa755bcaee6cbdc204a5b3d7607f3469b. Counts82+82+82+82+220+220=768. Exact prior receipt hashes remain unchanged; no inter-unit commit; only allowed untracked outputs. These files are labeled synthetic text, not images.
+
+CROSS-LANE HYPOTHESES:
+
+- T02 ancestor/cache: guarded caller reads refuse static/late ancestor substitutions; unguarded destination is R7-1. Bootstrap is reproduced as R7-3. Its final-hash FIFO class does not recur in the corrected caller verifier; separate inspector pre-admission exposure is R7-6.
+- T03/T14 observer primary: reproduced through actual fauna StageReceipts/current_commands and resource observer as R7-2. Shared capture cleanup: actual fauna wrapper fails to preserve it, R7-4. Cache source/copy verification pre-admission is fixed; stock extra copied-entry and source-shape/content tests pass. PNG palette cases reproduce as R7-5.
+- T13 charged-versus-hashed: corrected caller plans pass admitted inode/size into actual descriptor acquisition. Actual main refuses a source grown after fstat and writes no over-admitted copy. The later inspector is R7-6. T13 unreadable-directory hypothesis is REFUTED for the new tree planner: a real mode000 cache subdirectory raises PermissionError through actual main, refuses before native dispatch, marks after-inventory skipped, and preserves source/partial facts. The fixture's mode is restored afterward. Enumeration errors are not silently omitted by this controlled planner.
+- Normal `/tmp` alias use remains valid when canonicalized to `/private/tmp` before the canonical grant/file contract. Explicit positive control resolves the macOS alias and reads successfully; fixture creation uses canonical paths. No arbitrary ancestor symlink exemption or perpetual immutability claim is proposed.
+
+VERIFY:
+
+Exact verification argv/cwd/environment/exits/durations and complete stdout/stderr are in `commands.jsonl` and `COMMANDS.md`. All tests use direct frozen binaries, isolated review caches/TMPDIR, no package manager/install, and at most two CPU test workers. Every subprocess is synchronously waited/reaped; real first/successor outcomes and exact references are retained in case results. No live native process ownership is inferred from those harmless processes.
+
+- Python stock40/40 pass, including permitted software decoder controls; Node stock7/7 pass on26.12.1.
+- Original R6 red: artifact-boundaries4 cases, artifact-main2, artifact-process2 and cache-boundaries4 reproduce expected defects on exact base. Exit0 means defect assertions succeeded, not candidate acceptance. Reviewer-only FIFO cutoff is explicitly distinguished from a caller deadline.
+- Candidate artifact7 process cases, cache23 main cases, six-unit sequence,26 static admission mutations,29 metadata cases/242 observations,14 R5 schedules, original publication8/abort38/reference7, raw producer6 plus receipt cap, original R1 Node2 and full-inspector adverse cases all pass.
+- Fresh publication-successor6 cases run12 actual caller processes, all observed and accounted for; only positive allows successor.
+- Fresh cross-boundaries10 cases: destination violation, unreadable-dir and source-growth refusal controls, bootstrap2, observer2, budget2 and cancellation control. Reproduction exit0 asserts the explicitly described positive/negative behavior; it is not a source PASS.
+- Actual fauna entry/capture3 cases run with Node26.12.1. No Playwright/Vite/net/native process starts.
+- Full PNG3 cases use actual caller3.14 and actual decoder3.10 subprocess;81 images decoded in each. The two invalid palettes are accepted, substantiating R7-5.
+- Inspector-growth subprocess reads33,554,439 bytes after8,594-byte admission; exits1 and caller refuses, substantiating R7-6's read-bound failure.
+- Actual disabled checkout entry refuses all six units before helper imports/subprocess/allocation. No real grant is read or issued.
+- No-bytecode compile and Git diff checks pass. No pnpm/build/install/lint cache writes or broad suite claimed.
+
+Retained nonzero/harness development result:
+- `cross-boundaries` exits1 after its first seven checks. Its original budget fault fired repeatedly, so the later cleanup/after phase separately retained a newly raised error with identical sentinel bytes, disproving the harness's total-loss assertion. `cross-boundaries-initial.py`, initial-results and full log remain. The corrected script makes the intended first observer fault one-shot; both budget cases then establish first-error loss. This is a harness correction, not a concealed candidate fix. All ten corrected cases pass their stated assertions.
+- The initial inspector-growth probe used16MiB+1. It was deliberately strengthened to32MiB+7, exceeding the allowed cap plus sentinel; both originals and final results are retained. No source changed.
+- Initial path discovery found no literal `docs/review-records/p1-e08-t09`, `reproducers` subdirectory, `entry.ts` or `inspector.py`; actual paths above were used. These read-only discovery exits are not tests or product failures.
+
+PRESERVATION:
+
+`before.json` and `verification.json` compare12,733 tracked filesystem fingerprints,38 declared cache entries and21,687 R6 evidence-file fingerprints: zero changes. Comparison includes bytes/hash, type/mode, size, inode/device and mtime; symlink targets are recorded without following them. Checkout branch/HEAD/tree and clean status match. All436 frozen bindings (including runtime binaries and shared capture consumers), dependency bytes/routes and Pillow pins verify against actual current files. Both12-file base/candidate packet/helper copies equal Git blobs exactly. Only the four owned files differ from base; product, shared helpers, assets, history and unowned source/dependency pins are preserved; the three changed owned bindings match their final bytes.
+
+All120 prospective identities across final/7a4/372bd/eb856/e636 disabled readiness snapshots remain absent. Runtime stays false. Inventory/budgets/unit order/flags are unchanged: four82-file correction units, two220-file broad units,768 files/762 images. Correction admission8,925,528,064 bytes; broad15,871,295,488. Controlled metadata64MiB, snapshot64MiB, native reserves and capture/cleanup/decoder600/60/45 seconds unchanged. No all-six-fit or hard native-quota claim. Fresh capacity was not qualified: caller --check was not run because it invokes the prohibited launchctl probe. The parent can take its authorized next step only after a fresh source PASS and current capacity; no human-permission stage is added by this review.
+
+DECISIONS AND LIMITS:
+
+REVISE follows the explicit file/admission, bounded-read, raw-error and artifact-validation contracts. Plan0.9.5's authority/demo/new-system/product-budget rules introduce no separate finding in this four-file correction. The new stricter cache-entry bound does not expand byte budgets. The freezer's one-line use of guarded size admission is appropriate and remains source-reviewed; freezer was not rerun because that would rewrite readiness/probe routes.
+
+No actual browser/GPU/native encoder/StationJob launch/launchctl/service/DB/art capture, grant/enable/hydration/history cleanup, repository edit, push, PR/comment, queue submission or merge. Extracted unchanged helper bodies use inert OS ports; their CPU positive results are not physical drain/release proof. No product-source/live-QA result or historical visual verdict is recertified. Shared T15 work is separate and unadopted. Independent visual/animation grading, native ownership/capture and whole T09 remain unqualified.
+
+ARTIFACTS: this REPORT.md; COMMANDS.md; commands.jsonl; pins.json; source-diff.patch; before.json; verification.json; evidence-manifest.json; green/red original and new probe scripts, exact source copies, case JSON, child logs, retained fixtures and synthetic CPU packets. No self-grade or runtime acceptance is provided.
