@@ -11,8 +11,8 @@ import shutil
 import subprocess
 import sys
 
-from boundary import (CONSUMPTION_SCHEMA, RESULT_SCHEMA, MIB, canonical, deadline, encoded, exclusive_json, git, json_snapshot,
-                      output_manifest, persist, raw, require, retain, snapshot, validate_inventory, verify_worktree)
+from boundary import (CONSUMPTION_SCHEMA, RESULT_SCHEMA, FAILURE_SUMMARY_CAP, MIB, canonical, deadline, encoded, exclusive_bytes, exclusive_json, failure_summary, git, json_snapshot,
+                      output_manifest, persist, require, snapshot, validate_inventory, verify_worktree)
 import bindings
 
 HERE = Path(__file__).resolve().parent
@@ -23,27 +23,32 @@ def plan():
     return validate_inventory(json_snapshot(HERE / 'inventory.json')[0])
 
 
+def terminal_paths(paths):
+    return [Path(paths['evidence']) / 'result.json', Path(paths['consumption'] + '.fallback.json'),
+            Path(paths['consumption'] + '.failure-summary.json')]
+
+
 def prepare():
     inventory = plan()
     root = bindings.ROOT
-    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus')
+    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-nativefix-ydkbvouf')
     ready_path = str(evidence.with_name(evidence.name + '-readiness.json'))
     paths = {}
     for spec in inventory['units']:
         unit = spec['id']
         paths[unit] = {'ready': ready_path, 'grant': str(evidence.with_name(evidence.name + '-' + unit + '.grant.json')),
             'consumption': str(evidence.with_name(evidence.name + '-' + unit + '.consumed.json')),
-            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-r5-rdtnxbus' / unit)}
+            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-nativefix-ydkbvouf' / unit)}
     canonical(evidence, absent=True)
-    canonical(root / 'assets/renders/review/viewmodel-packet-r5-rdtnxbus', absent=True)
+    canonical(root / 'assets/renders/review/viewmodel-packet-nativefix-ydkbvouf', absent=True)
     for row in paths.values():
-        for path in row.values():
+        for path in [*row.values(), *terminal_paths(row)]:
             canonical(path, absent=True)
     pinned = bindings.discover()
     return {'version': 1, 'runtimeEnabled': RUNTIME_ENABLED, 'entryEnabled': inventory['entryEnabled'],
             'executionStatus': 'ENABLED_AWAITING_PARENT_GRANT', 'nativeQualified': False,
             'inventorySha256': json_snapshot(HERE / 'inventory.json')[1], 'paths': paths,
-            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-r5-rdtnxbus')},
+            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-nativefix-ydkbvouf')},
             'bindings': pinned, 'cacheOwnerFreezeObservation': bindings.cache_owners(),
             'pythonSelfObservation': {'scope': 'CPU_SELF_PROCESS_ONLY', 'pid': os.getpid(), 'uid': os.getuid(),
                                       'launcher': pinned['python'], 'kernelExecutable': pinned['pythonKernel']},
@@ -102,6 +107,8 @@ def admit(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bin
         p = ready['paths'][future['id']]
         for key in ('output', 'evidence', 'consumption'):
             canonical(p[key], absent=True)
+        for path in terminal_paths(p):
+            canonical(path, absent=True)
         if future['id'] != unit:
             canonical(p['grant'], absent=True)
     verify_worktree(root, grant['authorizedHead'], previous, ready['bindings']['ignoredInventorySha256'])
@@ -278,13 +285,17 @@ def main(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bind
     ready, spec, paths, consumed = admit(ready_path, unit, grant_path, enabled=enabled, verifier=verifier)
     # Atomic, immutable one-use consumption. Any later failure leaves it spent.
     metadata_attempted = 0
+    metadata_dispatched = 0
     def metadata_write(path, value):
-        nonlocal metadata_attempted
-        amount = len(encoded(value))
+        nonlocal metadata_attempted, metadata_dispatched
+        data = encoded(value)
+        amount = len(data)
         metadata_attempted += amount
         require(metadata_attempted <= 40 * MIB - 65536, 'Caller metadata attempt ceiling')
+        require(amount <= 20 * MIB, 'Metadata cap exceeded')
+        metadata_dispatched += amount
         if writer is exclusive_json:
-            return writer(path, value, cap=20 * MIB)
+            return exclusive_bytes(path, data, cap=20 * MIB)
         return writer(path, value)
     consumption_hash = metadata_write(Path(paths['consumption']), consumed)
     record = {**consumed, 'schema': RESULT_SCHEMA, 'consumptionSha256': consumption_hash, 'accepted': False, 'checksPassed': False,
@@ -294,12 +305,31 @@ def main(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bind
         runner(ready, spec, paths, record)
         record.update(checksPassed=True, status='AWAITING_CALLER_COMPLETION')
     except BaseException as error:
-        retain(record, record, 'primaryFailure', error)
-    result = persist(record, [Path(paths['evidence']) / 'result.json', Path(paths['consumption'] + '.fallback.json')], write=metadata_write, emit=emit)
+        # Keep the original graph. Encoding it here and again during publication
+        # expands shared native evidence into a second graph of graph nodes.
+        record['primaryFailure'] = error
+    def emergency(value):
+        nonlocal metadata_attempted, metadata_dispatched
+        data = encoded(value)
+        amount = len(data)
+        require(amount <= FAILURE_SUMMARY_CAP, 'Failure summary ceiling')
+        metadata_attempted += amount
+        require(metadata_dispatched + amount <= 40 * MIB, 'Caller failure reserve exhausted')
+        metadata_dispatched += amount
+        # The 64 KiB withheld from ordinary receipts covers this one 16 KiB sink.
+        # Failed full writes stay charged; no allocation or capture is retried.
+        path = terminal_paths(paths)[2]
+        if writer is exclusive_json:
+            exclusive_bytes(path, data, cap=FAILURE_SUMMARY_CAP)
+        else:
+            writer(path, value)
+        return str(path)
+    result = persist(record, terminal_paths(paths)[:2], write=metadata_write, emit=emit, emergency=emergency)
+    result['metadataBytes'] = {'attempted': metadata_attempted, 'dispatched': metadata_dispatched}
     return (0 if record['checksPassed'] and not record['persistenceErrors'] and result['durable'] else 1), result
 
 
-if __name__ == '__main__':
+def cli(argv=None, *, execute=main):
     def interrupted(number, _frame):
         raise KeyboardInterrupt(f'Caller interrupted by signal {number}')
     signal.signal(signal.SIGTERM, interrupted)
@@ -309,7 +339,8 @@ if __name__ == '__main__':
     parser.add_argument('--ready', type=Path)
     parser.add_argument('--unit')
     parser.add_argument('--grant', type=Path)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    result = None
     try:
         if args.prepare:
             print(json.dumps(prepare(), indent=2))
@@ -317,16 +348,34 @@ if __name__ == '__main__':
             ready = json_snapshot(args.check)[0]
             bindings.verify(ready)
             for row in ready['paths'].values():
-                for key, path in row.items():
+                for path in [*row.values(), *terminal_paths(row)]:
                     if str(args.check) != path: canonical(path, absent=True)
             inventory = plan()
             require(ready['runtimeEnabled'] is RUNTIME_ENABLED and ready['entryEnabled'] is inventory['entryEnabled'], 'Gate/readiness mismatch')
             status = 'ENABLED_AWAITING_PARENT_GRANT' if RUNTIME_ENABLED and ready['entryEnabled'] else 'DISABLED_CPU_BINDINGS_ONLY'
             print(json.dumps({'status': status, 'runtimeEnabled': RUNTIME_ENABLED, 'entryEnabled': ready['entryEnabled'], 'allUnitsQualified': False, 'nativeQualified': False}))
         else:
-            code, result = main(args.ready, args.unit, args.grant, emit=lambda data: sys.stderr.buffer.write(data))
+            code, result = execute(args.ready, args.unit, args.grant, emit=lambda data: sys.stderr.buffer.write(data))
             print(json.dumps({'exit': code, 'durable': result['durable'], 'accepted': False}))
-            sys.exit(code)
+            return code
+        return 0
     except BaseException as error:
-        sys.stderr.write(json.dumps(raw(error)) + '\n')
-        sys.exit(1)
+        record = getattr(error, 'evidence', None)
+        if not isinstance(record, dict):
+            if result is not None:
+                record = result['record']
+                record.setdefault('persistenceErrors', []).append({'sink': 'caller-status', 'error': error})
+            else:
+                record = {'primaryFailure': error}
+        # This bounded last diagnostic does not serialize the failed full graph.
+        # A broken stderr is an all-sinks failure, never a durable-success claim.
+        try:
+            sys.stderr.buffer.write(encoded(failure_summary(record)))
+            sys.stderr.buffer.flush()
+        except BaseException:
+            pass
+        return 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(cli())

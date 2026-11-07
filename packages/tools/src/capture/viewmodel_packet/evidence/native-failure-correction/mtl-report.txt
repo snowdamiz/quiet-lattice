@@ -1,0 +1,96 @@
+MTLCompilerService narrow binding: CPU PASS; native attempt remains FAILED/SPENT
+
+Workspace: /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8
+Branch: task/P1-E05-T03
+HEAD: 84d7098432de296b1db916849804c912d1558cd3
+Uncommitted patch: /private/tmp/vm-native-fix-ydkbvouf/mtl/patch.diff
+Only bindings.py and test_encoder.py changed. No commit, readiness update, new grant, runtime rerun,
+cleanup, dependency installation, other worktree modification, or nested agent. Parent owns the separate
+terminal receipt issue. This lane is finished; no more edits after handoff.
+
+Retained actual run
+- Original parent: /private/tmp/space-vm-parent-unit1-r5-kghan_6a
+- Raw packet: /private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus/review-thalune
+- Parent exit 1; release report accepted=false, outputFiles=[], callerResultPresent=false,
+  callerFallbackPresent=false; helper drained=true, clean=false; terminal coalition absent/live=0.
+- Spent consumption receipt was read, not regenerated or reused.
+- Owned job root PID54608 UID501 birth [1794046925,254462], coalition 42831.
+- PID54994: UID501 birth [1794046927,934671], coalition [42831,42832], ppid1 pgid54994.
+  Executable: /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService
+  Role apple-video-encoder-xpc; admitted=true; prelaunch_sha256
+  a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5.
+- PID55005: UID501 birth [1794046928,112755], coalition [42831,42832], ppid1 pgid55005.
+  Executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService
+  Role owned-launch-helper; admitted=false; no prelaunch hash retained for this process.
+- boundary.json identities and observed_execution.json kernel/coalition records agree exactly.
+  These are retained observations, not fresh observations of those PIDs. Parent prelaunch process
+  listing has unrelated MTL instances; it is not evidence that PID54994 was MTL.
+- Boundary error: AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService
+
+Current exact file (CPU codesign only)
+- SHA256 65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b; bytes 389760.
+- Identifier com.apple.MTLCompilerService; platform 26; CDHash 0564f4ea2063dbc3a9de0ac47ded14661384d230.
+- Requirement identifier "com.apple.MTLCompilerService" and anchor apple.
+- Strict verification exit0 and display exit0; canonical regular file plus all 12 route
+  entries UID0 and not group/world writable. Device/inode/owner/mode rechecked; executable and
+  codesign bytes rechecked after verification. Full argv/stdout/stderr/hash/protection in current-mtl-binding.json.
+- This current file hash/signature does not retrospectively prove PID55005's bytes during the failed run.
+
+Change
+- Adds exactly this path, hardcoded SHA256/byte count, root-owner/nonwritable/canonical route checks,
+  Apple designated signature/platform identity, and before/after checks following the existing VT model.
+- discover() includes the file in readiness bindings, stores appleMetalCompiler evidence, and populates
+  exactly one additional process_binary_sha256 entry. verify() still requires full discover() equality.
+- Existing apple_encoder_binding source text is byte-identical. All four helper files remain unchanged.
+  StageReceipts/StationJob ownership checks, unknown-executable refusal, role classification and
+  Storemember rules are untouched. No Apple namespace or other service path is admitted.
+
+RED and GREEN
+- red/: exact HEAD bindings bytes plus the new matching regression. Actual StageReceipts.observe()
+  failed at run_round4_remaining8.py:334 with Unbound owned executable; exit1. No prerequisite failure.
+- red/replay.*: same unchanged bindings, exact retained PID55005 UID/birth/coalition facts injected
+  through actual StationJob.members and StageReceipts.observe; same intended failure, exit1.
+- green-final/: all 8 tests pass (3 existing VT tests + 5 MTL tests), exit0. Retained-identity replay
+  passes, exit0, preserving the original retained admitted=false record separately from CPU output.
+- Tested refusals: binding hash/size, root owner, parent owner, file/parent writability, symlink route,
+  failed signature, wrong identifier/platform/designated requirement; StageReceipts missing binding,
+  wrong UID/birth/coalition, wrong executable despite MTL command text, birth/coalition race;
+  actual StationJob.members PID reuse; nonmember never admitted. All rejection control receipts
+  have zero admitted rows. Matching row retains role owned-launch-helper.
+- Initial green/ also passed. Tests were then hardened so forbidden process launches raise RuntimeError
+  rather than matching expected ownership AssertionError, and reject any admission on a failed observation.
+  green-final/ proves that final test source. test_encoder.red.py reconstructs only those guard changes
+  and was verified against the SHA256 recorded at the original RED; no production code changed between greens.
+
+Proof limits
+- CPU tests inject kernel/process observations and isolate unrelated discovery (resolver, trees, source
+  inventory and self-kernel probe); they do not validate fresh runtime discovery or produce new readiness.
+  Real Apple files and /usr/bin/codesign are used. No compiler/encoder/browser service was launched.
+- Wrong hash is rejected by the binding/discovery boundary BEFORE StageReceipts. The unchanged generic
+  StageReceipts path does not rehash arbitrary owned services on every observation; it trusts the frozen
+  process map, as it did for VTEncoder. Tests do not claim malformed caller maps are rejected by that helper.
+- No new native/browser/GPU/codec/Blender/service/server/DB/grant/cleanup/install run. No Node process needed.
+  Tests ran serially, at most one small Python3.14 -B test process in this lane (codesign subprocesses only).
+- Original unit stays FAILED/SPENT, zero images. No claim of native success, complete process observation,
+  external XPC ownership, publication readiness, or resolution of the parent's terminal receipt issue.
+
+Protection and provenance
+- protection-before/after.json: 114 entries unchanged, including retained parent/raw packet
+  directory/file identity, modes, owners, mtimes and file SHA256; exact spent grant/consumption/readiness
+  files and four helpers unchanged. Directory/file access times are intentionally not claimed.
+- git diff --check exit0. The saved final-git-status.txt snapshot immediately after lane tests listed
+  only the two owned source paths. A later handoff-git-status.txt also shows concurrent parent edits
+  to boundary.py and caller.py; this lane did not edit those files. The CPU results precede those parent
+  edits and do not qualify the combined parent patch. Assets/runtime/shared helpers/history had no
+  tracked changes at these observations; no exhaustive hashing of all shared dependencies is claimed.
+- Source snapshots, exact hashes, commands/exits and failure tails are retained here. Commands in commands.txt.
+
+Source SHA256
+ee98a25cfaf58d9411a3729e46e13bb66e43e74020927b29882c6f49c721c113  /private/tmp/vm-native-fix-ydkbvouf/mtl/bindings.old.py
+51beb6911086f5550bd428b6e6a90bef8ef2746a84db29c645b9c4ab38b427ae  /private/tmp/vm-native-fix-ydkbvouf/mtl/bindings.new.py
+2bde5d5a916bfca37de4007faeae8ad0a310aa227613348ee9f64d9d770ce1e6  /private/tmp/vm-native-fix-ydkbvouf/mtl/test_encoder.old.py
+25c8d7f94948695f0b4101fec9a88d2942dbabd03877315329308f91aaf16472  /private/tmp/vm-native-fix-ydkbvouf/mtl/test_encoder.new.py
+f500cb4a54f0888f0c6ba54b5049499ddb2420b403bdd8bc4dc41165ede9ced2  /private/tmp/vm-native-fix-ydkbvouf/mtl/patch.diff
+
+RED test SHA256: ceb744de8949ff86ff765093f7e07180d017709ae9ef4a4f160aa3acef708c72
+Python: {'executable': '/opt/homebrew/opt/python@3.14/bin/python3.14', 'version': '3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]', 'dont_write_bytecode': True}

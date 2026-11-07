@@ -93,7 +93,7 @@ class R2Controls(unittest.TestCase):
                             cache_copy=lambda r, e, rec: rec.update(initialCacheBytes=0))
                     def write(path, value):
                         if Path(path).name == 'result.json' and sink != 'durable': raise OSError('PRIMARY_SINK_FAILURE')
-                        if str(path).endswith('.fallback.json') and sink == 'all-sinks': raise OSError('FALLBACK_SINK_FAILURE')
+                        if str(path).endswith(('.fallback.json', '.failure-summary.json')) and sink == 'all-sinks': raise OSError('FALLBACK_SINK_FAILURE')
                         return boundary.exclusive_json(path, value, cap=20 * boundary.MIB)
                     def emit(_): raise OSError('STDERR_SINK_FAILURE')
                     with patch.object(caller, 'HERE', repo.packet):
@@ -106,7 +106,7 @@ class R2Controls(unittest.TestCase):
                     text = boundary.encoded(result).decode()
                     for fact in ('UkFX/w==', 'RVJS/g==', 'POST_OBSERVER_RECEIPT_FAILURE', 'Capture release unproved'):
                         self.assertIn(fact, text)
-                    if sink == 'all-sinks': self.assertEqual(len(result['record']['persistenceErrors']), 3)
+                    if sink == 'all-sinks': self.assertEqual(len(result['record']['persistenceErrors']), 4)
                     else:
                         durable = Path(result['path']).read_bytes()
                         for fact in ('UkFX/w==', 'POST_OBSERVER_RECEIPT_FAILURE', 'Capture release unproved'):

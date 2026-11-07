@@ -227,7 +227,11 @@ def encoded(value):
 
 
 def exclusive_json(path, value, cap=META_CAP):
-    data = encoded(value)
+    return exclusive_bytes(path, encoded(value), cap)
+
+
+def exclusive_bytes(path, data, cap=META_CAP):
+    require(type(data) is bytes, 'Receipt bytes required')
     require(len(data) <= cap, 'Metadata cap exceeded')
     canonical(path, absent=True)
     with open(path, 'xb') as stream:
@@ -237,7 +241,34 @@ def exclusive_json(path, value, cap=META_CAP):
     return hashlib.sha256(data).hexdigest()
 
 
-def persist(record, paths, *, write=exclusive_json, emit=None):
+FAILURE_SUMMARY_CAP = 16384
+
+
+def failure_summary(record):
+    """A separate, bounded diagnostic, never a substitute for the complete facts."""
+    def describe(value):
+        try:
+            if isinstance(value, dict):
+                value = value.get('error', value)
+            if isinstance(value, dict):
+                return {'type': str(value.get('type', 'dict'))[:64],
+                        'messagePrefix': str(value.get('message', 'Structured failure; see full record'))[:256]}
+            return {'type': type(value).__name__[:64], 'messagePrefix': str(value)[:256]}
+        except Exception:
+            return {'type': 'UnprintableFailure', 'messagePrefix': 'Full value retained in memory'}
+    primary = record.get('primaryFailure')
+    native = record.get('native', {})
+    secondary = record.get('secondaryFailures', []) + (native.get('secondaryFailures', []) if isinstance(native, dict) else [])
+    return {'schema': 'viewmodel-publication-failure/1', 'accepted': False,
+            'completeRecordDurable': False, 'completeFacts': 'retained-in-memory-only-unless-full-sink-succeeded',
+            'primaryFailure': describe(primary) if primary is not None else None,
+            'secondaryFailureCount': len(secondary),
+            'secondaryFailurePrefixes': [describe(e) for e in secondary[:2]],
+            'persistenceErrorCount': len(record.get('persistenceErrors', [])),
+            'persistenceErrorPrefixes': [describe(e) for e in record.get('persistenceErrors', [])[:4]]}
+
+
+def persist(record, paths, *, write=exclusive_json, emit=None, emergency=None):
     """Each sink is attempted once; interruptions escape with the in-memory record."""
     record.setdefault('persistenceErrors', [])
     for path in paths:
@@ -245,19 +276,34 @@ def persist(record, paths, *, write=exclusive_json, emit=None):
             write(path, record)
             return {'durable': True, 'path': str(path), 'record': record}
         except Exception as error:
-            record['persistenceErrors'].append({'path': str(path), 'error': raw(error)})
+            # Encoding a publication error must not prevent the next sink attempt.
+            record['persistenceErrors'].append({'path': str(path), 'error': error})
         except BaseException as error:
+            record['persistenceErrors'].append({'path': str(path), 'error': error})
+            error.evidence = record
+            raise
+    summary_path = None
+    if emergency:
+        try:
+            summary_path = emergency(failure_summary(record))
+        except Exception as error:
+            record['persistenceErrors'].append({'sink': 'failure-summary', 'error': error})
+        except BaseException as error:
+            record['persistenceErrors'].append({'sink': 'failure-summary', 'error': error})
             error.evidence = record
             raise
     if emit:
         try:
-            emit(encoded(record))
+            data = encoded(failure_summary(record))
+            require(len(data) <= FAILURE_SUMMARY_CAP, 'Failure summary ceiling')
+            emit(data)
         except Exception as error:
-            record['persistenceErrors'].append({'sink': 'stderr', 'error': raw(error)})
+            record['persistenceErrors'].append({'sink': 'stderr', 'error': error})
         except BaseException as error:
+            record['persistenceErrors'].append({'sink': 'stderr', 'error': error})
             error.evidence = record
             raise
-    return {'durable': False, 'path': None, 'record': record}
+    return {'durable': False, 'path': None, 'summaryPath': summary_path, 'record': record}
 
 
 def git(root, *args):
