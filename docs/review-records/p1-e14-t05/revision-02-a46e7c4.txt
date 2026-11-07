@@ -1,0 +1,100 @@
+POST-COMMIT IDENTITY / APPENDIX C.2 HANDOFF
+{
+  "base": "653e76823efbbe7ef69032f58ec6b3660ab63443",
+  "base_tree": "43fbc3b58e6e7787d7e37089d6e98b960788310d",
+  "head": "a46e7c4d444befd6efe6e06b9134b3a41abcb639",
+  "tree": "d975bba10ccd2269d62242a19397e7127cb35571",
+  "branch": "task/P1-E14-T05",
+  "clean": true,
+  "post_commit_manifest_entries": 751,
+  "manifest_sha256": "ff88a23e403e86f326f400dbcad8310a55c6000eb8c5b60b92b909661feac842",
+  "protected_hashes_sha256": "1d52973a7e3563abbe8cbdebf9dcdd45860c297137c904280bbb025ca705a52b",
+  "current_validation_run": "20261107T071341Z-a8b17aed0eaf401bbf72b069d7033557",
+  "current_validation": "PASS",
+  "retained_task_bytes": 446809772,
+  "png_count": 46,
+  "index": {
+    "staged_files": 119,
+    "lfs_objects_verified": 108,
+    "manifest_entries": 751,
+    "manifest_sha256": "ff88a23e403e86f326f400dbcad8310a55c6000eb8c5b60b92b909661feac842",
+    "owned_only": true,
+    "unstaged_changes": false
+  },
+  "all_owned_groups_dead": true,
+  "cpu_lane_free": true
+}
+
+TASK: P1.E14.T05 (art) Flora rebuild: plants, grass, rocks, deposits, crystals.
+Revision: R2 F1–F3 corrections; retain earlier R1–R6 fixes and reviewed T14 stock integration.
+
+STATUS: DONE — requested local SOURCE/CPU revision. Parent's independent R3 review and native/GPU acceptance remain pending. No whole visual, runtime adoption, CI, performance, or merge qualification.
+
+SUMMARY: Receipt schema 2 binds the absolute requested pathname, canonical target and bytes at capture, sealing and receipt consumption. Requested filenames survive aliases; ancestor retargeting is rejected even when bytes are identical, while /tmp -> /private/tmp works. The common output protocol inspects identities, quarantines every removable owned runtime name before content reads, and then freezes readable prior payloads in exclusive, digest-verified regular files. Unreadable entries, unresolved links and unremovable paths retain raw error facts; failure closure sealing publishes current FAIL without fabricating hashes. External link targets are read only; only owned names are moved/unlinked. The same preservation protocol handles failed publication. Consumers invoke the installed Vitest pin directly, avoiding package-manager dependency verification through scratch aliases.
+
+FILES CHANGED:
+- packages/tools/blender/flora/file_protocol.py — common input identity and archive protocol.
+- packages/tools/blender/flora/receipts.py — schema 2 identity checks, failure closure facts, revision8 default.
+- packages/tools/blender/flora/export_transaction.py — common protocol for prior outputs and failed publication.
+- packages/tools/blender/flora/validate_exports.py — direct installed Node/Vitest route and recorded versions.
+- packages/tools/blender/flora/test_file_protocol.py — seven real-filesystem tests using actual saved asset copies.
+- packages/tools/blender/flora/test_alias_cpu.py — eight full-validator/real-loader alias controls.
+- assets/renders/flora/t05/revision8/** — exclusive evidence, frozen old tooling, failures, current receipt, reports and manifests.
+No art source/export, shared artlib, family contract, runtime consumer, orchestration document or screenshot changes.
+
+PIN / PROVENANCE:
+Branch task/P1-E14-T05; revision base 653e76823efbbe7ef69032f58ec6b3660ab63443, tree 43fbc3b58e6e7787d7e37089d6e98b960788310d.
+Original task base f7f1347d1ba36b702000471d462dd7e9475dbb8d, tree 5cca39d788ed51aca8ebed574dc3c3756e9e7517.
+Reviewed shared commit 515ba1f00810a50b499970b5468ef7bf0af84c32, tree 6e0fb967b897ecde0777567adac37ab9b59cb68f; previously integrated by f0456b0bf71fd5ea070e89845f252d4b2d8230f8. All three exact shared files remain unchanged.
+Final commit HEAD/tree are supplied in the post-commit Appendix C.2 handoff to avoid embedding a circular commit identity in its own tree.
+Six actual art files and all 592 pre-existing evidence files match baseline, including all 455 pre-revision7 files. protected-hashes.json retains every before/after digest. sha256_manifest.json seals current source/export/tool/evidence bytes, excluding itself.
+
+VERIFY:
+Scratch S=/private/tmp/t05r3-2104d5oh. Exact command arrays, exits, environment, finite deadlines and process-group completion are in commands.json, results/*-run.json and static/summary.json. The following commands ran from this worktree with -B/PYTHONDONTWRITEBYTECODE, CPU thread limits2, ART_KTX_JOBS=1, short private TMPDIR and offline dependency settings. Every Blender command used /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P; at most one Blender process was active.
+
+1. python3 -B S/red/quarantine_repro.py — exit0 asserts OLD failures F2 and F3 with actual copied GLBs and chmod000/real symlinks; no fake hash/rename. Original reviewer scripts/reports were copied, never overwritten.
+2. python3 -B S/run.py red-alias-ready <Blender flags> S/red/alias_repro_ready.py — exit0 asserts two OLD false PASSes after actual six-asset stock checks and 130 real consumers. Source and export caller aliases were retargeted after the consumer; old seal and consume_current still accepted. Frozen receipts/export_transaction exactly match 653e768; the only old consumer adapter is a recorded diff replacing pnpm exec with pinned direct Node/Vitest. Scratch node_modules directories are real local directories with leaf package links; verifyDepsBeforeRun=false. No scratch package-manager install ran.
+3. T05_TEST_EVIDENCE=S/files-final python3 -B S/run.py files-final python3 -B -m unittest discover -s packages/tools/blender/flora -p test_file_protocol.py -v — exit0, seven methods. Covers unreadable prior and missing later source; absolute/relative symlinks and hardlinks; unreadable/dangling external targets; unremovable names with continuation; looping aliases; links to another owned output; leaf/ancestor identity, identical bytes and normal macOS routing. Unreadable scratch evidence is tested at mode000; only that test's own fixtures are later restored to600 for packaging, with explicit scratch-permission-recovery.json. The production protocol never changes referent permissions or invents a digest for unreadable data.
+4. python3 -B S/verify.py — exit0; serial calls to S/run.py, each with a 900s finite deadline:
+   unit-final: python3 -B -m unittest discover -s packages/tools/blender/flora -p test_revision.py -v — exit0, eight methods, including real child/grandchild TERM, repeated mixed signals, timeout, exited leader, contention, completed-log reuse, failed retries, stale PASS and malformed receipts. Lightweight controlled content records in this suite are transaction tests only.
+   aliases-final: <Blender flags> packages/tools/blender/flora/test_alias_cpu.py -- --report-dir S/aliases-final — exit0; eight rejected substitutions through stock validation and actual GLTFLoader/Meshopt/recolour consumers. Leaf and ancestor, source and export, before sealing and after a real PASS. Each baseline is 130/130; equal-byte ancestor swaps are rejected by target identity.
+   real-final: <Blender flags> packages/tools/blender/flora/test_revision_cpu.py -- --report-dir S/real-final — exit0; nine actual-asset cases. All six stock assets PASS, baseline130/130, all three wrong source/export collection pairings rejected by real geometry/name/mask association checks, both ordinary read races rejected, missing/pointer/corrupt source attempts leave zero removable runtime outputs and preserve all prior GLBs.
+   controls: <Blender flags> S/controls.py — exit0; five malformed actual source controls plus missing float-carrier rejection, lossless FLOAT adapter check; stock material baseline plus six malformed controls; official34/34 and nearby53/53 shared assertions. Active local material_trace/legacy route remains absent.
+5. python3 -B S/receipt_controls.py — exit0; fresh actual PASS accepted plus seven rejected corrupt/stale current/closure/run/source-binding/test-count/stock-report cases. Full copied receipts, failed attempts and unchanged prior-history checks retained.
+6. python3 -B S/contention.py — exit0; while an actual Blender -t2 process owned the lane, contender exit73; incumbent log prefix preserved. Unit signal/cleanup controls additionally prove ownership through resistant child termination. Every observed owned group is dead; global CPU lock is reacquirable and no blocked marker exists.
+7. python3 -B S/run.py pipeline <Node22> node_modules/vitest/vitest.mjs run packages/tools/src/art/ktx.test.ts packages/tools/src/art/meshopt.test.ts packages/tools/src/art/targets.test.ts --maxWorkers=1 --no-file-parallelism --reporter=json --outputFile=S/pipeline-tests.json — exit0, 28/28 CPU tests.
+8. python3 -B S/static.py — exit0: Python compile; uvx --offline ruff check and format --check on 13 relevant task files; pinned Node ESLint/Prettier on floraAssets.test.js; pinned TypeScript --noEmit -p packages/client; working/base diff checks all exit0. Shared Ruff exits1 with exactly SEVEN unchanged findings, equal to stdin checking exact515 bytes. Not full lint green.
+9. python3 -B S/package.py and S/seal.py — exit0; every archive payload read back and hashed, symlink identities compared without extraction, current schema2 receipt accepted, protected source/history/shared hashes unchanged.
+
+FAILURES / RED EVIDENCE:
+failure-tails.txt contains the last20 lines for every failed top-level recorded command. Full logs and JSON test failures are retained. Two initial new-scratch alias harness runs exited1: missing @astra/shared package metadata (0 tests), then missing demo_inventory.json (129/130). Both attempts remain; a new complete scratch attempt reproduced both old false PASSes at130/130. An initial contention observation found the first alias run already finished; no contender launched then. The subsequent real-Blender contention proof passed. Shared Ruff's seven existing findings remain explicitly exit1. Expected corrupt-source, wrong-pair, material and receipt rejection reports remain in boundary-evidence.tar.gz. Existing historical failed stock/source evidence was not rewritten.
+
+DEPENDENCY RESTORATION:
+Preserved post-review ignored state before touching the launcher: 17,972 entries, original launchers, .modules.yaml and ignored lock metadata. Inspected the parent script and its relative resolution route; verified baseline SHA256 7de22f0fa8465e3480cb4b5396d7e1d1ad87c8cb34a6e679508696be4a549639 against the supplied known pin. Replaced only T05's regular, single-link .bin/vitest using an exclusive temporary file and atomic replace. Bad launcher SHA256 c7882d1f869760538b5ef3011497efa7d3bdcb183b983da7e24ba1d25b41acef is preserved. No external checkout write, install, lockfile upgrade or store prune.
+Before/after versions are Node22.23.3, pnpm12.15.0, Vitest5.0.5. Shell default Node26 was not used for checks. Direct consumers verify Node22.23.3 and installed Vitest5.0.5 and record their entry hash.
+Final ignored comparison: 113 metadata/content differences, of which106 are content/new-entry differences: the authorized launcher restoration plus105 ordinary local .vite/.vitest-cache results/transforms produced by tests. No .pnpm installed package content changed during this work. Full path-by-path before/after metadata and hashes are in results/dependency-after.json; original state is dependency-state/before/inventory.json. Pre-review cache history is unavailable, so the reviewer's off-lock cache additions remain preserved, not claimed restored.
+
+DECISIONS:
+Alias inputs → support and bind requested/canonical/bytes → allows normal macOS routing and catches both leaf and ancestor replacement; schema1 receipts cannot qualify through the current reader.
+Prior bytes unreadable → remove all removable runtime names first, retain raw quarantined entry/errors and current FAIL → no content-read failure strands later stale outputs; unremovable names are explicitly reported rather than claimed removed.
+Alias/hardlink history → exclusive detached regular payload copies before removing held owned entries → later external changes cannot rewrite readable archived bytes. Looping/dangling aliases retain identity and raw failure facts.
+Repeated evidence → UUID attempts and deduplicated archive payloads → no old reports overwritten and retained evidence stays below512MiB. No new render/preview images.
+Scales, variants, authored geometry, materials and mapping → unchanged →31 variants/13 kinds/124 LOD meshes and21 legacy non-tree names remain as previously authored. Old78 demo meshes are not claimed as78 unique assets. See original TASK_REPORT.txt, demo_inventory.json, source_manifest.json and next_gpu_inventory.json for the preserved mapping/scale decisions.
+
+OUT OF SCOPE FOUND:
+No new shared pipeline or consumer change is required for these fixes. T07 still owns live flora.glb/fallback retirement, runtime resource identity/LOD/scale/material adoption. Native appearance, collision, far silhouette, LOD popping and 60FPS are not established by these CPU tests. Parent owns review/grade/GPU scheduling/main/plan/push/PR/merge. No GPU, renderer preview, browser/native capture, DB/services, screenshot cleanup or network asset download was performed.
+
+ARTIFACTS:
+This directory: current validation/, commands.json, protected-hashes.json, sha256_manifest.json, failure-tails.txt, archive-inventory.json, boundary-evidence.tar.gz, results/, logs/, static/, dependency-state/, scripts/.
+Archive: 2,819 members, 1,390 distinct payloads, 20,988,690 compressed bytes. Read and verify in place; any replay belongs in fresh scratch, never over historical evidence. Retained task evidence is approximately426MiB; all46 existing PNGs remain, none added.
+Next GPU inventory unchanged: assets/renders/flora/t05/next_gpu_inventory.json, SHA256 e074b0dbf6212f3bd900964b1788f11d35b541009a49926a8c52659a766fc836. 31 variant specifications across noon-lush/night-exotic/open-space; LOD0/2, wireframe/overlays, 100m far view, eight angles, material views and native performance. Prepared only; not launched.
+
+EXACT SIX ART SHA256
+{
+  "assets/blend/flora/non_tree_stone.blend": "436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15",
+  "assets/blend/flora/non_tree_foliage.blend": "5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456",
+  "assets/blend/flora/non_tree_resources.blend": "03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9",
+  "packages/client/public/models/flora/non_tree_stone.glb": "a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9",
+  "packages/client/public/models/flora/non_tree_foliage.glb": "925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d",
+  "packages/client/public/models/flora/non_tree_resources.glb": "7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725"
+}
