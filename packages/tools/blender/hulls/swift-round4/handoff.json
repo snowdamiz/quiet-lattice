@@ -1,0 +1,232 @@
+{
+  "status": "DONE",
+  "summary": "Completed the Swift-only ROUND4 CPU/source revision in the authoritative editable .blend: localized wear/clouded crystal, selected fractured openings and exposed structure, finished cockpit housings/readable displays/controls/shaped seat/restraints, and protected canopy normals, rear tip and landing-foot geometry through LOD2. Preserved base/damaged/husked variants, passing silhouette/proportions/cultural design and three liveries. Promoted the exact current-source GLB after unmodified stock source/export validation, actual decoded surface/marker identity, topology/UV/normal audits and inspected CPU previews. Parent engine captures, full smoke, reliable whole-scene performance, independent blind grade and review remain pending; no whole-task or performance PASS is claimed.",
+  "decisions": [
+    "Recover from history? \u2192 Verify equal Git pointer blobs at all three specified commits and SHA/size of the existing local LFS objects; hydrate only the two canonical Swift files \u2192 No fetch or old branch/debris imports; commit recovery separately before authoring.",
+    "Authoritative content? \u2192 Edit and save the .blend, with explicit authored LOD collections \u2192 Export entry point only consumes the saved source via stock validation/baking/export; it never imports author.py.",
+    "Round-3 disposition? \u2192 Treat the verbatim third verdict as REVISE \u2192 No fifth-grade waiver; parent must obtain a fresh blind grade.",
+    "Appearance corrections? \u2192 Contact masks around rung/grip/leading-edge/socket regions, distinct slate roughness and cloudy crystal; restore 16 displaced panels, remove 42 damaged and 46 husk floating replacement components, add 3/5 selected fracture sites \u2192 Address the specific material/destruction notes while keeping the passing hull design.",
+    "LOD defects? \u2192 Hold canopy and all three gear meshes exactly through LOD2, protect rear-tip vertices, retain four decreasing LODs \u2192 Verify actual vertices/faces/corner normals and decoded export, rather than chasing unattributed scene GPU timing.",
+    "Cockpit fit? \u2192 Author shaped seat/bolsters/head wings, harness/latch, fitted bezels, mesh labels/graphics, distinct rotary/toggle/pedal controls; fit existing ScreenLeft/Center/Right marker transforms to actual unchanged runtime plane dimensions \u2192 No Cockpit.js or runtime edits.",
+    "First author attempt exited 0 but failed the intended LOD3 budget \u2192 Keep 03-author/failed-source.blend and fix the inverted decimation group in 04 \u2192 A successful author process is not asset acceptance.",
+    "Cockpit fit checks failed in 17 and 19 (despite 19 directory name ending green) \u2192 Align marker scale/orientation and reverse side inset faces \u2192 Preserve failures and verify all 27 current LOD0/1/2 display instances.",
+    "Export attempts 16 and 20 cancelled when cockpit defects were found \u2192 Terminate and reap their process groups before further source edits \u2192 Never validate or promote a stale source/export pair.",
+    "Export 23 hit a disappearing scratch-file monitor race, not an asset/GPU failure \u2192 Preserve its failure log/receipt, make enumeration tolerate FileNotFoundError, prove the race in 24, reprove repeated-interrupt cleanup and exclusive ownership in 26 \u2192 One bounded retry at the same resource cap.",
+    "Export memory accumulation? \u2192 Release only reloadable decoded caches of packed maps after each stock material bake \u2192 Job25 proves exact float texels before/after release on a generated fixture and actual packed source mask; maps remain 4k and bake logic unchanged.",
+    "CPU preview qualification? \u2192 Use factory-started Blender, explicit CPU and two threads; strip stock turntable GPU discovery in memory without editing shared script \u2192 These images inform authoring only; they do not replace standard engine captures.",
+    "Failure scratch contains raw EXR tiles? \u2192 Record hashes/sizes and remove only own transient scratch after child-group-empty receipts \u2192 Preserve logs, failed source archives and visible partial artifacts without retaining raw frames.",
+    "Interruption orphaned Blender when the external harness killed the runner \u2192 Add an independent pipe watchdog, reproduce runner SIGKILL in 28 and repeated SIGTERM/SIGINT plus competing ownership in 29 \u2192 Command group termination/reaping now survives loss of the monitoring parent; job27 remains CANCELLED and unchanged.",
+    "Explicit continuation \u2192 Verify the same worktree, recovery HEAD, revised source SHA and absence of own active processes; continue from uncommitted source \u2192 No reset, rehydration, screenshot cleanup or other-checkout writes.",
+    "Export 33 completed baking and encoded 59 textures, then the stock tsx geometry tool failed listen EINVAL on its overlong Unix socket path \u2192 Reproduce the long-path failure and short-alias success in 34; route TMPDIR through an owned /tmp symlink to this attempt's scoped scratch \u2192 No shared tool edit; the alias is removed only after the child group is empty (normal and hard-loss proof 35).",
+    "Serializer reported invalid lower-LOD meshes \u2192 Disposable-copy probes 36/37 showed duplicate faces from decimation, not merely unused vertices \u2192 Remove duplicates in the saved source in 38, preserving unique triangle coverage and every LOD0 mesh; add duplicate-face/UV failure checks to the audit and validate authored LODs before saving. This is topology/source-export correctness, not performance-driven simplification.",
+    "Stock exporter deletes its temporary encoded file on later failure \u2192 Preserve the completed encoded stage in the fresh attempt before geometry compression \u2192 Label it INTERMEDIATE_NOT_VALIDATED; never import it into the source or promote it as canonical.",
+    "Export 41 passed geometry, compression and per-variant texture budgets but failed five uniform-normal checks \u2192 Author fine stone grain and crystal growth etching in those source materials, then bake and pack 4k normal maps while retaining their editable procedural nodes \u2192 Test actual surface UVs after stock UASTC before another full export; never waive the validator.",
+    "First targeted crystal normal in 42 remained below threshold; canonical source was not saved \u2192 Increase fine-etch depth/strength and repeat the bounded five-map authoring pass in 43 \u2192 All five compressed surface-UV deviations passed with margin (0.00967\u20130.01268 against 0.00392); geometry unchanged.",
+    "Monolithic export 47 reached the same 10000 MiB RSS cap when KTX overlapped retained Blender memory, after completing all source bakes and serialization \u2192 Preserve its receipt and exact SHA-pinned raw stage, terminate/reap, then split stock compression and stock validation into fresh bounded processes \u2192 No cap increase, source regeneration, rejected asset import, or repeated full bake.",
+    "Actual decoded comparison 50 rejected the stock-default candidate despite stock PASS: position quantization collapsed tiny bevels, UV quantization collapsed narrow islands, and some corner normals diverged \u2192 Check a bounded 16-bit candidate in 51/52; preserve its remaining failures \u2192 Do not relax identity tolerances or alter source geometry to fit the codec.",
+    "Precision resolution \u2192 Keep authored float32 positions/UVs, quantize normals/tangents at 16 bits, and use stock lossless meshopt stream compression \u2192 Both KHR_mesh_quantization and EXT_meshopt_compression remain genuinely required; no shared family/tool edit. Candidate 56 has 24,721,000 bytes and passes the unchanged identity gate in 57 across 127 surface groups and all 12 variant/LOD combinations.",
+    "Normal-only quantization library omission \u2192 glTF-Transform 4.5.1 isQuantizedPrimitive reads POSITION for each semantic, missing quantized NORMALs; explicitly declare their required extension and assert actual signed-short normal accessors \u2192 53 and diagnostic55 retain failures; 54 was an erroneously started missing-candidate check and failed without promotion. Applied codec settings are in successful56/compression.json; 53 input-stage defaults were preliminary and never produced an asset.",
+    "Paired CPU rear previews 61/62 showed the copied lower-LOD canopy floating above its cockpit despite identical local mesh signatures \u2192 Probe64 found nine lost parent-inverse transforms; fix65 restores them in the authoritative source, with all mesh signatures, packed images and every other world transform unchanged \u2192 Extend source audit to compare world transforms, preserve the defective images, and regenerate the export from the saved source.",
+    "Corrected-source export after canopy hierarchy fix \u2192 Fully run stock source validation, 4k bake and serialization in 68; all 59 fresh PNG image bytes and material/texture bindings exactly match the completed 48 texture stage \u2192 Reuse only its KTX2 encodings with byte equality proofs, retain fresh geometry buffers and nodes byte-for-byte, and apply the tested Swift precision policy in 69. No cached geometry or old asset is imported into source.",
+    "Later parent release retains the screenshot-cleanup hold \u2192 Finalizer performs no image or scratch deletion and records the two pre-existing interrupted Cycles EXR tile buffers from 20/27 as retained failure data \u2192 These are disclosed separately from compact previews and counted conservatively toward file/byte caps; no new raw-frame deliverable is generated.",
+    "Final promotion? \u2192 Require matching source SHA across source audit, display fit, stock validation and actual decoded identity, plus inspected final CPU images \u2192 Job84 promotes only candidate5873c5c; job85 rechecks recovery and the unchanged R3 packet. Stage72 was reused without restarting and no additional export was launched after the parent release."
+  ],
+  "outOfScope": [
+    "T13 owns whole-scene GPU diagnosis and reliable identified-device performance readouts. The round-3 whole-scene measurements do not attribute a bottleneck to Swift.",
+    "Lark, Kestrel, Mule, shared artlib/families/export_hulls, runtimeShip/Cockpit/Review/capture/orchestration and services were not modified.",
+    "No independent fourth-round visual verdict is claimed by this implementation lane."
+  ],
+  "viewedCurrent": [
+    "06-cockpit-top/swift-cockpit-top-lod0.png (earlier source diagnostic)",
+    "09-damage/swift_damaged-damage-lod0.png (earlier source diagnostic)",
+    "11-damage-refined/swift_damaged-damage-lod0.png (earlier source diagnostic)",
+    "15-final-damage/swift_damaged-damage-lod0.png (source diagnostic before final screen-marker/inset corrections)",
+    "46-source-cockpit-finished/swift-cockpit-top-lod0.png (source diagnostic before canopy-parent correction; LOD0 geometry unchanged)",
+    "59-final-cpu-sheets/swift_swift_materials.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "59-final-cpu-sheets/swift_swift_swift_damaged_materials.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "59-final-cpu-sheets/swift_swift_swift_damaged_turntable.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "59-final-cpu-sheets/swift_swift_swift_husked_materials.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "59-final-cpu-sheets/swift_swift_swift_husked_turntable.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "59-final-cpu-sheets/swift_swift_turntable.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "60-export-cockpit-pilot/swift-cockpit-pilot-lod0.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "61-export-rear-lod0/swift-rear-lod0.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "62-export-rear-lod2/swift-rear-lod2.png (revealed lower-LOD canopy parent-inverse defect; preserved)",
+    "63-export-gear-lod0/swift-gear-lod0.png (pre-canopy-transform correction decoded GLB, CPU)",
+    "72-current-rear-lod0/swift-rear-lod0.png (current corrected-source decoded GLB, CPU; viewed before resource hold)",
+    "74-current-rear-lod2/swift-rear-lod2.png (current decoded GLB: canopy seated at matching LOD0 pose; rear tip silhouette retained)",
+    "75-current-gear-lod0/swift-gear-lod0.png (current decoded GLB, CPU)",
+    "76-current-gear-lod2/swift-gear-lod2.png (current decoded GLB, CPU: paired foot silhouette retained)",
+    "77-current-cockpit-pilot/swift-cockpit-pilot-lod0.png (current decoded GLB, CPU: readable fitted displays and differentiated controls)",
+    "78-current-cockpit-top/swift-cockpit-top-lod0.png (current decoded GLB, CPU: shaped seat/head wings, restraints/latch, fitted housings and controls)",
+    "79-current-damage-detail/swift_damaged-damage-lod0.png (current decoded GLB, CPU: selected exposed structure and localized wear)",
+    "80-current-cpu-sheets/swift_swift_materials.png (current decoded GLB, CPU)",
+    "80-current-cpu-sheets/swift_swift_swift_damaged_materials.png (current decoded GLB, CPU)",
+    "80-current-cpu-sheets/swift_swift_swift_damaged_turntable.png (current decoded GLB, CPU)",
+    "80-current-cpu-sheets/swift_swift_swift_husked_materials.png (current decoded GLB, CPU)",
+    "80-current-cpu-sheets/swift_swift_swift_husked_turntable.png (current decoded GLB, CPU)",
+    "80-current-cpu-sheets/swift_swift_turntable.png (current decoded GLB, CPU)",
+    "81-current-compact-livery/swift-quarter-lod0.png (current source, CPU: Compact palette diagnostic)",
+    "82-current-working-livery/swift-quarter-lod0.png (current source, CPU: neutral working palette diagnostic)",
+    "83-current-fracture-closeup/swift_damaged-fracture-lod0.png (current decoded GLB, CPU: selected wing opening, rooted exposed spars and chipped crystal edges)"
+  ],
+  "viewedR3": [
+    "artifacts/swift_cockpit_open_top.png",
+    "artifacts/swift_swift_materials.png",
+    "artifacts/swift_swift_swift_damaged_turntable.png",
+    "artifacts/review/hulls/swift/swift/noon-lush_lod2.png",
+    "artifacts/swift_liveries.png",
+    "artifacts/swift_swift_swift_husked_turntable.png",
+    "artifacts/review/hulls/swift/swift/noon-lush_lod0.png",
+    "artifacts/swift_cockpit_open_side.png",
+    "artifacts/swift_hardpoint_HP_S_1.png",
+    "artifacts/swift_hardpoint_HP_S_2.png",
+    "artifacts/swift_boarding_board.png",
+    "artifacts/review/hulls/swift/swift/sheet.png",
+    "artifacts/review/hulls/swift/swift/swift_damaged/sheet.png",
+    "artifacts/review/hulls/swift/swift/swift_husked/sheet.png",
+    "artifacts/swift_swift_swift_damaged_materials.png",
+    "artifacts/swift_swift_swift_husked_materials.png",
+    "artifacts/swift_cockpit_closed_side.png",
+    "artifacts/swift_cockpit_open_q.png",
+    "artifacts/swift_swift_turntable.png",
+    "/tmp/hull-r3-packets/shared/hulls_lineup.png"
+  ],
+  "remaining": [
+    "Parent: for base, damaged and husked, standard engine noon-lush/night-exotic/open-space at LOD0 and LOD2 (18 PNGs); wireframe LOD0/2 (6); far LOD2 at 100m and 200m (6); collider/marker overlays (3). Total 33 new engine evidence PNGs, plus three composed review sheets.",
+    "Parent/T13: nine reliable paired whole-scene performance cases, identified device and setup, scene bottleneck diagnosis and 16.67ms requirement. CPU budgets and RSS are not GPU performance qualification.",
+    "Parent: refresh the integrated cockpit closed/open-quarter/open-side/open-top, boarding, both hardpoint, three-livery and shared lineup evidence against the final committed asset; preserve current standard capture paths and review tooling.",
+    "Parent: fresh independent blind ROUND4 model-rubric grade against the final source/export/engine packet; every criterion >=4 and mean >=4.5 remains required. Existing third-grade REVISE is unchanged.",
+    "Parent: review this scoped source/tooling diff and integrate sibling hull work without broadening this lane. No push, PR or merge was requested/performed.",
+    "Parent: run the standard full smoke and integrated runtime review on the combined hull work. This CPU/source lane did not launch the client, services, database, browser, native capture, or GPU."
+  ],
+  "verificationSummary": {
+    "sourceAudit": "66-final-source-world-audit/audit.json: PASS including canopy/gear world transforms",
+    "displayFit": "67-final-display-fit/display-fit.json: PASS",
+    "sourceSha256": "7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480",
+    "LOD0Triangles": {
+      "base": 68361,
+      "damaged": 67103,
+      "husked": 65119
+    },
+    "LOD3Ratios": {
+      "base": 0.015769225142990888,
+      "damaged": 0.01482795106031027,
+      "husked": 0.01816674088975568
+    },
+    "preservedThroughLOD2": [
+      "canopy vertices/faces/corner normals",
+      "three landing gear vertices/faces/corner normals",
+      "rear crystal tip vertices",
+      "canopy/gear world transforms"
+    ],
+    "zeroFindings": [
+      "duplicate faces",
+      "zero-area geometry",
+      "zero-area UV triangles",
+      "invalid corner normals",
+      "edges with more than two faces"
+    ],
+    "displayInstancesFitted": 27,
+    "exportValidation": "70-corrected-stock-validation: unmodified stock source/export checks PASS, zero warnings",
+    "sourceExportIdentity": "71-corrected-source-export-identity: PASS, 127 groups, all 12 variant/LODs, zero collapsed geometry/UV triangles, zero mesh repairs; negative control detected",
+    "glbSha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d",
+    "glbBytes": 24721524,
+    "textureBudgetMB": {
+      "base": 384.0,
+      "damaged": 426.7,
+      "husked": 448.0
+    },
+    "encodedTextures": {
+      "total": 59,
+      "UASTC": 17,
+      "ETC1S": 42,
+      "resolution": 4096,
+      "mipChain": "full"
+    },
+    "maxSourceExportPositionErrorMeters": 0,
+    "maxSourceExportUVError": 2.9802322387695312e-08,
+    "maxSourceExportNormalDegrees": 0.7242514458025491,
+    "geometryCompression": "float32 position/UV, signed-normalized-16 normals, meshopt required; KHR_mesh_quantization required",
+    "promotion": "84-promote-current/promotion.json: exact candidate copied atomically to canonical GLB after all source pins matched",
+    "recoveryAndR3Integrity": "85-final-provenance/provenance.json: PASS; equal pointer blobs at all three specified commits, original local LFS SHA/size and 61 R3 packet payloads unchanged",
+    "sourceBytes": 42959316,
+    "LODAllTriangles": {
+      "base": [
+        68361,
+        28641,
+        15548,
+        1078
+      ],
+      "damaged": [
+        67103,
+        28162,
+        15310,
+        995
+      ],
+      "husked": [
+        65119,
+        27342,
+        14828,
+        1183
+      ]
+    }
+  },
+  "resourceHold": {
+    "state": "HEAVY_ADMISSIONS_HELD",
+    "reason": "Parent T13 controlled native trace comparison; explicit parent release required. No timer-based automatic resumption.",
+    "lastStage": "72-current-rear-lod0",
+    "commandPID": 2040,
+    "commandPGID": 2040,
+    "guardianPID": 2041,
+    "exit": 0,
+    "seconds": 37.24,
+    "childGroupEmpty": true,
+    "liveMembers": [],
+    "sourceSha256": "7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480",
+    "validatedCandidate": "70-corrected-stock-validation/models/hulls/swift.glb",
+    "candidateSha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d",
+    "sourceAudit": "66-final-source-world-audit/audit.json",
+    "displayFit": "67-final-display-fit/display-fit.json",
+    "stockValidation": "70-corrected-stock-validation/validation",
+    "sourceExportIdentity": "71-corrected-source-export-identity/identity.json",
+    "canonicalGLB": "Still recovered R3; candidate not promoted",
+    "head": "82c3d50ff79a60b9dac38f0bdfbe421381c8dd73",
+    "remaining": [
+      "Current-candidate LOD2 rear pair, LOD0/2 gear, cockpit pilot/top, damaged close-up, compact/working livery CPU views and variant/material sheets",
+      "Inspect those images, promote the matching validated candidate, finalize Appendix C.2 and commit",
+      "Parent engine captures, full smoke, T13 performance qualification, fresh blind grade and review"
+    ],
+    "screenshotCleanup": "STOPPED; no images removed",
+    "resume": "After explicit parent release, archive/remove only the tool HEAVY_HOLD.json sentinel, retain this immutable checkpoint, verify no owned processes and fresh capacity, continue from saved source and candidate; do not rerun recovery or authoring."
+  },
+  "resourceRelease": {
+    "parentGPUReleaseUTC": "09:34:21Z",
+    "observedUTC": "2026-11-07T09:35:34.816167+00:00",
+    "scope": "Swift heavy CPU lane only, one process, two threads; other lanes stay held",
+    "preservedHoldRecord": "73-parent-resource-hold/hold.json",
+    "stage72ReusedWithoutRerun": true
+  },
+  "CPUObservations": [
+    "Current rear LOD0/2 pair: canopy sits at the same authored pose and retains its faceted geometry; rear crystal tip silhouette remains present. Body specular highlights vary with body LOD reduction; intended-distance engine transitions still require the parent capture/grade.",
+    "Current geometry/UV/normal comparisons pass against the authoritative source; these CPU observations do not qualify whole-scene GPU performance.",
+    "The paired landing-foot views retain the same joint and toe silhouettes at LOD0/2, consistent with the exact source mesh/normal/world-transform audit.",
+    "Current cockpit pilot and open-top diagnostics show the three readable displays, shaped seat/head wings, harness and latch, differentiated rotary/toggle/pedal/stick controls, and fitted housings. No CPU image is used as a blind-grade verdict.",
+    "Default Ixari, Compact and neutral working treatments remain visibly distinct on the same geometry. Alternate-livery CPU views use the authoritative source Livery nodes; the parent still owns integrated engine livery evidence.",
+    "The selected wing fracture closeup shows a localized cavity with rooted exposed spars and clustered broken crystal edges; the larger original angular plate design remains. Damage/husk geometry remains distinct in the full current sheets. Destruction quality still requires the independent engine-backed grade."
+  ],
+  "resourceCompletion": {
+    "state": "HEAVY_CPU_WORK_COMPLETE",
+    "observedUTC": "2026-11-07T09:51:01.778106+00:00",
+    "lastHeavyStage": "83-current-fracture-closeup",
+    "commandPID": 57461,
+    "commandPGID": 57461,
+    "guardianPID": 57462,
+    "exit": 0,
+    "seconds": 42.64,
+    "childGroupEmpty": true,
+    "liveMembers": [],
+    "ownershipLockPresent": false,
+    "remainingLocalWork": "Light-only report, provenance hashing and scoped Git commit; no further Blender/codec/bake/render/build/full-suite launches",
+    "screenshotCleanup": "STOPPED; retained every finished preview and the two old interrupted internal EXR tile buffers"
+  }
+}
