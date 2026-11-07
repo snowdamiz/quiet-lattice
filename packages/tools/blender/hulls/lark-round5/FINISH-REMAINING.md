@@ -1,0 +1,7 @@
+# Material repair checkpoint — not finished unit
+
+Saved husk normal atlas now contains etched relief amplified by existing rust pigmentation. Stock source validator passes 5/5. Base glass has no image maps; roughness raised from 0.06 to 0.18 softens white reflection boundaries, but does not remove broad light reflections. No geometry, UV, marker or LOD changes. Independent UVMap density remains 590.6459217270778 px/m minimum group median. Current source hash is in finish-material-receipt.json. Existing GLB is stale and was not exported.
+
+Inspected three new CPU previews. Husk remains too uniformly black with insufficient seam/rust hierarchy; cockpit has actual controls and seat ribs but blank screen faces. These findings remain unresolved. Required next authoring: map wear to physical contact edges/lower salt/fittings; finish actual screen faces and seat joins; measure seam-following plate loss using missing outer-plate surface area divided by corresponding intact plate area (not black pixels or triangle counts), require 15–30%, and separately demonstrate frame visibility through openings. Exposure was not measured in this checkpoint. Preserve fitted canopy and reconstructed LOD1/2.
+
+No visual PASS, runtime qualification, final export, independent review or blind grade. Three new previews, no cleanup; inherited images retained. All Blender calls used run_stage, CPU/two threads, GPU denoise disabled. This is a partial repair, not completion of the requested finish scope.
