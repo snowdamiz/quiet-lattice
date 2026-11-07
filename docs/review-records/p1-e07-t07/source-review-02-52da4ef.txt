@@ -1,0 +1,109 @@
+VERDICT: REVISE — fresh independent R2 SOURCE review, P1.E07.T07.
+
+All four original R1 findings are fixed in their unchanged authoritative reproductions. Four additional P2 boundary defects remain, independently reproduced below. The final current-pin counterexample suite has five failing assertions across those four defects and seven passing controls. No target source, tests or Git state were changed.
+
+Pinned checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d`, branch `task/P1-E07-T07`.
+
+- HEAD: `52da4eff0d2f354cb18198232a7c8a37c9529a41`
+- Tree: `5ede3c7b0db032c7345c20133d5cba10d0ec3e6b`
+- Revision parent: `c0b9c9ba966302b3e7b960129e1c8307e35b7667`
+- Original task base: `634c51d2378748c6a514af2a792ee4500b912643`
+- Original base is an ancestor; initial/final branch, HEAD, tree and parent match. Initial/final porcelain status, including untracked files, is empty. Cumulative `git diff --check` exits 0.
+- Revision delta: 10 files, including four production TypeScript modules. Cumulative task delta: 27 files. Exact patches retained as `revision.patch` and `full-task.patch`.
+- Environment: Darwin arm64; Node v22.23.3; pnpm 12.15.0; Vitest v5.0.5. CPU suites ran sequentially with maxWorkers=2, no cache; final counterexamples also disabled file parallelism.
+
+Read the original task block and dispatch contract in the parent IMPLEMENTATION_PLAN, DESIGN 9.5/12.1, the parent DECISIONS tuning and retirement decisions, the R1 report/reproductions, and the revision Appendix-C.2. Parent documents were copied into this report directory as the evidence read, not edited. Applied the requested TypeScript skill and its type-system-discipline prerequisite. Two bounded source reviewers checked clocks and full companion/Symbiotic scope; a third independently challenged the overlapping-burn finding. They ran no tests; all execution below was performed by this reviewer. Their source deductions were not accepted as execution proof.
+
+R1 disposition, independently classified:
+
+- F1, sleeping-zone shield cursor / fresh-hit delay: FIXED for both original cases. The exact real ZoneManager follow reproduction now grants 0.25 rather than 5.25 in 0.05 seconds, and the fresh pre-first-tick hit retains its delay. The permanent baseline and Symbiont Hull variants also pass in the 604-test run. The separate overdue-scheduler case R2-2 below still breaks the broader clock contract.
+- F2, retired Sear status suppresses a paid fresh cast: FIXED for the original case. The exact shipped Sear/PhaseManager reproduction now produces new damage after cooldown. Fresh replacement-generation protection passes with both the permanent test and an added real SkillService control. Shared-generation overlap remains broken under R2-1; do not conflate that with the original orphan-status replay.
+- F3, retired Lance remains on / next activation returns ended: FIXED. The exact replay now removes it from abilities.on and permits a new cast. Permanent tests cover new health loss and one end/notification. Additional real-service toggle-off drainage ends once and retains no active lifetime or timer after its queued callback drains.
+- F4, real SkillService refund/rebuy revives Bond and Regrow: FIXED. Both original real-service reproductions pass unchanged; Bond is absent and old Regrow leaves suit HP at 40. The permanent suite additionally checks synchronous Big Game loss for heavy/flyer, Call loss and unrelated skill edits. New replacement controls show that refunding the old companion's Big Game requirement cannot dismiss a new ordinary companion, and a retired queued Regrow callback cannot damage a fresh cast's lifetime.
+
+The original three authoritative test files and their original config are byte-unchanged (SHA-256 rechecked at completion). As an independent negative control, a fresh /tmp Vite transform loaded the four revision-parent runtime modules directly from `git show c0b9...:<path>` without swapping target files. The unchanged original six assertions all failed on that parent runtime; all six passed on the actual pinned runtime. `baseline-modules.json`, `vitest.baseline.config.mts`, `r1-baseline-replay.log` and `r1-replay.log` retain this evidence. Since those four modules are the entire runtime delta of this revision, the transform isolates the revision's production changes.
+
+R2-1 — P2: retiring the first burn producer erases a newer valid overlapping burn.
+
+Primary locations: `packages/server/src/abilities/service.ts:518` and `:367`. Related consumers: `packages/server/src/abilities/statuses.ts:45`; `packages/server/src/abilities/thermal.ts:21`.
+
+Statuses.apply deliberately merges this caster's re-ignitions into the existing generation at maximum power and later expiry. CastService records ownership only when the application is fresh; Thermal leaves ticking with the first context. A newer Flare therefore has neither its own retained status contribution nor timer responsibility. Refunding Sear retires its context and deletes the entire shared generation, including the valid Flare contribution.
+
+Reproduction uses actual SkillService, CastService, MeterService, CodexService, Zone and fauna, with the production skill subscription and shipped book. Cast Sear on a stunned creature, advance 0.5 s, then cast Flare at that same creature and refund only Sear. Flare remains bought and slotted. Initial HP 99.2 becomes 96.7 from Sear, then 78.7 after Flare's real 18-point burst. The next half-second remains 78.7 rather than 75.7: Flare's expected 3-point burn tick is lost well within its own four-second duration. Identical no-change and unrelated Second Lung refund controls both reach 75.7. This requires neither stacked damage nor retaining Sear's longer duration. The recorded Thermal merge policy and latest T07 decision that a newer valid effect survives are compatible with that assertion.
+
+Evidence: `overlap-probe.test.ts`, `final-findings.log`, `burn-{none,unrelated,retire_sear}.json`. One fail / two passing controls. The service fixture supplies only the existing trainerAtHand authority seam for respec; it is not live trainer UI evidence.
+
+Fix boundary: shared-status contributions and the single ticking loop need ownership that survives selective retirement. Generation equality alone distinguishes replacement generations, not multiple contributing casts within one generation. Merely registering both contexts against the same generation still permits either to delete the whole status. No source fix was attempted.
+
+R2-2 — P2: overdue scheduled ticks undo the wake clock and backdate fresh shield damage.
+
+Primary location: `packages/server/src/zones/manager.ts:229`. Supporting locations: `manager.ts:391` / `:432`; `packages/server/src/zones/zone.ts:542`; `packages/server/src/combat/zone.ts:476` / `:511`.
+
+open() refreshes a sleeping zone to current world time, but the manager's pending scheduled ticks can still be earlier. advance() delivers those older times to Zone.step, which rewinds its time and frame transforms. The max regeneration cursor does not protect hitAt: ship hazards pass their explicit old tick time to applyDamage and overwrite the newer hit timestamp.
+
+The real ZoneManager reproduction retains the default 30-second sleep policy and three-tick catch-up limit. A zone sleeps after t=1031, the clock advances to t=1041 without servicing the loop, and a saved ship joins just below a gas hazard ceiling. Wake correctly establishes 1041, but the overdue advance then leaves zone.time at 1031.15. A fresh 40-point attack at 1041 followed by the catch-up hazard ticks leaves shield 59.9988. A real accepted 2 m upward movement crosses the ceiling; at 1041.05 shield becomes 60.2488, gaining 0.25 only 0.05 seconds after the fresh hit, instead of retaining the six-second delay.
+
+The fixture uses a generated gas body through the manager's describe seam with a deterministic pressure layer, avoiding terrain-worker availability as a variable. No combat implementation, movement validator or scheduler is replaced. A control that services the overdue schedule while the zone is still asleep, then wakes and places the ship, retains the damage correctly after ascent.
+
+Evidence: `wake-probe.test.ts`, `final-findings.log`, `wake-time.json`, `wake-health.json`. Two failing assertions (clock and actual shield), one passing ordering control. Original R1 direct runTick tests and the new permanent tests do not exercise this overdue advance ordering.
+
+Fix boundary: reconcile wake with subsequent scheduled time, including frame-dependent consumers, and ensure earlier explicit damage times cannot overwrite newer hit authority. Preserving only the regeneration elapsed cursor is insufficient.
+
+R2-3 — P2: Call admits a visible shared herd whose phase-local contact scan excludes the visible event target.
+
+Primary locations: `packages/server/src/fauna/sim.ts:1173` and `:1234`. Related partition construction: `sim.ts:330-365`; visibility rule: `packages/server/src/phases/manager.ts:455`.
+
+An event-phase caster can see shared-world mobs, so callHerd accepts the nearest shared herd. WorldFauna simulates that herd in the shared partition, and Call scans only ctx.creatures from that partition. A visible enemy in the caster's own event phase is never a contact candidate, even though the same caster selected and paid for the herd.
+
+The real SkillService/CastService/PhaseManager/fauna reproduction places the herd at 5 m and the stationary enemy at 26 m, then directs Call through the 30 m aim. Both are visible to the caster. The swept herd path comes within 1.447209 m of the enemy sphere, inside the 4.147757 m combined contact radius. Yet target HP stays 99.2 rather than 87.2. The otherwise identical all-shared and same-event controls both deal exactly 12 HP; the other-hidden-event control correctly deals zero. Thus the failing case is not a miss, stun, hidden target, missing effect or damage-state proxy. Call is accepted with its ordinary cost and cooldown.
+
+Evidence: `call-phase-probe.test.ts`, `final-findings.log`, `call-{shared,same_event,split_event,hidden_event}.json`. One fail / three passing controls.
+
+Fix boundary: herd selection and contact resolution must use a consistent phase/visibility contract. Either restrict admissible herds before payment or deliberately align control/contact candidates with the intended phase. Preserve hidden-phase and owned/player exclusions.
+
+R2-4 — P2: Bond can strand a protected companion in an event's remaining-enemy set.
+
+Primary location: `packages/server/src/fauna/sim.ts:1161`. Supporting objective consumer: `packages/server/src/events/service.ts:495`; companion protection: `packages/server/src/combat/zone.ts:435-443`.
+
+A valid Bond converts an analysed event-wave creature in place, retaining its entity and phase. EventService still treats that entity as a living enemy until fauna forgets it. Companion protection then prevents players and companions from killing the required final enemy. The event cannot clear while that companion remains; the user must dismiss/replace/leave, or wait for expiry, to escape the stalled objective.
+
+The reproduction runs the actual EventService and PhaseManager with the existing CPU event fixture configured for one hostile-fauna wave of one creature. It obtains Bond/Big Game through real SkillService, analyses through CodexService, and casts the shipped Bond through CastService/MeterService. Bond is accepted and the mob becomes owner=1. An actual 10,000-point player weapon attempt is refused and changes no HP. After five seconds of ordinary zone/event steps the authoritative status still reports wave=1, waves=1, enemies=1; the instance has cleared=0 and mobs=[2], with no completion payout. The kill control for the same wave completes and pays once. No new Hollow actor or future fauna-player attack system is needed: the already-shipped event framework uses hostile fauna.
+
+Evidence: `event-bond-probe.test.ts`, `final-findings.log`, `event-{bond,kill}.json`. One fail / one passing control. The reduced wave is an event definition fixture; objective, phase, ownership and combat behavior are production implementations.
+
+Fix boundary: define conversion of event-owned enemies at the Bond/objective authority boundary. Refuse it before payment/replacement or have the objective owner resolve the conversion. Weakening companion PvP protection is not needed.
+
+Other coverage and limits of the source conclusion:
+
+All nine I-II nodes have live consumers. The focused passing suite exercises actual Bond follow and health-reducing strikes, native level/health retention, combat taunt and owner credit, protected companions, validation before replacement, Regrow actual suit healing/caps/recipients, stationary Spore damage/healing, Call movement and health loss, real hull repair/duration/caps, Second Lung and Thick Hide meter modifiers, and Symbiont Hull capacity/rate/hit delay/parked-ship behavior. The four findings above qualify that coverage.
+
+The ten-file correction is effective for the original six failures. Current costs/cooldowns and the recorded numeric tuning remain unchanged. The added real-service controls preserve a fresh Flare generation, an unrelated Sear, a replacement ordinary companion after Big Game refund, and a new Regrow while the retired callback is still queued. Current-party healing is refused while the recipient is outside the party and resumes only within the original duration after rejoining, matching the recorded current-party rule. Frame/mode/phase departure-return, death/recovery and session retirement are exercised by the focused permanent tests. Codex close/open is not a separate reachable production resurrection finding: current persistence teardown removes the old zone entity/session, and record() adds entries rather than removing them.
+
+No active-set/timer leak was observed in the added tests: twelve repeated natural Regrow completions, Spore, Drones, Call, toggle-off drainage, replacement/companion despawn and disconnect return their active lifetime/timer counts to zero when expected. This is bounded lifecycle instrumentation over actual effects, not a full heap/performance proof.
+
+T16 remains authoritative: the existing real SkillService/ReputationService/CastService eligibility suite passed, including Deckhand 199/200 admission before cost, missing-reader refusal, rank-loss shutdown through notification/step/cast and recovery. Its injected eligibility-only book is not implementation or acceptance of T08 Void. No paused Gravitic code was revived or qualified.
+
+Execution ledger (cwd for pnpm commands is the pinned target; all outputs/configs added by this review are under this /tmp directory):
+
+1. Original R1 current-runtime replay:
+   `pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r1-c0b9c9ba/vitest.config.mts thermal-review.test.ts real-skills-review.test.ts shield-review.test.ts --maxWorkers=2 --no-cache`
+   PASS, exit 0, 3 files / 6 tests, 857 ms. `r1-replay.log`.
+2. Focused current-runtime regressions:
+   `pnpm exec vitest run packages/server/src/abilities packages/server/src/fauna packages/server/src/combat packages/server/src/zones packages/server/src/phases packages/server/src/meters packages/server/src/skills packages/shared/src/ships packages/shared/src/skills packages/shared/test/data.test.ts --maxWorkers=2 --no-cache`
+   PASS, exit 0, 37 files / 604 tests, 18.47 s. `cpu-regressions.log`.
+3. Exact revision-parent runtime negative control, using only loader transforms:
+   `pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r2-52da4eff/vitest.baseline.config.mts --maxWorkers=2 --no-cache --reporter=verbose`
+   Expected RED, exit 1, 3 files / 6 original assertions failed, 2.95 s. `r1-baseline-replay.log`.
+4. Added lifecycle controls:
+   `pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r2-52da4eff/vitest.config.mts --maxWorkers=2 --no-cache --reporter=verbose`
+   PASS, exit 0, 1 file / 10 tests. `lifecycle-controls.log`.
+5. Final new counterexamples and controls:
+   `pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r2-52da4eff/vitest.findings.config.mts --maxWorkers=2 --no-file-parallelism --no-cache --reporter=verbose`
+   RED, exit 1, 4 files / 5 failing assertions / 7 passing controls, 2.08 s. `final-findings.log`. Failures are the four P2s above, not fixture failures.
+6. Cumulative whitespace, original-base ancestry, exact final HEAD/tree/parent/branch/status and unchanged R1 input SHA-256 assertions: PASS, exit 0. `initial-pins.json`, `final-audit.json`, `r1-input-hashes.json`.
+
+Intermediate scratch-only test development is retained rather than mistaken for source evidence. The first new Regrow replacement assertion assumed a fixed 40-HP starting value, but paying the fresh cast after a clock jump legitimately settled additive native suit regeneration; the final test measures HP after that boundary and asserts the fresh 40-point capped effect. The first gas fixture assumed system 0 contained a gas body; the final fixture selects an actual generated gas body. The first wake-ordering control used an exact floating-point 1041.10*1000 timer boundary and ran too few ticks; its final setup explicitly advances through sufficient scheduled ticks. Initial test text/logs are retained as `*-initial.*` / `wake-probe-second.*`. The substantive failing assertions in final-findings are reached after their real controller setup and controls succeed.
+
+SOURCE correctness: REVISE. Full integration on 52da is separately assigned and was NOT RUN here. Worker-reported 2,752 units / 48 selected integrations / typecheck / lint / format, and old c0b9 full 217 integration results, are not independent results of this review. No server, DB, private fixture, browser, GPU, full smoke, native rendering, cloud, CI, PR, comment, push, commit, main update, queue action or merge was performed.
+
+Actual T09 merged-renderer drawn-companion/picking proof, full smoke, GPU/visual qualification, whole-task acceptance and merged acceptance all remain separate pending gates. No source test or report here accepts those gates.
