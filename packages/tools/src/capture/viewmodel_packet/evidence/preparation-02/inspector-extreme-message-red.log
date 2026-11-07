@@ -1,0 +1,63 @@
+test_all_seven_units_decode_each_png_once_and_preserve_unknown_fields (test_inspect.InspectorTests) ... ok
+test_caps_before_read_and_cap_plus_one_growth_sentinel (test_inspect.InspectorTests) ... ok
+test_cli_real_process_success_and_primary_failure (test_inspect.InspectorTests) ... ok
+test_cli_result_cap_keeps_all_raw_evidence_and_creates_no_result (test_inspect.InspectorTests) ... ok
+test_cli_success_exclusive_result_and_metadata_caps (test_inspect.InspectorTests) ... ok
+test_every_artifact_read_is_capped_once (test_inspect.InspectorTests) ... ok
+test_frame_fact_contradictions_preserve_primary_and_full_raw_observations (test_inspect.InspectorTests) ... test_frame_order_time_and_top_level_contradictions (test_inspect.InspectorTests) ... ok
+test_hash_and_decode_use_the_same_snapshot_after_path_replacement (test_inspect.InspectorTests) ... ok
+test_invalid_png_container_and_actual_decode_failure (test_inspect.InspectorTests) ... ok
+test_json_duplicate_keys_overflow_and_unknown_nonfinite_are_refused (test_inspect.InspectorTests) ... ok
+test_manifest_shapes_hash_substitution_and_file_inventory (test_inspect.InspectorTests) ... ok
+test_material_requirements_and_substitutions (test_inspect.InspectorTests) ... ok
+test_native_perf_and_capture_lod_cannot_disagree (test_inspect.InspectorTests) ... ok
+test_projection_xy_alignment_camera_and_finite_raw_facts (test_inspect.InspectorTests) ... ok
+test_rgb_rgba_only_dimensions_and_sheet_geometry (test_inspect.InspectorTests) ... ok
+test_sparse_png_cap_is_checked_before_image_read (test_inspect.InspectorTests) ... ok
+test_symlinks_fifo_and_directory_substitution_refused (test_inspect.InspectorTests) ... ok
+test_view_readout_32k_preserves_full_precision_and_unknown_fields (test_inspect.InspectorTests) ... ok
+
+======================================================================
+FAIL: test_frame_fact_contradictions_preserve_primary_and_full_raw_observations (test_inspect.InspectorTests) (file='16x9-sway-left.png', key='sway')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 226, in test_frame_fact_contradictions_preserve_primary_and_full_raw_observations
+    failure = self.assert_refused(fixture, message)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 138, in assert_refused
+    self.assertIn(message, str(failure.exception))
+AssertionError: 'sway direction' not found in '16x9-sway-left.png: sway did not reach extreme'
+
+======================================================================
+FAIL: test_frame_fact_contradictions_preserve_primary_and_full_raw_observations (test_inspect.InspectorTests) (file='16x9-sway-right.png', key='sway')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 226, in test_frame_fact_contradictions_preserve_primary_and_full_raw_observations
+    failure = self.assert_refused(fixture, message)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 138, in assert_refused
+    self.assertIn(message, str(failure.exception))
+AssertionError: 'sway direction' not found in '16x9-sway-right.png: sway did not reach extreme'
+
+======================================================================
+FAIL: test_frame_fact_contradictions_preserve_primary_and_full_raw_observations (test_inspect.InspectorTests) (file='16x9-sway-up.png', key='sway')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 226, in test_frame_fact_contradictions_preserve_primary_and_full_raw_observations
+    failure = self.assert_refused(fixture, message)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 138, in assert_refused
+    self.assertIn(message, str(failure.exception))
+AssertionError: 'sway direction' not found in '16x9-sway-up.png: sway did not reach extreme'
+
+======================================================================
+FAIL: test_frame_fact_contradictions_preserve_primary_and_full_raw_observations (test_inspect.InspectorTests) (file='16x9-sway-down.png', key='sway')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 226, in test_frame_fact_contradictions_preserve_primary_and_full_raw_observations
+    failure = self.assert_refused(fixture, message)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py", line 138, in assert_refused
+    self.assertIn(message, str(failure.exception))
+AssertionError: 'sway direction' not found in '16x9-sway-down.png: sway did not reach extreme'
+
+----------------------------------------------------------------------
+Ran 19 tests in 2.367s
+
+FAILED (failures=4)
