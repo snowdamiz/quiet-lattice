@@ -1,0 +1,138 @@
+VERDICT: REVISE
+TASK: P1.E08.T09 — first independent read-only caller/source review
+HEAD: 82b6ac3fa9681e50346e090249de75328fe99d6c
+TREE: f7640c743d78f62ba6c083ece194e7178736ee26
+BASE PRODUCT: d688579adf31c2a8ee9836495ba6b32708b99ccd
+RECOVERY: 6245e5ffb68f4bd4b1baf66a2cf4f4e3806e4482
+BRANCH: task/P1-E08-T09-current-base
+WORKTREE: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+REVIEW ARTIFACTS: /tmp/p1-e08-t09-review-82b6-p23ba0ca
+
+Three P2 correctness findings block this caller's review gate. These concern preservation and validation of capture evidence. No product regression is asserted. The product/client/server/shared/smoke trees and captureUi/screens blobs are unchanged from the supplied reviewed product commit. Stock controls passing does not close the focused failures below.
+
+## Findings
+
+### F1 — P2: Node receipt failure can replace the primary capture failure and omit the attempted-entry result
+
+Location: `packages/tools/src/capture/fauna_packet/entry.mjs:311–320` (especially 313 and 320; top-level fallback 324–327).
+
+The catch stores the first error locally, then calls the fallible `metadata('returned-entry-failure.json', ...)` without protecting that call. If it throws, execution leaves the catch/finally and never attempts `entry-result.json`. The only top-level error is the secondary receipt-write failure; the primary capture error, writes/pages/launch counts and complete attempted-entry result are lost. A failure writing the final `entry-result.json` similarly replaces the thrown primary error, though the earlier failure receipt survives in that narrower case. A metadata cap failure follows the same unprotected route.
+
+Actual repro: `node-failure-control.mjs` imports and calls the byte-identical real `main()`. Node import hooks substitute inert CPU-only capture/product dependencies, prohibit subprocesses and browser launch, and make the capture function throw `PRIMARY_CAPTURE_SENTINEL`. A controlled `ENOSPC_SECONDARY_RECEIPT_WRITE` is injected at the real receipt-write boundary.
+
+- `catch-write`: thrown error is only `ENOSPC_SECONDARY_RECEIPT_WRITE`; no retained file contains the primary error; `entry-result.json` is not even attempted.
+- `final-write`: the earlier failure receipt retains the primary, but the thrown error is the secondary and the complete entry result is absent.
+- Native/browser/capture launches: zero. This tests real main/error/persistence control flow with simulated external boundaries, not a native capture.
+
+Evidence: `node-catch-write-result.json`, `node-final-write-result.json`, and `node-failure-control.mjs`.
+
+Required correction: keep the primary error independently of secondary reporting/cleanup failures, always attempt a complete entry result, and emit a bounded complete fallback to stderr when disk persistence fails. Protect `unregister()` as another secondary failure boundary. Expand the protected scope to cover post-admission setup if the complete attempted-entry contract includes it. Add actual-main combined-failure controls. The Python final writer does preserve its primary failure; do not apply that claim to Node by analogy.
+
+### F2 — P2: release assertions discard the raw observations needed to diagnose refusal
+
+Caller locations: `packages/tools/src/capture/fauna_packet/caller.py:343–353`.
+Exact helper locations: `assets/blend/stations/_authoring/round4_job_boundary.py:369–372` and `assets/blend/stations/_authoring/run_round4_remaining8.py:365–391`.
+
+`StationJob.archive()` obtains both bootout and registration-check results, but asserts registration absence before writing `unload.json`. On a failed bootout followed by a still-present registration, neither raw command result survives. `terminal_audit()` similarly asserts before returning its record; the caller writes `terminal-audit.json` only after a successful return. The caller catch retains only exception type/message. Kernel/probe stdout, stderr, return code and other observations from the refused audit are not retained as an attempted audit.
+
+Actual repro A: `archive-failure-control.py` compiles the exact unmodified `_archive_profile_paths` and `StationJob.archive` function ASTs from the byte-identical helper. Only subprocess boundaries are replaced with deterministic results: bootout exit 1, print exit 0, distinctive raw stdout/stderr. The real method raises `Owned job registration remains`, performs **zero receipt writes**, and retains the owned private directory and partial capture log. No OS command runs.
+
+Actual repro B: `python-focused.py` runs actual `caller.run_unit()` with inert job/process dependencies and the exact compiled `terminal_audit()` function. Capture exit 1 followed by a registration-audit failure preserves `Capture returned failure` as primary and appends `AssertionError: Owned registration remains`, but loses both distinctive raw registration strings and writes no terminal audit receipt. The decoder is guarded against invocation after failure. Acceptance remains false; this is lost refusal evidence, not false cleanup acceptance.
+
+Evidence: `archive-failure-result.json`, `python-focused-results.json` (`raw_terminal_registration_lost`), and retained `py-release-*/evidence/` receipts.
+
+Required correction: preserve an attempted release/audit record with raw observations before applying acceptance assertions, and append secondary assertion/persistence failures without dropping the first failure. The four helpers are deliberately immutable; resolve this in the packet adapter or explicitly revise/re-review the helper contract and pins rather than silently changing recovered helpers. Preserve partial allocations on an unproved release. Test the actual combined caller/helper failure path.
+
+### F3 — P2: broad inspector accepts contradictory or incomplete feed/time journals
+
+Locations: `packages/tools/src/capture/fauna_packet/inspect.py:99–117` and `181–188`; companion admission check `entry.mjs:138–143`.
+
+The broad oracle checks 204 photo clip clocks but validates event and consumption summaries only from the final frame. It never validates event/take stamps against those clocks or the actual fight schedule, never requires the intermediate cumulative event/take records, and does not reconcile the incoming event payload with its claimed consumption. Equality of before/after gameTime also accepts two null values.
+
+Actual repro: `python-focused.py` retains a complete 220-file synthetic broad packet built by the existing control, then invokes the **real full `inspect()`**, including all 219 software image decodes, after each independent mutation:
+
+1. Stamp the fight's final events/takes at `clipTime=999`, `gameTime=999`, `hudTime=999000`, `frame=59940`, outside the 3.4-second clip.
+2. Remove `events` and `takes` entirely from both observations in the first 203 clip frames.
+3. Change the incoming combat event to target 555/source 123/amount 999 while its retained consumption still claims source 602/amount 11.
+4. Set every clip observation's before/after gameTime to null.
+
+Every mutation returns `accepted:true`, `decodedImages:219`, `frames:204`. Valid image hashes, inventory and order are preserved. These are demonstrated false acceptances at the actual inspector, not assertions in a fake inspector. The stock positive fixture already omits timing and most intermediate feed records, so its acceptance does not establish these invariants. This is not a claim that a native run emitted the mutated data.
+
+The actual unchanged schedule is in `screens.ts:1080–1096` (hits at 0.15/0.3/0.36/0.55/0.85/1.1/1.45/1.6 seconds and rewards at 1.75/1.8/3.0). `entry.mjs:50–75` already records feed stamps; the inspector should independently use them and require finite, consistent sample clocks, cumulative per-frame records and event-to-consumption identity/timing. Keep independent pixel grading for held DOM clones: this finding does not ask machine receipt checks to grade their appearance.
+
+Evidence: `python-focused-results.json` (`inspector_adverse_acceptance`), `adverse-*.jsonl`, and retained synthetic-broad packet directories. All synthetic artifacts are CPU controls, never visual evidence.
+
+## Verified scope and provenance
+
+- Read the supplied preparation REPORT, exact recovery/rebinding patches, current provenance, check command/results, README, actual packet/helper source and the applicable plan rules (0.3, 0.9.5, 0.10 and E08.T09).
+- Base-to-head is exactly 12 added files. Recovery restores eight packet files exactly from `02248e6fc53bcaade146008f97bd83b6373af3d9` and four station helpers exactly from `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9`. Recovery-to-head changes exactly the eight packet files. All helper hashes remain pinned.
+- Both supplied patch files match independent `git diff --binary` output exactly. Current supplied provenance hashes match all 12 actual files.
+- Git object identity confirms unchanged `packages/client`, `packages/server`, `packages/shared`, `packages/tools/src/smoke`, `capture/capture.ts`, and `capture/screens.ts`. This covers original required source classes/exports. Full product review, 282 tests and live two-client QA were not repeated; their PASS is supplied context, not a fresh result of this review.
+- All 440 old artifact entries match the retained Git LFS pointers' SHA256 and size. No old image payload was hydrated or old absolute artifact path used. No historical verdict or spent grant was changed.
+- Runtime remains disabled, readiness SHA256 `00e5e07019e404a1a0d2c959587dfc937309eb5398aa23e530c6431931e1acf5`. All 24 proposed output/evidence/grant/consumption paths remain absent.
+- Twelve source files copied to scratch were byte-identical before and after controls. The target checkout remained clean at the exact head/tree throughout. No repository files, branches, commits or PRs were changed; no nested agents or runtime services were launched.
+
+Provenance records: `provenance.json`, `final-readonly-check.json`, `verified-recovery.patch`, `verified-caller-rebind.patch`.
+
+## Inventory, accounting and admission
+
+Declared order is explicit and independent of JSON key sorting:
+
+1. fauna-hit-turn-day-16x9
+2. fauna-hit-turn-day-21x9
+3. fauna-hit-turn-night-16x9
+4. fauna-hit-turn-night-21x9
+5. fauna-combat
+6. fauna-combat-night
+
+Each correction unit: 8 stills + 72 frames + 1 sheet + 1 readout = 82 files / 81 images. Each broad unit: 14 stills + 204 frames + 1 sheet + 1 readout = 220 files / 219 images. Total: **768 files / 762 images** (60 stills, 696 frames, 6 sheets, 6 readouts). Both output aspect still sets are accounted; only the specified clip aspect supplies the frames/sheet. Entry and inspector order agree with unchanged captureUi.
+
+- Image cap: 16,777,216 bytes/file; readout cap: 16,384 bytes.
+- Correction output cap: 1,358,970,880 bytes; admission: **8,925,528,064 bytes/unit**.
+- Broad output cap: 3,674,226,688 bytes; admission: **15,871,295,488 bytes/unit**.
+- Admission retains three equal output allowances: actual output, future LFS object, future main hydration. It also includes 67,108,864 controlled metadata (32 MiB Node + 32 MiB Python), 67,108,864 cache snapshot, 2,147,483,648 profile working/archive, 1,073,741,824 private TMP working/archive, 134,217,728 helper-log working/archive, 268,435,456 cache growth, 16,777,216 filesystem metadata and 1,073,741,824 safety reserve. Extra image staging/archive is zero.
+- Native writers have observed stop thresholds, **not OS quotas**; overshoot remains possible. No all-six-fit claim. Grant consumption repeats binding/resource admission for one unit, checks fresh identities and a clean checkout; predecessor receipt order is explicit, consumption is exclusive, and main dispatches one unit with no retry loop.
+- Capture deadline 600 s; cleanup 60 s; decoder 45 s; cache snapshot 30 s spanning inventory, copy and verification. Observation-journal inspection caps are 2 MiB correction / 16 MiB broad inside the Node aggregate.
+- Fresh read-only check observed 101,840,842,752 free bytes and no conflicting task-local cache owners. Final cache inventory totals 8,099,840 bytes. **These are time-local observations, not runtime admission. Refresh resources/cache ownership immediately before any future runtime.**
+
+## Independent controls and results
+
+**PASS:** Node 6/6, Python 21/21, committed-candidate read-only readiness check exit 0. All six Python and all six Node disabled entries refuse before helper/capture imports, runtime allocation and grant consumption under guards.
+
+**PASS:** launcher and self-observed kernel Python are in both immutable and process maps, and current hashes verify. Four focused removals (each identity from each map) are refused. Launcher hash `e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a`; kernel app executable hash `b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22`. The stored freeze probe has stable birth/UID and a reaped CPU child. This review did not launch a new native identity probe. Runtime routes remain pinned Python 3.14.8, isolated decoder Python 3.10.22/Pillow 12.0.0 and Node 26.12.1.
+
+**PASS:** retained cache growth/EOF/aggregate/shrink/mutation controls. Additional actual snapshot controls verify a short write retains only its three written bytes, a copy-stage deadline preserves source/partial output, and a final-verification deadline preserves all copied bytes. None publishes `cache-before.json`. Deadline injections shorten the same configured timer to 20 ms; they do not sleep 30 seconds or claim native timing qualification.
+
+**PASS:** actual image writer accepts exactly 16 MiB and rejects +1 byte before creation; readout accepts exactly 16 KiB and rejects +1 byte. Python metadata accepts the exact remaining space at its 32 MiB aggregate then refuses the next receipt before writing. The stock inspector fully decodes synthetic 81-image and 219-image packets and refuses malformed/extra/missing outputs, wrong source methods, and its tested clock/feed defects. Those tests do not cover F3.
+
+**PASS:** actual Python run_unit preserves its original error through final receipt-write failure and emits both errors to stderr. Failed-capture controls retain raw returned exits/drain data and refuse acceptance. No following unit or decoder dispatch occurs in the combined-failure reproductions.
+
+**FAIL / demonstrated:** F1 (two actual-main reporting failures), F2 (archive refusal and caller/terminal-audit integration), F3 (four full-inspector false acceptances).
+
+No native/browser/GPU/Vite/DB/Blender/capture was run. The real runtime, runtime process ownership, actual generated images, independent visual/animation grading and merged-tree verification were **not run in this review**, as required by the brief. Parent T10 smoke retains exclusive GPU ownership.
+
+## Reproduction commands
+
+All control source below is under this report directory. The `scratch` copy preserves original source bytes; fixtures and logs are separate. Tools run locally on macOS.
+
+```sh
+cd /tmp/p1-e08-t09-review-82b6-p23ba0ca/scratch
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --test packages/tools/src/capture/fauna_packet/controls.mjs
+/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B -c 'import sys,runpy; sys.path.insert(0,"/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages"); runpy.run_path("packages/tools/src/capture/fauna_packet/controls.py",run_name="__main__")'
+/bin/sh /tmp/p1-e08-t09-disabled-candidate-d688579ad/check.sh
+
+cd /tmp/p1-e08-t09-review-82b6-p23ba0ca
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node node-failure-control.mjs catch-write
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node node-failure-control.mjs final-write
+/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B python-focused.py
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B cache-boundaries.py
+/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -I -B archive-failure-control.py
+/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node image-cap-control.mjs
+python3 -I -B final-readonly-check.py
+```
+
+A zero exit from a focused defect reproduction means it reproduced the specified bad behavior; it does not mean the candidate passed that requirement. Stock outputs are retained in `node-controls.log`, `python-controls.log`, `check.json` and `check.stderr`. `python-focused-first.log` records a review-harness exception-class mismatch corrected only in scratch tooling before the successful focused run. The first Node attempt refused the harness's noncanonical /tmp alias; the harness then used its actual /private/tmp realpath. Neither setup issue is attributed to candidate source.
+
+## Handoff
+
+Keep runtime disabled. Fix and return a new exact head for a fresh independent caller review. Preserve the recovered helper provenance and historical accepted:false/consumed-grant state. This verdict supplies no approval, grant, native-launch authorization, visual PASS or merge authorization. Whole T09 visual acceptance and parent-owned merged verification remain pending after these caller fixes.

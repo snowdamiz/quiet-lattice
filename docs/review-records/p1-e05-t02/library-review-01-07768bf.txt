@@ -1,0 +1,101 @@
+P1.E05.T02 independent read-only review: REVISE
+
+Scope: CPU animation authoring/export/library validation restoration only. This is the first review of this restoration, not a visual grade or whole-task acceptance.
+
+Reviewed identity:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9
+- Branch: t3/P1-E05-T02-source-library-87bfd7e9
+- Base: ae8447ce13925befe63899452bee9beb162c07ea
+- Head: 07768bf14fce30c1e78db6750f44d8fbd561f4b5
+- Tree: 8a7c8ffb2e4a0d8cb029eb4c828f159ed48189ea
+- Retained source: 49ae87cbdb8671f7988b1bed4358d49d4cdc6b58
+- Accepted exporter: d1f5c569bfbdc27b319fd8aae49bac2ba7420de1
+
+FINDING — P2: Refuse existing receipt destinations before writing validation evidence.
+
+Location: packages/tools/blender/characters/animations/export_saved.py:266-269, with the optional/default destination at :231-232.
+
+The new --report-dir route accepts an already-used evidence directory via mkdir(exist_ok=True), then Path.write_text truncates source-validation.json and, under --selftest, component-validation.json. A rerun pointed at a previous packet therefore replaces that packet's receipt with current evidence. Omitting the option also retains the previous sibling-receipt destination. This does not satisfy the review brief's requested protection against writing historical evidence. It is an output-safety defect, not a claim that this candidate's committed packet was actually overwritten.
+
+Independent reproduction used only a new disposable directory under /tmp. Before the run, source-validation.json contained:
+{"status":"OLD_RETAINED_EVIDENCE","sourceSha256":"prior-source-sentinel"}
+
+The actual exporter ran --validate-only, exited 0, printed ANIMATION_SOURCE_VALIDATION_PASS, and replaced the existing file with status PASS and current source hash 36cd27d53ef6e10bc141bae1de2759519c625881c7c79d4f0b7607d78fb7b846.
+- Before SHA-256: de26cedc029fec9ff0eb31d538faf9592540cb776caaed9d786abb4e66563f5c
+- After SHA-256: 8e76d7cdc02b716973846662167980c7dea12f9091e5a2a7407843a9faa3f6a5
+- Actual committed/historical evidence and protected assets were not touched.
+
+Correction: make fresh receipt creation a checked invariant. Before validation/export side effects, reject a destination containing either receipt; use exclusive creation or an equivalent reservation to avoid truncation/races. A repeat run must reject and retain both prior files byte-for-byte. Add a focused temporary-directory control for an existing receipt, including the --selftest pair. A new directory must continue to produce the same successful receipts. This fits the exporter-only receipt-routing adaptation; the other nine restored files can remain exact.
+
+Exact reproduction commands (the runner sets the environment and enforces a 300-second process-group timeout):
+```sh
+cd /Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9
+python3 - <<'PY'
+from pathlib import Path
+p = Path('/tmp/P1-E05-T02-review-07768bf-4eG46I/reproduce-existing-receipt')
+p.mkdir()
+(p / 'source-validation.json').write_text('{"status":"OLD_RETAINED_EVIDENCE","sourceSha256":"prior-source-sentinel"}\n')
+PY
+python3 /tmp/P1-E05-T02-review-07768bf-4eG46I/run_bounded.py reproduce-existing-receipt /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --disable-autoexec --python-exit-code 1 -P packages/tools/blender/characters/animations/export_saved.py -- --validate-only --report-dir /tmp/P1-E05-T02-review-07768bf-4eG46I/reproduce-existing-receipt
+```
+
+Evidence: receipt-overwrite-before.json, receipt-overwrite-result.json, receipt-overwrite-control-command.json, receipt-overwrite-control.log, and receipt-overwrite-control/source-validation.json.
+
+OTHER REVIEWED AREAS — PASS within the stated CPU scope
+
+- Provenance: nine restored files match the retained Git blobs and hydrated content exactly. The accepted exporter Git blob equals the retained exporter; reversing only the --report-dir argument and two receipt-routing changes yields the accepted source exactly.
+- All four animation data Git blobs match retained source and the capture candidate using read-only Git objects. The two LFS binaries match their pointer OIDs/sizes and existing local LFS objects. Both JSON payload hashes match retained data.
+- All six accepted body .blend/.glb payloads match current/base Git LFS OIDs, sizes, and local objects before and after review.
+- The entire diff is 39 additions: ten restoration paths plus 29 files under the new validation packet. Every existing tracked path is unchanged from base. This includes sharedRig.js, sharedRig.test.js, loadActualRig.js, T16/T10, gameplay, orchestration documents, and historical packets. No capture-candidate checkout was accessed.
+- Exporter source review: :33-81 checks canonical bind hierarchy/axes, identity, action count, frame range, FPS, key count, supported finite LINEAR key data and full unique channel/component coverage. :84-85 revalidates at the actual export boundary before writes. :165-224 supplies actual export-boundary reject controls. :234-256 verifies the source export hash and routes successful output solely to the animation library. It neither imports author.py nor saves a .blend. No successful export was run in this review.
+- Authoring separation: author.py:264-344 reads/freeze-checks the canonical source and writes only the separate animation source; initial authoring refuses to replace that source, while explicit refinement uses saved pose boards. It is not reachable from exporter imports.
+- Live bind identity: animationLibrary.test.js:66-90 captures fresh profiles from actual loaded bodies; :111-145 compares the JSON receipt to the live Thalune profile and tests exact source/library identities. sharedRig.js:18-46 marks live captures; :50-106 rejects plain JSON/constructed profiles, mismatched identity, unsupported channels/interpolations, malformed tracks and invalid TRS while applying bind-relative motion.
+- Fixture: all 42 unique fixture names exactly match the unique manifest and GLB names. Families are idle 2, locomotion 9, jump 3, jet 5, swim 5, mine 3, cast 3, hit 4, Recall 2, emote 6. It is a separate literal checked against output, not generated from output at test time.
+- Actual geometry: loadActualRig.js:9-12, :25 and :38 assert nontexture geometry/skin/morph/node/compression JSON and BIN identity while omitting texture/material loading in RAM. CPU Meshopt decoding is used; no image/video encoder or decoder ran.
+- Independent glTF scene-graph inventory confirms 24 mesh nodes at each of LOD0/1/2/3 for each species (96 each). The tested inventories contain all 96, expanded into 216/216/176 loaded skinned primitives.
+- Historical workflow README is exact retained documentation. The new REPORT.md explicitly identifies its evidence and does not relabel prior reports. No historical report was added or modified by this restoration. The finding above concerns the CLI's unguarded future reuse of an existing output path.
+
+FRESH VERIFICATION
+
+All commands ran from the pinned worktree. run_bounded.py uses OMP_NUM_THREADS=2, OPENBLAS_NUM_THREADS=2, MKL_NUM_THREADS=2, NUMEXPR_NUM_THREADS=2, VECLIB_MAXIMUM_THREADS=2, PYTHONDONTWRITEBYTECODE=1 and a 300-second timeout. Blender processes ran sequentially with factory startup, autoexec disabled and -t 2; scene threads are also fixed at 2.
+
+1. Provenance audit (exit 0, repeated after all execution; identical before/after):
+```sh
+python3 /tmp/P1-E05-T02-review-07768bf-4eG46I/audit_provenance.py
+```
+
+2. Focused tests (exit 0; 2 files, 28 tests):
+```sh
+python3 /tmp/P1-E05-T02-review-07768bf-4eG46I/run_bounded.py focused-tests pnpm exec vitest run packages/client/src/characters/animationLibrary.test.js packages/client/src/characters/sharedRig.test.js --maxWorkers=1 --no-file-parallelism --no-cache
+```
+ANIMATION_PROOF_PATH and SHARED_RIG_PROOF_PATH point to this /tmp report directory; see focused-tests-command.json.
+
+3. Actual saved-source validation and export-boundary controls (exit 0; 42 actions, 10 rejects):
+```sh
+python3 /tmp/P1-E05-T02-review-07768bf-4eG46I/run_bounded.py blender-validation /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --disable-autoexec --python-exit-code 1 -P packages/tools/blender/characters/animations/export_saved.py -- --validate-only --selftest --report-dir /tmp/P1-E05-T02-review-07768bf-4eG46I
+```
+
+4. The disposable existing-receipt control (exporter exit 0, preservation requirement FAIL) is described above.
+
+5. git diff --check ae8447ce13925befe63899452bee9beb162c07ea HEAD: exit 0.
+6. Final git status --porcelain=v1: empty. Final head/tree unchanged. Before/after protected payload audits are identical.
+
+Fresh measured results:
+- 42 saved actions; 69 authored bones; 70 canonical profile bones.
+- 10 actual export-boundary negative controls passed, including Blender's negative-index clamp becoming a rejected duplicate.
+- 126 unique clip/people pairs; 510,720 finite animated vertex samples across all four LODs.
+- Maximum sampled bind-relative quaternion error: 1.3978528260658475e-7 rad.
+- Nine source/target neutral pairs; maximum sampled rest-vertex error: 1.7706557267871736e-8 m (within requested 1.771e-8 m).
+- Nine nonneutral/interpolated TRS pairs, round trips and immutable-input checks pass.
+- Maximum movement per pair spans 0.257526405250105–1.0999509332885844 m.
+- 16 loop endpoint checks, 21 contact checks, maximum stance-height residual 0.00660269316337142 m.
+- All four fresh JSON receipts (source-validation, component-validation, animation-proof, shared-rig-proof) exactly equal the corresponding committed packet JSON values.
+- The unsupported-channel/interpolation and malformed/live-profile rejection cases passed in the unchanged shared-rig suite.
+- The old absolute-translation geometry mismatch remains reproduced as a negative control on the actual target bodies; bind-relative adaptation preserves neutral rest geometry.
+
+REMAINING LIMITS
+
+The result is REVISE for one receipt-preservation issue. It is not whole P1.E05.T02 acceptance. Rendered motion, materials, contact quality, species-specific IK/proportion appearance, performance and gameplay/state-machine integration remain outside this CPU review. Geometry evidence is deterministic sampling of every loaded primitive, not exhaustive vertex/time coverage. No successful export, authoring regeneration, bind recapture, asset rewrite, render, bake, GPU, browser, Vite/server, database, native media codec or LFS fetch ran. No full main test suite, smoke, typecheck or lint rerun was required for this bounded independent review; the focused executable boundaries and exact provenance were checked instead. No checkout edits, commits, PR actions, nested agents, parent plan/progress/decisions changes or capture-lane changes occurred.
+
+Review inputs: task brief; docs/IMPLEMENTATION_PLAN.md 0.3/0.4/0.9.5 and T01/T02/T04 task blocks; DESIGN 5 and 19.2; art bible; current packet REPORT.md; actual diff, Git/LFS objects and source. Read-only review guidance was applied; existing test-configuration inspection also used the TypeScript/type-system guidance.
+
