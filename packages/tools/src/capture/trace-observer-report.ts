@@ -49,6 +49,10 @@ const record = (v: unknown, name: string) => {
   if (!isRecord(v)) throw new Error(`Missing ${name}`);
   return v;
 };
+function hasEveryIndex(values: unknown[]) {
+  for (let i = 0; i < values.length; i++) if (!Object.hasOwn(values, i)) return false;
+  return true;
+}
 const numeric = (v: unknown, name: string) => {
   if (typeof v !== 'number' || !Number.isFinite(v) || v < 0) throw new Error(`Invalid ${name}`);
   return v;
@@ -78,7 +82,10 @@ const stamp = (v: unknown) => {
   return numeric(s.monotonicMs, 'phase clock');
 };
 export function canonical(value: unknown): string {
-  if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
+  if (Array.isArray(value)) {
+    if (!hasEveryIndex(value)) throw new Error('Missing indexed evidence');
+    return '[' + value.map(canonical).join(',') + ']';
+  }
   if (isRecord(value))
     return (
       '{' +
@@ -142,16 +149,30 @@ export function validateObserverHost(value: unknown, pins: ObserverPins) {
   const h = record(value, 'host observation');
   date(h.at);
   numeric(h.monotonicMs, 'host clock');
-  if (h.pinsSha256 !== observerDigest(pins) || h.logicalCores !== pins.loadCondition.logicalCores || !Array.isArray(h.load) || h.load.length !== 3)
+  if (
+    h.pinsSha256 !== observerDigest(pins) ||
+    h.logicalCores !== pins.loadCondition.logicalCores ||
+    !Array.isArray(h.load) ||
+    h.load.length !== 3 ||
+    !hasEveryIndex(h.load)
+  )
     throw new Error('Source/asset/device/load pins changed or missing');
   h.load.forEach((n) => numeric(n, 'host load'));
   if (!Array.isArray(h.errors) || h.errors.length) throw new Error('Host/page errors missing or present');
 }
 function fences(value: unknown, labels: string[]) {
-  if (!Array.isArray(value) || value.length !== labels.length) throw new Error('Missing fences');
+  if (!Array.isArray(value) || value.length !== labels.length || !hasEveryIndex(value)) throw new Error('Missing fences');
   return value.map((v, index) => {
     const c = record(v, 'fence');
-    if (c.label !== labels[index] || c.status !== 'signaled' || c.failure !== null || !Array.isArray(c.polls) || c.polls.length < 1 || c.polls.length > 100)
+    if (
+      c.label !== labels[index] ||
+      c.status !== 'signaled' ||
+      c.failure !== null ||
+      !Array.isArray(c.polls) ||
+      c.polls.length < 1 ||
+      c.polls.length > 100 ||
+      !hasEveryIndex(c.polls)
+    )
       throw new Error('Invalid fence/polls');
     const start = Date.parse(date(c.startedAt)),
       finish = Date.parse(date(c.finishedAt));
@@ -206,33 +227,40 @@ function temporal(value: unknown) {
     t.blend > 1 ||
     !Array.isArray(t.jitter) ||
     t.jitter.length !== 2 ||
+    !hasEveryIndex(t.jitter) ||
     !t.jitter.every((v) => typeof v === 'number' && Number.isFinite(v) && v >= -1 && v <= 1) ||
     !Array.isArray(t.historySizes) ||
     t.historySizes.length !== 2 ||
-    !t.historySizes.every((size) => Array.isArray(size) && size.length === 2 && size[0] === observerScene.width / 2 && size[1] === observerScene.height / 2)
+    !hasEveryIndex(t.historySizes) ||
+    !t.historySizes.every(
+      (size) => Array.isArray(size) && size.length === 2 && hasEveryIndex(size) && size[0] === observerScene.width / 2 && size[1] === observerScene.height / 2,
+    )
   )
     throw new Error('Malformed temporal observations');
   return { frameIdx, histIdx: t.histIdx };
 }
 export function validateObserverPreparation(value: unknown, work: ObserverWork, pins: ObserverPins) {
-  const counts = validatePreparation(value, work),
+  const { warmUpFrames, preparedAt } = validatePreparation(value, work),
     r = record(value, 'preparation');
+  if (!Array.isArray(r.viewport) || !hasEveryIndex(r.viewport)) throw new Error('Missing viewport observations');
   if (canonical(parseDevice(r.device)) !== canonical(pins.device)) throw new Error('Device changed');
   numeric(r.timeOriginMs, 'page origin');
   date(r.preparedAt);
   const warm = record(r.warm, 'warm-up');
   numeric(warm.frameMs, 'warm frame');
-  if (typeof warm.underBudget !== 'boolean' || counts.warmUpFrames < 1) throw new Error('Missing warm-up observations');
+  if (typeof warm.underBudget !== 'boolean' || warmUpFrames < 1) throw new Error('Missing warm-up observations');
   const pre = record(r.preflight, 'preflight');
   const preflightSettledMs = stamp(pre.settledAt);
-  fences(pre.completions, ['after-work-class-warmup', 'after-work-class-dependent-preflight', 'after-work-class-preflight-disposal']);
-  if (!Array.isArray(pre.passes)) throw new Error('Missing preflight passes');
-  pre.passes.forEach((v, i) => {
+  const completions = fences(pre.completions, ['after-work-class-warmup', 'after-work-class-dependent-preflight', 'after-work-class-preflight-disposal']);
+  if (!Array.isArray(pre.passes) || !hasEveryIndex(pre.passes)) throw new Error('Missing preflight passes');
+  let dependentPasses = 0;
+  for (const [i, v] of pre.passes.entries()) {
     const p = record(v, 'pass');
     if (p.step !== i + 1 || p.completed !== true || p.calls !== 1 || p.triangles !== 1) throw new Error('Preflight work mismatch');
-  });
+    dependentPasses++;
+  }
   const proof = record(pre.proof, 'dependent proof');
-  if (proof.steps !== 4 || proof.side !== 256 || !Array.isArray(proof.points) || proof.points.length !== 3)
+  if (proof.steps !== 4 || proof.side !== 256 || !Array.isArray(proof.points) || proof.points.length !== 3 || !hasEveryIndex(proof.points))
     throw new Error('Missing dependent proof observations');
   const coordinates = [
     [0, 0],
@@ -250,6 +278,8 @@ export function validateObserverPreparation(value: unknown, work: ObserverWork, 
       !Array.isArray(point.expected) ||
       point.actual.length !== 4 ||
       point.expected.length !== 4 ||
+      !hasEveryIndex(point.actual) ||
+      !hasEveryIndex(point.expected) ||
       !point.actual.every((v) => Number.isInteger(v) && v >= 0 && v <= 255) ||
       canonical(point.actual) !== canonical(point.expected)
     )
@@ -258,10 +288,17 @@ export function validateObserverPreparation(value: unknown, work: ObserverWork, 
   }
   const checksum = bytes.map((v) => v.toString(16).padStart(2, '0')).join('');
   if (proof.sampleChecksum !== checksum || proof.expectedSampleChecksum !== checksum) throw new Error('Dependent proof checksum missing/mismatched');
-  return { ...counts, preflightSettledMs, timeOriginMs: numeric(r.timeOriginMs, 'page origin') };
+  return {
+    warmUpFrames,
+    preparedAt,
+    dependentPasses,
+    completions: completions.length,
+    preflightSettledMs,
+    timeOriginMs: numeric(r.timeOriginMs, 'page origin'),
+  };
 }
 export function validateObserverControl(value: unknown, prepared: unknown, work: ObserverWork, pins: ObserverPins) {
-  validateObserverPreparation(value, work, pins);
+  const preparation = validateObserverPreparation(value, work, pins);
   const counted = validateControl(value, work),
     r = record(value, 'control'),
     p = record(prepared, 'prepared');
@@ -269,7 +306,7 @@ export function validateObserverControl(value: unknown, prepared: unknown, work:
     if (canonical(r[field]) !== canonical(p[field])) throw new Error('Preparation changed between prepare/run');
   date(r.startedAt);
   date(r.finishedAt);
-  if (!Array.isArray(r.samples)) throw new Error('Missing sample');
+  if (!Array.isArray(r.samples) || !hasEveryIndex(r.samples)) throw new Error('Missing sample');
   const s = record(r.samples[0], 'sample');
   const start = stamp(s.controlStarted),
     end = stamp(s.controlFinished);
@@ -308,6 +345,8 @@ export function validateObserverControl(value: unknown, prepared: unknown, work:
   if (elapsed[0] + elapsed[1] + frameMs > end - start + 0.001) throw new Error('Fence/frame intervals exceed control envelope');
   return {
     ...counted,
+    preparation,
+    syncs: elapsed.length,
     frameMs,
     preFenceMs: elapsed[0],
     postFenceMs: elapsed[1],
@@ -352,8 +391,11 @@ export function summarizeObserver(controls: { arm: ObserverArm; pair: number | n
   // Every same-sign paired gap must exceed both within-arm ranges PLUS the 5ms tolerance.
   const gapThresholdMs = within + toleranceMs;
   const reproducibleGap = differences.min > gapThresholdMs || differences.max < -gapThresholdMs;
-  const similar = pairs.every((p) => Math.abs(p.onMinusOffMs) <= Math.max(within, toleranceMs));
-  const decision = unstable || longEmptyFence ? 'inconclusive' : reproducibleGap ? 'observer-cost-issue' : similar ? 'targeted-workload-next' : 'inconclusive';
+  // Zero is neutral: it can support similarity, but cannot meet the strict gap threshold.
+  const mixedSigns = differences.min < 0 && differences.max > 0;
+  const similar = !mixedSigns && pairs.every((p) => Math.abs(p.onMinusOffMs) <= Math.max(within, toleranceMs));
+  const decision =
+    unstable || longEmptyFence || mixedSigns ? 'inconclusive' : reproducibleGap ? 'observer-cost-issue' : similar ? 'targeted-workload-next' : 'inconclusive';
   return {
     pairs,
     on,
@@ -369,6 +411,7 @@ export function summarizeObserver(controls: { arm: ObserverArm; pair: number | n
       withinArmRangeMs: within,
       unstable,
       longEmptyFence,
+      mixedSigns,
       reproducibleGap,
       similar,
     },

@@ -17,7 +17,7 @@ export function traceObserverProposal() {
     bounds: observerBounds,
     traceLimits,
     decisionRule:
-      'Observer cost requires every same-sign paired gap to satisfy abs(gap) > max(onRange, offRange) + 5ms, with stable arms and short empty fences. Neither outcome qualifies the frame budget.',
+      'Observer cost requires every same-sign paired gap to satisfy abs(gap) > max(onRange, offRange) + 5ms, with stable arms and short empty fences. Mixed positive/negative gaps are inconclusive before considering similarity. Zero gaps are neutral: they may support stable similarity but never meet the strict gap threshold. Neither outcome qualifies the frame budget.',
     sourcePortLimits:
       'Returned evidence is a detached snapshot. Unsettled ports remain failed with no finished time; replies after the cutoff are excluded. Settled port promises do not prove physical process settlement.',
     deadlines: {

@@ -253,6 +253,17 @@ async function failed(f: ReturnType<typeof fixture>) {
   }
 }
 const methods = (f: ReturnType<typeof fixture>) => f.commands.map((c) => c.command.method);
+const arrayFaults = ['all-holes', 'first-hole', 'last-hole', 'undefined', 'null', 'inherited-index'] as const;
+function damageArray(values: unknown[], fault: (typeof arrayFaults)[number]) {
+  if (fault === 'all-holes') for (let i = 0; i < values.length; i++) delete values[i];
+  else if (fault === 'first-hole') delete values[0];
+  else if (fault === 'last-hole') delete values[values.length - 1];
+  else if (fault === 'inherited-index') {
+    const first = values[0];
+    delete values[0];
+    Object.setPrototypeOf(values, Object.assign(Object.create(Array.prototype), { 0: first }));
+  } else values[0] = fault === 'null' ? null : undefined;
+}
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
@@ -983,5 +994,99 @@ describe('independent review regressions at the actual dispatcher/report boundar
     if (!saved) throw new Error('Missing saved report');
     saved.steps.length = 0;
     expect(result.steps).toHaveLength(12);
+  });
+});
+
+describe('R2 indexed evidence and decision boundaries', () => {
+  const preflightArrays = [
+    ['passes', (r: Reply) => r.value.preflight.passes],
+    ['preflight fences', (r: Reply) => r.value.preflight.completions],
+    ['preflight polls', (r: Reply) => r.value.preflight.completions[0].polls],
+    ['proof points', (r: Reply) => r.value.preflight.proof.points],
+    ['proof actual', (r: Reply) => r.value.preflight.proof.points[0].actual],
+    ['proof expected', (r: Reply) => r.value.preflight.proof.points[0].expected],
+    ['viewport', (r: Reply) => r.value.viewport],
+  ] as const;
+  type SampleArrays = {
+    completions: ReturnType<typeof fence>[];
+    temporalBefore: { jitter: number[]; historySizes: number[][] };
+    temporalAfter: { jitter: number[]; historySizes: number[][] };
+  };
+  const sampleArrays = [
+    ['control fences', (s: SampleArrays) => s.completions],
+    ['control polls', (s: SampleArrays) => s.completions[0].polls],
+    ['before jitter', (s: SampleArrays) => s.temporalBefore.jitter],
+    ['after jitter', (s: SampleArrays) => s.temporalAfter.jitter],
+    ['before history targets', (s: SampleArrays) => s.temporalBefore.historySizes],
+    ['after history targets', (s: SampleArrays) => s.temporalAfter.historySizes],
+    ['before history dimensions', (s: SampleArrays) => s.temporalBefore.historySizes[0]],
+    ['after history dimensions', (s: SampleArrays) => s.temporalAfter.historySizes[0]],
+  ] as const;
+  const cases = [
+    ...(['prepare', 'run'] as const).flatMap((action) => preflightArrays.map(([name, select]) => ({ name, action, select }))),
+    { name: 'samples', action: 'run', select: (r: Reply) => r.value.samples },
+    ...sampleArrays.map(([name, select]) => ({ name, action: 'run', select: (r: Reply) => select(r.value.samples[0] as SampleArrays) })),
+  ];
+  it.each(cases.flatMap((test) => arrayFaults.map((fault) => ({ ...test, fault }))))(
+    'rejects $fault in $action $name before counting incomplete work or issuing another control',
+    async ({ action, select, fault }) => {
+      const f = fixture({
+        mutate(r, i, actual) {
+          if (i === 0 && actual === action) damageArray(select(r), fault);
+        },
+      });
+      const r = await failed(f);
+      expect(r.summary).toBeNull();
+      expect(r.steps).toHaveLength(1);
+      expect(r.steps[0].counts).toBeNull();
+      expect(r.totals.dependentPasses).toBe(action === 'prepare' ? 0 : 4);
+      expect(r.totals.preflightFences).toBe(action === 'prepare' ? 0 : 3);
+      expect(r.totals.controlFences).toBe(0);
+      expect(f.calls.map((c) => c.action)).toEqual(action === 'prepare' ? ['prepare'] : ['prepare', 'run']);
+      expect(f.retained).toHaveLength(action === 'prepare' ? 1 : 2);
+      expect(r.steps[0][action === 'prepare' ? 'prepare' : 'run']).not.toBeNull();
+      expect(methods(f).filter((m) => m === 'IO.close')).toHaveLength(1);
+      expect(f.state().active).toBe(false);
+    },
+  );
+  it.each((['before', 'after'] as const).flatMap((position) => arrayFaults.map((fault) => ({ position, fault }))))(
+    'rejects $fault in host $position load without losing returned facts',
+    async ({ position, fault }) => {
+      const f = fixture(),
+        observe = f.options.observe;
+      let calls = 0;
+      f.options.observe = async () => {
+        const value = await observe();
+        if (++calls === (position === 'before' ? 1 : 2)) damageArray((value as { load: number[] }).load, fault);
+        return value;
+      };
+      const r = await failed(f);
+      expect(r.steps).toHaveLength(1);
+      expect(r.steps[0][position]).not.toBeNull();
+      expect(r.summary).toBeNull();
+      expect(f.calls).toHaveLength(position === 'before' ? 0 : 2);
+    },
+  );
+  it.each([
+    { gaps: [1, -1, 1, -1, 1], mixed: true, decision: 'inconclusive' },
+    { gaps: [1, 0, -1, 0, 1], mixed: true, decision: 'inconclusive' },
+    { gaps: [0, 0, 0, 0, 0], mixed: false, decision: 'targeted-workload-next' },
+    { gaps: [1, 0, 1, 0, 1], mixed: false, decision: 'targeted-workload-next' },
+    { gaps: [-1, 0, -1, 0, -1], mixed: false, decision: 'targeted-workload-next' },
+    { gaps: [5, 5, 5, 5, 5], mixed: false, decision: 'targeted-workload-next' },
+    { gaps: [5.001, 5.001, 5.001, 5.001, 5.001], mixed: false, decision: 'observer-cost-issue' },
+    { gaps: [-5.001, -5.001, -5.001, -5.001, -5.001], mixed: false, decision: 'observer-cost-issue' },
+  ])('classifies signed gaps $gaps as $decision with zero gaps neutral', async ({ gaps, mixed, decision }) => {
+    const r = await dispatchBrowserDiagnostic(
+      fixture({
+        duration(i) {
+          const step = observerPlan[i];
+          return step.pair === null ? 8 : 30 + (step.arm === 'on' ? gaps[step.pair] : 0);
+        },
+      }).options,
+    );
+    expect(r.summary?.decision).toBe(decision);
+    expect(r.summary?.criteria).toMatchObject({ mixedSigns: mixed, similar: decision === 'targeted-workload-next' });
+    expect(r.summary?.budgetQualified).toBe(false);
   });
 });
