@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py", line 40, in <module>
+    if __name__=='__main__':run()
+                            ~~~^^
+  File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/space-e08t08-f2-independent-o32pkium/audit.py", line 23, in run
+    else:pins.update({a['path']:a['sha256'] for a in pngs})
+                      ~^^^^^^^^
+TypeError: string indices must be integers, not 'str'
