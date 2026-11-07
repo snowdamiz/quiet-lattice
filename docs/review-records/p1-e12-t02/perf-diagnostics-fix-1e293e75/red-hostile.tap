@@ -1,0 +1,340 @@
+TAP version 13
+# Subtest: null prototype: original causes survive every cleanup boundary and receipt write
+not ok 1 - null prototype: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 6.639541
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: throwing conversion: original causes survive every cleanup boundary and receipt write
+not ok 2 - throwing conversion: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.182625
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: conversion getter: original causes survive every cleanup boundary and receipt write
+not ok 3 - conversion getter: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 0.824417
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: toString getter: original causes survive every cleanup boundary and receipt write
+not ok 4 - toString getter: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 0.628334
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: invalid conversion result: original causes survive every cleanup boundary and receipt write
+not ok 5 - invalid conversion result: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.025459
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: empty message: original causes survive every cleanup boundary and receipt write
+not ok 6 - empty message: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 0.720833
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: missing message: original causes survive every cleanup boundary and receipt write
+not ok 7 - missing message: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 0.620542
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: throwing message getter: original causes survive every cleanup boundary and receipt write
+not ok 8 - throwing message getter: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 0.610041
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: nonstring message: original causes survive every cleanup boundary and receipt write
+not ok 9 - nonstring message: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.591417
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: hostile proxy: original causes survive every cleanup boundary and receipt write
+not ok 10 - hostile proxy: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.209459
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: revoked proxy: original causes survive every cleanup boundary and receipt write
+not ok 11 - revoked proxy: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.205708
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:32:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:65:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a single opaque rejection is rethrown unchanged with a serializable receipt
+not ok 12 - a single opaque rejection is rethrown unchanged with a serializable receipt
+  ---
+  duration_ms: 0.4765
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:90:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(Object.is((await caught(run(review, [], receipt))).error, primary))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:94:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: hostile receipt failures access remains a failure and preserves original causes
+not ok 13 - hostile receipt failures access remains a failure and preserves original causes
+  ---
+  duration_ms: 0.556833
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:99:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:107:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: hostile receipt errors access remains a failure and preserves original causes
+not ok 14 - hostile receipt errors access remains a failure and preserves original causes
+  ---
+  duration_ms: 0.390959
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:99:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(error instanceof AggregateError)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:107:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: capture records raw selector failures without failing during formatting
+not ok 15 - capture records raw selector failures without failing during formatting
+  ---
+  duration_ms: 0.501791
+  type: 'test'
+  location: '/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:120:1'
+  failureType: 'testCodeFailure'
+  error: 'Cannot convert object to primitive value'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    String (<anonymous>)
+    read (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/index.mjs:4:82)
+    capture (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/index.mjs:30:18)
+    TestContext.<anonymous> (file:///Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs:124:22)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 0
+# fail 15
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 83.690833

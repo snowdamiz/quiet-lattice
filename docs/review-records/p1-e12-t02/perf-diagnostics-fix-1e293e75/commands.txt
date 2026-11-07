@@ -1,0 +1,84 @@
+red: r1-only; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=1
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap '--test-name-pattern=R1 raw' /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-r1-only.tap
+
+red: independent; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=1
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-independent.tap
+
+red: index; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/index.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-index.tap
+
+red: adversarial; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/adversarial.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-adversarial.tap
+
+red: regressions; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/regressions.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-regressions.tap
+
+red: original-adversarial; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/original-adversarial.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-original-adversarial.tap
+
+red: hostile; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=1
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-hostile.tap
+
+red: raw-errors-repro; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/raw-errors-repro.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/red-raw-errors-repro.jsonl
+
+green: r1-only; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap '--test-name-pattern=R1 raw' /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-r1-only.tap
+
+green: independent; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-independent.tap
+
+green: index; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/index.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-index.tap
+
+green: adversarial; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/adversarial.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-adversarial.tap
+
+green: regressions; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/regressions.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-regressions.tap
+
+green: original-adversarial; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/original-adversarial.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-original-adversarial.tap
+
+green: hostile; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-hostile.tap
+
+green: raw-errors-repro; cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/raw-errors-repro.mjs
+log=/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-raw-errors-repro.jsonl
+
+syntax: exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --check packages/tools/src/diagnostics/review-performance/adversarial.test.mjs
+
+syntax: exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --check packages/tools/src/diagnostics/review-performance/index.mjs
+
+syntax: exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --check packages/tools/src/diagnostics/review-performance/index.test.mjs
+
+syntax: exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --check packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs
+
+syntax: exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --check packages/tools/src/diagnostics/review-performance/regressions.test.mjs
+
+lint: cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/Documents/dev/space/node_modules/eslint/bin/eslint.js --config /Users/andreyyurlov/Documents/dev/space/eslint.config.js --global structuredClone --global setImmediate packages/tools/src/diagnostics/review-performance/adversarial.test.mjs packages/tools/src/diagnostics/review-performance/index.mjs packages/tools/src/diagnostics/review-performance/index.test.mjs packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs packages/tools/src/diagnostics/review-performance/regressions.test.mjs
+
+diff: cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1; exit=0
+git diff --check b717dbb646588f8afda2c2be1ae7a9b2253fad5a 1e293e75258b986501780713d2956a7e8cc80ec0

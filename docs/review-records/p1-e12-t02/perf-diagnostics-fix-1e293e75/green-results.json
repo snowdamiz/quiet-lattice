@@ -1,0 +1,183 @@
+{
+  "node": "v22.23.3",
+  "head": "f4aaee716205c412dddcf8aacd9a5b4076a4de31",
+  "sourceSha256": {
+    "index.test.mjs": "cd40edaa518f3fcfbaa2118aae6d97722a245159835970c57274f595e2277747",
+    "README.md": "ed9c051852ed2d491577d280a3b48a9bf9838a066a4086138e54ff6aef67bfa6",
+    "raw-errors.test.mjs": "5f3d3fd5f9f1e7a5797a483d8313e7293dd60a2611934ef01068595a89eeeff5",
+    "index.mjs": "6ce1bc684d585956cc2e4cf52124b8fd7e9f979fbd66342af38f6d5a8ff31c37",
+    "regressions.test.mjs": "e76a521f9283c2c27bd97737db820baf995708cf4069a0d1c99cd8f0124777e3",
+    "adversarial.test.mjs": "e7ca87128020d6339777670fd48e32c3308cc55a1322500ecc7a4f54dbb8138a"
+  },
+  "timeoutSeconds": 30,
+  "results": [
+    {
+      "name": "r1-only",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=R1 raw",
+        "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap '--test-name-pattern=R1 raw' /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 3,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-r1-only.tap",
+      "logSha256": "bcc1bf88ce4f573ede4725ef0e87fc72e35bb7fe9322488d65cc4c746232fc51"
+    },
+    {
+      "name": "independent",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/independent.test.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-independent.tap",
+      "logSha256": "5c23e75804be580a90ec1d312f3a8609471101125d12ac53dfc0f46f4a1ebc99"
+    },
+    {
+      "name": "index",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/index.test.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/index.test.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-index.tap",
+      "logSha256": "d04d87881827982c58047b51cab6f77984fc489638d33a453e83efb48a188bdb"
+    },
+    {
+      "name": "adversarial",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/adversarial.test.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/adversarial.test.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-adversarial.tap",
+      "logSha256": "86877ae8b542cc7d12e522da2fcd5e22f3abc7f16367d5840d2aaebd61ef0189"
+    },
+    {
+      "name": "regressions",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/regressions.test.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/regressions.test.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 10,
+        "pass": 10,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-regressions.tap",
+      "logSha256": "237461520905a64659d2f846f9f55c3b40c511d0af4e6163037fa4aa2c95c89f"
+    },
+    {
+      "name": "original-adversarial",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/original-adversarial.test.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/original-adversarial.test.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-original-adversarial.tap",
+      "logSha256": "1fb9c5222345bcd68d1993c615ec035624b698409c42256893a5239d493e855c"
+    },
+    {
+      "name": "hostile",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --test --test-reporter=tap /Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1/packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs",
+      "exitCode": 0,
+      "counts": {
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-hostile.tap",
+      "logSha256": "c5920a6fcc467ca3e657833c0df7d030284c2ace7d5f41c4184608345067a122"
+    },
+    {
+      "name": "raw-errors-repro",
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/raw-errors-repro.mjs"
+      ],
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/review-performance-r1-15e5d4e1-avntmsqh/raw-errors-repro.mjs",
+      "exitCode": 0,
+      "counts": {},
+      "log": "/private/tmp/review-performance-r1-15e5d4e1-avntmsqh/green-raw-errors-repro.jsonl",
+      "logSha256": "f3ae7adb7bc1f1d7491fdcee9ebfeb25fe0705660bc75f2674f2ab680b6bb547"
+    }
+  ]
+}

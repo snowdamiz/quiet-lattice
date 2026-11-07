@@ -1,0 +1,233 @@
+{
+  "verdict": "R1 source fix ready for fresh independent review; no runtime admission",
+  "sealedUtc": "2026-11-07T20:06:32.501601+00:00",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-15e5d4e1",
+  "branch": "t3/15e5d4e1",
+  "base": "b717dbb646588f8afda2c2be1ae7a9b2253fad5a",
+  "head": "1e293e75258b986501780713d2956a7e8cc80ec0",
+  "tree": "7ce3b00b287bda07b97b75336ed9ff399122bb4a",
+  "worktreeClean": true,
+  "reference": {
+    "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+    "head": "8cad9bae11740fb607aa90da221256babe92bf62",
+    "clean": true,
+    "sealedInputsReverified": true,
+    "sourceUntouched": true
+  },
+  "provenanceCherryPicks": [
+    {
+      "from": "f4556abc5dca002569b367475dd61084738ebfd8",
+      "to": "274f743128d46c69b95bceda58ac27dec4303582"
+    },
+    {
+      "from": "8cad9bae11740fb607aa90da221256babe92bf62",
+      "to": "f4aaee716205c412dddcf8aacd9a5b4076a4de31"
+    }
+  ],
+  "fixCommit": "1e293e75258b986501780713d2956a7e8cc80ec0",
+  "scope": "packages/tools/src/diagnostics/review-performance",
+  "changedPathsIncludingRecovery": [
+    "packages/tools/src/diagnostics/review-performance/README.md",
+    "packages/tools/src/diagnostics/review-performance/adversarial.test.mjs",
+    "packages/tools/src/diagnostics/review-performance/index.mjs",
+    "packages/tools/src/diagnostics/review-performance/index.test.mjs",
+    "packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs",
+    "packages/tools/src/diagnostics/review-performance/regressions.test.mjs"
+  ],
+  "changedPathsInFix": [
+    "packages/tools/src/diagnostics/review-performance/README.md",
+    "packages/tools/src/diagnostics/review-performance/index.mjs",
+    "packages/tools/src/diagnostics/review-performance/raw-errors.test.mjs"
+  ],
+  "implementation": "A guarded errorText formatter preserves String(error) where available, tries a guarded string message after conversion throws, and otherwise returns a fixed opaque description. Both record() and capture read() use it. Original rejection objects/values and cleanup/guard/selector sequencing are unchanged.",
+  "node": {
+    "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "version": "v22.23.3",
+    "sha256": "68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b"
+  },
+  "tests": {
+    "red": {
+      "r1-only": {
+        "exitCode": 1,
+        "tests": 3,
+        "pass": 0,
+        "fail": 3,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "independent": {
+        "exitCode": 1,
+        "tests": 28,
+        "pass": 25,
+        "fail": 3,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "index": {
+        "exitCode": 0,
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "adversarial": {
+        "exitCode": 0,
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "regressions": {
+        "exitCode": 0,
+        "tests": 10,
+        "pass": 10,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "original-adversarial": {
+        "exitCode": 0,
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "hostile": {
+        "exitCode": 1,
+        "tests": 15,
+        "pass": 0,
+        "fail": 15,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "raw-errors-repro": {
+        "exitCode": 0
+      }
+    },
+    "green": {
+      "r1-only": {
+        "exitCode": 0,
+        "tests": 3,
+        "pass": 3,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "independent": {
+        "exitCode": 0,
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "index": {
+        "exitCode": 0,
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "adversarial": {
+        "exitCode": 0,
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "regressions": {
+        "exitCode": 0,
+        "tests": 10,
+        "pass": 10,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "original-adversarial": {
+        "exitCode": 0,
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "hostile": {
+        "exitCode": 0,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "raw-errors-repro": {
+        "exitCode": 0
+      }
+    },
+    "timeoutSecondsPerSuite": 30,
+    "deduplication": "The 3 R1-only cases are part of the 28-case independent suite. Original adversarial is the same 13 retained cases with its import redirected. Do not add these duplicate runs to case totals. raw-errors-repro exits 0 when observation completes; it is not an assertion suite.",
+    "committedBytesMatchGreenRun": true,
+    "newRegressionBytesIdenticalAcrossRedGreen": true
+  },
+  "checks": {
+    "syntax": "all five .mjs files passed explicit Node 22 --check",
+    "lint": "all five .mjs files passed repository ESLint config; dependencies read from main checkout, config bytes verified identical",
+    "diffWhitespace": "passed",
+    "scope": "only owned directory",
+    "referenceIntegrity": "40 original manifest entries verified at start and finish; reference source also matched pinned blobs"
+  },
+  "sourceSha256": {
+    "index.test.mjs": "cd40edaa518f3fcfbaa2118aae6d97722a245159835970c57274f595e2277747",
+    "README.md": "ed9c051852ed2d491577d280a3b48a9bf9838a066a4086138e54ff6aef67bfa6",
+    "raw-errors.test.mjs": "5f3d3fd5f9f1e7a5797a483d8313e7293dd60a2611934ef01068595a89eeeff5",
+    "index.mjs": "6ce1bc684d585956cc2e4cf52124b8fd7e9f979fbd66342af38f6d5a8ff31c37",
+    "regressions.test.mjs": "e76a521f9283c2c27bd97737db820baf995708cf4069a0d1c99cd8f0124777e3",
+    "adversarial.test.mjs": "e7ca87128020d6339777670fd48e32c3308cc55a1322500ecc7a4f54dbb8138a"
+  },
+  "probeSha256": {
+    "independent.test.mjs": "aaef6c818474c27e10e679f96f333586f53cd43da8c57a8aeafa44ee3e337702",
+    "original-adversarial.test.mjs": "2a92aa3d61984d16f5e0c27372cb23c027174a25c0c4ddfb263e5efdbe4d751f",
+    "raw-errors-repro.mjs": "6bc6d27333cacc4971413f0aae3d9aded00eddfe75cff58ab4a525c2e011181f",
+    "raw-errors.test.mjs": "5f3d3fd5f9f1e7a5797a483d8313e7293dd60a2611934ef01068595a89eeeff5"
+  },
+  "artifacts": {
+    "exactCommands": "commands.txt",
+    "redResults": "red-results.json",
+    "greenResults": "green-results.json",
+    "sourceBefore": "source-before/",
+    "sourceAfter": "source-after/",
+    "imports": "import-adaptations.json",
+    "inputHashes": "input-integrity.json",
+    "fixDiff": "fix.diff",
+    "fullDiff": "recovered-and-fix.diff",
+    "seal": "SHA256SUMS"
+  },
+  "limits": [
+    "Fake-runtime Node tests only; fresh independent review is pending.",
+    "Frozen/unwritable/invalid receipt access can prevent persistence; original causes and write failures remain in the thrown result. A failing restore can still leave runtime state unrestored.",
+    "Hardware, query ownership/completeness/lost or pending samples, raw frames, console/GL errors and GPU-state cleanup are unproven.",
+    "Configuration comparability and loaded-runtime identity remain unverified caller/operator responsibilities.",
+    "Pass timers and resolution/MSAA/material/LOD adapters remain pending.",
+    "No causal attribution, performance fix, scene-budget compliance or runtime admission is established.",
+    "No children, full suite, browser, GPU/native performance runtime, Blender, render, export, push, PR, merge or Trunk action was performed."
+  ],
+  "sealPolicy": "SHA256SUMS covers every artifact file except itself. Artifact files are made read-only after sealing. Original external evidence is unchanged."
+}

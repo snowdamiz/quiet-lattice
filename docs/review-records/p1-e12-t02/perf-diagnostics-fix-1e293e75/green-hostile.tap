@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: null prototype: original causes survive every cleanup boundary and receipt write
+ok 1 - null prototype: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 4.265667
+  type: 'test'
+  ...
+# Subtest: throwing conversion: original causes survive every cleanup boundary and receipt write
+ok 2 - throwing conversion: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 2.261333
+  type: 'test'
+  ...
+# Subtest: conversion getter: original causes survive every cleanup boundary and receipt write
+ok 3 - conversion getter: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.024959
+  type: 'test'
+  ...
+# Subtest: toString getter: original causes survive every cleanup boundary and receipt write
+ok 4 - toString getter: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.592959
+  type: 'test'
+  ...
+# Subtest: invalid conversion result: original causes survive every cleanup boundary and receipt write
+ok 5 - invalid conversion result: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.246042
+  type: 'test'
+  ...
+# Subtest: empty message: original causes survive every cleanup boundary and receipt write
+ok 6 - empty message: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 0.893041
+  type: 'test'
+  ...
+# Subtest: missing message: original causes survive every cleanup boundary and receipt write
+ok 7 - missing message: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 0.958333
+  type: 'test'
+  ...
+# Subtest: throwing message getter: original causes survive every cleanup boundary and receipt write
+ok 8 - throwing message getter: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.287875
+  type: 'test'
+  ...
+# Subtest: nonstring message: original causes survive every cleanup boundary and receipt write
+ok 9 - nonstring message: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.938292
+  type: 'test'
+  ...
+# Subtest: hostile proxy: original causes survive every cleanup boundary and receipt write
+ok 10 - hostile proxy: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.223167
+  type: 'test'
+  ...
+# Subtest: revoked proxy: original causes survive every cleanup boundary and receipt write
+ok 11 - revoked proxy: original causes survive every cleanup boundary and receipt write
+  ---
+  duration_ms: 1.385208
+  type: 'test'
+  ...
+# Subtest: a single opaque rejection is rethrown unchanged with a serializable receipt
+ok 12 - a single opaque rejection is rethrown unchanged with a serializable receipt
+  ---
+  duration_ms: 0.335209
+  type: 'test'
+  ...
+# Subtest: hostile receipt failures access remains a failure and preserves original causes
+ok 13 - hostile receipt failures access remains a failure and preserves original causes
+  ---
+  duration_ms: 0.8455
+  type: 'test'
+  ...
+# Subtest: hostile receipt errors access remains a failure and preserves original causes
+ok 14 - hostile receipt errors access remains a failure and preserves original causes
+  ---
+  duration_ms: 0.5945
+  type: 'test'
+  ...
+# Subtest: capture records raw selector failures without failing during formatting
+ok 15 - capture records raw selector failures without failing during formatting
+  ---
+  duration_ms: 1.442458
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 82.5005
