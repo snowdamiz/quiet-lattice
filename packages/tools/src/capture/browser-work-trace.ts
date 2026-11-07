@@ -721,6 +721,7 @@ export interface ObserverTraceReceipt {
   startRequested: boolean;
   endRequested: boolean;
   categories: unknown;
+  categoryDiscovery: BrowserWorkLog['categoryDiscovery'];
   terminals: unknown[];
   usage: unknown[];
   markers: Marker[];
@@ -831,6 +832,7 @@ function requireCompleteObserver(packet: ObserverPacket) {
     }
     if (
       receipt.kind !== 'trace-on' ||
+      receipt.categoryDiscovery.status !== 'listed' ||
       !receipt.startRequested ||
       !receipt.endRequested ||
       !receipt.eof ||
@@ -974,6 +976,7 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
               startRequested: false,
               endRequested: false,
               categories: null,
+              categoryDiscovery: { status: 'unrequested' },
               terminals: [],
               usage: [],
               markers: [],
@@ -1039,13 +1042,19 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
           const categories = isRecord(receipt.categories) ? receipt.categories.categories : null;
           if (
             !isRecord(receipt.categories) ||
+            !Object.hasOwn(receipt.categories, 'categories') ||
             !Array.isArray(categories) ||
             categories.length > 4096 ||
             Array.from(categories).some((v, i) => !Object.hasOwn(categories, i) || typeof v !== 'string' || !v.length || v.length > 256 || v.includes('\0')) ||
-            !browserTraceCategories.every((required) => categories.includes(required)) ||
             Buffer.byteLength(JSON.stringify(receipt.categories)) > categoryReplyBytes
           )
             throw new Error('Malformed category receipt');
+          receipt.categoryDiscovery = {
+            status: 'listed',
+            returned: [...categories],
+            unreportedSelectors: browserTraceCategories.filter((name) => !categories.includes(name)),
+            listingIsEmissionProof: false,
+          };
           if (++packet.totals.segments > observerBounds.segments) throw new Error('Trace segment overflow');
           receipt.startRequested = true;
           await owned(

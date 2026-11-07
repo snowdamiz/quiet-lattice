@@ -8,6 +8,7 @@ import { traceObserverEntry, traceObserverProposal } from './trace-observer.ts';
 import { runAdapter, AdapterFailure } from './trace_observer_packet/adapter.ts';
 import { EvidenceStore } from './trace_observer_packet/evidence.ts';
 import { bounded } from './native-trace.ts';
+import nativeCategoryReceipt from './trace_observer_packet/fixtures/native-attempt3-categories.json';
 
 const at = '2026-11-06T12:00:00.000Z';
 const stamp = (monotonicMs: number) => ({ at, monotonicMs });
@@ -1104,18 +1105,99 @@ describe('R3 advisory admission boundaries in the new native caller unit', () =>
       expect(f.calls).toEqual([]);
     },
   );
-  it.each([Array(3), Object.assign(Array(3), { 0: 'blink.user_timing', 2: 'v8.execute' }), [NaN], [], ['blink.user_timing']].map((value) => ({ value })))(
-    'rejects incomplete category receipt $value before tracing starts',
-    async ({ value: categories }) => {
+  it.each(
+    [
+      Array(3),
+      Object.assign(Array(3), { 0: 'blink.user_timing', 2: 'v8.execute' }),
+      [NaN],
+      [undefined],
+      [null],
+      [''],
+      ['x\0y'],
+      ['x'.repeat(257)],
+      Array(4097).fill('category'),
+    ].map((value) => ({ value })),
+  )('rejects incomplete category receipt $value before tracing starts', async ({ value: categories }) => {
+    const f = fixture(),
+      send = f.options.trace.send;
+    f.options.trace.send = (command) => (command.method === 'Tracing.getCategories' ? Promise.resolve({ categories }) : send(command));
+    const r = await failed(f);
+    expect(r.steps).toHaveLength(1);
+    expect(methods(f)).not.toContain('Tracing.start');
+    expect(f.calls).toEqual([]);
+  });
+});
+
+describe('native category discovery regression', () => {
+  it.each([
+    { label: 'null receipt', response: null },
+    { label: 'missing field', response: {} },
+    { label: 'non-array field', response: { categories: null } },
+    { label: 'inherited field', response: Object.create({ categories: [] }) },
+    {
+      label: 'inherited index',
+      response: { categories: Object.setPrototypeOf(Array(1), Object.assign(Object.create(Array.prototype), { 0: 'blink.user_timing' })) },
+    },
+    { label: 'raw receipt overflow', response: { categories: [], unknown: 'x'.repeat(1024 * 1024) } },
+  ])('refuses $label before starting any trace or work', async ({ response }) => {
+    const f = fixture(),
+      send = f.options.trace.send;
+    const observedSend = vi.fn((c: TraceCommand) => (c.method === 'Tracing.getCategories' ? Promise.resolve(response) : send(c)));
+    f.options.trace.send = observedSend;
+    const packet = await failed(f);
+    expect(packet.failure).toContain('Malformed category receipt');
+    expect(packet.totals.segments).toBe(0);
+    expect(f.calls).toEqual([]);
+    expect(observedSend.mock.calls.map(([c]) => c.method)).toEqual(['Tracing.getCategories']);
+  });
+  it.each([nativeCategoryReceipt.response, { categories: ['blink.user_timing'], unknown: { retained: true } }])(
+    'runs the fixed protocol for a valid discovery listing %j without claiming emission from the listing',
+    async (response) => {
       const f = fixture(),
         send = f.options.trace.send;
-      f.options.trace.send = (command) => (command.method === 'Tracing.getCategories' ? Promise.resolve({ categories }) : send(command));
-      const r = await failed(f);
-      expect(r.steps).toHaveLength(1);
-      expect(methods(f)).not.toContain('Tracing.start');
-      expect(f.calls).toEqual([]);
+      f.options.trace.send = (c) => (c.method === 'Tracing.getCategories' ? Promise.resolve(response) : send(c));
+      const packet = await dispatchBrowserDiagnostic(f.options);
+      expect(packet.status).toBe('observed');
+      expect(packet.totals).toMatchObject({
+        preparations: 12,
+        frames: 10,
+        dependentPasses: 48,
+        preflightFences: 36,
+        controlFences: 24,
+        segments: 6,
+        png: 0,
+        queries: 0,
+      });
+      for (const step of packet.steps.filter((s) => s.arm === 'on')) {
+        expect(step.receipt).toMatchObject({
+          categories: response,
+          categoryDiscovery: {
+            status: 'listed',
+            returned: response.categories,
+            unreportedSelectors: browserTraceCategories.filter((s) => !new Set<string>(response.categories).has(s)),
+            listingIsEmissionProof: false,
+          },
+          markerCoverage: { status: 'observed' },
+          eof: true,
+        });
+      }
+      const starts = f.commands.filter(({ command }) => command.method === 'Tracing.start');
+      expect(starts).toHaveLength(6);
+      for (const { command } of starts) expect(command).toMatchObject({ params: { traceConfig: { includedCategories: browserTraceCategories } } });
+      expect(f.commands.every((c) => observerPlan[c.index].arm === 'on')).toBe(true);
+      expect(methods(f).filter((m) => m === 'IO.close')).toHaveLength(6);
     },
   );
+  it('still fails on absent emitted markers after the exact native empty listing and closes the stream', async () => {
+    const f = fixture({ traceData: () => ({ traceEvents: [] }) }),
+      send = f.options.trace.send;
+    f.options.trace.send = (c) => (c.method === 'Tracing.getCategories' ? Promise.resolve(nativeCategoryReceipt.response) : send(c));
+    const packet = await failed(f);
+    expect(packet.failure).toContain('Missing/ambiguous segment markers');
+    expect(packet.summary).toBeNull();
+    expect(packet.totals.segments).toBe(1);
+    expect(methods(f).filter((m) => m === 'IO.close')).toHaveLength(1);
+  });
 });
 
 describe('concrete adapter with inert native ports', () => {

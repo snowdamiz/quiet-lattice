@@ -244,7 +244,7 @@ export async function nativeMain(args: string[]) {
             if (event === 'close') cdp.off('close', fn);
             else cdp.off(event, fn);
           },
-          disconnect: close,
+          disconnect: () => cdp.detach(),
         },
         pageCall: async (input) => ({ ...(await page.evaluate(probe.observerProbePageCall, input)), pageErrors: [...errors] }),
         cancel: () => page.evaluate(() => window.review.nativeWorkClassProbe('cancel')).then(() => {}),
