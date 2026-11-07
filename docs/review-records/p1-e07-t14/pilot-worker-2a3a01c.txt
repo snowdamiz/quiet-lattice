@@ -1,0 +1,129 @@
+TASK: P1.E07.T14 — disabled source-only capture pilot
+
+STATUS: DONE (authorized source unit only). Native launch, independent caller review and visual acceptance remain pending.
+
+SUMMARY: Implemented the single effects/gravitic / gravitic_pull path through unchanged captureReview, StationJob and StageReceipts. Both runtime flags and readiness remain false. The 64-file reviewed asset unit is unchanged. No real grant, output root, evidence root, consumption identity, GPU/browser/Blender/ffmpeg/server/DB run, push, PR or merge was created. Fauna remains first in the GPU queue.
+
+Exact provenance:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects
+- Branch: task/P1-E07-T14-effects
+- Source asset base: 2643aca9d8b85a45498d85eb637d20260ebf06d1; tree 6038b7d94b0208f3173d2449df5d7578fb4c2aa0
+- Original art base: 634c51d2378748c6a514af2a792ee4500b912643
+- Separate helper recovery: 22506166571d4045eeb4902b1f278bdcafa2ad19; tree b8f644aca4dff7e4c85e3b4beecfbd6742c857f8
+- Implementation HEAD: 2a3a01c7638b167d47901c57509c5d2bc07f8096
+- Implementation tree: 835d46e35ef996980323d9a5d8697ae823ced12c
+- Git status: clean, all untracked files included.
+- Binary source patch SHA256: 40f73a8a9a737feb027f1fd90b65e622b2df21c4ce96df5c7509d84808f93a93
+- Readiness SHA256: 4fb945a05853fce9069da437cdee48155905cbbaf51c04fde75088198b870821
+
+FILES CHANGED:
+- assets/blend/stations/_authoring/round4_capture_children.py
+- assets/blend/stations/_authoring/round4_job_boundary.py
+- assets/blend/stations/_authoring/run_round4_browser_proof.py
+- assets/blend/stations/_authoring/run_round4_remaining8.py
+- packages/tools/src/capture/effects_packet/README.md
+- packages/tools/src/capture/effects_packet/bindings.py
+- packages/tools/src/capture/effects_packet/caller.py
+- packages/tools/src/capture/effects_packet/check_ready.py
+- packages/tools/src/capture/effects_packet/contract.py
+- packages/tools/src/capture/effects_packet/controls.mjs
+- packages/tools/src/capture/effects_packet/controls.py
+- packages/tools/src/capture/effects_packet/entry.mjs
+- packages/tools/src/capture/effects_packet/evidence.py
+- packages/tools/src/capture/effects_packet/freeze.py
+- packages/tools/src/capture/effects_packet/inspect_packet.py
+- packages/tools/src/capture/effects_packet/native_ports.py
+- packages/tools/src/capture/effects_packet/readiness.json
+- packages/tools/src/capture/effects_packet/recovery.json
+
+VERIFY: final recorded commands and exits (commands.json retains exact argv, duration and log paths):
+- freeze: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/freeze.log
+- format-readiness: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/format-readiness.log
+- python-controls: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/python-controls.log
+- node-controls: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/node-controls.log
+- eslint: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/eslint.log
+- prettier: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/prettier.log
+- disabled-caller: exit 78 (expected 78); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/disabled-caller.log
+- disabled-entry: exit 78 (expected 78); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/disabled-entry.log
+- python-source-compile: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/python-source-compile.log
+- diff-check: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/diff-check.log
+- readiness-exact-head: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/readiness-exact-head.log
+- dependency-parity: exit 0 (expected 0); /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/dependency-parity.log
+- Python controls: 26 passed; Node controls: 9 passed. Sequential test runners, at most two processes during the inert child-exit control.
+- Source-only readiness: PASS at exact committed head; 404 file bindings, six dependency tree bindings; actual GLB has 576 indices-derived triangles, one filament primitive, LIB_FX_Gravitic and a gravitic_filament KTX2 image.
+- All four recovered helper blobs and SHA256s match ca7d91e378e9d2f3f0ce8f0651475dcb843875d9 exactly. All 64 protected asset files remain unchanged.
+- Disabled actual CLIs exit 78 with zero native-helper/capture imports, launch or output allocation. Actual synthetic parent-child success produces observed OS exit 0 and exact receipt hashes; native acceptance is not claimed.
+- Controls cover missing/reused/mismatched grants, byte-binding drift, dirty real Git output, malformed PNG/inventory/perf/material/texture/LOD, unknown partial facts, all-sink failure, real SIGALRM through caller and exact retained helper drain, positive release before full PNG decode, exact budget edges, bounded cache copy, scratch-file replacement and 8 MiB metadata refusal before any byte read.
+- A synthetic 1920x1080 RGBA Paeth PNG fully decoded in about 1.06 seconds under a 45-second phase. This is a CPU decoder probe, not native performance evidence; its temporary PNG was removed.
+
+Pre-final iteration failures (corrected before final verification):
+```text
+Initial Python controls: FAILED (errors=4): contract.Refused: Unowned/noncanonical parent
+Correction: accept only the canonical root-owned sticky 01777 /private/tmp parent, with fresh exclusive identities.
+Initial eslint: 3 problems (3 errors, 0 warnings): unused os, unused sha, URL not defined.
+Correction: remove unused imports and explicitly import URL from node:url.
+Initial freeze: contract.Refused: Ambiguous installed esbuild route
+Correction: resolve @esbuild/darwin-arm64/bin/esbuild through the selected tsx/esbuild dependency chain.
+```
+
+DECISIONS:
+- Exact existing standard capture -> one 12-file static pilot -> no common capture/Review/Engine/trace modifications and no second browser stack.
+- Requested LOD2 -> selected authored LOD0 -> validate shown=0 and lods=[0], without inventing geometry.
+- CPU decoder -> in-process bounded stdlib zlib and scanline reconstruction after positive cohort release -> no native codec validator job is required.
+- Metadata authenticity -> capped single descriptor snapshot -> hash, parse, semantic checks and later manifest checks use the same bytes.
+- Publication -> disk always accepted=false; final success only after all terminal writes -> parent must independently observe OS exit 0 and supply exact terminal/consumption hashes.
+- Ownership -> existing StationJob/StageReceipts; record job before constructor -> retain unknown or failed partials and consumed identity, never infer release.
+- Budget -> exact controlled writes plus actual copy-before-remove archive peaks -> native thresholds are observations, not OS quotas; archive requires measured copy headroom plus safety.
+- Source binding -> exact current clean head before launch, no predecessor exception -> a first pilot output cannot silently authorize another unused grant.
+- Python -> bind launcher, kernel Python.app executable and framework -> no prior app-bundle omission.
+- Runtime remains disabled -> parent review, fresh enabling source freeze and exact one-use grant later -> no authorization inferred from this source task.
+
+OUT OF SCOPE FOUND:
+- Parent independent caller review, scheduled native slot after fauna, parent-observed native completion receipts, blind visual grade and visual acceptance remain required.
+- T13 owns common capture/perf/Review/trace work. Existing perf is preserved without GPU-attribution or 60fps qualification.
+- All 59 asset roots still have native/static visual review pending. Only gravitic_pull is proposed by this pilot; the other 58 are inventory, not a batch authorization.
+- 32 proposed motion records depend on abilities/Recall playback supplied by their owners. No motion generator, atlas stepping, alpha-overlap, 21:9 or gameplay work was added.
+- macOS OS dyld-cache libraries remain platform dependencies, not standalone byte-pin claims; external system XPC ownership is unqualified.
+
+ARTIFACTS:
+- Source-only readiness, full byte pins and pilot identities: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json
+- Contract, complete output filenames and detailed budget ledger: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md
+- Exact helper recovery provenance: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/recovery.json
+- Verification commands/exits/logs: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/commands.json
+- Exact pins and source patch: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/pins.json ; /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/source.patch
+- Unchanged asset hashes/mapping: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/protected-assets.json ; /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/manifest.json
+- Remaining GPU inventory: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/remaining-gpu-inventory.json
+- CPU decoder-only probe: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/.claude/pause/P1-E07-T14-pilot/final/decoder-probe.json
+- Prior iteration preview directory (unchanged, no independent visual grade): /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/
+- New native capture/preview paths: none. All proposed grant/output/evidence/consumption identities remain absent.
+
+Pilot filenames, relative to /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-6d82813a25c341daa05c699c0fad8e40:
+- gravitic_pull/noon-lush_lod0.png
+- gravitic_pull/noon-lush_lod2.png
+- gravitic_pull/wireframe_lod0.png
+- gravitic_pull/wireframe_lod2.png
+- gravitic_pull/overlay.png
+- gravitic_pull/far_lod2.png
+- gravitic_pull/night-exotic_lod0.png
+- gravitic_pull/night-exotic_lod2.png
+- gravitic_pull/open-space_lod0.png
+- gravitic_pull/open-space_lod2.png
+- gravitic_pull/perf.json
+- gravitic_pull/sheet.png
+
+Exact budget ledger:
+- capture_outputs: 184565760 bytes — 11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root
+- future_lfs_copy: 184565760 bytes — Reserved for later Git LFS adoption; this pilot performs no git add or LFS write
+- future_main_hydration: 184565760 bytes — Reserved for later parent hydration; this pilot makes no main-worktree copy
+- controlled_metadata: 67108864 bytes — Node and Python each reserve attempted receipt bytes before writing, 32 MiB each
+- cache_snapshot: 67108864 bytes — One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained
+- profile_work_and_archive: 2147483648 bytes — StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive
+- private_tmp_work_and_archive: 1073741824 bytes — preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles
+- helper_logs_work_and_archive: 134217728 bytes — StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job
+- generated_cache_growth: 268435456 bytes — Observed additional Vite cache growth; original cache bytes already reduce free space
+- filesystem_metadata: 16777216 bytes — Directory and filesystem overhead reserve
+- safety: 1073741824 bytes — Fresh disk safety reserve, checked at admission and while observing
+- Output cap: 184565760 bytes. Admission proposal: 5402312704 bytes. No image staging or image archive copy.
+- Deadlines: capture 600s; cleanup 60s (drain 45s within it); CPU decoder 45s; cache snapshot 64 MiB /30s.
+
+Readiness: PASS_SOURCE_ONLY_DISABLED. Full task is not visually accepted.

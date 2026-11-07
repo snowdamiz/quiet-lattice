@@ -1,0 +1,132 @@
+# P1.E14.T14 source/CPU review — PASS
+
+Imported colour-mask material validation. Shared Python pipeline only. No visual or runtime adoption, and no whole-task merge recommendation.
+
+## Pin
+
+- Target: `/Users/andreyyurlov/.t3/worktrees/space/t3-e0969873`
+- Branch: `task/P1-E14-T14-imported-mask-validation`
+- HEAD: `515ba1f00810a50b499970b5468ef7bf0af84c32`
+- Tree: `6e0fb967b897ecde0777567adac37ab9b59cb68f`
+- Base: `73f51ba436e2a8c4e3828f60439c441db4f7ef38` (ancestor)
+- `git status --porcelain` empty before and after the runs
+- Diff is exactly 3 files (+278/−5). `git diff --check` exit 0
+- SHA256 unchanged after the runs:
+  - `checks.py` `c5801c626e1a13d413b0c77d1600395bdb3a2878744e31fa0358413b2ebd4056`
+  - `materials.py` `893ffc7721507defa275061284ed817140e0dc2fb74eef6e5d8b8883ebe90ed2`
+  - `material_mask_selftest.py` `c9d639c5dd993fa66597178cea9e532e4d2440e158c96dc3f462c9fcc48b6f63`
+
+## Verdict
+
+PASS. No 0.9.5 finding.
+
+The stock export validator recognizes the Blender 5.2 importer's direct image × COLOR_0 graph on the six pinned flora assets, and it rejects the two over-broad local-override false passes at the materials check. Naming, image, UV, roughness, mip, and geometry checks still fire on the controls that target them. Source mode and one-argument `trace` / `MaterialInfo` stay context-free.
+
+## Original defect
+
+T05 R6, the task-local mask predicate that accepted a disabled VALUE output and a non-active layer named `Color`, is closed in this shared validator. Reproduced below on the imported stone material: the old predicate PASSes both, and the new full validator FAILs each with only `materials: missing maps: base colour (procedural)`. Naming still PASSes, which is the right boundary: the active mask data is still valid, and the shader route is not.
+
+T05 R1–R5 (runner and export history) are not this diff and were not retested. The T05 override file is not in this commit. Removing it remains T05's integration step.
+
+## What the change does
+
+`colorMask` is set only on creatures and flora (`families.json` lines 261 and 280). `material_set` passes masks only when `model.mode == "export"` and the family has `colorMask` (`checks.py:322`). Otherwise `MaterialInfo` is one-argument.
+
+`_imported_color_masks` (`checks.py:280–296`) keeps a mask only when every render-mesh user of that material has `active_color == color_attributes[0]`, `render_color_index == 0`, and `_color_mask_problem` is None. Any miss returns `()` and the special path stays off. Colliders and `REF_*` stay outside `render_meshes`, which is the existing render-mesh set the task asked for.
+
+`_masked_image` (`materials.py:84–113`) then requires an unmuted, unclamped `ShaderNodeMix` with `data_type == RGBA`, `blend_type == MULTIPLY`, the enabled RGBA result connected to Principled Base Color, and the Factor socket enabled, unlinked, and exactly `1.0`. Both enabled RGBA inputs must be linked. One side must be an unmuted `TEX_IMAGE` Color output; `trace` on that socket (no masks) still applies the old coordinate and image rules. The other side must be an unmuted Vertex Color Color output. An empty `layer_name` is accepted, matching the importer, which leaves the name empty so the rendered attribute is used. A non-empty name must equal the active attribute name on every collected user. It is not a string allowlist.
+
+`trace(socket, color_masks=())` (`materials.py:117`) returns the masked image only when that helper matches; otherwise the old classifier runs. `MaterialInfo` forwards masks for `baseColor` only (`materials.py:207`). Bake, export planning, and `textures()` still call `MaterialInfo(m)` with no masks.
+
+The 95% / 0.05 sum rule in `_color_mask_problem` (`checks.py:167–181`) is unchanged.
+
+## Importer agreement
+
+Blender 5.2.3 LTS `e13b728c6880`. Importer `pbrMetallicRoughness.py`: the vertex mix is `ShaderNodeMix` RGBA MULTIPLY, factor 1, `outputs[2]` to the upstream color socket, texture on `inputs[6]`, vertex color on `inputs[7]` (lines 757–769). The Vertex Color node does not set `layer_name` (lines 785–790). On all 13 materials in the three pinned GLBs (124 render-mesh users) the loaded graph matches that: output index 2 RGBA enabled, factor socket is `inputs[0]`, unlinked, value 1.0, A is `TEX_IMAGE:Color`, B is `VERTEX_COLOR:Color`, `layer_name` empty, unmute, unclamped. Every user has one attribute `Color`, `BYTE_COLOR` / `CORNER`, active is index 0, render index is 0.
+
+When `baseColorFactor != [1,1,1]` the importer inserts an outer "Color Factor" mix on the Principled socket and puts the vertex mix behind it (lines 706–735, before the vertex mix). None of the 13 pinned materials do this. A scratch wrapper of that shape fails closed as procedural. That is a residual limit, not a fail-open, and it is outside the required direct factor-1 graph. This review does not ask to widen it.
+
+## Independent runs
+
+Blender lane: one process, `-b --factory-startup -t 2`, thread env 2, `ART_KTX_JOBS=1`, `CUDA_VISIBLE_DEVICES` empty, `PYTHONDONTWRITEBYTECODE=1`, 600s group timeout, `start_new_session`. KTX binary `ktx-software-4.4.2` from the existing T05 worktree cache (no LFS fetch, no target `node_modules`). Owned PIDs 53500, 92899, 3753, and 6384 are dead, and their groups were already gone before the launcher's final kill. No repo write, commit, or push. Scratch under `/tmp/t14-e14-t14-review` is 1716 KiB. Target `__pycache__` is gitignored, timestamped 00:27:17, and was not touched.
+
+Pinned inputs (copied, not the live T05 tree), SHA256 reconfirmed after every Blender run:
+
+| file | sha256 | bytes |
+| --- | --- | --- |
+| non_tree_foliage.blend | `5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456` | 2556236 |
+| non_tree_foliage.glb | `925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d` | 1080436 |
+| non_tree_resources.blend | `03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9` | 6937736 |
+| non_tree_resources.glb | `7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725` | 2119312 |
+| non_tree_stone.blend | `436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15` | 4951361 |
+| non_tree_stone.glb | `a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9` | 1772936 |
+
+### New stock `validate_path`, no override
+
+`python3 /tmp/t14-e14-t14-review/launch.py probe` — exit 0, about 15s. `probe.json` `inputs_unchanged: true`, `errors: []`.
+
+| asset | mode | status | masks |
+| --- | --- | --- | --- |
+| 3 sources | source | PASS | no mask calls |
+| 3 GLBs | export | PASS | every color-mask material read as `image` |
+
+On the loaded stone material, one-argument `trace(base).kind` is `procedural`. Production `_imported_color_masks` returns 4 masks and `trace(base, masks).kind` is `image`. Context-free `MaterialInfo` reads (masks 0, kind procedural) list the same image names as the masked reads, including `Flora_rock`: `boulder_Base`, `boulder_Emission`, `boulder_Normal`, `boulder_ORM`. `textures()` still calls one-argument `MaterialInfo` (`checks.py:496`) and `images()` keeps a procedural channel's TEX_IMAGE, so the GPU-byte inventory is not skipped.
+
+### Old stock, no override
+
+Base `materials.py` and `checks.py` from `73f51ba` loaded over current `core` from `/tmp/t14-e14-t14-review/base` (those modules have no `_masked_image` and no `_imported_color_masks`). First launcher attempt exit 1 in 0.8s was this harness calling `core.rules` instead of `core.R`. Rerun: `launch.py baseline` exit 0, 7.4s, group gone.
+
+| asset | status | failures |
+| --- | --- | --- |
+| 3 sources | PASS | none |
+| foliage GLB | FAIL | materials only, 4× `base colour (procedural)` |
+| resources GLB | FAIL | materials only, 6× `base colour (procedural)` |
+| stone GLB | FAIL | materials only, 3× `base colour (procedural)` |
+
+Same 4/6/3 split as the earlier T05 stock run. No other check failed.
+
+### False passes and extra boundaries
+
+In-memory mutations on a decoded copy of the stone GLB, then full `run_checks` against the original compressed GLB. New validator:
+
+| case | result | only failure |
+| --- | --- | --- |
+| identity; extra unused black layer with the active name; same with empty `layer_name` | PASS | — |
+| disabled VALUE output (`outputs[0]`, enabled false) | FAIL | base colour procedural; naming passes |
+| active valid mask renamed, node pointed at a new black `Color` layer | FAIL | base colour procedural; naming passes |
+| same, but the non-active `Color` layer is a valid red mask | FAIL | base colour procedural; naming passes |
+| muted vertex color; muted image; image Alpha into the mix; `data_type` FLOAT; factor disabled; factor 1.0000001; reroute on the vertex-color link; outer Color Factor mix; valid mask active and rendered but not index 0 | FAIL | base colour procedural |
+
+The same three mutations under a replica of the old T05 predicate (MIX MULTIPLY RGBA, factor exactly 1, Vertex Color `layer_name` in `("", "Color")`, Color socket, no enabled-output or active-attribute check) all PASS, including the disabled VALUE socket and both non-active `Color` layers. That is the old fail-open. The new code rejects them.
+
+### Official 34 and nearby 53
+
+`launch.py suite` exit 0. `material_mask_selftest.py` 34/34, `results.json` `unchanged: true`, selftest exit 0. Then `selftest.test_validator` + `test_review_cases` + the six context-free/UV expects: `suite.json` 53/53, `failed: []`. No bake, export, or render. `s.TMP` removed.
+
+Reject controls that only break the mask route fail materials base colour and leave naming, triangles, LODs, and scale passing (`disabled_value_output.json` summary: materials FAIL, the other four PASS, fail count 1). Preserved checks, each the sole or paired expected failure:
+
+- uniform image: `base colour map UniformControl is uniform`
+- constant plugged in instead of an image: `base colour (vertex attribute, not a map)`
+- last user missing UVs: `mesh has no UV map`
+- roughness disconnected: `roughness (constant 0.50)`
+- last user invalid mask: naming `weights sum to 1` plus base colour
+- last user absent mask: naming `no colour-region mask` plus base colour
+- short mip chain: `mip level(s)`
+- compression flags cleared: `EXT_meshopt_compression` / `KHR_mesh_quantization` and `KHR_texture_basisu` not in `extensionsRequired`
+
+The 53 include crate/broken/creatures/hull/library source verdicts, scale and LOD review cases, UV-local speck acceptance, image×constant staying image, zero multiplier staying constant, and one-argument `trace` of map×attribute staying procedural.
+
+### CPU pipeline tests
+
+Vitest 5.0.5, scratch root `/tmp/t14-e14-t14-review/vitest-root`, byte-copied target `packages/tools/src/art` tests (`ktx`, `meshopt`, `targets`). Node modules came from the parent checkout because this worktree has none. A first run failed resolving `@gltf-transform/core` and `three` through an incomplete symlink layout. After the tools and client `node_modules` links, the rerun printed 3 files, 28 tests passed, 836 ms. Those suites are unchanged by this diff. Full `pnpm art:test` was not run: it bakes and exports, which this brief forbids.
+
+## Limits (advisory, not REVISE)
+
+- Outer Color Factor mix (importer lines 724–735) and a Reroute between Vertex Color and the mix stay procedural. Fail-closed. The pinned assets do not use either shape.
+- Context-free classification of this graph remains procedural, so bake and export planning do not start treating it as an image. That is the required default. T05's one-argument monkeypatch will not match `MaterialInfo`'s optional second argument until that override is removed; removal is T05's, and it is not a defect in this diff.
+- `pnpm art:test` (render/bake/export regeneration) was not run.
+- Pre-existing gitignored `artlib/__pycache__` at 00:27:17 was left in place. This lane did not refresh it.
+
+## 0.9.5
+
+No client authority change. The new path has a focused full-validator self-test plus the nearby regressions above. This commit does not leave a second demo implementation behind; the old override lives on the T05 branch and is still required to be removed there. Not a perf-budget task; GPU image sets on the passing exports match the context-free reads. The direct factor-1 graph is the behaviour the task block already states, not an unlogged widening of the mask-domain rule.

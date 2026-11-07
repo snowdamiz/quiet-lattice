@@ -1,0 +1,76 @@
+**P1.E08.T09 independent R5 SOURCE/CPU review — REVISE**
+
+One new P2 finding remains at the metadata open boundary. The original R4 split-read and oversized-EOF failures are fixed, as are all six R1/R2 findings. The six-process sequence and required regression controls pass. This verdict does not supply visual, native, whole-task, launch, release, or merge acceptance.
+
+**Pinned state and scope**
+
+- Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`
+- Branch: `task/P1-E08-T09-current-base`
+- HEAD: `eb8563a58dc1014f0c4d85fc6ddc5b0878d5a54c`
+- Tree: `a48c447bf26449ffdab57764bab2c22a2366d281`
+- R4 base: `e636efbb1900c6426f3a2586724080b6a132e1bb`
+- Binary diff SHA256: `fa42f6eeeca32a939ca03177dfbda337014caaaf9a6d37e167a3d00f600f531d`
+- Disabled readiness SHA256: `5e0d48ce860a0f69e25227044e2ce49f0b47d473bbe5985113a0f890a99a03f0`
+- New evidence root: `/private/tmp/p1-e08-t09-r5-independent-xDKoJp`
+
+Initial and final branch/HEAD/tree match exactly; Git status including untracked files is empty. The exact delta contains only caller.py, controls.py and readiness.json under `packages/tools/src/capture/fauna_packet`. I read plan 0.3/0.9.5 and Appendix C, the T09 task, README's bounded packet contract, the complete caller and relevant entry/inspector/control/sequence paths, the R4 and R3 reports, and the worker's R5 report and evidence scripts. The worker report served as a map; all results below were freshly executed. No subagent was delegated or prior reviewer thread continued.
+
+**R5-1 — P2: metadata replacement can block in open before descriptor/type validation**
+
+Location: `packages/tools/src/capture/fauna_packet/caller.py:69`, between the pathname `lstat`/regular-file check at 65–68 and descriptor checks at 70–72. Reachable for predecessor result at 317, predecessor consumption at 318, and root grant at 382.
+
+`Path.open('rb')` is a blocking open. If the pathname changes from the checked regular file to a FIFO after `lstat` but before the real open, opening its read end waits for a writer. The following `fstat` cannot execute. Admission has no active phase timer: capture/cleanup deadlines begin only in `run_unit`, after `consume` returns. The maximum+1 payload read and size/hash checks are never reached.
+
+Independent reproduction, repeated for result, consumption and grant:
+
+1. Create a new inert Git fixture and run the actual first caller as an isolated pinned-Python subprocess. Parent observes OS exit 0 and builds the next synthetic grant from that exit and actual receipt hashes.
+2. Run actual second `main -> consume` with native/decoder ports forbidden.
+3. A deterministic hook immediately before the real `Path.open` renames the checked regular metadata file to a preserved sibling and puts an actual filesystem FIFO at that pathname. The caller's real `lstat` has already completed; its real `open` then blocks.
+4. A harness-only 250 ms SIGALRM interrupts the wait. Recorded traces terminate in caller.py:69 -> pathlib.open -> io.open. In all three cases the timer was `(0.0, 0.0)` before the harness armed its cutoff, there were zero payload reads, zero helper/decoder calls and no successor consumption/output/evidence allocation.
+
+The harness cutoff is not a caller refusal or a production timeout. Without external intervention, a FIFO without a writer has no reason to return. A preexisting FIFO is promptly refused, isolating the gap to the check/open interval. Replacing the file with a different regular inode is also correctly refused before payload reads.
+
+Evidence: `fresh-boundaries.py`, `fresh-boundaries-results.json` (three `fifo-before-open` rows including full traces and retained fixtures), `fifo-controls.py`, `fifo-controls-results.json`. Both commands exit 0 because their assertions confirm the described behavior; **that is a successful defect reproduction, not a candidate PASS**.
+
+Correction: obtain the descriptor with nonblocking/no-follow flags appropriate to the pinned platform (for example `os.open` with `O_RDONLY | O_NONBLOCK | O_NOFOLLOW`), then validate its regular type, identity and size before wrapping/reading it. Preserve the single snapshot, original caps and digest semantics. The small FIFO primitive control confirms a nonblocking descriptor can be obtained and rejected by type without waiting; it is not a patched-caller qualification. No repository code was changed.
+
+This finding concerns a replacement **before a snapshot exists**. It does not require preventing filesystem changes after completed admission, and does not claim false-success admission or native allocation occurred in the FIFO case. It violates the requested bounded/type-refusal admission boundary under the same actual-filesystem replacement class reviewed in R4.
+
+**Every prior item — disposition**
+
+- **R1 receipt-write error masks the primary — FIXED.** `entry.mjs:339–376`. Fresh original actual-main catch-write and final-write injections retain PRIMARY_CAPTURE_SENTINEL independently from ENOSPC. The seven Node controls also cover setup, unregister, combined and all-reporting failures. Evidence: `node-catch-write-result.json`, `node-final-write-result.json`, `stock-node.log`.
+- **R1 audit assertion discards raw release facts — FIXED.** `caller.py:121–189`, `:543–569`. Actual unchanged helper archive/terminal bodies retain stdout/stderr, unknown fields, observations and the failed predicate. Evidence: `python-focused-results.json`, `retained-facts-results.json`, stock Python controls.
+- **R1 broad inspector accepts contradictory clocks/incomplete feed — FIXED.** `inspect.py:106–176`, plus full inspector integration. The complete synthetic broad packet succeeds; future stamps, missing intermediate journals, wrong incoming payload and null clocks all refuse. Evidence: `python-focused-results.json`, four retained `adverse-*.jsonl`, `stock-python.log`.
+- **R2 receipt guard swallows DeadlineExpired — FIXED.** `caller.py:135–136`, `:188–189`, `:497–498`, `:543–569`. Fresh 38 cases run real shortened helper SIGALRM deadlines and KeyboardInterrupt at all 19 cleanup receipt boundaries. Calls at interruption equal final calls, no decoder follows, and timers are cleared. Evidence: `independent-abort-results.json`.
+- **R2 final-write failure leaves accepted:true disk authority — FIXED.** `caller.py:309–326`, `:598–619`, `:634–636`. Eight actual caller-process outcomes include after-write, close, publication return, rename, all sinks and exception after caller return. Only genuine success exits 0 and admits a successor; retained disk receipts are provisional accepted:false. Seven completion/reference mutations refuse. Evidence: `independent-process-results.json`, `independent-gate-mutations.json`, child logs.
+- **R2 normalization loses partial bytes/unknown/allocation ownership — FIXED.** `caller.py:94–118`, `:532–540`. Six real producer/all-sinks cases preserve exact non-UTF8/NUL stdout/output/stderr, nested unknown fields, allocation path/dev/inode/UID and independent cleanup failure. Full metadata allowance is charged even when close fails; the next write is refused before creation. Evidence: `retained-facts-results.json`, `prior-facts.log`.
+- **R3 parent-observed actual exit plus exact receipt/consumption hashes — RETAINED/PASS.** `caller.py:309–326`. Fresh process tests and six subprocess chain use the OS return code. A checksPassed:true provisional disk result never substitutes for it. The R4 authentication defect is now closed. The trusted parent must truthfully report its observation; the caller does not independently authenticate a parent that fabricates it.
+- **Parent dirty-tree/changed-HEAD sequence gap — FIXED.** `caller.py:333–373`. Six actual subprocesses complete at one Git HEAD with exactly 82+82+82+82+220+220=768 files. No inter-unit commit. All 26 existing static artifact/worktree mutations refuse before allocation or dispatch. Evidence: `six-sequence-results.json`, `admission-mutations-results.json`.
+- **R4-1 separate hash/semantic read and manifest reread — FIXED.** `caller.py:62–81`, `:317–330`, `:366–392`. Both predecessor records are parsed from their hash-authenticated bounded buffers. Validated manifests travel through GrantAdmission, without reopening the receipt. Fresh original R4 RED reproduces the failure on exact e636 bytes; current GREEN refuses. My additional actual-read schedules for BOTH metadata records replace failure bytes with success bytes immediately after the read and restore failure after parse: both refuse. The three positive post-snapshot replacement cases confirm original snapshot data/manifests/digests remain authoritative.
+- **R4-2 EOF hashing before the size cap — FIXED for the reported defect.** `caller.py:62–77`, `:380–394`. Fresh exact-e636 RED reads 8,413,711 result bytes and 8,389,855 consumption bytes before refusal. Current GREEN reads zero payload bytes for both oversized files. Growth is bounded at maximum+1; root grant uses its 16 KiB bounded snapshot digest rather than a later hash. The new pre-open FIFO gap is reported separately as R5-1; the old EOF-read bug does not remain.
+
+**Fresh execution evidence**
+
+All 18 recorded top-level commands exit 0; exact argv, cwd, environment, log and exits are in `commands.json` and copyable `COMMANDS.md`. Expected nonzero caller exits are recorded separately. No failed harness invocation was omitted. Review-only setup and final inventory commands are also retained as scripts. CPU test execution never exceeds two workers.
+
+- Stock suites: Node **7/7**, Python **30/30**. Python uses the existing pinned Python 3.10/Pillow environment; all lifecycle/admission extensions use the pinned Python 3.14.8 caller executable.
+- Six actual caller children: observed exits **0,0,0,0,0,0**; scratch HEAD `8533350a8c67555c4d12206eb108862c07096c69`; exact file counts **82,82,82,82,220,220**. Prior receipt hashes remain unchanged. Native ownership and decoder ports are inert; exact caller and extracted unchanged archive/audit/deadline bodies execute. Release paths precede decoder dispatch; failure controls prevent subsequent dispatch. These files are labeled synthetic text, not pictures or visual evidence.
+- **26** existing negative worktree/output mutations, each following actual first OS exit 0, refuse before any new identity path or helper/decoder call.
+- **29** supplied metadata cases, **242** retained snapshot observations: exact caps, 8 MiB excess, descriptor-time growth, hash mismatch, malformed JSON/UTF8, unknown nested fields, static symlink/directory, actual-read replacement and post-snapshot grant growth. Reads are bounded; root consumption digest equals the admitted bytes even after later grant growth.
+- **11** additional independent filesystem schedule cases: two authenticated failure/success swaps refuse; three regular-inode replacements refuse without payload reads; three completed-snapshot replacements remain coherent; three FIFO replacements reproduce R5-1.
+- Prior regression replay: **8** actual process/publication outcomes, **38** real signal/cancellation boundaries, **7** reference mutations, **6** raw producer/all-sinks cases, exact close-error metadata cap, original Node primary-error cases, original full-inspector cases.
+- Actual pinned checkout disabled-entry controls: all six units refuse with child exit 2 before subprocess/helper import/allocation; no actual grant read. Test command exits 0.
+- Actual committed-head `caller.py --check`: exit 0, CPU_BINDINGS_ONLY, runtimeEnabled:false, allSixQualified:false, no conflicting task-local cache owner. It hashes local source/dependencies/executables and performs its existing read-only owner/configuration probes; no ownership helper import or native capture launch. Observed free space was 57,330,597,888 bytes, a time-local observation only.
+- Static checks are confined to the changed files: caller/control compile without bytecode emission, readiness JSON format, and `git diff --check e636efbb HEAD` all pass. No full GPU smoke/e2e/DB suite runs.
+
+**Preservation and budgets**
+
+`final-verify.json` confirms all **12,733** present tracked entries match the initial fingerprints, all twelve copied packet/helper files match current checkout bytes, and all **11,563** prior R4 evidence files still match the worker's retained inventory. The prior sequence/mutation and R3 boundary/fact scripts were verified byte-identical against the original reviewer sources; old Node/Python R1 copies changed only their evidence-root string, with originals retained locally.
+
+Product client/server/shared/smoke/capture source, public assets, package metadata and lockfile remain unchanged from d688579ad; the only asset differences are the four already recovered helpers. Those four current helper hashes match both ca7d91e37 and recovery6245. The retained task branch remains bb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9. All **440** historical artifact Git/LFS pointers match their manifest SHA256/size using Git blobs only; no old image was hydrated or regraded.
+
+All **48** unique current/R4 output/evidence/grant/consumption paths remain absent. Runtime is false. Unit order, inventory, budgets, dependency bindings, product bindings and phase durations remain unchanged. Correction admission is 8,925,528,064 bytes/unit; broad admission is 15,871,295,488 bytes/unit. Controlled metadata remains 64 MiB total, 32 MiB per writer; cache snapshot remains 64 MiB/30 seconds; capture/cleanup/decoder remain 600/60/45 seconds. No all-six-fit or hard native-writer-quota claim is introduced.
+
+Under 0.9.5, this delta introduces no client authority, untested new system, retained replacement demo, budget increase or unlogged spec interpretation. REVISE is required here by the explicit bounded admission/refusal contract and the reproduced P2, not a style objection. No advisory blocker is added.
+
+No repository/docs/plan edits, commits, branch switch, hydration, real grants, native/GPU/browser/Blender launch, service/DB work, push, PR or merge occurred. Only isolated temporary fixture repositories received commits and synthetic grants. Product source/live QA PASS supplied by the parent is not recertified. Actual native ownership, captures, visual/animation grading, whole T09 acceptance and launch authorization remain outside this review.

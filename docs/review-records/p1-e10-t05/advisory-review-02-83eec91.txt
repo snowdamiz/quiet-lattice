@@ -1,0 +1,42 @@
+**PASS.** The four source advisories are fixed on `83eec91beca01e454794017ce95a0e744eb395ab` (tree `38da70cc3e65d0025485b79e1b50773185395a67`). Geometry, materials, and the historical packet were not rewritten. This is a source/CPU correction pass only.
+
+## Advisories
+
+| # | Result | What was checked |
+|---|---|---|
+| 1 Hinge Court ceiling | **FIXED** | Source clearance **3.189999 m**, export **3.189598 m**, both on `COL_thalune_low_0_HingeVaultHull_136`. Manifest certifies **3.189 m**. |
+| 2 LOD3 counts | **FIXED** | Saved source stays **2014 / 2014**. Decoded export is **2009 / 2004**. The other 36 assets match in both fields. |
+| 3 Bronze roughness | **FIXED** | Decoded bronze texels stay above 0.2. Source floor **0.239216**, export **0.243137** (anchor export **0.231373**). |
+| 4 Preview bytes | **FIXED** | r1 is **10,774,824** bytes, r2 is **1,417,497**. The old appendix still says **10,773,992** and was not rewritten. |
+
+## Clearance
+
+The walk surface is the deck at z **0.360**. The vault soffit is at z **3.550**, normal `(0, 0, -1)`. Center and edge of the 3 m route agree. The door point at `(0, -4.8)` is **3.190 m**. The certified 3.189 m is below both measurements and above the 2.4 m opening and the 3.0 m service-door height.
+
+The old ray ended 2 cm short (`height - 0.22` from 0.20 m up) and missed this soffit. The current ray ends at the declared height. On the unchanged mesh it rejects 3.2 m, rejects +0.5 mm and +1 mm, accepts 2.4 × 1.4 m, and rejects the same collider lowered 1 cm in memory. Source and GLB bytes were unchanged after that mutation. `audit.py` uses this probe for every walk route and every clearance that has an `entry`. Stair and bridge records without an entry are not treated as doors; bridge deck and rail checks are still in `audit.py`.
+
+## Counts and ORM
+
+`sourceLodTriangles` is the evaluated Blender render mesh, colliders excluded. `exportLodTriangles` is the meshopt index count. No `COL_` mesh sits under an LOD node. `thalune_mid_2` export is `[57578, 17273, 5757, 2009]`. `thalune_tall_2` export is `[57577, 17272, 5757, 2004]`. All 38 export arrays match the manifest.
+
+ORM is linear `KHR_DF_TRANSFER_LINEAR`, factors `(1, 1)`, G roughness and B metallic. The metallic lane is Blender lane 4 and glTF eighth 3, and meshes that use bronze sample that band. The anchor keeps the lane in the atlas and has no bronze UV. All **84** mips stay at or above the floors above. From 16 px downward, ETC1S blending drops bronze metallic under 0.5 and roughness rises (about 0.53–0.65), so the floor is not undercut. The darkest texel outside that lane is roughness **0.1529** at metallic **0**. `studio.py:106` still clips at 0.13; that clip is not active on the saved bronze lane, whose source minimum is 0.239.
+
+## Pins and guards
+
+Clean `task/P1-E10-T05-thalune-sarelun`. Diff against `5208f10` is the reported 67 paths. No blend, GLB, or PNG bytes changed. **158** baseline files match. The three amendments are `manifest.json`, `audit.py`, and `run_lane.py`. Historical `SHA256SUMS` (144) and `APPENDIX-C2.json` still name the `5208f10` bytes. The new checksum file (208) matches. **31** LFS pointer oids match the hydrated files; nothing was fetched. Shared `artlib` and runtime trees are untouched. The 342-image inventory is unchanged and `engineCapturesRun` is 0.
+
+`run_lane.py` adds an exclusive lane lock, immutable receipts, and RSS and output cutoffs. The four guard tests returned 124, reaped their process groups, and refused a reused receipt. That is tighter than the previous wall-clock-only runner.
+
+| Command | Exit |
+|---|---|
+| `git status`, `git diff --check` on `t3-07044f6e` | 0, porcelain empty |
+| `python3 /tmp/p1-e10-t05-r2-83eec91/static_verify.py` | 0. The only checksum difference is the three amended files against the frozen historical list |
+| `python3 test_lane_limits.py /tmp/p1-e10-t05-r2-83eec91/lane-tests` | 0, four guards passed |
+| `node --input-type=module < /tmp/p1-e10-t05-r2-83eec91/decode.mjs` | 0, 7 GLBs, 84 mips |
+| `run_lane.py --seconds 1800 -- Blender -b -t 2 --factory-startup -P independent_probe.py` | child 0, wrapper 0, 4.99 s, peak RSS 958,704 KiB, group reaped |
+
+Blender 5.2.3 LTS `e13b728c6880`, Cycles CPU, one process. Evidence is under `/tmp/p1-e10-t05-r2-83eec91` (308 KiB). `/tmp/p1-e10-t05-r1` was not overwritten. No push, PR, merge, capture, GPU render, or LFS fetch.
+
+`core.validate_path` was not run again. Its 14 stock receipts (1,494 source checks, 1,532 export checks, 0 failures) still hash to these blend and GLB bytes, and `artlib` is unchanged. Negative-validation and compression tests were left as the historical proofs.
+
+This pass does not approve native appearance, three-light LOD captures, a blind grade, live traversal, performance, or merged smoke.

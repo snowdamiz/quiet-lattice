@@ -1,0 +1,359 @@
+TASK: P1.E07.T07 — R2 source-review corrections (Symbiotic I–II)
+
+STATUS: DONE for this delegated correction and authorized verification. Source acceptance remains pending fresh R3 review. Whole T07 acceptance also needs the parent's fresh full integration run on this pin and integrated drawn-companion/picking evidence. This is not merge or visual acceptance.
+
+SUMMARY: Corrected all four R2 authority failures while retaining all R1 protections. Burns now retain individual producer contributions with one shared damage clock; ordinary re-ignition keeps greater power until the later end, and revocation subtracts only the revoked producer. Waking a zone advances the scheduler time floor, and frames/combat reject older time. Call resolves contact against caster-visible creatures on the same world without moving shared herds into a phase. Successful Bond conversion is consumed exactly once by the event owner for one objective point, without fake damage, kill rewards or premature actor/phase retirement. Existing rates, costs, cooldowns, reach and hit amounts are unchanged.
+
+PROVENANCE:
+- Worktree: `/Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d`
+- Branch: `task/P1-E07-T07`
+- Correction base: `52da4eff0d2f354cb18198232a7c8a37c9529a41`
+- Base tree: `5ede3c7b0db032c7345c20133d5cba10d0ec3e6b`
+- Final head: `bf09bc72543ed74b7dc7386415471d26a36a4b6d`
+- Final tree: `b5456a8f82c498ee5bb7e35836bd35fd4c425c41`
+- Original task base/tree: `634c51d2378748c6a514af2a792ee4500b912643` / `079eec371fa8605596700a7c80142ac9cbb95fa0`
+- Commit: `P1.E07.T07: Preserve effect, time and event authority`
+- Checkout: CLEAN, including untracked files. Staged/tested tree equals committed tree; final source hashes equal tested source hashes.
+- Platform: `macOS-27.0.1-arm64-arm-64bit-Mach-O`. Node22.23.3, pnpm12.15.0, Vitest5.0.5. At most two workers; test jobs sequential; integration files serialized.
+- TypeScript and type-system discipline skills were read from the user's supplied pstack root and applied. No Potato mode, delegated writer or worker-owned final reviewer.
+- Independent R2 source input: `/tmp/space-symbiotic-t07-source-review-r2-52da4eff/review-report.md`. Original reviewer files were preserved; copied inputs and hashes are in this exclusive artifact directory.
+
+FILES CHANGED (15; correction delta only):
+- `docs/ARCHITECTURE.md`
+- `packages/server/src/abilities/book.ts`
+- `packages/server/src/abilities/resonance.test.ts`
+- `packages/server/src/abilities/retirement.test.ts`
+- `packages/server/src/abilities/service.ts`
+- `packages/server/src/abilities/statuses.ts`
+- `packages/server/src/abilities/thermal.ts`
+- `packages/server/src/combat/zone.ts`
+- `packages/server/src/events/service.test.ts`
+- `packages/server/src/events/service.ts`
+- `packages/server/src/fauna/sim.ts`
+- `packages/server/src/zones/manager.ts`
+- `packages/server/src/zones/wake.test.ts`
+- `packages/server/src/zones/zone.ts`
+- `packages/server/test/symbiotic.int.test.ts`
+
+Ownership: nine runtime TypeScript modules, five TypeScript test files (one new wake suite), and ARCHITECTURE. EventService is the minimal scope extension explicitly authorized by the parent. No plan/PROGRESS/DECISIONS/VISUAL-REVIEW, renderer, HUD, viewmodel, city/den/effects, shared world fixtures, gatewayPersistence.test.ts, Void or paused Gravitic edits. No push, PR or merge.
+
+VERIFY:
+- Before editing production, the exact four reviewer probes reproduced all five failed assertions with seven passing controls: `authoritative-red.log`, 4 files, 12 tests, exit1, 1.85 s. Only copied artifact paths/root changed; assertions were unchanged. The actual failures were missing3HP after Sear refund, missing12HP from shared-herd Call into an event enemy, event payout absent after final Bond, clock1041→1031.15, and shield59.9988→60.2488 after0.05s.
+- Final baseline transform proof: `baseline-red.log`, 5 failed/7 passed, exit1. The scratch Vite transform loads all nine changed runtime modules from exact base52da4eff without mutating the checkout. `baseline-modules.json` and `vitest.baseline.config.mts` preserve this setup.
+- Final corrected reviewer probes: 12/12 PASS in4 files, exit0 (`r2-green.log`). Original R1 assertions:6/6 PASS in3 files (`r1-green.log`). Independent lifecycle controls:10/10 PASS (`lifecycle-green.log`).
+- Important wake-test correction: after the clock fix, the original probe's setup assumption `damaged < initial` is false because a newly joined ship has no pre-join hazard interval. The unchanged probe reached11/12 PASS (`first-green.log`). A separate copied probe changes ONLY that assertion to exact equality; the final no-early-regen assertion stays unchanged. The original source is retained. Permanent tests additionally create a real post-wake hazard, inject an explicitly older hit, advance past the next scheduled tick, assert no0.25 early regeneration, and check frame/time non-rewind. That permanent four-test suite against old runtime modules gives3 failures/1 control PASS (`wake-permanent-red.log`), including exact58.88→59.13 unwanted regeneration; it passes on the final source in full units. This is stronger authority coverage, not acceptance of the old historical-damage assumption.
+- Full units:216 files /2,774 tests PASS, exit0,93.35 s Vitest duration. `units.log`, `units.json`. Delta adds22 permanent unit/service cases:8 burn order/refund cases,5 Call visibility/protection cases,5 event conversion cases,4 wake cases. Existing normal Thermal, skill retirement, companion, recovery, zone, meter and event reward tests remain in this pass.
+- Relevant real integration:6 files /54 tests PASS, exit0,78.41 s Vitest duration (79.436 s supervised wall). `db/integration.log`, `db/integration.json`, `db/result.json`. Symbiotic30 +Thermal5 +events2 +Resonance5 +ship hazards8 +movement4. Four new gateway cases cover both burn orders with real refund messages, shared-herd event contact, and real EventService conversion with one wire reward and no kill event. Every existing Symbiotic node/lifecycle test remains in that30-test suite.
+- Full workspace typechecks: shared/client/server/tools PASS. Scoped ESLint and Prettier:14 changed TypeScript files PASS. `git diff --check` and staged whitespace check PASS. No lint rules disabled.
+- Integration ran on the final runtime and gateway-test bytes. After that run only the permanent unit wake test was strengthened to ensure the next scheduled tick executes past floating-point rounding; full2,774 units/types/static ran after that edit. `integration-source-hashes.json`, `integration-to-final-source-proof.json`, `tested-source-hashes.json` and `final-source-hashes.json` prove this distinction.
+
+Exact final CPU commands and results (Node22 bin first in PATH, inherited NODE_OPTIONS/DATABASE_URL/REDIS_URL removed):
+- `pnpm exec vitest run --config /tmp/space-symbiotic-t07-r2-fixes-52da4eff/vitest.baseline.config.mts --maxWorkers=2 --no-file-parallelism --no-cache` — exit 1 (expected 1), 12.683 s wall; `baseline-red.log`.
+- `pnpm exec vitest run --config /tmp/space-symbiotic-t07-r2-fixes-52da4eff/vitest.corrected.config.mts --maxWorkers=2 --no-file-parallelism --no-cache` — exit 0 (expected 0), 5.639 s wall; `r2-green.log`.
+- `pnpm exec vitest run --config /tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/vitest.red.config.mts --maxWorkers=2 --no-file-parallelism --no-cache` — exit 0 (expected 0), 4.073 s wall; `r1-green.log`.
+- `pnpm exec vitest run --config /tmp/space-symbiotic-t07-r2-fixes-52da4eff/vitest.controls.config.mts --maxWorkers=2 --no-file-parallelism --no-cache` — exit 0 (expected 0), 4.884 s wall; `lifecycle-green.log`.
+- `pnpm exec vitest run --maxWorkers=2 --no-cache --reporter=default --reporter=json --outputFile=/tmp/space-symbiotic-t07-r2-fixes-52da4eff/units.json` — exit 0 (expected 0), 94.058 s wall; `units.log`.
+- `pnpm -r --workspace-concurrency=1 typecheck` — exit 0 (expected 0), 21.89 s wall; `typecheck.log`.
+- `pnpm exec eslint packages/server/src/abilities/book.ts packages/server/src/abilities/resonance.test.ts packages/server/src/abilities/retirement.test.ts packages/server/src/abilities/service.ts packages/server/src/abilities/statuses.ts packages/server/src/abilities/thermal.ts packages/server/src/combat/zone.ts packages/server/src/events/service.test.ts packages/server/src/events/service.ts packages/server/src/fauna/sim.ts packages/server/src/zones/manager.ts packages/server/src/zones/zone.ts packages/server/test/symbiotic.int.test.ts packages/server/src/zones/wake.test.ts` — exit 0 (expected 0), 2.203 s wall; `eslint.log`.
+- `pnpm exec prettier --check packages/server/src/abilities/book.ts packages/server/src/abilities/resonance.test.ts packages/server/src/abilities/retirement.test.ts packages/server/src/abilities/service.ts packages/server/src/abilities/statuses.ts packages/server/src/abilities/thermal.ts packages/server/src/combat/zone.ts packages/server/src/events/service.test.ts packages/server/src/events/service.ts packages/server/src/fauna/sim.ts packages/server/src/zones/manager.ts packages/server/src/zones/zone.ts packages/server/test/symbiotic.int.test.ts packages/server/src/zones/wake.test.ts` — exit 0 (expected 0), 1.416 s wall; `format.log`.
+- `git diff --check` — exit 0 (expected 0), 0.063 s wall; `diff-check.log`.
+
+Additional negative proof command: `pnpm exec vitest run --config /tmp/space-symbiotic-t07-r2-fixes-52da4eff/vitest.wake-baseline.config.mts --maxWorkers=2 --no-file-parallelism --no-cache` — exit1 expected,3 failed/1 passed; `wake-permanent-red-command.json` records timing. Initial exact reviewer run: `pnpm exec vitest run --config /tmp/space-symbiotic-t07-r2-fixes-52da4eff/vitest.findings.config.mts --maxWorkers=2 --no-file-parallelism --reporter=verbose` — five failures/seven controls.
+
+Exact integration command, with process-level private routes and route guard established before any imports/migration:
+```sh
+pnpm exec vitest run packages/server/test/symbiotic.int.test.ts packages/server/test/events.int.test.ts packages/server/test/thermal.int.test.ts packages/server/test/resonance.int.test.ts packages/server/test/shipHazards.int.test.ts packages/server/test/movement.int.test.ts --config vitest.int.config.ts --maxWorkers=2 --no-file-parallelism --passWithNoTests=false --reporter=default --reporter=json --outputFile=/tmp/space-symbiotic-t07-r2-fixes-52da4eff/db/integration.json
+```
+`db/run.py`, `db/execution.json` and `db/execution-env.json` retain exact environment, process group, timeout and command. A focused event fixture correction run also passed1 selected/29 skipped before the final54-test rerun (`db/event-*`). No full independent suite was run by this worker.
+
+REAL-BOUNDARY COVERAGE AND LIMITS:
+- Unit/service fixtures use actual SkillService, CastService/default book, CodexService, MeterService, PhaseManager, ZoneManager.advance(), fauna/combat and EventService. No fake skill-state mutation substitutes for the refund tests. Ordinary burn controls exercise both Sear→Flare and Flare→Sear through the whole merged lifetime, plus unrelated refund, first-producer refund and second-producer refund. HP assertions distinguish one aggregate from stacked ticks and retired-duration carryover.
+- The wake fixture uses the default30-second sleep and three-tick catch-up via advance(), then valid movement ascent, actual hazard damage, a fresh40-damage hit and an explicitly older1-damage hit. Only its generated gas-world description is controlled. Its behavior is service-level scheduler/frame/combat evidence; no new gateway sleep-specific test is claimed.
+- Call tests cover shared, same-event, shared-herd/event-target and hidden-event partitions; HP changes by12 only where permitted, herd phase stays unchanged, and players/companions take no contact damage. Existing lifecycle/phase/world/safe-zone policies remain active.
+- Event tests cover final-wave conversion, duplicate attempts, two waves with dismissal or replacement, expiry payout, hidden phase refusal and post-closure no-repeat payout. They assert objective1 per consumed enemy, damage0, unchanged HP/inventory/progress before event payout, no combat kill callback or kill-quest change, existing payout/share values, and companion removal only through normal phase closure/dismissal. Analysis XP is settled before no-kill comparisons.
+- DB tests use real auth, character creation, WebSocket join/cast/analyze/skills messages and shipped server wiring. Refund tests temporarily satisfy the existing `trainerAtHand` authority hook and restore it: they prove the gateway→SkillService notification→effect path, not rendered/live trainer placement. Event definitions/placement and stepping are set through trusted server fixture seams; Bond, analysis and rewards use actual gateway messages. The event fixture does not claim a live randomly scheduled event occurrence or UI proof. No browser/GPU/native captures were used.
+
+DECISIONS (question → choice → why):
+- One burn generation contains multiple live producers → retain producer-keyed contributions plus one effective clock → generation identity alone cannot selectively revoke Sear without deleting Flare. Damage uses the first still-valid producer's existing combat authority; the loop transfers authority after validating all contributions and never creates a second tick stream.
+- Ordinary re-ignition after a shorter contribution expires → preserve maximum power until the later aggregate end, in both orders → explicit parent clarification/DECISIONS1074. Natural expiration does not subtract the shorter producer; revocation does. On revocation, only still-valid contributions supply power and expiry, so neither retired duration nor retired power survives by accident. Fresh generations keep existing grace behavior and do not revive stale callbacks.
+- Burn timing origin → use the authoritative stored `until - duration` → a second wall-clock read loses part of the first interval. The real-clock Thermal integration caught this regression; restoring the recorded start gives the unchanged40HP Sear and24HP Flare burn totals.
+- Wake before overdue scheduling → advance manager lastTime to the wake clock and clamp zone/combat time monotonically → frames and every zone tick consumer see ordered time, rather than a shield-only workaround. Explicit old hit times cannot overwrite newer hit authority. Existing50ms tick,30s sleep,3-tick catch-up,5/s shield rate and6s delay stay unchanged.
+- Shared visible Call herd in event phase → retain admission and enumerate creatures on the caster's same world/frame, filtered by existing visibility/harm authority → parent chose usable visible shared herds. Hidden phases, players and companions remain excluded; herd identity/phase and ordinary isolated AI partitions are unchanged. One12-damage swept contact per target/cast remains unchanged.
+- Bond event fauna → EventService verifies live instance, owner membership, owner/target phase and actual companion ownership, then consumes that enemy's objective membership once and calls existing `credit(...,1)` → parent explicitly chose neutralization with exactly one objective point. No fake HP change, hit/damage contribution, kill XP, kill loot or kill-quest event. Subsequent despawn/replacement cannot reuse consumed membership. Event contribution weights/share/payout stay unchanged. Fauna's synchronous conversion notification is a narrow authority handoff, not a parallel lifecycle system.
+- Companion event lifetime → retain actor and phase identity until normal owner/phase cleanup → completion may immediately dismiss it when EventService closes the phase; no global phase adoption or phase escape.
+- Numerical tuning → no ability/skill/shared-data change in this correction. The single objective point is the only new event interpretation and is parent-directed. Test values/timing tolerances are fixtures, not new tuning.
+
+Retained full Symbiotic tuning/lifecycle context (unchanged from implementation report):
+- Bond30Heat/60s cooldown,60m reach, one analysed native creature;4m follow,20m defense,40m leash, flyer extra3m follow tolerance and1m desired altitude. Species' existing first attack/native herd level,1s AI strike clock, existing reach plus1.5 tolerance/canonical target sphere; successful strikes use existing4s taunt. No owner-level scaling/riding/splitting. Validate analysis/eligibility/current target before spending/replacement. Invalid replacement preserves companion, meters and cooldown. Owner or companion death, disconnect, mode/world/zone/phase departure, or required Bond/Big Game loss dismisses. Synchronous skill and presence/life/session retirement prevents refund/rebuy or departure/return revival.
+- Second Lung and Thick Hide retain ×0.7 depletion modifiers; Thick Hide stacks multiplicatively with Hazard Weave. No duplicate consumers.
+- Repair Drones15Charge/20s cooldown,1hull/s for20s in flight, capped; leaving flight ends it. Dock repair remains20hull/s.
+- Regrow20Heat/10s cooldown,40health/6s,30m initial range and sight, omitted target=self or visible current party ally on foot/up, maximum cap. Subsequent ticks keep lifecycle/party/phase checks; native suit recovery remains additive.
+- Spore25Heat/15s cooldown,stationary8m radius/10s,4poison damage/s to valid wild enemies and4healing/s to self/party allies; total40. Existing sight/frame/phase/resistance paths apply, no player/owned-companion harm or extra lingering duration.
+- Call30Heat/45s cooldown,aim×30m point,nearest eligible unowned herd within40m,6s travel,12flat contact damage,swept2m radius plus canonical sphere,one hit/target across herd/cast. Stun prevents movement/contact; no unauthorized PvP.
+- Symbiont Hull maximum×1.25,regen×1.5: baseline5 shield/s after6s unhit becomes7.5/s; capped. Actual positive ship hits reset delay, suit damage does not reset parked ship shield, downed players receive no regeneration; retuning preserves fractions. Handoffs retain latest hit/cursor with no catch-up bonus.
+- Symbiotic effect callbacks0.25s with elapsed integration/final clamp; generic due tolerance1e-9s remains unchanged. Thermal Sear5/s8s,Flare18burst+6/s4s,one per-caster burn at max power/later expiry when no revocation; Thermal burn cadence0.5s unchanged.
+
+FIXTURE ROUTING AND CLEANUP:
+- Fresh uniquely named DB: `astra_symbiotic_fix_r2_20261107_060434_f65e085d` on existing `space-t16-pg-20261106`, host127.0.0.1:53055→5432, astra/astra. No existing astra DB or default port was used. Claim preceded imports/reset/migration; parseConfig(process.env) migration routing was independently checked.
+- Redis existing `space-t16-redis-20261106`,127.0.0.1:53058→6379, DB8 freshly checked empty then atomically claimed with an owner marker. No DB0/7 or FLUSH commands. Only task-owned shard keys were written.
+- `db/claim.json` records host SQL/Redis CLIENT INFO/container checks. Pre-import guard validates exact DB/current user/server port, Redis CLIENT INFO db8/marker and Node22. It rejects default55432/56379 and raw5432/6379 connections and wrong Redis SELECT/FLUSH. Self-test denials never opened those sockets; no unexpected blocked call occurred.
+- Runtime routing evidence:70 SQL sockets at53055 and15 Redis sockets at53058, separate from31 SQL/31 Redis pre-import probes across all three integration invocations. Nine actual terrain worker startups inherited the same guarded environment. Worker source itself is terrain planning and has no production DB consumer; route probes in those workers are guard instrumentation, not application DB traffic. Actual worker entry/Node/route proof is in `db/final-process-and-routes.json` and `db/process-routes.jsonl`. `db/live-routes.jsonl` records live actual server sessions.
+- Cleanup: zero owned process groups and zero SQL sessions before drop; all23 observed process PIDs gone. Verified9 owned Redis keys (marker +8 task SQL shards) atomically deleted, DB8size0 and marker absent; unique SQL DB dropped and confirmed absent. Both original containers remain running/healthy. `db/cleanup.json` / `db/cleanup-commands.json` / `db/final-process-and-routes.json` contain proof. Historical fixture JSON is not a live/reusable route.
+
+FAILURE ACCOUNTING:
+- All five authoritative RED failures and seven controls were reproduced before production edits; see exact values above. All originals remain available unchanged outside the copied path adjustments.
+- `first-green.log`:11 PASS, one obsolete pre-join historical-hazard setup assertion. Corrected setup is explained above; original end assertion retained and additional actual post-wake RED/GREEN added.
+- `first-regressions.log`:381 PASS/1 failure because an old Deep Sweep spy expected the former argument list. Replaced it with an actual stored-status power/expiry assertion; no behavior weakened.
+- `expanded-green.log`:118 PASS/10 failures during permanent-test authoring: eight strict endpoint float equalities differed below5e-11 (now six-decimal HP comparisons); one no-kill comparison included legitimate300 analysis XP (now analysis settled before baseline); one expiry fixture used5s below schema30s minimum (now actual30s window).
+- `expanded-green-2.log`:128 PASS/1 failure from expecting1041.1 exactly when floating nextAt still held1041.05. Permanent test now explicitly advances to1041.101 and asserts the scheduled tick reached1041.1 before checking HP; no relaxed HP assertion. `expanded-green-3.log` passed130 tests before final integration.
+- `types-first.log`/`types-second.log`: fixture literal widening errors in gas SystemDescription/Pose tuples; fixed with explicit domain types, no casts suppressing invalid values.
+- `db/initial-integration.log`:51 PASS/3 failures. Two real-time Thermal totals lost part of their first interval because of a second clock read; production timing now derives from stored status start. Third was invalid fixture ID `bond-drill`; corrected to protocol-valid `bond_drill`. Focused event proof and the complete final54-test rerun pass. No production rates or assertion tolerances were changed to hide the timing regression.
+- Final negative baseline proofs intentionally exit1 and are not unresolved acceptance failures. All required final positive checks exit0.
+
+OUT OF SCOPE FOUND / ACTUAL GATES REMAINING:
+- Fresh R3 independent source review required on `bf09bc72543ed74b7dc7386415471d26a36a4b6d` / tree`b5456a8f82c498ee5bb7e35836bd35fd4c425c41`; this worker did not spawn its own final reviewer.
+- Parent must rerun full independent integration on this final pin. Prior fullQA222 tests/38files PASS applies ONLY to52da4eff, report `/tmp/space-symbiotic_qa_r2_20261107_053324_2edbaae0/Appendix-C.2-report.md`; it does not override R2 REVISE or qualify this new commit. This worker's final subset is54 tests/6files.
+- Parent/T09 integrated renderer, drawn companion and picking proof remain pending. No browser/GPU/fullsmoke/captures/grants were attempted; health and snapshot evidence is not visual acceptance.
+- Parent owns decisions/plan/progress/visual-review updates and records the two precise gameplay interpretations. No orchestration docs were edited. General fauna-player combat remains E08.T02; live trainer placement remains E07.T13/E09.T05. No T08, Void, TierIII or Gravitic work.
+
+ARTIFACTS:
+- `/tmp/space-symbiotic-t07-r2-fixes-52da4eff/Appendix-C.2-report.md`: this exclusive report.
+- `final-pins.json`, `tested-tree.txt`, `changed-files.txt`, `patch.diff`, `full-task.patch`, `*-source-hashes.json`, `integration-to-final-source-proof.json`, `SHA256SUMS`: exact provenance/deltas.
+- Reviewer copies/configs, baseline modules, `authoritative-red.log`, `baseline-red.log`, `wake-permanent-red.log`, `r2-green.log`, `r1-green.log`, `lifecycle-green.log`, `units.log/json`, `verification.json`, types/lint/format logs: CPU evidence.
+- `db/integration.log/json`, `db/execution*`, `db/result.json`, guard/claim/route/cleanup records and preserved `db/initial-*` failure evidence: private real gateway proof.
+- Historical original implementation and R1 reports remain unchanged at `/tmp/space-symbiotic-t07/Appendix-C.2-report.md` and `/tmp/space-symbiotic-t07-r1-fixes-c0b9c9ba/Appendix-C.2-report.md`.
+- No render/capture artifact: visual work expressly unassigned.
+
+FAILURE LOG TAILS (last20 lines of every retained failed run in this correction round):
+
+authoritative-red.log
+```text
+ FAIL  wake-probe.test.ts > R2 wake before overdue scheduled advance > fresh catch-up hazard damage retains the six-second regen delay after a valid ascent
+AssertionError: expected 60.24879999999977 to be 59.998799999999996 // Object.is equality
+
+- Expected
++ Received
+
+- 59.998799999999996
++ 60.24879999999977
+
+ ❯ wake-probe.test.ts:58:31
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  5 failed | 7 passed (12)
+   Start at  00:50:56
+   Duration  1.85s (transform 42%, import 39%, tests 19%, worker 1%)
+
+```
+
+baseline-red.log
+```text
+
+ ❯ wake-probe-corrected.test.ts:52:21
+     50|     r.zones.advance(r.now()*1000);
+     51|     const damaged=r.health().shield;
+     52|     expect(damaged).toBe(initial); // No historical hazard interval ex…
+       |                     ^
+     53|     r.setTime(1041.05);
+     54|     const pose={...r.joined.pose,pos:[0,r.gas.radius+1001,0],quat:[Mat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  5 failed | 7 passed (12)
+   Start at  01:12:05
+   Duration  10.59s (transform 68%, import 20%, tests 12%)
+
+    Isolate  4 workers spawned · ~214ms startup each (spawn + environment, per file)
+             at least ~641ms faster with isolate: false — reuses workers across files instead of one per file
+
+```
+
+wake-permanent-red.log
+```text
+
+- 58.879999999999995
++ 59.12999999999977
+
+ ❯ packages/server/src/zones/wake.test.ts:100:29
+     98|   r.zones.advance(r.now() * 1000);
+     99|   expect(r.joined.zone.time).toBeGreaterThanOrEqual(1041.1 - 1e-8);
+    100|   expect(r.health().shield).toBe(damaged);
+       |                             ^
+    101|   const world = r.joined.zone.toWorld(r.joined.pose.frame, r.joined.po…
+    102|   const time = r.joined.zone.time;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  01:14:39
+   Duration  1.37s (transform 71%, import 19%, tests 9%)
+
+```
+
+first-green.log
+```text
+ ❯ wake-probe.test.ts:52:21
+     50|     r.zones.advance(r.now()*1000);
+     51|     const damaged=r.health().shield;
+     52|     expect(damaged).toBeLessThan(initial);
+       |                     ^
+     53|     r.setTime(1041.05);
+     54|     const pose={...r.joined.pose,pos:[0,r.gas.radius+1001,0],quat:[Mat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 11 passed (12)
+   Start at  00:55:07
+   Duration  7.47s (import 40%, transform 40%, tests 19%, worker 1%)
+
+     Import  168 modules were evaluated 266 times · 2.59s total, 40% of tracked time
+             ~955ms faster with isolate: false — shared modules are evaluated once per worker instead of once per file
+             learn more: https://vitest.dev/guide/improving-performance#test-isolation
+
+```
+
+first-regressions.log
+```text
+
+
+Number of calls: 1
+
+ ❯ src/abilities/resonance.test.ts:538:19
+    536|     const apply = vi.spyOn(Statuses.prototype, 'apply');
+    537|     cast('deep_sweep', 0);
+    538|     expect(apply).toHaveBeenCalledWith(w.zone.id, 'c1', w.player, DEEP…
+       |                   ^
+    539|     expect(getSkillNode('deep_sweep').params.radarRangeM).toBe(5000);
+    540|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 28 passed (29)
+      Tests  1 failed | 381 passed (382)
+   Start at  00:55:16
+   Duration  41.86s (tests 71%, import 25%, transform 4%)
+
+```
+
+expanded-green.log
+```text
+  }
+]
+ ❯ EventService.run src/events/service.ts:269:36
+    267|    */
+    268|   run(def: EventDef, zoneId: string, opts: { startsIn?: number } = {})…
+    269|     const checked = eventDefSchema.parse(def);
+       |                                    ^
+    270|     if (!this.zones.zone(zoneId)) throw new Error(`zone ${zoneId} is n…
+    271|     for (const o of this.occurrences.values()) {
+ ❯ started src/events/service.test.ts:148:23
+ ❯ src/events/service.test.ts:676:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+
+ Test Files  2 failed | 5 passed (7)
+      Tests  10 failed | 118 passed (128)
+   Start at  00:58:55
+   Duration  13.18s (tests 79%, import 15%, transform 6%)
+
+```
+
+expanded-green-2.log
+```text
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/server| src/zones/wake.test.ts > a real post-wake hazard and an explicitly older hit cannot shorten a new attack delay
+AssertionError: expected 1041.05 to be greater than or equal to 1041.09999999
+ ❯ src/zones/wake.test.ts:75:32
+     73|     const world = r.joined.zone.toWorld(r.joined.pose.frame, r.joined.…
+     74|     r.joined.zone.step(1031);
+     75|     expect(r.joined.zone.time).toBeGreaterThanOrEqual(1041.1 - 1e-8);
+       |                                ^
+     76|     expect(r.joined.zone.toWorld(r.joined.pose.frame, r.joined.pose.po…
+     77|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  1 failed | 128 passed (129)
+   Start at  01:00:44
+   Duration  12.32s (tests 81%, import 11%, transform 8%)
+
+```
+
+types-first.log
+```text
+        Type 'BodySpec | { params: { hazard: { kind: string; label: string; ceiling: number; dps: number; curve: number; }; seed: number; type: "frozen" | "lush" | "alien" | "desert" | "toxic" | ... 7 more ... | "crushing"; ... 40 more ...; pads?: number[] | ... 1 more ... | undefined; } | { ...; }; ... 17 more ...; orbitTilt: Qu...' is not assignable to type 'BodySpec'.
+          Type '{ params: { hazard: { kind: string; label: string; ceiling: number; dps: number; curve: number; }; seed: number; type: PlanetType; radius: number; isMoon: boolean; hasOcean: boolean; ... 37 more ...; pads?: number[] | null; } | { ...; }; ... 17 more ...; orbitTilt: Quat; }' is not assignable to type 'BodySpec'.
+            Types of property 'params' are incompatible.
+              Type '{ hazard: { kind: string; label: string; ceiling: number; dps: number; curve: number; }; seed: number; type: "frozen" | "lush" | "alien" | "desert" | "toxic" | "volcanic" | "barren" | "dead" | ... 4 more ... | "crushing"; ... 40 more ...; pads?: number[] | ... 1 more ... | undefined; } | { ...; }' is not assignable to type 'PlanetParams | GasParams'.
+                Type '{ hazard: { kind: string; label: string; ceiling: number; dps: number; curve: number; }; seed: number; type: PlanetType; radius: number; isMoon: boolean; hasOcean: boolean; ... 37 more ...; pads?: number[] | null; }' is not assignable to type 'PlanetParams | GasParams'.
+                  Type '{ hazard: { kind: string; label: string; ceiling: number; dps: number; curve: number; }; seed: number; type: PlanetType; radius: number; isMoon: boolean; hasOcean: boolean; ... 37 more ...; pads?: number[] | null; }' is not assignable to type 'PlanetParams'.
+                    The types of 'hazard.kind' are incompatible between these types.
+                      Type 'string' is not assignable to type 'HazardKind'.
+packages/server/src/zones/wake.test.ts(35,87): error TS2322: Type '{ pos: number[]; quat: number[]; vel: number[]; frame: string | null; }' is not assignable to type '{ frame: string | null; pos: [number, number, number]; quat: [number, number, number, number]; vel: [number, number, number]; }'.
+  Types of property 'pos' are incompatible.
+    Type 'number[]' is not assignable to type '[number, number, number]'.
+      Target requires 3 element(s) but source may have fewer.
+packages/server/src/zones/wake.test.ts(53,87): error TS2322: Type '{ pos: number[]; quat: number[]; vel: number[]; frame: string | null; }' is not assignable to type '{ frame: string | null; pos: [number, number, number]; quat: [number, number, number, number]; vel: [number, number, number]; }'.
+  Types of property 'pos' are incompatible.
+    Type 'number[]' is not assignable to type '[number, number, number]'.
+      Target requires 3 element(s) but source may have fewer.
+packages/server/src/zones/wake.test.ts(70,97): error TS2322: Type '{ pos: number[]; quat: number[]; vel: number[]; frame: string | null; }' is not assignable to type '{ frame: string | null; pos: [number, number, number]; quat: [number, number, number, number]; vel: [number, number, number]; }'.
+  Types of property 'pos' are incompatible.
+    Type 'number[]' is not assignable to type '[number, number, number]'.
+      Target requires 3 element(s) but source may have fewer.
+```
+
+types-second.log
+```text
+packages/server/src/zones/wake.test.ts(35,87): error TS2322: Type '{ pos: number[]; quat: number[]; vel: number[]; frame: string | null; }' is not assignable to type '{ frame: string | null; pos: [number, number, number]; quat: [number, number, number, number]; vel: [number, number, number]; }'.
+  Types of property 'pos' are incompatible.
+    Type 'number[]' is not assignable to type '[number, number, number]'.
+      Target requires 3 element(s) but source may have fewer.
+packages/server/src/zones/wake.test.ts(53,87): error TS2322: Type '{ pos: number[]; quat: number[]; vel: number[]; frame: string | null; }' is not assignable to type '{ frame: string | null; pos: [number, number, number]; quat: [number, number, number, number]; vel: [number, number, number]; }'.
+  Types of property 'pos' are incompatible.
+    Type 'number[]' is not assignable to type '[number, number, number]'.
+      Target requires 3 element(s) but source may have fewer.
+packages/server/src/zones/wake.test.ts(70,97): error TS2322: Type '{ pos: number[]; quat: number[]; vel: number[]; frame: string | null; }' is not assignable to type '{ frame: string | null; pos: [number, number, number]; quat: [number, number, number, number]; vel: [number, number, number]; }'.
+  Types of property 'pos' are incompatible.
+    Type 'number[]' is not assignable to type '[number, number, number]'.
+      Target requires 3 element(s) but source may have fewer.
+```
+
+db/initial-integration.log
+```text
+
+ FAIL  packages/server/test/thermal.int.test.ts > Thermal over the wire > Sear: marks one creature in reach to burn 8 s for 5 a second, with no blow of its own
+AssertionError: expected 39.99989666044712 to be close to 40, received difference is 0.0001033395528793335, but expected 5e-7
+ ❯ packages/server/test/thermal.int.test.ts:359:36
+    357|     expect(lost(bot.zone, marked)).toBe(0);
+    358|     await sleep(9000);
+    359|     expect(lost(bot.zone, marked)).toBeCloseTo(N.sear.burnDps * 8, 6);
+       |                                    ^
+    360|     expect(lost(bot.zone, other)).toBe(0);
+    361|     // out of reach: refused, and the cooldown not started over
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 4 passed (6)
+      Tests  3 failed | 51 passed (54)
+   Start at  01:04:36
+   Duration  79.68s (tests 95%, import 4%, transform 1%)
+
+JSON report written to /tmp/space-symbiotic-t07-r2-fixes-52da4eff/db/integration.json
+```
