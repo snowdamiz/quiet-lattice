@@ -1,0 +1,350 @@
+{
+  "source_sha256": "ce23f092fcae26d83f7be5d280043beb9f7ef2f4967289fa23670686398a3bc6",
+  "shell_sampling": {
+    "denominator": "Exterior-visible triangle samples of all LOD0 Lark_Hull and Lark_Accent surfaces, all directions, area weighted, three barycentric samples/triangle; visibility along outward normal. Includes potentially exposed inner skins; semantic outerplate identification remains required.",
+    "area_m2": 102.76428406802391,
+    "samples": 48098,
+    "missing_area_m2": {
+      "0.02": 40.42509294484206,
+      "0.05": 27.280316891201643,
+      "0.1": 22.240333352342006
+    },
+    "fraction": {
+      "0.02": 0.39337687516105335,
+      "0.05": 0.2654649632273376,
+      "0.1": 0.21642084654256155
+    },
+    "qualification": "UNPROVEN whole-shell percentage: material roles do not uniquely identify outer plates; inherited versus newly removed area requires historical source comparison."
+  },
+  "glyph_objects": [],
+  "emissive_seam_faces": 12,
+  "livery_images": [
+    "lark_livery_compact",
+    "lark_livery_working"
+  ],
+  "static_limits": [
+    "Finite samples cannot prove continuous clearance, reachability, collision response, swept motion or runtime flicker.",
+    "No geometry correction justified from missing evidence or ambiguous plate classification."
+  ],
+  "reference_body": {
+    "height_m": 1.850000023841858,
+    "standing_nearest_canopy_vertex_sample_m": 2.541893243789673,
+    "seated_clearance": "OPEN: reference is unrigged standing mesh; do not substitute origin distance for seated head envelope"
+  },
+  "markers": {
+    "Blink_Strobes": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -4.619999885559082
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          1.9900000095367432
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "Light_Landing": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          4.050000190734863
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.9599999785423279
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "Canopy": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -1.120093584060669
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          1.8043180704116821
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "CockpitInterior": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "ScreenLeft": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.2729032337665558
+        ],
+        [
+          0.0,
+          0.9393726587295532,
+          0.3428977131843567,
+          1.9302823543548584
+        ],
+        [
+          0.0,
+          -0.3428977131843567,
+          0.9393726587295532,
+          1.0811877250671387
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "ScreenCenter": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.9393726587295532,
+          0.3428977131843567,
+          1.9302823543548584
+        ],
+        [
+          0.0,
+          -0.3428977131843567,
+          0.9393726587295532,
+          1.0811877250671387
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "ScreenRight": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.2729032337665558
+        ],
+        [
+          0.0,
+          0.9393726587295532,
+          0.3428977131843567,
+          1.9302823543548584
+        ],
+        [
+          0.0,
+          -0.3428977131843567,
+          0.9393726587295532,
+          1.0811877250671387
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "GearAssembly": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  },
+  "colliders": [
+    "COL_Body",
+    "COL_NacelleL",
+    "COL_NacelleR",
+    "COL_WingL",
+    "COL_WingR"
+  ],
+  "articulation_samples": {
+    "canopy": [
+      0,
+      0.5,
+      1
+    ],
+    "gear": [
+      0,
+      0.5,
+      1
+    ],
+    "hardpoint": [
+      0,
+      0.5,
+      1
+    ]
+  },
+  "articulation_status": "Prepared normalized sample schedule only; authored axes/limits must be applied before clearance certification.",
+  "proxy_poses": {
+    "seated": {
+      "hip": [
+        0.0,
+        1.149999976158142,
+        1.5199999809265137
+      ],
+      "nearest_canopy_vertex_sample_m": 0.01281843613833189,
+      "warning": "Unsigned surface distance cannot establish containment; boarding pose uses linear marker interpolation and must be checked against actual ladder."
+    },
+    "boarding_0": {
+      "hip": [
+        -3.0,
+        0.949999988079071,
+        -1.0500000715255737
+      ],
+      "nearest_canopy_vertex_sample_m": 2.27532958984375,
+      "warning": "Unsigned surface distance cannot establish containment; boarding pose uses linear marker interpolation and must be checked against actual ladder."
+    },
+    "boarding_1": {
+      "hip": [
+        -2.4800000190734863,
+        0.949999988079071,
+        -0.19250011444091797
+      ],
+      "nearest_canopy_vertex_sample_m": 1.5121108293533325,
+      "warning": "Unsigned surface distance cannot establish containment; boarding pose uses linear marker interpolation and must be checked against actual ladder."
+    },
+    "boarding_2": {
+      "hip": [
+        -1.9600000381469727,
+        0.949999988079071,
+        0.6649999618530273
+      ],
+      "nearest_canopy_vertex_sample_m": 0.8935205936431885,
+      "warning": "Unsigned surface distance cannot establish containment; boarding pose uses linear marker interpolation and must be checked against actual ladder."
+    },
+    "boarding_3": {
+      "hip": [
+        -1.440000057220459,
+        0.949999988079071,
+        1.5225000381469727
+      ],
+      "nearest_canopy_vertex_sample_m": 0.3894107937812805,
+      "warning": "Unsigned surface distance cannot establish containment; boarding pose uses linear marker interpolation and must be checked against actual ladder."
+    },
+    "boarding_4": {
+      "hip": [
+        -0.9200000166893005,
+        0.949999988079071,
+        2.380000114440918
+      ],
+      "nearest_canopy_vertex_sample_m": 0.004753102082759142,
+      "warning": "Unsigned surface distance cannot establish containment; boarding pose uses linear marker interpolation and must be checked against actual ladder."
+    }
+  },
+  "ground_z_m": -1.9500000476837158,
+  "grid_spacing_m": 1,
+  "remaining": [
+    "Production rig seated/boarding with collider containment and rung contact",
+    "Actual three-livery lineup",
+    "Mounted module envelope and articulated geometry samples",
+    "Semantic full outerplate denominator and historical loss split",
+    "Glyph finish and runtime flicker"
+  ]
+}
