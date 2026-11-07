@@ -1,0 +1,50 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ixari/fit_civic_collider.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 60,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T05:51:39Z",
+  "head": "0c4396a9194a5f7c99352f630ea7e66514b61115",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/fit_civic_collider.py": "0474976ad0ca2b20d87436b7b239059b9308b64eb81df51560b7058660c48da5"
+  },
+  "exitCode": 0,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 2.271,
+  "peakGroupRssKiB": 423184,
+  "last20Lines": [
+    "00:00.324  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_civic.blend\"",
+    "Info: Saved as \"ixari_civic.blend\"",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit"
+  ]
+}

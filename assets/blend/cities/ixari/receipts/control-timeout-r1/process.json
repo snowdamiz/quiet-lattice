@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "import time; time.sleep(10)"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 1,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T05:57:17Z",
+  "head": "0c4396a9194a5f7c99352f630ea7e66514b61115",
+  "inputScriptSha256": {},
+  "exitCode": -2,
+  "stoppedBy": "wall limit",
+  "signals": [
+    "SIGINT"
+  ],
+  "reaped": true,
+  "elapsedSeconds": 1.815,
+  "peakGroupRssKiB": 14512,
+  "last20Lines": [
+    "Traceback (most recent call last):",
+    "  File \"<string>\", line 1, in <module>",
+    "    import time; time.sleep(10)",
+    "                 ~~~~~~~~~~^^^^",
+    "KeyboardInterrupt"
+  ]
+}

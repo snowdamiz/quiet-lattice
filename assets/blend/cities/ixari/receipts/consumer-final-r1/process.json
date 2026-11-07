@@ -1,0 +1,57 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "--config",
+    "packages/tools/blender/cities/ixari/consumer.config.mjs"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 60,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T05:49:28Z",
+  "head": "0c4396a9194a5f7c99352f630ea7e66514b61115",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/consumer.config.mjs": "83741e7081c3dc3b1fe43d37ee6ec6bbbbf03228060131b894c17447aed6825d"
+  },
+  "exitCode": 0,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 2.824,
+  "peakGroupRssKiB": 87680,
+  "last20Lines": [
+    "",
+    " RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+    "",
+    "LEGACY AABB LIMIT \u2014 bridge_ixari, curved bridge: bridge_ixari: blocked route at 0.000,0.180,12.000, resolveBoxes displacement 0,0.060215945746828314,0 (R=0.38, H=1.85). Axis-aligned boxes do not qualify sloped/curved deck or rail traversal; E10.T01 runtime traversal remains unproven.",
+    "LEGACY AABB LIMIT \u2014 kit_ixari_spiral, spiral: kit_ixari_spiral: blocked route at 0.000,0.180,9.000, resolveBoxes displacement 0,0.08875711987173412,0 (R=0.38, H=1.85). Axis-aligned boxes do not qualify sloped/curved deck or rail traversal; E10.T01 runtime traversal remains unproven.",
+    "LEGACY AABB LIMIT \u2014 Interact_Crossing_bridge_ixari: Interact_Crossing_bridge_ixari: unreachable marker; no clear 1.85m standing pose within 1.5m of a declared route; curved approach remains unqualified.",
+    "LEGACY AABB LIMIT \u2014 Interact_Ascent_kit_ixari_spiral: Interact_Ascent_kit_ixari_spiral: unreachable marker; no clear 1.85m standing pose within 1.5m of a declared route; curved approach remains unqualified.",
+    "LEGACY AABB LIMIT \u2014 ixari_landmark_summit, spiral: ixari_landmark_summit: blocked route at 0.000,0.180,15.000, resolveBoxes displacement 0,0.17903766904021,0 (R=0.38, H=1.85). Axis-aligned boxes do not qualify sloped/curved deck or rail traversal; E10.T01 runtime traversal remains unproven.",
+    "LEGACY AABB LIMIT \u2014 Interact_Ascent_ixari_landmark_summit: Interact_Ascent_ixari_landmark_summit: unreachable marker; no clear 1.85m standing pose within 1.5m of a declared route; curved approach remains unqualified.",
+    "",
+    " Test Files  1 passed (1)",
+    "      Tests  68 passed (68)",
+    "   Start at  00:49:29",
+    "   Duration  2.01s (tests 67%, import 18%, transform 15%)",
+    ""
+  ]
+}

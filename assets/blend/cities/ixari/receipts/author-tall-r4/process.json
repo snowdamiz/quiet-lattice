@@ -1,0 +1,62 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ixari/author.py",
+    "--",
+    "tall"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 900,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T05:31:42Z",
+  "head": "0c4396a9194a5f7c99352f630ea7e66514b61115",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/author.py": "5797a672540bc15bc3e9f2c07b33cdb57ccdd5e2488d055b884b1127dc075cd8"
+  },
+  "exitCode": 0,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 3.803,
+  "peakGroupRssKiB": 766240,
+  "last20Lines": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py:106: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0",
+    "  mat.use_nodes = True",
+    "AUTHOR ixari_tall_0 LOD0 54528 budget 8000 60000",
+    "    generated LODs for ixari_tall_0: 54,528 > 16,356 > 5,452 > 1,908 triangles",
+    "AUTHOR ixari_tall_1 LOD0 55912 budget 8000 60000",
+    "    generated LODs for ixari_tall_1: 55,912 > 16,772 > 5,590 > 1,956 triangles",
+    "AUTHOR ixari_tall_2 LOD0 57296 budget 8000 60000",
+    "    generated LODs for ixari_tall_2: 57,296 > 17,188 > 5,728 > 2,004 triangles",
+    "AUTHOR ixari_tall_3 LOD0 54528 budget 8000 60000",
+    "    generated LODs for ixari_tall_3: 54,528 > 16,356 > 5,452 > 1,908 triangles",
+    "Info: Saved as \"ixari_tall.blend\"",
+    "SAVED /Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_tall.blend",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit"
+  ]
+}

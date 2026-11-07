@@ -1,0 +1,377 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ixari_civic.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:34:06Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ixari_plaza",
+      "variants": [
+        {
+          "id": "ixari_plaza",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 21908,
+            "1": 6572,
+            "2": 2190,
+            "3": 766
+          },
+          "implicitLods": false,
+          "dims": [
+            48.0,
+            48.0,
+            5.089
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_market_hall",
+      "variants": [
+        {
+          "id": "ixari_market_hall",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 53184,
+            "1": 15954,
+            "2": 5318,
+            "3": 1860
+          },
+          "implicitLods": false,
+          "dims": [
+            22.753,
+            26.513,
+            23.488
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_skill_house",
+      "variants": [
+        {
+          "id": "ixari_skill_house",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 47848,
+            "1": 14354,
+            "2": 4784,
+            "3": 1674
+          },
+          "implicitLods": false,
+          "dims": [
+            16.466,
+            20.538,
+            18.404
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_compact_office",
+      "variants": [
+        {
+          "id": "ixari_compact_office",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 55952,
+            "1": 16784,
+            "2": 5594,
+            "3": 1958
+          },
+          "implicitLods": false,
+          "dims": [
+            20.97,
+            24.596,
+            28.46
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_listening_house",
+      "variants": [
+        {
+          "id": "ixari_listening_house",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 53184,
+            "1": 15954,
+            "2": 5318,
+            "3": 1860
+          },
+          "implicitLods": false,
+          "dims": [
+            25.179,
+            22.74,
+            35.516
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_shipyard",
+      "variants": [
+        {
+          "id": "ixari_shipyard",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 38432,
+            "1": 11528,
+            "2": 3842,
+            "3": 1344
+          },
+          "implicitLods": false,
+          "dims": [
+            56.0,
+            50.4,
+            4.522
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_salvage_yard",
+      "variants": [
+        {
+          "id": "ixari_salvage_yard",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 38432,
+            "1": 11528,
+            "2": 3842,
+            "3": 1344
+          },
+          "implicitLods": false,
+          "dims": [
+            44.0,
+            39.6,
+            4.522
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_civic.blend",
+          "message": "7 variant(s) in 7 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_plaza",
+          "message": "LOD0 21,908 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_market_hall",
+          "message": "LOD0 53,184 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_skill_house",
+          "message": "LOD0 47,848 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_compact_office",
+          "message": "LOD0 55,952 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_listening_house",
+          "message": "LOD0 53,184 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_shipyard",
+          "message": "LOD0 38,432 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_salvage_yard",
+          "message": "LOD0 38,432 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_plaza",
+          "message": "21,908 > 6,572 > 2,190 > 766 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ixari_market_hall",
+          "message": "53,184 > 15,954 > 5,318 > 1,860 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ixari_skill_house",
+          "message": "47,848 > 14,354 > 4,784 > 1,674 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ixari_compact_office",
+          "message": "55,952 > 16,784 > 5,594 > 1,958 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ixari_listening_house",
+          "message": "53,184 > 15,954 > 5,318 > 1,860 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ixari_shipyard",
+          "message": "38,432 > 11,528 > 3,842 > 1,344 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ixari_salvage_yard",
+          "message": "38,432 > 11,528 > 3,842 > 1,344 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "IxariAtlas2048 (LIB_IxariAtlas2048)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ixari_plaza",
+          "message": "longest side 48.00 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_market_hall",
+          "message": "longest side 26.51 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_skill_house",
+          "message": "longest side 20.54 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_compact_office",
+          "message": "longest side 28.46 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_listening_house",
+          "message": "longest side 35.52 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_shipyard",
+          "message": "longest side 56.00 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_salvage_yard",
+          "message": "longest side 44.00 m within 1-400 m"
+        }
+      ]
+    }
+  ]
+}

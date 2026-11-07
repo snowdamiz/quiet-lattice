@@ -1,0 +1,41 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "eslint",
+    "packages/tools/blender/cities/ixari/consumer.test.js",
+    "packages/tools/blender/cities/ixari/consumer.config.mjs"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 90,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T06:08:25Z",
+  "head": "0c4396a9194a5f7c99352f630ea7e66514b61115",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/consumer.test.js": "c4ced4f84846e027d5f5d794a8176c014b9e08d6eea8b99e2848d5338ee66a3a",
+    "packages/tools/blender/cities/ixari/consumer.config.mjs": "83741e7081c3dc3b1fe43d37ee6ec6bbbbf03228060131b894c17447aed6825d"
+  },
+  "exitCode": 0,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 1.163,
+  "peakGroupRssKiB": 87056,
+  "last20Lines": []
+}

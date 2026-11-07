@@ -1,0 +1,59 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ixari/inspect_mesh.py",
+    "--",
+    "assets/blend/cities/ixari/receipts/mesh-validity-final/audit.json"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 180,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T06:08:13Z",
+  "head": "0c4396a9194a5f7c99352f630ea7e66514b61115",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/inspect_mesh.py": "5b610eb399d606980801235d98c145a1f40890d2a864b96694bc55fa2b97f93c"
+  },
+  "exitCode": 0,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 2.243,
+  "peakGroupRssKiB": 414768,
+  "last20Lines": [
+    "00:00.303  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_anchor.blend\"",
+    "00:00.367  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_civic.blend\"",
+    "00:00.621  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_kit.blend\"",
+    "00:00.696  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_landmarks.blend\"",
+    "00:01.115  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_low.blend\"",
+    "00:01.245  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_mid.blend\"",
+    "00:01.405  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_props.blend\"",
+    "00:01.432  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_tall.blend\"",
+    "MESH VALIDITY 0 of 132 changed",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit"
+  ]
+}

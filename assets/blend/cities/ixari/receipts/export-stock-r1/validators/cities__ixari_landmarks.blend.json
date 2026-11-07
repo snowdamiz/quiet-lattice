@@ -1,0 +1,162 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ixari_landmarks.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:35:06Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ixari_landmark_spire_hall",
+      "variants": [
+        {
+          "id": "ixari_landmark_spire_hall",
+          "class": "hero",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 143104,
+            "1": 42930,
+            "2": 14310,
+            "3": 5008
+          },
+          "implicitLods": false,
+          "dims": [
+            33.357,
+            32.691,
+            112.6
+          ],
+          "materials": [
+            "LIB_IxariAtlas4096"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_landmark_summit",
+      "variants": [
+        {
+          "id": "ixari_landmark_summit",
+          "class": "hero",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 141924,
+            "1": 42576,
+            "2": 14192,
+            "3": 4966
+          },
+          "implicitLods": false,
+          "dims": [
+            36.712,
+            36.435,
+            53.309
+          ],
+          "materials": [
+            "LIB_IxariAtlas4096"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_landmarks.blend",
+          "message": "2 variant(s) in 2 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_landmark_spire_hall",
+          "message": "LOD0 143,104 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ixari_landmark_summit",
+          "message": "LOD0 141,924 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_landmark_spire_hall",
+          "message": "143,104 > 42,930 > 14,310 > 5,008 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ixari_landmark_summit",
+          "message": "141,924 > 42,576 > 14,192 > 4,966 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "IxariAtlas4096 (LIB_IxariAtlas4096)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ixari_landmark_spire_hall",
+          "message": "longest side 112.60 m within 0.5-400 m"
+        },
+        {
+          "subject": "ixari_landmark_summit",
+          "message": "longest side 53.31 m within 0.5-400 m"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1443 @@
+[
+  {
+    "id": "ixari_plaza",
+    "title": "Summit Gathering",
+    "role": "plaza",
+    "assetClass": "building",
+    "bounds": [
+      [
+        -24.0,
+        -24.0,
+        0.0
+      ],
+      [
+        24.0,
+        24.0,
+        5.0886149406433105
+      ]
+    ],
+    "authoredHeight": 5.0886149406433105,
+    "footprintRadius": 24.00000088627576,
+    "lodTriangles": [
+      21908,
+      6572,
+      2141,
+      673
+    ],
+    "markers": [
+      {
+        "name": "Light_MemoryPier0_ixari_plaza",
+        "position": [
+          20.8799991607666,
+          0.0,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier1_ixari_plaza",
+        "position": [
+          19.62078285217285,
+          7.141380786895752,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier2_ixari_plaza",
+        "position": [
+          15.995007514953613,
+          13.421404838562012,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier3_ixari_plaza",
+        "position": [
+          10.4399995803833,
+          18.082611083984375,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier4_ixari_plaza",
+        "position": [
+          3.6257739067077637,
+          20.562786102294922,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier5_ixari_plaza",
+        "position": [
+          -3.6257739067077637,
+          20.562786102294922,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier6_ixari_plaza",
+        "position": [
+          -10.4399995803833,
+          18.082611083984375,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier7_ixari_plaza",
+        "position": [
+          -15.995007514953613,
+          13.421404838562012,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier8_ixari_plaza",
+        "position": [
+          -19.62078285217285,
+          7.141380786895752,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier9_ixari_plaza",
+        "position": [
+          -20.8799991607666,
+          2.557062448203329e-15,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier10_ixari_plaza",
+        "position": [
+          -19.62078285217285,
+          -7.141380786895752,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier11_ixari_plaza",
+        "position": [
+          -15.995007514953613,
+          -13.421404838562012,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier16_ixari_plaza",
+        "position": [
+          15.995007514953613,
+          -13.421404838562012,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_MemoryPier17_ixari_plaza",
+        "position": [
+          19.62078285217285,
+          -7.141380786895752,
+          2.799999952316284
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.85,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Interact_Plaza_ixari_plaza",
+        "position": [
+          0.0,
+          -7.0,
+          1.2799999713897705
+        ],
+        "properties": {
+          "service": "recall_assembly"
+        }
+      }
+    ],
+    "colliders": [
+      "COL_ixari_plaza_SummitTerrace",
+      "COL_ixari_plaza_MemoryPier0Socket",
+      "COL_ixari_plaza_MemoryPier0Growth0",
+      "COL_ixari_plaza_MemoryPier0Growth1",
+      "COL_ixari_plaza_MemoryPier0Growth2",
+      "COL_ixari_plaza_MemoryPier0Growth3",
+      "COL_ixari_plaza_MemoryPier0Growth4",
+      "COL_ixari_plaza_MemoryPier0Growth5",
+      "COL_ixari_plaza_MemoryPier1Socket",
+      "COL_ixari_plaza_MemoryPier1Growth0",
+      "COL_ixari_plaza_MemoryPier1Growth1",
+      "COL_ixari_plaza_MemoryPier1Growth2",
+      "COL_ixari_plaza_MemoryPier1Growth3",
+      "COL_ixari_plaza_MemoryPier1Growth4",
+      "COL_ixari_plaza_MemoryPier1Growth5",
+      "COL_ixari_plaza_MemoryPier2Socket",
+      "COL_ixari_plaza_MemoryPier2Growth0",
+      "COL_ixari_plaza_MemoryPier2Growth1",
+      "COL_ixari_plaza_MemoryPier2Growth2",
+      "COL_ixari_plaza_MemoryPier2Growth3",
+      "COL_ixari_plaza_MemoryPier2Growth4",
+      "COL_ixari_plaza_MemoryPier2Growth5",
+      "COL_ixari_plaza_MemoryPier3Socket",
+      "COL_ixari_plaza_MemoryPier3Growth0",
+      "COL_ixari_plaza_MemoryPier3Growth1",
+      "COL_ixari_plaza_MemoryPier3Growth2",
+      "COL_ixari_plaza_MemoryPier3Growth3",
+      "COL_ixari_plaza_MemoryPier3Growth4",
+      "COL_ixari_plaza_MemoryPier3Growth5",
+      "COL_ixari_plaza_MemoryPier4Socket",
+      "COL_ixari_plaza_MemoryPier4Growth0",
+      "COL_ixari_plaza_MemoryPier4Growth1",
+      "COL_ixari_plaza_MemoryPier4Growth2",
+      "COL_ixari_plaza_MemoryPier4Growth3",
+      "COL_ixari_plaza_MemoryPier4Growth4",
+      "COL_ixari_plaza_MemoryPier4Growth5",
+      "COL_ixari_plaza_MemoryPier5Socket",
+      "COL_ixari_plaza_MemoryPier5Growth0",
+      "COL_ixari_plaza_MemoryPier5Growth1",
+      "COL_ixari_plaza_MemoryPier5Growth2",
+      "COL_ixari_plaza_MemoryPier5Growth3",
+      "COL_ixari_plaza_MemoryPier5Growth4",
+      "COL_ixari_plaza_MemoryPier5Growth5",
+      "COL_ixari_plaza_MemoryPier6Socket",
+      "COL_ixari_plaza_MemoryPier6Growth0",
+      "COL_ixari_plaza_MemoryPier6Growth1",
+      "COL_ixari_plaza_MemoryPier6Growth2",
+      "COL_ixari_plaza_MemoryPier6Growth3",
+      "COL_ixari_plaza_MemoryPier6Growth4",
+      "COL_ixari_plaza_MemoryPier6Growth5",
+      "COL_ixari_plaza_MemoryPier7Socket",
+      "COL_ixari_plaza_MemoryPier7Growth0",
+      "COL_ixari_plaza_MemoryPier7Growth1",
+      "COL_ixari_plaza_MemoryPier7Growth2",
+      "COL_ixari_plaza_MemoryPier7Growth3",
+      "COL_ixari_plaza_MemoryPier7Growth4",
+      "COL_ixari_plaza_MemoryPier7Growth5",
+      "COL_ixari_plaza_MemoryPier8Socket",
+      "COL_ixari_plaza_MemoryPier8Growth0",
+      "COL_ixari_plaza_MemoryPier8Growth1",
+      "COL_ixari_plaza_MemoryPier8Growth2",
+      "COL_ixari_plaza_MemoryPier8Growth3",
+      "COL_ixari_plaza_MemoryPier8Growth4",
+      "COL_ixari_plaza_MemoryPier8Growth5",
+      "COL_ixari_plaza_MemoryPier9Socket",
+      "COL_ixari_plaza_MemoryPier9Growth0",
+      "COL_ixari_plaza_MemoryPier9Growth1",
+      "COL_ixari_plaza_MemoryPier9Growth2",
+      "COL_ixari_plaza_MemoryPier9Growth3",
+      "COL_ixari_plaza_MemoryPier9Growth4",
+      "COL_ixari_plaza_MemoryPier9Growth5",
+      "COL_ixari_plaza_MemoryPier10Socket",
+      "COL_ixari_plaza_MemoryPier10Growth0",
+      "COL_ixari_plaza_MemoryPier10Growth1",
+      "COL_ixari_plaza_MemoryPier10Growth2",
+      "COL_ixari_plaza_MemoryPier10Growth3",
+      "COL_ixari_plaza_MemoryPier10Growth4",
+      "COL_ixari_plaza_MemoryPier10Growth5",
+      "COL_ixari_plaza_MemoryPier11Socket",
+      "COL_ixari_plaza_MemoryPier11Growth0",
+      "COL_ixari_plaza_MemoryPier11Growth1",
+      "COL_ixari_plaza_MemoryPier11Growth2",
+      "COL_ixari_plaza_MemoryPier11Growth3",
+      "COL_ixari_plaza_MemoryPier11Growth4",
+      "COL_ixari_plaza_MemoryPier11Growth5",
+      "COL_ixari_plaza_MemoryPier16Socket",
+      "COL_ixari_plaza_MemoryPier16Growth0",
+      "COL_ixari_plaza_MemoryPier16Growth1",
+      "COL_ixari_plaza_MemoryPier16Growth2",
+      "COL_ixari_plaza_MemoryPier16Growth3",
+      "COL_ixari_plaza_MemoryPier16Growth4",
+      "COL_ixari_plaza_MemoryPier16Growth5",
+      "COL_ixari_plaza_MemoryPier17Socket",
+      "COL_ixari_plaza_MemoryPier17Growth0",
+      "COL_ixari_plaza_MemoryPier17Growth1",
+      "COL_ixari_plaza_MemoryPier17Growth2",
+      "COL_ixari_plaza_MemoryPier17Growth3",
+      "COL_ixari_plaza_MemoryPier17Growth4",
+      "COL_ixari_plaza_MemoryPier17Growth5"
+    ],
+    "openings": [],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -24,
+            0.18
+          ],
+          [
+            0,
+            -6.4,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 163,
+    "node": "ixari_plaza",
+    "source": "assets/blend/cities/ixari_civic.blend",
+    "glb": "packages/client/public/models/cities/ixari_civic.glb",
+    "sourceSha256": "7e5d6e428d6f67d4079fc480b3cc765a9a5076134a66fe79e3d5e50419de786b"
+  },
+  {
+    "id": "ixari_market_hall",
+    "title": "Hollow Exchange",
+    "role": "market",
+    "assetClass": "building",
+    "bounds": [
+      [
+        -11.365485191345215,
+        -13.337021827697754,
+        0.0
+      ],
+      [
+        11.387395858764648,
+        13.17560863494873,
+        23.488000869750977
+      ]
+    ],
+    "authoredHeight": 23.488000869750977,
+    "footprintRadius": 13.889081990924593,
+    "lodTriangles": [
+      53184,
+      15954,
+      5230,
+      1679
+    ],
+    "markers": [
+      {
+        "name": "Light_EntryGrowth0_ixari_market_hall",
+        "position": [
+          -10.399999618530273,
+          -8.710000038146973,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Light_EntryGrowth2_ixari_market_hall",
+        "position": [
+          10.399999618530273,
+          -8.710000038146973,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Interact_Service_ixari_market_hall",
+        "position": [
+          0.0,
+          -12.199999809265137,
+          1.2799999713897705
+        ],
+        "properties": {
+          "service": "market"
+        }
+      }
+    ],
+    "colliders": [
+      "COL_ixari_market_hall_FootPolishedFloor",
+      "COL_ixari_market_hall_ShaftBed2",
+      "COL_ixari_market_hall_ShaftBed3",
+      "COL_ixari_market_hall_ShaftBed4",
+      "COL_ixari_market_hall_ShaftBed5",
+      "COL_ixari_market_hall_ShaftBed6",
+      "COL_ixari_market_hall_ShaftBed7",
+      "COL_ixari_market_hall_ShaftBed8",
+      "COL_ixari_market_hall_ShaftBed9",
+      "COL_ixari_market_hall_ShaftBed10",
+      "COL_ixari_market_hall_ShaftBed11",
+      "COL_ixari_market_hall_ShaftBed12",
+      "COL_ixari_market_hall_ShaftBed13",
+      "COL_ixari_market_hall_ShaftBed14",
+      "COL_ixari_market_hall_ShaftBed15",
+      "COL_ixari_market_hall_ShaftBed16",
+      "COL_ixari_market_hall_ShaftBed17",
+      "COL_ixari_market_hall_ShaftBed18",
+      "COL_ixari_market_hall_ShaftBed19",
+      "COL_ixari_market_hall_ShaftBed20",
+      "COL_ixari_market_hall_ShaftBed21",
+      "COL_ixari_market_hall_ShaftBed22",
+      "COL_ixari_market_hall_PortalCheek0",
+      "COL_ixari_market_hall_EntryGrowth0Socket",
+      "COL_ixari_market_hall_EntryGrowth0Growth0",
+      "COL_ixari_market_hall_EntryGrowth0Growth1",
+      "COL_ixari_market_hall_EntryGrowth0Growth2",
+      "COL_ixari_market_hall_EntryGrowth0Growth3",
+      "COL_ixari_market_hall_PortalCheek2",
+      "COL_ixari_market_hall_EntryGrowth2Socket",
+      "COL_ixari_market_hall_EntryGrowth2Growth0",
+      "COL_ixari_market_hall_EntryGrowth2Growth1",
+      "COL_ixari_market_hall_EntryGrowth2Growth2",
+      "COL_ixari_market_hall_EntryGrowth2Growth3",
+      "COL_ixari_market_hall_PortalLintel",
+      "COL_ixari_market_hall_HollowHallCanopy",
+      "COL_ixari_market_hall_ListeningBench0_0",
+      "COL_ixari_market_hall_ListeningBench0_1",
+      "COL_ixari_market_hall_ListeningBench0_2",
+      "COL_ixari_market_hall_ListeningBench2_0",
+      "COL_ixari_market_hall_ListeningBench2_1",
+      "COL_ixari_market_hall_ListeningBench2_2"
+    ],
+    "openings": [
+      {
+        "center": [
+          0,
+          -12.219999999999999,
+          0.18
+        ],
+        "width": 3.6,
+        "height": 3.42,
+        "axis": "Y"
+      }
+    ],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -15,
+            0.18
+          ],
+          [
+            0,
+            0,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 340,
+    "node": "ixari_market_hall",
+    "source": "assets/blend/cities/ixari_civic.blend",
+    "glb": "packages/client/public/models/cities/ixari_civic.glb",
+    "sourceSha256": "7e5d6e428d6f67d4079fc480b3cc765a9a5076134a66fe79e3d5e50419de786b"
+  },
+  {
+    "id": "ixari_skill_house",
+    "title": "Resonance House",
+    "role": "skill",
+    "assetClass": "building",
+    "bounds": [
+      [
+        -8.23275375366211,
+        -10.517022132873535,
+        0.0
+      ],
+      [
+        8.23275375366211,
+        10.021029472351074,
+        18.40399932861328
+      ]
+    ],
+    "authoredHeight": 18.40399932861328,
+    "footprintRadius": 10.910869766790366,
+    "lodTriangles": [
+      47848,
+      14354,
+      4700,
+      1507
+    ],
+    "markers": [
+      {
+        "name": "Light_EntryGrowth0_ixari_skill_house",
+        "position": [
+          -7.400000095367432,
+          -6.699999809265137,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Light_EntryGrowth2_ixari_skill_house",
+        "position": [
+          7.400000095367432,
+          -6.699999809265137,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Interact_Service_ixari_skill_house",
+        "position": [
+          0.0,
+          -9.199999809265137,
+          1.2799999713897705
+        ],
+        "properties": {
+          "service": "skill"
+        }
+      }
+    ],
+    "colliders": [
+      "COL_ixari_skill_house_FootPolishedFloor",
+      "COL_ixari_skill_house_ShaftBed2",
+      "COL_ixari_skill_house_ShaftBed3",
+      "COL_ixari_skill_house_ShaftBed4",
+      "COL_ixari_skill_house_ShaftBed5",
+      "COL_ixari_skill_house_ShaftBed6",
+      "COL_ixari_skill_house_ShaftBed7",
+      "COL_ixari_skill_house_ShaftBed8",
+      "COL_ixari_skill_house_ShaftBed9",
+      "COL_ixari_skill_house_ShaftBed10",
+      "COL_ixari_skill_house_ShaftBed11",
+      "COL_ixari_skill_house_ShaftBed12",
+      "COL_ixari_skill_house_ShaftBed13",
+      "COL_ixari_skill_house_ShaftBed14",
+      "COL_ixari_skill_house_ShaftBed15",
+      "COL_ixari_skill_house_ShaftBed16",
+      "COL_ixari_skill_house_ShaftBed17",
+      "COL_ixari_skill_house_ShaftBed18",
+      "COL_ixari_skill_house_ShaftBed19",
+      "COL_ixari_skill_house_ShaftBed20",
+      "COL_ixari_skill_house_ShaftBed21",
+      "COL_ixari_skill_house_ShaftBed22",
+      "COL_ixari_skill_house_PortalCheek0",
+      "COL_ixari_skill_house_EntryGrowth0Socket",
+      "COL_ixari_skill_house_EntryGrowth0Growth0",
+      "COL_ixari_skill_house_EntryGrowth0Growth1",
+      "COL_ixari_skill_house_EntryGrowth0Growth2",
+      "COL_ixari_skill_house_EntryGrowth0Growth3",
+      "COL_ixari_skill_house_PortalCheek2",
+      "COL_ixari_skill_house_EntryGrowth2Socket",
+      "COL_ixari_skill_house_EntryGrowth2Growth0",
+      "COL_ixari_skill_house_EntryGrowth2Growth1",
+      "COL_ixari_skill_house_EntryGrowth2Growth2",
+      "COL_ixari_skill_house_EntryGrowth2Growth3",
+      "COL_ixari_skill_house_PortalLintel",
+      "COL_ixari_skill_house_HollowHallCanopy",
+      "COL_ixari_skill_house_ListeningBench0_0",
+      "COL_ixari_skill_house_ListeningBench0_1",
+      "COL_ixari_skill_house_ListeningBench0_2",
+      "COL_ixari_skill_house_ListeningBench2_0",
+      "COL_ixari_skill_house_ListeningBench2_1",
+      "COL_ixari_skill_house_ListeningBench2_2"
+    ],
+    "openings": [
+      {
+        "center": [
+          0,
+          -9.399999999999999,
+          0.18
+        ],
+        "width": 3.6,
+        "height": 3.42,
+        "axis": "Y"
+      }
+    ],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -12,
+            0.18
+          ],
+          [
+            0,
+            0,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 306,
+    "node": "ixari_skill_house",
+    "source": "assets/blend/cities/ixari_civic.blend",
+    "glb": "packages/client/public/models/cities/ixari_civic.glb",
+    "sourceSha256": "7e5d6e428d6f67d4079fc480b3cc765a9a5076134a66fe79e3d5e50419de786b"
+  },
+  {
+    "id": "ixari_compact_office",
+    "title": "Passage Archive",
+    "role": "compact",
+    "assetClass": "building",
+    "bounds": [
+      [
+        -10.485160827636719,
+        -12.397022247314453,
+        0.0
+      ],
+      [
+        10.485160827636719,
+        12.199380874633789,
+        28.459999084472656
+      ]
+    ],
+    "authoredHeight": 28.459999084472656,
+    "footprintRadius": 12.726775778821189,
+    "lodTriangles": [
+      55952,
+      16784,
+      5496,
+      1777
+    ],
+    "markers": [
+      {
+        "name": "Light_EntryGrowth0_ixari_compact_office",
+        "position": [
+          -9.399999618530273,
+          -8.039999961853027,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Light_EntryGrowth2_ixari_compact_office",
+        "position": [
+          9.399999618530273,
+          -8.039999961853027,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Interact_Service_ixari_compact_office",
+        "position": [
+          0.0,
+          -11.199999809265137,
+          1.2799999713897705
+        ],
+        "properties": {
+          "service": "compact"
+        }
+      }
+    ],
+    "colliders": [
+      "COL_ixari_compact_office_FootPolishedFloor",
+      "COL_ixari_compact_office_ShaftBed2",
+      "COL_ixari_compact_office_ShaftBed3",
+      "COL_ixari_compact_office_ShaftBed4",
+      "COL_ixari_compact_office_ShaftBed5",
+      "COL_ixari_compact_office_ShaftBed6",
+      "COL_ixari_compact_office_ShaftBed7",
+      "COL_ixari_compact_office_ShaftBed8",
+      "COL_ixari_compact_office_ShaftBed9",
+      "COL_ixari_compact_office_ShaftBed10",
+      "COL_ixari_compact_office_ShaftBed11",
+      "COL_ixari_compact_office_ShaftBed12",
+      "COL_ixari_compact_office_ShaftBed13",
+      "COL_ixari_compact_office_ShaftBed14",
+      "COL_ixari_compact_office_ShaftBed15",
+      "COL_ixari_compact_office_ShaftBed16",
+      "COL_ixari_compact_office_ShaftBed17",
+      "COL_ixari_compact_office_ShaftBed18",
+      "COL_ixari_compact_office_ShaftBed19",
+      "COL_ixari_compact_office_ShaftBed20",
+      "COL_ixari_compact_office_ShaftBed21",
+      "COL_ixari_compact_office_ShaftBed22",
+      "COL_ixari_compact_office_PortalCheek0",
+      "COL_ixari_compact_office_EntryGrowth0Socket",
+      "COL_ixari_compact_office_EntryGrowth0Growth0",
+      "COL_ixari_compact_office_EntryGrowth0Growth1",
+      "COL_ixari_compact_office_EntryGrowth0Growth2",
+      "COL_ixari_compact_office_EntryGrowth0Growth3",
+      "COL_ixari_compact_office_PortalCheek2",
+      "COL_ixari_compact_office_EntryGrowth2Socket",
+      "COL_ixari_compact_office_EntryGrowth2Growth0",
+      "COL_ixari_compact_office_EntryGrowth2Growth1",
+      "COL_ixari_compact_office_EntryGrowth2Growth2",
+      "COL_ixari_compact_office_EntryGrowth2Growth3",
+      "COL_ixari_compact_office_PortalLintel",
+      "COL_ixari_compact_office_HollowHallCanopy",
+      "COL_ixari_compact_office_ListeningBench0_0",
+      "COL_ixari_compact_office_ListeningBench0_1",
+      "COL_ixari_compact_office_ListeningBench0_2",
+      "COL_ixari_compact_office_ListeningBench2_0",
+      "COL_ixari_compact_office_ListeningBench2_1",
+      "COL_ixari_compact_office_ListeningBench2_2"
+    ],
+    "openings": [
+      {
+        "center": [
+          0,
+          -11.28,
+          0.18
+        ],
+        "width": 3.6,
+        "height": 3.42,
+        "axis": "Y"
+      }
+    ],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -14,
+            0.18
+          ],
+          [
+            0,
+            0,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 356,
+    "node": "ixari_compact_office",
+    "source": "assets/blend/cities/ixari_civic.blend",
+    "glb": "packages/client/public/models/cities/ixari_civic.glb",
+    "sourceSha256": "7e5d6e428d6f67d4079fc480b3cc765a9a5076134a66fe79e3d5e50419de786b"
+  },
+  {
+    "id": "ixari_listening_house",
+    "title": "House of Kept Voices",
+    "role": "listening",
+    "assetClass": "building",
+    "bounds": [
+      [
+        -12.58935260772705,
+        -11.457022666931152,
+        0.0
+      ],
+      [
+        12.58935260772705,
+        11.282804489135742,
+        35.51599884033203
+      ]
+    ],
+    "authoredHeight": 35.51599884033203,
+    "footprintRadius": 13.901909507478608,
+    "lodTriangles": [
+      53184,
+      15954,
+      5230,
+      1671
+    ],
+    "markers": [
+      {
+        "name": "Light_EntryGrowth0_ixari_listening_house",
+        "position": [
+          -11.399999618530273,
+          -7.369999885559082,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Light_EntryGrowth2_ixari_listening_house",
+        "position": [
+          11.399999618530273,
+          -7.369999885559082,
+          1.1875
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 4.55
+        }
+      },
+      {
+        "name": "Interact_Service_ixari_listening_house",
+        "position": [
+          0.0,
+          -10.199999809265137,
+          1.2799999713897705
+        ],
+        "properties": {
+          "service": "listening"
+        }
+      }
+    ],
+    "colliders": [
+      "COL_ixari_listening_house_FootPolishedFloor",
+      "COL_ixari_listening_house_ShaftBed2",
+      "COL_ixari_listening_house_ShaftBed3",
+      "COL_ixari_listening_house_ShaftBed4",
+      "COL_ixari_listening_house_ShaftBed5",
+      "COL_ixari_listening_house_ShaftBed6",
+      "COL_ixari_listening_house_ShaftBed7",
+      "COL_ixari_listening_house_ShaftBed8",
+      "COL_ixari_listening_house_ShaftBed9",
+      "COL_ixari_listening_house_ShaftBed10",
+      "COL_ixari_listening_house_ShaftBed11",
+      "COL_ixari_listening_house_ShaftBed12",
+      "COL_ixari_listening_house_ShaftBed13",
+      "COL_ixari_listening_house_ShaftBed14",
+      "COL_ixari_listening_house_ShaftBed15",
+      "COL_ixari_listening_house_ShaftBed16",
+      "COL_ixari_listening_house_ShaftBed17",
+      "COL_ixari_listening_house_ShaftBed18",
+      "COL_ixari_listening_house_ShaftBed19",
+      "COL_ixari_listening_house_ShaftBed20",
+      "COL_ixari_listening_house_ShaftBed21",
+      "COL_ixari_listening_house_ShaftBed22",
+      "COL_ixari_listening_house_PortalCheek0",
+      "COL_ixari_listening_house_EntryGrowth0Socket",
+      "COL_ixari_listening_house_EntryGrowth0Growth0",
+      "COL_ixari_listening_house_EntryGrowth0Growth1",
+      "COL_ixari_listening_house_EntryGrowth0Growth2",
+      "COL_ixari_listening_house_EntryGrowth0Growth3",
+      "COL_ixari_listening_house_PortalCheek2",
+      "COL_ixari_listening_house_EntryGrowth2Socket",
+      "COL_ixari_listening_house_EntryGrowth2Growth0",
+      "COL_ixari_listening_house_EntryGrowth2Growth1",
+      "COL_ixari_listening_house_EntryGrowth2Growth2",
+      "COL_ixari_listening_house_EntryGrowth2Growth3",
+      "COL_ixari_listening_house_PortalLintel",
+      "COL_ixari_listening_house_HollowHallCanopy",
+      "COL_ixari_listening_house_ListeningBench0_0",
+      "COL_ixari_listening_house_ListeningBench0_1",
+      "COL_ixari_listening_house_ListeningBench0_2",
+      "COL_ixari_listening_house_ListeningBench2_0",
+      "COL_ixari_listening_house_ListeningBench2_1",
+      "COL_ixari_listening_house_ListeningBench2_2"
+    ],
+    "openings": [
+      {
+        "center": [
+          0,
+          -10.34,
+          0.18
+        ],
+        "width": 3.6,
+        "height": 3.42,
+        "axis": "Y"
+      }
+    ],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -13,
+            0.18
+          ],
+          [
+            0,
+            0,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 340,
+    "node": "ixari_listening_house",
+    "source": "assets/blend/cities/ixari_civic.blend",
+    "glb": "packages/client/public/models/cities/ixari_civic.glb",
+    "sourceSha256": "7e5d6e428d6f67d4079fc480b3cc765a9a5076134a66fe79e3d5e50419de786b"
+  },
+  {
+    "id": "ixari_shipyard",
+    "title": "Listener Ship Shelf",
+    "role": "shipyard",
+    "assetClass": "building",
+    "bounds": [
+      [
+        -28.0,
+        -25.200000762939453,
+        0.0
+      ],
+      [
+        28.0,
+        25.200000762939453,
+        4.521999835968018
+      ]
+    ],
+    "authoredHeight": 4.521999835968018,
+    "footprintRadius": 28.0,
+    "lodTriangles": [
+      38432,
+      11528,
+      3736,
+      1205
+    ],
+    "markers": [
+      {
+        "name": "Light_YardMouth0_ixari_shipyard",
+        "position": [
+          -4.0,
+          -20.15999984741211,
+          1.7300000190734863
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_YardMouth2_ixari_shipyard",
+        "position": [
+          4.0,
+          -20.15999984741211,
+          1.7300000190734863
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Interact_Yard_ixari_shipyard",
+        "position": [
+          0.0,
+          -19.600000381469727,
+          1.2799999713897705
+        ],
+        "properties": {
+          "service": "shipyard"
+        }
+      },
+      {
+        "name": "BAY_Shipyard_ixari_shipyard",
+        "position": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "properties": {
+          "padDiameter": 36
+        }
+      }
+    ],
+    "colliders": [
+      "COL_ixari_shipyard_YardShelf",
+      "COL_ixari_shipyard_YardSocket0Socket",
+      "COL_ixari_shipyard_YardSocket0Growth0",
+      "COL_ixari_shipyard_YardSocket0Growth1",
+      "COL_ixari_shipyard_YardSocket0Growth2",
+      "COL_ixari_shipyard_YardSocket0Growth3",
+      "COL_ixari_shipyard_YardSocket1Socket",
+      "COL_ixari_shipyard_YardSocket1Growth0",
+      "COL_ixari_shipyard_YardSocket1Growth1",
+      "COL_ixari_shipyard_YardSocket1Growth2",
+      "COL_ixari_shipyard_YardSocket1Growth3",
+      "COL_ixari_shipyard_YardSocket2Socket",
+      "COL_ixari_shipyard_YardSocket2Growth0",
+      "COL_ixari_shipyard_YardSocket2Growth1",
+      "COL_ixari_shipyard_YardSocket2Growth2",
+      "COL_ixari_shipyard_YardSocket2Growth3",
+      "COL_ixari_shipyard_YardSocket3Socket",
+      "COL_ixari_shipyard_YardSocket3Growth0",
+      "COL_ixari_shipyard_YardSocket3Growth1",
+      "COL_ixari_shipyard_YardSocket3Growth2",
+      "COL_ixari_shipyard_YardSocket3Growth3",
+      "COL_ixari_shipyard_YardSocket4Socket",
+      "COL_ixari_shipyard_YardSocket4Growth0",
+      "COL_ixari_shipyard_YardSocket4Growth1",
+      "COL_ixari_shipyard_YardSocket4Growth2",
+      "COL_ixari_shipyard_YardSocket4Growth3",
+      "COL_ixari_shipyard_YardSocket5Socket",
+      "COL_ixari_shipyard_YardSocket5Growth0",
+      "COL_ixari_shipyard_YardSocket5Growth1",
+      "COL_ixari_shipyard_YardSocket5Growth2",
+      "COL_ixari_shipyard_YardSocket5Growth3",
+      "COL_ixari_shipyard_YardSocket6Socket",
+      "COL_ixari_shipyard_YardSocket6Growth0",
+      "COL_ixari_shipyard_YardSocket6Growth1",
+      "COL_ixari_shipyard_YardSocket6Growth2",
+      "COL_ixari_shipyard_YardSocket6Growth3",
+      "COL_ixari_shipyard_YardSocket7Socket",
+      "COL_ixari_shipyard_YardSocket7Growth0",
+      "COL_ixari_shipyard_YardSocket7Growth1",
+      "COL_ixari_shipyard_YardSocket7Growth2",
+      "COL_ixari_shipyard_YardSocket7Growth3",
+      "COL_ixari_shipyard_YardSocket8Socket",
+      "COL_ixari_shipyard_YardSocket8Growth0",
+      "COL_ixari_shipyard_YardSocket8Growth1",
+      "COL_ixari_shipyard_YardSocket8Growth2",
+      "COL_ixari_shipyard_YardSocket8Growth3",
+      "COL_ixari_shipyard_YardSocket9Socket",
+      "COL_ixari_shipyard_YardSocket9Growth0",
+      "COL_ixari_shipyard_YardSocket9Growth1",
+      "COL_ixari_shipyard_YardSocket9Growth2",
+      "COL_ixari_shipyard_YardSocket9Growth3",
+      "COL_ixari_shipyard_YardSocket10Socket",
+      "COL_ixari_shipyard_YardSocket10Growth0",
+      "COL_ixari_shipyard_YardSocket10Growth1",
+      "COL_ixari_shipyard_YardSocket10Growth2",
+      "COL_ixari_shipyard_YardSocket10Growth3",
+      "COL_ixari_shipyard_YardSocket11Socket",
+      "COL_ixari_shipyard_YardSocket11Growth0",
+      "COL_ixari_shipyard_YardSocket11Growth1",
+      "COL_ixari_shipyard_YardSocket11Growth2",
+      "COL_ixari_shipyard_YardSocket11Growth3",
+      "COL_ixari_shipyard_YardSocket12Socket",
+      "COL_ixari_shipyard_YardSocket12Growth0",
+      "COL_ixari_shipyard_YardSocket12Growth1",
+      "COL_ixari_shipyard_YardSocket12Growth2",
+      "COL_ixari_shipyard_YardSocket12Growth3",
+      "COL_ixari_shipyard_YardSocket13Socket",
+      "COL_ixari_shipyard_YardSocket13Growth0",
+      "COL_ixari_shipyard_YardSocket13Growth1",
+      "COL_ixari_shipyard_YardSocket13Growth2",
+      "COL_ixari_shipyard_YardSocket13Growth3",
+      "COL_ixari_shipyard_YardSocket14Socket",
+      "COL_ixari_shipyard_YardSocket14Growth0",
+      "COL_ixari_shipyard_YardSocket14Growth1",
+      "COL_ixari_shipyard_YardSocket14Growth2",
+      "COL_ixari_shipyard_YardSocket14Growth3",
+      "COL_ixari_shipyard_YardSocket15Socket",
+      "COL_ixari_shipyard_YardSocket15Growth0",
+      "COL_ixari_shipyard_YardSocket15Growth1",
+      "COL_ixari_shipyard_YardSocket15Growth2",
+      "COL_ixari_shipyard_YardSocket15Growth3",
+      "COL_ixari_shipyard_YardSocket16Socket",
+      "COL_ixari_shipyard_YardSocket16Growth0",
+      "COL_ixari_shipyard_YardSocket16Growth1",
+      "COL_ixari_shipyard_YardSocket16Growth2",
+      "COL_ixari_shipyard_YardSocket16Growth3",
+      "COL_ixari_shipyard_YardSocket17Socket",
+      "COL_ixari_shipyard_YardSocket17Growth0",
+      "COL_ixari_shipyard_YardSocket17Growth1",
+      "COL_ixari_shipyard_YardSocket17Growth2",
+      "COL_ixari_shipyard_YardSocket17Growth3",
+      "COL_ixari_shipyard_YardSocket18Socket",
+      "COL_ixari_shipyard_YardSocket18Growth0",
+      "COL_ixari_shipyard_YardSocket18Growth1",
+      "COL_ixari_shipyard_YardSocket18Growth2",
+      "COL_ixari_shipyard_YardSocket18Growth3",
+      "COL_ixari_shipyard_YardSocket19Socket",
+      "COL_ixari_shipyard_YardSocket19Growth0",
+      "COL_ixari_shipyard_YardSocket19Growth1",
+      "COL_ixari_shipyard_YardSocket19Growth2",
+      "COL_ixari_shipyard_YardSocket19Growth3",
+      "COL_ixari_shipyard_YardSocket20Socket",
+      "COL_ixari_shipyard_YardSocket20Growth0",
+      "COL_ixari_shipyard_YardSocket20Growth1",
+      "COL_ixari_shipyard_YardSocket20Growth2",
+      "COL_ixari_shipyard_YardSocket20Growth3",
+      "COL_ixari_shipyard_YardSocket21Socket",
+      "COL_ixari_shipyard_YardSocket21Growth0",
+      "COL_ixari_shipyard_YardSocket21Growth1",
+      "COL_ixari_shipyard_YardSocket21Growth2",
+      "COL_ixari_shipyard_YardSocket21Growth3",
+      "COL_ixari_shipyard_YardSocket22Socket",
+      "COL_ixari_shipyard_YardSocket22Growth0",
+      "COL_ixari_shipyard_YardSocket22Growth1",
+      "COL_ixari_shipyard_YardSocket22Growth2",
+      "COL_ixari_shipyard_YardSocket22Growth3",
+      "COL_ixari_shipyard_YardSocket32Socket",
+      "COL_ixari_shipyard_YardSocket32Growth0",
+      "COL_ixari_shipyard_YardSocket32Growth1",
+      "COL_ixari_shipyard_YardSocket32Growth2",
+      "COL_ixari_shipyard_YardSocket32Growth3",
+      "COL_ixari_shipyard_YardSocket33Socket",
+      "COL_ixari_shipyard_YardSocket33Growth0",
+      "COL_ixari_shipyard_YardSocket33Growth1",
+      "COL_ixari_shipyard_YardSocket33Growth2",
+      "COL_ixari_shipyard_YardSocket33Growth3",
+      "COL_ixari_shipyard_YardSocket34Socket",
+      "COL_ixari_shipyard_YardSocket34Growth0",
+      "COL_ixari_shipyard_YardSocket34Growth1",
+      "COL_ixari_shipyard_YardSocket34Growth2",
+      "COL_ixari_shipyard_YardSocket34Growth3",
+      "COL_ixari_shipyard_YardSocket35Socket",
+      "COL_ixari_shipyard_YardSocket35Growth0",
+      "COL_ixari_shipyard_YardSocket35Growth1",
+      "COL_ixari_shipyard_YardSocket35Growth2",
+      "COL_ixari_shipyard_YardSocket35Growth3",
+      "COL_ixari_shipyard_YardMouth0Socket",
+      "COL_ixari_shipyard_YardMouth0Growth0",
+      "COL_ixari_shipyard_YardMouth0Growth1",
+      "COL_ixari_shipyard_YardMouth0Growth2",
+      "COL_ixari_shipyard_YardMouth0Growth3",
+      "COL_ixari_shipyard_YardStore0_0",
+      "COL_ixari_shipyard_YardStore0_1",
+      "COL_ixari_shipyard_YardStore0_2",
+      "COL_ixari_shipyard_YardStore0_3",
+      "COL_ixari_shipyard_YardMouth2Socket",
+      "COL_ixari_shipyard_YardMouth2Growth0",
+      "COL_ixari_shipyard_YardMouth2Growth1",
+      "COL_ixari_shipyard_YardMouth2Growth2",
+      "COL_ixari_shipyard_YardMouth2Growth3",
+      "COL_ixari_shipyard_YardStore2_0",
+      "COL_ixari_shipyard_YardStore2_1",
+      "COL_ixari_shipyard_YardStore2_2",
+      "COL_ixari_shipyard_YardStore2_3"
+    ],
+    "openings": [],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -25.2,
+            0.18
+          ],
+          [
+            0,
+            0,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": 36,
+    "sourceIslands": 268,
+    "node": "ixari_shipyard",
+    "source": "assets/blend/cities/ixari_civic.blend",
+    "glb": "packages/client/public/models/cities/ixari_civic.glb",
+    "sourceSha256": "7e5d6e428d6f67d4079fc480b3cc765a9a5076134a66fe79e3d5e50419de786b"
+  },
+  {
+    "id": "ixari_salvage_yard",
+    "title": "Found Memory Yard",
+    "role": "salvage",
+    "assetClass": "building",
+    "bounds": [
+      [
+        -22.0,
+        -19.799999237060547,
+        0.0
+      ],
+      [
+        22.0,
+        19.799999237060547,
+        4.521999835968018
+      ]
+    ],
+    "authoredHeight": 4.521999835968018,
+    "footprintRadius": 22.0,
+    "lodTriangles": [
+      38432,
+      11528,
+      3736,
+      1205
+    ],
+    "markers": [
+      {
+        "name": "Light_YardMouth0_ixari_salvage_yard",
+        "position": [
+          -4.0,
+          -15.84000015258789,
+          1.7300000190734863
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_YardMouth2_ixari_salvage_yard",
+        "position": [
+          4.0,
+          -15.84000015258789,
+          1.7300000190734863
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Interact_Yard_ixari_salvage_yard",
+        "position": [
+          0.0,
+          -15.399999618530273,
+          1.2799999713897705
+        ],
+        "properties": {
+          "service": "salvage"
+        }
+      },
+      {
+        "name": "BAY_Listener_ixari_salvage_yard",
+        "position": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "properties": {
+          "padDiameter": 24
+        }
+      }
+    ],
+    "colliders": [
+      "COL_ixari_salvage_yard_YardShelf",
+      "COL_ixari_salvage_yard_YardSocket0Socket",
+      "COL_ixari_salvage_yard_YardSocket0Growth0",
+      "COL_ixari_salvage_yard_YardSocket0Growth1",
+      "COL_ixari_salvage_yard_YardSocket0Growth2",
+      "COL_ixari_salvage_yard_YardSocket0Growth3",
+      "COL_ixari_salvage_yard_YardSocket1Socket",
+      "COL_ixari_salvage_yard_YardSocket1Growth0",
+      "COL_ixari_salvage_yard_YardSocket1Growth1",
+      "COL_ixari_salvage_yard_YardSocket1Growth2",
+      "COL_ixari_salvage_yard_YardSocket1Growth3",
+      "COL_ixari_salvage_yard_YardSocket2Socket",
+      "COL_ixari_salvage_yard_YardSocket2Growth0",
+      "COL_ixari_salvage_yard_YardSocket2Growth1",
+      "COL_ixari_salvage_yard_YardSocket2Growth2",
+      "COL_ixari_salvage_yard_YardSocket2Growth3",
+      "COL_ixari_salvage_yard_YardSocket3Socket",
+      "COL_ixari_salvage_yard_YardSocket3Growth0",
+      "COL_ixari_salvage_yard_YardSocket3Growth1",
+      "COL_ixari_salvage_yard_YardSocket3Growth2",
+      "COL_ixari_salvage_yard_YardSocket3Growth3",
+      "COL_ixari_salvage_yard_YardSocket4Socket",
+      "COL_ixari_salvage_yard_YardSocket4Growth0",
+      "COL_ixari_salvage_yard_YardSocket4Growth1",
+      "COL_ixari_salvage_yard_YardSocket4Growth2",
+      "COL_ixari_salvage_yard_YardSocket4Growth3",
+      "COL_ixari_salvage_yard_YardSocket5Socket",
+      "COL_ixari_salvage_yard_YardSocket5Growth0",
+      "COL_ixari_salvage_yard_YardSocket5Growth1",
+      "COL_ixari_salvage_yard_YardSocket5Growth2",
+      "COL_ixari_salvage_yard_YardSocket5Growth3",
+      "COL_ixari_salvage_yard_YardSocket6Socket",
+      "COL_ixari_salvage_yard_YardSocket6Growth0",
+      "COL_ixari_salvage_yard_YardSocket6Growth1",
+      "COL_ixari_salvage_yard_YardSocket6Growth2",
+      "COL_ixari_salvage_yard_YardSocket6Growth3",
+      "COL_ixari_salvage_yard_YardSocket7Socket",
+      "COL_ixari_salvage_yard_YardSocket7Growth0",
+      "COL_ixari_salvage_yard_YardSocket7Growth1",
+      "COL_ixari_salvage_yard_YardSocket7Growth2",
+      "COL_ixari_salvage_yard_YardSocket7Growth3",
+      "COL_ixari_salvage_yard_YardSocket8Socket",
+      "COL_ixari_salvage_yard_YardSocket8Growth0",
+      "COL_ixari_salvage_yard_YardSocket8Growth1",
+      "COL_ixari_salvage_yard_YardSocket8Growth2",
+      "COL_ixari_salvage_yard_YardSocket8Growth3",
+      "COL_ixari_salvage_yard_YardSocket9Socket",
+      "COL_ixari_salvage_yard_YardSocket9Growth0",
+      "COL_ixari_salvage_yard_YardSocket9Growth1",
+      "COL_ixari_salvage_yard_YardSocket9Growth2",
+      "COL_ixari_salvage_yard_YardSocket9Growth3",
+      "COL_ixari_salvage_yard_YardSocket10Socket",
+      "COL_ixari_salvage_yard_YardSocket10Growth0",
+      "COL_ixari_salvage_yard_YardSocket10Growth1",
+      "COL_ixari_salvage_yard_YardSocket10Growth2",
+      "COL_ixari_salvage_yard_YardSocket10Growth3",
+      "COL_ixari_salvage_yard_YardSocket11Socket",
+      "COL_ixari_salvage_yard_YardSocket11Growth0",
+      "COL_ixari_salvage_yard_YardSocket11Growth1",
+      "COL_ixari_salvage_yard_YardSocket11Growth2",
+      "COL_ixari_salvage_yard_YardSocket11Growth3",
+      "COL_ixari_salvage_yard_YardSocket12Socket",
+      "COL_ixari_salvage_yard_YardSocket12Growth0",
+      "COL_ixari_salvage_yard_YardSocket12Growth1",
+      "COL_ixari_salvage_yard_YardSocket12Growth2",
+      "COL_ixari_salvage_yard_YardSocket12Growth3",
+      "COL_ixari_salvage_yard_YardSocket13Socket",
+      "COL_ixari_salvage_yard_YardSocket13Growth0",
+      "COL_ixari_salvage_yard_YardSocket13Growth1",
+      "COL_ixari_salvage_yard_YardSocket13Growth2",
+      "COL_ixari_salvage_yard_YardSocket13Growth3",
+      "COL_ixari_salvage_yard_YardSocket14Socket",
+      "COL_ixari_salvage_yard_YardSocket14Growth0",
+      "COL_ixari_salvage_yard_YardSocket14Growth1",
+      "COL_ixari_salvage_yard_YardSocket14Growth2",
+      "COL_ixari_salvage_yard_YardSocket14Growth3",
+      "COL_ixari_salvage_yard_YardSocket15Socket",
+      "COL_ixari_salvage_yard_YardSocket15Growth0",
+      "COL_ixari_salvage_yard_YardSocket15Growth1",
+      "COL_ixari_salvage_yard_YardSocket15Growth2",
+      "COL_ixari_salvage_yard_YardSocket15Growth3",
+      "COL_ixari_salvage_yard_YardSocket16Socket",
+      "COL_ixari_salvage_yard_YardSocket16Growth0",
+      "COL_ixari_salvage_yard_YardSocket16Growth1",
+      "COL_ixari_salvage_yard_YardSocket16Growth2",
+      "COL_ixari_salvage_yard_YardSocket16Growth3",
+      "COL_ixari_salvage_yard_YardSocket17Socket",
+      "COL_ixari_salvage_yard_YardSocket17Growth0",
+      "COL_ixari_salvage_yard_YardSocket17Growth1",
+      "COL_ixari_salvage_yard_YardSocket17Growth2",
+      "COL_ixari_salvage_yard_YardSocket17Growth3",
+      "COL_ixari_salvage_yard_YardSocket18Socket",
+      "COL_ixari_salvage_yard_YardSocket18Growth0",
+      "COL_ixari_salvage_yard_YardSocket18Growth1",
+      "COL_ixari_salvage_yard_YardSocket18Growth2",
+      "COL_ixari_salvage_yard_YardSocket18Growth3",
+      "COL_ixari_salvage_yard_YardSocket19Socket",
+      "COL_ixari_salvage_yard_YardSocket19Growth0",
+      "COL_ixari_salvage_yard_YardSocket19Growth1",
+      "COL_ixari_salvage_yard_YardSocket19Growth2",
+      "COL_ixari_salvage_yard_YardSocket19Growth3",
+      "COL_ixari_salvage_yard_YardSocket20Socket",
+      "COL_ixari_salvage_yard_YardSocket20Growth0",
+      "COL_ixari_salvage_yard_YardSocket20Growth1",
+      "COL_ixari_salvage_yard_YardSocket20Growth2",
+      "COL_ixari_salvage_yard_YardSocket20Growth3",
+      "COL_ixari_salvage_yard_YardSocket21Socket",
+      "COL_ixari_salvage_yard_YardSocket21Growth0",
+      "COL_ixari_salvage_yard_YardSocket21Growth1",
+      "COL_ixari_salvage_yard_YardSocket21Growth2",
+      "COL_ixari_salvage_yard_YardSocket21Growth3",
+      "COL_ixari_salvage_yard_YardSocket22Socket",
+      "COL_ixari_salvage_yard_YardSocket22Growth0",
+      "COL_ixari_salvage_yard_YardSocket22Growth1",
+      "COL_ixari_salvage_yard_YardSocket22Growth2",
+      "COL_ixari_salvage_yard_YardSocket22Growth3",
+      "COL_ixari_salvage_yard_YardSocket32Socket",
+      "COL_ixari_salvage_yard_YardSocket32Growth0",
+      "COL_ixari_salvage_yard_YardSocket32Growth1",
+      "COL_ixari_salvage_yard_YardSocket32Growth2",
+      "COL_ixari_salvage_yard_YardSocket32Growth3",
+      "COL_ixari_salvage_yard_YardSocket33Socket",
+      "COL_ixari_salvage_yard_YardSocket33Growth0",
+      "COL_ixari_salvage_yard_YardSocket33Growth1",
+      "COL_ixari_salvage_yard_YardSocket33Growth2",
+      "COL_ixari_salvage_yard_YardSocket33Growth3",
+      "COL_ixari_salvage_yard_YardSocket34Socket",
+      "COL_ixari_salvage_yard_YardSocket34Growth0",
+      "COL_ixari_salvage_yard_YardSocket34Growth1",
+      "COL_ixari_salvage_yard_YardSocket34Growth2",
+      "COL_ixari_salvage_yard_YardSocket34Growth3",
+      "COL_ixari_salvage_yard_YardSocket35Socket",
+      "COL_ixari_salvage_yard_YardSocket35Growth0",
+      "COL_ixari_salvage_yard_YardSocket35Growth1",
+      "COL_ixari_salvage_yard_YardSocket35Growth2",
+      "COL_ixari_salvage_yard_YardSocket35Growth3",
+      "COL_ixari_salvage_yard_YardMouth0Socket",
+      "COL_ixari_salvage_yard_YardMouth0Growth0",
+      "COL_ixari_salvage_yard_YardMouth0Growth1",
+      "COL_ixari_salvage_yard_YardMouth0Growth2",
+      "COL_ixari_salvage_yard_YardMouth0Growth3",
+      "COL_ixari_salvage_yard_YardStore0_0",
+      "COL_ixari_salvage_yard_YardStore0_1",
+      "COL_ixari_salvage_yard_YardStore0_2",
+      "COL_ixari_salvage_yard_YardStore0_3",
+      "COL_ixari_salvage_yard_YardMouth2Socket",
+      "COL_ixari_salvage_yard_YardMouth2Growth0",
+      "COL_ixari_salvage_yard_YardMouth2Growth1",
+      "COL_ixari_salvage_yard_YardMouth2Growth2",
+      "COL_ixari_salvage_yard_YardMouth2Growth3",
+      "COL_ixari_salvage_yard_YardStore2_0",
+      "COL_ixari_salvage_yard_YardStore2_1",
+      "COL_ixari_salvage_yard_YardStore2_2",
+      "COL_ixari_salvage_yard_YardStore2_3"
+    ],
+    "openings": [],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -19.8,
+            0.18
+          ],
+          [
+            0,
+            0,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": 24,
+    "sourceIslands": 268,
+    "node": "ixari_salvage_yard",
+    "source": "assets/blend/cities/ixari_civic.blend",
+    "glb": "packages/client/public/models/cities/ixari_civic.glb",
+    "sourceSha256": "7e5d6e428d6f67d4079fc480b3cc765a9a5076134a66fe79e3d5e50419de786b"
+  }
+]

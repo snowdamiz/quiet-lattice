@@ -1,0 +1,21 @@
+00:00.386  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_civic.blend"
+/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/preview.py:36: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  sc.world=bpy.data.worlds.new('CPUStudio');sc.world.use_nodes=True
+00:02.305  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/renders/cities/ixari/civic-shape-r2/scratch.png'
+00:05.794  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/renders/cities/ixari/civic-shape-r2/scratch.png'
+00:10.615  render           | Saved: '/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/renders/cities/ixari/civic-shape-r2/scratch.png'
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/preview.py", line 90, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/preview.py", line 74, in main
+    im=bpy.data.images.load(str(scratch),check_existing=False)
+RuntimeError: Error: Cannot read '/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/renders/cities/ixari/civic-shape-r2/scratch.png': No such file or directory
+
+
+Error: script failed, file: 'packages/tools/blender/cities/ixari/preview.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Sent an internal break event. Press ^C again to kill Blender
+
+Blender quit

@@ -1,0 +1,368 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/cities/ixari_kit.glb",
+  "family": "cities",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:47:24Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "bridge_ixari",
+      "variants": [
+        {
+          "id": "bridge_ixari",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 10640,
+            "1": 3192,
+            "2": 1056,
+            "3": 275
+          },
+          "implicitLods": false,
+          "dims": [
+            6.794,
+            24.194,
+            2.856
+          ],
+          "materials": [
+            "IxariAtlas2048"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "gate_ixari",
+      "variants": [
+        {
+          "id": "gate_ixari",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 7592,
+            "1": 2276,
+            "2": 754,
+            "3": 251
+          },
+          "implicitLods": false,
+          "dims": [
+            12.202,
+            6.0,
+            10.631
+          ],
+          "materials": [
+            "IxariAtlas2048"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "kit_ixari_spiral",
+      "variants": [
+        {
+          "id": "kit_ixari_spiral",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 11680,
+            "1": 3504,
+            "2": 1014,
+            "3": 248
+          },
+          "implicitLods": false,
+          "dims": [
+            24.712,
+            24.435,
+            7.811
+          ],
+          "materials": [
+            "IxariAtlas2048"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "lamp_ixari_biolume",
+      "variants": [
+        {
+          "id": "lamp_ixari_biolume",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 1172,
+            "1": 350,
+            "2": 114,
+            "3": 37
+          },
+          "implicitLods": false,
+          "dims": [
+            1.695,
+            1.362,
+            3.112
+          ],
+          "materials": [
+            "IxariAtlas2048"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "wall_ixari_corner",
+      "variants": [
+        {
+          "id": "wall_ixari_corner",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 14612,
+            "1": 4382,
+            "2": 1434,
+            "3": 468
+          },
+          "implicitLods": false,
+          "dims": [
+            9.826,
+            9.308,
+            3.891
+          ],
+          "materials": [
+            "IxariAtlas2048"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "wall_ixari_straight",
+      "variants": [
+        {
+          "id": "wall_ixari_straight",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 13488,
+            "1": 4046,
+            "2": 1324,
+            "3": 434
+          },
+          "implicitLods": false,
+          "dims": [
+            17.826,
+            1.308,
+            3.891
+          ],
+          "materials": [
+            "IxariAtlas2048"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_kit.glb",
+          "message": "6 variant(s) in 6 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "bridge_ixari",
+          "message": "LOD0 10,640 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "gate_ixari",
+          "message": "LOD0 7,592 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "kit_ixari_spiral",
+          "message": "LOD0 11,680 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "lamp_ixari_biolume",
+          "message": "LOD0 1,172 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "wall_ixari_corner",
+          "message": "LOD0 14,612 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "wall_ixari_straight",
+          "message": "LOD0 13,488 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 1.9 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "bridge_ixari",
+          "message": "10,640 > 3,192 > 1,056 > 275 triangles; LOD3 2.6% of LOD0"
+        },
+        {
+          "subject": "gate_ixari",
+          "message": "7,592 > 2,276 > 754 > 251 triangles; LOD3 3.3% of LOD0"
+        },
+        {
+          "subject": "kit_ixari_spiral",
+          "message": "11,680 > 3,504 > 1,014 > 248 triangles; LOD3 2.1% of LOD0"
+        },
+        {
+          "subject": "lamp_ixari_biolume",
+          "message": "1,172 > 350 > 114 > 37 triangles; LOD3 3.2% of LOD0"
+        },
+        {
+          "subject": "wall_ixari_corner",
+          "message": "14,612 > 4,382 > 1,434 > 468 triangles; LOD3 3.2% of LOD0"
+        },
+        {
+          "subject": "wall_ixari_straight",
+          "message": "13,488 > 4,046 > 1,324 > 434 triangles; LOD3 3.2% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "IxariAtlas2048",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "4 KTX2 map(s) (1 UASTC, 3 ETC1S) with full mip chains, 0.4 MB"
+        },
+        {
+          "subject": "bridge_ixari",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "gate_ixari",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "kit_ixari_spiral",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "lamp_ixari_biolume",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "wall_ixari_corner",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "wall_ixari_straight",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/cities/ixari_kit.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "bridge_ixari",
+          "message": "longest side 24.19 m within 0.2-60 m"
+        },
+        {
+          "subject": "gate_ixari",
+          "message": "longest side 12.20 m within 0.2-60 m"
+        },
+        {
+          "subject": "kit_ixari_spiral",
+          "message": "longest side 24.71 m within 0.2-60 m"
+        },
+        {
+          "subject": "lamp_ixari_biolume",
+          "message": "longest side 3.11 m within 0.2-60 m"
+        },
+        {
+          "subject": "wall_ixari_corner",
+          "message": "longest side 9.83 m within 0.2-60 m"
+        },
+        {
+          "subject": "wall_ixari_straight",
+          "message": "longest side 17.83 m within 0.2-60 m"
+        }
+      ]
+    }
+  ]
+}

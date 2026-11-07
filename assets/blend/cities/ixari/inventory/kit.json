@@ -1,0 +1,1126 @@
+[
+  {
+    "id": "gate_ixari",
+    "title": "Cleft Gate",
+    "role": "gate",
+    "assetClass": "kit",
+    "bounds": [
+      [
+        -6.241636753082275,
+        -3.0,
+        0.0
+      ],
+      [
+        5.96063232421875,
+        3.0,
+        10.630000114440918
+      ]
+    ],
+    "authoredHeight": 10.630000114440918,
+    "footprintRadius": 6.2429306419307995,
+    "lodTriangles": [
+      7592,
+      2276,
+      754,
+      251
+    ],
+    "markers": [
+      {
+        "name": "Interact_Gate_gate_ixari",
+        "position": [
+          0.0,
+          -2.0,
+          1.2799999713897705
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_gate_ixari_GateSpire0Socket",
+      "COL_gate_ixari_GateSpire0Growth0",
+      "COL_gate_ixari_GateSpire0Growth1",
+      "COL_gate_ixari_GateSpire0Growth2",
+      "COL_gate_ixari_GateSpire0Growth3",
+      "COL_gate_ixari_GateSpire0Growth4",
+      "COL_gate_ixari_GateSpire0Growth5",
+      "COL_gate_ixari_GateSpire0Growth6",
+      "COL_gate_ixari_GateSpire0Growth7",
+      "COL_gate_ixari_GateSpire0Growth8",
+      "COL_gate_ixari_GateSocketBed0_0",
+      "COL_gate_ixari_GateSocketBed0_1",
+      "COL_gate_ixari_GateSocketBed0_2",
+      "COL_gate_ixari_GateSocketBed0_3",
+      "COL_gate_ixari_GateSpire2Socket",
+      "COL_gate_ixari_GateSpire2Growth0",
+      "COL_gate_ixari_GateSpire2Growth1",
+      "COL_gate_ixari_GateSpire2Growth2",
+      "COL_gate_ixari_GateSpire2Growth3",
+      "COL_gate_ixari_GateSpire2Growth4",
+      "COL_gate_ixari_GateSpire2Growth5",
+      "COL_gate_ixari_GateSpire2Growth6",
+      "COL_gate_ixari_GateSpire2Growth7",
+      "COL_gate_ixari_GateSpire2Growth8",
+      "COL_gate_ixari_GateSocketBed2_0",
+      "COL_gate_ixari_GateSocketBed2_1",
+      "COL_gate_ixari_GateSocketBed2_2",
+      "COL_gate_ixari_GateSocketBed2_3",
+      "COL_gate_ixari_CrownBridge",
+      "COL_gate_ixari_GateThreshold"
+    ],
+    "openings": [
+      {
+        "center": [
+          0,
+          0,
+          0.18
+        ],
+        "width": 4.4,
+        "height": 4.5,
+        "axis": "Y"
+      }
+    ],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -3,
+            0.18
+          ],
+          [
+            0,
+            3,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 42,
+    "node": "gate_ixari",
+    "source": "assets/blend/cities/ixari_kit.blend",
+    "glb": "packages/client/public/models/cities/ixari_kit.glb",
+    "sourceSha256": "03135e4a16a22c01a012a59c5dc776d3fd9ee954429f607bdd2bb8717d4246bb"
+  },
+  {
+    "id": "wall_ixari_straight",
+    "title": "Socket Wall",
+    "role": "wall",
+    "assetClass": "kit",
+    "bounds": [
+      [
+        -8.901244163513184,
+        -0.6914899945259094,
+        0.0
+      ],
+      [
+        8.924800872802734,
+        0.6164089441299438,
+        3.8919999599456787
+      ]
+    ],
+    "authoredHeight": 3.8919999599456787,
+    "footprintRadius": 8.925164241007003,
+    "lodTriangles": [
+      13488,
+      4046,
+      1324,
+      434
+    ],
+    "markers": [],
+    "colliders": [
+      "COL_wall_ixari_straight_WallBed0_0",
+      "COL_wall_ixari_straight_WallBed0_1",
+      "COL_wall_ixari_straight_WallBed0_2",
+      "COL_wall_ixari_straight_WallBed0_3",
+      "COL_wall_ixari_straight_WallBed0_4",
+      "COL_wall_ixari_straight_WallBed0_5",
+      "COL_wall_ixari_straight_WallBed0_6",
+      "COL_wall_ixari_straight_WallBed0_7",
+      "COL_wall_ixari_straight_WallBed0_8",
+      "COL_wall_ixari_straight_WallBed0_9",
+      "COL_wall_ixari_straight_WallBed0_10",
+      "COL_wall_ixari_straight_WallBed0_11"
+    ],
+    "openings": [],
+    "walkRoutes": [],
+    "padDiameter": null,
+    "sourceIslands": 84,
+    "node": "wall_ixari_straight",
+    "source": "assets/blend/cities/ixari_kit.blend",
+    "glb": "packages/client/public/models/cities/ixari_kit.glb",
+    "sourceSha256": "03135e4a16a22c01a012a59c5dc776d3fd9ee954429f607bdd2bb8717d4246bb"
+  },
+  {
+    "id": "wall_ixari_corner",
+    "title": "Turned Socket Wall",
+    "role": "wall_corner",
+    "assetClass": "kit",
+    "bounds": [
+      [
+        -8.901244163513184,
+        -0.6914899945259094,
+        0.0
+      ],
+      [
+        0.924801230430603,
+        8.616409301757812,
+        3.8919999599456787
+      ]
+    ],
+    "authoredHeight": 3.8919999599456787,
+    "footprintRadius": 8.901590169528058,
+    "lodTriangles": [
+      14612,
+      4382,
+      1434,
+      468
+    ],
+    "markers": [],
+    "colliders": [
+      "COL_wall_ixari_corner_WallBed0_0",
+      "COL_wall_ixari_corner_WallBed0_1",
+      "COL_wall_ixari_corner_WallBed0_2",
+      "COL_wall_ixari_corner_WallBed0_3",
+      "COL_wall_ixari_corner_WallBed0_4",
+      "COL_wall_ixari_corner_WallBed0_5",
+      "COL_wall_ixari_corner_WallBed0_6",
+      "COL_wall_ixari_corner_WallBed1_1",
+      "COL_wall_ixari_corner_WallBed1_2",
+      "COL_wall_ixari_corner_WallBed1_3",
+      "COL_wall_ixari_corner_WallBed1_4",
+      "COL_wall_ixari_corner_WallBed1_5",
+      "COL_wall_ixari_corner_WallBed1_6"
+    ],
+    "openings": [],
+    "walkRoutes": [],
+    "padDiameter": null,
+    "sourceIslands": 91,
+    "node": "wall_ixari_corner",
+    "source": "assets/blend/cities/ixari_kit.blend",
+    "glb": "packages/client/public/models/cities/ixari_kit.glb",
+    "sourceSha256": "03135e4a16a22c01a012a59c5dc776d3fd9ee954429f607bdd2bb8717d4246bb"
+  },
+  {
+    "id": "bridge_ixari",
+    "title": "Single Growth Crossing",
+    "role": "bridge",
+    "assetClass": "kit",
+    "bounds": [
+      [
+        -3.3888821601867676,
+        -12.800000190734863,
+        0.0
+      ],
+      [
+        3.40558123588562,
+        12.800000190734863,
+        2.8550000190734863
+      ]
+    ],
+    "authoredHeight": 2.8550000190734863,
+    "footprintRadius": 12.971121943851632,
+    "lodTriangles": [
+      10664,
+      3198,
+      1058,
+      274
+    ],
+    "markers": [
+      {
+        "name": "Interact_Crossing_bridge_ixari",
+        "position": [
+          0.0,
+          -11.0,
+          1.2799999713897705
+        ],
+        "properties": {}
+      },
+      {
+        "name": "Light_BridgeHeart_bridge_ixari",
+        "position": [
+          0.0,
+          0.0,
+          0.800000011920929
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 10
+        }
+      }
+    ],
+    "colliders": [
+      "COL_bridge_ixari_CrystalDeck0",
+      "COL_bridge_ixari_BridgeRail0_0",
+      "COL_bridge_ixari_BridgeRail2_0",
+      "COL_bridge_ixari_CrystalDeck1",
+      "COL_bridge_ixari_BridgeRail0_1",
+      "COL_bridge_ixari_BridgeRail2_1",
+      "COL_bridge_ixari_CrystalDeck2",
+      "COL_bridge_ixari_BridgeRail0_2",
+      "COL_bridge_ixari_BridgeRail2_2",
+      "COL_bridge_ixari_CrystalDeck3",
+      "COL_bridge_ixari_BridgeRail0_3",
+      "COL_bridge_ixari_BridgeRail2_3",
+      "COL_bridge_ixari_CrystalDeck4",
+      "COL_bridge_ixari_BridgeRail0_4",
+      "COL_bridge_ixari_BridgeRail2_4",
+      "COL_bridge_ixari_CrystalDeck5",
+      "COL_bridge_ixari_BridgeRail0_5",
+      "COL_bridge_ixari_BridgeRail2_5",
+      "COL_bridge_ixari_CrystalDeck6",
+      "COL_bridge_ixari_BridgeRail0_6",
+      "COL_bridge_ixari_BridgeRail2_6",
+      "COL_bridge_ixari_CrystalDeck7",
+      "COL_bridge_ixari_BridgeRail0_7",
+      "COL_bridge_ixari_BridgeRail2_7",
+      "COL_bridge_ixari_CrystalDeck8",
+      "COL_bridge_ixari_BridgeRail0_8",
+      "COL_bridge_ixari_BridgeRail2_8",
+      "COL_bridge_ixari_CrystalDeck9",
+      "COL_bridge_ixari_BridgeRail0_9",
+      "COL_bridge_ixari_BridgeRail2_9",
+      "COL_bridge_ixari_CrystalDeck10",
+      "COL_bridge_ixari_BridgeRail0_10",
+      "COL_bridge_ixari_BridgeRail2_10",
+      "COL_bridge_ixari_CrystalDeck11",
+      "COL_bridge_ixari_BridgeRail0_11",
+      "COL_bridge_ixari_BridgeRail2_11",
+      "COL_bridge_ixari_CrystalDeck12",
+      "COL_bridge_ixari_BridgeRail0_12",
+      "COL_bridge_ixari_BridgeRail2_12",
+      "COL_bridge_ixari_CrystalDeck13",
+      "COL_bridge_ixari_BridgeRail0_13",
+      "COL_bridge_ixari_BridgeRail2_13",
+      "COL_bridge_ixari_CrystalDeck14",
+      "COL_bridge_ixari_BridgeRail0_14",
+      "COL_bridge_ixari_BridgeRail2_14",
+      "COL_bridge_ixari_CrystalDeck15",
+      "COL_bridge_ixari_BridgeRail0_15",
+      "COL_bridge_ixari_BridgeRail2_15",
+      "COL_bridge_ixari_CrystalDeck16",
+      "COL_bridge_ixari_BridgeRail0_16",
+      "COL_bridge_ixari_BridgeRail2_16",
+      "COL_bridge_ixari_CrystalDeck17",
+      "COL_bridge_ixari_BridgeRail0_17",
+      "COL_bridge_ixari_BridgeRail2_17",
+      "COL_bridge_ixari_CrystalDeck18",
+      "COL_bridge_ixari_BridgeRail0_18",
+      "COL_bridge_ixari_BridgeRail2_18",
+      "COL_bridge_ixari_CrystalDeck19",
+      "COL_bridge_ixari_BridgeRail0_19",
+      "COL_bridge_ixari_BridgeRail2_19",
+      "COL_bridge_ixari_CrystalDeck20",
+      "COL_bridge_ixari_BridgeRail0_20",
+      "COL_bridge_ixari_BridgeRail2_20",
+      "COL_bridge_ixari_CrystalDeck21",
+      "COL_bridge_ixari_BridgeRail0_21",
+      "COL_bridge_ixari_BridgeRail2_21",
+      "COL_bridge_ixari_CrystalDeck22",
+      "COL_bridge_ixari_BridgeRail0_22",
+      "COL_bridge_ixari_BridgeRail2_22",
+      "COL_bridge_ixari_CrystalDeck23",
+      "COL_bridge_ixari_BridgeRail0_23",
+      "COL_bridge_ixari_BridgeRail2_23",
+      "COL_bridge_ixari_Abutment0_0Socket",
+      "COL_bridge_ixari_Abutment0_0Growth0",
+      "COL_bridge_ixari_Abutment0_0Growth1",
+      "COL_bridge_ixari_Abutment0_0Growth2",
+      "COL_bridge_ixari_Abutment0_0Growth3",
+      "COL_bridge_ixari_Abutment0_2Socket",
+      "COL_bridge_ixari_Abutment0_2Growth0",
+      "COL_bridge_ixari_Abutment0_2Growth1",
+      "COL_bridge_ixari_Abutment0_2Growth2",
+      "COL_bridge_ixari_Abutment0_2Growth3",
+      "COL_bridge_ixari_Abutment2_0Socket",
+      "COL_bridge_ixari_Abutment2_0Growth0",
+      "COL_bridge_ixari_Abutment2_0Growth1",
+      "COL_bridge_ixari_Abutment2_0Growth2",
+      "COL_bridge_ixari_Abutment2_0Growth3",
+      "COL_bridge_ixari_Abutment2_2Socket",
+      "COL_bridge_ixari_Abutment2_2Growth0",
+      "COL_bridge_ixari_Abutment2_2Growth1",
+      "COL_bridge_ixari_Abutment2_2Growth2",
+      "COL_bridge_ixari_Abutment2_2Growth3",
+      "COL_bridge_ixari_SouthApproach",
+      "COL_bridge_ixari_NorthApproach"
+    ],
+    "openings": [],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            0,
+            -12.0,
+            0.18
+          ],
+          [
+            0,
+            0,
+            0.68
+          ],
+          [
+            0,
+            12.0,
+            0.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 126,
+    "node": "bridge_ixari",
+    "source": "assets/blend/cities/ixari_kit.blend",
+    "glb": "packages/client/public/models/cities/ixari_kit.glb",
+    "sourceSha256": "03135e4a16a22c01a012a59c5dc776d3fd9ee954429f607bdd2bb8717d4246bb"
+  },
+  {
+    "id": "kit_ixari_spiral",
+    "title": "Ascending Memory Street",
+    "role": "spiral_street",
+    "assetClass": "kit",
+    "bounds": [
+      [
+        -12.346962928771973,
+        -12.250000953674316,
+        -0.2199999988079071
+      ],
+      [
+        12.365180015563965,
+        12.184853553771973,
+        7.590000152587891
+      ]
+    ],
+    "authoredHeight": 7.810000151395798,
+    "footprintRadius": 12.365377476823626,
+    "lodTriangles": [
+      11704,
+      3510,
+      1013,
+      250
+    ],
+    "markers": [
+      {
+        "name": "Light_Spiral0_kit_ixari_spiral",
+        "position": [
+          7.133567486174684e-16,
+          -11.649999618530273,
+          0.7799999713897705
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_Spiral8_kit_ixari_spiral",
+        "position": [
+          8.237793922424316,
+          -8.237793922424316,
+          1.5299999713897705
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_Spiral16_kit_ixari_spiral",
+        "position": [
+          11.649999618530273,
+          0.0,
+          2.2799999713897705
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_Spiral24_kit_ixari_spiral",
+        "position": [
+          8.237793922424316,
+          8.237793922424316,
+          3.0299999713897705
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_Spiral32_kit_ixari_spiral",
+        "position": [
+          7.133567486174684e-16,
+          11.649999618530273,
+          3.7799999713897705
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_Spiral40_kit_ixari_spiral",
+        "position": [
+          -8.237793922424316,
+          8.237793922424316,
+          4.53000020980835
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_Spiral48_kit_ixari_spiral",
+        "position": [
+          -11.649999618530273,
+          1.4267134972349368e-15,
+          5.28000020980835
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Light_Spiral56_kit_ixari_spiral",
+        "position": [
+          -8.237793922424316,
+          -8.237793922424316,
+          6.03000020980835
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 0.6,
+          "distance": 7
+        }
+      },
+      {
+        "name": "Interact_Ascent_kit_ixari_spiral",
+        "position": [
+          5.510910704284357e-16,
+          -9.0,
+          1.2799999713897705
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_kit_ixari_spiral_SpiralDeck0",
+      "COL_kit_ixari_spiral_SpiralRail0_0",
+      "COL_kit_ixari_spiral_SpiralRail2_0",
+      "COL_kit_ixari_spiral_SpiralDeck1",
+      "COL_kit_ixari_spiral_SpiralRail0_1",
+      "COL_kit_ixari_spiral_SpiralRail2_1",
+      "COL_kit_ixari_spiral_SpiralDeck2",
+      "COL_kit_ixari_spiral_SpiralRail0_2",
+      "COL_kit_ixari_spiral_SpiralRail2_2",
+      "COL_kit_ixari_spiral_SpiralDeck3",
+      "COL_kit_ixari_spiral_SpiralRail0_3",
+      "COL_kit_ixari_spiral_SpiralRail2_3",
+      "COL_kit_ixari_spiral_SpiralDeck4",
+      "COL_kit_ixari_spiral_SpiralRail0_4",
+      "COL_kit_ixari_spiral_SpiralRail2_4",
+      "COL_kit_ixari_spiral_SpiralDeck5",
+      "COL_kit_ixari_spiral_SpiralRail0_5",
+      "COL_kit_ixari_spiral_SpiralRail2_5",
+      "COL_kit_ixari_spiral_SpiralDeck6",
+      "COL_kit_ixari_spiral_SpiralRail0_6",
+      "COL_kit_ixari_spiral_SpiralRail2_6",
+      "COL_kit_ixari_spiral_SpiralDeck7",
+      "COL_kit_ixari_spiral_SpiralRail0_7",
+      "COL_kit_ixari_spiral_SpiralRail2_7",
+      "COL_kit_ixari_spiral_SpiralDeck8",
+      "COL_kit_ixari_spiral_SpiralRail0_8",
+      "COL_kit_ixari_spiral_SpiralRail2_8",
+      "COL_kit_ixari_spiral_SpiralDeck9",
+      "COL_kit_ixari_spiral_SpiralRail0_9",
+      "COL_kit_ixari_spiral_SpiralRail2_9",
+      "COL_kit_ixari_spiral_SpiralDeck10",
+      "COL_kit_ixari_spiral_SpiralRail0_10",
+      "COL_kit_ixari_spiral_SpiralRail2_10",
+      "COL_kit_ixari_spiral_SpiralDeck11",
+      "COL_kit_ixari_spiral_SpiralRail0_11",
+      "COL_kit_ixari_spiral_SpiralRail2_11",
+      "COL_kit_ixari_spiral_SpiralDeck12",
+      "COL_kit_ixari_spiral_SpiralRail0_12",
+      "COL_kit_ixari_spiral_SpiralRail2_12",
+      "COL_kit_ixari_spiral_SpiralDeck13",
+      "COL_kit_ixari_spiral_SpiralRail0_13",
+      "COL_kit_ixari_spiral_SpiralRail2_13",
+      "COL_kit_ixari_spiral_SpiralDeck14",
+      "COL_kit_ixari_spiral_SpiralRail0_14",
+      "COL_kit_ixari_spiral_SpiralRail2_14",
+      "COL_kit_ixari_spiral_SpiralDeck15",
+      "COL_kit_ixari_spiral_SpiralRail0_15",
+      "COL_kit_ixari_spiral_SpiralRail2_15",
+      "COL_kit_ixari_spiral_SpiralDeck16",
+      "COL_kit_ixari_spiral_SpiralRail0_16",
+      "COL_kit_ixari_spiral_SpiralRail2_16",
+      "COL_kit_ixari_spiral_SpiralDeck17",
+      "COL_kit_ixari_spiral_SpiralRail0_17",
+      "COL_kit_ixari_spiral_SpiralRail2_17",
+      "COL_kit_ixari_spiral_SpiralDeck18",
+      "COL_kit_ixari_spiral_SpiralRail0_18",
+      "COL_kit_ixari_spiral_SpiralRail2_18",
+      "COL_kit_ixari_spiral_SpiralDeck19",
+      "COL_kit_ixari_spiral_SpiralRail0_19",
+      "COL_kit_ixari_spiral_SpiralRail2_19",
+      "COL_kit_ixari_spiral_SpiralDeck20",
+      "COL_kit_ixari_spiral_SpiralRail0_20",
+      "COL_kit_ixari_spiral_SpiralRail2_20",
+      "COL_kit_ixari_spiral_SpiralDeck21",
+      "COL_kit_ixari_spiral_SpiralRail0_21",
+      "COL_kit_ixari_spiral_SpiralRail2_21",
+      "COL_kit_ixari_spiral_SpiralDeck22",
+      "COL_kit_ixari_spiral_SpiralRail0_22",
+      "COL_kit_ixari_spiral_SpiralRail2_22",
+      "COL_kit_ixari_spiral_SpiralDeck23",
+      "COL_kit_ixari_spiral_SpiralRail0_23",
+      "COL_kit_ixari_spiral_SpiralRail2_23",
+      "COL_kit_ixari_spiral_SpiralDeck24",
+      "COL_kit_ixari_spiral_SpiralRail0_24",
+      "COL_kit_ixari_spiral_SpiralRail2_24",
+      "COL_kit_ixari_spiral_SpiralDeck25",
+      "COL_kit_ixari_spiral_SpiralRail0_25",
+      "COL_kit_ixari_spiral_SpiralRail2_25",
+      "COL_kit_ixari_spiral_SpiralDeck26",
+      "COL_kit_ixari_spiral_SpiralRail0_26",
+      "COL_kit_ixari_spiral_SpiralRail2_26",
+      "COL_kit_ixari_spiral_SpiralDeck27",
+      "COL_kit_ixari_spiral_SpiralRail0_27",
+      "COL_kit_ixari_spiral_SpiralRail2_27",
+      "COL_kit_ixari_spiral_SpiralDeck28",
+      "COL_kit_ixari_spiral_SpiralRail0_28",
+      "COL_kit_ixari_spiral_SpiralRail2_28",
+      "COL_kit_ixari_spiral_SpiralDeck29",
+      "COL_kit_ixari_spiral_SpiralRail0_29",
+      "COL_kit_ixari_spiral_SpiralRail2_29",
+      "COL_kit_ixari_spiral_SpiralDeck30",
+      "COL_kit_ixari_spiral_SpiralRail0_30",
+      "COL_kit_ixari_spiral_SpiralRail2_30",
+      "COL_kit_ixari_spiral_SpiralDeck31",
+      "COL_kit_ixari_spiral_SpiralRail0_31",
+      "COL_kit_ixari_spiral_SpiralRail2_31",
+      "COL_kit_ixari_spiral_SpiralDeck32",
+      "COL_kit_ixari_spiral_SpiralRail0_32",
+      "COL_kit_ixari_spiral_SpiralRail2_32",
+      "COL_kit_ixari_spiral_SpiralDeck33",
+      "COL_kit_ixari_spiral_SpiralRail0_33",
+      "COL_kit_ixari_spiral_SpiralRail2_33",
+      "COL_kit_ixari_spiral_SpiralDeck34",
+      "COL_kit_ixari_spiral_SpiralRail0_34",
+      "COL_kit_ixari_spiral_SpiralRail2_34",
+      "COL_kit_ixari_spiral_SpiralDeck35",
+      "COL_kit_ixari_spiral_SpiralRail0_35",
+      "COL_kit_ixari_spiral_SpiralRail2_35",
+      "COL_kit_ixari_spiral_SpiralDeck36",
+      "COL_kit_ixari_spiral_SpiralRail0_36",
+      "COL_kit_ixari_spiral_SpiralRail2_36",
+      "COL_kit_ixari_spiral_SpiralDeck37",
+      "COL_kit_ixari_spiral_SpiralRail0_37",
+      "COL_kit_ixari_spiral_SpiralRail2_37",
+      "COL_kit_ixari_spiral_SpiralDeck38",
+      "COL_kit_ixari_spiral_SpiralRail0_38",
+      "COL_kit_ixari_spiral_SpiralRail2_38",
+      "COL_kit_ixari_spiral_SpiralDeck39",
+      "COL_kit_ixari_spiral_SpiralRail0_39",
+      "COL_kit_ixari_spiral_SpiralRail2_39",
+      "COL_kit_ixari_spiral_SpiralDeck40",
+      "COL_kit_ixari_spiral_SpiralRail0_40",
+      "COL_kit_ixari_spiral_SpiralRail2_40",
+      "COL_kit_ixari_spiral_SpiralDeck41",
+      "COL_kit_ixari_spiral_SpiralRail0_41",
+      "COL_kit_ixari_spiral_SpiralRail2_41",
+      "COL_kit_ixari_spiral_SpiralDeck42",
+      "COL_kit_ixari_spiral_SpiralRail0_42",
+      "COL_kit_ixari_spiral_SpiralRail2_42",
+      "COL_kit_ixari_spiral_SpiralDeck43",
+      "COL_kit_ixari_spiral_SpiralRail0_43",
+      "COL_kit_ixari_spiral_SpiralRail2_43",
+      "COL_kit_ixari_spiral_SpiralDeck44",
+      "COL_kit_ixari_spiral_SpiralRail0_44",
+      "COL_kit_ixari_spiral_SpiralRail2_44",
+      "COL_kit_ixari_spiral_SpiralDeck45",
+      "COL_kit_ixari_spiral_SpiralRail0_45",
+      "COL_kit_ixari_spiral_SpiralRail2_45",
+      "COL_kit_ixari_spiral_SpiralDeck46",
+      "COL_kit_ixari_spiral_SpiralRail0_46",
+      "COL_kit_ixari_spiral_SpiralRail2_46",
+      "COL_kit_ixari_spiral_SpiralDeck47",
+      "COL_kit_ixari_spiral_SpiralRail0_47",
+      "COL_kit_ixari_spiral_SpiralRail2_47",
+      "COL_kit_ixari_spiral_SpiralDeck48",
+      "COL_kit_ixari_spiral_SpiralRail0_48",
+      "COL_kit_ixari_spiral_SpiralRail2_48",
+      "COL_kit_ixari_spiral_SpiralDeck49",
+      "COL_kit_ixari_spiral_SpiralRail0_49",
+      "COL_kit_ixari_spiral_SpiralRail2_49",
+      "COL_kit_ixari_spiral_SpiralDeck50",
+      "COL_kit_ixari_spiral_SpiralRail0_50",
+      "COL_kit_ixari_spiral_SpiralRail2_50",
+      "COL_kit_ixari_spiral_SpiralDeck51",
+      "COL_kit_ixari_spiral_SpiralRail0_51",
+      "COL_kit_ixari_spiral_SpiralRail2_51",
+      "COL_kit_ixari_spiral_SpiralDeck52",
+      "COL_kit_ixari_spiral_SpiralRail0_52",
+      "COL_kit_ixari_spiral_SpiralRail2_52",
+      "COL_kit_ixari_spiral_SpiralDeck53",
+      "COL_kit_ixari_spiral_SpiralRail0_53",
+      "COL_kit_ixari_spiral_SpiralRail2_53",
+      "COL_kit_ixari_spiral_SpiralDeck54",
+      "COL_kit_ixari_spiral_SpiralRail0_54",
+      "COL_kit_ixari_spiral_SpiralRail2_54",
+      "COL_kit_ixari_spiral_SpiralDeck55",
+      "COL_kit_ixari_spiral_SpiralRail0_55",
+      "COL_kit_ixari_spiral_SpiralRail2_55",
+      "COL_kit_ixari_spiral_SpiralDeck56",
+      "COL_kit_ixari_spiral_SpiralRail0_56",
+      "COL_kit_ixari_spiral_SpiralRail2_56",
+      "COL_kit_ixari_spiral_SpiralDeck57",
+      "COL_kit_ixari_spiral_SpiralRail0_57",
+      "COL_kit_ixari_spiral_SpiralRail2_57",
+      "COL_kit_ixari_spiral_SpiralDeck58",
+      "COL_kit_ixari_spiral_SpiralRail0_58",
+      "COL_kit_ixari_spiral_SpiralRail2_58",
+      "COL_kit_ixari_spiral_SpiralDeck59",
+      "COL_kit_ixari_spiral_SpiralRail0_59",
+      "COL_kit_ixari_spiral_SpiralRail2_59",
+      "COL_kit_ixari_spiral_SpiralDeck60",
+      "COL_kit_ixari_spiral_SpiralRail0_60",
+      "COL_kit_ixari_spiral_SpiralRail2_60",
+      "COL_kit_ixari_spiral_SpiralDeck61",
+      "COL_kit_ixari_spiral_SpiralRail0_61",
+      "COL_kit_ixari_spiral_SpiralRail2_61",
+      "COL_kit_ixari_spiral_SpiralDeck62",
+      "COL_kit_ixari_spiral_SpiralRail0_62",
+      "COL_kit_ixari_spiral_SpiralRail2_62",
+      "COL_kit_ixari_spiral_SpiralDeck63",
+      "COL_kit_ixari_spiral_SpiralRail0_63",
+      "COL_kit_ixari_spiral_SpiralRail2_63",
+      "COL_kit_ixari_spiral_EntryLanding",
+      "COL_kit_ixari_spiral_ExitLanding"
+    ],
+    "openings": [],
+    "walkRoutes": [
+      {
+        "points": [
+          [
+            5.51091059616309e-16,
+            -9.0,
+            0.18
+          ],
+          [
+            0.8821542629660469,
+            -8.956662540049772,
+            0.27375
+          ],
+          [
+            1.755812898145155,
+            -8.827067523629074,
+            0.3675
+          ],
+          [
+            2.612562095290161,
+            -8.61246302158988,
+            0.46125
+          ],
+          [
+            3.4441508912858083,
+            -8.31491579260158,
+            0.5549999999999999
+          ],
+          [
+            4.24257063143398,
+            -7.9372913791351944,
+            0.6487499999999999
+          ],
+          [
+            5.0001320971764205,
+            -7.483226510722907,
+            0.7424999999999999
+          ],
+          [
+            5.70953955747281,
+            -6.957094080264633,
+            0.8362499999999999
+          ],
+          [
+            6.3639610306789285,
+            -6.363961030678928,
+            0.9299999999999999
+          ],
+          [
+            6.957094080264633,
+            -5.70953955747281,
+            1.02375
+          ],
+          [
+            7.483226510722907,
+            -5.00013209717642,
+            1.1175
+          ],
+          [
+            7.9372913791351944,
+            -4.2425706314339795,
+            1.21125
+          ],
+          [
+            8.31491579260158,
+            -3.444150891285808,
+            1.305
+          ],
+          [
+            8.61246302158988,
+            -2.6125620952901603,
+            1.39875
+          ],
+          [
+            8.827067523629074,
+            -1.7558128981451542,
+            1.4925
+          ],
+          [
+            8.956662540049772,
+            -0.8821542629660464,
+            1.58625
+          ],
+          [
+            9.0,
+            0.0,
+            1.68
+          ],
+          [
+            8.956662540049772,
+            0.8821542629660464,
+            1.77375
+          ],
+          [
+            8.827067523629074,
+            1.7558128981451542,
+            1.8675
+          ],
+          [
+            8.61246302158988,
+            2.6125620952901603,
+            1.96125
+          ],
+          [
+            8.31491579260158,
+            3.444150891285808,
+            2.055
+          ],
+          [
+            7.9372913791351944,
+            4.2425706314339795,
+            2.14875
+          ],
+          [
+            7.483226510722908,
+            5.000132097176419,
+            2.2425
+          ],
+          [
+            6.957094080264633,
+            5.709539557472809,
+            2.33625
+          ],
+          [
+            6.3639610306789285,
+            6.363961030678928,
+            2.43
+          ],
+          [
+            5.70953955747281,
+            6.957094080264633,
+            2.52375
+          ],
+          [
+            5.000132097176419,
+            7.483226510722908,
+            2.6175
+          ],
+          [
+            4.24257063143398,
+            7.9372913791351944,
+            2.71125
+          ],
+          [
+            3.4441508912858083,
+            8.31491579260158,
+            2.805
+          ],
+          [
+            2.612562095290161,
+            8.61246302158988,
+            2.89875
+          ],
+          [
+            1.7558128981451566,
+            8.827067523629074,
+            2.9925
+          ],
+          [
+            0.8821542629660469,
+            8.956662540049772,
+            3.08625
+          ],
+          [
+            5.51091059616309e-16,
+            9.0,
+            3.18
+          ],
+          [
+            -0.8821542629660458,
+            8.956662540049772,
+            3.27375
+          ],
+          [
+            -1.7558128981451557,
+            8.827067523629074,
+            3.3675
+          ],
+          [
+            -2.6125620952901594,
+            8.61246302158988,
+            3.46125
+          ],
+          [
+            -3.4441508912858074,
+            8.31491579260158,
+            3.555
+          ],
+          [
+            -4.2425706314339795,
+            7.937291379135195,
+            3.64875
+          ],
+          [
+            -5.000132097176418,
+            7.483226510722908,
+            3.7425
+          ],
+          [
+            -5.709539557472809,
+            6.957094080264634,
+            3.83625
+          ],
+          [
+            -6.363961030678928,
+            6.3639610306789285,
+            3.93
+          ],
+          [
+            -6.95709408026463,
+            5.709539557472812,
+            4.02375
+          ],
+          [
+            -7.483226510722908,
+            5.00013209717642,
+            4.1175
+          ],
+          [
+            -7.9372913791351944,
+            4.24257063143398,
+            4.21125
+          ],
+          [
+            -8.314915792601578,
+            3.4441508912858128,
+            4.305
+          ],
+          [
+            -8.61246302158988,
+            2.6125620952901616,
+            4.39875
+          ],
+          [
+            -8.827067523629074,
+            1.7558128981451575,
+            4.4925
+          ],
+          [
+            -8.956662540049772,
+            0.8821542629660436,
+            4.58625
+          ],
+          [
+            -9.0,
+            1.102182119232618e-15,
+            4.68
+          ],
+          [
+            -8.956662540049772,
+            -0.8821542629660413,
+            4.77375
+          ],
+          [
+            -8.827067523629074,
+            -1.7558128981451553,
+            4.8675
+          ],
+          [
+            -8.61246302158988,
+            -2.612562095290159,
+            4.96125
+          ],
+          [
+            -8.31491579260158,
+            -3.4441508912858105,
+            5.055
+          ],
+          [
+            -7.937291379135195,
+            -4.242570631433979,
+            5.14875
+          ],
+          [
+            -7.4832265107229095,
+            -5.000132097176418,
+            5.2425
+          ],
+          [
+            -6.957094080264632,
+            -5.7095395574728105,
+            5.33625
+          ],
+          [
+            -6.363961030678929,
+            -6.363961030678928,
+            5.43
+          ],
+          [
+            -5.709539557472812,
+            -6.95709408026463,
+            5.52375
+          ],
+          [
+            -5.00013209717642,
+            -7.483226510722907,
+            5.6175
+          ],
+          [
+            -4.242570631433981,
+            -7.9372913791351944,
+            5.71125
+          ],
+          [
+            -3.444150891285813,
+            -8.314915792601578,
+            5.805
+          ],
+          [
+            -2.612562095290162,
+            -8.61246302158988,
+            5.89875
+          ],
+          [
+            -1.755812898145158,
+            -8.827067523629072,
+            5.9925
+          ],
+          [
+            -0.882154262966044,
+            -8.956662540049772,
+            6.08625
+          ],
+          [
+            -1.6532731788489267e-15,
+            -9.0,
+            6.18
+          ]
+        ],
+        "width": 3,
+        "height": 3.2,
+        "kind": "spiral",
+        "railHeight": 1.05
+      }
+    ],
+    "padDiameter": null,
+    "sourceIslands": 250,
+    "node": "kit_ixari_spiral",
+    "source": "assets/blend/cities/ixari_kit.blend",
+    "glb": "packages/client/public/models/cities/ixari_kit.glb",
+    "sourceSha256": "03135e4a16a22c01a012a59c5dc776d3fd9ee954429f607bdd2bb8717d4246bb"
+  },
+  {
+    "id": "lamp_ixari_biolume",
+    "title": "Bioluminescent Growth",
+    "role": "lighting",
+    "assetClass": "kit",
+    "bounds": [
+      [
+        -0.8363549709320068,
+        -0.7200006246566772,
+        0.0
+      ],
+      [
+        0.8582155704498291,
+        0.6418240070343018,
+        3.111999988555908
+      ]
+    ],
+    "authoredHeight": 3.111999988555908,
+    "footprintRadius": 0.8757587846127428,
+    "lodTriangles": [
+      1172,
+      350,
+      114,
+      37
+    ],
+    "markers": [
+      {
+        "name": "Light_Wayfinding_lamp_ixari_biolume",
+        "position": [
+          0.0,
+          0.0,
+          2.4800000190734863
+        ],
+        "properties": {
+          "color": "#64E3FF",
+          "intensity": 1.1,
+          "distance": 11.200000000000001
+        }
+      },
+      {
+        "name": "Interact_Wayfinding_lamp_ixari_biolume",
+        "position": [
+          0.0,
+          -1.600000023841858,
+          1.100000023841858
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_lamp_ixari_biolume_WayfindingSocket",
+      "COL_lamp_ixari_biolume_WayfindingGrowth0",
+      "COL_lamp_ixari_biolume_WayfindingGrowth1",
+      "COL_lamp_ixari_biolume_WayfindingGrowth2",
+      "COL_lamp_ixari_biolume_WayfindingGrowth3"
+    ],
+    "openings": [],
+    "walkRoutes": [],
+    "padDiameter": null,
+    "sourceIslands": 7,
+    "node": "lamp_ixari_biolume",
+    "source": "assets/blend/cities/ixari_kit.blend",
+    "glb": "packages/client/public/models/cities/ixari_kit.glb",
+    "sourceSha256": "03135e4a16a22c01a012a59c5dc776d3fd9ee954429f607bdd2bb8717d4246bb"
+  }
+]

@@ -1,0 +1,62 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "--config",
+    "packages/tools/blender/cities/ixari/consumer.config.mjs"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 60,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T05:41:29Z",
+  "head": "0c4396a9194a5f7c99352f630ea7e66514b61115",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/consumer.config.mjs": "83741e7081c3dc3b1fe43d37ee6ec6bbbbf03228060131b894c17447aed6825d"
+  },
+  "exitCode": 1,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 2.817,
+  "peakGroupRssKiB": 87136,
+  "last20Lines": [
+    "- 0",
+    "+ 5",
+    "",
+    " \u276f every packages/tools/blender/cities/ixari/consumer.test.js:537:10",
+    "    535|       errors.push(error.message);",
+    "    536|     }",
+    "    537|   assert.equal(errors.length, 0, errors.join('\\n'));",
+    "       |          ^",
+    "    538| }",
+    "    539|",
+    " \u276f packages/tools/blender/cities/ixari/consumer.test.js:570:9",
+    "",
+    "\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[7/7]\u23af",
+    "",
+    "",
+    " Test Files  1 failed (1)",
+    "      Tests  7 failed | 61 passed (68)",
+    "   Start at  00:41:29",
+    "   Duration  1.87s (tests 66%, transform 19%, import 14%)",
+    ""
+  ]
+}

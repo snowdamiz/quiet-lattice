@@ -1,0 +1,19 @@
+/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py:106: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat.use_nodes = True
+AUTHOR ixari_low_0 LOD0 63892 budget 8000 60000
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py", line 625, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py", line 612, in main
+    p=Piece(asset,role,title,cls,mat);fn(p);inventory.append(p.finish())
+                                                             ~~~~~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py", line 201, in finish
+    assert low<=tris<=high,(self.id,tris,low,high)
+           ^^^^^^^^^^^^^^^
+AssertionError: ('ixari_low_0', 63892, 8000, 60000)
+
+Error: script failed, file: 'packages/tools/blender/cities/ixari/author.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

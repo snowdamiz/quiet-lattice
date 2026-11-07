@@ -1,0 +1,248 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ixari_tall.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:57:39Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ixari_tall_0",
+      "variants": [
+        {
+          "id": "ixari_tall_0",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 54528,
+            "1": 16354,
+            "2": 5348,
+            "3": 1721
+          },
+          "implicitLods": false,
+          "dims": [
+            24.342,
+            25.082,
+            180.488
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_tall_1",
+      "variants": [
+        {
+          "id": "ixari_tall_1",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 55912,
+            "1": 16768,
+            "2": 5484,
+            "3": 1769
+          },
+          "implicitLods": false,
+          "dims": [
+            27.37,
+            26.025,
+            225.508
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_tall_2",
+      "variants": [
+        {
+          "id": "ixari_tall_2",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57296,
+            "1": 17184,
+            "2": 5620,
+            "3": 1820
+          },
+          "implicitLods": false,
+          "dims": [
+            32.407,
+            26.967,
+            275.527
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ixari_tall_3",
+      "variants": [
+        {
+          "id": "ixari_tall_3",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 54528,
+            "1": 16354,
+            "2": 5348,
+            "3": 1721
+          },
+          "implicitLods": false,
+          "dims": [
+            37.82,
+            27.91,
+            325.547
+          ],
+          "materials": [
+            "LIB_IxariAtlas2048"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_tall.blend",
+          "message": "4 variant(s) in 4 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_tall_0",
+          "message": "LOD0 54,528 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_tall_1",
+          "message": "LOD0 55,912 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_tall_2",
+          "message": "LOD0 57,296 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ixari_tall_3",
+          "message": "LOD0 54,528 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ixari_tall_0",
+          "message": "54,528 > 16,354 > 5,348 > 1,721 triangles; LOD3 3.2% of LOD0"
+        },
+        {
+          "subject": "ixari_tall_1",
+          "message": "55,912 > 16,768 > 5,484 > 1,769 triangles; LOD3 3.2% of LOD0"
+        },
+        {
+          "subject": "ixari_tall_2",
+          "message": "57,296 > 17,184 > 5,620 > 1,820 triangles; LOD3 3.2% of LOD0"
+        },
+        {
+          "subject": "ixari_tall_3",
+          "message": "54,528 > 16,354 > 5,348 > 1,721 triangles; LOD3 3.2% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "IxariAtlas2048 (LIB_IxariAtlas2048)",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ixari_tall_0",
+          "message": "longest side 180.49 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_tall_1",
+          "message": "longest side 225.51 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_tall_2",
+          "message": "longest side 275.53 m within 1-400 m"
+        },
+        {
+          "subject": "ixari_tall_3",
+          "message": "longest side 325.55 m within 1-400 m"
+        }
+      ]
+    }
+  ]
+}

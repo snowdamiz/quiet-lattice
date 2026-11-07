@@ -1,0 +1,27 @@
+/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py:106: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat.use_nodes = True
+AUTHOR prop_ixari_terminal LOD0 6164 budget 2000 10000
+    generated LODs for prop_ixari_terminal: 6,164 > 1,848 > 616 > 214 triangles
+AUTHOR prop_ixari_board LOD0 9044 budget 2000 10000
+    generated LODs for prop_ixari_board: 9,044 > 2,712 > 904 > 316 triangles
+AUTHOR prop_ixari_stall LOD0 9088 budget 2000 10000
+    generated LODs for prop_ixari_stall: 9,088 > 2,726 > 908 > 318 triangles
+AUTHOR prop_ixari_seat LOD0 4264 budget 2000 10000
+    generated LODs for prop_ixari_seat: 4,264 > 1,278 > 426 > 148 triangles
+AUTHOR prop_ixari_basin LOD0 10320 budget 2000 10000
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py", line 630, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py", line 617, in main
+    p=Piece(asset,role,title,cls,mat);fn(p);inventory.append(p.finish())
+                                                             ~~~~~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/packages/tools/blender/cities/ixari/author.py", line 202, in finish
+    assert low<=tris<=high,(self.id,tris,low,high)
+           ^^^^^^^^^^^^^^^
+AssertionError: ('prop_ixari_basin', 10320, 2000, 10000)
+
+Error: script failed, file: 'packages/tools/blender/cities/ixari/author.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

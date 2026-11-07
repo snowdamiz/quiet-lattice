@@ -1,0 +1,383 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78
+
+LEGACY AABB LIMIT — bridge_ixari, curved bridge: bridge_ixari: blocked route at 0.000,0.180,12.000, resolveBoxes displacement 0,0.060215945746828314,0 (R=0.38, H=1.85). Axis-aligned boxes do not qualify sloped/curved deck or rail traversal; E10.T01 runtime traversal remains unproven.
+LEGACY AABB LIMIT — kit_ixari_spiral, spiral: kit_ixari_spiral: blocked route at 0.000,0.180,9.000, resolveBoxes displacement 0,0.08875711987173412,0 (R=0.38, H=1.85). Axis-aligned boxes do not qualify sloped/curved deck or rail traversal; E10.T01 runtime traversal remains unproven.
+LEGACY AABB LIMIT — Interact_Crossing_bridge_ixari: Interact_Crossing_bridge_ixari: unreachable marker; no clear 1.85m standing pose within 1.5m of a declared route; curved approach remains unqualified.
+LEGACY AABB LIMIT — Interact_Ascent_kit_ixari_spiral: Interact_Ascent_kit_ixari_spiral: unreachable marker; no clear 1.85m standing pose within 1.5m of a declared route; curved approach remains unqualified.
+LEGACY AABB LIMIT — ixari_landmark_summit, spiral: ixari_landmark_summit: blocked route at 0.000,0.180,15.000, resolveBoxes displacement 0,0.17903766904021,0 (R=0.38, H=1.85). Axis-aligned boxes do not qualify sloped/curved deck or rail traversal; E10.T01 runtime traversal remains unproven.
+LEGACY AABB LIMIT — Interact_Ascent_ixari_landmark_summit: Interact_Ascent_ixari_landmark_summit: unreachable marker; no clear 1.85m standing pose within 1.5m of a declared route; curved approach remains unqualified.
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js (68 tests | 7 failed) 1187ms
+   ❯ P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract (68)
+     ❯ low (11)
+       × matches the saved inventory triangle counts against decoded geometry at all four levels 7ms
+       × preserves the full declared width and height of straight routes and doorways 6ms
+     ❯ mid (8)
+       × matches the saved inventory triangle counts against decoded geometry at all four levels 1ms
+     ❯ tall (8)
+       × matches the saved inventory triangle counts against decoded geometry at all four levels 1ms
+     ❯ kit (8)
+       × preserves the full declared width and height of straight routes and doorways 2ms
+     ❯ props (8)
+       × matches the saved inventory triangle counts against decoded geometry at all four levels 1ms
+     ❯ landmarks (8)
+       × matches the saved inventory triangle counts against decoded geometry at all four levels 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/tools/blender/cities/ixari/consumer.test.js > P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract > low > matches the saved inventory triangle counts against decoded geometry at all four levels
+AssertionError: ixari_low_0 LOD2: decoded 4564 != inventory 4646; source/export difference needs reconciliation
+
+4564 !== 4646
+
+ixari_low_0 LOD3: decoded 1466 != inventory 1624; source/export difference needs reconciliation
+
+1466 !== 1624
+
+ixari_low_1 LOD2: decoded 4700 != inventory 4784; source/export difference needs reconciliation
+
+4700 !== 4784
+
+ixari_low_1 LOD3: decoded 1519 != inventory 1674; source/export difference needs reconciliation
+
+1519 !== 1674
+
+ixari_low_2 LOD2: decoded 4836 != inventory 4922; source/export difference needs reconciliation
+
+4836 !== 4922
+
+ixari_low_2 LOD3: decoded 1568 != inventory 1722; source/export difference needs reconciliation
+
+1568 !== 1722
+
+ixari_low_3 LOD2: decoded 4564 != inventory 4646; source/export difference needs reconciliation
+
+4564 !== 4646
+
+ixari_low_3 LOD3: decoded 1462 != inventory 1624; source/export difference needs reconciliation
+
+1462 !== 1624
+
+
+8 !== 0
+
+
+- Expected
++ Received
+
+- 0
++ 8
+
+ ❯ every packages/tools/blender/cities/ixari/consumer.test.js:537:10
+    535|       errors.push(error.message);
+    536|     }
+    537|   assert.equal(errors.length, 0, errors.join('\n'));
+       |          ^
+    538| }
+    539|
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js:570:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  packages/tools/blender/cities/ixari/consumer.test.js > P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract > low > preserves the full declared width and height of straight routes and doorways
+AssertionError: ixari_low_0: blocked route at -1.120,0.180,5.700, resolveBoxes displacement 0,0,0.07151397646537028 (R=0.38, H=3.2)
+ixari_low_0: blocked route at 1.120,0.180,5.700, resolveBoxes displacement 0,0,0.06738057723532087 (R=0.38, H=3.2)
+
+2 !== 0
+
+ixari_low_1: blocked route at -1.120,0.180,5.963, resolveBoxes displacement 0,0,0.040844272410620164 (R=0.38, H=3.2)
+ixari_low_1: blocked route at 1.120,0.180,5.963, resolveBoxes displacement 0,0,0.03660197050385783 (R=0.38, H=3.2)
+
+2 !== 0
+
+ixari_low_2: blocked route at 1.420,0.180,4.922, resolveBoxes displacement -0.26804846982578745,-0.0035945983028153883,0 (R=0.38, H=3.42)
+ixari_low_2: blocked route at -1.420,0.180,4.922, resolveBoxes displacement 0.24670718055021945,-0.0035945983028153883,0 (R=0.38, H=3.42)
+
+2 !== 0
+
+ixari_low_3: blocked route at 1.420,0.180,5.157, resolveBoxes displacement -0.16280053549274864,-0.0036529819964861154,0 (R=0.38, H=3.42)
+ixari_low_3: blocked route at -1.420,0.180,5.157, resolveBoxes displacement 0.14012424023561554,-0.0036529819964861154,0 (R=0.38, H=3.42)
+
+2 !== 0
+
+
+4 !== 0
+
+
+- Expected
++ Received
+
+- 0
++ 4
+
+ ❯ every packages/tools/blender/cities/ixari/consumer.test.js:537:10
+    535|       errors.push(error.message);
+    536|     }
+    537|   assert.equal(errors.length, 0, errors.join('\n'));
+       |          ^
+    538| }
+    539|
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js:600:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  packages/tools/blender/cities/ixari/consumer.test.js > P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract > mid > matches the saved inventory triangle counts against decoded geometry at all four levels
+AssertionError: ixari_mid_0 LOD2: decoded 5222 != inventory 5318; source/export difference needs reconciliation
+
+5222 !== 5318
+
+ixari_mid_0 LOD3: decoded 1679 != inventory 1860; source/export difference needs reconciliation
+
+1679 !== 1860
+
+ixari_mid_1 LOD2: decoded 5358 != inventory 5456; source/export difference needs reconciliation
+
+5358 !== 5456
+
+ixari_mid_1 LOD3: decoded 1721 != inventory 1908; source/export difference needs reconciliation
+
+1721 !== 1908
+
+ixari_mid_2 LOD2: decoded 5494 != inventory 5594; source/export difference needs reconciliation
+
+5494 !== 5594
+
+ixari_mid_2 LOD3: decoded 1767 != inventory 1958; source/export difference needs reconciliation
+
+1767 !== 1958
+
+ixari_mid_3 LOD2: decoded 5225 != inventory 5318; source/export difference needs reconciliation
+
+5225 !== 5318
+
+ixari_mid_3 LOD3: decoded 1678 != inventory 1860; source/export difference needs reconciliation
+
+1678 !== 1860
+
+
+8 !== 0
+
+
+- Expected
++ Received
+
+- 0
++ 8
+
+ ❯ every packages/tools/blender/cities/ixari/consumer.test.js:537:10
+    535|       errors.push(error.message);
+    536|     }
+    537|   assert.equal(errors.length, 0, errors.join('\n'));
+       |          ^
+    538| }
+    539|
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js:570:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  packages/tools/blender/cities/ixari/consumer.test.js > P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract > tall > matches the saved inventory triangle counts against decoded geometry at all four levels
+AssertionError: ixari_tall_0 LOD1: decoded 16354 != inventory 16356; source/export difference needs reconciliation
+
+16354 !== 16356
+
+ixari_tall_0 LOD2: decoded 5348 != inventory 5452; source/export difference needs reconciliation
+
+5348 !== 5452
+
+ixari_tall_0 LOD3: decoded 1721 != inventory 1908; source/export difference needs reconciliation
+
+1721 !== 1908
+
+ixari_tall_1 LOD1: decoded 16768 != inventory 16772; source/export difference needs reconciliation
+
+16768 !== 16772
+
+ixari_tall_1 LOD2: decoded 5484 != inventory 5590; source/export difference needs reconciliation
+
+5484 !== 5590
+
+ixari_tall_1 LOD3: decoded 1769 != inventory 1956; source/export difference needs reconciliation
+
+1769 !== 1956
+
+ixari_tall_2 LOD1: decoded 17184 != inventory 17188; source/export difference needs reconciliation
+
+17184 !== 17188
+
+ixari_tall_2 LOD2: decoded 5620 != inventory 5728; source/export difference needs reconciliation
+
+5620 !== 5728
+
+ixari_tall_2 LOD3: decoded 1820 != inventory 2004; source/export difference needs reconciliation
+
+1820 !== 2004
+
+ixari_tall_3 LOD1: decoded 16354 != inventory 16356; source/export difference needs reconciliation
+
+16354 !== 16356
+
+ixari_tall_3 LOD2: decoded 5348 != inventory 5452; source/export difference needs reconciliation
+
+5348 !== 5452
+
+ixari_tall_3 LOD3: decoded 1721 != inventory 1908; source/export difference needs reconciliation
+
+1721 !== 1908
+
+
+12 !== 0
+
+
+- Expected
++ Received
+
+- 0
++ 12
+
+ ❯ every packages/tools/blender/cities/ixari/consumer.test.js:537:10
+    535|       errors.push(error.message);
+    536|     }
+    537|   assert.equal(errors.length, 0, errors.join('\n'));
+       |          ^
+    538| }
+    539|
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js:570:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  packages/tools/blender/cities/ixari/consumer.test.js > P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract > kit > preserves the full declared width and height of straight routes and doorways
+AssertionError: gate_ixari: blocked route at -1.820,0.180,-0.700, resolveBoxes displacement 0.08492716297481717,0,0 (R=0.38, H=4.5)
+
+1 !== 0
+
+
+1 !== 0
+
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ every packages/tools/blender/cities/ixari/consumer.test.js:537:10
+    535|       errors.push(error.message);
+    536|     }
+    537|   assert.equal(errors.length, 0, errors.join('\n'));
+       |          ^
+    538| }
+    539|
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js:600:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  packages/tools/blender/cities/ixari/consumer.test.js > P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract > props > matches the saved inventory triangle counts against decoded geometry at all four levels
+AssertionError: prop_ixari_terminal LOD2: decoded 596 != inventory 616; source/export difference needs reconciliation
+
+596 !== 616
+
+prop_ixari_terminal LOD3: decoded 187 != inventory 214; source/export difference needs reconciliation
+
+187 !== 214
+
+prop_ixari_board LOD2: decoded 878 != inventory 904; source/export difference needs reconciliation
+
+878 !== 904
+
+prop_ixari_board LOD3: decoded 274 != inventory 316; source/export difference needs reconciliation
+
+274 !== 316
+
+prop_ixari_stall LOD2: decoded 894 != inventory 908; source/export difference needs reconciliation
+
+894 !== 908
+
+prop_ixari_stall LOD3: decoded 283 != inventory 318; source/export difference needs reconciliation
+
+283 !== 318
+
+prop_ixari_seat LOD2: decoded 422 != inventory 426; source/export difference needs reconciliation
+
+422 !== 426
+
+prop_ixari_seat LOD3: decoded 141 != inventory 148; source/export difference needs reconciliation
+
+141 !== 148
+
+prop_ixari_basin LOD2: decoded 920 != inventory 936; source/export difference needs reconciliation
+
+920 !== 936
+
+prop_ixari_basin LOD3: decoded 302 != inventory 326; source/export difference needs reconciliation
+
+302 !== 326
+
+
+10 !== 0
+
+
+- Expected
++ Received
+
+- 0
++ 10
+
+ ❯ every packages/tools/blender/cities/ixari/consumer.test.js:537:10
+    535|       errors.push(error.message);
+    536|     }
+    537|   assert.equal(errors.length, 0, errors.join('\n'));
+       |          ^
+    538| }
+    539|
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js:570:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  packages/tools/blender/cities/ixari/consumer.test.js > P1.E10.T06 actual Ixari GLBs: CPU consumer/artifact contract > landmarks > matches the saved inventory triangle counts against decoded geometry at all four levels
+AssertionError: ixari_landmark_spire_hall LOD1: decoded 42928 != inventory 42930; source/export difference needs reconciliation
+
+42928 !== 42930
+
+ixari_landmark_spire_hall LOD2: decoded 14091 != inventory 14310; source/export difference needs reconciliation
+
+14091 !== 14310
+
+ixari_landmark_spire_hall LOD3: decoded 4600 != inventory 5008; source/export difference needs reconciliation
+
+4600 !== 5008
+
+ixari_landmark_summit LOD2: decoded 13927 != inventory 14192; source/export difference needs reconciliation
+
+13927 !== 14192
+
+ixari_landmark_summit LOD3: decoded 3690 != inventory 4966; source/export difference needs reconciliation
+
+3690 !== 4966
+
+
+5 !== 0
+
+
+- Expected
++ Received
+
+- 0
++ 5
+
+ ❯ every packages/tools/blender/cities/ixari/consumer.test.js:537:10
+    535|       errors.push(error.message);
+    536|     }
+    537|   assert.equal(errors.length, 0, errors.join('\n'));
+       |          ^
+    538| }
+    539|
+ ❯ packages/tools/blender/cities/ixari/consumer.test.js:570:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 61 passed (68)
+   Start at  00:41:29
+   Duration  1.87s (tests 66%, transform 19%, import 14%)
+
