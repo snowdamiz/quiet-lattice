@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import type { Browser, Page, TestInfo } from '@playwright/test';
 import { CharacterSummary, EntityState, ServerMessage, type Vec3 } from '@astra/shared/protocol';
 import { newSkillState, storedSkills, type SkillOp } from '@astra/shared/skills';
+import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
 import { describeGalaxySystem, faunaSpecies, Galaxy, GALAXY_SEED, frameId } from '@astra/shared/world';
 import { expect, test } from './harness.ts';
 import { startOnline, type Online } from './online.ts';
@@ -100,7 +101,8 @@ function selectArena(tiers: number[]) {
 }
 
 async function place(character: string, arena: ReturnType<typeof selectArena>, pose: string, frame = String(arena.body)) {
-  const result = await online.admin({ cmd: 'teleport', character, system: arena.system, frame, pose, mode: 'foot' });
+  // Cross-system placement is saved and restored: transport the owned ship, then disembark through normal input.
+  const result = await online.admin({ cmd: 'teleport', character, system: arena.system, frame, pose, mode: pose === 'docked' ? 'docked' : 'landed' });
   expect(result, JSON.stringify(result)).toMatchObject({ ok: true });
 }
 
@@ -274,53 +276,77 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
       await place(client.character, arena, 'docked', 'station');
       await until(
         client.page,
-        `window.game.net.zone.systemSeed === ${arena.seed} && window.game.system.seed === ${arena.seed} && window.game.mode === 'foot'`,
+        `window.game.net?.joined && window.game.net.zone.systemSeed === ${arena.seed} && window.game.system.seed === ${arena.seed} && window.game.mode === 'ship' && window.game.ship.mode === 'landed' && window.game.ship.state.frame === window.game.station && window.game.net.store.entities.get(window.game.net.entityId)?.mode === 'docked'`,
         60_000,
       );
     }
-    const ground = await a.page.evaluate((body) => {
-      const p = window.game.system.planets[body];
-      // Broad dry patch; all offsets are tangent metres, never fixed world-axis displacements on a sphere.
-      for (let lat = -60; lat <= 60; lat += 5)
-        for (let lon = 0; lon < 360; lon += 5) {
-          const up = window.game.player.state.pos
-            .clone()
-            .set(
-              Math.cos((lat * Math.PI) / 180) * Math.cos((lon * Math.PI) / 180),
-              Math.sin((lat * Math.PI) / 180),
-              Math.cos((lat * Math.PI) / 180) * Math.sin((lon * Math.PI) / 180),
-            );
-          const east = up.clone().set(-up.z, 0, up.x).normalize();
-          const north = up.clone().cross(east).normalize();
-          const at = (x: number, y: number) => {
-            const dir = up.clone().multiplyScalar(p.radius).addScaledVector(east, x).addScaledVector(north, y).normalize();
-            return dir.multiplyScalar(p.surfaceRadius(dir));
-          };
-          const points = [
-            [0, 0],
-            [60, 0],
-            [-60, 0],
-            [0, 60],
-            [0, -60],
-          ].map(([x, y]) => at(x!, y!));
-          const heights = points.map((v) => v.length() - p.radius);
-          if (heights.every((h) => h > 30) && Math.max(...heights) - Math.min(...heights) < 4)
-            return {
-              owner: at(0, 0).toArray(),
-              observer: at(0, 12).toArray(),
-              companion: at(12, 0).toArray(),
-              east: east.toArray(),
+    const ground = await a.page.evaluate(
+      ({ body, gearHeight }) => {
+        const p = window.game.system.planets[body];
+        // Broad dry patch; all offsets are tangent metres, never fixed world-axis displacements on a sphere.
+        for (let lat = -60; lat <= 60; lat += 5)
+          for (let lon = 0; lon < 360; lon += 5) {
+            const up = window.game.player.state.pos
+              .clone()
+              .set(
+                Math.cos((lat * Math.PI) / 180) * Math.cos((lon * Math.PI) / 180),
+                Math.sin((lat * Math.PI) / 180),
+                Math.cos((lat * Math.PI) / 180) * Math.sin((lon * Math.PI) / 180),
+              );
+            const east = up.clone().set(-up.z, 0, up.x).normalize();
+            const north = up.clone().cross(east).normalize();
+            const at = (x: number, y: number, clearance = 0) => {
+              const dir = up.clone().multiplyScalar(p.radius).addScaledVector(east, x).addScaledVector(north, y).normalize();
+              return dir.multiplyScalar(p.surfaceRadius(dir) + clearance);
             };
-        }
-      throw new Error('No broad dry arena on the selected world');
-    }, arena.body);
+            const points = [
+              [0, 0],
+              [60, 0],
+              [-60, 0],
+              [0, 60],
+              [0, -60],
+            ].map(([x, y]) => at(x!, y!));
+            const heights = points.map((v) => v.length() - p.radius);
+            if (heights.every((h) => h > 30) && Math.max(...heights) - Math.min(...heights) < 4)
+              return {
+                owner: at(0, 0, gearHeight).toArray(),
+                observer: at(0, 12, gearHeight).toArray(),
+                companion: at(12, 0).toArray(),
+                east: east.toArray(),
+              };
+          }
+        throw new Error('No broad dry arena on the selected world');
+      },
+      { body: arena.body, gearHeight: SHIP_GEAR_HEIGHT },
+    );
     await place(a.character, arena, ground.owner.join(','));
     await place(b.character, arena, ground.observer.join(','));
-    for (const page of pages)
+    const arrivals: { character: string; landed: EntityState; foot: EntityState }[] = [];
+    evidence.arrivals = arrivals;
+    for (const client of [a, b]) {
+      const page = client.page;
       await until(
         page,
-        `window.game.net.store.entities.get(window.game.net.entityId)?.frame === '${arena.frame}' && window.game.player.state.frame === window.game.system.planets[${arena.body}]`,
+        `window.game.net?.joined && window.game.net.store.entities.get(window.game.net.entityId)?.frame === '${arena.frame}' && window.game.net.store.entities.get(window.game.net.entityId)?.mode === 'landed' && window.game.mode === 'ship' && window.game.ship.mode === 'landed' && window.game.ship.state.frame === window.game.system.planets[${arena.body}]`,
       );
+      const landed = EntityState.parse(await page.evaluate(() => window.game.net.store.entities.get(window.game.net.entityId)));
+      expect(landed).toMatchObject({ kind: 'player', frame: arena.frame, mode: 'landed' });
+      // Real F interaction leaves this client's server-owned landed ship; no foot teleport or parked-pose injection.
+      await page.keyboard.down('KeyF');
+      try {
+        await until(page, 'window.game.mode === "foot"', 10_000);
+      } finally {
+        await page.keyboard.up('KeyF');
+      }
+      await until(
+        page,
+        `window.game.net?.joined && window.game.net.store.entities.get(window.game.net.entityId)?.frame === '${arena.frame}' && window.game.net.store.entities.get(window.game.net.entityId)?.mode === 'foot' && window.game.mode === 'foot' && window.game.player.state.frame === window.game.system.planets[${arena.body}] && window.game.player.grounded && !window.game.director.pose && !window.game.director.blend`,
+      );
+      const foot = EntityState.parse(await page.evaluate(() => window.game.net.store.entities.get(window.game.net.entityId)));
+      expect(foot).toMatchObject({ id: landed.id, kind: 'player', frame: arena.frame, mode: 'foot' });
+      expect(foot.hp).toBeGreaterThan(0);
+      arrivals.push({ character: client.character, landed, foot });
+    }
     await until(a.page, 'window.game.fauna.shown.length > 0', 60_000);
     const companion = await spawn(arena, arena.companion.index, ground.companion);
     evidence.companion = companion;

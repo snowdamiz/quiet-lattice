@@ -1,6 +1,16 @@
 import { readFileSync } from 'node:fs';
 import type { EntityState } from '@astra/shared/protocol';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
+import { createSourceFile, isFunctionDeclaration, ScriptTarget, transpileModule } from 'typescript';
+import { AdminCommand } from '../../../server/src/admin/commands.ts';
+import { resolvePlacement } from '../../../server/src/admin/place.ts';
+import { planHere } from '../../../server/src/fauna/terrain.ts';
+import { poseProblem as savedPoseProblem } from '../../../server/src/persistence/components.ts';
+import { MovementAuthority } from '../../../server/src/sim/movement/authority.ts';
+import { exitFeet, LARK } from '../../../server/src/sim/movement/testing.ts';
+import { groundOf, heightAt } from '../../../server/src/sim/movement/world.ts';
+import { describeZoneSystem } from '../../../server/src/zones/system.ts';
 import { symbioticRoutes } from './symbiotic-private.ts';
 
 const claim = '20261107_2a0b7521';
@@ -377,5 +387,58 @@ describe('R1 live lifecycle predicates', () => {
     const w = world();
     w.game.net.store.entities.get(33)!.hp = 0;
     expect(combat(w)).toBe(false);
+  });
+});
+
+// The live fixture's actual command builder, checked at the same placement/persistence boundary that rejected
+// the cross-system teleport. Only the transport is collected here; production pose/ship authority runs below.
+function fixturePlace(admin: (command: unknown) => Promise<unknown>) {
+  const source = createSourceFile('symbiotic-online.spec.ts', spec, ScriptTarget.Latest, true);
+  const declaration = source.statements.find((s) => isFunctionDeclaration(s) && s.name?.text === 'place');
+  if (!declaration) throw new Error('Live place function missing');
+  const code = transpileModule(declaration.getText(source), { compilerOptions: { target: ScriptTarget.ES2022 } }).outputText;
+  return new Function('online', 'expect', `${code}; return place;`)({ admin }, expect);
+}
+async function placement(character: string, system: number, body: number, pose: string, frame = String(body)) {
+  const admin = vi.fn(async (_command: unknown) => ({ ok: true }));
+  await fixturePlace(admin)(character, { system, body }, pose, frame);
+  expect(admin).toHaveBeenCalledTimes(1);
+  const command = AdminCommand.parse(admin.mock.calls[0]?.[0]);
+  if (command.cmd !== 'teleport') throw new Error('Setup must use the existing teleport API');
+  expect(command.character).toBe(character);
+  return resolvePlacement(command);
+}
+
+describe('live arena setup respects owned ship authority', () => {
+  it('reproduces the live cross-system foot rejection at the real persistence pose check', () => {
+    const at = resolvePlacement({ system: 31, frame: 'station', pose: 'docked', mode: 'foot' });
+    expect(savedPoseProblem(at, 1e6)).toBe('board_range: on foot with no ship of its own here');
+  });
+  it.each(['owner', 'observer'])('moves %s across systems in a restorable ship pose', async (character) => {
+    const at = await placement(character, 31, 7, 'docked', 'station');
+    expect(savedPoseProblem(at, 1e6)).toBeNull();
+    expect(at).toMatchObject({ system: 31, mode: 'docked' });
+  });
+  it.each(['owner', 'observer'])('lands %s with an owned ship that remains restorable after disembarking', async (character) => {
+    const system = describeZoneSystem(0);
+    const ground = groundOf(system, system.home)!;
+    const at = await placement(character, 0, system.home, `0,0,${-(ground.radius + heightAt(ground, [0, 0, -1]) + SHIP_GEAR_HEIGHT)}`);
+    const movement = new MovementAuthority({ zone: 'setup-cpu', system, grounds: planHere });
+    const profile = { ship: LARK, characterId: character, accountId: character };
+    expect(movement.poseProblem(at.pose, at.mode, profile, 1e6)).toBeNull();
+    movement.add(1, at.pose, at.mode, profile, 1e6);
+    expect(movement.parkedOf(1)).toEqual(at.pose);
+    const feet = { ...at.pose, pos: exitFeet(system, at.pose) };
+    expect(movement.check(1, { t: 'input', seq: 1, time: 1e6 + 0.05, pose: feet, mode: 'foot', buttons: 0 }, 1e6 + 0.05)).toMatchObject({
+      ok: true,
+      mode: 'foot',
+    });
+    const parked = movement.parkedOf(1);
+    expect(parked).toEqual(at.pose);
+    expect(movement.poseProblem(feet, 'foot', profile, 1e6 + 0.05, parked ?? undefined)).toBeNull();
+  });
+  it('does not hide a refused admin placement', async () => {
+    const reply = { ok: false, error: 'invalid', message: 'pose: board_range: on foot with no ship of its own here' };
+    await expect(fixturePlace(async () => reply)('owner', { system: 31, body: 7 }, 'docked', 'station')).rejects.toThrow('board_range');
   });
 });
