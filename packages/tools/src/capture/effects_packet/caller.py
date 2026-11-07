@@ -12,7 +12,7 @@ from contract import CAPTURE_SECONDS, CLEANUP_SECONDS, DECODE_SECONDS, HERE, req
 from bindings import admit, verify
 from evidence import Receipts, failure, publish, raw, ownership, reject_unconsumed, write_capture_record, capture_snapshot
 
-RUNTIME_ENABLED = False
+RUNTIME_ENABLED = True
 
 
 class ObservationUnwind(BaseException):

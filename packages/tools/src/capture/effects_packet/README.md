@@ -1,4 +1,49 @@
-# P1.E07.T14 failed native pilot correction — disabled source candidate
+# P1.E07.T14 mechanical re-enablement after correction review
+
+Both runtime flags and fresh rebound readiness are enabled for parent activation
+review. No grant or native launch is created here; all new prospective identity
+paths remain absent. The old authorization
+`effects-b61233fdf3564205bd01d9566f306430` remains permanently SPENT and its native
+pilot remains FAILED. Parent owns the next serialized slot and actual grant.
+
+The unchanged correction received independent SOURCE/CPU PASS at
+`6b4073305af21efe5c6cf5ecc09f78406b637a42`, tree
+`4ffe285721b1949a3fc887e444e2661a72656412`. Report:
+`/private/tmp/p1-e07-t14-native-independent-vxqw75q0/APPENDIX-C2.md`, SHA256
+`f0bdb88c1a11406173b87cd69030e93a5c081c6633890b6a1e6bfa99f52b66ce`.
+Its 79 supplied and 29 additional controls do not constitute activation or native
+acceptance. The report and seal are bound by this fresh readiness. This unit
+changes only the two literal runtime flags, readiness bindings/current provenance
+and this documentation; reviewed logic, controls, assets, helpers and T15 bytes
+remain unchanged. Existing make_ready supplies the CPU freeze; runtimeEnabled,
+phase and prerequisite text are explicitly updated afterward. The unchanged
+check_ready.py describes disabled checkpoints and is not used to label this
+enabled state as PASS_SOURCE_ONLY_DISABLED.
+
+Light CPU inspection resolves the pinned captureReview, Playwright chromium.launch
+and tsx API exports without invoking capture or a browser. The module-shape probe
+uses Node22 built-in TypeScript transformation and blocks process creation,
+listeners and filesystem mutations; it is not a fresh execution of the tsx
+capture loader or proof of native runtime success.
+
+Separate cross-lane finding: replaying the exact retained T13 SetStoreUpdateService
+member through the unchanged actual effects observer produces an unbound-executable
+refusal. It is absent from effects process/file bindings. This mechanical unit
+does not add it, infer ownership in a future effects run, or broaden the allowlist.
+The retained T13 evidence and inert reproduction are documented in the new C.2
+handoff; any binding/design correction remains a separate reviewed source unit.
+
+The new evidence directory is `/private/tmp/p1-e07-t14-reenable-ume27o1x`.
+All previous reports and evidence remain unchanged. Full suites, source/art
+regeneration, native capture and screenshot cleanup were not run in this unit.
+
+## Retained disabled-correction documentation
+
+The following records the previous disabled correction and its earlier history.
+Current enablement above supersedes only its flag/readiness state; the failed
+native verdict, spent identity and outstanding native/visual acceptance remain.
+
+### P1.E07.T14 failed native pilot correction — disabled source candidate
 
 The parent-run pilot at `6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8` FAILED.
 Authorization `effects-b61233fdf3564205bd01d9566f306430` is permanently spent.
