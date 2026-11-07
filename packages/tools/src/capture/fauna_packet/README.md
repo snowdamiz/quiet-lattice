@@ -33,6 +33,12 @@ Admission = three output copies (output, future LFS, future main hydration) + 67
 
 Each fresh output/evidence/grant/consumption identity is recorded in `readiness.json`; no grant or output directory is created during preparation. The broad inspector reuses full byte/order/source/viewport/decoder checks, requires all 204 manual frame clocks and combat-feed events/consumption, and checks the existing HUD readout. Its observation journal has a 16 MiB cap within the unchanged 32 MiB Node metadata cap (correction journal cap stays 2 MiB). Broad stills deliberately hold DOM clones from the existing fixtures, so their numbers, flash, toasts and codex banner require independent pixel grading; packet acceptance alone does not provide that grade.
 
+Revision after caller review `82b6ac3fa`: Node keeps the first capture/setup error, cleanup errors and persistence errors separately, always attempts the final entry result and provides a bounded stderr fallback plus the complete in-memory result. Receipt failure cannot replace the primary error; unregister failure is secondary. The protected scope includes post-admission setup.
+
+The packet adapter observes the exact unchanged helper call boundaries during archive/terminal audit. It retains complete command results (including stdout, stderr, return codes and unknown fields), kernel/identity/member observations and attempted helper results before helper assertions can discard them. Each probe is attempted on disk before control returns to the helper. Failed disk writes remain separately recorded in memory/final fallback; raw drain/profile/TMP/audit records are retained whole, alongside the exact failed predicate/source line. The helper bytes, release decisions and deadlines are unchanged; an unproved release retains partial allocations. No later capture or decoder is dispatched after failure.
+
+The broad inspector checks both sides of every screenshot for finite clocks and actor/journal fields. Every clip frame must contain the cumulative, unchanged feed history due by that frame. Independent checks bind each event and take to the existing fight schedule, game/HUD/clip stamps, all three queue channels, full payloads and their actual consumption. Feed timestamps must fall within the observed interval for their frame. These checks do not grade held DOM-clone pixels.
+
 CPU verification (from this worktree; no browser or capture):
 
 ```sh

@@ -96,24 +96,81 @@ def decode_image(file, dimensions, image_format):
         check(image.mode in ('RGB', 'RGBA'), 'Unexpected screenshot pixel mode')
 
 
+def number(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def close(actual, expected, message):
+    check(number(actual) and abs(actual - expected) < 0.00001, message)
+
+
 def broad_oracle(observations, readout):
-    frames = [row['after'] for row in observations if row['path'].startswith('_frames/')]
+    frames = [row for row in observations if row['path'].startswith('_frames/')]
     check(len(frames) == 204, 'Broad fight requires 204 actual frames')
-    for i, raw in enumerate(frames):
-        check(raw['phase'] == 'fight' and abs(raw['clipTime'] - (i + 1) / 60) < 0.000001, 'Broad actual frame clock/order differs')
-    final = frames[-1]
-    events = [row['event'] for row in final['events'] if row['phase'] == 'fight']
-    check([event['kind'] for event in events] == ['combat'] * 8 + ['xp', 'loot', 'loot'], 'Broad fight event sequence differs')
-    dealt = [event for event in events if event['kind'] == 'combat' and event['target'] in (602, 603)]
-    check([(event['target'], event['amount'], event['killed']) for event in dealt] ==
-          [(603, 12, False), (603, 18, False), (603, 9, False), (602, 21, False), (603, 15, False), (603, 24, False), (603, 31, True)], 'Broad fight hits differ')
-    consumed = [event for take in final['takes'] if take['phase'] == 'fight' for event in take['returned']['dealt']]
-    check([(event['target'], event['amount'], event['killed']) for event in consumed] ==
-          [(event['target'], event['amount'], event['killed']) for event in dealt], 'Broad fight consumption differs')
-    taken = [event for take in final['takes'] if take['phase'] == 'fight' for event in take['returned']['taken']]
-    gained = [event for take in final['takes'] if take['phase'] == 'fight' for event in take['returned']['gained']]
-    check([(event['source'], event['amount']) for event in taken] == [(602, 11)], 'Broad incoming damage consumption differs')
-    check([(event['what'], event['count']) for event in gained] == [('xp', 30), ('units', 7), ('units', 7)], 'Broad XP/loot consumption differs')
+    # Independent schedule from the unchanged fightClip fixture: dispatch before frame(), take during frame().
+    schedule = [
+        (9, {'kind': 'combat', 'source': 1, 'target': 603, 'amount': 12, 'killed': False, 'hp': 0.5}),
+        (18, {'kind': 'combat', 'source': 1, 'target': 603, 'amount': 18, 'killed': False, 'hp': 0.5}),
+        (22, {'kind': 'combat', 'source': 1, 'target': 603, 'amount': 9, 'killed': False, 'hp': 0.5}),
+        (33, {'kind': 'combat', 'source': 1, 'target': 602, 'amount': 21, 'killed': False, 'hp': 0.5}),
+        (51, {'kind': 'combat', 'source': 602, 'target': 1, 'amount': 11, 'killed': False, 'hp': 0.9}),
+        (66, {'kind': 'combat', 'source': 1, 'target': 603, 'amount': 15, 'killed': False, 'hp': 0.5}),
+        (87, {'kind': 'combat', 'source': 1, 'target': 603, 'amount': 24, 'killed': False, 'hp': 0.5}),
+        (96, {'kind': 'combat', 'source': 1, 'target': 603, 'amount': 31, 'killed': True, 'hp': 0}),
+        (105, {'kind': 'xp', 'amount': 30, 'level': 1}),
+        (108, {'kind': 'loot', 'item': 'units', 'count': 7}),
+        (180, {'kind': 'loot', 'item': 'units', 'count': 7}),
+    ]
+    first = frames[0]['after']
+    check(number(first.get('gameTime')) and number(first.get('hudTime')), 'Nonfinite broad clock origin')
+    game_base, hud_base = first['gameTime'] - 1 / 60, first['hudTime'] - 1000 / 60
+    previous = None
+    event_base = take_base = None
+    for i, row in enumerate(frames):
+        before, raw = row['before'], row['after']
+        for sample in (before, raw):
+            check(sample.get('phase') == 'fight' and sample.get('actor') == 1, 'Wrong broad phase/actor')
+            close(sample.get('clipTime'), (i + 1) / 60, 'Broad actual frame clock/order differs')
+            close(sample.get('gameTime'), game_base + (i + 1) / 60, 'Broad game clock differs')
+            close(sample.get('hudTime'), hud_base + (i + 1) * 1000 / 60, 'Broad HUD clock differs')
+            check(number(sample.get('feedTime')), 'Nonfinite feed clock')
+            check(isinstance(sample.get('events'), list) and isinstance(sample.get('takes'), list), 'Missing broad cumulative feed journal')
+        check(before['events'] == raw['events'] and before['takes'] == raw['takes'], 'Feed changed during screenshot')
+        check(before['feedTime'] <= raw['feedTime'], 'Feed clock went backwards during screenshot')
+        if previous is None:
+            event_base, take_base = len(raw['events']), len(raw['takes'])
+            check(all(e.get('phase') != 'fight' for e in raw['events'] + raw['takes']), 'Unexpected first-frame fight entries')
+        else:
+            check(previous['feedTime'] <= before['feedTime'], 'Feed clock went backwards between frames')
+            for key in ('events', 'takes'):
+                check(raw[key][:len(previous[key])] == previous[key], 'Cumulative feed history changed: ' + key)
+        due = [(frame, payload) for frame, payload in schedule if frame <= i]
+        check(len(raw['events']) == event_base + len(due) and len(raw['takes']) == take_base + len(due), 'Incomplete/extra broad feed journal')
+        for j, (frame, payload) in enumerate(due):
+            event, take = raw['events'][event_base + j], raw['takes'][take_base + j]
+            for stamped, is_take in ((event, False), (take, True)):
+                check(stamped.get('phase') == 'fight' and stamped.get('frame', 'missing') is None, 'Wrong broad feed phase/frame')
+                close(stamped.get('clipTime'), frame / 60, 'Broad feed clip stamp differs')
+                close(stamped.get('gameTime'), game_base + (frame + int(is_take)) / 60, 'Broad feed game stamp differs')
+                close(stamped.get('hudTime'), hud_base + frame * 1000 / 60, 'Broad feed HUD stamp differs')
+            check(all(event['event'].get(k) == v for k, v in payload.items()), 'Broad incoming event payload differs')
+            if payload['kind'] == 'combat':
+                channel = 'taken' if payload['target'] == 1 else 'dealt'
+                feedback = {k: payload[k] for k in ('amount', 'killed', 'hp')}
+                feedback['source' if channel == 'taken' else 'target'] = payload['source' if channel == 'taken' else 'target']
+            else:
+                channel = 'gained'
+                feedback = {'what': 'xp', 'count': 30, 'level': 1} if payload['kind'] == 'xp' else {'what': 'units', 'count': 7}
+            queues = event.get('queues')
+            check(isinstance(queues, dict) and set(queues) == {'dealt', 'taken', 'gained'}, 'Incomplete queued feed contract')
+            check(all(isinstance(queues[key], list) and len(queues[key]) == int(key == channel) for key in queues), 'Wrong queued feed channels')
+            value = queues[channel][0]
+            check(all(value.get(k) == v for k, v in feedback.items()) and number(value.get('at')), 'Queued payload/clock differs')
+            event_frame = frames[frame]
+            low = frames[frame - 1]['after']['feedTime']
+            check(low <= value['at'] <= event_frame['before']['feedTime'], 'Queued event outside its actual frame interval')
+            check(take.get('returned') == queues, 'Complete event-to-consumption contract differs')
+        previous = raw
     check(readout.startswith('HUD frame cost over 204 frames:') and '\nframes over 1 ms:' in readout, 'Broad HUD readout missing')
 
 
@@ -147,7 +204,7 @@ def inspect(ready, unit):
             actual.append(str(p.relative_to(output)))
     check(sorted(actual) == sorted(expected) and len(actual) == stills + frames + 2, 'Missing/extra output/count')
     result = load(evidence / 'entry-result.json')
-    check(result['accepted'] is True and result['primaryFailure'] is None and result['unit'] == unit and result['pages'] == 2 and result['launched'] == 1, 'Raw entry outcome refused')
+    check(result['accepted'] is True and result['primaryFailure'] is None and not result.get('cleanupFailures') and not result.get('persistenceFailures') and result['unit'] == unit and result['pages'] == 2 and result['launched'] == 1, 'Raw entry outcome refused')
     check([x['path'] for x in result['writes']] == expected, 'Output writes reordered/incomplete')
     sources = load(evidence / 'source-methods.json')
     check(sources['unit'] == unit and sources['productBindings'] == ready['productBindings'], 'Source bindings differ')
@@ -180,6 +237,10 @@ def inspect(ready, unit):
         decode_image(file, dimensions, 'JPEG' if name.endswith('.jpg') else 'PNG')
     for row in observations:
         name, raw = row['path'], row['after']
+        if broad:
+            for sample in (row['before'], raw):
+                check(all(number(sample.get(clock)) for clock in ('gameTime', 'hudTime', 'feedTime')), 'Nonfinite broad sample clock')
+                check(sample.get('actor') == 1 and isinstance(sample.get('events'), list) and isinstance(sample.get('takes'), list), 'Incomplete broad sample journal')
         width = 2520 if name.startswith('21x9') or name.startswith('_frames/') and spec['aspect'] == '21x9' else 1920
         viewport = [width, 1080]
         check(row['ordinal'] == expected.index(name) and row['sourceBindings'] == ready['productBindings'], 'Observation source/order differs')

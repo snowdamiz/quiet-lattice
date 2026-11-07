@@ -2,12 +2,15 @@
 import sys
 sys.dont_write_bytecode = True
 import copy
-from contextlib import nullcontext
+import ast
+from contextlib import nullcontext, redirect_stderr, redirect_stdout
 import datetime
 import importlib.util
 import io
 import json
 import os
+import re
+import stat
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
 if str(HERE) in sys.path:
@@ -31,6 +34,82 @@ inspector = module('fauna_cpu_inspector', 'inspect.py')
 
 
 class CallerControls(unittest.TestCase):
+    def test_actual_helper_refusals_preserve_raw_unknown_fields_through_receipt_failure(self):
+        helpers_dir = HERE.parents[4] / 'assets/blend/stations/_authoring'
+        for phase in ('archive', 'terminal'):
+            with self.subTest(phase=phase), tempfile.TemporaryDirectory(prefix='fauna-cpu-release-') as tempdir:
+                base = Path(tempdir).resolve(); evidence = base / 'evidence'; evidence.mkdir()
+                private = base / 'private'; private.mkdir(mode=0o700)
+                calls = []
+                def command(argv, **kwargs):
+                    calls.append(argv[1])
+                    return SimpleNamespace(args=argv, returncode=1 if argv[1] == 'bootout' else 0,
+                                           stdout='RAW_STDOUT', stderr='RAW_STDERR', futureField={'unknown': [7, 'preserve']})
+                kernel = lambda _: {'live': 0, 'futureKernel': {'raw': 'preserve'}}
+                namespace = {'Path': Path, 'ROOT': base, 'SUPPORTED_PROFILE_PREFIXES': ('playwright_chromiumdev_profile-',),
+                             'UnsafeCaptureGroup': RuntimeError, 'tempfile': tempfile, 'stat': stat, 'os': os, 're': re,
+                             'subprocess': SimpleNamespace(run=command, check_output=lambda *a, **k: ''),
+                             'kernel_tasks': kernel, 'identity': lambda _: None, 'utc': lambda: 'CPU_ONLY',
+                             'write': lambda p, v: p.write_text(json.dumps(v))}
+                source = helpers_dir / 'round4_job_boundary.py'
+                tree = ast.parse(source.read_text(), filename=str(source))
+                prevalidate = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == '_archive_profile_paths')
+                jobclass = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'StationJob')
+                archive = next(n for n in jobclass.body if isinstance(n, ast.FunctionDef) and n.name == 'archive')
+                exec(compile(ast.Module(body=[prevalidate, archive], type_ignores=[]), str(source), 'exec'), namespace)
+                source = helpers_dir / 'run_round4_remaining8.py'
+                audit = next(n for n in ast.parse(source.read_text()).body if isinstance(n, ast.FunctionDef) and n.name == 'terminal_audit')
+                exec(compile(ast.Module(body=[audit], type_ignores=[]), str(source), 'exec'), namespace)
+                class Job:
+                    def __init__(self, out, *a, **kw):
+                        self.out = Path(out); self.out.mkdir(); self.scratch = base / 'scratch'; self.scratch.mkdir()
+                        (self.scratch / 'capture_stdout.txt').write_text('PARTIAL_CAPTURE_LOG')
+                        self.coalition_id = 7; self.known = {}; self.target = 'CPU_ONLY_NO_LAUNCH'
+                        self.state = {'drained': True, 'clean': True, 'exits': {'capture': 1, 'caffeinate': 0}, 'futureState': {'raw': 'keep'}}
+                    def start(self): calls.append('fake-start')
+                    def wait(self, *a): return 'completed'
+                    def drain(self, *a): return self.state.copy()
+                    def members(self): return []
+                    def archive(self, **kw):
+                        (self.scratch / 'capture_stdout.txt').unlink(); self.scratch.rmdir()
+                        (self.out / 'profile_release.json').write_text(json.dumps({'all_absent': True, 'all_owned_profiles': [], 'futureProfile': 'keep'}))
+                if phase == 'archive': Job.archive = namespace['archive']
+                def release(*a, **kw):
+                    private.rmdir()
+                    return {'namespace_removed': True, 'all_bytes_preserved': True, 'futureRelease': 'keep'}
+                core = SimpleNamespace(StationJob=Job, identity=lambda _: {'uid': os.getuid()}, coalition=lambda _: [1, 2], deadline=lambda _: nullcontext(), kernel_tasks=kernel)
+                temp = SimpleNamespace(executable_path=lambda _: sys.executable, create_private_tmp=lambda _: (private, {}), preserve_private_tmp=release)
+                support = SimpleNamespace(StageReceipts=lambda *a: SimpleNamespace(observe=lambda: None, require_browser=lambda: None), terminal_audit=namespace['terminal_audit'])
+                helpers = {'round4_job_boundary': core, 'run_round4_browser_proof': temp, 'run_round4_remaining8': support}
+                ready = {'generatedCaches': [], 'stationDirectory': str(helpers_dir), 'uid': os.getuid(), 'node': 'NEVER_EXECUTED', 'path': 'CPU_ONLY', 'browserCache': 'CPU_ONLY', 'root': str(base)}
+                original_persist, original_read = caller.persist, caller.read_json
+                def persist(p, value):
+                    if Path(p).name.startswith('release-') or Path(p).name == 'result.json': raise OSError('ENOSPC_SECONDARY')
+                    return original_persist(p, value)
+                stderr, stdout = io.StringIO(), io.StringIO()
+                before_path = list(sys.path)
+                try:
+                    with patch.object(sys, 'argv', ['caller', '--execute', 'fauna-hit-turn-day-16x9', '--grant', 'CPU_ONLY']), patch.object(caller, 'read_json', side_effect=lambda p, *a: ready if p == caller.READY else original_read(p, *a)), patch.object(caller, 'consume', return_value=({'evidence': str(evidence), 'consumption': 'NEVER_USED'}, {'unit': 'fauna-hit-turn-day-16x9'})) as consume, patch.object(caller, 'snapshot_caches'), patch.object(caller.importlib, 'import_module', side_effect=lambda n: helpers[n]), patch.object(caller, 'observed_thresholds', return_value={}), patch.object(caller, 'persist', side_effect=persist), patch.object(caller.subprocess, 'run', side_effect=AssertionError('No decoder/later dispatch')), redirect_stderr(stderr), redirect_stdout(stdout):
+                        self.assertEqual(caller.main(), 1)
+                    self.assertEqual(consume.call_count, 1)
+                finally:
+                    sys.path[:] = before_path
+                result = json.loads(stdout.getvalue())
+                self.assertFalse(result['accepted'])
+                self.assertEqual(result['primaryFailure']['message'], 'Capture returned failure')
+                self.assertEqual(result['cleanupFailures'][0]['type'], 'AssertionError')
+                self.assertTrue(result['persistenceFailures'])
+                attempt = result['raw']['releaseAttempts'][phase]
+                self.assertIn('assert check.returncode != 0', attempt['failure']['predicate'])
+                data = json.dumps(result)
+                for marker in ('RAW_STDOUT', 'RAW_STDERR', 'futureField', 'futureKernel', 'futureState', 'preserve'):
+                    self.assertIn(marker, data)
+                    self.assertIn(marker, stderr.getvalue())
+                self.assertEqual(calls.count('fake-start'), 1)
+                if phase == 'archive':
+                    self.assertTrue(private.exists())
+                    self.assertEqual((base / 'scratch/capture_stdout.txt').read_text(), 'PARTIAL_CAPTURE_LOG')
+
     def test_per_unit_budget_uses_219_images_for_broad_and_81_for_correction(self):
         freeze = module('fauna_cpu_freeze', 'freeze.py')
         common = caller.read_json(HERE / 'readiness.json')['budget']
@@ -322,15 +401,36 @@ def synthetic_turn():
 
 
 def synthetic_broad():
-    # Small software-decoded controls, never visual evidence.
-    hits = [(603, 12), (603, 18), (603, 9), (602, 21), (999, 11), (603, 15), (603, 24), (603, 31)]
-    events = [{'kind': 'combat', 'target': target, 'amount': amount, 'killed': i == 7} for i, (target, amount) in enumerate(hits)]
-    events += [{'kind': 'xp', 'amount': 30}, {'kind': 'loot', 'item': 'units', 'count': 7}, {'kind': 'loot', 'item': 'units', 'count': 7}]
-    rows = [{'path': '_frames/%03d.jpg' % i, 'after': {'phase': 'fight', 'clipTime': (i + 1) / 60,
-             'target': {'id': 603, 'incarnation': 1, 'visible': True}, 'numbers': [], 'events': [], 'takes': []}} for i in range(204)]
-    rows[-1]['after'].update(events=[{'phase': 'fight', 'event': event} for event in events],
-                             takes=[{'phase': 'fight', 'returned': {'dealt': [event for event in events if event['kind'] == 'combat' and event['target'] != 999],
-                                     'taken': [{'source': 602, 'amount': 11}], 'gained': [{'what': 'xp', 'count': 30}, {'what': 'units', 'count': 7}, {'what': 'units', 'count': 7}]}}])
+    # Simulate the fixture's before-frame dispatch and during-frame consumption; never visual evidence.
+    script = [(0.15, 603, 12), (0.3, 603, 18), (0.36, 603, 9), (0.55, 602, 21), (0.85, 1, 11),
+              (1.1, 603, 15), (1.45, 603, 24), (1.6, 603, 31), (1.75, 'xp', 30), (1.8, 'loot', 7), (3.0, 'loot', 7)]
+    events, takes, rows = [], [], []
+    next_event = 0
+    for i in range(204):
+        t = i / 60
+        while next_event < len(script) and script[next_event][0] <= t + 1e-9:
+            _, target, amount = script[next_event]
+            next_event += 1
+            queues = {'dealt': [], 'taken': [], 'gained': []}
+            if target in ('xp', 'loot'):
+                event = {'kind': 'xp', 'amount': amount, 'level': 1} if target == 'xp' else {'kind': 'loot', 'item': 'units', 'count': amount}
+                item = {'what': 'xp', 'count': amount, 'level': 1} if target == 'xp' else {'what': 'units', 'count': amount}
+                channel = 'gained'
+            else:
+                killed = amount == 31
+                event = {'kind': 'combat', 'source': 602 if target == 1 else 1, 'target': target, 'amount': amount, 'killed': killed, 'hp': 0.9 if target == 1 else 0 if killed else 0.5}
+                item = {k: event[k] for k in ('amount', 'killed', 'hp')}
+                item['source' if target == 1 else 'target'] = 602 if target == 1 else target
+                channel = 'taken' if target == 1 else 'dealt'
+            item['at'] = 400000 + t * 1000 + 1
+            queues[channel].append(item)
+            stamp = {'phase': 'fight', 'frame': None, 'clipTime': t, 'gameTime': 100 + t, 'hudTime': 1000 + t * 1000}
+            events.append({**stamp, 'event': event, 'queues': queues})
+            takes.append({**stamp, 'gameTime': 100 + (i + 1) / 60, 'returned': copy.deepcopy(queues)})
+        raw = {'phase': 'fight', 'actor': 1, 'clipTime': (i + 1) / 60, 'gameTime': 100 + (i + 1) / 60,
+               'hudTime': 1000 + (i + 1) * 1000 / 60, 'feedTime': 400000 + (i + 1) * 1000 / 60,
+               'target': {'id': 603, 'incarnation': 1, 'visible': True}, 'numbers': [], 'events': copy.deepcopy(events), 'takes': copy.deepcopy(takes)}
+        rows.append({'path': '_frames/%03d.jpg' % i, 'before': copy.deepcopy(raw), 'after': raw})
     return rows, 'HUD frame cost over 204 frames: CPU SYNTHETIC CONTROL ONLY\nframes over 1 ms: none'
 
 
@@ -348,9 +448,9 @@ class InspectorControls(unittest.TestCase):
             elif bad == 'consumption':
                 rows[-1]['after']['takes'] = []
             elif bad == 'damage':
-                rows[-1]['after']['takes'][0]['returned']['taken'] = []
+                next(take for take in rows[-1]['after']['takes'] if take['returned']['taken'])['returned']['taken'] = []
             elif bad == 'reward':
-                rows[-1]['after']['takes'][0]['returned']['gained'].pop()
+                next(take for take in rows[-1]['after']['takes'] if take['returned']['gained'])['returned']['gained'].pop()
             else:
                 text = text.replace('204', '72')
             with self.subTest(bad=bad), self.assertRaises(ValueError):
@@ -473,7 +573,9 @@ class InspectorControls(unittest.TestCase):
                         events = [{'target': target, 'amount': value} for target, value in ((602, 17), (603, 23), (602, 9))]
                         raw['events'] = [{'phase': 'offscreen', 'event': {**event, 'kind': 'combat'}} for event in events]
                         raw['takes'] = [{'phase': 'offscreen', 'returned': {'dealt': events}}]
-                raw.update(viewport=[width, 1080], canvas=[width, 1080], gameTime=0, clipTime=raw.get('clipTime'))
+                raw.update(viewport=[width, 1080], canvas=[width, 1080], gameTime=raw.get('gameTime', 0), clipTime=raw.get('clipTime'))
+                if broad:
+                    raw.setdefault('hudTime', 0); raw.setdefault('feedTime', 0); raw['actor'] = 1
                 observations.append({'ordinal': ordinal, 'path': name, 'sha256': inspector.digest(data), 'sourceBindings': ready['productBindings'], 'before': copy.deepcopy(raw), 'after': raw})
             def save(name, value):
                 (evidence / name).write_text(json.dumps(value))
@@ -486,6 +588,37 @@ class InspectorControls(unittest.TestCase):
                 save('page-source-%d.json' % page, {'actual': methods, 'expectedMethods': methods})
             (evidence / 'capture-observations.jsonl').write_text(''.join(json.dumps(row) + '\n' for row in observations))
             accepted = inspector.inspect(ready, unit)
+            if broad:
+                original_journal = (evidence / 'capture-observations.jsonl').read_bytes()
+                for defect in ('future-stamps', 'missing-intermediate', 'incoming-payload', 'null-game', 'nan-hud', 'missing-channel', 'rewritten-history'):
+                    adverse = copy.deepcopy(observations)
+                    for row in adverse:
+                        if not row['path'].startswith('_frames/'):
+                            continue
+                        for side in ('before', 'after'):
+                            raw = row[side]
+                            if defect == 'future-stamps':
+                                for stamp in raw['events'] + raw['takes']:
+                                    stamp.update(clipTime=999, gameTime=999, hudTime=999000, frame=59940)
+                            elif defect == 'missing-intermediate' and row['path'] != '_frames/203.jpg':
+                                raw.pop('events'); raw.pop('takes')
+                            elif defect == 'incoming-payload':
+                                for event in raw['events']:
+                                    if event['event'].get('target') == 1:
+                                        event['event'].update(target=555, source=123, amount=999)
+                            elif defect == 'null-game':
+                                raw['gameTime'] = None
+                            elif defect == 'nan-hud':
+                                raw['hudTime'] = float('nan')
+                            elif defect == 'missing-channel':
+                                for take in raw['takes']:
+                                    take['returned'].pop('taken', None)
+                            elif defect == 'rewritten-history' and row['path'] == '_frames/203.jpg':
+                                raw['events'][0]['unknown-new-field'] = 'later rewrite'
+                    (evidence / 'capture-observations.jsonl').write_text(''.join(json.dumps(row) + '\n' for row in adverse))
+                    with self.subTest(full_decoder_defect=defect), self.assertRaises(ValueError):
+                        inspector.inspect(ready, unit)
+                (evidence / 'capture-observations.jsonl').write_bytes(original_journal)
             self.assertEqual(accepted['decodedImages'], 219 if broad else 81)
             self.assertLess(accepted['outputBytes'], (12 if broad else 4) * 1024**2)
             (output / 'extra.png').write_bytes(b'x')

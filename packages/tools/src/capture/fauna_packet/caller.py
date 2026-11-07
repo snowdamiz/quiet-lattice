@@ -6,10 +6,12 @@ if not __debug__ or sys.flags.optimize != 0 or os.environ.get('PYTHONOPTIMIZE', 
 sys.dont_write_bytecode = True
 
 import argparse
+import copy
 import datetime
 import hashlib
 import importlib
 import json
+import linecache
 from pathlib import Path
 import re
 import shutil
@@ -17,6 +19,7 @@ import signal
 import stat
 import subprocess
 import time
+from types import SimpleNamespace
 
 sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
@@ -68,6 +71,81 @@ def persist(path, value):
 
 def failure(error):
     return {'type': type(error).__name__, 'message': str(error)}
+
+
+def raw_value(value):
+    """Keep every field of helper observations, including future/unknown fields."""
+    if isinstance(value, dict):
+        return {str(k): raw_value(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [raw_value(v) for v in value]
+    if isinstance(value, Path):
+        return str(value)
+    if hasattr(value, '__dict__'):
+        return raw_value(vars(value))
+    return copy.deepcopy(value)
+
+
+def observed_release(result, evidence, name, function, job, *args, **kwargs):
+    """Record boundaries of the unchanged helper before its assertions can discard them."""
+    attempt = {'observations': [], 'returned': None, 'failure': None,
+               'jobState': raw_value(job.state), 'known': raw_value(getattr(job, 'known', {}))}
+    result['raw'].setdefault('releaseAttempts', {})[name] = attempt
+    def record(label, value):
+        row = {'probe': label, 'raw': raw_value(value)}
+        attempt['observations'].append(row)
+        try:
+            persist(evidence / ('release-%s-%02d.json' % (name, len(attempt['observations']))), row)
+        except BaseException as error:
+            result['persistenceFailures'].append({'receipt': name + '/' + label, **failure(error)})
+    def observed(label, call):
+        def invoke(*a, **kw):
+            try:
+                value = call(*a, **kw)
+            except BaseException as error:
+                record(label, {'args': a, 'kwargs': kw, 'failure': failure(error)})
+                raise
+            record(label, {'args': a, 'kwargs': kw, 'returned': value})
+            return value
+        return invoke
+    namespace = function.__globals__
+    replaced = {}
+    original_members = job.__dict__.get('members')
+    had_members = 'members' in job.__dict__
+    record('initial-state', attempt['jobState'])
+    paths = [job.scratch, *([args[0], *args[1]] if name == 'terminal' else [kwargs['profile_namespace']])]
+    record('paths', [{'path': str(p), 'exists': Path(p).exists(), 'symlink': Path(p).is_symlink()} for p in paths])
+    try:
+        for key in ('kernel_tasks', 'identity', '_archive_profile_paths'):
+            if key in namespace:
+                replaced[key] = namespace[key]
+                namespace[key] = observed(key, namespace[key])
+        if 'subprocess' in namespace:
+            process = namespace['subprocess']
+            replaced['subprocess'] = process
+            namespace['subprocess'] = SimpleNamespace(**{key: observed('subprocess.' + key, getattr(process, key))
+                                                        for key in ('run', 'check_output') if hasattr(process, key)})
+        job.members = observed('members', job.members)
+        returned = function(job, *args, **kwargs) if name == 'terminal' else function(*args, **kwargs)
+        attempt['returned'] = raw_value(returned)
+        return returned
+    except BaseException as error:
+        trace = error.__traceback__
+        while trace.tb_next:
+            trace = trace.tb_next
+        attempt['failure'] = {**failure(error), 'source': trace.tb_frame.f_code.co_filename, 'line': trace.tb_lineno,
+                              'predicate': linecache.getline(trace.tb_frame.f_code.co_filename, trace.tb_lineno).strip()}
+        raise
+    finally:
+        namespace.update(replaced)
+        if had_members:
+            job.members = original_members
+        else:
+            del job.members
+        try:
+            persist(evidence / ('release-' + name + '-result.json'), attempt)
+        except BaseException as error:
+            result['persistenceFailures'].append({'receipt': name + '/result', **failure(error)})
 
 
 def inventory(root):
@@ -299,6 +377,11 @@ def accept_outcome(raw):
 def run_unit(ready, spec, record):
     evidence = Path(spec['evidence'])
     result = {'accepted': False, 'primaryFailure': None, 'cleanupFailures': [], 'persistenceFailures': [], 'raw': {}}
+    def receipt(name, value):
+        try:
+            persist(evidence / name, value)
+        except BaseException as error:
+            result['persistenceFailures'].append({'receipt': name, **failure(error)})
     job = private = admission = None
     try:
         snapshot_caches(ready, evidence)
@@ -308,7 +391,9 @@ def run_unit(ready, spec, record):
         support = importlib.import_module('run_round4_remaining8')
         controller = core.identity(os.getpid())
         require(controller and controller['uid'] == ready['uid'], 'Actual controller identity missing')
-        persist(evidence / 'controller-before-exec.json', {'identity': controller, 'coalition': core.coalition(os.getpid()), 'executable': temp.executable_path(os.getpid())})
+        result['raw']['controllerBeforeExec'] = {'identity': controller, 'coalition': core.coalition(os.getpid()), 'executable': temp.executable_path(os.getpid())}
+        receipt('controller-before-exec.json', result['raw']['controllerBeforeExec'])
+        require(not result['persistenceFailures'], 'Controller receipt failed before launch')
         with core.deadline(600):
             private, admission = temp.create_private_tmp(evidence / 'private-tmp-admission.json')
             argv = [ready['node'], str(HERE / 'entry.mjs'), str(READY), record['unit'], spec['consumption']]
@@ -325,7 +410,8 @@ def run_unit(ready, spec, record):
                 observed_thresholds(ready, job, private)
             outcome = job.wait(max(0.001, 600 - (time.monotonic() - started)), observe)
             result['raw'].update(outcome=outcome, exits=dict(job.state['exits']))
-            persist(evidence / 'returned-capture-outcome.json', result['raw'])
+            result['raw']['jobStateAfterCapture'] = raw_value(job.state)
+            receipt('returned-capture-outcome.json', result['raw'])
             require(outcome == 'completed' and job.state['exits'].get('capture') == 0, 'Capture returned failure')
             observer.require_browser()
     except BaseException as error:
@@ -336,19 +422,27 @@ def run_unit(ready, spec, record):
                 with core.deadline(60):
                     require(bool(job.coalition_id), 'No durable cohort; retain allocations for recovery')
                     drained = job.drain(60)
+                    result['raw']['drain'] = raw_value(drained)
                     result['raw'].update(drained=drained['drained'], clean=drained['clean'], exits=dict(drained['exits']))
-                    persist(evidence / 'returned-drain.json', drained)
-                    require(drained['drained'] and core.kernel_tasks(job.coalition_id)['live'] == 0 and not job.members(), 'Live owned tasks remain')
-                    persist(evidence / 'native-before-archive.json', observed_thresholds(ready, job, private))
-                    job.archive(profile_namespace=private, profile_prefixes=('playwright_chromiumdev_profile-',))
+                    receipt('returned-drain.json', drained)
+                    result['raw']['kernelBeforeArchive'] = core.kernel_tasks(job.coalition_id)
+                    result['raw']['membersBeforeArchive'] = job.members()
+                    receipt('before-archive-predicates.json', {'kernel': result['raw']['kernelBeforeArchive'], 'members': result['raw']['membersBeforeArchive']})
+                    require(drained['drained'] and result['raw']['kernelBeforeArchive']['live'] == 0 and not result['raw']['membersBeforeArchive'], 'Release predicate failed: drained && kernel.live == 0 && members empty')
+                    result['raw']['nativeBeforeArchive'] = observed_thresholds(ready, job, private)
+                    receipt('native-before-archive.json', result['raw']['nativeBeforeArchive'])
+                    observed_release(result, evidence, 'archive', job.archive, job, profile_namespace=private, profile_prefixes=('playwright_chromiumdev_profile-',))
                     profiles = read_json(job.out / 'profile_release.json')
+                    result['raw']['profiles'] = profiles
                     result['raw']['profilesAbsent'] = profiles['all_absent']
                     release = temp.preserve_private_tmp(private, admission, job.out / 'preserved-private-tmp', job=job)
+                    result['raw']['tmpRelease'] = raw_value(release)
                     result['raw']['tmpAbsent'] = release['namespace_removed'] and release['all_bytes_preserved']
-                    persist(evidence / 'returned-tmp-release.json', release)
-                    terminal = support.terminal_audit(job, private, profiles['all_owned_profiles'])
+                    receipt('returned-tmp-release.json', release)
+                    terminal = observed_release(result, evidence, 'terminal', support.terminal_audit, job, private, profiles['all_owned_profiles'])
+                    result['raw']['terminalAuditRecord'] = raw_value(terminal)
                     result['raw']['terminalAudit'] = True
-                    persist(evidence / 'terminal-audit.json', terminal)
+                    receipt('terminal-audit.json', terminal)
             except BaseException as error:
                 result['cleanupFailures'].append(failure(error))
         elif private is not None:
@@ -358,19 +452,21 @@ def run_unit(ready, spec, record):
         except BaseException as error:
             result['persistenceFailures'].append(failure(error))
     try:
-        persist(evidence / 'raw-before-acceptance.json', result)
+        receipt('raw-before-acceptance.json', result)
         if result['primaryFailure'] or result['cleanupFailures'] or result['persistenceFailures']:
             raise Refused('Capture/cleanup failed; raw outcome retained')
         command = [ready['decoderPython'], '-I', '-B', str(HERE / 'inspect.py'), str(READY), record['unit']]
         decoded = subprocess.run(command, capture_output=True, text=True, timeout=45,
                                  env={'PATH': ready['path'], 'PYTHONOPTIMIZE': '0', 'PYTHONDONTWRITEBYTECODE': '1'})
-        persist(evidence / 'inspection-command.json', {'argv': command, 'exit': decoded.returncode, 'stdout': decoded.stdout, 'stderr': decoded.stderr})
+        result['raw']['inspectionCommand'] = {'argv': command, 'result': raw_value(decoded)}
+        receipt('inspection-command.json', result['raw']['inspectionCommand'])
         require(decoded.returncode == 0, 'Independent artifact inspector refused output')
         result['raw']['inspection'] = json.loads(decoded.stdout)
         result['raw']['persistenceFailures'] = result['persistenceFailures']
         accept_outcome(result['raw'])
         verify_legacy(ready)
-        persist(evidence / 'accepted-evidence.json', result['raw'])
+        receipt('accepted-evidence.json', result['raw'])
+        require(not result['persistenceFailures'], 'Evidence persistence failed')
         result['accepted'] = True
     except BaseException as error:
         if result['primaryFailure'] is None:
@@ -380,7 +476,10 @@ def run_unit(ready, spec, record):
     except BaseException as error:
         result['accepted'] = False
         result['persistenceFailures'].append(failure(error))
-        print(json.dumps(result), file=sys.stderr)
+        try:
+            print(json.dumps(result), file=sys.stderr)
+        except BaseException as fallback_error:
+            result['persistenceFailures'].append({'receipt': 'stderr', **failure(fallback_error)})
     return result
 
 

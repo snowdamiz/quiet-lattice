@@ -63,6 +63,7 @@ function installAudit(kind) {
       event: { ...e },
       incarnation: audit.identity(target),
       queued: this.dealt.map((x) => ({ target: x.target, amount: x.amount, killed: x.killed, at: x.at })),
+      queues: Object.fromEntries(['dealt', 'taken', 'gained'].map((key) => [key, this[key].map((x) => ({ ...x }))])),
     });
     if (audit.events.length > 32) throw Error('Unexpected extra fauna combat/reward events');
     return returned;
@@ -96,6 +97,9 @@ function samplePage() {
     canvas: [g.engine.renderer.domElement.width, g.engine.renderer.domElement.height],
     gameTime: g.time,
     clipTime: w.__clip?.t ?? null,
+    hudTime: g.hud.now(),
+    feedTime: w.__feed.net.now(),
+    actor: w.__feed.net.entityId,
     traceFrame: w.__hitTurn?.frames.at(-1) ?? null,
     target: r && {
       id: r.id,
@@ -136,6 +140,8 @@ export function validateSample(raw, relative, aspect, kind = 'correction') {
     );
   }
   if (kind === 'broad') {
+    requireFact(Number.isFinite(raw.gameTime) && Number.isFinite(raw.hudTime) && Number.isFinite(raw.feedTime), 'Nonfinite broad sample clock');
+    requireFact(raw.actor === 1 && Array.isArray(raw.events) && Array.isArray(raw.takes), 'Incomplete broad feed journal');
     if (relative.startsWith('_frames/')) {
       const frame = Number(path.basename(relative, '.jpg'));
       requireFact(raw.phase === 'fight' && Math.abs(raw.clipTime - (frame + 1) / 60) < 0.000001, 'Actual broad frame/time mismatch');
@@ -180,94 +186,116 @@ export async function main() {
       JSON.stringify(consumed.spec) === JSON.stringify(spec),
     'Noncanonical readiness/consumption route',
   );
-  requireFact(process.cwd() === ready.root && fs.realpathSync(process.execPath) === ready.node, 'Actual cwd/Node path changed');
-  requireFact(
-    process.execPath === ready.node && process.env.PATH === ready.path && process.env.NODE_OPTIONS === '' && process.env.SMOKE_GL === 'metal',
-    'Pinned runtime routes changed',
-  );
-  for (const b of ready.bindings) requireFact(fs.realpathSync(b.path) === b.realpath && sha(fs.readFileSync(b.path)) === b.sha256, 'Input drift: ' + b.path);
   const evidence = spec.evidence,
     output = spec.output,
     plan = outputPlan(spec.aspect, spec.kind),
     writes = [];
+  const result = { accepted: false, primaryFailure: null, cleanupFailures: [], persistenceFailures: [], unit, writes, pages: 0, launched: 0, returned: null };
+  const describe = (error) => ({ name: error?.name ?? typeof error, message: error?.message ?? String(error), ...(error?.code ? { code: error.code } : {}) });
+  const reportingErrors = new Set();
   let metadataBytes = 0;
-  const metadata = (name, value, append = false) => {
-    const data = Buffer.from(JSON.stringify(value) + '\n');
-    metadataBytes += data.length;
-    requireFact(data.length <= 1024 * 1024 && metadataBytes <= 32 * 1024 * 1024, 'Controlled metadata cap exceeded');
-    const file = path.join(evidence, name);
-    if (append) fs.appendFileSync(file, data);
-    else writeFile(file, data, { flag: 'wx' });
-  };
-  metadata('entry-controller-before-imports.json', {
-    pid: process.pid,
-    uid: process.getuid(),
-    executable: process.execPath,
-    readinessSha256: consumed.readinessSha256,
-    unit,
-  });
-  // The ordinary capture path is imported only after the caller consumed its explicit grant.
-  const { register } = await import(pathToFileURL(ready.tsxApi).href);
-  const unregister = register();
-  const { transformSync } = await import(pathToFileURL(ready.esbuild).href);
-  const canonical = (s) => sha(transformSync(`({${s}})`, { minifyWhitespace: true, legalComments: 'none', target: 'esnext' }).code);
-  const { HUD } = await import(pathToFileURL(path.join(ready.root, 'packages/client/src/ui/HUD.js')).href);
-  const { Fauna } = await import(pathToFileURL(path.join(ready.root, 'packages/client/src/gameplay/Fauna.js')).href);
-  const { CombatFeed } = await import(pathToFileURL(path.join(ready.root, 'packages/client/src/net/combat.js')).href);
-  const expectedMethods = {};
-  for (const [name, fn] of Object.entries({
-    'HUD.hitNumber': HUD.prototype.hitNumber,
-    'HUD.hitAnchor': HUD.prototype.hitAnchor,
-    'Fauna.update': Fauna.prototype.update,
-    'Fauna.hitAnchor': Fauna.prototype.hitAnchor,
-    'CombatFeed.event': CombatFeed.prototype.event,
-    'CombatFeed.take': CombatFeed.prototype.take,
-  }))
-    expectedMethods[name] = canonical(fn.toString());
-  metadata('source-methods.json', { unit, productBindings: ready.productBindings, expectedMethods });
-  const playwright = await import(pathToFileURL(ready.playwright).href);
-  const launch = playwright.chromium.launch.bind(playwright.chromium);
   let launched = 0,
-    pages = 0;
-  playwright.chromium.launch = async (options) => {
-    requireFact(++launched === 1 && !options.executablePath && !options.channel && !options.recordVideo, 'Nonstandard/duplicate browser launch refused');
-    const browser = await launch(options); // Unchanged ordinary launch, observed by default StageReceipts.
-    const newPage = browser.newPage.bind(browser);
-    browser.newPage = async (options) => {
-      requireFact(++pages <= 2 && !options.recordVideo, 'Unexpected page/video request');
-      const page = await newPage(options);
-      const screenshot = page.screenshot.bind(page);
-      page.screenshot = async (options) => {
-        const relative = path.relative(output, options.path);
-        const before = await page.evaluate(samplePage);
-        const bytes = await screenshot({ ...options, path: undefined });
-        const after = await page.evaluate(samplePage);
-        metadata(
-          'capture-observations.jsonl',
-          { ordinal: writes.length, path: relative, bytes: bytes.length, sha256: sha(bytes), sourceBindings: ready.productBindings, before, after },
-          true,
-        );
-        requireFact(before.gameTime === after.gameTime && before.clipTime === after.clipTime, 'Game advanced during screenshot');
-        validateSample(after, relative, spec.aspect, spec.kind);
-        controlledWrite(output, plan, writes, options.path, bytes);
-        return bytes;
-      };
-      return page;
-    };
-    return browser;
-  };
+    pages = 0,
+    returned = null,
+    unregister = () => {};
   const oldWrite = fs.writeFileSync,
     oldRm = fs.rmSync;
-  fs.writeFileSync = (file, data, options) =>
-    path.resolve(String(file)).startsWith(output + path.sep) ? controlledWrite(output, plan, writes, file, data) : oldWrite(file, data, options);
-  fs.rmSync = (file, options) => {
-    if (path.resolve(String(file)) === path.join(output, '_frames')) requireFact(!fs.existsSync(file), 'Existing frame namespace refused');
-    return oldRm(file, options);
+  let restoreBrowser = () => {};
+  const metadata = (name, value, append = false) => {
+    try {
+      const data = Buffer.from(JSON.stringify(value) + '\n');
+      metadataBytes += data.length;
+      requireFact(data.length <= 1024 * 1024 && metadataBytes <= 32 * 1024 * 1024, 'Controlled metadata cap exceeded');
+      const file = path.join(evidence, name);
+      if (append) fs.appendFileSync(file, data);
+      else writeFile(file, data, { flag: 'wx' });
+    } catch (error) {
+      reportingErrors.add(error);
+      result.persistenceFailures.push({ receipt: name, ...describe(error) });
+      throw error;
+    }
   };
-  syncBuiltinESMExports();
-  let error = null,
-    returned = null;
+  const attemptReceipt = (name, value) => {
+    try {
+      metadata(name, value);
+    } catch {
+      /* retained independently in result */
+    }
+  };
   try {
+    requireFact(process.cwd() === ready.root && fs.realpathSync(process.execPath) === ready.node, 'Actual cwd/Node path changed');
+    requireFact(
+      process.execPath === ready.node && process.env.PATH === ready.path && process.env.NODE_OPTIONS === '' && process.env.SMOKE_GL === 'metal',
+      'Pinned runtime routes changed',
+    );
+    for (const b of ready.bindings) requireFact(fs.realpathSync(b.path) === b.realpath && sha(fs.readFileSync(b.path)) === b.sha256, 'Input drift: ' + b.path);
+    metadata('entry-controller-before-imports.json', {
+      pid: process.pid,
+      uid: process.getuid(),
+      executable: process.execPath,
+      readinessSha256: consumed.readinessSha256,
+      unit,
+    });
+    // The ordinary capture path is imported only after the caller consumed its explicit grant.
+    const { register } = await import(pathToFileURL(ready.tsxApi).href);
+    unregister = register();
+    const { transformSync } = await import(pathToFileURL(ready.esbuild).href);
+    const canonical = (s) => sha(transformSync(`({${s}})`, { minifyWhitespace: true, legalComments: 'none', target: 'esnext' }).code);
+    const { HUD } = await import(pathToFileURL(path.join(ready.root, 'packages/client/src/ui/HUD.js')).href);
+    const { Fauna } = await import(pathToFileURL(path.join(ready.root, 'packages/client/src/gameplay/Fauna.js')).href);
+    const { CombatFeed } = await import(pathToFileURL(path.join(ready.root, 'packages/client/src/net/combat.js')).href);
+    const expectedMethods = {};
+    for (const [name, fn] of Object.entries({
+      'HUD.hitNumber': HUD.prototype.hitNumber,
+      'HUD.hitAnchor': HUD.prototype.hitAnchor,
+      'Fauna.update': Fauna.prototype.update,
+      'Fauna.hitAnchor': Fauna.prototype.hitAnchor,
+      'CombatFeed.event': CombatFeed.prototype.event,
+      'CombatFeed.take': CombatFeed.prototype.take,
+    }))
+      expectedMethods[name] = canonical(fn.toString());
+    metadata('source-methods.json', { unit, productBindings: ready.productBindings, expectedMethods });
+    const playwright = await import(pathToFileURL(ready.playwright).href);
+    const launch = playwright.chromium.launch.bind(playwright.chromium);
+    restoreBrowser = () => {
+      playwright.chromium.launch = launch;
+    };
+    playwright.chromium.launch = async (options) => {
+      requireFact(++launched === 1 && !options.executablePath && !options.channel && !options.recordVideo, 'Nonstandard/duplicate browser launch refused');
+      const browser = await launch(options); // Unchanged ordinary launch, observed by default StageReceipts.
+      const newPage = browser.newPage.bind(browser);
+      browser.newPage = async (options) => {
+        requireFact(++pages <= 2 && !options.recordVideo, 'Unexpected page/video request');
+        const page = await newPage(options);
+        const screenshot = page.screenshot.bind(page);
+        page.screenshot = async (options) => {
+          const relative = path.relative(output, options.path);
+          const before = await page.evaluate(samplePage);
+          const bytes = await screenshot({ ...options, path: undefined });
+          const after = await page.evaluate(samplePage);
+          metadata(
+            'capture-observations.jsonl',
+            { ordinal: writes.length, path: relative, bytes: bytes.length, sha256: sha(bytes), sourceBindings: ready.productBindings, before, after },
+            true,
+          );
+          requireFact(before.gameTime === after.gameTime && before.clipTime === after.clipTime, 'Game advanced during screenshot');
+          validateSample(before, relative, spec.aspect, spec.kind);
+          validateSample(after, relative, spec.aspect, spec.kind);
+          controlledWrite(output, plan, writes, options.path, bytes);
+          return bytes;
+        };
+        return page;
+      };
+      return browser;
+    };
+    fs.writeFileSync = (file, data, options) =>
+      path.resolve(String(file)).startsWith(output + path.sep) ? controlledWrite(output, plan, writes, file, data) : oldWrite(file, data, options);
+    fs.rmSync = (file, options) => {
+      if (path.resolve(String(file)) === path.join(output, '_frames')) requireFact(!fs.existsSync(file), 'Existing frame namespace refused');
+      return oldRm(file, options);
+    };
+    syncBuiltinESMExports();
+
     const { SCREENS } = await import(pathToFileURL(path.join(ready.root, 'packages/tools/src/capture/screens.ts')).href);
     const def = SCREENS[unit],
       open = def.open,
@@ -308,17 +336,46 @@ export async function main() {
     metadata('returned-entry-outcome.json', { returned, writes, pages, launched });
     requireFact(writes.length === plan.length && pages === 2 && launched === 1, 'Incomplete one-screen output');
     for (const b of ready.bindings) requireFact(sha(fs.readFileSync(b.path)) === b.sha256, 'Source changed during capture');
-  } catch (e) {
-    error = { name: e.name, message: e.message };
-    metadata('returned-entry-failure.json', { error, returned, writes, pages, launched });
+  } catch (error) {
+    if (!reportingErrors.has(error)) result.primaryFailure = describe(error);
+    Object.assign(result, { returned, pages, launched });
+    attemptReceipt('returned-entry-failure.json', result);
   } finally {
-    fs.writeFileSync = oldWrite;
-    fs.rmSync = oldRm;
-    syncBuiltinESMExports();
-    unregister();
+    for (const [phase, cleanup] of [
+      [
+        'restore-fs',
+        () => {
+          fs.writeFileSync = oldWrite;
+          fs.rmSync = oldRm;
+          syncBuiltinESMExports();
+        },
+      ],
+      ['restore-browser', restoreBrowser],
+      ['unregister', () => unregister()],
+    ]) {
+      try {
+        cleanup();
+      } catch (error) {
+        result.cleanupFailures.push({ phase, ...describe(error) });
+      }
+    }
   }
-  metadata('entry-result.json', { accepted: error === null, primaryFailure: error, unit, writes, pages, launched });
-  if (error) throw Error(error.message);
+  Object.assign(result, { returned, pages, launched });
+  result.accepted = !result.primaryFailure && !result.cleanupFailures.length && !result.persistenceFailures.length;
+  attemptReceipt('entry-result.json', result);
+  if (result.persistenceFailures.length) result.accepted = false;
+  if (!result.accepted) {
+    // Preserve the complete result in memory even if the final disk and stderr writers both fail.
+    try {
+      const fallback = JSON.stringify(result) + '\n';
+      requireFact(Buffer.byteLength(fallback) <= 1024 * 1024, 'Fallback result exceeds 1 MiB');
+      process.stderr.write(fallback);
+    } catch (error) {
+      result.persistenceFailures.push({ receipt: 'stderr', ...describe(error) });
+    }
+    throw Object.assign(new Error((result.primaryFailure ?? result.cleanupFailures[0] ?? result.persistenceFailures[0]).message), { entryResult: result });
+  }
+  return result;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]))
