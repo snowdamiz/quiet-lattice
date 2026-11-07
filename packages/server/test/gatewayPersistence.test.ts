@@ -3,7 +3,7 @@
 // however the client spells its id; and the inventory sent after `welcome` is the one persistence loaded.
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { PROTOCOL_VERSION, type Pose } from '@astra/shared/protocol';
+import { PROTOCOL_VERSION, type ClientMessage, type Pose } from '@astra/shared/protocol';
 import type { FastifyBaseLogger } from 'fastify';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { Db } from '../src/db/client.ts';
@@ -93,9 +93,8 @@ async function setup() {
     savedAt: null,
     createdAt: new Date(),
   });
-  // (time passes: movement authority lets nothing move in no time)
-  const started = performance.now();
-  const clock = { now: () => 1000 + (performance.now() - started) / 1000 };
+  // Only the fixture advances world time; socket scheduling cannot grant or consume movement credit.
+  const clock = { time: 1000, now: () => clock.time };
   const zones = new ZoneManager({ clock });
   const inventory = new InventoryService();
   persistence = new CharacterPersistence({
@@ -138,7 +137,23 @@ async function setup() {
     s.send({ t: 'join', characterId });
     return { s, welcome: await s.next('welcome'), inventory: await s.next('inventory') };
   };
-  return { store, zones, inventory, persistence, join };
+  const moveFromJoin = async ({ s, welcome }: Awaited<ReturnType<typeof join>>, pose: Pose) => {
+    const sendAccepted = async (input: Pick<Extract<ClientMessage, { t: 'input' }>, 'seq' | 'pose' | 'mode'>) => {
+      s.send({ t: 'input', ...input, time: clock.now(), buttons: 0 });
+      await handled(s);
+      expect(s.received.filter((m) => m.t === 'correction')).toEqual([]);
+      expect(zones.zone(welcome.zone.id)?.entity(welcome.entityId)).toMatchObject({
+        input: { seq: input.seq, time: clock.now() },
+        unvalidated: false,
+        fields: { ...input.pose, mode: input.mode },
+      });
+    };
+    // Seed each fresh mover at its welcome pose, then give the one-metre lift half a second on both clocks.
+    await sendAccepted({ seq: 1, pose: welcome.pose, mode: welcome.mode });
+    clock.time += 0.5;
+    await sendAccepted({ seq: 2, pose, mode: 'ship' });
+  };
+  return { store, inventory, persistence, join, moveFromJoin };
 }
 
 let pings = 0;
@@ -150,11 +165,11 @@ async function handled(s: TestSocket): Promise<void> {
 
 describe('gateway join with persistence', () => {
   it('loads what a character left when the save of its leave lands while its row is being read, however its id is spelled', async () => {
-    const { store, inventory, persistence, join } = await setup();
+    const { store, inventory, persistence, join, moveFromJoin } = await setup();
     const a = await join(CHARACTER);
     // (lifting off its pad: movement authority holds inputs to what a ship can do)
     const moved: Pose = { frame: stationFrame(HOME), pos: [-30, 3.4, -22], quat: [0, 0, 0, 1], vel: [0, 2, 0] };
-    a.s.send({ t: 'input', seq: 1, time: 0, mode: 'ship', pose: moved, buttons: 0 });
+    await moveFromJoin(a, moved);
     a.s.send({ t: 'inventory', seq: 1, op: { op: 'transfer', from: { c: 'suit', i: 0 } } });
     const left = (await a.s.next('inventory')).inventory;
     await handled(a.s);
@@ -164,9 +179,10 @@ describe('gateway join with persistence', () => {
     a.s.close();
     await waitFor(() => persistence.status(CHARACTER)?.inPlay === false, 5000, 'the character to leave');
     expect(store.calls).toHaveLength(1);
+    expect(store.rows.get(CHARACTER)!.revision).toBe(0);
     store.duringRead = async () => {
       release();
-      await persistence.flush();
+      expect(await persistence.flush()).toBe(true);
     };
 
     const b = await join(CHARACTER.toUpperCase());
@@ -178,11 +194,12 @@ describe('gateway join with persistence', () => {
 
     // and its next save is not stale: memory and the row agree
     const again: Pose = { ...moved, pos: [-30, 4.4, -22] };
-    b.s.send({ t: 'input', seq: 1, time: 0, mode: 'ship', pose: again, buttons: 0 });
-    await handled(b.s);
+    await moveFromJoin(b, again);
     expect(persistence.saveNow(CHARACTER)).toBe(true);
     expect(await persistence.flush()).toBe(true);
     expect(persistence.stats().stale).toBe(0);
+    expect(store.calls).toHaveLength(2);
+    expect(store.rows.get(CHARACTER)!.revision).toBe(2);
     expect(store.rows.get(CHARACTER)!.state.pose?.data).toMatchObject({ pose: { pos: [-30, 4.4, -22] } });
     b.s.close();
   });
