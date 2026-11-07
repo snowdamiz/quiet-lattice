@@ -1,0 +1,85 @@
+# Appendix C.2 — T13 exact owned Apple encoder binding
+
+Confirmed the conditional refusal and prepared a configuration-only mechanical rebind. No runtime source/generator/observer/protocol change was needed. The new binding and readiness remain false. This is CPU pre-launch evidence for a fresh narrow parent-owned review, not native qualification or an independent review grade.
+
+## Pins and exact delta
+
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8; branch codex/task/P1-E14-T13-trace-observer.
+- SOURCE-PASS base: a310c5050d18c5f8c562cd2764186ce5a1f0492d; tree 6c285200f613715b04984f2f09f20e5b3f869e01. Prior independent report: /private/tmp/p1-e14-t13-native-r3.A19dJrRY/report.md.
+- New HEAD: 66ce38ec5ca03d86289fb63b116d6ca53b163032; tree eb48565cf1e159d3249f7f688b2ca83f37c973cd; clean.
+- Sole tracked change: packages/tools/src/capture/trace_observer_packet/local-binding.json,72 inserted lines. Config SHA256 773a6985ec4629aad0d684dbe089df5dc28ae292d57a4d443fff885ac49fac59. Full patch: config.patch, SHA256 7353b4bc01f620d0426952bc65a882fe31ddec51659ed71ab90a6947a8359336.
+- Existing544 binary rows remain identical and in the same order. Exactly two rows are appended: the signed VTEncoder executable and codesign used to verify it. appleEncoderBinding stores the current read-only signature/identity evidence, with runtimeAuthorized:false. Every other preexisting configuration value, path, scene, device/load expectation and budget is unchanged.
+- Production Python/TypeScript, discovery generator, retained helpers, worker/adapter, renderer/Review, protocol/report algorithms and T15 are byte-identical. protected-source-hashes.json records key hashes; git base..HEAD names exactly one JSON file. No authoring/orchestration docs or asset changes.
+
+## RED and bounded current verification
+
+The initial whole-controller replay imported actual current run_owned, actual StageReceipts and retained wait/drain/archive/audit bodies. Only process/kernel/launch ports were inert. It supplied the existing binding list plus the normal CPU fixture executable and a seventh observed current-cohort process with the exact VTEncoder path. Actual StageReceipts recorded role apple-video-encoder-xpc, admitted:false, then raised Unbound owned executable at that exact path. The desired positive assertion exited1. red-missing/assessment.json, returned.json and red-missing.log retain the result. This confirms conditional refusal if that service appears in T13; it is not evidence that T13 launched or that the service is guaranteed to appear.
+
+Current executable:
+`/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService`
+
+- 167280 bytes; SHA256 a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5 — exactly the effects pilot's observed executable hash.
+- Canonical regular file, UID0, mode0755. No group/other write bits; current UID501 cannot write it. "Nonwritable" here means protected from the nonroot caller, not removal of root's mode write bit.
+- Identity/size/mtime/ctime/device/inode stamps, content hashes and nonroot-writability were checked before and after signature inspection through the anchored metadata readers. No system path was changed.
+- `/usr/bin/codesign`:973408 bytes, SHA256 d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e, likewise canonical/root-owned/protected and stable.
+- Actual CPU codesign --verify --strict with requirement `identifier "com.apple.coremedia.videoencoder" and anchor apple`:exit0. Actual display:exit0; identifier matches, platform identifier26, designated requirement exact, CDHash 1a44901103cc99a0b15b19f81156f25748c3a0d9.
+- The accepted retained encoder_binding body supplied signature verification through the task-local anchored read ports. Each command has5s timeout; the observation phase has20s I/O deadline and output observations are bounded/checked at64KiB. No encoder executable, browser, XPC service or GPU job was started.
+
+The report /private/tmp/p1-e07-t14-native-failure-3pevk0mk/APPENDIX-C2.md was used for the exact observed path/hash and known role. Its failed effects pilot remains FAILED/spent; its proposed source correction was not copied. No effects cleanup or rerun occurred here.
+
+## GREEN and negative boundaries
+
+Seven whole-controller modes run against the unchanged actual observer/helper bodies; all driver exits0:
+
+| Mode | Observed result |
+| --- | --- |
+| Exact signed row, current UID/birth/cohort | candidate:true in inert fixture; exact service role admitted |
+| Missing row, original binding | candidate:false; exact unbound-executable refusal |
+| Wrong coalition | candidate:false before service admission |
+| Wrong UID | candidate:false before service admission |
+| Changed birth identity | candidate:false before service admission |
+| Another executable path | candidate:false; the exact row grants no wildcard allowance |
+| Service outside observed cohort | normal six-process fixture completes; no encoder record; external ownership remains UNQUALIFIED |
+
+These labels describe CPU fixtures, not real OS-native acceptance. All raw observer records and terminal facts are retained per mode. The concrete test scaffold and its hashes are in this evidence root; it derives from the existing controller controls with only the seventh inert identity, supplied binding, negative ownership ports and expected assertions changed.
+
+Additional focused controls:
+- Real user-owned executable and symlink are refused by the same current protected-identity admission used to construct the binding.
+- Actual codesign with a wrong identifier requirement exits3, as expected; raw stderr retained.
+- Actual production verify_freeze rejects a false expected VTEncoder hash with Bound input changed. The runtime hash gate therefore does not accept a forged expected row merely because the observer recognizes the path. The unchanged observer relies on prelaunch hash admission and then current UID/birth/coalition/executable membership; it does not newly perform a per-XPC signature query.
+- Scoped JSON formatting and final base..HEAD diff check exit0. An initial formatting check exited1; formatting was corrected without changing JSON values, and the warning is recorded. No 632-suite/typecheck/lint rerun: every executable source/test byte remains at the reviewed base. The prior632/64/T15 results remain exact prior evidence, not new test counts.
+
+This is intentionally config-only. Signature/permission observations are frozen pre-launch provenance; existing runtime admission rechecks exact binary hashes and the retained observer enforces current process ownership. The external bind_encoder.py records/repeats this mechanical inspection; it is not a new runtime controller, broad allowlist, service launcher or grant issuer. Use the exact reviewed configuration rather than treating a fresh general discovery result as this binding.
+
+## New disabled freeze
+
+One fresh final freeze after clean commit: /private/tmp/p1-e14-t13-encoder-rebind.76v3q66e/frozen-66ce38ec5.
+Readiness: /private/tmp/p1-e14-t13-encoder-rebind.76v3q66e/frozen-66ce38ec5/readiness.json
+Readiness SHA256: d2b62cb5cf17f7b53ccbe8fb5254e8a9b766c75873e0ee2d6f85f1d6f19a5b43; 7889098 bytes, below16MiB.
+Readiness, local binding and signed-observation runtime flags:false.
+Source/resource records:513 / 47558061 bytes.
+Dependencies:13222 records / 243636268 regular bytes, unchanged.
+Binary/bundle records:546.
+
+Actual freezer and production verify_freeze exit0. Complete source/dependency/file/link inventory and current bound hashes are verified. The wrong-hash control refuses. Frozen Python launcher exits2 before grant/native imports/allocation; frozen Node --owned reads disabled metadata through its bounded CPU bridge then exits1 before native imports. NEXT_LAUNCH.sh passes /bin/sh -n only and was not executed. Old a310 frozen readiness remains hash8729a8b3812b468e0b8277d704bfeab588751879c17998f84aacb50eb980d646. Old bundles/reports/paths are preserved.
+
+## Next launch data for narrow review
+
+/private/tmp/p1-e14-t13-encoder-rebind.76v3q66e/NEXT_LAUNCH.json and NEXT_LAUNCH.sh contain the exact new head/tree/readiness pins and unchanged bounds. After the parent's fresh narrow review and separate enabled-readiness/grant step, the proposal is:
+
+```sh
+/private/tmp/p1-e14-t13-encoder-rebind.76v3q66e/NEXT_LAUNCH.sh <parent-enabled-readiness-sha256> <fresh-grant-sha256>
+```
+
+This command was not run. The script does not enable readiness or issue a grant. All existing prospective paths remain absent:
+- Enabled readiness: /private/tmp/t13-observer-enabled-readiness-7b836b7a.json
+- Grant: /private/tmp/t13-observer-grant-7b836b7a.json
+- Consumption: /private/tmp/t13-observer-consumed-7b836b7a
+- Output: /private/tmp/t13-observer-native-7b836b7a
+- Fallback: /private/tmp/t13-observer-fallback-7b836b7a
+
+The parent has not launched T13. One-use scope/expiry, clean exact source, current capacity, reserved GPU identity, our CPU quiescence, complete observed backend/device/load and physical settlement remain required. Current capacity observation:32543293440 free bytes; minimum8589934592, to be read again at admission. No OS quota is claimed. Native child/cohort/birth/UID/drain/profile/TMP/archive/terminal proof and parent-observed launcher OS exit0 plus complete output hashes are still unobserved. External XPC ownership remains UNQUALIFIED; a name or PPID does not admit it.
+
+Protocol unchanged:12 preparations<=7200warmups,10 measured frames,48 dependent passes,36 preflight fences,24 control fences,6 on segments,64MiB/250000events/1024reads,0 PNG/timer queries; standard1920x1080 Thalune suit2/noon-lush/history/render workload. Off tracing stays zero; on covers prep/control. Decision rules and1009100/306100/1315200ms envelopes remain exact. No16.67ms or performance conclusion follows. Historical cloud03 stays FAILED, accepted:false.
+
+No native capture/browser/GPU/XPC/service/DB/Blender/trace job, grant, enablement, package install, hydration, screenshot cleanup, push/PR/merge or orchestration-doc write occurred. CPU codesign inspection and inert observer replays are the only new executable checks. Exact argv/exits/raw results, input/source/protected hashes, patch, signature receipt, verification and next-launch data are retained here. Fresh independent narrow review remains parent-owned.

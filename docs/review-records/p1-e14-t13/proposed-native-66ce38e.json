@@ -1,0 +1,133 @@
+{
+  "kind": "T13_DISABLED_NEXT_LAUNCH",
+  "runtimeAuthorized": false,
+  "head": "66ce38ec5ca03d86289fb63b116d6ca53b163032",
+  "tree": "eb48565cf1e159d3249f7f688b2ca83f37c973cd",
+  "readiness": "/private/tmp/p1-e14-t13-encoder-rebind.76v3q66e/frozen-66ce38ec5/readiness.json",
+  "disabledReadinessSha256": "d2b62cb5cf17f7b53ccbe8fb5254e8a9b766c75873e0ee2d6f85f1d6f19a5b43",
+  "parentEnabledReadinessPath": "/private/tmp/t13-observer-enabled-readiness-7b836b7a.json",
+  "entry": "/private/tmp/p1-e14-t13-encoder-rebind.76v3q66e/NEXT_LAUNCH.sh",
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "pythonLauncher": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "pythonKernel": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+  "browser": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "boundPaths": {
+    "prefix": "bwt-7b836b7ae1754aac9d95e3b74a980efd",
+    "output": "/private/tmp/t13-observer-native-7b836b7a",
+    "fallback": "/private/tmp/t13-observer-fallback-7b836b7a",
+    "consumption": "/private/tmp/t13-observer-consumed-7b836b7a",
+    "grant": "/private/tmp/t13-observer-grant-7b836b7a.json",
+    "assetPath": "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/client/public/models/characters/thalune.glb"
+  },
+  "bounds": {
+    "captureMs": 1009100,
+    "controlFences": 24,
+    "dependentPasses": 48,
+    "drainMs": 306100,
+    "events": 250000,
+    "frames": 10,
+    "png": 0,
+    "preflightFences": 36,
+    "preparations": 12,
+    "queries": 0,
+    "reads": 1024,
+    "segments": 6,
+    "terminalMs": 1315200,
+    "traceBytes": 67108864,
+    "warmUpFrames": 7200
+  },
+  "limits": {
+    "dependencyBytes": 536870912,
+    "dependencyFiles": 30000,
+    "frozenBytes": 805306368,
+    "frozenFiles": 40000,
+    "logBytes": 268435456,
+    "metadataBytes": 16777216,
+    "minimumFreeBytes": 8589934592,
+    "outputBytes": 536870912,
+    "outputFiles": 20000,
+    "profileBytes": 536870912,
+    "profileFiles": 20000,
+    "sourceBytes": 268435456,
+    "sourceFiles": 6000
+  },
+  "controlledLoad": {
+    "externalContenders": "unknown-not-excluded",
+    "logicalCores": 15,
+    "maxLoad": [
+      7.5,
+      10,
+      15
+    ],
+    "requiresOurHeavyCPUJobsQuiesced": true,
+    "requiresParentGPUReservation": true
+  },
+  "expectedDevice": {
+    "backend": "metal",
+    "provenance": "read-only system_profiler; actual GL device must still be observed",
+    "rendererContains": "Apple M5 Pro"
+  },
+  "grantFieldRequirements": [
+    "purpose=P1.E14.T13/unchanged-reference-trace-observer-v1",
+    "head=66ce38ec5ca03d86289fb63b116d6ca53b163032",
+    "tree=eb48565cf1e159d3249f7f688b2ca83f37c973cd",
+    "readinessSha256=hash of separately parent-enabled readiness",
+    "planSha256=73522bd42bd66eb35e9f94fcaa6f8813c2b5738be8ee9d34553ca14c50c7abed",
+    "output=/private/tmp/t13-observer-native-7b836b7a",
+    "consumption=/private/tmp/t13-observer-consumed-7b836b7a",
+    "expiresAtEpochSeconds must be future and no more than 3600 seconds ahead",
+    "controlledLoad.ourHeavyCpuJobsQuiesced=true",
+    "controlledLoad.gpuReservation=explicit parent reservation identity",
+    "controlledLoad.externalContenders=unknown-not-excluded",
+    "controlledLoad.maxLoad=[7.5,10,15]"
+  ],
+  "prospectivePathsAbsent": {
+    "/private/tmp/t13-observer-enabled-readiness-7b836b7a.json": true,
+    "/private/tmp/t13-observer-native-7b836b7a": true,
+    "/private/tmp/t13-observer-fallback-7b836b7a": true,
+    "/private/tmp/t13-observer-consumed-7b836b7a": true,
+    "/private/tmp/t13-observer-grant-7b836b7a.json": true
+  },
+  "currentAdmissionObservation": {
+    "at": 1794042925.12978,
+    "path": "/private/tmp/p1-e14-t13-encoder-rebind.76v3q66e",
+    "availableBytes": 32543444992,
+    "minimumFreeBytes": 8589934592,
+    "quotaGuaranteed": false
+  },
+  "parentMustObserve": "Actual launcher OS exit 0 and bounded terminal/result/output hashes; candidate/accepted disk flags cannot admit a successor",
+  "noNativeExecutionInThisUnit": true,
+  "metadataBridge": {
+    "pythonLauncher": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "pythonKernel": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+    "argv": [
+      "-I",
+      "-B",
+      "-c",
+      "task-local bounded metadata wrapper",
+      "frozen trace_observer_packet directory"
+    ],
+    "timeoutMs": 15000,
+    "signal": "SIGKILL",
+    "ownedRole": "owned-launch-helper",
+    "nativeObserved": false
+  },
+  "terminalLimits": {
+    "totalMs": 1315200,
+    "drainMaximumMs": 306100,
+    "preDrainEvidenceMaximumMs": 2000,
+    "inventoryMaximumMs": 28000,
+    "publicationMaximumMs": 2000,
+    "stderrMaximumMs": 2000,
+    "reservesTerminalMsInsideExistingEnvelope": 32000,
+    "quotaGuaranteed": false
+  },
+  "signedAppleExecutable": {
+    "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+    "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5",
+    "codesignSha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e",
+    "bindingEvidence": "binding.appleEncoderBinding",
+    "ownership": "Actual current UID/birth/coalition and exact executable required; external XPC ownership UNQUALIFIED",
+    "signatureObservationScope": "Read-only prelaunch verification frozen as provenance; unchanged runtime verifier rechecks exact binary hashes."
+  }
+}
