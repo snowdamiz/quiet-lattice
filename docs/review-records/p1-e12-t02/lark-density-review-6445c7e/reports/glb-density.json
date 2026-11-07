@@ -1,0 +1,2347 @@
+{
+  "glb": "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/client/public/models/hulls/lark.glb",
+  "glb_sha256": "7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78",
+  "glb_bytes": 19791628,
+  "decoder": {
+    "node_require_from": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/package.json",
+    "gltf_transform_core": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/.pnpm/@gltf-transform+core@4.5.1/node_modules/@gltf-transform/core/dist/index.cjs",
+    "meshoptimizer": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/.pnpm/meshoptimizer@1.3.0/node_modules/meshoptimizer/index.js"
+  },
+  "extensions": [
+    "EXT_meshopt_compression",
+    "KHR_materials_clearcoat",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_variants",
+    "KHR_mesh_quantization",
+    "KHR_texture_basisu"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_mesh_quantization",
+    "KHR_texture_basisu"
+  ],
+  "accessorHist": {
+    "POSITION type=VEC3 ct=5122 normalized=true": 151,
+    "NORMAL type=VEC3 ct=5120 normalized=true": 151,
+    "TEXCOORD_0 type=VEC2 ct=5123 normalized=true": 134,
+    "TEXCOORD_1 absent": 151,
+    "TEXCOORD_0 type=VEC2 ct=5126 normalized=false": 17
+  },
+  "uvAudit": {
+    "renderPrimitives": 151,
+    "missingTexcoord0": 0,
+    "extraTexcoord": 0,
+    "sets": {
+      "TEXCOORD_0": 151
+    }
+  },
+  "uv_bounds_lod0": {
+    "min": [
+      0,
+      0.00030518043793392844
+    ],
+    "max": [
+      0.9997558556496529,
+      1
+    ],
+    "samples": 1996074,
+    "samples_outside_0_1": 0
+  },
+  "lodTris": {
+    "lark_damaged_LOD0": 113554,
+    "lark_damaged_LOD1": 79329,
+    "lark_damaged_LOD2": 65756,
+    "lark_damaged_LOD3": 3907,
+    "lark_husked_LOD0": 110371,
+    "HollowGlyph_LOD0": 8,
+    "lark_husked_LOD1": 77944,
+    "HollowGlyph_LOD1": 8,
+    "lark_husked_LOD2": 66039,
+    "lark_husked_LOD3": 3484,
+    "lark_LOD0": 108746,
+    "lark_LOD1": 73947,
+    "lark_LOD2": 59938,
+    "lark_LOD3": 4015
+  },
+  "namedBits": [
+    {
+      "node": "HollowGlyph_LOD0",
+      "lod": 0,
+      "material": "HollowSeam",
+      "triangles": 8
+    },
+    {
+      "node": "HollowGlyph_LOD1",
+      "lod": 1,
+      "material": "HollowSeam",
+      "triangles": 8
+    }
+  ],
+  "floatUv": [
+    {
+      "node": "CockpitMechanism_dmgMesh",
+      "lod": 1,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 5996
+    },
+    {
+      "node": "CockpitMechanism_dmgMesh",
+      "lod": 2,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 4227
+    },
+    {
+      "node": "Body_dmg",
+      "lod": 3,
+      "material": "Hull",
+      "componentType": 5126,
+      "count": 85
+    },
+    {
+      "node": "Body_dmg",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 2293
+    },
+    {
+      "node": "CockpitMechanism_dmgMesh",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 625
+    },
+    {
+      "node": "LandingMechanism_dmgMesh",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 715
+    },
+    {
+      "node": "CockpitMechanism_huskMesh",
+      "lod": 1,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 5920
+    },
+    {
+      "node": "CockpitMechanism_huskMesh",
+      "lod": 2,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 4191
+    },
+    {
+      "node": "Body_husk",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 3456
+    },
+    {
+      "node": "Body_husk",
+      "lod": 3,
+      "material": "Trim",
+      "componentType": 5126,
+      "count": 1729
+    },
+    {
+      "node": "CockpitMechanism_huskMesh",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 564
+    },
+    {
+      "node": "CockpitMechanismMesh",
+      "lod": 1,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 5918
+    },
+    {
+      "node": "CockpitMechanismMesh",
+      "lod": 2,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 4159
+    },
+    {
+      "node": "Body",
+      "lod": 3,
+      "material": "Hull",
+      "componentType": 5126,
+      "count": 615
+    },
+    {
+      "node": "Body",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 1218
+    },
+    {
+      "node": "CockpitMechanismMesh",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 603
+    },
+    {
+      "node": "LandingMechanismMesh",
+      "lod": 3,
+      "material": "Dark",
+      "componentType": 5126,
+      "count": 736
+    }
+  ],
+  "skippedMaterials": {
+    "NavWhite": 3,
+    "EngineGlow": 3,
+    "NavRed": 3,
+    "NavGreen": 3,
+    "Glass": 3,
+    "HollowSeam": 2
+  },
+  "images": [
+    {
+      "name": "lark_damaged_4k_density_normal",
+      "mime": "image/ktx2",
+      "bytes": 1325125,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_damaged_4k_density_ORM",
+      "mime": "image/ktx2",
+      "bytes": 139659,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_damaged_4k_density_baseColor",
+      "mime": "image/ktx2",
+      "bytes": 154701,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_damaged_Glass_normal",
+      "mime": "image/ktx2",
+      "bytes": 1535518,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_damaged_Glass_baseColor",
+      "mime": "image/ktx2",
+      "bytes": 262277,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_damaged_Glass_roughness",
+      "mime": "image/ktx2",
+      "bytes": 499898,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_husked_4k_emissive",
+      "mime": "image/ktx2",
+      "bytes": 26925,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_husked_4k_density_normal",
+      "mime": "image/ktx2",
+      "bytes": 1763074,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_husked_4k_density_ORM",
+      "mime": "image/ktx2",
+      "bytes": 374605,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_husked_4k_density_baseColor",
+      "mime": "image/ktx2",
+      "bytes": 41191,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_husked_Glass_normal",
+      "mime": "image/ktx2",
+      "bytes": 893605,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_husked_Glass_roughness",
+      "mime": "image/ktx2",
+      "bytes": 416600,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_4k_density_normal",
+      "mime": "image/ktx2",
+      "bytes": 550027,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_4k_density_ORM",
+      "mime": "image/ktx2",
+      "bytes": 63461,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_4k_density_baseColor",
+      "mime": "image/ktx2",
+      "bytes": 71161,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_livery_compact",
+      "mime": "image/ktx2",
+      "bytes": 897395,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    },
+    {
+      "name": "lark_livery_working",
+      "mime": "image/ktx2",
+      "bytes": 886251,
+      "declaredSize": [
+        4096,
+        4096
+      ],
+      "size": {
+        "kind": "ktx2",
+        "width": 4096,
+        "height": 4096,
+        "levels": 13
+      }
+    }
+  ],
+  "image_size_counts": {
+    "4096x4096": 17
+  },
+  "materials": [
+    {
+      "name": "NavWhite",
+      "role": "NavWhite",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "NavWhite"
+      },
+      "extensions": [
+        "KHR_materials_emissive_strength"
+      ],
+      "slots": {}
+    },
+    {
+      "name": "Hull",
+      "role": "Hull",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Hull",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedPlate",
+        "livery_base": "#F4F4F0",
+        "livery_role": "Hull",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "3989a4b6fc2a6c15beff7b4f6c09b6efabb5df7720b5996ab60b05355cea89b1",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_damaged_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_damaged_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Dark",
+      "role": "Dark",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Dark",
+        "macro_variation": true,
+        "lib_source": "LIB_DarkMetal",
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "3989a4b6fc2a6c15beff7b4f6c09b6efabb5df7720b5996ab60b05355cea89b1",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_damaged_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_damaged_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Accent",
+      "role": "Accent",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Accent",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedAccent",
+        "livery_base": "#22406A",
+        "livery_role": "Accent",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "3989a4b6fc2a6c15beff7b4f6c09b6efabb5df7720b5996ab60b05355cea89b1",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_damaged_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_damaged_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Trim",
+      "role": "Trim",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Trim",
+        "macro_variation": true,
+        "lib_source": "LIB_TrimMetal",
+        "livery_base": "#F28C28",
+        "livery_role": "Trim",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "3989a4b6fc2a6c15beff7b4f6c09b6efabb5df7720b5996ab60b05355cea89b1",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_damaged_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_damaged_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_damaged_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "EngineGlow",
+      "role": "EngineGlow",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "EngineGlow",
+        "lib_source": "LIB_EngineGlow"
+      },
+      "extensions": [
+        "KHR_materials_emissive_strength"
+      ],
+      "slots": {}
+    },
+    {
+      "name": "NavRed",
+      "role": "NavRed",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "NavRed"
+      },
+      "extensions": [
+        "KHR_materials_emissive_strength"
+      ],
+      "slots": {}
+    },
+    {
+      "name": "NavGreen",
+      "role": "NavGreen",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "NavGreen"
+      },
+      "extensions": [
+        "KHR_materials_emissive_strength"
+      ],
+      "slots": {}
+    },
+    {
+      "name": "Glass",
+      "role": "Glass",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Glass",
+        "lib_source": "LIB_Glass"
+      },
+      "extensions": [
+        "KHR_materials_clearcoat"
+      ],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_damaged_Glass_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_damaged_Glass_roughness",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_damaged_Glass_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Hull",
+      "role": "Hull",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "macro_variation": true,
+        "engine_name": "Hull",
+        "lib_source": "LIB_HuskPlate",
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "7e0dd9f5adc2693a330564bd1237332ee2ede39f0ac11184c3ee87e375c3d536",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_husked_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_husked_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "emissive": {
+          "texture": "lark_husked_4k_emissive",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Dark",
+      "role": "Dark",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "macro_variation": true,
+        "engine_name": "Dark",
+        "lib_source": "LIB_HuskPlate",
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "7e0dd9f5adc2693a330564bd1237332ee2ede39f0ac11184c3ee87e375c3d536",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_husked_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_husked_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Accent",
+      "role": "Accent",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "macro_variation": true,
+        "engine_name": "Accent",
+        "lib_source": "LIB_HuskPlate",
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "7e0dd9f5adc2693a330564bd1237332ee2ede39f0ac11184c3ee87e375c3d536",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_husked_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_husked_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "emissive": {
+          "texture": "lark_husked_4k_emissive",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Trim",
+      "role": "Trim",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "macro_variation": true,
+        "engine_name": "Trim",
+        "lib_source": "LIB_HuskPlate",
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "7e0dd9f5adc2693a330564bd1237332ee2ede39f0ac11184c3ee87e375c3d536",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_husked_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_husked_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "EngineGlow",
+      "role": "EngineGlow",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "EngineGlow",
+        "lib_source": "LIB_EngineGlow"
+      },
+      "extensions": [],
+      "slots": {}
+    },
+    {
+      "name": "NavRed",
+      "role": "NavRed",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "NavRed",
+        "lib_source": "LIB_NavRed"
+      },
+      "extensions": [],
+      "slots": {}
+    },
+    {
+      "name": "NavGreen",
+      "role": "NavGreen",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "NavGreen",
+        "lib_source": "LIB_NavGreen"
+      },
+      "extensions": [],
+      "slots": {}
+    },
+    {
+      "name": "NavWhite",
+      "role": "NavWhite",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "NavWhite",
+        "lib_source": "LIB_NavWhite"
+      },
+      "extensions": [],
+      "slots": {}
+    },
+    {
+      "name": "HollowSeam",
+      "role": "HollowSeam",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "macro_variation": true,
+        "engine_name": "HollowSeam",
+        "lib_source": "LIB_HuskPlate",
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "7e0dd9f5adc2693a330564bd1237332ee2ede39f0ac11184c3ee87e375c3d536",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_husked_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_husked_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_husked_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "emissive": {
+          "texture": "lark_husked_4k_emissive",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Glass",
+      "role": "Glass",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Glass",
+        "lib_source": "LIB_Glass"
+      },
+      "extensions": [
+        "KHR_materials_clearcoat"
+      ],
+      "slots": {
+        "metallicRoughness": {
+          "texture": "lark_husked_Glass_roughness",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_husked_Glass_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Hull",
+      "role": "Hull",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Hull",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedPlate",
+        "livery_base": "#F4F4F0",
+        "livery_role": "Hull",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Dark",
+      "role": "Dark",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Dark",
+        "macro_variation": true,
+        "lib_source": "LIB_DarkMetal",
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Accent",
+      "role": "Accent",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Accent",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedAccent",
+        "livery_base": "#22406A",
+        "livery_role": "Accent",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Trim",
+      "role": "Trim",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Trim",
+        "macro_variation": true,
+        "lib_source": "LIB_TrimMetal",
+        "livery_base": "#F28C28",
+        "livery_role": "Trim",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_4k_density_baseColor",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "EngineGlow",
+      "role": "EngineGlow",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "EngineGlow",
+        "lib_source": "LIB_EngineGlow"
+      },
+      "extensions": [
+        "KHR_materials_emissive_strength"
+      ],
+      "slots": {}
+    },
+    {
+      "name": "Glass",
+      "role": "Glass",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Glass",
+        "lib_source": "LIB_Glass"
+      },
+      "extensions": [
+        "KHR_materials_clearcoat"
+      ],
+      "slots": {}
+    },
+    {
+      "name": "Hull_compact",
+      "role": "Hull_compact",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Hull",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedPlate",
+        "livery_base": "#F4F4F0",
+        "livery_role": "Hull",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_livery_compact",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Accent_compact",
+      "role": "Accent_compact",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Accent",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedAccent",
+        "livery_base": "#22406A",
+        "livery_role": "Accent",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_livery_compact",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Trim_compact",
+      "role": "Trim_compact",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Trim",
+        "macro_variation": true,
+        "lib_source": "LIB_TrimMetal",
+        "livery_base": "#F28C28",
+        "livery_role": "Trim",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_livery_compact",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Hull_working",
+      "role": "Hull_working",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Hull",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedPlate",
+        "livery_base": "#F4F4F0",
+        "livery_role": "Hull",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_livery_working",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Accent_working",
+      "role": "Accent_working",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Accent",
+        "macro_variation": true,
+        "lib_source": "LIB_PaintedAccent",
+        "livery_base": "#22406A",
+        "livery_role": "Accent",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_livery_working",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    },
+    {
+      "name": "Trim_working",
+      "role": "Trim_working",
+      "alphaMode": "OPAQUE",
+      "extras": {
+        "engine_name": "Trim",
+        "macro_variation": true,
+        "lib_source": "LIB_TrimMetal",
+        "livery_base": "#F28C28",
+        "livery_role": "Trim",
+        "livery_name": "compact",
+        "livery_albedo_scale": 0.86,
+        "round3_paint": "Localized leading rim, intake lips, port ingress, maintenance covers, contact rungs; no global noise",
+        "round3_baked": true,
+        "bake_source_lod": 0,
+        "bake_resolution": 4096,
+        "bake_source_sha256": "f73327b3755418a816f18738b94345b68766d92416582e794af90fee5ba5d690",
+        "final_normal_ao_source_sha256": "1013885728fb00ebd9ee70a82d7e0457c14c89a999f47715de3188a4f6e2c2ec",
+        "round3_density_private": true
+      },
+      "extensions": [],
+      "slots": {
+        "baseColor": {
+          "texture": "lark_livery_working",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "metallicRoughness": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "normal": {
+          "texture": "lark_4k_density_normal",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        },
+        "occlusion": {
+          "texture": "lark_4k_density_ORM",
+          "mime": "image/ktx2",
+          "texCoord": 0,
+          "size": {
+            "kind": "ktx2",
+            "width": 4096,
+            "height": 4096,
+            "levels": 13
+          }
+        }
+      }
+    }
+  ],
+  "density": {
+    "atlas_pixels": 4096,
+    "roles": 23,
+    "min_median": 590.6403370883208,
+    "min_key": "lark_husked_LOD0/Body_husk/Accent",
+    "max_median": 40975.63866049564,
+    "all_texcoord_normalized": true,
+    "rows": [
+      {
+        "key": "lark_husked_LOD0/Body_husk/Accent",
+        "triangles": 5656,
+        "edges": 16900,
+        "world_area_m2": 21.717478035679754,
+        "uv_area": 1.79890707706789,
+        "median_px_per_m": 590.6403370883208,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/CockpitMechanism_dmgMesh/Trim",
+        "triangles": 444,
+        "edges": 1332,
+        "world_area_m2": 0.10103452781785596,
+        "uv_area": 0.0022115711758019263,
+        "median_px_per_m": 629.0189730678236,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/CockpitMechanismMesh/Trim",
+        "triangles": 444,
+        "edges": 1332,
+        "world_area_m2": 0.10103452781785596,
+        "uv_area": 0.0022115711758019263,
+        "median_px_per_m": 629.0189730678236,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Accent",
+        "triangles": 8392,
+        "edges": 24225,
+        "world_area_m2": 31.284844238783894,
+        "uv_area": 1.8365613794737883,
+        "median_px_per_m": 632.8779958045058,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Body/Accent",
+        "triangles": 8536,
+        "edges": 24353,
+        "world_area_m2": 32.31301954128059,
+        "uv_area": 2.356195309403217,
+        "median_px_per_m": 650.8860222128374,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/CanopyFrame_husk/Dark",
+        "triangles": 2656,
+        "edges": 7940,
+        "world_area_m2": 5.76920520866777,
+        "uv_area": 3.6849825015155253,
+        "median_px_per_m": 1649.5657552523076,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Trim",
+        "triangles": 32622,
+        "edges": 94447,
+        "world_area_m2": 58.54708207269632,
+        "uv_area": 22.54511036879012,
+        "median_px_per_m": 1724.3824798279954,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Body/Trim",
+        "triangles": 32622,
+        "edges": 93957,
+        "world_area_m2": 58.771159476484414,
+        "uv_area": 22.99840159644377,
+        "median_px_per_m": 1765.9024103201155,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/CanopyFrame/Dark",
+        "triangles": 2656,
+        "edges": 7944,
+        "world_area_m2": 5.76920520866777,
+        "uv_area": 5.647179907890447,
+        "median_px_per_m": 1979.8011897821739,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Hull",
+        "triangles": 22012,
+        "edges": 61474,
+        "world_area_m2": 124.37133917223996,
+        "uv_area": 23.770776113820514,
+        "median_px_per_m": 2150.9585858783757,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Body/Hull",
+        "triangles": 23468,
+        "edges": 65175,
+        "world_area_m2": 130.47133437486286,
+        "uv_area": 28.382767474212493,
+        "median_px_per_m": 2385.336732730084,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/Trim",
+        "triangles": 32622,
+        "edges": 93194,
+        "world_area_m2": 58.772672747468796,
+        "uv_area": 63.039612993858555,
+        "median_px_per_m": 2572.8334628610646,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/Hull",
+        "triangles": 14746,
+        "edges": 40892,
+        "world_area_m2": 75.067687754202,
+        "uv_area": 21.486971602974396,
+        "median_px_per_m": 2685.5865164993843,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/CanopyFrame_dmg/Dark",
+        "triangles": 2656,
+        "edges": 7958,
+        "world_area_m2": 5.769205208667769,
+        "uv_area": 17.801012545245566,
+        "median_px_per_m": 4156.872081090136,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Body/Dark",
+        "triangles": 16318,
+        "edges": 45708,
+        "world_area_m2": 272.4616322214436,
+        "uv_area": 249.47730430744275,
+        "median_px_per_m": 6028.843448458967,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Dark",
+        "triangles": 22726,
+        "edges": 64599,
+        "world_area_m2": 371.4527207429537,
+        "uv_area": 776.7875734883473,
+        "median_px_per_m": 6649.010081970844,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/Dark",
+        "triangles": 29889,
+        "edges": 79819,
+        "world_area_m2": 381.12265226449864,
+        "uv_area": 1022.2995896588337,
+        "median_px_per_m": 8357.916968650055,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/CockpitMechanismMesh/Dark",
+        "triangles": 12232,
+        "edges": 34924,
+        "world_area_m2": 33.840215667251954,
+        "uv_area": 107.38227162386971,
+        "median_px_per_m": 12657.093618963527,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/CockpitMechanism_huskMesh/Dark",
+        "triangles": 12316,
+        "edges": 34904,
+        "world_area_m2": 33.90927121537632,
+        "uv_area": 145.9946910636816,
+        "median_px_per_m": 19106.007402980555,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/CockpitMechanism_dmgMesh/Dark",
+        "triangles": 12232,
+        "edges": 34970,
+        "world_area_m2": 33.840215667251954,
+        "uv_area": 191.11199169613866,
+        "median_px_per_m": 21808.63042935459,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/LandingMechanismMesh/Dark",
+        "triangles": 10556,
+        "edges": 31668,
+        "world_area_m2": 1.6095724493791177,
+        "uv_area": 102.10976442448073,
+        "median_px_per_m": 23233.852365280054,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/LandingMechanism_huskMesh/Dark",
+        "triangles": 10556,
+        "edges": 31668,
+        "world_area_m2": 1.6095724493791175,
+        "uv_area": 68.16889030710318,
+        "median_px_per_m": 24271.991228822095,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/LandingMechanism_dmgMesh/Dark",
+        "triangles": 10556,
+        "edges": 31668,
+        "world_area_m2": 1.6088777239746361,
+        "uv_area": 207.40839409319278,
+        "median_px_per_m": 40975.63866049564,
+        "texcoord_normalized": true
+      }
+    ]
+  },
+  "outside_gate": {
+    "roles": 17,
+    "min_median": 21.248622904364208,
+    "min_key": "lark_husked_LOD0/Body_husk/NavWhite",
+    "rows": [
+      {
+        "key": "lark_husked_LOD0/Body_husk/NavWhite",
+        "triangles": 294,
+        "edges": 882,
+        "world_area_m2": 0.12780772410227498,
+        "uv_area": 0.0000032504149794442896,
+        "median_px_per_m": 21.248622904364208,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/NavGreen",
+        "triangles": 98,
+        "edges": 294,
+        "world_area_m2": 0.04250193667284029,
+        "uv_area": 0.0000011269347063402951,
+        "median_px_per_m": 21.666849735333308,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/NavRed",
+        "triangles": 98,
+        "edges": 294,
+        "world_area_m2": 0.0425019492262567,
+        "uv_area": 0.000001106444984406823,
+        "median_px_per_m": 21.701863734337515,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/EngineGlow",
+        "triangles": 128,
+        "edges": 384,
+        "world_area_m2": 0.54939448586724,
+        "uv_area": 0.00001644207050060446,
+        "median_px_per_m": 22.558633750766944,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/NavRed",
+        "triangles": 98,
+        "edges": 294,
+        "world_area_m2": 0.042549160064610514,
+        "uv_area": 0.0000017546652783017406,
+        "median_px_per_m": 26.83215782866197,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/NavGreen",
+        "triangles": 98,
+        "edges": 294,
+        "world_area_m2": 0.04254915480918092,
+        "uv_area": 0.000001838486868029512,
+        "median_px_per_m": 27.791839907906773,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/EngineGlow",
+        "triangles": 128,
+        "edges": 384,
+        "world_area_m2": 0.5493178565856399,
+        "uv_area": 0.00002663477581150354,
+        "median_px_per_m": 28.64084224640543,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Body/EngineGlow",
+        "triangles": 128,
+        "edges": 384,
+        "world_area_m2": 0.54939448586724,
+        "uv_area": 0.00003269228269583212,
+        "median_px_per_m": 32.10927623632667,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Body/NavGreen",
+        "triangles": 98,
+        "edges": 294,
+        "world_area_m2": 0.04251877387655505,
+        "uv_area": 0.0000029076778125573232,
+        "median_px_per_m": 33.946952840078346,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Body/NavRed",
+        "triangles": 98,
+        "edges": 294,
+        "world_area_m2": 0.04251877315910305,
+        "uv_area": 0.0000029430691504424052,
+        "median_px_per_m": 34.92624626074142,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/CanopyGlass_dmg/Glass",
+        "triangles": 1296,
+        "edges": 3888,
+        "world_area_m2": 8.094742109476922,
+        "uv_area": 0.9215238285366809,
+        "median_px_per_m": 1114.961029595142,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/CanopyGlass_husk/Glass",
+        "triangles": 1296,
+        "edges": 3888,
+        "world_area_m2": 8.094742109476922,
+        "uv_area": 0.9215238285366809,
+        "median_px_per_m": 1114.961029595142,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/CanopyGlass/Glass",
+        "triangles": 1296,
+        "edges": 3888,
+        "world_area_m2": 8.094742109476922,
+        "uv_area": 0.9215238285366809,
+        "median_px_per_m": 1114.961029595142,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/HollowSeam",
+        "triangles": 16,
+        "edges": 48,
+        "world_area_m2": 0.035285507924931715,
+        "uv_area": 0.002143597454638671,
+        "median_px_per_m": 1204.3121912379233,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "HollowGlyph_LOD0/HollowGlyph_LOD0/HollowSeam",
+        "triangles": 8,
+        "edges": 24,
+        "world_area_m2": 0.0013800856783482242,
+        "uv_area": 0.0010717987273193355,
+        "median_px_per_m": 1939.1794446871593,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_damaged_LOD0/Lens_Strobes_dmg/NavWhite",
+        "triangles": 294,
+        "edges": 882,
+        "world_area_m2": 0.1278615501058129,
+        "uv_area": 0.6326659367552491,
+        "median_px_per_m": 9834.895108472347,
+        "texcoord_normalized": true
+      },
+      {
+        "key": "lark_LOD0/Lens_Strobes/NavWhite",
+        "triangles": 294,
+        "edges": 882,
+        "world_area_m2": 0.1278615501058129,
+        "uv_area": 0.6326659367552491,
+        "median_px_per_m": 9834.895108472347,
+        "texcoord_normalized": true
+      }
+    ]
+  }
+}

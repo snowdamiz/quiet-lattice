@@ -1,0 +1,915 @@
+{
+  "before": {
+    "blend_sha256": "d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba",
+    "glb_sha256": "7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78",
+    "blend_bytes": 48962870,
+    "glb_bytes": 19791628,
+    "git_status": "",
+    "git_head": "6445c7ec07aa2a08b722aeca22d56132154ea32c",
+    "git_tree": "a09d51b1b594a799a9489504d44d64447bb15450",
+    "disk_free": 100084293632
+  },
+  "after": {
+    "blend_sha256": "d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba",
+    "glb_sha256": "7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78",
+    "git_status": "",
+    "disk_free": 100012961792,
+    "scratch_bytes": 68897724
+  },
+  "restored": [],
+  "alive_reaped": [],
+  "identity": {
+    "6445c7ec07aa2a08b722aeca22d56132154ea32c": {
+      "blend": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba\nsize 48962870",
+        "lfs_oid": "sha256:d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba",
+        "lfs_size": 48962870
+      },
+      "glb": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78\nsize 19791628",
+        "lfs_oid": "sha256:7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78",
+        "lfs_size": 19791628
+      }
+    },
+    "8b6c3604bb842019c899956a1b57d6a01385d6f3": {
+      "blend": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:4d0eec86894b3eefa3985cbd6686e1f27d0d7512140e7d09e39a65adc19d07c1\nsize 35508071",
+        "lfs_oid": "sha256:4d0eec86894b3eefa3985cbd6686e1f27d0d7512140e7d09e39a65adc19d07c1",
+        "lfs_size": 35508071
+      },
+      "glb": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:659b084f2664b9f79d406a4c5abf2a425ba9e4dc2d1c533de467fecde6ba8836\nsize 16699824",
+        "lfs_oid": "sha256:659b084f2664b9f79d406a4c5abf2a425ba9e4dc2d1c533de467fecde6ba8836",
+        "lfs_size": 16699824
+      }
+    },
+    "9648690f6e3149684cbd7fe7787d6ae8cfc1c5f1": {
+      "blend": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:9fea5ec91f66247d8c459e5c599771ea4002b111d277406b021a82164c995ee0\nsize 36597454",
+        "lfs_oid": "sha256:9fea5ec91f66247d8c459e5c599771ea4002b111d277406b021a82164c995ee0",
+        "lfs_size": 36597454
+      },
+      "glb": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:06cf7ca1b620d8f7b6fbf65969deba511c7c13cb5d00eb7712be7c19a72729a6\nsize 16512872",
+        "lfs_oid": "sha256:06cf7ca1b620d8f7b6fbf65969deba511c7c13cb5d00eb7712be7c19a72729a6",
+        "lfs_size": 16512872
+      }
+    },
+    "1331891dcaba3e8438c6a62b2b698a1d054c0e79": {
+      "blend": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba\nsize 48962870",
+        "lfs_oid": "sha256:d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba",
+        "lfs_size": 48962870
+      },
+      "glb": {
+        "blob_text": "version https://git-lfs.github.com/spec/v1\noid sha256:6f3a0774a8539435779985afdaca4322a2bea9a798fa51ad4a88f2ba27c88b55\nsize 19791752",
+        "lfs_oid": "sha256:6f3a0774a8539435779985afdaca4322a2bea9a798fa51ad4a88f2ba27c88b55",
+        "lfs_size": 19791752
+      }
+    }
+  },
+  "ktx_version": "ktx version: v4.4.2",
+  "stages": {
+    "blend_measure": {
+      "cmd": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/tmp/lark-grok-6445c7ec/measure_blend.py"
+      ],
+      "log": "/tmp/lark-grok-6445c7ec/logs/blend-measure.log",
+      "exit": 0,
+      "killed": null,
+      "peak_rss": 831619072,
+      "seconds": 3.132,
+      "tmp_peak": 68847752
+    },
+    "validate_source": {
+      "cmd": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/tools/blender/validate.py",
+        "--",
+        "--quiet",
+        "--report",
+        "/tmp/lark-grok-6445c7ec/reports/validate-source.json",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/assets/blend/hulls/lark.blend"
+      ],
+      "log": "/tmp/lark-grok-6445c7ec/logs/validate-source.log",
+      "exit": 0,
+      "killed": null,
+      "peak_rss": 1641299968,
+      "seconds": 3.143,
+      "tmp_peak": 68882615
+    },
+    "validate_glb": {
+      "cmd": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/tools/blender/validate.py",
+        "--",
+        "--quiet",
+        "--report",
+        "/tmp/lark-grok-6445c7ec/reports/validate-glb.json",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/client/public/models/hulls/lark.glb"
+      ],
+      "log": "/tmp/lark-grok-6445c7ec/logs/validate-glb.log",
+      "exit": 0,
+      "killed": null,
+      "peak_rss": 2030747648,
+      "seconds": 11.374,
+      "tmp_peak": 106457404
+    },
+    "glb_measure": {
+      "cmd": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "/tmp/lark-grok-6445c7ec/measure_glb.mjs",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/client/public/models/hulls/lark.glb",
+        "/tmp/lark-grok-6445c7ec/reports/glb-density.json"
+      ],
+      "log": "/tmp/lark-grok-6445c7ec/logs/glb-measure.log",
+      "exit": 1,
+      "killed": null,
+      "peak_rss": 753664,
+      "seconds": 1.092,
+      "tmp_peak": 68897724
+    }
+  },
+  "stage_tails": {
+    "blend_measure": "00:00.897  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/assets/blend/hulls/lark.blend\"\n/tmp/lark-grok-6445c7ec/measure_blend.py:249: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  if mat.use_nodes and mat.node_tree:\n/tmp/lark-grok-6445c7ec/measure_blend.py:273: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0\n  \"use_nodes\": bool(mat.use_nodes),\nBLEND_MEASURE {'roles': 23, 'median_of_medians': 2438.4896981607917, 'min_median': 590.6459274927377, 'min_key': 'lark_husked_LOD0/Body_husk/Accent', 'max_median': 20459.628424054976, 'max_key': 'lark_damaged_LOD0/CockpitMechanism_dmgMesh/Dark', 'target_px_per_m': 512, 'pass': True, 'gate_roles': ['Hull', 'Accent', 'Trim', 'Dark'], 'outside_roles': 17, 'outside_min_median': 21.42830904841018, 'outside_min_key': 'lark_husked_LOD0/Body_husk/NavRed'} images 17 force_fit_props 0\nBlender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)\n\nBlender quit\n",
+    "validate_source": "00:00.302  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/assets/blend/hulls/lark.blend\"\nBlender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)\nPASS  assets/blend/hulls/lark.blend\n\n1 of 1 file(s) passed validation\n",
+    "validate_glb": "ront_leg_dmg\n14:45:58 | INFO: Blender create Mesh node Lens_Strobes_dmg\n14:45:58 | INFO: Blender create Mesh node Body_dmg\n14:45:58 | INFO: Blender create Mesh node CanopyFrame_dmg\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_dmg.004_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg\n14:45:58 | INFO: Blender create Mesh node GearFront_leg_dmg\n14:45:58 | INFO: Blender create Mesh node Lens_Strobes_dmg\n14:45:58 | INFO: Blender create Mesh node Body_dmg\n14:45:58 | INFO: Blender create Mesh node CanopyFrame_dmg\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_dmg.005_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg\n14:45:58 | INFO: Blender create Mesh node GearFront_leg_dmg\n14:45:58 | INFO: Blender create Mesh node Lens_Strobes_dmg\n14:45:58 | INFO: Blender create Mesh node Body_dmg\n14:45:58 | INFO: Blender create Mesh node CanopyFrame_dmg\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_dmg.006_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh_dmg\n14:45:58 | INFO: Blender create Mesh node GearFront_leg_dmg\n14:45:58 | INFO: Blender create Mesh node Body_husk\n14:45:58 | INFO: Blender create Mesh node CanopyFrame_husk\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_husk_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh_husk\n14:45:58 | INFO: Blender create Mesh node GearFront_leg_husk\n14:45:58 | INFO: Blender create Mesh node HollowGlyph_LOD0\n14:45:58 | INFO: Blender create Mesh node Body_husk\n14:45:58 | INFO: Blender create Mesh node CanopyFrame_husk\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_husk.004_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh_husk\n14:45:58 | INFO: Blender create Mesh node GearFront_leg_husk\n14:45:58 | INFO: Blender create Mesh node HollowGlyph_LOD1\n14:45:58 | INFO: Blender create Mesh node Body_husk\n14:45:58 | INFO: Blender create Mesh node CanopyFrame_husk\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_husk.005_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh_husk\n14:45:58 | INFO: Blender create Mesh node GearFront_leg_husk\n14:45:58 | INFO: Blender create Mesh node Body_husk\n14:45:58 | INFO: Blender create Mesh node CanopyFrame_husk\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_husk.006_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh_husk\n14:45:58 | INFO: Blender create Mesh node GearFront_leg_husk\n14:45:58 | INFO: Blender create Mesh node Lens_Strobes\n14:45:58 | INFO: Blender create Mesh node Body\n14:45:58 | INFO: Blender create Mesh node CanopyFrame\n14:45:58 | INFO: Blender create Mesh node CanopyGlass_fitted\n14:45:58 | INFO: Blender create Mesh node CockpitInteriorMesh\n14:45:58 | INFO: Blender create Mesh node GearFront_leg\n14:45:59 | INFO: Blender create Mesh node Lens_Strobes\n14:45:59 | INFO: Blender create Mesh node Body\n14:45:59 | INFO: Blender create Mesh node CanopyFrame\n14:45:59 | INFO: Blender create Mesh node CanopyGlass.004_fitted\n14:45:59 | INFO: Blender create Mesh node CockpitInteriorMesh\n14:45:59 | INFO: Blender create Mesh node GearFront_leg\n14:45:59 | INFO: Blender create Mesh node Lens_Strobes\n14:45:59 | INFO: Blender create Mesh node Body\n14:45:59 | INFO: Blender create Mesh node CanopyFrame\n14:45:59 | INFO: Blender create Mesh node CanopyGlass.005_fitted\n14:45:59 | INFO: Blender create Mesh node CockpitInteriorMesh\n14:45:59 | INFO: Blender create Mesh node GearFront_leg\n14:45:59 | INFO: Blender create Mesh node Lens_Strobes\n14:45:59 | INFO: Blender create Mesh node Body\n14:45:59 | INFO: Blender create Mesh node CanopyFrame\n14:45:59 | INFO: Blender create Mesh node CanopyGlass.006_fitted\n14:45:59 | INFO: Blender create Mesh node CockpitInteriorMesh\n14:45:59 | INFO: Blender create Mesh node GearFront_leg\n14:45:59 | INFO: glTF import finished in 1.12s\nBlender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)\nPASS  packages/client/public/models/hulls/lark.glb\n\n1 of 1 file(s) passed validation\n",
+    "glb_measure": "file:///private/tmp/lark-grok-6445c7ec/measure_glb.mjs:193\n  const image = texture.getSource();\n                        ^\n\nTypeError: texture.getSource is not a function\n    at file:///private/tmp/lark-grok-6445c7ec/measure_glb.mjs:193:25\n\nNode.js v22.23.3\n"
+  },
+  "validate_source": {
+    "status": "PASS",
+    "error": null,
+    "blender": "5.2.3 LTS",
+    "summary": {
+      "checks": {
+        "naming": "PASS",
+        "triangles": "PASS",
+        "lods": "PASS",
+        "materials": "PASS",
+        "scale": "PASS"
+      },
+      "fail": 0,
+      "warn": 136
+    },
+    "assets": [
+      {
+        "asset": "lark",
+        "id": "lark",
+        "class": "hero",
+        "lodTris": {
+          "0": 108746,
+          "1": 73947,
+          "2": 59940,
+          "3": 4388
+        },
+        "dims": [
+          13.522,
+          12.38,
+          4.285
+        ],
+        "materials": [
+          "Lark_Hull",
+          "Lark_Dark",
+          "Lark_Accent",
+          "Lark_Trim",
+          "Lark_EngineGlow",
+          "LIB_NavRed",
+          "LIB_NavGreen",
+          "LIB_NavWhite",
+          "Lark_Glass"
+        ]
+      },
+      {
+        "asset": "lark",
+        "id": "lark_damaged",
+        "class": "hero",
+        "lodTris": {
+          "0": 113554,
+          "1": 79329,
+          "2": 65758,
+          "3": 4557
+        },
+        "dims": [
+          13.522,
+          12.38,
+          4.49
+        ],
+        "materials": [
+          "LarkDmg_Hull",
+          "LarkDmg_Dark",
+          "LarkDmg_Accent",
+          "LarkDmg_Trim",
+          "LarkDmg_EngineGlow",
+          "LIB_NavRed",
+          "LIB_NavGreen",
+          "LIB_NavWhite",
+          "LarkDmg_Glass"
+        ]
+      },
+      {
+        "asset": "lark",
+        "id": "lark_husked",
+        "class": "hero",
+        "lodTris": {
+          "0": 110379,
+          "1": 77952,
+          "2": 66041,
+          "3": 4760
+        },
+        "dims": [
+          13.522,
+          12.431,
+          4.285
+        ],
+        "materials": [
+          "LarkHusk_HuskHull",
+          "LarkHusk_HuskDark",
+          "LarkHusk_HuskAccent",
+          "LarkHusk_HuskTrim",
+          "LarkHusk_HuskEngineGlow",
+          "LarkHusk_DeadNavRed",
+          "LarkHusk_DeadNavGreen",
+          "LarkHusk_DeadNavWhite",
+          "LIB_HollowSeam_Lark",
+          "LarkHusk_HuskGlass"
+        ]
+      }
+    ],
+    "fail_findings": [],
+    "warn_messages": [
+      {
+        "check": "naming",
+        "message": "object name carries Blender's duplicate suffix; give it a real name",
+        "count": 135
+      },
+      {
+        "check": "materials",
+        "message": "emissive map lark_husked_4k_emissive is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail",
+        "count": 1
+      }
+    ]
+  },
+  "validate_glb": {
+    "status": "PASS",
+    "error": null,
+    "blender": "5.2.3 LTS",
+    "summary": {
+      "checks": {
+        "naming": "PASS",
+        "triangles": "PASS",
+        "lods": "PASS",
+        "materials": "PASS",
+        "scale": "PASS"
+      },
+      "fail": 0,
+      "warn": 1
+    },
+    "assets": [
+      {
+        "asset": "lark",
+        "id": "lark_damaged",
+        "class": "hero",
+        "lodTris": {
+          "0": 113554,
+          "1": 79329,
+          "2": 65755,
+          "3": 3907
+        },
+        "dims": [
+          13.522,
+          12.379,
+          4.49
+        ],
+        "materials": [
+          "NavWhite",
+          "Hull",
+          "Dark",
+          "Accent",
+          "Trim",
+          "EngineGlow",
+          "NavRed",
+          "NavGreen",
+          "Glass"
+        ]
+      },
+      {
+        "asset": "lark",
+        "id": "lark_husked",
+        "class": "hero",
+        "lodTris": {
+          "0": 110379,
+          "1": 77952,
+          "2": 66038,
+          "3": 3484
+        },
+        "dims": [
+          13.522,
+          12.432,
+          4.286
+        ],
+        "materials": [
+          "Hull",
+          "Dark",
+          "Accent",
+          "Trim",
+          "EngineGlow",
+          "NavRed",
+          "NavGreen",
+          "NavWhite",
+          "HollowSeam",
+          "Glass"
+        ]
+      },
+      {
+        "asset": "lark",
+        "id": "lark",
+        "class": "hero",
+        "lodTris": {
+          "0": 108746,
+          "1": 73947,
+          "2": 59938,
+          "3": 4015
+        },
+        "dims": [
+          13.522,
+          12.379,
+          4.286
+        ],
+        "materials": [
+          "NavWhite",
+          "Hull",
+          "Dark",
+          "Accent",
+          "Trim",
+          "EngineGlow",
+          "NavRed",
+          "NavGreen",
+          "Glass"
+        ]
+      }
+    ],
+    "fail_findings": [],
+    "warn_messages": [
+      {
+        "check": "materials",
+        "message": "emissive map lark_husked_4k_emissive is uniform under the surface's UVs (std 0.0008 < 0.0039): paint or bake real detail",
+        "count": 1
+      }
+    ]
+  },
+  "blend_measure_json": {
+    "summary": {
+      "roles": 23,
+      "median_of_medians": 2438.4896981607917,
+      "min_median": 590.6459274927377,
+      "min_key": "lark_husked_LOD0/Body_husk/Accent",
+      "max_median": 20459.628424054976,
+      "max_key": "lark_damaged_LOD0/CockpitMechanism_dmgMesh/Dark",
+      "target_px_per_m": 512,
+      "pass": true,
+      "gate_roles": [
+        "Hull",
+        "Accent",
+        "Trim",
+        "Dark"
+      ],
+      "outside_roles": 17,
+      "outside_min_median": 21.42830904841018,
+      "outside_min_key": "lark_husked_LOD0/Body_husk/NavRed"
+    },
+    "uv_inventory": {
+      "lark_lod_mesh_objects": 71,
+      "layer_sets": [
+        {
+          "layers": [
+            "UVMap"
+          ],
+          "objects": 71
+        }
+      ],
+      "active_uv": [
+        {
+          "name": "UVMap",
+          "objects": 71
+        }
+      ],
+      "missing_UVMap": [],
+      "not_exactly_UVMap": []
+    },
+    "uv_bounds_lod0_UVMap": {
+      "min": [
+        9.522202049083717e-08,
+        6.936032548310322e-08
+      ],
+      "max": [
+        0.999755859375,
+        0.9997053146362305
+      ],
+      "samples": 684513,
+      "samples_outside_0_1": 0
+    },
+    "image_size_counts": [
+      {
+        "width": 4096,
+        "height": 4096,
+        "images": 17
+      }
+    ],
+    "gate_linked_image_size_counts": [
+      {
+        "width": 4096,
+        "height": 4096,
+        "links": 38
+      }
+    ],
+    "force_fit_properties": [],
+    "libraries": [],
+    "linked_object_count": 0,
+    "local_mesh_object_count": 78,
+    "name_matches": [
+      {
+        "name": "LarkHusk_DeadNavGreen",
+        "engine_name": "NavGreen",
+        "images": []
+      },
+      {
+        "name": "LarkHusk_DeadNavRed",
+        "engine_name": "NavRed",
+        "images": []
+      },
+      {
+        "name": "LarkHusk_DeadNavWhite",
+        "engine_name": "NavWhite",
+        "images": []
+      },
+      {
+        "name": "LarkHusk_HuskAccent",
+        "engine_name": "Accent",
+        "images": [
+          "lark_husked_4k_density_ORM",
+          "lark_husked_4k_density_baseColor",
+          "lark_husked_4k_density_normal",
+          "lark_husked_4k_emissive"
+        ]
+      },
+      {
+        "name": "LarkHusk_HuskDark",
+        "engine_name": "Dark",
+        "images": [
+          "lark_husked_4k_density_ORM",
+          "lark_husked_4k_density_baseColor",
+          "lark_husked_4k_density_normal"
+        ]
+      },
+      {
+        "name": "LarkHusk_HuskEngineGlow",
+        "engine_name": "EngineGlow",
+        "images": []
+      },
+      {
+        "name": "LarkHusk_HuskGlass",
+        "engine_name": "Glass",
+        "images": [
+          "lark_husked_Glass_normal",
+          "lark_husked_Glass_roughness"
+        ]
+      },
+      {
+        "name": "LarkHusk_HuskHull",
+        "engine_name": "Hull",
+        "images": [
+          "lark_husked_4k_density_ORM",
+          "lark_husked_4k_density_baseColor",
+          "lark_husked_4k_density_normal",
+          "lark_husked_4k_emissive"
+        ]
+      },
+      {
+        "name": "LarkHusk_HuskTrim",
+        "engine_name": "Trim",
+        "images": [
+          "lark_husked_4k_density_ORM",
+          "lark_husked_4k_density_baseColor",
+          "lark_husked_4k_density_normal"
+        ]
+      },
+      {
+        "name": "LIB_HollowSeam_Lark",
+        "engine_name": "HollowSeam",
+        "images": [
+          "lark_husked_4k_density_ORM",
+          "lark_husked_4k_density_baseColor",
+          "lark_husked_4k_density_normal",
+          "lark_husked_4k_emissive"
+        ]
+      }
+    ],
+    "husk_slot_engine_names": [
+      "Accent",
+      "Dark",
+      "EngineGlow",
+      "Glass",
+      "HollowSeam",
+      "Hull",
+      "NavGreen",
+      "NavRed",
+      "NavWhite",
+      "Trim"
+    ],
+    "matrix_convention_error": null,
+    "blender": "5.2.3 LTS",
+    "outside_min": {
+      "key": "lark_husked_LOD0/Body_husk/NavRed",
+      "median": 21.42830904841018
+    },
+    "rows": [
+      {
+        "key": "lark_husked_LOD0/Body_husk/Accent",
+        "area_m2": 21.703410090813655,
+        "uv_area": 1.798804550797215,
+        "edges": 16924,
+        "triangles": 5656,
+        "median_px_per_m": 590.6459274927377,
+        "area_px_per_m": 1179.201297795702
+      },
+      {
+        "key": "lark_damaged_LOD0/CockpitMechanism_dmgMesh/Trim",
+        "area_m2": 0.11200512948254086,
+        "uv_area": 0.0024032475030182354,
+        "edges": 1332,
+        "triangles": 444,
+        "median_px_per_m": 599.9909174755187,
+        "area_px_per_m": 599.9847910237474
+      },
+      {
+        "key": "lark_LOD0/CockpitMechanismMesh/Trim",
+        "area_m2": 0.11200512948254086,
+        "uv_area": 0.0024032475030182354,
+        "edges": 1332,
+        "triangles": 444,
+        "median_px_per_m": 599.9909174755187,
+        "area_px_per_m": 599.9847910237474
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Accent",
+        "area_m2": 31.288580531840516,
+        "uv_area": 1.8365052446523933,
+        "edges": 24526,
+        "triangles": 8392,
+        "median_px_per_m": 618.7622170456874,
+        "area_px_per_m": 992.3459554301213
+      },
+      {
+        "key": "lark_LOD0/Body/Accent",
+        "area_m2": 32.30363608462763,
+        "uv_area": 2.3562967102112466,
+        "edges": 24804,
+        "triangles": 8536,
+        "median_px_per_m": 626.8463790533059,
+        "area_px_per_m": 1106.2396790686894
+      },
+      {
+        "key": "lark_husked_LOD0/CanopyFrame_husk/Dark",
+        "area_m2": 5.767760351496728,
+        "uv_area": 3.684877828511828,
+        "edges": 7940,
+        "triangles": 2656,
+        "median_px_per_m": 1650.4678499608417,
+        "area_px_per_m": 3273.918703919266
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Trim",
+        "area_m2": 58.53697016551703,
+        "uv_area": 22.540504637095367,
+        "edges": 96342,
+        "triangles": 32622,
+        "median_px_per_m": 1651.3617953114376,
+        "area_px_per_m": 2541.713791417265
+      },
+      {
+        "key": "lark_LOD0/Body/Trim",
+        "area_m2": 58.7645209983031,
+        "uv_area": 22.995130858659962,
+        "edges": 96066,
+        "triangles": 32622,
+        "median_px_per_m": 1675.3722538473894,
+        "area_px_per_m": 2562.2428530270695
+      },
+      {
+        "key": "lark_LOD0/CanopyFrame/Dark",
+        "area_m2": 5.767760351496728,
+        "uv_area": 5.647319309127909,
+        "edges": 7944,
+        "triangles": 2656,
+        "median_px_per_m": 1979.4847632262745,
+        "area_px_per_m": 4053.008517400329
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Hull",
+        "area_m2": 124.37611999002092,
+        "uv_area": 23.77131980801463,
+        "edges": 62551,
+        "triangles": 22012,
+        "median_px_per_m": 2144.439095273923,
+        "area_px_per_m": 1790.6804539961308
+      },
+      {
+        "key": "lark_LOD0/Body/Hull",
+        "area_m2": 130.4705007428127,
+        "uv_area": 28.38191827383431,
+        "edges": 66575,
+        "triangles": 23468,
+        "median_px_per_m": 2348.917131427746,
+        "area_px_per_m": 1910.4015241952204
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/Trim",
+        "area_m2": 58.7645209983031,
+        "uv_area": 63.04073706948092,
+        "edges": 96018,
+        "triangles": 32622,
+        "median_px_per_m": 2438.4896981607917,
+        "area_px_per_m": 4242.413429240397
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/Hull",
+        "area_m2": 75.06726540586737,
+        "uv_area": 21.48865696126587,
+        "edges": 41826,
+        "triangles": 14746,
+        "median_px_per_m": 2601.536194139284,
+        "area_px_per_m": 2191.488957904759
+      },
+      {
+        "key": "lark_damaged_LOD0/CanopyFrame_dmg/Dark",
+        "area_m2": 5.767760351496728,
+        "uv_area": 17.801369449085975,
+        "edges": 7958,
+        "triangles": 2656,
+        "median_px_per_m": 4173.681867220409,
+        "area_px_per_m": 7195.865730356013
+      },
+      {
+        "key": "lark_LOD0/Body/Dark",
+        "area_m2": 272.4703344035879,
+        "uv_area": 249.48244523061862,
+        "edges": 46769,
+        "triangles": 16318,
+        "median_px_per_m": 5789.790964167257,
+        "area_px_per_m": 3919.4067081857024
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/Dark",
+        "area_m2": 371.46014021393864,
+        "uv_area": 776.807346373887,
+        "edges": 66220,
+        "triangles": 22726,
+        "median_px_per_m": 6324.049335071939,
+        "area_px_per_m": 5923.255970397933
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/Dark",
+        "area_m2": 381.1561327874589,
+        "uv_area": 1022.2605499865672,
+        "edges": 86884,
+        "triangles": 29889,
+        "median_px_per_m": 7224.051629286668,
+        "area_px_per_m": 6707.9419042003765
+      },
+      {
+        "key": "lark_LOD0/LandingMechanismMesh/Dark",
+        "area_m2": 16.295902920365947,
+        "uv_area": 102.1112939684399,
+        "edges": 31668,
+        "triangles": 10556,
+        "median_px_per_m": 7280.294108699372,
+        "area_px_per_m": 10253.157375763174
+      },
+      {
+        "key": "lark_husked_LOD0/LandingMechanism_huskMesh/Dark",
+        "area_m2": 16.295902920365947,
+        "uv_area": 68.16584059126623,
+        "edges": 31668,
+        "triangles": 10556,
+        "median_px_per_m": 7649.663411489137,
+        "area_px_per_m": 8377.301207854369
+      },
+      {
+        "key": "lark_LOD0/CockpitMechanismMesh/Dark",
+        "area_m2": 37.6638061257524,
+        "uv_area": 107.3850971131527,
+        "edges": 35390,
+        "triangles": 12232,
+        "median_px_per_m": 11684.989736354697,
+        "area_px_per_m": 6916.2367667338785
+      },
+      {
+        "key": "lark_damaged_LOD0/LandingMechanism_dmgMesh/Dark",
+        "area_m2": 16.286163618233378,
+        "uv_area": 207.41365554344645,
+        "edges": 31668,
+        "triangles": 10556,
+        "median_px_per_m": 12880.703504014898,
+        "area_px_per_m": 14617.369458955089
+      },
+      {
+        "key": "lark_husked_LOD0/CockpitMechanism_huskMesh/Dark",
+        "area_m2": 37.74039964296534,
+        "uv_area": 145.9879310753289,
+        "edges": 35414,
+        "triangles": 12316,
+        "median_px_per_m": 18005.92491262889,
+        "area_px_per_m": 8055.92060773656
+      },
+      {
+        "key": "lark_damaged_LOD0/CockpitMechanism_dmgMesh/Dark",
+        "area_m2": 37.6638061257524,
+        "uv_area": 191.11819718957076,
+        "edges": 35440,
+        "triangles": 12232,
+        "median_px_per_m": 20459.628424054976,
+        "area_px_per_m": 9226.75237272639
+      }
+    ],
+    "outside_rows": [
+      {
+        "key": "lark_husked_LOD0/Body_husk/NavRed",
+        "area_m2": 0.042686534370481574,
+        "uv_area": 1.0869490676412852e-06,
+        "edges": 294,
+        "triangles": 98,
+        "median_px_per_m": 21.42830904841018,
+        "area_px_per_m": 20.668982461988872
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/NavGreen",
+        "area_m2": 0.04268653437048158,
+        "uv_area": 1.083209078989178e-06,
+        "edges": 294,
+        "triangles": 98,
+        "median_px_per_m": 21.478291748979014,
+        "area_px_per_m": 20.63339276784623
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/NavWhite",
+        "area_m2": 0.12805955051474657,
+        "uv_area": 3.2385566961671453e-06,
+        "edges": 882,
+        "triangles": 294,
+        "median_px_per_m": 21.484792852070072,
+        "area_px_per_m": 20.59822101085368
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/EngineGlow",
+        "area_m2": 0.5493743009388652,
+        "uv_area": 1.6271547485513516e-05,
+        "edges": 384,
+        "triangles": 128,
+        "median_px_per_m": 22.294069652682467,
+        "area_px_per_m": 22.291546904026855
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/NavRed",
+        "area_m2": 0.042686534370481574,
+        "uv_area": 1.816894210859843e-06,
+        "edges": 294,
+        "triangles": 98,
+        "median_px_per_m": 27.685517073733518,
+        "area_px_per_m": 26.72263748486003
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/NavGreen",
+        "area_m2": 0.04268653437048158,
+        "uv_area": 1.8050109565903583e-06,
+        "edges": 294,
+        "triangles": 98,
+        "median_px_per_m": 27.708749638907463,
+        "area_px_per_m": 26.635105467344815
+      },
+      {
+        "key": "lark_damaged_LOD0/Body_dmg/EngineGlow",
+        "area_m2": 0.5493681773894723,
+        "uv_area": 2.6685369673096204e-05,
+        "edges": 384,
+        "triangles": 128,
+        "median_px_per_m": 28.556458166103955,
+        "area_px_per_m": 28.547284962093205
+      },
+      {
+        "key": "lark_LOD0/Body/EngineGlow",
+        "area_m2": 0.5493743009388652,
+        "uv_area": 3.2637288265746633e-05,
+        "edges": 384,
+        "triangles": 128,
+        "median_px_per_m": 32.400206206899426,
+        "area_px_per_m": 31.57059825551677
+      },
+      {
+        "key": "lark_LOD0/Body/NavRed",
+        "area_m2": 0.042686534370481574,
+        "uv_area": 2.9523961475597105e-06,
+        "edges": 294,
+        "triangles": 98,
+        "median_px_per_m": 34.96391240846055,
+        "area_px_per_m": 34.064483985399974
+      },
+      {
+        "key": "lark_LOD0/Body/NavGreen",
+        "area_m2": 0.04268653437048158,
+        "uv_area": 2.9478493632772995e-06,
+        "edges": 294,
+        "triangles": 98,
+        "median_px_per_m": 35.300444452739995,
+        "area_px_per_m": 34.038243682589545
+      },
+      {
+        "key": "lark_damaged_LOD0/CanopyGlass_dmg/Glass",
+        "area_m2": 8.095028868266576,
+        "uv_area": 0.921600037479401,
+        "edges": 3888,
+        "triangles": 1296,
+        "median_px_per_m": 1114.036123402319,
+        "area_px_per_m": 1382.044378876418
+      },
+      {
+        "key": "lark_husked_LOD0/CanopyGlass_husk/Glass",
+        "area_m2": 8.095028868266576,
+        "uv_area": 0.921600037479401,
+        "edges": 3888,
+        "triangles": 1296,
+        "median_px_per_m": 1114.036123402319,
+        "area_px_per_m": 1382.044378876418
+      },
+      {
+        "key": "lark_LOD0/CanopyGlass/Glass",
+        "area_m2": 8.095028868266576,
+        "uv_area": 0.921600037479401,
+        "edges": 3888,
+        "triangles": 1296,
+        "median_px_per_m": 1114.036123402319,
+        "area_px_per_m": 1382.044378876418
+      },
+      {
+        "key": "lark_husked_LOD0/Body_husk/HollowSeam",
+        "area_m2": 0.0352687547042945,
+        "uv_area": 0.0021457672119140625,
+        "edges": 48,
+        "triangles": 16,
+        "median_px_per_m": 1208.9107082998246,
+        "area_px_per_m": 1010.3135731855047
+      },
+      {
+        "key": "lark_husked_LOD0/HollowGlyph_LOD0/HollowSeam",
+        "area_m2": 0.0013800726755167003,
+        "uv_area": 0.0010728836059570312,
+        "edges": 24,
+        "triangles": 8,
+        "median_px_per_m": 1940.7041366479145,
+        "area_px_per_m": 3611.480497371736
+      },
+      {
+        "key": "lark_damaged_LOD0/Lens_Strobes_dmg/NavWhite",
+        "area_m2": 0.12805955051474657,
+        "uv_area": 0.6328010491450311,
+        "edges": 882,
+        "triangles": 294,
+        "median_px_per_m": 9857.285204940139,
+        "area_px_per_m": 9105.159472658292
+      },
+      {
+        "key": "lark_LOD0/Lens_Strobes/NavWhite",
+        "area_m2": 0.12805955051474657,
+        "uv_area": 0.6328010491450311,
+        "edges": 882,
+        "triangles": 294,
+        "median_px_per_m": 9857.285204940139,
+        "area_px_per_m": 9105.159472658292
+      }
+    ]
+  },
+  "glb_measure_json": {
+    "missing": true
+  }
+}

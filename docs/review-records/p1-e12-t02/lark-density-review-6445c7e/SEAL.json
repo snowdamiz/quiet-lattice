@@ -1,0 +1,50 @@
+{
+  "slice": "density-material-stock-validate",
+  "verdict": "PASS",
+  "visual_grade": false,
+  "head": "6445c7ec07aa2a08b722aeca22d56132154ea32c",
+  "tree": "a09d51b1b594a799a9489504d44d64447bb15450",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96",
+  "blend_sha256": "d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba",
+  "glb_sha256": "7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78",
+  "blend_bytes": 48962870,
+  "glb_bytes": 19791628,
+  "hashes_match_head_lfs_and_receipt": true,
+  "blend_matches_anchor_1331891dc": true,
+  "glb_matches_anchor_1331891dc": false,
+  "anchor_glb_sha256": "6f3a0774a8539435779985afdaca4322a2bea9a798fa51ad4a88f2ba27c88b55",
+  "stock": {
+    "source": {"status": "PASS", "checks": 5, "fail": 0, "warn": 136},
+    "glb": {"status": "PASS", "checks": 5, "fail": 0, "warn": 1}
+  },
+  "density_gate": {
+    "target_px_per_m": 512,
+    "atlas_pixels": 4096,
+    "blend_min_median": 590.6459274927377,
+    "blend_min_key": "lark_husked_LOD0/Body_husk/Accent",
+    "glb_min_median": 590.6403370883208,
+    "glb_min_key": "lark_husked_LOD0/Body_husk/Accent",
+    "roles": 23,
+    "pass": true
+  },
+  "uv": {
+    "blend_lark_lod_mesh_objects": 71,
+    "blend_layer_set": ["UVMap"],
+    "glb_render_primitives": 151,
+    "glb_texcoord_sets": {"TEXCOORD_0": 151},
+    "float_texcoord_primitives": 17,
+    "float_texcoord_scope": "LOD1-LOD3 only"
+  },
+  "images_4096": {"blend": 17, "glb_ktx2": 17, "glb_mip_levels": 13},
+  "force_fit_properties_in_blend": 0,
+  "measurement_scale": "4096 px per UV unit",
+  "git_status_after": "",
+  "resources": {
+    "blender_left_running": false,
+    "author_files_restored": false,
+    "peak_rss_bytes": {"blend_measure": 831619072, "validate_source": 1641299968, "validate_glb": 2030747648},
+    "scratch_tmp_peak_bytes": 106457404,
+    "disk_free_at_start_bytes": 100084293632
+  },
+  "report": "/tmp/lark-grok-6445c7ec/REPORT.md"
+}
