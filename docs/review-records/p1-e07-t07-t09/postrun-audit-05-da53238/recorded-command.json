@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "packages/tools/node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    "packages/tools/src/smoke/symbiotic.config.ts",
+    "--workers=1",
+    "--retries=0",
+    "--repeat-each=1",
+    "--max-failures=1",
+    "--global-timeout=420000",
+    "--trace=off",
+    "--reporter=list,json",
+    "--output",
+    "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/results"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+  "outerSeconds": 450,
+  "drainSeconds": 20
+}

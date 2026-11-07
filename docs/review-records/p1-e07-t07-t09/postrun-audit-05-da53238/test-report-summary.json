@@ -1,0 +1,304 @@
+{
+  "sourceReport": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/playwright.json",
+  "reportSha256": "97b836739620a669161d1949e868385a4d0d2207be75a98452b3b2b4836ae828",
+  "stats": {
+    "startTime": "2026-11-07T10:33:31.742Z",
+    "duration": 38979.659,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "topLevelErrors": [],
+  "testResults": [
+    {
+      "spec": {
+        "title": "Bond is eligible, rendered, picked, follows, damages and retires on two real clients",
+        "ok": true,
+        "tags": [],
+        "id": "c3082284bb839a1906ad-ecbb4849a21219178d48",
+        "file": "symbiotic-online.spec.ts",
+        "line": 267,
+        "column": 1
+      },
+      "test": {
+        "timeout": 300000,
+        "annotations": [],
+        "expectedStatus": "passed",
+        "projectId": "",
+        "projectName": "",
+        "status": "expected"
+      },
+      "result": {
+        "workerIndex": 0,
+        "parallelIndex": 0,
+        "status": "passed",
+        "duration": 35970,
+        "errors": [],
+        "retry": 0,
+        "startTime": "2026-11-07T10:33:32.547Z",
+        "annotations": []
+      }
+    }
+  ],
+  "config": {
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "packages/tools/src/smoke/symbiotic.config.ts",
+      "--workers=1",
+      "--retries=0",
+      "--repeat-each=1",
+      "--max-failures=1",
+      "--global-timeout=420000",
+      "--trace=off",
+      "--reporter=list,json",
+      "--output",
+      "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/results"
+    ],
+    "configFile": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic.config.ts",
+    "rootDir": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 420000,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke",
+        "testIgnore": [],
+        "testMatch": [
+          "symbiotic-online.spec.ts"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke",
+        "snapshotDir": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke",
+        "testIgnore": [],
+        "testMatch": "symbiotic-online.spec.ts",
+        "timeout": 180000,
+        "use": {
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:5190",
+          "launchOptions": {
+            "args": [
+              "--use-angle=metal",
+              "--enable-gpu",
+              "--ignore-gpu-blocklist"
+            ]
+          },
+          "actionTimeout": 15000,
+          "navigationTimeout": 60000,
+          "trace": "off",
+          "video": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "standalonePngPaths": [],
+  "attachments": [
+    {
+      "name": "bond-owner",
+      "contentType": "image/png",
+      "index": 0,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/01-bond-owner.png",
+      "bytes": 758792,
+      "sha256": "e63cd2173f81bca0a5ec456ef7c8826d22236f3beb6f323e1079222d3484d292",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "bond-observer",
+      "contentType": "image/png",
+      "index": 1,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/02-bond-observer.png",
+      "bytes": 1007931,
+      "sha256": "51e51c49c9cfe8c68b86e330f7d2982ca05ae87beaca61a68b85790ad6a8c269",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "follow-owner",
+      "contentType": "image/png",
+      "index": 2,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/03-follow-owner.png",
+      "bytes": 742848,
+      "sha256": "e7a7a89ad9a6c4f6b84e3db3ca1023360c829bdd08acffec794579b486cb9b01",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "follow-observer",
+      "contentType": "image/png",
+      "index": 3,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/04-follow-observer.png",
+      "bytes": 1005203,
+      "sha256": "7fe9b22dc3b542b62ff2f55b8137aba2d7ed036b691104225b195521fe7ffdf0",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "combat-owner",
+      "contentType": "image/png",
+      "index": 4,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/05-combat-owner.png",
+      "bytes": 888842,
+      "sha256": "ee182a6ff087a35695864ecb172598492084b5433a975fb6407d8c9ab3f98025",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "combat-observer",
+      "contentType": "image/png",
+      "index": 5,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/06-combat-observer.png",
+      "bytes": 997996,
+      "sha256": "3930f4950df8524da07987cc169f29a446d9b1d589378b920244de1e24db6028",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "before-disconnect-owner",
+      "contentType": "image/png",
+      "index": 6,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/07-before-disconnect-owner.png",
+      "bytes": 883195,
+      "sha256": "4b9ba03fc0fbccab3ce9fb7dcc93659faa4c67239da5892c082cc8f827a12bba",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "disconnect-observer",
+      "contentType": "image/png",
+      "index": 7,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/08-disconnect-observer.png",
+      "bytes": 999685,
+      "sha256": "9ea6ff077974137687f53f77d02a2ec3001ab6ded9be33a6c82896184c3af607",
+      "originalEncoding": "base64 inline body",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "pngCrcValid": true,
+      "inflatedPixelStreamBytes": 2765520
+    },
+    {
+      "name": "symbiotic-evidence",
+      "contentType": "application/json",
+      "index": 8,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/09-symbiotic-evidence.json",
+      "bytes": 27719,
+      "sha256": "297c014f6d24bc8e5f0a7e6655d7906bbeab7eaf4545de9f2d6b0f7bb172b904",
+      "originalEncoding": "base64 inline body"
+    },
+    {
+      "name": "server-output",
+      "contentType": "text/plain",
+      "index": 9,
+      "extractedPath": "/private/tmp/symbiotic-postrun-da532383-dotkvphf/attachments/10-server-output.log",
+      "bytes": 1280,
+      "sha256": "f99ffd05aea05fa63c94bd92011751621f2b01e15fa8b24ca3da646330b9d788",
+      "originalEncoding": "base64 inline body"
+    }
+  ]
+}

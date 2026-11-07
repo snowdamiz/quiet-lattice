@@ -1,0 +1,37 @@
+
+Running 1 test using 1 worker
+
+  pw:browser <launching> /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --use-angle=metal --enable-gpu --ignore-gpu-blocklist --user-data-dir=/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/playwright_chromiumdev_profile-tfn6Aj --remote-debugging-pipe --no-startup-window +0ms
+  pw:browser <launched> pid=195 +106ms
+  pw:browser [pid=195][err] [1107/053334.771799:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +258ms
+  pw:browser [pid=195][err] [1107/053334.772058:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=195][err] [1107/053334.820158:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +48ms
+  pw:browser [pid=195][err] [1107/053334.820240:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=195][err] [1107/053335.013198:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:61448/@vite/client (946) +211ms
+  pw:browser [pid=195][err] [1107/053335.060152:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:61448/@vite/client (1055) +39ms
+  pw:browser [pid=195][err] [1107/053336.246994:INFO:CONSOLE:1748] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:61448/@fs/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/vite-cache/deps/three.module-Cp08ibyj.js?v=947e1cee (1748) +1s
+  pw:browser [pid=195][err] [1107/053341.042469:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:61448/src/remote/RemoteShips.js (133) +5s
+  pw:browser [pid=195][err] [1107/053341.854481:ERROR:sandbox/mac/system_services.cc:31] SetApplicationIsDaemon: Error Domain=NSOSStatusErrorDomain Code=-50 "paramErr: error in user parameter list" (-50) +812ms
+  pw:browser [pid=195][err] [1107/053344.511259:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +3s
+  pw:browser [pid=195][err] [1107/053345.063542:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +552ms
+  pw:browser [pid=195][err] [1107/053345.063594:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=195][err] [1107/053345.081645:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +23ms
+  pw:browser [pid=195][err] [1107/053345.081701:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=195][err] [1107/053345.084932:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:61448/@vite/client (946) +0ms
+  pw:browser [pid=195][err] [1107/053345.089070:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:61448/@vite/client (1055) +3ms
+  pw:browser [pid=195][err] [1107/053346.126101:INFO:CONSOLE:1748] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:61448/@fs/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/vite-cache/deps/three.module-Cp08ibyj.js?v=947e1cee (1748) +1s
+  pw:browser [pid=195][err] [1107/053346.323737:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +197ms
+  pw:browser [pid=195][err] [1107/053347.878493:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +2s
+  pw:browser [pid=195][err] [1107/053347.947669:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:61448/src/remote/RemoteShips.js (133) +69ms
+  pw:browser [pid=195][err] [1107/053349.749942:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +2s
+  pw:browser [pid=195][err] [1107/053356.379049:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the render pipeline cache limit of 64 elements, removing the least recently used to make room. +7s
+  pw:browser [pid=195][err] [1107/053357.187198:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +808ms
+  pw:browser [pid=195][err] [1107/053402.366849:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the render pipeline cache limit of 64 elements, removing the least recently used to make room. +5s
+  ✓  1 packages/tools/src/smoke/symbiotic-online.spec.ts:267:1 › Bond is eligible, rendered, picked, follows, damages and retires on two real clients (36.0s)
+  pw:browser [pid=195] <gracefully close start> +8s
+  pw:browser [pid=195] <process did exit: exitCode=0, signal=null> +17ms
+  pw:browser [pid=195] starting temporary directories cleanup +0ms
+  pw:browser [pid=195] finished temporary directories cleanup +2ms
+  pw:browser [pid=195] <gracefully close end> +0ms
+
+  1 passed (39.0s)

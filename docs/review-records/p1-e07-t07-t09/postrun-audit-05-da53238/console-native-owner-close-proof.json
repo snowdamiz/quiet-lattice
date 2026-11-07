@@ -1,0 +1,121 @@
+{
+  "nativeMessageCounts": {
+    "CVDisplayLinkCreateWithCGDisplay failed": 8,
+    "SetApplicationIsDaemon: Error": 1,
+    "Overflowed the metal library cache": 5,
+    "Overflowed the render pipeline cache": 2,
+    "PCFSoftShadowMap has been removed": 2,
+    "[vite] connecting...": 2,
+    "[vite] connected.": 2,
+    "ERR_NAME_NOT_RESOLVED": 0
+  },
+  "pageErrors": 0,
+  "consoleErrors": 0,
+  "localRequestFailures": [
+    {
+      "utc": "2026-11-07T10:33:44.931Z",
+      "pid": 99609,
+      "kind": "requestfailed",
+      "contextId": 2,
+      "requestId": 9,
+      "url": "http://127.0.0.1:61448/audio/music/music_planet_2.ogg",
+      "method": "GET",
+      "resourceType": "media",
+      "frameUrl": "http://127.0.0.1:61448/?dev=bonde95b0047f5#foot",
+      "redirectedFrom": null,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    },
+    {
+      "utc": "2026-11-07T10:33:50.102Z",
+      "pid": 99609,
+      "kind": "requestfailed",
+      "contextId": 3,
+      "requestId": 9,
+      "url": "http://127.0.0.1:61448/audio/music/music_planet_1.ogg",
+      "method": "GET",
+      "resourceType": "media",
+      "frameUrl": "http://127.0.0.1:61448/?dev=bond8b52839ce9#foot",
+      "redirectedFrom": null,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    },
+    {
+      "utc": "2026-11-07T10:34:10.544Z",
+      "pid": 99609,
+      "kind": "requestfailed",
+      "contextId": 3,
+      "requestId": 10,
+      "url": "http://127.0.0.1:61448/?dev=bond8b52839ce9",
+      "method": "GET",
+      "resourceType": "document",
+      "frameUrl": "http://127.0.0.1:61448/?dev=bond8b52839ce9#foot",
+      "redirectedFrom": null,
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+      "failure": {
+        "errorText": "net::ERR_ABORTED"
+      }
+    }
+  ],
+  "serverLogRecords": 5,
+  "devLoginRecords": [
+    {
+      "level": 40,
+      "time": 1794047614629,
+      "pid": 99625,
+      "hostname": "Andreys-MacBook-Pro.local",
+      "account": "822fd856-e795-4118-a940-267f52b34703",
+      "username": "dev-bonde95b0047f5",
+      "character": "ecac128f-9953-4996-b0d9-19626fb6f2aa",
+      "created": true,
+      "remote": "127.0.0.1",
+      "msg": "dev login"
+    },
+    {
+      "level": 40,
+      "time": 1794047620867,
+      "pid": 99625,
+      "hostname": "Andreys-MacBook-Pro.local",
+      "account": "822fd856-e795-4118-a940-267f52b34703",
+      "username": "dev-bonde95b0047f5",
+      "character": "ecac128f-9953-4996-b0d9-19626fb6f2aa",
+      "created": false,
+      "remote": "127.0.0.1",
+      "msg": "dev login"
+    },
+    {
+      "level": 40,
+      "time": 1794047624937,
+      "pid": 99625,
+      "hostname": "Andreys-MacBook-Pro.local",
+      "account": "3565a8fe-e20d-42b7-ab18-609bd94c3acd",
+      "username": "dev-bond8b52839ce9",
+      "character": "ac157076-e5d5-4371-86da-31deaa67017f",
+      "created": true,
+      "remote": "127.0.0.1",
+      "msg": "dev login"
+    },
+    {
+      "level": 40,
+      "time": 1794047627779,
+      "pid": 99625,
+      "hostname": "Andreys-MacBook-Pro.local",
+      "account": "3565a8fe-e20d-42b7-ab18-609bd94c3acd",
+      "username": "dev-bond8b52839ce9",
+      "character": "ac157076-e5d5-4371-86da-31deaa67017f",
+      "created": false,
+      "remote": "127.0.0.1",
+      "msg": "dev login"
+    }
+  ],
+  "ownerPageClosed": true,
+  "ownerAbsentAtRetiredTick": true,
+  "ownerRejoinObserved": false,
+  "noRejoinScope": "terminal page-close assertion, finite observer snapshot and retained server log; no independent continuous navigation/CDP recording",
+  "observerTeardownAbort": "context3 dev-document abort retained after final evidence; owner context2 has no document abort/reload in observed request failures",
+  "nativeWarningsNotPageConsoleErrors": true
+}

@@ -1,0 +1,271 @@
+{
+  "at": "2026-11-07T10:35:11.310278+00:00",
+  "sourceHead": "da5323833471eb3af68e77ffa78fc59598fe2a6d",
+  "slot": "parent:symbiotic-da532383-r6-metal-20261107",
+  "outerExit": {
+    "exitCode": 0,
+    "wallSeconds": 62.11264258302981,
+    "finishedAt": "2026-11-07T10:34:17.616281+00:00"
+  },
+  "playwrightStats": {
+    "startTime": "2026-11-07T10:33:31.742Z",
+    "duration": 38979.659,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "Bond is eligible, rendered, picked, follows, damages and retires on two real clients",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 35970,
+          "errors": [],
+          "attachments": [
+            {
+              "name": "bond-owner",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 1011724,
+              "bodyEncoding": "base64",
+              "bytes": 758792
+            },
+            {
+              "name": "bond-observer",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 1343908,
+              "bodyEncoding": "base64",
+              "bytes": 1007931
+            },
+            {
+              "name": "follow-owner",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 990464,
+              "bodyEncoding": "base64",
+              "bytes": 742848
+            },
+            {
+              "name": "follow-observer",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 1340272,
+              "bodyEncoding": "base64",
+              "bytes": 1005203
+            },
+            {
+              "name": "combat-owner",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 1185124,
+              "bodyEncoding": "base64",
+              "bytes": 888842
+            },
+            {
+              "name": "combat-observer",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 1330664,
+              "bodyEncoding": "base64",
+              "bytes": 997996
+            },
+            {
+              "name": "before-disconnect-owner",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 1177596,
+              "bodyEncoding": "base64",
+              "bytes": 883195
+            },
+            {
+              "name": "disconnect-observer",
+              "contentType": "image/png",
+              "path": null,
+              "bodyCharacterCount": 1332916,
+              "bodyEncoding": "base64",
+              "bytes": 999685
+            },
+            {
+              "name": "symbiotic-evidence",
+              "contentType": "application/json",
+              "path": null,
+              "bodyCharacterCount": 36960,
+              "bodyEncoding": "base64",
+              "bytes": 27719
+            },
+            {
+              "name": "server-output",
+              "contentType": "text/plain",
+              "path": null,
+              "bodyCharacterCount": 1708,
+              "bodyEncoding": "base64",
+              "bytes": 1280
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "freshPids": [
+    {
+      "pid": 195,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 202,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 203,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 226,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 265,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 9620,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 11728,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 11741,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 11750,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99479,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99602,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99609,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99617,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99618,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99622,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99625,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99629,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 99631,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "cleanupSha256": "604e2ac4b6962292d0dabb4c654f163bbe1cefb54f75467d1c537b5d8834ef42",
+  "rawCleanup": {
+    "databaseAbsent": true,
+    "redis8Empty": true,
+    "deletedKeys": [
+      "qa:owner:20261107_103315_a8358f74",
+      "astra:shard:main:world"
+    ],
+    "noOwnedProcesses": true,
+    "listenersAbsentBeforeDrop": true,
+    "sourceAfterManifest": "source-after.json",
+    "noPrivateApplicationClients": true,
+    "profilesAndTempAbsent": true,
+    "containers": [
+      {
+        "id": "66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb",
+        "name": "space-t16-pg-20261106",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53055"
+            }
+          ]
+        }
+      },
+      {
+        "id": "d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4",
+        "name": "space-t16-redis-20261106",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53058"
+            }
+          ]
+        }
+      }
+    ],
+    "gpuReleased": true,
+    "archiveScreenshotsUntouched": true
+  },
+  "scope": "Focused live functionality only; no art grade/performance/full smoke/merged verification",
+  "gpuReleased": true,
+  "metadataCorrection": "Initial attachment bytes fields counted base64 characters; original retained in parent-release-initial-encoded-lengths.json. Corrected bytes are decoded lengths. Release facts unchanged."
+}

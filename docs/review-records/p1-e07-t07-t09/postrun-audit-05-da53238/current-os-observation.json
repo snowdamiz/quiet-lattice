@@ -1,0 +1,29 @@
+{
+  "utc": "2026-11-07T10:37:05.041349+00:00",
+  "matchingOwnedIdentities": [],
+  "processesReferencingOwnedTmp": [],
+  "runTmpExists": true,
+  "runTmpContents": [],
+  "ownedRecords": 46,
+  "uniquePidBirth": 33,
+  "currentListenerProducers": [
+    {
+      "args": [
+        "/usr/sbin/lsof",
+        "-nP",
+        "-Fpcn",
+        "-iTCP:61423",
+        "-iTCP:61429",
+        "-iTCP:61430",
+        "-iTCP:61448",
+        "-sTCP:LISTEN"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "",
+      "error": null
+    }
+  ],
+  "privateServicesRequeried": false,
+  "signalsOrCleanupPerformed": false
+}

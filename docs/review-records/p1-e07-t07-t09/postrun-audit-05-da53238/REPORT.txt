@@ -1,0 +1,237 @@
+TASK: P1.E07.T07 / P1.E08.T09 companion focused live gameplay — R6 postrun C.2 audit
+STATUS: PASS — one actual focused native test; read-only postrun audit complete
+SUMMARY: Parent OS exit0. Exactly1 required test passed,0 failed/skipped/unexpected/flaky,
+retry0/repeat1/worker1, no timeout. Test35.970s; Playwright report38.979659s; supervisor39.570s;
+parent wrapper62.11264258302981s including preparation/admission/drain/cleanup. These are elapsed
+durations for this functional QA run, not performance measurements or a budget-compliance benchmark.
+The final source reaches live retirement. Eight actual1280x720 PNGs, gameplayJSON and serverlog
+were losslessly extracted. No image was viewed, rendered, synthesized, edited or blindly graded.
+
+EXACT PIN / INPUTS
+Worktree /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+HEAD da5323833471eb3af68e77ffa78fc59598fe2a6d
+TREE b48263afd56522f432a042de367e4410120644e1
+SOURCE 313371af2fb25ecd9d821ef9f2c330b2da4afc13
+SOURCE TREE 0c989c39ef81a9f60e27c4eee9527c7d4049c06c
+Actual independent R6 SOURCE_CPU PASS: /private/tmp/symbiotic-r6-source-cpu-PPFHAV/Appendix-C.2.txt
+Report SHA256 62dd71f2f9b46dcaf0c81a8608af65503c18ca3a24a7ac84169a748cd3dced45
+Run /private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e
+Parent /private/tmp/space-symbiotic-parent-r6-iku5s3xb
+Bound harness /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5
+Assigned ticket /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/future/parent-ticket.assigned-r6.json
+Ticket SHA256 23a49fc4f55fd178d552de97a0fea0071f0be9a4391c88150621ff06d824c8c4
+Spent ticketId 04d25738971e493e90b1a822282d4a8b; singleUse journal exactly matches assigned ticket.
+Spent claim 20261107_103315_a8358f74. Neither is reusable; no new claim, grant or ticket was made.
+Parent slot parent:symbiotic-da532383-r6-metal-20261107; assignment 2026-11-07T10:33:09.069156+00:00.
+
+ACTUAL COMMANDS / FINITE LIMITS
+Parent cwd /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/bin/python3 /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/execute-once.py --ticket /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/future/parent-ticket.assigned-r6.json
+Child (sandbox-exec wraps this with the retained live.sb):
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/node_modules/@playwright/test/cli.js test --config packages/tools/src/smoke/symbiotic.config.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=420000 --trace=off --reporter=list,json --output /private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/results
+Dedicated symbiotic-online.spec.ts only through symbiotic.config.ts; exactly1 matched and executed
+test at line267; no annotations/skips/retries. Effective test timeout300000ms, global420000ms,
+outer450s+20s owned drain, maxfailure1. Actual owned drain0.149s. Font DNS10s+5s drain,
+acquisition70s+5s drain. Their producers exited0 in0.322s and0.825s, no timeout/survivors/errors.
+Actual Playwright1.64.1 config has traceoff/videooff/webServernull, no global setup/teardown;
+startOnline owns the server. Two manual gameplay contexts1280x720; one framework-created context
+is also observed (3 context records total), not a third gameplay client. BaseURL localhost5190
+in inherited config is not the actual app URL; pages used private Vite127.0.0.1:61448.
+No trace ZIP/video/raw-frame capture found. Exact parent dispatch, complete effective Playwright
+config, child command and environment are retained, not reconstructed claims.
+
+LIVE GAMEPLAY / ASSERTION FACTS
+Production gateway/dev characters were created; only the initial Symbiotic fragment was SQL-staged.
+Stored skill replies show Bond unlocked but initially unbought, then bought, then ground slot0 Bond.
+Both actual clients transported their owned ship, acquired input, and changed same entity from
+landed to positive-HP foot mode in frame1262081916:7. Owner1 and observer2 are distinct.
+The passed source sequence asserts pre-analysis cast refusal(reason target), analysis success and
+post-analysis cast success. Analysis JSON independently retains target34/resultnew/eligible,
+docile biped Lumbering Rhecor Walker. Cast answers themselves are not separate retained JSON fields.
+
+Both retained bound observations independently have companion34/species0/owner1 in real snapshots,
+drawn=true/instanced=true/submitted=true/offline=false, correct body/frame/species, instance-matrix
+translation error<0.02, species-size scale, projected point in frustum, and actual pick34.
+The onAfterRender callback is actual mesh draw-submission evidence; it is not a GPU pixel-quality grade.
+The source asserts actual owner S movement>14m and follow distance<8m on both clients; those exact
+owner-distance samples are not separately stored. Retained companion movement independently recomputes:
+owner client wire28.020224411702163m/render29.67124140126245m, tick245->315;
+observer wire21.415597636132176m/render25.659534160961943m, tick260->315.
+Both satisfy>6m, newer snapshot and pick34 after follow.
+
+Combat starts with enemy35 HP[1,1]. Both clients retain source34->target35 combat event amount22.32,
+attack/leap/killedfalse, enemy HP0.7000000000000001; both target and companion have real drawn
+instance submissions. Enemy remains alive/nondead; companion HP1. This is companion-attributed
+health loss, not an enemy corpse or owner-only visual state.
+Before release, observer independently picks companion34 and retains its living drawn instance.
+Release tick380 has correct living foot observer2 HP1 and correct enemy35/species4 HP0.7 in frame.
+Pre-disconnect owner PNG is captured before await page.close(runBeforeUnloadfalse); page.isClosed
+is asserted and ownerPageClosed=true retained, before clock thaw.
+Retired tick387 is newer than380: observer remains joined/entity2/foot/HP1; enemy35/species4 is
+alive HP0.7/modeidle in the same frame. ownerGone=true; companionGone=true means all of snapshot,
+remote map and fauna shown-instance membership absent. targetGone=true separately removes the
+companion hit target; picked35 differs from companion34. These predicates are asserted again on
+the retained snapshot after the wait. Surviving observer supplies the eighth disconnect PNG.
+Fixture errors=[], test errors=[], top-level report errors=[]. Retirement was reached and retained.
+
+OWNER DEPARTURE / REJOIN LIMIT
+The real terminal owner page close was awaited and isClosed checked; later code uses observer only.
+Retained server output has exactly4 dev-login events: createdtrue then createdfalse once per
+character, corresponding to fixture auth and initial page bootstrap. No additional owner dev-login
+or owner document reload/rejoin is observed. Two Vite connecting/connected pairs correspond to
+initial two gameplay pages. This is a finite page-close/snapshot/log observation, not an independent
+continuous CDP navigation or network history. It does not claim indefinite future absence.
+The context3(observer) dev-document ERR_ABORTED occurs during final teardown after evidence;
+it is preserved and does not represent owner rejoin. Owner context2 has no document abort here.
+
+FONTS / PAGE CONSOLE / LOCAL ABORTS / NATIVE WARNINGS
+All34 retained public CSS/font asset bodies total452765bytes, have HTTP200 and exact matching hashes.
+Sixteen context-route font fulfillments across8 unique URLs (8 per gameplay context) match those
+retained bytes;16 external response events report200,16 finished, no failed external font request,
+no policy violation, no observation-limit record. CSS/font content was not blanked or substituted.
+Acquisition occurred in the actual authorized parent run; this audit made no network requests.
+Browser event observer reports pageerror0/console-error0; unfiltered fixture error collection empty.
+Three exact local requestfailed events remain (full URL/error/frame/context/location in network proof):
+10:33:44.931Z context2 GET http://127.0.0.1:61448/audio/music/music_planet_2.ogg net::ERR_ABORTED;
+10:33:50.102Z context3 GET http://127.0.0.1:61448/audio/music/music_planet_1.ogg net::ERR_ABORTED;
+10:34:10.544Z context3 GET http://127.0.0.1:61448/?dev=bond8b52839ce9 net::ERR_ABORTED.
+No ERR_NAME_NOT_RESOLVED is observed. Earlier failed-run DNS explanations are not retroactively proved.
+Native merged output retains8 CVDisplayLinkCreateWithCGDisplay failures(CVReturn-6670),1 daemon
+parameter error(-50),5 Metal library-cache overflow warnings,2 render-pipeline-cache warnings,
+and2 Three PCFSoftShadowMap deprecation messages. These are not filtered or relabeled as page errors.
+Metal launch flags plus Metal backend warnings and actual render callbacks/pixels support actual
+native Metal execution; no separate renderer-info extension/GPU counter/FPS measurement was captured.
+Actual browser exitCode0/signalnull and temporary-directory cleanup are in native-producer-output.txt.
+
+PROVENANCE / BEFORE-AFTER
+All4376 tracked source file hashes equal frozen harness, run-before, source-after, cleanup-after
+and this audit's current snapshot. Current HEAD/tree match and worktree is clean. Fixture/config/
+assets/runtime/protected sources were not edited. All12422 recorded dependency content hashes
+equal frozen-before, run-after and current; original generated-cache exclusions remain exclusions.
+Node22.23.3 SHA25668f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b.
+Installed Playwright1.64.1 and Corepack/pnpm cached distributions are hash-unchanged; no package-manager
+install ran in this audit. Runtime manifest and50-file harness seal plus81-file independent R6
+review seal verify. Assigned/used-ticket files are legitimate added runtime records, preserved.
+Actual Chromium headless-shell1248 prelaunch/after/current binary SHA256:
+77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634.
+Exact executable path/options/private profile in provenance-proof.json and raw launch output.
+Fresh actual run disk receipts: font preflight free20178845696bytes; cleanup-before20140408832;
+cleanup-after20161892352. Parent dispatch recorded20180910080. These are observed free bytes at
+their respective times, not reclaimed-byte or current admission claims. Source/dependency cache
+and binary proof is file-hash evidence, not new integration/CPU tests.
+
+PRIVATE ROUTES / RAW CLAIM AND CLEANUP
+SQL127.0.0.1:53055, database astra_symbiotic_smoke_20261107_103315_a8358f74, userastra.
+Redis127.0.0.1:53058/db8, marker qa:owner:20261107_103315_a8358f74.
+PG exact ID66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb;
+Redis exact IDd06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4.
+Initial/final docker inspect receipts show healthy/running and expected private127.0.0.1 bindings.
+Thirty-six raw service control commands all exited0 with no stderr. Before claim, DB8 empty/no
+application clients and fresh SQL name absent; atomic DBSIZE+SETNX marker result1, CREATE DATABASE,
+then exact SQL/currentuser and Redis selectedDB/marker verification. No unknown existing fixture adopted.
+Seventeen actual SQL StartupMessages all name only this fresh database/userastra;13 Redis SELECTs
+all select8. Eleven per-process/thread preimport verifications precede the corresponding11 live
+entry receipts. Four worker constructions inherit environment; child records preserve ownership.
+Observed Node TCP destinations:53055,53058 and owned61423/61429/61430; no forbidden/default destination.
+Two recorded Redis mutations affect only proven-owned astra:shard:main:world. No Redis0/7/FLUSH/sharedreset.
+Route evidence is pre-import Node socket/protocol instrumentation plus native OS sandbox controls,
+not an exhaustive kernel packet capture of every native socket. Nonloopback browser network was
+denied; exact fonts were fulfilled from acquired bytes. Guard limitations are not hidden.
+
+Supervision proves observed exit and empty remaining/registered/unknown sets, no producer or
+cleanup errors. Native browser descendants outside the original group are tracked with PID+birth+
+argv and ownership. Raw listeners-after-drain and listeners-before-drop receipts show no owned
+identities/tmp references/listeners, before cleanup's fresh namespace removal. No PID/name-only kill
+was issued by this audit. SQL private-client count0 before DROP; only fresh DB dropped. Atomic marker+
+complete known keyset verification deletes exactly2 explicit owned keys (marker and world key).
+Post-cleanup DB8 size0, markerabsent, no Redis8 appclients, SQL DBabsent, healthy samecontainers;
+temporary profiles absent. Raw receipt command indices and full listener producer outputs are in
+route-cleanup-proof.json. No private service was re-queried during this audit.
+
+Fresh read-only OS observations corroborate all33 unique recorded PID/birth identities absent
+(including font/preflight producers; parent separately checked18 run PIDs), no run-temp references,
+empty owned tmp, no observed owned TCP listeners. Complete bounded lsof exit/stdout/stderr and
+kernel birth/argv observations are retained. No resource recovery/cleanup was needed or performed.
+Parent release at2026-11-07T10:35:11.310278+00:00 is supported by recorded cleanup and parent PID
+observations; fresh audit absence agrees. GPU is released for this task; audit acquired no GPU slot.
+
+ARTIFACTS / BYTE ACCOUNTING
+All8 PNGs were inline bodies in playwright.json; no original standalone PNG paths existed.
+They were base64-decoded exactly once into exclusive0700 audit attachments and byte-hashed.
+PNG signature/IHDR dimensions, every chunk CRC, IEND boundary and decompression integrity pass.
+Each1280x720;7284492PNG bytes;27719gameplayJSON bytes;1280serverlog bytes;
+7313491total decoded bytes. Exact paths, dimensions and SHA256 for all10 are in ARTIFACTS.md
+and attachments.json. No recompression, synthesized image, screenshot cleanup or pixel grade.
+Initial parent metadata labeled base64 character counts as bytes. Preserved initial and corrected
+final observations are both retained; all final decoded counts independently match. Release time,
+cleanup and PID facts are unchanged. This was metadata correction, not altered capture content.
+
+PRESERVATION / AUDIT OPERATIONS / LIMITS
+All14 prior packet roots plus this run, bound harness, parent and R6 review:18 roots/5709 original
+files are byte-identical before/after this audit. Spentticket/claim, earlier FAILs and first old
+COULD NOT RUN remain unchanged. Originals-before/after and preservation-final record exact paths.
+Only new scratch evidence files were written under /private/tmp/symbiotic-postrun-da532383-dotkvphf. Existing extraction/proof code was
+adapted in this fresh audit for the new schema/result; no runtime/fixture/assertion/source edits.
+Audit ran serial small Python hashing/base64/PNG checks, git reads, kernel process observations
+and bounded local lsof only. No new native/browser/server/serviceclaim/network/test/harness/run,
+retry, art/Blender job, broadCPU suite, screenshot cleanup, push/PR/merge or source change.
+One read-only guessed stderr path was absent; actual producer stdout is merged and was located
+and preserved. exploration-notes.txt records this, without inventing an unavailable log.
+This PASS covers the exact focused live gameplay fixture on the pinned branch. It is not an art
+blind grade, FPS/performance result, full-smoke/CI/merged-tree/release qualification or a merge grant.
+Test assertions, source review and actual pixels are distinct evidence; pixels await any separate
+independent visual inspection. No failure tail exists for this successful test; stdout-tail.txt
+retains the actual ending and all native messages remain unfiltered.
+
+EXACT ENVIRONMENT (recorded, not executed by this audit)
+{
+  "HOME": "/Users/andreyyurlov",
+  "USER": "andreyyurlov",
+  "LOGNAME": "andreyyurlov",
+  "LANG": "C.UTF-8",
+  "LC_ALL": "C.UTF-8",
+  "TERM": "dumb",
+  "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+  "SHELL": "/bin/zsh",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "QA_CONTEXT_FILE": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/context.json",
+  "QA_PYTHON": "/opt/homebrew/bin/python3",
+  "QA_HARNESS_ROOT": "/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5",
+  "QA_OUT": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e",
+  "QA_ROUTE_GUARD": "/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/bootstrap.mjs",
+  "TMPDIR": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/",
+  "TMP": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp",
+  "TEMP": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp",
+  "XDG_CACHE_HOME": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/xdg-cache",
+  "NODE_COMPILE_CACHE": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/node-compile",
+  "PWTEST_CACHE_DIR": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/playwright-transform",
+  "PLAYWRIGHT_JSON_OUTPUT_FILE": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/playwright.json",
+  "NODE_OPTIONS": "--import /private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/bootstrap.mjs",
+  "COREPACK_HOME": "/private/tmp/space-symbiotic-harness-63b6130-6pdp7zq8/tools/corepack",
+  "COREPACK_ENABLE_NETWORK": "0",
+  "COREPACK_ENABLE_AUTO_PIN": "0",
+  "COREPACK_DEFAULT_TO_LATEST": "0",
+  "npm_config_offline": "true",
+  "npm_config_frozen_lockfile": "true",
+  "npm_config_manage_package_manager_versions": "false",
+  "npm_config_manage_dependencies": "false",
+  "npm_config_ignore_scripts": "true",
+  "npm_config_userconfig": "/private/tmp/space-symbiotic-harness-r6-bound-kgm6csy5/empty.npmrc",
+  "npm_config_cache": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/npm-cache",
+  "PNPM_HOME": "/private/tmp/space-symbiotic-live-da532383-6c6af6ca6ee974f2912e/tmp/pnpm-home",
+  "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+  "CI": "1",
+  "SMOKE_GL": "metal",
+  "DEBUG": "pw:browser",
+  "DATABASE_URL": "postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_103315_a8358f74",
+  "REDIS_URL": "redis://127.0.0.1:53058/8",
+  "SYMBIOTIC_QA_CLAIM": "20261107_103315_a8358f74"
+}
+
+PROTECTED FILE HASHES (full4376 map retained separately)
+{
+  "packages/tools/src/smoke/symbiotic-online.spec.ts": "e0e93db3515ea2362d85a24942ecf3e4b2abebb24ed3e60a78411c114b234ab1",
+  "packages/tools/src/smoke/symbiotic.config.ts": "2b909488e6bceb80b860907cbeb358da99e42658218be2cfbcb3509eed990180",
+  "packages/tools/playwright.config.ts": "e8d1f7670df93620727ae50613dd3e173f4242ead13eb73ad53f5fcb148480d8",
+  "packages/client/index.html": "36df8eac2250968eea647c6a778fe812aadc6a00d812ac01e34dff1d8df85916"
+}

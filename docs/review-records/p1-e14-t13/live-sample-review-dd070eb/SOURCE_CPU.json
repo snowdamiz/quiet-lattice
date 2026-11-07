@@ -1,0 +1,60 @@
+{
+  "advisories": [],
+  "at": "2026-11-07T10:48:07.501858+00:00",
+  "base": "7c134b6aa29f2abedba347d91aed28323fd93006",
+  "branch": "codex/task/P1-E14-T13-trace-observer",
+  "commandLogSha256": "cfc4e06ebd8103afe8f3ce9d7f38e931cf22bb465b92c2f4c215c3a293850f95",
+  "findings": [],
+  "freshProof": {
+    "childrenReaped": true,
+    "exactBaseControllerRedExit": 1,
+    "focusedCpuCases": 58,
+    "frozenDisabledPythonExit": 2,
+    "fullVerifyFreeze": "PASS",
+    "harmlessChildProcessFixtures": 2,
+    "independentFilesystemCases": 12,
+    "metalObserverReplayCases": 7,
+    "missingMetalRedExit": 1,
+    "wrongMetalHash": "REFUSED",
+    "wrongSignatureIdentifierExit": 3
+  },
+  "grantIssued": false,
+  "head": "dd070eb0233e242eed6ec4e62d5d7f8857d6dc21",
+  "kind": "SOURCE_CPU",
+  "limits": [
+    "inert kernel/process/command ports in controller replays",
+    "VM headless evidence is not T13 full-Chrome native acceptance",
+    "external XPC/all-ever-lived ownership unqualified",
+    "no native/device/timing/16.67ms acceptance"
+  ],
+  "mergeAuthorized": false,
+  "nativeRun": false,
+  "performanceQualified": false,
+  "priorFindings": {
+    "R1-F1..F8": "FIXED/PRESERVED",
+    "R2-F1..F3": "FIXED/PRESERVED",
+    "R3-protocol": "PRESERVED_BY_HASH",
+    "actual-native2-live-ledger": "FIXED_AT_REPRODUCED_SOURCE_CPU_BOUNDARY",
+    "first-native-copy-and-SetStore": "FIXED/PRESERVED"
+  },
+  "priorNativeStatus": "FAILED/SPENT/UNPROVED",
+  "protectedStateUnchanged": true,
+  "report": "/private/tmp/p1-e14-t13-source-cpu-r2.jiw5_5nx/APPENDIX-C2.md",
+  "reportSha256": "480b5ab9561f143afd5e8a45cd5baf9d69ca7840af76c26428f88e0e6f4bed85",
+  "repositoryChanged": false,
+  "reusedProof": {
+    "broadCases": 632,
+    "dispatcherCases": 64,
+    "freshlyExecuted": false,
+    "hashVerified": true
+  },
+  "runtimeAuthorized": false,
+  "schemaVersion": 1,
+  "scope": "actual-native2 live metadata sampling and exact Metal prerequisite correction",
+  "status": "DONE",
+  "task": "P1.E14.T13",
+  "tree": "55425ed6c5d0fed5d0b04cbec30dca2c3bd0692c",
+  "verdict": "PASS",
+  "wholeTaskComplete": false,
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8"
+}
