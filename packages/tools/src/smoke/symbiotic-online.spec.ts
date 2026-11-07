@@ -389,6 +389,7 @@ function drawn(e: Awaited<ReturnType<typeof inspect>>, arena: ReturnType<typeof 
 }
 
 interface CaptureView {
+  joined: boolean;
   clientId: number;
   tick: number;
   serverTime: number;
@@ -409,7 +410,18 @@ interface CaptureView {
     aspect: number;
   };
   viewport: { width: number; height: number; pixelRatio: number };
-  subjects: { id: number; wire: EntityState | null; shown: boolean; drawn: boolean; pos: number[] | null; world: number[] | null }[];
+  subjects: {
+    id: number;
+    wire: EntityState | null;
+    remote: boolean;
+    shown: boolean;
+    drawn: boolean;
+    faunaShown: boolean;
+    targeted: boolean;
+    pos: number[] | null;
+    world: number[] | null;
+  }[];
+  picked: number | null;
   bannerOpacity: number;
   overlay: string | null;
 }
@@ -421,7 +433,10 @@ async function captureView(page: Page, ids: number[]) {
     if (!g.net.joined || !player?.frame) throw new Error('Missing live capture player/frame');
     const camera = g.engine.camera;
     const banner = document.querySelector('.banner');
+    const targets = g.fauna.targets(g.cam.frame);
+    const ray = g.cam.pos.clone().set(0, 0, -1).applyQuaternion(g.cam.quat);
     return {
+      joined: g.net.joined,
       clientId: g.net.entityId,
       tick: g.net.store.tick,
       serverTime: g.net.store.time,
@@ -447,12 +462,16 @@ async function captureView(page: Page, ids: number[]) {
         return {
           id,
           wire: g.net.store.entities.get(id) ?? null,
+          remote: remote !== undefined && remote !== null,
           shown: remote?.shown === true,
           drawn: remote?.drawn === true,
+          faunaShown: g.fauna.shown.some((r: { id: number }) => r.id === id),
+          targeted: targets.some((t: { id: number }) => t.id === id),
           pos: remote?.pos.toArray() ?? null,
           world: remote?.world.toArray() ?? null,
         };
       }),
+      picked: g.fauna.pick(g.cam.frame, g.cam.pos, ray, 70)?.id ?? null,
       bannerOpacity: banner ? Number(getComputedStyle(banner).opacity) : 0,
       overlay: g.overlay ?? null,
     };
@@ -877,6 +896,32 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     evidence.retired = retired;
     const observerAfter = await capture(info, b.page, 'observer', 'disconnect', [owner, observer, companion, enemy]);
     evidence.observerAfter = observerAfter;
+    // Overlay readiness and the screenshot each consume time after the original retirement proof.
+    // Validate both retained samples, after attachment, so a rejected interval keeps its evidence.
+    for (const endpoint of [observerAfter.before, observerAfter.after]) {
+      expect(endpoint).toMatchObject({ joined: true, clientId: observer, frame: arena.frame });
+      expect(endpoint.tick).toBeGreaterThan(release.tick);
+      const witness = EntityState.parse(endpoint.subjects.find((s) => s.id === observer)?.wire);
+      expect(witness).toMatchObject({ id: observer, kind: 'player', frame: arena.frame, mode: 'foot' });
+      expect(witness.hp).toBeGreaterThan(0);
+      const retained = endpoint.subjects.find((s) => s.id === enemy);
+      const target = EntityState.parse(retained?.wire);
+      expect(target).toMatchObject({ id: enemy, kind: 'mob', species: arena.enemy.index, frame: arena.frame });
+      expect(target.hp).toBeGreaterThan(0);
+      expect(target.mode).not.toBe('dead');
+      expect(retained).toMatchObject({ remote: true, shown: true, drawn: true, faunaShown: true, targeted: true });
+      for (const id of [owner, companion]) {
+        expect(endpoint.subjects.find((s) => s.id === id)).toMatchObject({
+          wire: null,
+          remote: false,
+          shown: false,
+          drawn: false,
+          faunaShown: false,
+          targeted: false,
+        });
+        expect(endpoint.picked).not.toBe(id);
+      }
+    }
     expect(observerBefore.after.clientId).toBe(observer);
     expect(sameCaptureView(observerBefore.after, observerAfter.before)).toBe(true);
     expect(sameCaptureView(observerAfter.before, observerAfter.after)).toBe(true);
