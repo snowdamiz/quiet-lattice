@@ -1,0 +1,315 @@
+{
+  "kind": "SCHEMA_AND_EXAMPLE_DATA_ONLY_NOT_A_GRANT_OR_REVIEW_RECEIPT",
+  "warning": "No verdict or authorization is issued. Nested examples describe what the independent reviewer and parent must separately supply. This top-level document cannot satisfy either parser. Do not copy it to any pilot identity path.",
+  "source": {
+    "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
+    "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482",
+    "clean": true
+  },
+  "readiness": {
+    "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json",
+    "sha256": "073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee"
+  },
+  "independentReceiptSchema": {
+    "type": "object",
+    "required": [
+      "verdict",
+      "scope",
+      "source"
+    ],
+    "properties": {
+      "verdict": {
+        "const": "PASS"
+      },
+      "scope": {
+        "const": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW"
+      },
+      "source": {
+        "const": {
+          "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
+          "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482",
+          "clean": true
+        }
+      }
+    }
+  },
+  "independentReceiptExampleData": {
+    "verdict": "PASS",
+    "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+    "source": {
+      "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
+      "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482",
+      "clean": true
+    }
+  },
+  "parentGrantSchema": {
+    "type": "object",
+    "required": [
+      "purpose",
+      "oneUse",
+      "nativeReservesAccepted",
+      "authorizationId",
+      "readinessSha256",
+      "pilot",
+      "source",
+      "assetHead",
+      "expiresAt",
+      "callerReview"
+    ],
+    "properties": {
+      "purpose": {
+        "const": "EFFECTS_GRAVITIC_PULL_SINGLE_DISABLED_PILOT"
+      },
+      "oneUse": {
+        "const": true
+      },
+      "nativeReservesAccepted": {
+        "const": true
+      },
+      "authorizationId": {
+        "const": "effects-b61233fdf3564205bd01d9566f306430"
+      },
+      "readinessSha256": {
+        "const": "073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee"
+      },
+      "pilot": {
+        "const": {
+          "asset": "gravitic_pull",
+          "attemptId": "b61233fdf3564205bd01d9566f306430",
+          "authorizationId": "effects-b61233fdf3564205bd01d9566f306430",
+          "consumption": "/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json",
+          "evidence": "/private/tmp/egp-b61233fdf3564205bd01d9566f306430",
+          "file": "effects/gravitic",
+          "files": [
+            "gravitic_pull/noon-lush_lod0.png",
+            "gravitic_pull/noon-lush_lod2.png",
+            "gravitic_pull/wireframe_lod0.png",
+            "gravitic_pull/wireframe_lod2.png",
+            "gravitic_pull/overlay.png",
+            "gravitic_pull/far_lod2.png",
+            "gravitic_pull/night-exotic_lod0.png",
+            "gravitic_pull/night-exotic_lod2.png",
+            "gravitic_pull/open-space_lod0.png",
+            "gravitic_pull/open-space_lod2.png",
+            "gravitic_pull/perf.json",
+            "gravitic_pull/sheet.png"
+          ],
+          "gl": "metal",
+          "grant": "/private/tmp/egg-b61233fdf3564205bd01d9566f306430.json",
+          "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430",
+          "viewport": [
+            1920,
+            1080
+          ]
+        }
+      },
+      "source": {
+        "const": {
+          "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
+          "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482",
+          "clean": true
+        }
+      },
+      "assetHead": {
+        "const": "2643aca9d8b85a45498d85eb637d20260ebf06d1"
+      },
+      "expiresAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Parent-issued future timezone-aware expiry, checked at actual admission."
+      },
+      "callerReview": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Actual independent activation reviewer receipt, not this schema/data document."
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  },
+  "parentGrantExampleData": {
+    "purpose": "EFFECTS_GRAVITIC_PULL_SINGLE_DISABLED_PILOT",
+    "oneUse": true,
+    "nativeReservesAccepted": true,
+    "authorizationId": "effects-b61233fdf3564205bd01d9566f306430",
+    "readinessSha256": "073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee",
+    "pilot": {
+      "asset": "gravitic_pull",
+      "attemptId": "b61233fdf3564205bd01d9566f306430",
+      "authorizationId": "effects-b61233fdf3564205bd01d9566f306430",
+      "consumption": "/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json",
+      "evidence": "/private/tmp/egp-b61233fdf3564205bd01d9566f306430",
+      "file": "effects/gravitic",
+      "files": [
+        "gravitic_pull/noon-lush_lod0.png",
+        "gravitic_pull/noon-lush_lod2.png",
+        "gravitic_pull/wireframe_lod0.png",
+        "gravitic_pull/wireframe_lod2.png",
+        "gravitic_pull/overlay.png",
+        "gravitic_pull/far_lod2.png",
+        "gravitic_pull/night-exotic_lod0.png",
+        "gravitic_pull/night-exotic_lod2.png",
+        "gravitic_pull/open-space_lod0.png",
+        "gravitic_pull/open-space_lod2.png",
+        "gravitic_pull/perf.json",
+        "gravitic_pull/sheet.png"
+      ],
+      "gl": "metal",
+      "grant": "/private/tmp/egg-b61233fdf3564205bd01d9566f306430.json",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430",
+      "viewport": [
+        1920,
+        1080
+      ]
+    },
+    "source": {
+      "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
+      "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482",
+      "clean": true
+    },
+    "assetHead": "2643aca9d8b85a45498d85eb637d20260ebf06d1",
+    "expiresAt": "<PARENT_FUTURE_TIME_WITH_TIMEZONE>",
+    "callerReview": {
+      "path": "<ACTUAL_INDEPENDENT_ACTIVATION_RECEIPT_ABSOLUTE_PATH>",
+      "sha256": "<ACTUAL_RECEIPT_SHA256>"
+    }
+  },
+  "futureInvocationOnly": {
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects",
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py"
+    ],
+    "env": {
+      "HOME": "/Users/andreyyurlov",
+      "USER": "andreyyurlov",
+      "LOGNAME": "andreyyurlov",
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONOPTIMIZE": "0",
+      "EFFECTS_AUTHORIZATION": "effects-b61233fdf3564205bd01d9566f306430"
+    },
+    "clearInheritedEnvironment": true,
+    "nodeChildArgvViaStationJobOnly": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs",
+      "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json"
+    ],
+    "nodeChildImportantEnvironment": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "EFFECTS_READY_SHA256": "073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee",
+      "EFFECTS_AUTHORIZATION": "effects-b61233fdf3564205bd01d9566f306430",
+      "SMOKE_GL": "metal",
+      "TMPDIR": "<CALLER_OWNED_PRIVATE_TMP>"
+    },
+    "note": "Caller CLI takes no readiness argument and uses the adjacent bound readiness.json. Parent invokes only caller; StationJob launches the Node child after all gates."
+  },
+  "expectedAfterActualCaptureOnly": {
+    "parentObservedOsExit": 0,
+    "result": "/private/tmp/egp-b61233fdf3564205bd01d9566f306430/result.json",
+    "consumption": "/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json",
+    "entry": "/private/tmp/egp-b61233fdf3564205bd01d9566f306430/entry.json",
+    "requiredHashInputs": [
+      "result_sha256",
+      "consumption_sha256"
+    ],
+    "acceptanceAPI": "caller.parent_acceptance(result_path, consumption_path, observed_os_exit=0, result_sha256=ACTUAL_RESULT_SHA256, consumption_sha256=ACTUAL_CONSUMPTION_SHA256)",
+    "diskAcceptedValue": false,
+    "checksPassed": true,
+    "publication": "AWAITING_PARENT_OS_EXIT_AND_HASHES",
+    "releaseReleased": true,
+    "inspectionValid": true,
+    "errors": [],
+    "allTerminalWritesMustHaveCompleted": true,
+    "failedFallbackMustNotExist": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430/failed-result.json"
+  },
+  "budget": {
+    "admissionBytes": 5402312704,
+    "imageArchiveCopyBytes": 0,
+    "imageStagingBytes": 0,
+    "nativeOSQuotas": false,
+    "outputCapBytes": 184565760,
+    "rows": [
+      {
+        "bytes": 184565760,
+        "semantics": "11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root",
+        "writer": "capture_outputs"
+      },
+      {
+        "bytes": 184565760,
+        "semantics": "Reserved for later Git LFS adoption; this pilot performs no git add or LFS write",
+        "writer": "future_lfs_copy"
+      },
+      {
+        "bytes": 184565760,
+        "semantics": "Reserved for later parent hydration; this pilot makes no main-worktree copy",
+        "writer": "future_main_hydration"
+      },
+      {
+        "bytes": 67108864,
+        "semantics": "Node and Python each reserve attempted receipt bytes before writing, 32 MiB each",
+        "writer": "controlled_metadata"
+      },
+      {
+        "bytes": 67108864,
+        "semantics": "One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained",
+        "writer": "cache_snapshot"
+      },
+      {
+        "bytes": 2147483648,
+        "semantics": "StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive",
+        "writer": "profile_work_and_archive"
+      },
+      {
+        "bytes": 1073741824,
+        "semantics": "preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles",
+        "writer": "private_tmp_work_and_archive"
+      },
+      {
+        "bytes": 134217728,
+        "semantics": "StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job",
+        "writer": "helper_logs_work_and_archive"
+      },
+      {
+        "bytes": 268435456,
+        "semantics": "Observed additional Vite cache growth; original cache bytes already reduce free space",
+        "writer": "generated_cache_growth"
+      },
+      {
+        "bytes": 16777216,
+        "semantics": "Directory and filesystem overhead reserve",
+        "writer": "filesystem_metadata"
+      },
+      {
+        "bytes": 1073741824,
+        "semantics": "Fresh disk safety reserve, checked at admission and while observing",
+        "writer": "safety"
+      }
+    ],
+    "scope": "One pilot only; native thresholds are observations and can overshoot, not OS quotas."
+  },
+  "deadlines": {
+    "cacheCopy": 30,
+    "capture": 600,
+    "cleanup": 60,
+    "decode": 45
+  },
+  "pilotPathsCurrentlyAbsent": {
+    "grant": "/private/tmp/egg-b61233fdf3564205bd01d9566f306430.json",
+    "consumption": "/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json",
+    "evidence": "/private/tmp/egp-b61233fdf3564205bd01d9566f306430",
+    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430"
+  },
+  "remaining": "Fresh independent activation review, T15 GPU release, current exact owner/disk admission, parent-issued actual grant; then actual capture and independent visual grade."
+}

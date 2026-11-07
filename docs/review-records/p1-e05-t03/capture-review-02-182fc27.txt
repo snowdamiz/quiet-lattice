@@ -1,0 +1,262 @@
+VERDICT: REVISE — three reproduced P2 findings.
+TASK: P1.E05.T03 capture SOURCE/CPU R2, including exact T15 adoption.
+
+Pinned checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8
+Branch: task/P1-E05-T03
+HEAD: 182fc27d1a5459270e2a3c4673f8e70b86ef3a33
+Tree: 546f57bc68c5a19f8144ae2ccd205a368bd9982f
+Review base: 826337c81d17081bc6856506956df4a7d57c8f86
+Base tree: f8a4074cde50ae56ba633cb1f91ae774505f8bae
+R1 correction: 58ae819f2e9d2a8d221e90f0fe808fde2683b010
+Separate T15 adoption: dea07963a32227cc3eaecad86d128026350b9082
+Fresh evidence: /private/tmp/p1-e05-t03-r2-yrN5o2
+Decoder subreview: /private/tmp/p1-e05-t03-decoder-r2-kf878yxf/REPORT.txt
+
+This is a source/controlled-CPU verdict. Both execution gates remain false and all 31 prospective paths remain absent. Native cohort release, GPU/Metal behavior, image quality and whole-task acceptance remain unqualified. Parent owns the full Metal T15 smoke separately. No future native or visual gate is used as a reason for this REVISE.
+
+FINDINGS
+
+R2-1 — P2: serializing a cyclic observer field skips mandatory owned draining and masks the original failure.
+Location: packages/tools/src/capture/viewmodel_packet/native.py:123-126,139-149; serializer boundary.py:94-104.
+Reachability: actual native.capture -> actual StationJob constructor/wait -> actual StageReceipts.observe/_observe -> controlled current_commands port raises TimeoutExpired. Native start/status/membership/kernel/drain ports are inert; the adapter, helper wait, observer and exception paths are not replaced.
+
+The adapter sets callback_failure before evaluating raw(error). An unknown nested field referring back to its exception causes raw() to recurse. The real helper normalizes that RecursionError; the adapter later raises the saved original, but its outer handler indexes evidence['callbackFailure'], which was never populated. It escapes as KeyError('callbackFailure') before phase='cleanup' and before job.drain. Original partial stdout/stderr/unknown facts disappear from the returned record. released remains false and no decoder runs, but mandatory cleanup is bypassed despite an owned root/coalition being present.
+
+Concrete repro: native-unknown.py runs two otherwise-identical actual callback cases. Both errors carry output=b'RAW\xff', stderr=b'ERR\xfe', unknown.retained=b'\x00'. The adverse case additionally sets unknown.nested.sourceError=error. The acyclic case throws the original TimeoutExpired and traces inert-start -> actual-observer-command-port -> inert-drain. The cyclic case throws KeyError and traces only inert-start -> actual-observer-command-port. Its known scratch allocation remains retained. Harness exit 0 means this defect assertion succeeded. It is not native cleanup qualification.
+
+Correction: make raw-fact encoding cycle-safe and failure-aware; use explicit reference/type records while retaining the first exception object independently. Do not assume serialization has completed because callback_failure is set. Put mandatory owned draining on a path that error observation/persistence cannot bypass, and retain serialization/receipt faults as secondary facts. Test cyclic/shared nested observations and an encoder failure through the actual helper callback with inert kernel/command ports. Keep the four retained helpers immutable.
+Evidence: native-unknown.py, native-unknown.log, native-unknown-results.json, native-cyclic-False.json, native-cyclic-True.json.
+
+R2-2 — P2: falsy raw work failures discard shared cleanup evidence; undefined is lost at durable JSON publication.
+Location: packages/tools/src/capture/viewmodel_packet/entry.mjs:44,63-65,134-137,273-280.
+Reachability: actual execute -> productionCapture -> adopted captureReview/openReview/finishCapture, with only Playwright/Vite/net/import ports inert. All child-process APIs are prohibited in the probe. Actual shared exports run and preserve raw identity and encounter order.
+
+With page.goto rejecting false, 0 or '', and browser.close plus Vite close both failing, shared captureReview correctly throws AggregateError([original,browserError,viteError], {cause: original}). execute keeps the falsy primary but its `if (record.firstCaptureFailure && ...)` condition skips the aggregate. The fallback browser close happens again and records the browser fault, but the Vite failure and its byte/unknown observations are absent from both memory and durable receipts. This is a packet integration bug; the exact adopted shared source does preserve all three values.
+
+Concrete repro: falsy-probe.mjs runs 36 combinations: ordinary Error plus false/0/''/null/undefined, cleanup success or simultaneous browser+Vite faults, and durable/fallback/all-sinks receipt modes. Nine combinations (three falsy values times three sink modes) lose the Vite facts. For each the probe asserts the caught aggregate contains the exact original and both cleanup objects before entry serialization. Disk receipt modes use actual exclusive scratch writes and read the JSON back. All-sinks retains the incomplete in-memory entry record. With a lone undefined rejection, errorFacts returns undefined and JSON.stringify omits primaryFailure entirely in both durable and fallback receipts. With combined faults, undefined cause is omitted and an undefined array element becomes null. All cases still exit as failure; there is no false success claim here.
+
+Correction: represent whether a first failure exists separately from its value; do not use truthiness or nullishness as the observation flag. Preserve the aggregate and all ordered cleanup facts for every raw rejection. Encode undefined (and other non-JSON scalars if accepted by the contract) explicitly so published facts distinguish them from null or absence. Keep the shared reviewed two-file T15 patch unchanged; correct the task-local adapter/serialization. Add actual-export cases for false/0/''/null/undefined and durable/fallback/all-sinks publication.
+Evidence: falsy-probe.mjs, falsy-integration.log, falsy-results.json, falsy-*/entry-result.json or entry-fallback.json. Exit 0 confirms reproduction, not candidate acceptance.
+
+R2-3 — P2: switch-settled accepts a full raise with no elapsed time.
+Location: packages/tools/src/capture/viewmodel_packet/inspect_packet.py:313-318,338-351; producer fixture.mjs:283-308; real runtime Multitool.js:301-303.
+Reachability: unmodified inspector CLI -> authenticated inventory/manifest -> real PNG/zlib/Pillow decoding -> observations, for return-thalune, view-ixari and view-ulgani.
+
+The new full-raise predicate validates only the switch-settled endpoint. The clock predicate allows equal elapsed when dt=0, and the stronger update/duration predicate applies only to raise-0.4. A real CLI packet therefore passes with switch-gap frame=26, elapsed=0.4, dt=0, raise=0 followed by switch-settled frame=27, elapsed=0.4, dt=0, raise=1. The actual runtime increases raise by dt*2.6; its model-attachment callback does not change raise. The fixture takes 24 ordinary 1/60 updates between those endpoints. Zero elapsed cannot yield the reported state.
+
+The independent decoder reviewer reproduced zero-time, one-step and 23-step variants on all three transition units: 9/9 incorrectly PASS. Three 24-step/0.4-second controls PASS. I separately replayed the retained return-thalune zero-time case through the real CLI and observed exit 0, valid:true, status:PASS, with both contradictory raw frames present in stdout.
+
+Correction: reconcile each switch-settled with its immediately preceding same-aspect switch-gap using the documented 24 updates / at least 0.4 elapsed, consistent fixed-step frame/time progress and last dt=1/60 (or an independently justified equivalent). Retain valid zero-dt reset semantics and cooling allowance for raise-0.4. Add real-CLI controls for all three transition units.
+Evidence: DECODER-REPORT.txt; child transition-followup/*/{zero-time,one-step,23-steps,24-steps-valid} case inputs and manifests; transition-summary.json; parent decoder-switch-independent-replay.log. Child report gives the exact existing case paths and argv. Synthetic PNGs establish byte/receipt validation behavior, not native image meaning.
+
+EVERY PRIOR FINDING DISPOSITION
+
+R1 StageReceipts readiness mismatch — FIXED. Actual retained observe and require_browser receive resolver.selectedExecutable.path plus process_binary_sha256. Fresh original lifecycle replay reproduces missing resolver; candidate replay no longer does. Stock actual-helper control qualifies browser/gpu-process/renderer/utility roles through inert identity ports, then deliberately refuses unproved release.
+R2 callback/resource facts lost or receipt masking — PARTIAL. Both original resource-error recipes and the TimeoutExpired byte/unknown-field recipe now preserve the original, including failed helper save; fresh base RED/current GREEN replays confirm this. The cyclic unknown-field neighbor R2-1 still masks the original and skips drain.
+R3 navigation replaced by browser close — PARTIAL at the required caller boundary. The exact original Error-valued goto+close recipe is fixed, as are the broader six-operation Error-valued combined cases. T15 shared source is correct for falsy raw values too. Task-local entry loses combined falsy cleanup observations at R2-2.
+R4 >64 MiB hash-before-cap — FIXED for the reported defect. Fresh base replay reads 67,108,865 bytes before later rejection. Candidate metadata inventory/per-read remaining cap rejects growth before oversized content reads in all four supplied schedules, and at the final os.open/fstat boundary. FIFO replacement refuses and descriptors close. The route-admission limit below does not reproduce an over-budget read or successful acceptance.
+R5 lowered settled/neutral/fire accepted — FIXED for all reported recipes. Eight byte-identical base/head decoder counterexamples include these cases; old CLI accepts and current CLI rejects. All named settled endpoints now require full raise; hidden/reset endpoints require zero.
+R6 raise-0.4 with no elapsed progress — FIXED for the original recipe and tested fractional/insufficient/frame/dt neighbors. The separate switch-settled omission is R2-3; the original named raise-0.4 case no longer passes.
+R7 incomplete PNG zlib — FIXED. Missing Adler, trailing compressed stream, duplicate IHDR and unknown critical chunk accept on base and reject on head. Neighbor malformed filters/scanline counts/checksum/CRC/order/APNG/end conditions reject; legal split/empty IDAT and RGB/RGBA 8/16-bit Adam7 controls pass.
+
+NONBLOCKING OBSERVATION / LIMIT
+
+Cache admission records root/directory identities, but cache_contents passes only leaf identity into snapshot. Between lstat/canonical checks and os.open, a same-size mutation with changed mtime is read and copied before reconciliation rejects it; opened fstat does not compare mtime with admitted mtime. Moving a directory and substituting an ancestor symlink to the same leaf inode, or a replacement real directory with a hardlink to that inode, also permits one bounded read/copy before later rejection. Fresh cache-neighbors.py records all three routes, the exact 8 bytes read, late errors and closed descriptors. A grown file at the same boundary is rejected before any read. No case was accepted or exceeded the cap, so this is not another blocking finding or a claim of arbitrary out-of-budget data access. If the intended guarantee is route/ancestor authentication before every payload read, validate admitted directory identities through no-follow directory descriptors and compare full leaf identity before reading; current controls establish late fail-closed reconciliation instead. No universal filesystem-race proof is claimed.
+
+T15 PROVENANCE AND BOUNDARY
+
+The exact reviewed commit 38b6c4b58db43146df20cd760808d1461d7a667b and separate adoption dea07963a32227cc3eaecad86d128026350b9082 have byte-identical full-index binary patches: SHA256 febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345. Both Git blobs match at reviewed T15, adoption and final HEAD:
+  capture.ts: 555c71d140a36004200ac04ff66609eeb4458136
+  capture.lifecycle.test.ts: 2e33cab7a3a3cdb8f929b51e45a7f894a09c6133
+Both files appear in the authenticated 12,921-entry non-packet source closure. Their working SHA256s are 42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d and ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18. The final 182 commit changes only readiness and new T15 provenance/report/evidence; no post-adoption shared source modification occurred.
+
+The retained T15 SOURCE PASS report was read and verified byte-identical to its committed gzip copy (SHA256 944f849660b40540f253612159f49f02c31083a83b178cbabee5171326591af9). Its 325 independent assertions/68 old-source failures remain explicitly historical; they were reused, not re-counted as fresh tests. Fresh candidate shared suite: 100 tests PASS. Fresh combined actual-export probe: 72 cases PASS. Exact original shared-source replay: 54/72 fail, exit 1, reproducing the claimed RED. Source bytes for this replay are the recorded original hash 3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc. Additional 36-case falsy integration exposes R2-2. Browser then Vite cleanup plus the existing task-local fallback browser close are recorded; none proves native cohort ownership.
+
+Both committed evidence archives were freshly hash-checked and every regular body read back without extraction: 5,904 R1 files and 187 T15 files. R1 manifest additionally records 879 directories, 8 symlinks and 3 FIFOs; T15 records 58 directories, 2 symlinks and 1 FIFO. Nonregular objects were not opened. Initial audit incorrectly omitted the archive's evidence/ prefix, failed before checking bodies, and was corrected in archive-audit-v2.py. The v2 log's field named nonregular includes directory rows; archive-kinds.json records the precise distinction. No worker evidence was overwritten.
+
+EXECUTION AND SCOPE
+
+Read task E05.T03/T04, plan 0.3/0.4/0.9.5, DESIGN 19.2/19.4/20.3, art-bible viewmodel/material limits, packet README, prior R1, revision/adoption reports, and changed code/tests. Applied read-only review and TypeScript/type-system guidance. One app-owned child reviewed decoder/inventory only, with fresh supplied brief and no worker transcript. Parent ran at most one active CPU test workload; child at most one. The native helpers, capture exports, caller subprocess boundary and inspector CLI were executed with only prohibited native/browser/network ports controlled. No whole adapter was replaced to assert its own correctness.
+
+Source trace preserves the standard captureReview path for three exact fp_<people> routes, three lighting pairs, wireframe pair, Muzzle-only overlay, far100 and sheet/readout. Requested LOD2 versus selected LOD0 remain distinct; viewmodels have one authored LOD. First-person fixture uses actual #foot offline state, original Multitool.update and Engine.render identities, explicit input, 1920x1080/2520x1080, same synchronous render/canvas sampling, actual GLB-request hold for people switch, and one captured frame per named pose. It does not assign authored bone/clip poses. T04 clip integration is not expanded. R3 accepted art/source is not regraded.
+
+Exact disabled inventory remains 7 units, 101 files = 94 PNGs + 7 readouts:
+  review-thalune / review-ixari / review-ulgani: each 12 files, 11 PNGs, outputCap=184565760, admission=5402312704.
+  view-thalune: 19 files, 18 PNGs, outputCap=302022656, admission=5754683392.
+  view-ixari / view-ulgani: each 21 files, 20 PNGs, outputCap=335577088, admission=5855346688.
+  return-thalune: 4 files, 3 PNGs, outputCap=50348032, admission=4999659520.
+Every PNG cap is 16777216. Full-view readout cap 32768; other readouts 16384. Three copies; fixed reserve 4848615424; admission=3*outputCap+reserve. Deadlines are capture/cleanup/decode/cache-copy=600/60/45/30 seconds. Observed ceilings are not OS quotas.
+
+Fresh ordinary suites: Python caller/helper/revision 22 PASS plus independently executed decoder suite 24 PASS = 46; Node packet 18 PASS; shared lifecycle 100 PASS; client runtime 8 files / 110 tests PASS. Exact executables/config/cache controls are in commands below. Decoder child additionally ran 92 independent CLI cases (84 head, 8 base; 44 exit 0, 48 exit 1); parent separately replayed one existing adverse head case. Child's 44 exit-0 cases include the nine invalid transitions and eight deliberately bad base controls; these are not mislabeled product passes.
+
+Fresh seven actual caller subprocesses traverse main/admit/run_unit/persist/Git in scratch at one unchanged temporary Git HEAD: exits [0,0,0,0,0,0,0], inventories [12,12,12,19,21,21,4], total 101. Five publication/release outcomes exit [0,1,1,1,1] for success, after-result-write, after-return, release-unproved, all-sinks. Only success admits the successor. A checksPassed:true disk receipt never substitutes for observed process completion; all-sinks retains in-memory unknown byte facts. Native capture and decoding ports are inert in this caller-chain fixture; it is not a native capture chain.
+
+Original lifecycle and resource replays use 26 scratch files freshly compared byte-for-byte to base Git blobs, reverified afterward. Base lifecycle 7 cases and resources 2 cases reproduce their defects; current localized replays pass their corrected expectations. Actual archive deadline stops later dispatch, allocation/bootstrap receipt errors retain ownership/raw facts, and release remains unproved when intended. Original cache growth/FIFO/live-owner 3-case replay confirms old over-read plus safe FIFO refusal and owner refusal; benign Python holder exits 0. No real launchctl/bootstrap/bootout command ran.
+
+The active brief correction was honored: readiness has always frozen Node26.12.1. Authoritative packet/combined/runtime checks used /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node, SHA256 06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b. Vitest reports 5.0.5. Before clarification, one supplemental Node22 packet run passed 18 tests and an over-restricted Node22 Vitest attempt produced no test result; its two owned processes were terminated (exit 143). These are separate supplemental results, not packet qualification. No executable, binding or dependency was retargeted or updated. The failed attempt used deny network*, which blocked its harness; the successful direct Node26 run used the prior review's deny network-outbound policy and scratch filesystem guard. No Vite app server was started.
+
+Other retained harness failures: first original cache replay reached its read-only ps owner probe and sandbox refused spawning /bin/ps (exit 1); reviewed scratch-only replay without that sandbox passed all three cases, including actual owner refusal and child exit 0. First archive audit's prefix mismatch exited 1. Logs remain intact. None is counted as a product pass. No package manager or install ran; no linked dependency-cache write, broad cleanup or foreign restoration occurred.
+
+FINAL PRESERVATION
+
+before.json and after.json are byte-identical and record all 12,994 tracked working-file SHA256/lengths, branch/HEAD/tree/status, live binding/dependency trees and ignored inventory. Both status snapshots are clean. Final actual caller --check exits 0 with CPU_BINDINGS_ONLY and runtimeEnabled:false. All 31 prospective paths are absent. Protected audit matches 6 accepted bodies, 6 viewmodel source/exports, 6 previews, 745 accepted review files, 59 retained runtime/source-revision files, four helpers and retained historical report hashes. Decoder child also independently checked source/assets/helper/report bytes and all preexisting PIL bytecode identities. No ignored writes were observed; no source/doc/assets/helpers/prior reports were modified.
+
+Native/browser/GPU/Metal, app Vite/server/DB, Blender/export, real grant, LFS fetch, screenshot or screenshot cleanup did not run. No target commits, main changes, pushes, PRs, comments, queue submissions or merges. Scratch temporary Git commits exist only in explicit caller-boundary fixtures. Both native and visual gates remain separate.
+
+Plan 0.9.5: no new client authority, missing-tests system, replaced-demo survival, demonstrated perf-tagged budget regression or unlogged product/spec interpretation found. The three P2s are concrete failures of the packet's promised error/cleanup/CPU-evidence contracts. No style issue blocks.
+
+BEFORE/AFTER HASH INDEX
+before.json SHA256 2ca3ed42d7f839c551de8dc926a5e8b0e8ba6c51262c5f036e7a4a84fc3171bd
+after.json SHA256 2ca3ed42d7f839c551de8dc926a5e8b0e8ba6c51262c5f036e7a4a84fc3171bd
+reviewed.diff SHA256 de6a1b8093fb7581e5121844d796009722c82a989d9b85d7ec16c79de0bd84d0
+DECODER-REPORT.txt SHA256 e940074ffe19c49bf264ff77a9cdee4e21d00da381afb9dba70766b8f69c57f7
+original-provenance.json SHA256 d2185c9c649875f3825b4208d54203c7aff00128530ee8d51246798ac49b1532
+original-reverified.json SHA256 42d500c605f0e121101bd8f96dcdf0d354f92d7ec731193bec3b0182b709a213
+sourceDigest cfd22c5cf2d6736cce266f26f39b1c0bd76e04f1eb292915aed12791fa40d0d4
+ignoredInventorySha256 2fde53955b2b8855c9cae24565e0ba0c300667c203f4001e2ae2d56b0d58f552
+/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/node_modules c9ca9b99ea32b544e006174013458c83feb842f339634b4746d694f236e681dc (12848 files, 288634535 bytes)
+/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64 5fb8dcd8d2606ed66b09d4e545ba7f264b0bb2bb129022db4369de534b2a9645 (16 files, 213060105 bytes)
+/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages/PIL 6addcbac6ae4bd93ca6cfe79295d32b2d30662040f466ca4f554057df33a8b1c (132 files, 13076627 bytes)
+pnpm-lock.yaml 120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f
+package.json a555ba885349efbf0e6d4247891fddd2a4918a84c4623b73d3b23266af39a944
+packages/tools/vitest.config.ts 09b7785c792eba69ef266c9f15b19b14e81eda4497df23f3b94bbead17176a69
+packages/client/vitest.config.ts 75330dcf558dd5c475f714a2e447450d2aff6df723d73a0d136ce17c0ed9b8cb
+packages/tools/src/capture/viewmodel_packet/readiness.json 4926852df1adfb8f1afe0a1e2592415eba9e2942771f1e69ff3edf8abcfa93de
+packages/tools/src/capture/viewmodel_packet/inventory.json 98958acf95dfdd56eba3b9f86172498f4f60b8d38993046dd4d17d863f1263ae
+packages/tools/src/capture/viewmodel_packet/evidence/capture-revision-r1/protected-audit.txt 09d67b371caa811a47c621d0131870d9541dd2e288315e59a7c4d8416fb19b4e
+packages/tools/src/capture/viewmodel_packet/native.py aca89ddcd8ff5c20e600cf4068c1595d55dc77026fc27ae7eaf8e79fab91cc47
+packages/tools/src/capture/viewmodel_packet/boundary.py 2644bdfb4538b79c5e5169bdd20501fd18cfb38b75a744898ee1ff9f6aeb8e8d
+packages/tools/src/capture/viewmodel_packet/caller.py 4f574ffe97acd0d4432228f1b7d4615487f5ddd8e0e14529c6af8943c1f07eb8
+packages/tools/src/capture/viewmodel_packet/entry.mjs aace15af4836c6245c3f996cb05152763028194463854c8b6c419f3e6d940e77
+packages/tools/src/capture/viewmodel_packet/fixture.mjs 856dd81a1238f19f9c1dcc103ce7a2ae5ccddfd9327f1e9ba5eef182d6f6e5a6
+packages/tools/src/capture/viewmodel_packet/inspect_packet.py f51410422b5c36a36f240bead001b7869cddc747dffb008302c945480ff05ee9
+
+EXACT PARENT COMMANDS
+Each ran from /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8. commands.jsonl records log hashes, timing and common environment; supplemental-command-environments.json includes VM_SHARED_UNDER_TEST and decoder PYTHONPATH omitted by the initial recorder. Full child commands and counts are in DECODER-REPORT.txt and its referenced commands.jsonl/probe-commands.jsonl.
+
+baseline: exit=0 duration=14.365820000006352s
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/audit.py before
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 d3fda14b0556f3d8acfd6bc2b04e0215a69d8821e9e7535ca25525227c5ad3ab
+
+python-stock: exit=0 duration=5.543792583979666s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/python-controls.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 a1672bd77d5f8a9ea7740cade4fd6ed6864c7d4945e53788d205f18ec4ff2a49
+
+node-stock: exit=0 duration=0.48139954201178625s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import /private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs --test --test-concurrency=1 packages/tools/src/capture/viewmodel_packet/entry.test.mjs packages/tools/src/capture/viewmodel_packet/fixture.test.mjs packages/tools/src/capture/viewmodel_packet/production.test.mjs
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 a228ca3612903365feda07d30986deb441ce1a2e865effae6312390e22cc03eb
+
+node26-stock: exit=0 duration=0.473276500008069s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --import /private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs --test --test-concurrency=1 packages/tools/src/capture/viewmodel_packet/entry.test.mjs packages/tools/src/capture/viewmodel_packet/fixture.test.mjs packages/tools/src/capture/viewmodel_packet/production.test.mjs
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 91d2140dbf84adee5989463a295806300524352cbf25fed341cec51ea8bdb1fd
+
+falsy-integration: exit=0 duration=0.1358537909691222s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --import /private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs --test --test-concurrency=1 /private/tmp/p1-e05-t03-r2-yrN5o2/falsy-probe.mjs
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 8a083ade5a056ecdedaa6006bba3ca0045e2bc07d9c1aa626e91e36289c87a82
+
+shared-lifecycle: exit=143 duration=79.89408970804652s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import /private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs node_modules/vitest/vitest.mjs run --config /private/tmp/p1-e05-t03-r2-yrN5o2/tools.config.mjs --configLoader native --maxWorkers 1 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /private/tmp/p1-e05-t03-r2-yrN5o2/module-cache src/capture/capture.lifecycle.test.ts
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 4e7f64f6b8dd5f1b20fcbbc883809cb32d869f7215f8e389cd925332ff979de1
+
+node26-shared-lifecycle: exit=0 duration=0.6904867080156691s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly-vitest.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node node_modules/vitest/vitest.mjs run --config /private/tmp/p1-e05-t03-r2-yrN5o2/tools.config.mjs --configLoader native --maxWorkers 1 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /private/tmp/p1-e05-t03-r2-yrN5o2/module-cache26 src/capture/capture.lifecycle.test.ts
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "NODE_OPTIONS": "--import=/private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 c859c9e88403bbb21f95e263e83de1df027abb5d620cfd61085d87a5faa6ae1d
+
+combined-green: exit=0 duration=0.13548037502914667s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --import /private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs --test --test-concurrency=1 /private/tmp/p1-e05-t03-r2-yrN5o2/combined-probe.mjs
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_ENTRY_EVIDENCE": "/private/tmp/p1-e05-t03-r2-yrN5o2/combined-green.json", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 dd454bf901b98d19b4856d6f9bb28346cbe84f18b30c0abe2fa9088e95c3bda6
+
+combined-old-red: exit=1 duration=0.18298670800868422s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --import /private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs --test --test-concurrency=1 /private/tmp/p1-e05-t03-r2-yrN5o2/combined-probe.mjs
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_ENTRY_EVIDENCE": "/private/tmp/p1-e05-t03-r2-yrN5o2/combined-red.json", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 34ea79fb7ba4c9eede6ec2acc4d4b4e6b8229190cb5e5c5f554719965af4a533
+
+node26-runtime: exit=0 duration=15.28656337497523s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly-vitest.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node node_modules/vitest/vitest.mjs run --config /private/tmp/p1-e05-t03-r2-yrN5o2/client.config.mjs --configLoader native --maxWorkers 1 --no-fileParallelism --no-cache --no-fsModuleCache --fsModuleCachePath /private/tmp/p1-e05-t03-r2-yrN5o2/client-module-cache26 src/entities src/exosuit.test.js src/Game.test.js
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "NODE_OPTIONS": "--import=/private/tmp/p1-e05-t03-r2-yrN5o2/fs-guard.mjs", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 3efd8e93301340c8bbc884d6728054bcf1dc22000a890ab363190cd660a101c4
+
+cache-neighbors: exit=0 duration=0.0810260419966653s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/cache-neighbors.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 d202261b85cd5c3ab0690bc28bd207467276394106a21290583bb6695c041ccb
+
+prepare-replays: exit=0 duration=0.2433065000222996s
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/prepare-replays.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 f2c5f00f2d999617607674c50b2c811a58ef965d1b179d9fe208ff3d0400a256
+
+original-lifecycle-red: exit=0 duration=0.13389958400512114s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/red/lifecycle.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 67e80db03773fe7aa754fc9006c08be80dac34aa0e5a542c19b7a93d1162b385
+
+current-lifecycle-green: exit=0 duration=0.20123187499120831s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/green/lifecycle.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 75f19f9f7fc1bc0d87ab499888dabc5e0a8671f7e10946d881d1b9a44c415793
+
+original-resource-red: exit=0 duration=0.14467029203660786s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/red/resource-errors.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 f1650480db7b458fca671ec6500d02fad179e4a3f7bd305c17986f9fd98e2135
+
+current-resource-green: exit=0 duration=0.13988066697493196s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/green/resource-errors.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 8cf1ef322f942c47fe2e581d280da480023b4010c301ec90566387d301413397
+
+original-cache-red: exit=1 duration=0.2465530830086209s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/red/cache-boundaries.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 974fb17068dc159d910a56a591f67161e0bfaa1033f753e437e4b68de155bffe
+
+actual-process-boundaries: exit=0 duration=3.20292170898756s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/process-boundaries.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 c7e3ad405c6505960dc910f387844d2f6f578188f752190a4212b1f390958fd3
+
+original-cache-red-live-owner: exit=0 duration=0.5743713330011815s
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/red/cache-boundaries.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 6d7806717e7a5d16d1b917219097eded55bc6f63679244c6751d680ce2e77bb3
+
+native-unknown: exit=0 duration=0.13894891703967005s
+/usr/bin/sandbox-exec -f /private/tmp/p1-e05-t03-r2-yrN5o2/readonly.sb /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/native-unknown.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 92d9f88c8526cb35d2f61d26ae5ebc9f1fc38632bee7420da9de8225cc24d28e
+
+archives: exit=1 duration=0.2468774999724701s
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/archive-audit.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 dcbc3031d857864482fd21ffba6ac15701c4d7e4961058f6583d3424a0132bc1
+
+archives-v2: exit=0 duration=0.6866571659920737s
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/archive-audit-v2.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 f0394b1839f9bb3afb7d47d6cb0e3ba123b241159cceb48002ca2a397e95ace4
+
+readiness-final: exit=0 duration=9.664880249998532s
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/final-check.py
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 40e6284baaa5aef7a43fbf53c6870e038ee0e7304b457c2e9a72adfa71f4babb
+
+decoder-switch-independent-replay: exit=0 duration=0.07369112502783537s
+/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -B packages/tools/src/capture/viewmodel_packet/inspect_packet.py --inventory packages/tools/src/capture/viewmodel_packet/inventory.json --unit return-thalune --output /private/tmp/p1-e05-t03-decoder-r2-kf878yxf/transition-followup/return-thalune/zero-time/output --manifest /private/tmp/p1-e05-t03-decoder-r2-kf878yxf/transition-followup/return-thalune/zero-time/manifest.json
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 829a025800f4d18b76de9e637ce2e0d1d670904da80bcffb2de0321a1c7a0992
+
+final-provenance: exit=0 duration=12.538853625010233s
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e05-t03-r2-yrN5o2/audit.py after
+ENV {"NODE_DISABLE_COMPILE_CACHE": "1", "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp", "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-r2-yrN5o2/tmp"}
+LOG_SHA256 d3fda14b0556f3d8acfd6bc2b04e0215a69d8821e9e7535ca25525227c5ad3ab
+
+FINAL VERDICT: REVISE. Immutable fresh report; no source change performed.

@@ -1,0 +1,213 @@
+# Appendix C.2 — P1.E07.T14 enabled source preparation
+
+Status: COMPLETE SOURCE ACTIVATION PREPARATION. Not an independent activation review, native capture, performance qualification or visual acceptance. No actual grant, consumption or capture output was created. Parent has runtime authority; the remaining sequence is parent-coordinated, not another human permission request.
+
+## Exact source and review provenance
+
+- Worktree `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`; branch `task/P1-E07-T14-effects`; clean all-untracked Git status.
+- Disabled R3 base HEAD `587989af34fab480703f282084d20e2a27bbee48`, tree `4d87ff72f0a72dbbcbbfde0fcc4ba3ede41d89c5`.
+- Final enabled HEAD `6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8`, tree `fc1488aa0fae0727d4998205d24f914d3a32c482`.
+- Final readiness SHA256 `073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee`.
+- Exact full-index patch SHA256 `bc81185b77b5c0b423af694264fc0b9e4b7de41009ce0299a9399920f6efac30`; file `/private/tmp/p1-e07-t14-enable-idk3f7sd/source.patch`.
+- Immutable R3 report `/private/tmp/p1-e07-t14-r3-independent-mrcerv14/REPORT.md`, SHA256 `d2384e36c860e19089b5ab93e3068f09c5a23f422a1604689220648b8fe151a8`. All seven sealed R3 artifact hashes and immutable flags rechecked. Report and COMMANDS/seal remain unchanged. Its 131-case PASS applies to the disabled base only.
+- Old false readiness SHA256 `7978e31584c5152eca089fb1b6d2838c8f2ff2acf88d7be3908b008bfa76fa8b` remains in Git at the base and in `/private/tmp/p1-e07-t14-enable-idk3f7sd/readiness-disabled.json`; old identities remain absent.
+- Earlier asset source head `2643aca9d8b85a45498d85eb637d20260ebf06d1` and separate helper recovery `22506166571d4045eeb4902b1f278bdcafa2ad19` are unchanged. No new recovery or T15 adoption was performed. The exact prior T15 adoption `18add9e19f65260d4201be1b23344ead827dd32e` of reviewed `38b6c4b58db43146df20cd760808d1461d7a667b` remains intact.
+
+## Exact change boundary and choices
+
+Exactly four files changed: caller.py (False to True), entry.mjs (false to true), readiness.json and README.md. Normalize those two literal substitutions and runtime source is byte-identical to R3. No new runtime code, method patch, ownership rule, capture path, validation rule or test implementation was added. README adds current activation provenance and explicitly labels all retained disabled text as historical; its original body is preserved exactly.
+
+Existing freeze.make_ready generated the current CPU bindings after the two flags and README were final. Explicit overrides are runtimeEnabled=true, phase `ENABLED_PENDING_INDEPENDENT_ACTIVATION_REVIEW_AND_PARENT_ONE_USE_GRANT`, and current prerequisite provenance (R3 done; fresh activation review required; pilot scheduled after T15 smoke, fauna correction not a blocker; no extra permission question). Report and seal are two additional bindings. Existing freeze.py/check_ready.py remain byte-identical; check_ready.py was not run or misreported as a disabled PASS.
+
+Exact readiness field changes are in `/private/tmp/p1-e07-t14-enable-idk3f7sd/readiness-field-diff.json`: caller/entry/README size+hash; added immutable R3 report/seal rows; final fresh freezePredecessor head/tree; explicit stable PATH with bound Node22 first; phase/runtimeEnabled/current prerequisite text; current Python self-observation PID; fresh attemptId, authorizationId and four prospective paths. No other field changed. In particular, all six dependency tree records, tool binaries, budget, file inventory, asset manifest and shared T15 provenance bytes remain unchanged. Historical sharedCaptureLifecycle status is retained, with current interpretation in README. Wire purpose retains SINGLE_DISABLED_PILOT exactly as reviewed.
+
+414 file bindings and six dependency trees pass existing bindings.verify on the exact final clean HEAD. This is labeled PASS_ENABLED_SOURCE_BINDINGS_ONLY_NOT_INDEPENDENT_REVIEW. Full 131 controls were not rerun because reviewed logic and controls are hash-proved unchanged. The prior results remain independent disabled-source evidence, not an enabled-pin verdict.
+
+## Focused evidence and commands
+
+`/private/tmp/p1-e07-t14-enable-idk3f7sd/COMMANDS.md` and commands.json contain exact argv, cwd, explicit environment, durations, OS exits and log hashes. `/private/tmp/p1-e07-t14-enable-idk3f7sd/activation-checks.json` records four actual CLI refusals: Python absent grant; Node absent auth/hash; Node correct readiness hash but absent grant; Node wrong readiness hash. All exit1 as expected, before native imports. No EFFECTS_AUTHORIZATION was supplied. Interpreter import traces, absent paths before/after and a sandbox denying network, file writes and process fork support the zero native allocation/launch boundary. The Node actual CLI uses only builtins; the Python CLI imports no native_ports, frozen helper, cache-owner or decoder module. No fake grant/consumption was needed.
+
+The final existing verify primitive accepts the real bindings/source and rejects independent in-memory caller-byte, entry-byte and wrong-checkout binding changes. It imports no native helper/decoder. Scoped ESLint/Prettier, all 13 Python source compilations without bytecode, and git diff --check pass. The existing freeze primitive alone does its authorized CPU self-process kernel-path observation and pure resolver/hash work; no native capture probe, StationJob, codec subprocess, browser, Vite, application server, DB, Blender or screenshot operation ran. Preparation evidence is ordinary task-local CPU evidence outside the four prospective pilot paths.
+
+- `provenance-format`: actual OS exit 0 (expected 0); 0.057 s.
+- `freeze-enabled`: actual OS exit 0 (expected 0); 3.595 s.
+- `readiness-format`: actual OS exit 0 (expected 0); 0.105 s.
+- `python-cli-missing-grant`: actual OS exit 1 (expected 1); 0.041 s.
+- `node-cli-missing-auth-and-hash`: actual OS exit 1 (expected 1); 0.034 s.
+- `node-cli-missing-grant`: actual OS exit 1 (expected 1); 0.034 s.
+- `node-cli-bad-readiness-binding`: actual OS exit 1 (expected 1); 0.033 s.
+- `scope-protection`: actual OS exit 0 (expected 0); 0.404 s.
+- `eslint`: actual OS exit 0 (expected 0); 0.557 s.
+- `format`: actual OS exit 0 (expected 0); 0.158 s.
+- `diff-check`: actual OS exit 0 (expected 0); 0.023 s.
+- `git-add`: actual OS exit 0 (expected 0); 0.027 s.
+- `git-commit`: actual OS exit 0 (expected 0); 0.191 s.
+- `final-source-bindings`: actual OS exit 0 (expected 0); 3.19 s.
+
+All expected outcomes passed; no verification failure or retry occurred. A draft scratch script was corrected before execution. Git add/commit affected only the four named task-local files; the existing Git LFS post-commit hook exited successfully. No push, PR, merge, parent orchestration edit or cleanup occurred.
+
+## Concrete handoff data — not a receipt or grant
+
+`/private/tmp/p1-e07-t14-enable-idk3f7sd/HANDOFF-DATA.json` is a schema/data envelope (no top-level verdict, purpose or oneUse) and cannot be admitted as either an independent review receipt or a grant. Its nested examples show the exact required values; placeholder expiry and actual independent receipt path/hash must be supplied later. It issues no verdict or authorization and is not written at any pilot identity path. SHA256 `c604da943ee3a21c12743404ca0812a13fdef33f7be9563db2f76e4d91bea663`.
+
+The separate independent activation reviewer, only after completing its review, must produce its own receipt with this required shape. The following is documentation/example DATA, not a verdict from this worker:
+
+```json
+{
+  "verdict": "PASS",
+  "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+  "source": {
+    "head": "6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8",
+    "tree": "fc1488aa0fae0727d4998205d24f914d3a32c482",
+    "clean": true
+  }
+}
+```
+
+Parent grant required fields: purpose, oneUse, nativeReservesAccepted, authorizationId, readinessSha256, exact pilot object, exact source object, assetHead, future timezone-aware expiresAt, callerReview path and exact byte SHA256. The complete schema and exact nested example values are in HANDOFF-DATA.json. Use the real reviewer receipt for this enabled pin, never the disabled R3 report as a substituted receipt. Both grant and review are admitted through the unchanged capped single-snapshot hash/parse/semantic boundary.
+
+Future invocation, NOT executed during preparation, only after the parent issues that grant and releases the serialized GPU slot and current admission passes:
+
+```sh
+cd /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects
+/usr/bin/env -i HOME=/Users/andreyyurlov USER=andreyyurlov LOGNAME=andreyyurlov PATH=/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin PYTHONDONTWRITEBYTECODE=1 PYTHONOPTIMIZE=0 EFFECTS_AUTHORIZATION=effects-b61233fdf3564205bd01d9566f306430 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py
+```
+
+The Python CLI takes no readiness argument; it uses `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json`. Only StationJob may launch its Node entry after consumption and the second clean-source/owner checks. Its exact bound child argv is:
+
+```json
+[
+  "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs",
+  "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json"
+]
+```
+
+Node receives SMOKE_GL=metal, EFFECTS_READY_SHA256=`073afdeec8a474d950f21988da8ca1a38ff595cde2b9a8ac0c148de45c00eeee`, EFFECTS_AUTHORIZATION=`effects-b61233fdf3564205bd01d9566f306430` and caller-owned TMPDIR/TMP/TEMP from NativePorts.initialize. Parent must not launch that child directly. No new shell launcher or orchestration framework is introduced.
+
+Python launcher: `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14`; SHA256 `e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a`. Current actual Python kernel executable: `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python`; SHA256 `b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22`. Node `v22.23.3`: `/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node`; SHA256 `68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b`. Installed tsx, esbuild, browser/decoder/framework/dependency bytes are fully recorded in committed readiness; none was fetched or launched. The OS dyld/system-library limitation remains as reviewed.
+
+## Prospective identities and acceptance
+
+- Grant (absent): `/private/tmp/egg-b61233fdf3564205bd01d9566f306430.json`.
+- Consumption (absent): `/private/tmp/egc-b61233fdf3564205bd01d9566f306430.json`.
+- Evidence (absent): `/private/tmp/egp-b61233fdf3564205bd01d9566f306430`.
+- Single output root (absent): `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-b61233fdf3564205bd01d9566f306430`.
+- Expected terminal path after a future actual run: `/private/tmp/egp-b61233fdf3564205bd01d9566f306430/result.json`.
+- Expected child receipt after a future actual run: `/private/tmp/egp-b61233fdf3564205bd01d9566f306430/entry.json`.
+
+No one-use identity has been consumed. Successful future process exit must be observed by the parent as actual OS exit0, after every terminal write succeeds, together with exact result.json and consumption hashes. Both on-disk accepted fields remain false by design; result must show checksPassed=true, errors=[], publication=AWAITING_PARENT_OS_EXIT_AND_HASHES, release.released=true and inspection.valid=true. Call the existing parent_acceptance with that parent-observed exit and those exact hashes; never infer acceptance from a file alone. Failed partials and consumption stay retained, no relaunch. Packet fallback/all-sink uncertainty remains governed by unchanged reviewed code. Successor grants cannot treat a first pilot's real Git output as clean implicitly.
+
+## Inventory, budget and pending native work
+
+Only captureReview('effects/gravitic', {asset:'gravitic_pull',outDir}). 1920x1080 native Metal requested for the future slot. Eleven PNGs plus perf.json, requested LOD2 selecting the only authored LOD0 (shown0, lods[0]), 576 triangles, LIB_FX_Gravitic and nonzero gravitic_filament compressed textures. Exact successful relative files:
+
+- `gravitic_pull/noon-lush_lod0.png`
+- `gravitic_pull/noon-lush_lod2.png`
+- `gravitic_pull/wireframe_lod0.png`
+- `gravitic_pull/wireframe_lod2.png`
+- `gravitic_pull/overlay.png`
+- `gravitic_pull/far_lod2.png`
+- `gravitic_pull/night-exotic_lod0.png`
+- `gravitic_pull/night-exotic_lod2.png`
+- `gravitic_pull/open-space_lod0.png`
+- `gravitic_pull/open-space_lod2.png`
+- `gravitic_pull/perf.json`
+- `gravitic_pull/sheet.png`
+
+Output cap: 11 × 16MiB PNG + 16KiB perf = 184,565,760 bytes. Admission: 5,402,312,704 bytes. No OS quota is claimed. No disk admission or cache-owner observation made in this preparation is represented as a future release/admission. Actual owner/disk checks must run later under parent scheduling.
+
+| Reserved writer/copy | Bytes | Actual accounting semantics |
+| --- | ---: | --- |
+| capture_outputs | 184,565,760 | 11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root |
+| future_lfs_copy | 184,565,760 | Reserved for later Git LFS adoption; this pilot performs no git add or LFS write |
+| future_main_hydration | 184,565,760 | Reserved for later parent hydration; this pilot makes no main-worktree copy |
+| controlled_metadata | 67,108,864 | Node and Python each reserve attempted receipt bytes before writing, 32 MiB each |
+| cache_snapshot | 67,108,864 | One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained |
+| profile_work_and_archive | 2,147,483,648 | StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive |
+| private_tmp_work_and_archive | 1,073,741,824 | preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles |
+| helper_logs_work_and_archive | 134,217,728 | StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job |
+| generated_cache_growth | 268,435,456 | Observed additional Vite cache growth; original cache bytes already reduce free space |
+| filesystem_metadata | 16,777,216 | Directory and filesystem overhead reserve |
+| safety | 1,073,741,824 | Fresh disk safety reserve, checked at admission and while observing |
+
+Capture600s, cleanup60s (drain45s inside), CPUdecode45s only after positive cohort release, cachecopy64MiB/30s. The unchanged owner check is10s,256KiB per command/384KiB total,0.5s own-probe reap. No decode or capture occurred here.
+
+No new preview images; old CPU art preview paths remain unchanged. Actual pilot capture and blind visual grade are pending. Remaining58 roots, all32 proposed motion records/playback, 21:9, alpha-overlap and atlas stepping remain outside this grant scope. This checkpoint does not qualify any of them or the full art task.
+
+## Protected byte manifest
+
+All64 asset files, four recovered helpers and both shared T15 files remain exactly unchanged. All other tracked changes are excluded by the four-file full-index diff and clean status. Complete data is in protection.json, SHA256 `76a1394a222254aae600870880108369ed5e923f4ec84e00def0f89f2a5441d7`. Asset-to-node/palette mapping remains in the unchanged assets/blend/effects/manifest.json (included below); no mapping, geometry, texture, export or material changed.
+
+| Path | Bytes | SHA256 |
+| --- | ---: | --- |
+| `assets/blend/effects/evidence/audit.json` | 52922 | `ef76bb691c3d8ecf4b9f17b48021d011039a895e74eaae6c8bfeda8e13c19673` |
+| `assets/blend/effects/evidence/command-tails.json` | 9127 | `f959e73bf963f36dc146553e97ed88a1365f2e2d59ef0694ef79a26ab2b45e6f` |
+| `assets/blend/effects/evidence/commands.json` | 1648 | `cab232c2a26ce1d0405f130dd0a9a45dab35d89113bee1ab249fd53c87fa5a49` |
+| `assets/blend/effects/evidence/gpu-inventory.json` | 28540 | `d01c4e6ed9bd988fec8785c8baecfc9a77a164addac73466f1f7cb67b2f2c849` |
+| `assets/blend/effects/evidence/hashes.json` | 7030 | `7dec124ab6d24738270422751dee8f1c87a6c2bbe26c0ac972c94c50eeda1a01` |
+| `assets/blend/effects/evidence/previews/gravitic_eight_views.png` | 647379 | `f61ff6622fb5b492128b59b8f68e61d6cff6c0dc1a4139843d8a54ba4cc0df08` |
+| `assets/blend/effects/evidence/previews/inventory.json` | 5311 | `8899c1a0ffe48e4870f6b4da3d33912f51540c5f3fb4554e61590da4f1e33d13` |
+| `assets/blend/effects/evidence/previews/materials_and_particle_decay.png` | 537606 | `e905ab87631110c474160fc35dae0ede2b22f16c2a46466366d8b636a9e6cbdf` |
+| `assets/blend/effects/evidence/previews/recall_eight_views.png` | 146420 | `86437784830f082a5b8c5893f560537ce456a6d0fe02414ba275f96795d1f89d` |
+| `assets/blend/effects/evidence/previews/recall_glyphs_front.png` | 337389 | `bd766f785129aee1fca3c7afbdefdb19084fd42bbc3c08f45d4486f4b67ef551` |
+| `assets/blend/effects/evidence/previews/recall_glyphs_oblique.png` | 312215 | `cf98decf7ffa76ef58c5bd9fb02652f692537909f9ec1bee14b616f3cb4a26e0` |
+| `assets/blend/effects/evidence/previews/resonance_eight_views.png` | 774058 | `2f85d0a2dc2b9163c03b4e594c4f46d9abdfdcea7852bb68bfb16d8f9af6c1d7` |
+| `assets/blend/effects/evidence/previews/symbiotic_eight_views.png` | 691126 | `19a65e2a1b829fa16c4fd944d7296b42de0a542d1f72539b6c0b66857d67eaf3` |
+| `assets/blend/effects/evidence/previews/thermal_eight_views.png` | 649994 | `3aeedf2d797e12dc369aa213b58cba39f0bfda567c9920419a88ff81d939de20` |
+| `assets/blend/effects/evidence/previews/void_eight_views.png` | 689616 | `98ab345bde20e78c6924d24665258216bec7a33a2453aacc3b002e7123051af9` |
+| `assets/blend/effects/evidence/report.json` | 4107 | `9d71e62715c697f80cc26014bebe3a5142aca096994f29ac065260b5b544b685` |
+| `assets/blend/effects/evidence/source-before-export.json` | 651 | `45e527f15c0b54866783f7cb39c1a039090f6d941a2f1386649a5aec763fdf48` |
+| `assets/blend/effects/evidence/spore-initial-fail.json` | 7417 | `0424272b0f1d47b159c4445d68c2364e0da8da6632cae3799d3b6500e1f5e507` |
+| `assets/blend/effects/evidence/validation/effects__gravitic.blend.json` | 7369 | `101a911f86775e96778b11f9e10c66e0cf662095aceb05b85babbc46563c4ff1` |
+| `assets/blend/effects/evidence/validation/effects__gravitic.glb.json` | 9156 | `0c8f7d06509ff9f21691576bd168726bd4ae03503fefddb2e282674fefc25f34` |
+| `assets/blend/effects/evidence/validation/effects__recall.blend.json` | 27497 | `7f90d690cfc4d142ebb5441878c3da867cc44872eecc513f8e802dc50f39d0e1` |
+| `assets/blend/effects/evidence/validation/effects__recall.glb.json` | 34690 | `68cddefcd558c3c426ed7e63e877d8a3d1f63bd092e8d8162ee27ce7d5a2c953` |
+| `assets/blend/effects/evidence/validation/effects__resonance.blend.json` | 8335 | `fe1d21e4d0fd9a5df98d50d79266e50f0341a139a9c640e2bdfd20d4307f5209` |
+| `assets/blend/effects/evidence/validation/effects__resonance.glb.json` | 10385 | `19215d6dc62a1e868311c22c0052210c6ff685bffaa8ed2c12d7c6d34bcd87dd` |
+| `assets/blend/effects/evidence/validation/effects__symbiotic.blend.json` | 7381 | `6a884185c58fb6c199677a6da1afd9c8a4ae9e418ae8ea61ee5b0df574a7bb3a` |
+| `assets/blend/effects/evidence/validation/effects__symbiotic.glb.json` | 9169 | `08dad9d2845a83932aeb61925d40668d1730340734c0590dad6665069f676e00` |
+| `assets/blend/effects/evidence/validation/effects__thermal.blend.json` | 6309 | `08693cd923af03bb5d31cd8c467d839184e1c531749d6a816a35e557124e3cb8` |
+| `assets/blend/effects/evidence/validation/effects__thermal.glb.json` | 7817 | `21edb2de9003abe54d5960710b74562308ec6492a32710f8e76aa28ae7267cdc` |
+| `assets/blend/effects/evidence/validation/effects__void.blend.json` | 9047 | `3c92a8728cd4d20a5a813688d137c120a02fe5b3c370533b18d7e20f5ff6968c` |
+| `assets/blend/effects/evidence/validation/effects__void.glb.json` | 11314 | `407f134a90a0353e947d864a25386e1d4ecd35425e910bf39046c4dd370dbff9` |
+| `assets/blend/effects/gravitic.blend` | 737106 | `d3855d5d6d41726ccdff4cb2101711fbec40491b7ea339a87abfdfec30fe58de` |
+| `assets/blend/effects/manifest.json` | 78106 | `4fd74de92e47d75af47d6da235663574b8a3bc1cc9592adbb1e8e6167b5c89ae` |
+| `assets/blend/effects/recall.blend` | 530671 | `19ed201b201b175aff621e7a0cde4eae6e03da1b5a0f5c97d197dc8591b22cc4` |
+| `assets/blend/effects/resonance.blend` | 977830 | `530dd29a82eb90dd9dcec45db9217ce768f71c9910784af43c995a2903f5f90e` |
+| `assets/blend/effects/symbiotic.blend` | 688644 | `42e33e2449f4992040efaf7f97e97b53b7386266258d643bb27d6ec1dd4443d8` |
+| `assets/blend/effects/thermal.blend` | 824716 | `6759ffc7cf1cc44811837ee11359f0e9f040a5905cf872eaf4662c68543defcc` |
+| `assets/blend/effects/void.blend` | 654778 | `47c36a6dd7d18139ed209fe3004d2ba5f21667a91467fb2c429a8a8be956ba5b` |
+| `packages/client/public/models/effects/gravitic.glb` | 264032 | `ebcd9cc0876887547298108facb390b73ab97134359e9970f985bc95b331a610` |
+| `packages/client/public/models/effects/recall.glb` | 231960 | `f138cba75959be8dda6c7a532745fd99ed4f35449998550a8ddf8faca640beb5` |
+| `packages/client/public/models/effects/resonance.glb` | 273208 | `d9622d3ed81ed4a7b0b8df5e8311c58334b269c10b08fe9050fc65c008a53fd5` |
+| `packages/client/public/models/effects/symbiotic.glb` | 282328 | `36059151b368c6d5b5d5de510488991d5340690a352af7be5334773409ea0ecb` |
+| `packages/client/public/models/effects/thermal.glb` | 239208 | `30a7ee9e483ad4d28f208256e9b9586e9f63c0df66041ffd442f3ca1e6a13143` |
+| `packages/client/public/models/effects/void.glb` | 162284 | `8a11ec3e42f91ae32a3d05889f04af8974b0cd8ffdae885896e240b755443f66` |
+| `packages/client/public/particles/effects/gravitic_filament.png` | 318123 | `26ac4f5a1a9adaff58b966d163e76204ee0c466042c981af85b82317c4a7e9ec` |
+| `packages/client/public/particles/effects/gravitic_particles.png` | 239871 | `ae26657306fc1b028753de0f000f4d6777444df38fa9320462c2392712d6631c` |
+| `packages/client/public/particles/effects/recall_filament.png` | 278310 | `ab275c2064ed7a4fce25689d4b70a9123f7d5edd0434e56ff9abdf12924aab3a` |
+| `packages/client/public/particles/effects/recall_particles.png` | 145384 | `449eeee79168b6323b1b352c25410acd607523f9517493df212aa82efecb1c2b` |
+| `packages/client/public/particles/effects/resonance_filament.png` | 442362 | `79980c96ba1f7de54d2cc3980d2e518a6e7538b05a40f1248e3f63b4b89229fe` |
+| `packages/client/public/particles/effects/resonance_particles.png` | 340115 | `f630b650af80cb4129e33a5f7d012de0b055c4e65acaaecee5aee4a0551f8323` |
+| `packages/client/public/particles/effects/symbiotic_filament.png` | 305999 | `134ef04827118b23286ac0fd84a03457e55082eadd1d9c60b939ab7b40d044ed` |
+| `packages/client/public/particles/effects/symbiotic_particles.png` | 155598 | `2bb92a5c08a38bf25449704d7e630f00bf5a1e6c6541cad423a98db0b652d751` |
+| `packages/client/public/particles/effects/thermal_filament.png` | 320558 | `7ae07adda6dd11ad26f25d3b93effe3f8e39824c49ebe2d7f97d666c86574ed3` |
+| `packages/client/public/particles/effects/thermal_particles.png` | 301840 | `3d0c64b01a4052cfcc288bc2746133e0388383f360e2b822e2247674d9c969c9` |
+| `packages/client/public/particles/effects/void_filament.png` | 391907 | `fe864222f3a566e561ddc850f977cae07c43f83c239cf0774cd10b432d289a9e` |
+| `packages/client/public/particles/effects/void_particles.png` | 147882 | `0e986835d4d8b99cc1c9f0017196011c256c771cff86c3c313c8674c8c124a48` |
+| `packages/tools/blender/effects/audit.py` | 12515 | `dd676083e29d018451c04304c6af3268997da739e56a5b35529497e59ee80d63` |
+| `packages/tools/blender/effects/author.py` | 20792 | `ce683e40005d41dfc3ce95b836634d3f8d3996c8ea40d6bf9f532e7185845a4a` |
+| `packages/tools/blender/effects/catalog.py` | 8194 | `d35de7826945e12bfb8989760d2696f054c0262d1f10455dcff0d02150aa7965` |
+| `packages/tools/blender/effects/ktx_cpu.py` | 275 | `c9287811d0613f5dc45f71af66f381ddc0791a821d3e8eb0852cc3a14b845d60` |
+| `packages/tools/blender/effects/package_evidence.py` | 8719 | `489a5670567909724c8f3db99e2bf6d5ba8aa66583735da9c7819e162054fe43` |
+| `packages/tools/blender/effects/preview.py` | 7491 | `254a8339ae78b016649f27f93691d6cc9cb65a7c9600ddecb81ff4033f5ff108` |
+| `packages/tools/blender/effects/refine_textures.py` | 1329 | `e27786410c12f5cb23200427a1dbffaea3b8ff7b224563c83fce275ff1a5bd73` |
+| `packages/tools/blender/effects/revise_spore.py` | 1140 | `f12c9524a4af2056f4228677e8263c7ff396e662f9e01f2f4dfa38439e82c778` |
+| `packages/tools/blender/effects/run.py` | 2222 | `23466e381713b513969fdba1f8575b2fbbd4831aa59ce0071c294c16ff732b08` |
+| `assets/blend/stations/_authoring/round4_job_boundary.py` | 23061 | `3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c` |
+| `assets/blend/stations/_authoring/round4_capture_children.py` | 2132 | `e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07` |
+| `assets/blend/stations/_authoring/run_round4_browser_proof.py` | 23711 | `f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab` |
+| `assets/blend/stations/_authoring/run_round4_remaining8.py` | 31906 | `4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8` |
+| `packages/tools/src/capture/capture.lifecycle.test.ts` | 15585 | `ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18` |
+| `packages/tools/src/capture/capture.ts` | 22007 | `42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d` |
