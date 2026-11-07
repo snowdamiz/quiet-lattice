@@ -113,7 +113,7 @@ def validate(
             attempt.path / "export_manifest.json",
             {"run_id": attempt.id, "exports": reports},
         )
-        # Always exercise pairing, even while stock material recognition is pending.
+        # Pairing is an independent gate even when a stock asset check fails.
         consumer_check(attempt, manifest_path, exports[0].parent)
         attempt.assert_stable()
         stock_pass = all(row["status"] == "PASS" for row in reports)

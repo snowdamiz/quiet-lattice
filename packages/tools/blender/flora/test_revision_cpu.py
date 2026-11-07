@@ -25,14 +25,13 @@ def run(out):
     results = []
     write_json(out / "before.json", before)
     config = rules.load()
-    # Actual matching pairs. Stock may remain FAIL pending the parent's reviewed
-    # shared fix, but actual geometry/masks/consumer tests must all pass.
+    # Actual matching pairs must satisfy the reviewed stock validator and consumers.
     evidence = out / "matching"
     code = validate(sources, exports, evidence)
     latest = json.loads((evidence / "latest.json").read_text())
     receipt = json.loads((evidence / latest["receipt"]).read_text())
     assert receipt["content"] == "PASS", receipt
-    assert receipt["stock"] in ("PASS", "FAIL")
+    assert code == 0 and receipt["stock"] == "PASS", receipt
     results.append(
         {
             "case": "matching_pairs",
@@ -41,15 +40,7 @@ def run(out):
             "exit": code,
         }
     )
-    if code:
-        try:
-            consume_current(evidence)
-        except ValueError:
-            pass
-        else:
-            raise AssertionError("Stock failure qualified as current PASS")
-    else:
-        consume_current(evidence)
+    consume_current(evidence)
     for index, stem in enumerate(STEMS):
         wrong = STEMS[(index + 1) % 3]
         fixture = out / ("pair-" + stem)

@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 STEMS = ("non_tree_foliage", "non_tree_resources", "non_tree_stone")
-DEFAULT_EVIDENCE = ROOT / "assets/renders/flora/t05/revision6"
+DEFAULT_EVIDENCE = ROOT / "assets/renders/flora/t05/revision7"
 
 
 def sha(path):
@@ -40,6 +40,8 @@ def tool_paths():
             *Path(__file__).parent.glob("*.py"),
             *Path(__file__).parent.parent.joinpath("artlib").rglob("*.py"),
             Path(__file__).parent.parent / "families.json",
+            Path(__file__).parent.parent / "material_mask_selftest.py",
+            Path(__file__).parent.parent / "selftest.py",
             ROOT / "packages/client/test/floraAssets.test.js",
             ROOT / "packages/client/src/core/Engine.js",
             ROOT / "packages/client/src/gameplay/modelLibrary.js",

@@ -4,13 +4,14 @@ from pathlib import Path
 import bpy
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from artlib import core
+from artlib import core, rules
 
 root = Path(__file__).resolve().parents[4]
-core.load(
+path = (
     root
     / "assets/renders/flora/t05/validation/export/flora__non_tree_foliage.glb.rejected.glb"
 )
+core.load(path)
 m = bpy.data.materials["Flora_bush"]
 for n in m.node_tree.nodes:
     print(
@@ -39,9 +40,12 @@ for node in m.node_tree.nodes:
             "INPUTS",
             [(s.name, s.type, s.enabled) for s in node.inputs],
         )
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from artlib import materials
-from material_trace import install
-
-install()
-print("TRACE_AFTER", materials.MaterialInfo(m).channels["baseColor"].kind)
+core.write_and_print(
+    core.run_checks(
+        rules.load(),
+        path,
+        "flora",
+        "export",
+        source=root / "assets/blend/flora/non_tree_foliage.blend",
+    )
+)
