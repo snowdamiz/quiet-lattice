@@ -1,0 +1,275 @@
+P1.E14.T05 — fresh independent SOURCE/CPU R2 review
+VERDICT: REVISE — three remaining P2 findings. R1/R2/R6 fixed; R3/R4/R5 partially fixed.
+No visual, GPU, native performance, runtime-adoption, CI or merge qualification.
+
+PIN AND SCOPE
+Target: /Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f
+Branch: task/P1-E14-T05
+HEAD: 653e76823efbbe7ef69032f58ec6b3660ab63443
+Tree: 43fbc3b58e6e7787d7e37089d6e98b960788310d
+Original base: f7f1347d1ba36b702000471d462dd7e9475dbb8d
+Previously reviewed: df2d05b1cc263c04599ab67334187dd807ebe186
+Local fixes: f9c2cef85002b8b859dfd393647a77c15f565e78
+Shared reviewed pin: 515ba1f00810a50b499970b5468ef7bf0af84c32
+Exact shared cherry-pick: f0456b0bf71fd5ea070e89845f252d4b2d8230f8
+Fresh evidence: /tmp/t05-r2-review-653e768-l2zog4x7
+/tmp and /private/tmp refer to the same scratch directory on this host.
+
+Read IMPLEMENTATION_PLAN 0.3/0.4/0.9.5, T05 and Appendix C, DESIGN 19,
+art-bible, the complete R1 report, worker /tmp/t05-r2-653e7682-HANDOFF.txt,
+and revision7 records. Traced runner ownership, export transaction, immutable
+attempts, source audit, stock material route, actual loader and receipt consumer.
+One additional independent reviewer examined R3–R5 without Blender; its report is
+helper-REPORT.txt (original /tmp/t05-r2-helper-653e7682-o11vloji/REPORT.txt).
+I independently reproduced all three findings below, including a full-validator
+and actual-consumer false PASS for both source and export alias substitution.
+
+These findings concern failure handling and durable qualification. The six
+submitted ordinary asset files still pass the fresh bounded content checks.
+
+F1 — P2 — R5 PARTIAL: rebinding a caller's symlink still yields an accepted PASS.
+Location: packages/tools/blender/flora/receipts.py:97; follow-through :119-123,
+:137-150 and :231-236. Caller: validate_exports.py:85-92 and :118-128.
+
+Attempt.snapshot calls resolve() before recording the requested input path.
+All stability checks and consume_current subsequently inspect that old resolved
+target. The original caller path, including a symlinked ancestor, is discarded.
+A caller's runtime/source path can therefore select new bytes while the receipt
+continues to qualify the old target.
+
+Actual full-boundary reproduction, copied tooling and saved assets only:
+  PYTHONDONTWRITEBYTECODE=1 python3 -B <evidence>/dispatch.py alias
+Harness exit 0 means the defect was reproduced, not that the tested state is safe.
+Two sequential validations in one factory-background Blender -t 2:
+  1. Three scratch source/export names initially symlink to the correct copied
+     saved assets. Real source audits, stock export validators and all 130 actual
+     production-loader consumer tests execute on the proper snapshots.
+  2. Immediately after the actual consumer returns, atomically retarget the
+     scratch foliage source link (case one) or export link (case two) to the
+     existing resources asset. No content validator result is mocked.
+  3. validate returns 0, publishes PASS, and consume_current accepts PASS in BOTH
+     cases although the caller pathname now serves different bytes.
+
+Source caller digest changes:
+  5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456
+  -> 03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9
+Export caller digest changes:
+  925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d
+  -> 7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725
+
+Evidence: alias_repro.py, alias.log, alias-run.json, alias-repro/results.json,
+and both complete alias-repro/{source,export}/evidence attempt trees.
+The old resolved targets remain unchanged and appear in receipt.inputs.
+Ordinary-file source/export replacement races are correctly rejected in the
+separate nine-case actual-asset suite; this is specifically lost alias identity.
+
+Correction: retain and recheck the absolute caller pathname, its resolved target
+and current bytes at snapshot/seal/consume boundaries, or explicitly reject
+symlinked inputs and ancestors. Use the requested basename. Add both real-loader
+alias-rebinding controls. This is the unresolved R5 substitution contract and
+DESIGN 19.1 source-of-truth/build-error boundary.
+
+F2 — P2 — R3 PARTIAL: an unreadable prior output aborts cleanup of later outputs.
+Location: packages/tools/blender/flora/export_transaction.py:16-23, especially :18.
+The cleanup try starts only at :23, after hashing/relocation and prior-assets.json.
+
+Independent actual-filesystem reproduction with copies of all three saved GLBs:
+  PYTHONDONTWRITEBYTECODE=1 python3 -B <evidence>/quarantine_repro.py
+Harness exits 0 after asserting the defect. The transaction raises PermissionError;
+the helper's uncaught transaction driver independently exits 1.
+  - Copy actual saved sources and outputs into scratch.
+  - Remove non_tree_stone.blend.
+  - chmod prior non_tree_resources.glb to 000, retaining a writable parent.
+  - Invoke unchanged export_transaction. Neither content callback is reached.
+Foliage is quarantined. sha(resources) raises errno 13 before cleanup is armed.
+The attempt is FAIL, but resources.glb AND stone.glb remain in the runtime folder;
+stone.glb retains its real a655b28c... digest despite its source being absent.
+The harness restores the scratch file's permissions in finally.
+
+Evidence: quarantine_repro.py; quarantine-repro/results.json;
+quarantine-repro/unreadable-prior/{models,evidence}; helper cli-unreadable.log.
+No synthetic sha/rename implementation was substituted. This tests the real
+transaction before Blender/export and makes no content-validation claim.
+
+Correction: bring the initial relocation/hash/ledger phase into the failure
+protocol; quarantine every owned runtime path before requiring content reads,
+and continue invalidating the other paths if one entry fails. Preserve unhashable
+bytes/entries as evidence and explicitly record any path that cannot be invalidated.
+This remains R3's no-stale-runtime-output-on-missing-input/exception requirement.
+
+F3 — P2 — R4 PARTIAL: archived output symlinks leave earlier evidence mutable.
+Location: packages/tools/blender/flora/export_transaction.py:17-19, especially :19;
+closure hashing in receipts.py:162-167 follows the retained links.
+
+Same independent quarantine_repro.py command, second case:
+  - Scratch runtime GLB names are absolute symlinks to separate scratch copies of
+    the actual saved GLBs. Remove the scratch stone source.
+  - The transaction renames the symlinks into prior-assets and publishes FAIL.
+  - Replace only the external foliage backing file with saved stone GLB bytes.
+The earlier archived prior-assets/non_tree_foliage.glb changes from
+925a4264... to a655b28c... without modifying anything inside the attempt directory.
+The recorded closure detects damage, but cannot recover the prior bytes.
+
+Evidence: quarantine-repro/results.json, symlink-prior/backing and its complete
+failed attempt. The archived entry is still a symlink outside the attempt.
+Correction: preserve prior bytes in exclusively created regular files, verify their
+digests, and then invalidate runtime names; handle links explicitly. A raw rename
+of an alias does not create immutable evidence. This is R4's preserved prior
+artifact contract, distinct from F1's current-path binding and F2's cleanup gap.
+
+ALL PRIOR FINDINGS — DISPOSITION
+R1 (P1): FIXED for the requested catchable SIGTERM/repeated-SIGINT/timeout cases.
+  run_cpu.py:66-81 and :104-159 defer repeated signals, terminate/escalate, reap
+  the child and inspect the owned group before releasing the lane. Cleanup failure
+  records a blocked marker. Fresh real-process tests cover TERM, repeated mixed
+  signals, timeout, an exited leader with a surviving descendant, and contention.
+  Observed runner exits: TERM 143, repeated interrupt 130, timeout 124, leader 0.
+  Every owned child/grandchild is dead. No claim that SIGKILL can be handled.
+R2 (P2): FIXED. run_cpu.py:92-101 acquires ownership before opening a log with x.
+  Fresh contender exits 73; incumbent bytes remain intact. Reusing a completed log
+  is rejected without truncation; ownership stays held during resisted cleanup.
+R3 (P2): PARTIAL. Normal missing/pointer/corrupt saved-source cases leave zero
+  runtime outputs and retain all three prior assets. F2 remains for early failure.
+R4 (P2): PARTIAL. UUID attempts, exclusive writers and current selectors preserve
+  normal retry history/rejected artifacts. F3 remains for prior-output aliases.
+R5 (P2): PARTIAL. All three actual collection swaps, ordinary source/export
+  replacement races, stale current FAIL and malformed evidence are rejected.
+  Same-run loader associations and closure hashes work on ordinary files. F1
+  remains for a caller pathname that changes target.
+R6 (P2): FIXED. Active material_trace.py is deleted; no active legacy import/route
+  remains. The stock context-aware validator is used. Actual disabled VALUE output
+  and inactive named black Color controls now fail materials while baseline passes.
+
+POSITIVE SOURCE/CPU EVIDENCE
+- All three saved sources and all three compressed exports PASS fresh stock
+  validation. The actual consumer suite passes 130/130 with Vitest 5.0.5, one
+  worker, no file parallelism. Only texture upload is replaced with a null promise;
+  actual GLTFLoader/Meshopt, transforms, indexing and recolour consumers execute.
+- Fresh source manifest: 124 LOD meshes, 31 base variants, 13 kinds, 31 distinct
+  LOD0 triangle/position/mask fingerprints. Consumer tests retain all 21 legacy
+  non-tree names, per-file mesh/root/variant associations and four decreasing LODs
+  (LOD3 under 5%). Exact FLOAT RGBA mask bits remain attached to vertices/triangles.
+  Position association keys round to five decimals; this is not a claim of bitwise
+  position or transform equality. No source or production GLB was regenerated.
+- Independent structural parsing: foliage/resources/stone contain 36/48/40 FLOAT
+  VEC4 mask primitives and 7/18/7 KTX2 images, each 1024x1024 with 11 mip levels.
+  Stock validators preserve image variation, full PBR, UV, codec, transfer, mip,
+  compression, scale/reference and geometry checks. See glb-structure.json.
+- Source controls reject missing mask, invalid weights, repeated LOD3, missing REF,
+  and uniform base map using in-memory changes to loaded copied saved sources.
+- Material controls: actual positive PASS plus six malformed rejections. Official
+  shared material suite 34/34; nearby source/context-free regressions 53/53.
+  CPU KTX2/Meshopt/targets suites 28/28 on pinned Vitest 5.0.5.
+- Eight existing Python regression methods pass (including real process children).
+  Their fake source/consumer records are used only for transaction/race testing,
+  never as actual asset proof. Fresh real receipt controls separately start from
+  a full actual validation PASS and reject seven corrupt/stale combinations.
+- Existing committed current validation receipt
+  20261107T062445Z-e28a6776c7ac4f2f9d8019a4fe20146d is accepted by the unchanged
+  consumer against current ordinary source/export/tool bytes. That does not cure F1.
+
+EXACT INTEGRATION AND PROTECTED CONTENT
+f9c2cef -> f0456b0 changes exactly the three reviewed shared files. Each current
+file equals the upstream 515ba1f and cherry-picked f0456b0 bytes:
+  checks.py: c5801c626e1a13d413b0c77d1600395bdb3a2878744e31fa0358413b2ebd4056
+  materials.py: 893ffc7721507defa275061284ed817140e0dc2fb74eef6e5d8b8883ebe90ed2
+  material_mask_selftest.py: c9d639c5dd993fa66597178cea9e532e4d2440e158c96dc3f462c9fcc48b6f63
+No subsequent shared edits. Final integration changes six flora paths (including
+tracer deletion) and fresh revision7 evidence. Shared core/families and gameplay
+have no additional task change. The production consumer test is task-owned.
+
+All 455 pre-existing evidence files match baseline hashes and their f9c2cef Git
+blobs. All 632 revision7 manifest entries match current bytes/sizes; the manifest's
+own SHA256 is b5d99cac4267ad25d67072dc46700160608a6222e8d04473b67336ade89f19f9.
+All 633 reviewed changed/protected working files match committed Git or LFS OID
+and size, and remain unchanged after the review. Archive inventories independently
+verify all 754 members (199 real-boundary and 555 unit-boundary), read in place
+without extraction. No historical evidence or screenshot was rewritten/deleted.
+The next GPU inventory remains e074b0dbf6212f3bd900964b1788f11d35b541009a49926a8c52659a766fc836.
+
+UNCHANGED SIX ART ASSET SHA256
+assets/blend/flora/non_tree_foliage.blend
+  5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456
+assets/blend/flora/non_tree_resources.blend
+  03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9
+assets/blend/flora/non_tree_stone.blend
+  436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15
+packages/client/public/models/flora/non_tree_foliage.glb
+  925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d
+packages/client/public/models/flora/non_tree_resources.glb
+  7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725
+packages/client/public/models/flora/non_tree_stone.glb
+  a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9
+
+COMMANDS, EXITS AND RETAINED FAILURES
+All paths below use <evidence> = /tmp/t05-r2-review-653e768-l2zog4x7.
+Every dispatch logs the exact argument array, command exit, finite deadline and
+thread settings in *-run.json and *.log. Tool and art copies retain original bytes.
+  python3 -B <evidence>/dispatch.py unit          0 (8 methods, real process cases)
+  python3 -B <evidence>/dispatch.py real          0 (9 cases; superseded for tool pin)
+  python3 -B <evidence>/dispatch.py controls      1 (harness /tmp canonicalization)
+  python3 -B <evidence>/dispatch.py controls2     0 (source 5, material 7, shared 34/53)
+  python3 -B <evidence>/dispatch.py real-pinned   0 (9 cases, Vitest 5.0.5, 130 baseline)
+  python3 -B <evidence>/receipt_controls.py       0 (actual PASS plus 7 rejections)
+  python3 -B <evidence>/dispatch.py alias         0 (2 confirmed full false PASSes)
+  python3 -B <evidence>/quarantine_repro.py       0 (2 asserted transaction defects)
+  python3 -B <evidence>/static.py                0 (records expected shared exit 1)
+Initial pipeline command (pipeline-run.json) exits 1: 26/28 passed; scratch lacked
+basis_transcoder.js/.wasm. Copying those exact target fixtures and using pinned
+Vitest produces pipeline-pinned-run.json exit 0, 28/28. No failure was erased.
+Exact pipeline command:
+  node <scratch-workspace>/node_modules/vitest/vitest.mjs run
+    packages/tools/src/art/ktx.test.ts packages/tools/src/art/meshopt.test.ts
+    packages/tools/src/art/targets.test.ts --maxWorkers=1 --no-file-parallelism
+    --reporter=json --outputFile=<evidence>/pipeline-pinned-results.json
+
+All Blender launches use /Applications/Blender.app/Contents/MacOS/Blender -b -t 2
+--factory-startup --python-exit-code 1 -P <scratch script>, at most one at a time,
+600s deadline, process-group termination/reap. Blender 5.2.3 LTS e13b728c6880.
+OMP/OPENBLAS/MKL/NUMEXPR/VECLIB/BLIS/TBB/UV thread settings are 2,
+ART_KTX_JOBS=1, PYTHONDONTWRITEBYTECODE=1, CUDA_VISIBLE_DEVICES empty.
+KTX uses existing 4.4.2. One testworker; no GPU/render/browser/services/DB/native
+capture, bulk LFS, actual-asset export regeneration or screenshot cleanup.
+Shared nearby tests create only their own synthetic scratch source fixtures.
+
+STATIC LIMITS
+Fresh compilation and scoped task-local Ruff/format, consumer ESLint/Prettier,
+and base-to-HEAD diff check exit 0. Shared Ruff exits 1 with exactly SEVEN findings:
+SIM118, two BLE001 in checks.py; F541, F401, BLE001 in materials.py; RUF100 in the
+selftest. Running the exact upstream 515ba1f bytes through Ruff stdin yields the
+same seven diagnostics. Never call full lint green. Client typecheck is retained
+worker evidence, not independently rerun here. Full art:test, repository-wide
+checks, dev/smoke and service tests were not run under this SOURCE/CPU brief.
+
+REVIEW-HARNESS EXCEPTION — IGNORED DEPENDENCY STATE WAS TOUCHED
+The first scratch pnpm exec inherited verifyDepsBeforeRun and followed shared
+node_modules symlinks. It attempted an install (logs retain the hoist-directory
+warning) and selected Vitest 5.1.0. It also touched the target's ignored .pnpm cache
+and .bin/vitest launcher through those links. Confirmed: .bin/vitest now references
+5.1.0 while the target node_modules/vitest entry remains pinned to 5.0.5. This is
+an unintended read-only-review exception, NOT an implementation finding and NOT
+an unchanged-all-files claim. No tracked source/docs/assets/lockfile changed.
+I did not attempt an unverified restoration of ignored user dependency state.
+The corrected scratch setup disables verifyDepsBeforeRun, uses local launcher
+files and points explicitly to existing Vitest 5.0.5; the full real-boundary and
+pipeline proof was rerun. See dependency-harness-note.json and retained first logs.
+Parent should inspect/restore that ignored launcher before using pnpm exec there;
+the existing node_modules/vitest/vitest.mjs entry still selects 5.0.5 directly.
+
+FINAL PRESERVATION AND HANDOFF
+after.json: HEAD/tree/branch exactly as above; git status --porcelain=v1
+--untracked-files=all empty; 633 protected/scoped hashes unchanged. Independent
+helper also verified all 4,621 tracked paths before/after. All six actual assets,
+455 prior evidence files and exact shared-pin bytes preserved. All observed owned
+processes are dead; CPU lock reacquirable, no blocked marker. No source/docs edits,
+commit, push, PR, merge, or screenshot cleanup. Ignored dependency exception above
+is explicitly excluded from the tracked-clean assertion.
+
+Known static/task limits remain: T07 runtime adoption and visual acceptance are
+separate. Live startup still uses legacy flora.glb/fallbacks; resource selection
+pools deposit variants without resource identity; live consumers expose fewer
+LODs and retain procedural scaling; recolour/Review paths can replace/discard
+PBR/UV data. No final material appearance, real GPU upload, three-lighting grade,
+100m silhouette, LOD popping, collision or 60fps claim. These are known separate
+integration boundaries, not new T05 ownership findings. Source/CPU REVISE is for
+F1–F3 above. Fix those and request a fresh independent review at the new pin.
