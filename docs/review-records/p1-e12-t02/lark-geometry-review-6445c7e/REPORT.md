@@ -1,0 +1,25 @@
+# REVISE — geometry/markers/process, SOURCE/CPU only
+
+Pin: 6445c7ec07aa2a08b722aeca22d56132154ea32c; tree a09d51b1b594a799a9489504d44d64447bb15450. Clean author checkout at initial inspection. Independently hashed blend d48d83e9c6a76b0214028a80389a77d6dfd19f65704c73ffc9f47dca58b244ba and canonical GLB 7cd5fed2661f96dd67b50c0a5f6d7df995be43d4adc57d327d35479d894a5e78. No author files changed. No Blender, browser, native/GPU or visual inspection. Prior full VERDICT read; no obsolete audit restarted or relied upon.
+
+## Findings
+
+1. Medium: fitted-pane proof is in incompatible local coordinate spaces. `fit_glazing.py` copies CanopyFrame vertex coordinates directly into the replacement CanopyGlass mesh without applying inverse(glass.matrix_world) * frame.matrix_world. `verify_glazing.py` likewise compares local frame samples with a local glass BVH, ignoring object transforms. The exact decoded GLB has different frame and pane world transforms (decoded.json rows CanopyFrame/CanopyGlass): frame scale 2.413111031, translation approximately (0,1.633974463,-1.074272811); pane scale 2.325880051, translation approximately (0,1.636118740,-1.121569872). Export quantization can also produce different decode transforms, so this difference alone is NOT proof of a visible gap. However the source-local nearest-surface test cannot certify world-space fit. Reconstruct/measure in one common world frame against the latest candidate and report boundary-to-frame clearance for every variant/LOD. Do not treat nearest points on a subset of arch centres as full pane perimeter coverage. No visual failure asserted.
+
+2. Medium: structural frame exposure and 15–30% plate removal remain unqualified. `whole_shell.py` defines the denominator using Body Hull/Accent connected components and classifies rays by material name. Trim hits do not identify structural frame; Dark hits may be backing. `whole-shell-receipt.json` explicitly reports FRAME_EXPOSURE_NOT_QUALIFIED, 52/71/93 absent components at different thresholds among 243, and ~42.5–43.9% missing area. Those are different metrics, not an established plate count. Do not reject solely because an area proxy exceeds 30%; identify semantic plates and structural members before accepting the requirement. This limitation survives added ribs/openings/glyph geometry.
+
+3. Process qualification: diff from checkpoint 9648690 contains no shared tools outside hull work. Diff from 8b6c360 DOES include packages/tools/blender/artlib/checks.py, artlib/materials.py, material_mask_selftest.py and capture files. Thus an unqualified assertion that the entire prior-to-candidate diff excludes shared validation/material tooling is false. Attribute inherited changes against an explicit author base before approving that scope claim. No shared exporter/family mutation is inferred merely from evidence filenames.
+
+## Independently verified passes
+
+Small NodeIO/Meshopt decode, script included: base LOD0/1/2/3 = 108746/73947/59938/4015; damaged = 113554/79329/65756/3907; husked = 110379/77952/66039/3484. Hero counts are 60–150k; decreasing LODs; LOD3 respectively 3.69%, 3.44%, 3.16%, all below 5%. Glyph descendants included under the owning LOD (not misclassified as separate roots).
+
+All render mesh primitives have POSITION, NORMAL, TEXCOORD_0 and finite decoded attribute values. Only five unmaterialed COL meshes omit UVs, expected for collision geometry. Presence/finite attributes do not prove correct winding, tangent continuity, atlas seams, nonoverlap or smooth shading; reconstructed LODs cannot close prior visual breakup from counts alone.
+
+Decoded BAY_1, HP_S_1/2 and Canopy/GearAssembly/GearFront/Left/Right nodes exist, including variant/LOD articulation hierarchy. Matrices and parent chains saved in decoded.json. This verifies marker representation, not mounted axis clearance, rig limits or production collision. No GLB animation clips; procedural runtime motion is neither disproven nor qualified.
+
+`prepare_capture.py` builds three livery review copies from base plus two lark_livery_ images and copied material graphs. That establishes a source-side lineup mechanism, not runtime selection or perceptual differentiation. Damage/husk states are not liveries. Body poses and HP socket envelopes remain anthropometric/local-geometry proxies; diagnostic sampled angles do not establish continuous collision or reachability. Wear/material/readability, glyph visibility and flicker, performance and overall visual acceptance remain parent gates.
+
+## Evidence limits
+
+Read full prior visual verdict, latest candidate receipt (large density detail output was truncated), capture-preparation-next, fitting/measurement source, whole-shell survey and receipt, decoded actual canonical GLB. No independent blend object inspection by design; density reviewer owns Blender. Source counts and material-authoring receipts are not substituted for runtime proof. Report is a bounded review with actionable evidence gaps, not an overall visual grade or proof all defects are found.
