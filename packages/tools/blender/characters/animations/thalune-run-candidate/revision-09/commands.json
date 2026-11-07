@@ -1,0 +1,131 @@
+{
+  "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin",
+  "python": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+  "admission": {
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-09/admission-controls.py",
+      "--report",
+      "/private/tmp/t02-native189-activation-_bye9b5s/admission-controls.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "seconds": 8.286211041966453
+  },
+  "cli": [
+    {
+      "name": "native-absent-grant",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r04-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredDiagnostic": "FileNotFoundError",
+      "seconds": 0.37975979200564325,
+      "operationalPathsRemainAbsent": true
+    },
+    {
+      "name": "capture-disabled",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+        "--execute",
+        "--grant",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredDiagnostic": "SOURCE_ONLY_RUNTIME_DISABLED",
+      "seconds": 0.035905083001125604,
+      "operationalPathsRemainAbsent": true
+    },
+    {
+      "name": "optimized-refused",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-O",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r04-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredDiagnostic": "T02_ASSERTIONS_REQUIRED",
+      "seconds": 0.014182457991410047,
+      "operationalPathsRemainAbsent": true
+    },
+    {
+      "name": "legacy-native-source-preflight",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredDiagnostic": "AssertionError",
+      "seconds": 0.037947666947729886,
+      "operationalPathsRemainAbsent": true
+    },
+    {
+      "name": "legacy-capture-source-preflight",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+        "--preflight"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredDiagnostic": "AssertionError",
+      "seconds": 0.034309292037505656,
+      "operationalPathsRemainAbsent": true
+    }
+  ],
+  "preservation": [
+    {
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-native189-activation-_bye9b5s/preserve.py",
+        "before"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-native189-activation-_bye9b5s/preserve.py",
+        "after"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "schemaCheck": {
+    "status": "PASS",
+    "schemaKeys": 12,
+    "exampleStructurallyMatches": true,
+    "exampleOperationallyInvalid": [
+      "expired epoch zero",
+      "all-zero HEAD",
+      "not at the fixed grant path"
+    ],
+    "externalSchemaPackagesInstalled": false,
+    "sourceAST": "PASS"
+  },
+  "old525Rerun": false
+}

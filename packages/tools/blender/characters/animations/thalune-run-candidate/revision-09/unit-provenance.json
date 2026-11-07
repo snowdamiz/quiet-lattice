@@ -1,0 +1,62 @@
+{
+  "base": "b6ad8528c7fe504817078fcfe0f253caac45020d",
+  "baseTree": "3a8f15923b5314dd894012f98d5728bb99a9a69d",
+  "branch": "codex/task/P1-E05-T02-thalune-reel-candidate",
+  "originalBase": "e1ed4752805ee92be561db81910ee1bc1a87b1d9",
+  "combinedLibraryHead": "afb3921ae59616ab5b555b771cd9dc1a914d78f2",
+  "combinedLibraryTree": "ac859db599e124c7d91d462e329deae5b9d91e37",
+  "donors": [
+    "07768bf14fce30c1e78db6750f44d8fbd561f4b5",
+    "83b145e9d6dc845aa6c7706ada69019fc813b202"
+  ],
+  "recoveriesAdded": [],
+  "originalRecoveries": 21,
+  "additionalEarlierRecoveries": 2,
+  "retainedAnimationBranch": "49ae87cbdb8671f7988b1bed4358d49d4cdc6b58",
+  "sourceHashes": {
+    "release_accounting.py": "bf84569764d31354e6a6955b450f68a03ed6d3753ba41f36e4dfafcd10032ae8",
+    "caller.py": "0aac9ee207a0b987af998bb5ca0585347d45a7cd37742a11ca551276cf686a0c",
+    "inventory_boundary.py": "5a46bf1eccb41e5a2af191ab05319844be4a8b30f542df054ce5866d5bbe6974",
+    "controls.py": "59e847fedebca4078cc3a61230f26d62448ed6aa534aa861e2172d796b25a314",
+    "resource_admission.py": "1c4f8920b246a639c1913cf69f260d689980530b7e905609d8a6828611f77ec2",
+    "packet_budget.py": "5e211b6d759d456dd3d8f6fd3c91702c86d7583e23525ba1731be089b3b91df8",
+    "timed-controls.py": "e3f1e4f21fd1082ad974ed0c046b20e9a4981a39f185a861c269ee9bb763a199",
+    "assertion_guard.py": "a2a29fc3d672bcd56bd55fa718f055ed029ad8d158e3882c43358f84f2c8cd21",
+    "revision08-controls.py": "1fa867986d3babab1b708f415ab73976491da95e55640e9ea22f3705d78a35bd",
+    "native189-controls.py": "0755b111f6dfe3a4202331a11a349c19d783d0d1b91c61d95741c1c744ce0ffc",
+    "inspector.py": "5a1efb2e86416f7dead45cad9ccd8c7abf1f77fb7a8e77e089770aecc5a46aa3",
+    "revision07-controls.py": "dbf23769be510793b38ad18cb1b81e4dc92fe7eec7d431d0bcc8e7ca498fbd38",
+    "native189.py": "bce2aae14789d83721885e551e5a6b023a2ea20f907da7c20f536c4674c92f14",
+    "evidence-controls.py": "4313639dd335e0b0ee42f1b349cb5851c2130515d5bec205b8b08b3190c0537f",
+    "revision05-controls.py": "df67524cf5b93ff2972a8436552844e81fa6bfc442baf62c6b51f4a4d1b2637d",
+    "admission_json.py": "9d89678048e46e376b70212aa45f1ef2e97f8c25b08c5deaa710981e03c291f1",
+    "freeze.py": "012872f99f0b44eec687c0838055d4db67537388ac12e6f55e136eb9886fc874",
+    "metadata-controls.py": "de82698308660a320dad3c1995abc3f31386500585ddb5225d1f24e5219bd13b",
+    "revision06-controls.py": "b1d68d891ed960e7954d783dba797d0137bfc4e53ef1bb84773a6a118826cc15",
+    "contract.py": "43ee39cc429e140283b8081d2fecbae04a13d2d79a3e0906bf6a63aabfdbc75b",
+    "native189_producer.py": "fcc60df0e33f2f7fcfaf583826475114fa0c27a45de949dc90ea2f2825f777c7",
+    "terminal-controls.py": "9321eaadd0dc94967ef3e132da7a0c1cddf1a9828b12f9d103866a73072a51c0",
+    "bind-local.py": "0b6fc314a8894913cded6535e87a5297f57325d7a8c46dd8af6a49ef0e6c86ee",
+    "rgb-primary.py": "def00276dba5351c9f5fb4adfa4c0ce20a10fb3613a9e7babc7b1e3c37695ff0"
+  },
+  "preservation": "evidence/preservation-after.json",
+  "counts": {
+    "activationCPUControls": 22,
+    "actualCLIGates": 5,
+    "priorControls": 525,
+    "priorControlsRerun": false
+  },
+  "runtimeAuthorization": false,
+  "nativeFixtureAuthorization": true,
+  "fullSnapshotPreservation": "Historical FAILED/MISMATCH retained; no restoration/cleanup",
+  "sourceReview": {
+    "path": "/private/tmp/t02-native189-r5-independent-znhry9ge/REPORT.md",
+    "sha256": "13d3b55df57ca6c053a058e9db373f00d04b101ac9c3e2ccbb185caf0d0ec533",
+    "verdict": "PASS_EXACT_DISABLED_SOURCE_CPU"
+  },
+  "readinessSha256": "daa896c0281cfe5d3c539eb5627f352df68ad52e4b7ca2637183c5105b37a040",
+  "candidateSha256": "79eb11a88c72e815ea66b1c57eb582a6e9ed8e840a5515607cd182c65f0649d4",
+  "planSha256": "3854b1996c49640e77b65950c429f6e017730b90206fbf0c58ae46f3d1656f21",
+  "runtimeBindingsSha256": "728f5c138f7fd0a374d49e6074fdd4f82256c07c8feb2511538699aa20884199",
+  "admissionControlSha256": "fc8d9997a8cb2287a6a9865ae1857a72c86b445da6ea6834abcfeb0cc20cfd84"
+}

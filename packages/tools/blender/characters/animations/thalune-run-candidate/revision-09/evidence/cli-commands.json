@@ -1,0 +1,82 @@
+[
+  {
+    "name": "native-absent-grant",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+      "--execute",
+      "--grant",
+      "/private/tmp/t02-native189-r04-20261107-t3-11167406-grant.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "requiredDiagnostic": "FileNotFoundError",
+    "seconds": 0.37975979200564325,
+    "operationalPathsRemainAbsent": true
+  },
+  {
+    "name": "capture-disabled",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+      "--execute",
+      "--grant",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "requiredDiagnostic": "SOURCE_ONLY_RUNTIME_DISABLED",
+    "seconds": 0.035905083001125604,
+    "operationalPathsRemainAbsent": true
+  },
+  {
+    "name": "optimized-refused",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-O",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+      "--execute",
+      "--grant",
+      "/private/tmp/t02-native189-r04-20261107-t3-11167406-grant.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "requiredDiagnostic": "T02_ASSERTIONS_REQUIRED",
+    "seconds": 0.014182457991410047,
+    "operationalPathsRemainAbsent": true
+  },
+  {
+    "name": "legacy-native-source-preflight",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "requiredDiagnostic": "AssertionError",
+    "seconds": 0.037947666947729886,
+    "operationalPathsRemainAbsent": true
+  },
+  {
+    "name": "legacy-capture-source-preflight",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+      "--preflight"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "requiredDiagnostic": "AssertionError",
+    "seconds": 0.034309292037505656,
+    "operationalPathsRemainAbsent": true
+  }
+]
