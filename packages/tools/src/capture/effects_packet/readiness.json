@@ -45,8 +45,16 @@
   "asset": {
     "assetClass": "effect",
     "boundsBlender": [
-      [-0.1255086362361908, -0.5010707378387451, -0.12698976695537567],
-      [0.14278095960617065, 0.5004498958587646, 0.12964355945587158]
+      [
+        -0.1255086362361908,
+        -0.5010707378387451,
+        -0.12698976695537567
+      ],
+      [
+        0.14278095960617065,
+        0.5004498958587646,
+        0.12964355945587158
+      ]
     ],
     "branch": "gravitic",
     "drawCalls": 1,
@@ -2270,10 +2278,10 @@
       "sha256": "3aac3f7be1fa76bd8fe8138e189b86acf25c2b725f37a1d572fcf2a4f8aba4ff"
     },
     {
-      "bytes": 23412,
+      "bytes": 26345,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
-      "sha256": "8ef8dec8be6b8d2862d576390e79067e941e92191c44df0f076f39a9e14171a5"
+      "sha256": "30ea78db3947c8535d44baa47b79521963455c611ccba6d872aaf03cd1cc6b8e"
     },
     {
       "bytes": 2138,
@@ -2366,6 +2374,18 @@
       "sha256": "2a88d2a4115d9f4d7002f44770f3283c3260bd2cce6acdce2b0f66f0c65ec2a6"
     },
     {
+      "bytes": 5207,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/live_cache.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/live_cache.py",
+      "sha256": "12d49446c9186e30f5e077c9c1991ebdbcc84b99f9848637732058d1356bdb85"
+    },
+    {
+      "bytes": 13714,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/live_cache_controls.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/live_cache_controls.py",
+      "sha256": "5cdf886374721deae8db7a12a3d5fc19d407379f5a7c1a3997fd601ca9bc04b7"
+    },
+    {
       "bytes": 19487,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_failure_controls.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_failure_controls.py",
@@ -2378,10 +2398,10 @@
       "sha256": "5720ac4d65139f3220a97a2f4ddb8002083f6d3f3fd7ea115074a15d82cf53ae"
     },
     {
-      "bytes": 16187,
+      "bytes": 16821,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_ports.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_ports.py",
-      "sha256": "6489aedd95770d50379108a34abcc8e97ef4d2473ef99cde66a7476dba994cea"
+      "sha256": "57883632fe80d4aaa1256814092f0e372eb821e683aea6810b49a9ab02ca0eb5"
     },
     {
       "bytes": 1154,
@@ -2600,6 +2620,24 @@
       "sha256": "7fa4af83422024a19e64a80937f6c8094244c3397372a495b348dfbe44a5dd72"
     },
     {
+      "bytes": 18239,
+      "path": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/APPENDIX-C2.md",
+      "realpath": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/APPENDIX-C2.md",
+      "sha256": "1955381dd47948fdf738844cba0f917ab6e92663a9dabeaf018d8341b6d2fa29"
+    },
+    {
+      "bytes": 2027,
+      "path": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/INDEPENDENT-RECEIPT.json",
+      "realpath": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/INDEPENDENT-RECEIPT.json",
+      "sha256": "47949700e7b5c09a5c9ae0d720c77f1f3b897123898ed7f0b5d2662d6a33f67c"
+    },
+    {
+      "bytes": 936,
+      "path": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/seal.json",
+      "realpath": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/seal.json",
+      "sha256": "64b0a45a500a9f0a27c54e59c63afb4a09bb788cfa2e9a3b27045ccdc04418ad"
+    },
+    {
       "bytes": 20826,
       "path": "/private/tmp/p1-e07-t14-native-independent-vxqw75q0/APPENDIX-C2.md",
       "realpath": "/private/tmp/p1-e07-t14-native-independent-vxqw75q0/APPENDIX-C2.md",
@@ -2716,7 +2754,10 @@
   "cacheOwnerPolicy": {
     "checkOutputCap": 393216,
     "commandOutputCap": 262144,
-    "phases": ["before-consumption-and-snapshot", "immediately-before-launch"],
+    "phases": [
+      "before-consumption-and-snapshot",
+      "immediately-before-launch"
+    ],
     "scope": "Exact cache opens and task-local Node/Vite cwd/argv; any owner or uncertainty refuses; observations are not a lock.",
     "secondsPerCheck": 10
   },
@@ -2786,9 +2827,9 @@
   "esbuildBinary": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
   "externalSystemXpcOwnership": "UNQUALIFIED; no recorder/encoder requested",
   "freezePredecessor": {
-    "head": "6b4073305af21efe5c6cf5ecc09f78406b637a42",
+    "head": "b151c82427a541754cec0d5143c7942271eed2b8",
     "informativeOnly": true,
-    "tree": "4ffe285721b1949a3fc887e444e2661a72656412"
+    "tree": "442f1b7a8990bf06a719f10488c230f32aabcb50"
   },
   "generatedCaches": [
     "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules/.vite",
@@ -2798,13 +2839,13 @@
   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
   "nodeVersion": "v22.23.3",
   "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
-  "phase": "ENABLED_PENDING_INDEPENDENT_ACTIVATION_REVIEW_AND_PARENT_ONE_USE_GRANT",
+  "phase": "ENABLED_LIVE_CACHE_CORRECTION_PENDING_INDEPENDENT_REVIEW_AND_PARENT_ONE_USE_GRANT",
   "pilot": {
     "asset": "gravitic_pull",
-    "attemptId": "66f592c370404aa5b310f8d15e1b3230",
-    "authorizationId": "effects-66f592c370404aa5b310f8d15e1b3230",
-    "consumption": "/private/tmp/egc-66f592c370404aa5b310f8d15e1b3230.json",
-    "evidence": "/private/tmp/egp-66f592c370404aa5b310f8d15e1b3230",
+    "attemptId": "a2002dbc58854694880dd505416ac34d",
+    "authorizationId": "effects-a2002dbc58854694880dd505416ac34d",
+    "consumption": "/private/tmp/egc-a2002dbc58854694880dd505416ac34d.json",
+    "evidence": "/private/tmp/egp-a2002dbc58854694880dd505416ac34d",
     "file": "effects/gravitic",
     "files": [
       "gravitic_pull/noon-lush_lod0.png",
@@ -2821,9 +2862,12 @@
       "gravitic_pull/sheet.png"
     ],
     "gl": "metal",
-    "grant": "/private/tmp/egg-66f592c370404aa5b310f8d15e1b3230.json",
-    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-66f592c370404aa5b310f8d15e1b3230",
-    "viewport": [1920, 1080]
+    "grant": "/private/tmp/egg-a2002dbc58854694880dd505416ac34d.json",
+    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d",
+    "viewport": [
+      1920,
+      1080
+    ]
   },
   "playwright": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js",
   "process_binary_sha256": {
@@ -2851,19 +2895,19 @@
     },
     "probe": {
       "nativeCaptureStarted": false,
-      "pid": 24213,
+      "pid": 34743,
       "scope": "CURRENT_CPU_SELF_PROCESS_ONLY",
       "uid": 501
     }
   },
   "remainingPrerequisites": [
-    "Independent correction SOURCE/CPU PASS at 6b4073305af21efe5c6cf5ecc09f78406b637a42 is retained; enabled final pin still requires parent activation review.",
-    "Original native pilot effects-b61233fdf3564205bd01d9566f306430 remains FAILED and permanently SPENT; never reuse or retry.",
-    "Parent owns actual one-use grant and serialized GPU slot after current work releases it; current owner and 5402312704-byte admission must pass at launch.",
-    "Known retained T13 SetStoreUpdateService member is not bound and is refused by unchanged effects observer; finding reported separately, no binding added by this mechanical unit.",
-    "Native authority already exists; no further human permission request is needed. No new grant or native launch is created by this preparation.",
-    "Parent must observe actual OS exit zero and verify exact outer result/consumption hashes and all segmented facts through existing parent_acceptance.",
-    "Actual one-root capture and independent blind visual grade remain pending; remaining58 and motion/playback are excluded."
+    "Historical b151c82427a541754cec0d5143c7942271eed2b8 activation PASS and 6b4073305af21efe5c6cf5ecc09f78406b637a42 correction PASS are retained; current live-cache correction requires fresh independent review at exact final pin.",
+    "Original effects-b61233fdf3564205bd01d9566f306430 remains FAILED and permanently SPENT; do not reuse any historical identity.",
+    "Parent owns new one-use grant and serialized GPU slot; current owner and 5402312704-byte disk admission must pass at actual launch.",
+    "Live cache traversal retries are finite estimates, not atomic snapshots or quotas; immutable pre-copy and post-drain checks remain strict.",
+    "Known retained T13 SetStore member remains unbound; no Apple bindings added and future effects membership is not inferred.",
+    "Parent must observe actual OS exit zero and exact result/consumption hashes, complete segmented evidence and positive release through existing parent_acceptance.",
+    "Actual one-root capture and independent blind visual grade remain pending; remaining58 and motion/playback excluded. Native authority exists; no further human permission request required."
   ],
   "resolver": {
     "selectedExecutable": {

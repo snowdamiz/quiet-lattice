@@ -204,7 +204,16 @@ class NativePorts:
             probe = {'path': str(path), 'kind': key, 'bytes': None}
             observed['probes'].append(probe)
             try:
-                probe['bytes'] = tree_bytes(path)
+                if key == 'cacheBytes' and not for_archive:
+                    from live_cache import measure as live_cache_bytes
+                    try:
+                        probe['bytes'] = live_cache_bytes(path, self.ready['initialCacheBytes'] + 256 * MIB - observed[key], probe)
+                    finally:
+                        if any(not a['complete'] for a in probe.get('attempts', [])):
+                            # Keep interrupted samples even after a later observation succeeds.
+                            self.result['raw'].setdefault('writerPublicationObservations', []).append(probe)
+                else:
+                    probe['bytes'] = tree_bytes(path)
                 observed[key] += probe['bytes']
             except BaseException as error:
                 probe['failure'] = failure(error)

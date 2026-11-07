@@ -1,3 +1,47 @@
+# P1.E07.T14 bounded live-cache publication correction
+
+The enabled b151c82427a541754cec0d5143c7942271eed2b8 checkpoint and its
+independent PASS remain historical. A CPU publisher reproduced the actual
+StationJob.wait observer abort when Vite renames deps_temp after enumeration.
+This correction requires fresh independent review at the new exact enabled pin.
+No grant or capture is created. The original native attempt remains FAILED/SPENT.
+
+Only active generated-cache byte measurement uses `live_cache.measure`. It walks
+admitted directory descriptors without following links, reads no file payload,
+and retains partial directory/entry metadata and original failures. An ENOENT
+or explicitly observed directory-name change may restart the complete cache
+sample, at most three attempts within two seconds total and 8192 metadata entries
+per attempt. Other errors, changed identity, special files, size limits, close
+failures and phase deadlines refuse. An absent initial leaf is zero only after
+its admitted parent route and absence are verified; a disappeared root is unknown.
+Continuous publication exhausts the finite attempts and refuses with bytes null.
+A successful traversal is a live estimate, explicitly not an atomic snapshot or
+OS quota. Regular file sizes may change between samples. Retried samples remain
+in writerPublicationObservations even after a later successful observation.
+
+Pre-copy cache inventory/read/hash/copy verification, freeze measurement, and
+post-drain archive checks keep their existing strict behavior and never use this
+retry policy. Live profile/private-TMP/helper measurement is unchanged; zero-byte
+currently written TMP files already count as zero sampled bytes, with immutable
+copy-before-remove checks later. Unknown errors are never converted to absence.
+All new records use existing segmented evidence and its unchanged 32 MiB Python
+allowance (including fallback attempts and reserved failure summary); exhausting
+that allowance still fails, never truncates facts into a success. The total
+5402312704-byte admission and 184565760-byte capture output cap are unchanged.
+
+Fresh focused controls cover the actual helper wait, real directory publication,
+continuous churn, addition during enumeration, SIGALRM, arbitrary I/O faults,
+symlinks/FIFOs/ancestor links, finite size/count/time edges, strict immutable
+boundaries, and actual caller publication-sink failure. Evidence and exact
+RED/GREEN provenance: `/private/tmp/p1-e07-t14-live-cache-51t64qhu/APPENDIX-C2.md`.
+All 64 assets, four recovered helpers, shared T15 and earlier reports are retained.
+No Apple executable binding or other lane is changed. Parent owns the next grant
+and serialized launch after review and current admission; native capture and
+independent visual grading remain pending.
+
+The earlier checkpoint descriptions below are retained provenance, not a claim
+that the current diff is only a mechanical enablement.
+
 # P1.E07.T14 mechanical re-enablement after correction review
 
 Both runtime flags and fresh rebound readiness are enabled for parent activation
