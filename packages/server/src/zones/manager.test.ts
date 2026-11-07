@@ -135,8 +135,12 @@ describe('ZoneManager', () => {
     const s2 = new Sink(2);
     expect(zones.join(s2, character(0)).zone).toBe(zone);
     expect(zones.isAsleep('sys:0')).toBe(false);
-    advance(50);
+    // Wake refreshes time and frame caches before placement, without sending a snapshot to the new viewer.
+    expect(zone.time).toBeCloseTo(5e6 + 2.1, 6);
     expect(zone.tick).toBe(asleepAt + 1);
+    expect(s2.frames).toHaveLength(0);
+    advance(50);
+    expect(zone.tick).toBe(asleepAt + 2);
     expect(s2.frames).toHaveLength(1);
 
     zones.leave(s2);

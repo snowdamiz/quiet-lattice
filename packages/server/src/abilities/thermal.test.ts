@@ -547,3 +547,59 @@ describe('Vent', () => {
     expect(c.lost()).toBe(0);
   });
 });
+
+describe('cast retirement across phase departure', () => {
+  it('retires Lance toggle state with the context after phase departure/return', () => {
+    own(['lance']);
+    const c = creatureAt(10);
+    const notified: string[] = [];
+    svc.subscribe((id) => notified.push(id));
+    expect(cast('lance', 0, { aim: aimAt(c.pos()) }).result).toBe('cast');
+    fire(0.25);
+    expect(c.lost()).toBeGreaterThan(0);
+    const lost = c.lost();
+    w.zone.phases.phaseFor(viewer, 'event', { key: 'review-hop', frame: w.frame, center: w.at(0, 0), radius: 100 });
+    w.zone.phases.leave(viewer);
+    fire(0.5);
+    expect(c.lost()).toBe(lost);
+    const state = svc.state('c1');
+    const next = cast('lance', 0, { aim: aimAt(c.pos()) });
+    expect(state.on).not.toContain('lance');
+    expect(next.result).toBe('cast');
+    expect(notified).toEqual(['c1']);
+    expect(svc.stats().ended).toBe(1);
+    fire(0.25);
+    expect(c.lost()).toBeGreaterThan(lost);
+  });
+  it('starts a fresh Sear burn after the retired burn cooldown ends', () => {
+    own(['lance', 'sear']);
+    const c = creatureAt(10);
+    expect(cast('sear', 1, { target: c.id }).result).toBe('cast');
+    wait(0.5);
+    expect(c.lost()).toBeGreaterThan(0);
+    const retiredLoss = c.lost();
+    w.zone.phases.phaseFor(viewer, 'event', { key: 'review-hop', frame: w.frame, center: w.at(0, 0), radius: 100 });
+    w.zone.phases.leave(viewer);
+    wait(7.5);
+    const lost = c.lost();
+    expect(lost).toBe(retiredLoss);
+    const recast = cast('sear', 1, { target: c.id });
+    expect(recast.result).toBe('cast');
+    expect(meter.heat).toBe(40);
+    wait(1);
+    expect(c.lost()).toBeGreaterThan(lost);
+  });
+  it('leaves a fresh Flare burn running when an expired Sear producer loses ownership', () => {
+    own(['lance', 'sear', 'flare']);
+    const c = creatureAt(5);
+    expect(cast('sear', 1, { target: c.id }).result).toBe('cast');
+    // Let the old generation expire without servicing its queued callback.
+    now += getSkillNode('sear').params.burnS! + 2;
+    expect(cast('flare', 2, { aim: aimAt(c.pos()) }).result).toBe('cast');
+    const burst = c.lost();
+    skills = { ...skills, bought: skills.bought.filter((n) => n !== 'sear') };
+    svc.skillsChanged('c1');
+    wait(0.5);
+    expect(c.lost() - burst).toBeCloseTo(N.flare.burnDps * 0.5, 6);
+  });
+});

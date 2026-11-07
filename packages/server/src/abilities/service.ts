@@ -138,12 +138,19 @@ interface Timer {
   fn: () => void;
 }
 
+interface CastLifetime {
+  live(): boolean;
+  active(): boolean;
+}
+
 export class CastService {
   private readonly zones: CastZones;
   private readonly skills: CastServiceOptions['skills'];
   private readonly codex: CastServiceOptions['codex'];
   private readonly epochs = new Map<string, object>();
-  private readonly companions = new Map<string, { zone: CastZone; owner: number }>();
+  private readonly companions = new Map<string, { zone: CastZone; owner: number; ctx: CastContext }>();
+  private readonly lifetimes = new WeakMap<CastContext, CastLifetime>();
+  private readonly active = new Map<string, Set<CastLifetime>>();
   private readonly meets: NonNullable<CastServiceOptions['meets']>;
   private readonly meters: CastServiceOptions['meters'];
   private readonly now: () => number;
@@ -284,6 +291,12 @@ export class CastService {
     }
     this.counts.cast++;
     this.run(() => entry.effect.cast(ctx), characterId, msg.node);
+    const lifetime = this.lifetimes.get(ctx);
+    if (lifetime?.active()) {
+      let active = this.active.get(characterId);
+      if (!active) this.active.set(characterId, (active = new Set()));
+      active.add(lifetime);
+    }
     this.announce(zone, ctx, 'cast');
     const out: CastState = { ...base, result: 'cast' };
     return cd ? { ...out, readyAt: now + cd.seconds } : out;
@@ -296,10 +309,10 @@ export class CastService {
       this.timers = this.timers.filter((t) => t.at > now + 1e-9);
       for (const t of due) this.run(t.fn, t.characterId, 'timer');
     }
-    for (const characterId of [...this.on.keys()]) if (this.settle(characterId)) this.notify(characterId);
+    for (const characterId of new Set([...this.on.keys(), ...this.active.keys()])) if (this.settle(characterId)) this.notify(characterId);
   }
 
-  /** The character's skills changed (a respec, a slot, a hull's slots): its toggles whose nodes left their bars end. */
+  /** Observe ownership/eligibility loss synchronously, before a refund/rebuy can hide it from timers or fauna. */
   skillsChanged(characterId: string): void {
     if (this.settle(characterId)) this.notify(characterId);
   }
@@ -307,6 +320,8 @@ export class CastService {
   /** A character out of play: its toggles end and its effects' timers are dropped. Its cooldowns stay for its return. */
   left(characterId: string): void {
     this.epochs.delete(characterId);
+    for (const lifetime of this.active.get(characterId) ?? []) lifetime.live();
+    this.active.delete(characterId);
     const companion = this.companions.get(characterId);
     companion?.zone.fauna?.dismissOwner(companion.owner);
     this.companions.delete(characterId);
@@ -328,10 +343,15 @@ export class CastService {
     let epoch = this.epochs.get(characterId);
     if (!epoch) this.epochs.set(characterId, (epoch = {}));
     let ended = false;
+    let pending = 0;
+    let required = () => true;
+    let held = () => false;
+    let release = () => {};
+    const produced: { target: number; id: string; gen: number }[] = [];
     const live = (): boolean => {
-      if (!ended)
-        ended =
-          this.epochs.get(characterId) !== epoch ||
+      if (
+        !ended &&
+        (this.epochs.get(characterId) !== epoch ||
           zone.entity(self) !== me ||
           me.presence !== presence ||
           f.frame !== frame ||
@@ -339,7 +359,15 @@ export class CastService {
           zone.combat.lifeOf(self) !== life ||
           zone.combat.isDown(self) ||
           barOfMode(f.mode) !== bar ||
-          !this.skills.get(characterId)?.bought.includes(msg.node);
+          !this.skills.get(characterId)?.bought.includes(msg.node) ||
+          !meetsNodeRequirements(msg.node, (req) => this.meets(characterId, req)) ||
+          !required())
+      ) {
+        ended = true;
+        for (const s of produced) this.statuses.remove(zone.id, characterId, s.target, s.id, s.gen);
+        produced.length = 0;
+        release();
+      }
       return !ended;
     };
     const al = Math.hypot(msg.aim[0], msg.aim[1], msg.aim[2]);
@@ -416,10 +444,13 @@ export class CastService {
           attackerMods: modsOfNodes(owned),
         });
       },
-      after: (delayS, fn) =>
+      after: (delayS, fn) => {
+        pending++;
         this.after(characterId, delayS, () => {
+          pending--;
           if (live()) fn();
-        }),
+        });
+      },
       time: () => this.now(),
       owns: (node) => !!this.skills.get(characterId)?.bought.includes(node),
       pose: () => (live() ? this.poseOf(zone, self, frame, bar, origin, aim) : null),
@@ -445,20 +476,31 @@ export class CastService {
         tame: (target) => {
           if (!canBond(target)) return;
           const c = zone.fauna?.creature(target);
-          const eligibleOwner = () => live() && !!c && !!this.codex?.holds(characterId) && this.codex.canBond(characterId, c.frame, c.species.index);
-          if (!zone.fauna?.bond(self, target, eligibleOwner)) return;
+          required = () => !!c && !!this.codex?.holds(characterId) && this.codex.canBond(characterId, c.frame, c.species.index);
+          if (!zone.fauna?.bond(self, target, live)) return;
           const old = this.companions.get(characterId);
           if (old && (old.zone !== zone || old.owner !== self)) old.zone.fauna?.dismissOwner(old.owner);
-          this.companions.set(characterId, { zone, owner: self });
+          this.companions.set(characterId, { zone, owner: self, ctx });
+          held = () => zone.fauna?.ownerOf(target) === self;
+          release = () => {
+            if (this.companions.get(characterId)?.ctx !== ctx) return;
+            zone.fauna?.dismissOwner(self);
+            this.companions.delete(characterId);
+          };
         },
       },
       stampede: {
         ready: () => live() && this.inSight(zone, frame, origin, callPoint) === true && !!zone.fauna?.callHerd(self, origin),
         start: () => {
-          if (live())
+          if (
+            live() &&
             zone.fauna?.stampede(self, origin, callPoint, live, (target) => {
               ctx.damage(target, SYMBIOTIC_NUMBERS.call.contactDamage);
-            });
+            })
+          ) {
+            const until = this.now() + SYMBIOTIC_NUMBERS.call.durationS;
+            held = () => this.now() < until;
+          }
         },
       },
       meters: {
@@ -469,7 +511,13 @@ export class CastService {
         },
       },
       status: {
-        apply: (target, id, durationS, power) => this.statuses.apply(zone.id, characterId, target, id, durationS, power),
+        apply: (target, id, durationS, power) => {
+          if (!live()) return false;
+          const fresh = this.statuses.apply(zone.id, characterId, target, id, durationS, power);
+          const status = this.statuses.get(zone.id, characterId, target, id);
+          if (fresh && status) produced.push({ target, id, gen: status.gen });
+          return fresh;
+        },
         get: (target, id) => this.statuses.get(zone.id, characterId, target, id),
         active: (target, id) => this.statuses.active(zone.id, target, id),
         remove: (target, id) => this.statuses.remove(zone.id, characterId, target, id),
@@ -498,6 +546,14 @@ export class CastService {
       },
     };
     this.shares.set(ctx, shared);
+    this.lifetimes.set(ctx, {
+      live,
+      active: () =>
+        pending > 0 ||
+        held() ||
+        this.on.get(characterId)?.get(msg.node)?.ctx === ctx ||
+        produced.some((s) => this.statuses.get(zone.id, characterId, s.target, s.id)?.gen === s.gen),
+    });
     return ctx;
   }
 
@@ -586,6 +642,7 @@ export class CastService {
   /** Whether a toggle that is on still holds: its caster's entity in play, in the bar's mode and up, its node owned and in
    * a working slot of that bar. */
   private holds(characterId: string, node: string, { ctx, zone }: On): boolean {
+    if (!this.lifetimes.get(ctx)?.live()) return false;
     const e = zone.entity(ctx.caster);
     if (!e || barOfMode(e.fields.mode) !== ctx.bar || zone.combat.isDown(ctx.caster)) return false;
     const skills = this.skills.get(characterId);
@@ -597,6 +654,9 @@ export class CastService {
 
   /** Ends the character's toggles that no longer hold; whether any did. */
   private settle(characterId: string): boolean {
+    const active = this.active.get(characterId);
+    for (const lifetime of active ?? []) if (!lifetime.live() || !lifetime.active()) active?.delete(lifetime);
+    if (active?.size === 0) this.active.delete(characterId);
     let ended = false;
     for (const [node, lit] of this.on.get(characterId) ?? []) {
       if (this.holds(characterId, node, lit)) continue;
