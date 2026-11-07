@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-6vifl1kk/test_missing_local_lfs_object/packages/tools/blender/cities/ixari/build_report.py", line 391, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-6vifl1kk/test_missing_local_lfs_object/packages/tools/blender/cities/ixari/build_report.py", line 237, in collect
+    require(local.is_absolute() and local.is_file() and local.stat().st_size==o['bytes']
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            and digest(local)==o['sha256'],'local LFS storage object mismatch')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-6vifl1kk/test_missing_local_lfs_object/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: local LFS storage object mismatch
+

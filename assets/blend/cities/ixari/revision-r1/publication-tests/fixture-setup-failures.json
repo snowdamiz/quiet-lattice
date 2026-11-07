@@ -1,0 +1,23 @@
+{
+  "failures": [
+    {
+      "command": [
+        "python3",
+        "assets/blend/cities/ixari/revision-r1/publication-tests/reproduce_base.py"
+      ],
+      "exitCode": 1,
+      "exception": "FileNotFoundError",
+      "reason": "Initial helper used parents[7] instead of parents[6]; failed before constructing fixtures or modifying any source."
+    },
+    {
+      "command": [
+        "python3",
+        "packages/tools/blender/cities/ixari/test_publication.py"
+      ],
+      "exitCode": 1,
+      "evidenceDirectory": "suite-gzs8l3f1",
+      "exception": "AssertionError: baseline drift: assets/renders/cities/ixari/anchor-shape-r2/readout.json",
+      "reason": "Git stores readout JSON as an LFS pointer; fixture loader now resolves the already-local object and validates its hash."
+    }
+  ]
+}

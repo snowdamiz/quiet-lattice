@@ -1,0 +1,199 @@
+00:00.350  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_anchor.blend"
+00:01.041  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_props.blend"
+
+validate assets/blend/cities/ixari_anchor.blend  (family cities, source .blend)
+  anchor_quavel / anchor_quavel [hero]  tris LOD0 76,876, LOD1 23,062, LOD2 7,617, LOD3 2,576  size 14.79 x 10.76 x 52.00 m
+  PASS  naming
+        ok    ixari_anchor.blend: 1 variant(s) in 1 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    anchor_quavel: LOD0 76,876 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    anchor_quavel: 76,876 > 23,062 > 7,617 > 2,576 triangles; LOD3 3.4% of LOD0
+  PASS  materials
+        ok    IxariAtlas4096 (LIB_IxariAtlas4096): pbr: base colour, roughness, metallic, normal, AO, emissive
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    anchor_quavel: longest side 52.00 m within 0.5-400 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/ixari/receipts/revise-r1-stock/validators/cities__ixari_anchor.blend.json
+
+validate assets/blend/cities/ixari_props.blend  (family cities, source .blend)
+  prop_ixari_terminal / prop_ixari_terminal [prop]  tris LOD0 6,260, LOD1 1,878, LOD2 609, LOD3 193  size 1.83 x 1.02 x 1.92 m
+  prop_ixari_board / prop_ixari_board [prop]  tris LOD0 9,140, LOD1 2,742, LOD2 892, LOD3 278  size 2.23 x 1.02 x 2.82 m
+  prop_ixari_stall / prop_ixari_stall [prop]  tris LOD0 9,088, LOD1 2,726, LOD2 894, LOD3 283  size 4.27 x 2.00 x 2.95 m
+  prop_ixari_seat / prop_ixari_seat [prop]  tris LOD0 4,264, LOD1 1,278, LOD2 422, LOD3 141  size 3.27 x 0.99 x 1.43 m
+  prop_ixari_basin / prop_ixari_basin [prop]  tris LOD0 9,360, LOD1 2,808, LOD2 920, LOD3 302  size 1.87 x 1.86 x 0.87 m
+  PASS  naming
+        ok    ixari_props.blend: 5 variant(s) in 5 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    prop_ixari_terminal: LOD0 6,260 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    prop_ixari_board: LOD0 9,140 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    prop_ixari_stall: LOD0 9,088 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ... 2 more
+  PASS  LODs
+        ok    prop_ixari_terminal: 6,260 > 1,878 > 609 > 193 triangles; LOD3 3.1% of LOD0
+        ok    prop_ixari_board: 9,140 > 2,742 > 892 > 278 triangles; LOD3 3.0% of LOD0
+        ok    prop_ixari_stall: 9,088 > 2,726 > 894 > 283 triangles; LOD3 3.1% of LOD0
+        ok    ... 2 more
+  PASS  materials
+        ok    IxariAtlas1024 (LIB_IxariAtlas1024): pbr: base colour, roughness, metallic, normal, AO, emissive
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    prop_ixari_terminal: longest side 1.92 m within 0.05-6 m
+        ok    ... 4 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/ixari/receipts/revise-r1-stock/validators/cities__ixari_props.blend.json
+03:12:37 | INFO: Data are loaded, start creating Blender stuff
+03:12:37 | INFO: Blender create Mesh node anchor_quavel_Facets
+03:12:37 | INFO: Blender create Mesh node anchor_quavel_Facets_L1
+03:12:37 | INFO: Blender create Mesh node anchor_quavel_Facets_L2
+03:12:37 | INFO: Blender create Mesh node anchor_quavel_Facets_L3
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_AnchorBlade0_Cleft
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_AnchorBlade1_Cleft
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_AnchorBlade2_Cleft
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_AnchorBlade3_Cleft
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_AnchorBlade4_Cleft
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone0
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone1
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone3
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone4
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone5
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone6
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone8
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone9
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone11
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone12
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone13
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone14
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone16
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone17
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone19
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone21
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone22
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone24
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone25
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone26
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone27
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone29
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone30
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone32
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone34
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone35
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone37
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone38
+03:12:37 | INFO: Blender create Mesh node COL_anchor_quavel_FallStone40
+03:12:37 | INFO: glTF import finished in 0.25s
+
+validate packages/client/public/models/cities/ixari_anchor.glb  (family cities, export .glb)
+  anchor_quavel / anchor_quavel [hero]  tris LOD0 76,876, LOD1 23,062, LOD2 7,617, LOD3 2,576  size 14.79 x 10.75 x 52.00 m
+  PASS  naming
+        ok    ixari_anchor.glb: 1 variant(s) in 1 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    anchor_quavel: LOD0 76,876 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+        ok    geometry: meshopt-compressed: 2.2 MB of streams
+  PASS  LODs
+        ok    anchor_quavel: 76,876 > 23,062 > 7,617 > 2,576 triangles; LOD3 3.4% of LOD0
+  PASS  materials
+        ok    IxariAtlas4096: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    textures: 4 KTX2 map(s) (1 UASTC, 3 ETC1S) with full mip chains, 1.1 MB
+        ok    anchor_quavel: textures take 85 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB
+  PASS  scale references
+        ok    source: assets/blend/cities/ixari_anchor.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    anchor_quavel: longest side 52.00 m within 0.5-400 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/ixari/receipts/revise-r1-stock/validators/cities__ixari_anchor.glb.json
+03:12:37 | INFO: Data are loaded, start creating Blender stuff
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim0
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim1
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim2
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim3
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim4
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim5
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim6
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim7
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim8
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim9
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim10
+03:12:37 | INFO: Blender create Mesh node COL_prop_ixari_basin_BasinRim11
+03:12:37 | INFO: Blender create Mesh node prop_ixari_basin_Facets
+03:12:37 | INFO: Blender create Mesh node prop_ixari_basin_Facets_L1
+03:12:38 | INFO: Blender create Mesh node prop_ixari_basin_Facets_L2
+03:12:38 | INFO: Blender create Mesh node prop_ixari_basin_Facets_L3
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_board_MemoryLectern
+03:12:38 | INFO: Blender create Mesh node prop_ixari_board_Facets
+03:12:38 | INFO: Blender create Mesh node prop_ixari_board_Facets_L1
+03:12:38 | INFO: Blender create Mesh node prop_ixari_board_Facets_L2
+03:12:38 | INFO: Blender create Mesh node prop_ixari_board_Facets_L3
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_Seat
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm0Growth0_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm0Growth1_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm0Growth2_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm0Growth3_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm0Socket
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm2Growth0_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm2Growth1_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm2Growth2_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm2Growth3_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_seat_SeatArm2Socket
+03:12:38 | INFO: Blender create Mesh node prop_ixari_seat_Facets
+03:12:38 | INFO: Blender create Mesh node prop_ixari_seat_Facets_L1
+03:12:38 | INFO: Blender create Mesh node prop_ixari_seat_Facets_L2
+03:12:38 | INFO: Blender create Mesh node prop_ixari_seat_Facets_L3
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_Counter
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_GrownAwning
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost0Growth0_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost0Growth1_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost0Growth2_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost0Growth3_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost0Socket
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost2Growth0_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost2Growth1_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost2Growth2_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost2Growth3_Fitted
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_stall_StallPost2Socket
+03:12:38 | INFO: Blender create Mesh node prop_ixari_stall_Facets
+03:12:38 | INFO: Blender create Mesh node prop_ixari_stall_Facets_L1
+03:12:38 | INFO: Blender create Mesh node prop_ixari_stall_Facets_L2
+03:12:38 | INFO: Blender create Mesh node prop_ixari_stall_Facets_L3
+03:12:38 | INFO: Blender create Mesh node COL_prop_ixari_terminal_MemoryLectern
+03:12:38 | INFO: Blender create Mesh node prop_ixari_terminal_Facets
+03:12:38 | INFO: Blender create Mesh node prop_ixari_terminal_Facets_L1
+03:12:38 | INFO: Blender create Mesh node prop_ixari_terminal_Facets_L2
+03:12:38 | INFO: Blender create Mesh node prop_ixari_terminal_Facets_L3
+03:12:38 | INFO: glTF import finished in 0.15s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/cities/ixari_props.glb  (family cities, export .glb)
+  prop_ixari_basin / prop_ixari_basin [prop]  tris LOD0 9,360, LOD1 2,808, LOD2 920, LOD3 302  size 1.87 x 1.86 x 0.87 m
+  prop_ixari_board / prop_ixari_board [prop]  tris LOD0 9,140, LOD1 2,742, LOD2 892, LOD3 278  size 2.23 x 1.02 x 2.82 m
+  prop_ixari_seat / prop_ixari_seat [prop]  tris LOD0 4,264, LOD1 1,278, LOD2 422, LOD3 141  size 3.27 x 0.99 x 1.43 m
+  prop_ixari_stall / prop_ixari_stall [prop]  tris LOD0 9,088, LOD1 2,726, LOD2 894, LOD3 283  size 4.27 x 2.00 x 2.95 m
+  prop_ixari_terminal / prop_ixari_terminal [prop]  tris LOD0 6,260, LOD1 1,878, LOD2 609, LOD3 193  size 1.83 x 1.02 x 1.92 m
+  PASS  naming
+        ok    ixari_props.glb: 5 variant(s) in 5 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    prop_ixari_basin: LOD0 9,360 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    prop_ixari_board: LOD0 9,140 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    prop_ixari_seat: LOD0 4,264 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ... 3 more
+  PASS  LODs
+        ok    prop_ixari_basin: 9,360 > 2,808 > 920 > 302 triangles; LOD3 3.2% of LOD0
+        ok    prop_ixari_board: 9,140 > 2,742 > 892 > 278 triangles; LOD3 3.0% of LOD0
+        ok    prop_ixari_seat: 4,264 > 1,278 > 422 > 141 triangles; LOD3 3.3% of LOD0
+        ok    ... 2 more
+  PASS  materials
+        ok    IxariAtlas1024: pbr: base colour, roughness, metallic, normal, AO, emissive
+        ok    textures: 4 KTX2 map(s) (1 UASTC, 3 ETC1S) with full mip chains, 0.2 MB
+        ok    prop_ixari_basin: textures take 5 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the prop budget of 32 MB
+        ok    ... 4 more
+  PASS  scale references
+        ok    source: assets/blend/cities/ixari_props.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    prop_ixari_basin: longest side 1.87 m within 0.05-6 m
+        ok    prop_ixari_board: longest side 2.82 m within 0.05-6 m
+        ok    ... 3 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/ixari/receipts/revise-r1-stock/validators/cities__ixari_props.glb.json
+
+4 of 4 file(s) passed validation

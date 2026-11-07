@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_revision_image_cap/packages/tools/blender/cities/ixari/build_report.py", line 392, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_revision_image_cap/packages/tools/blender/cities/ixari/build_report.py", line 228, in collect
+    require(len(new_images)<=12 and sum(p.stat().st_size for p in new_images)<=128*1024**2,'revision image cap')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_revision_image_cap/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: revision image cap
+

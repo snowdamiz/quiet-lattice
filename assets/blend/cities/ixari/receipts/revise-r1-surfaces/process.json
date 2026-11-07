@@ -1,0 +1,64 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ixari/revise_surfaces.py",
+    "--",
+    "assets/blend/cities/ixari/receipts/revise-r1-surfaces/edits.json"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 360,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T08:09:32Z",
+  "head": "2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/revise_surfaces.py": "a3fe6f05836cb3382363431835f7e0fd3861cfcf578f35c2ae4b3bc6143538eb"
+  },
+  "diskFreeBytesAtAdmission": 37542404096,
+  "diskReserveBytes": 9663676416,
+  "reapedScope": "owned process group; deliberately detached descendants are not covered",
+  "exitCode": 0,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 43.399,
+  "peakGroupRssKiB": 1923568,
+  "observedGroupPids": [
+    63600
+  ],
+  "last20Lines": [
+    "00:00.360  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_anchor.blend\"",
+    "00:40.800  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_props.blend\"",
+    "    generated LODs for anchor_quavel: 76,876 > 23,062 > 7,686 > 2,690 triangles",
+    "Info: Saved as \"ixari_anchor.blend\"",
+    "    generated LODs for prop_ixari_terminal: 6,260 > 1,878 > 626 > 218 triangles",
+    "    generated LODs for prop_ixari_board: 9,140 > 2,742 > 914 > 318 triangles",
+    "Info: Saved as \"ixari_props.blend\"",
+    "SAVED: removed false ribbons; authored Ixari fault colonies and pressure facets; architecture/COL/markers preserved",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit"
+  ]
+}

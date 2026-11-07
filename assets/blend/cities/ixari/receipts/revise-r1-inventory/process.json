@@ -1,0 +1,61 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ixari/measure_inventory.py",
+    "--",
+    "--only",
+    "anchor,props"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78",
+  "backend": "CPU iteration; not GPU visual PASS",
+  "threadEnv": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "RAYON_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2"
+  },
+  "wallLimitSeconds": 60,
+  "rssLimitMiB": 8192,
+  "logLimitMiB": 32,
+  "imageLimit": 48,
+  "imageBudgetMiB": 512,
+  "outputLimitMiB": 4096,
+  "startedUtc": "2026-11-07T08:10:47Z",
+  "head": "2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00",
+  "inputScriptSha256": {
+    "packages/tools/blender/cities/ixari/measure_inventory.py": "f6d682f7dfc3a43d429d8ca60709b09e2a081b2a73f8b1d90496d6b1e35163ee"
+  },
+  "diskFreeBytesAtAdmission": 37143838720,
+  "diskReserveBytes": 9663676416,
+  "reapedScope": "owned process group; deliberately detached descendants are not covered",
+  "exitCode": 0,
+  "stoppedBy": null,
+  "signals": [],
+  "reaped": true,
+  "elapsedSeconds": 1.168,
+  "peakGroupRssKiB": 250080,
+  "observedGroupPids": [
+    71214
+  ],
+  "last20Lines": [
+    "00:00.312  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_anchor.blend\"",
+    "00:00.402  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari_props.blend\"",
+    "MEASURED anchor.json 1",
+    "MEASURED props.json 5",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit"
+  ]
+}

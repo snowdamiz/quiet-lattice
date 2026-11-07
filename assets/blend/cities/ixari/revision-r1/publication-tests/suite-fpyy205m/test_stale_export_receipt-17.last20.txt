@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_stale_export_receipt/packages/tools/blender/cities/ixari/build_report.py", line 392, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_stale_export_receipt/packages/tools/blender/cities/ixari/build_report.py", line 189, in collect
+    export_audit=audits(config['exportAudit'],'export',exports,assets)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_stale_export_receipt/packages/tools/blender/cities/ixari/build_report.py", line 98, in audits
+    checked(input_path(f['path']),f['sha256'])
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_stale_export_receipt/packages/tools/blender/cities/ixari/build_report.py", line 61, in checked
+    require(expected is None or value==expected,f'hash mismatch: {rel(path)}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_stale_export_receipt/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: hash mismatch: packages/client/public/models/cities/ixari_anchor.glb
+

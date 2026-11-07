@@ -1,0 +1,25 @@
+{
+  "status": "FAILED_NOT_PUBLISHED",
+  "command": [
+    "python3",
+    "packages/tools/blender/cities/ixari/prepare_revision.py",
+    "assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/results.json"
+  ],
+  "exitCode": 1,
+  "currentStatusAtFailure": "IN_PROGRESS",
+  "reason": "Required eslint receipt failed on an unimported process identifier in the dedicated cache config.",
+  "capturedToolTail": [
+    "File \"packages/tools/blender/cities/ixari/prepare_revision.py\", line 93, in main",
+    "config['commands']={name:receipt(attempt,inputs=read(TASK/'receipts'/attempt/'process.json')['inputScriptSha256'])",
+    "File \"packages/tools/blender/cities/ixari/prepare_revision.py\", line 24, in receipt",
+    "assert p['exitCode']==0 and p['reaped'] and not p['stoppedBy'],name",
+    "AssertionError: revise-r1-eslint"
+  ],
+  "retainedPartialMetadata": [
+    "revision-r1/REVISION-C2.json",
+    "revision-r1/GPU_HANDOFF.json",
+    "revision-r1/history-before-publication.jsonl",
+    "revision-r1/reviewer-r1.md"
+  ],
+  "authority": "Only reports/CURRENT.json can qualify a complete report set; these files were never published."
+}

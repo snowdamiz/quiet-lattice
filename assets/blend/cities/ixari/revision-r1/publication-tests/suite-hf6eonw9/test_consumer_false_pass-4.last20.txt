@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-hf6eonw9/test_consumer_false_pass/packages/tools/blender/cities/ixari/build_report.py", line 371, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-hf6eonw9/test_consumer_false_pass/packages/tools/blender/cities/ixari/build_report.py", line 208, in collect
+    require(consumer['success'] is True and consumer['numTotalTests']==consumer['numPassedTests']==68
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            and consumer['numFailedTests']==consumer['numPendingTests']==consumer.get('numTodoTests',0)==0,'consumer must pass all 68 tests')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-hf6eonw9/test_consumer_false_pass/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: consumer must pass all 68 tests
+

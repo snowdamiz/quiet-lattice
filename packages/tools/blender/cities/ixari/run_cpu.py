@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -23,14 +24,27 @@ def processes(group):
             for p, g, r, s in [row.split()] if int(g) == group and not s.startswith('Z')]
 
 
-def file_bytes(paths):
+def file_bytes(paths, unique=False):
     total=0
+    seen=set()
     for path in paths:
         try:
-            if path.is_file():total+=path.stat().st_size
+            if path.is_file():
+                stat=path.stat();identity=(stat.st_dev,stat.st_ino)
+                if not unique or identity not in seen:total+=stat.st_size
+                seen.add(identity)
         except FileNotFoundError:
             pass  # The one reused render scratch still may be removed between enumeration and stat.
     return total
+
+
+def artifact_hashes():
+    paths = list((ROOT / 'assets/blend/cities').glob('ixari_*.blend'))
+    paths += list((ROOT / 'packages/client/public/models/cities').glob('ixari_*.glb'))
+    paths += list((TASK / 'inventory').glob('*.json'))
+    paths += [ROOT / 'packages/tools/blender/cities/ixari/consumer.test.js',
+              ROOT / 'packages/tools/blender/cities/ixari/consumer.config.mjs']
+    return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths if p.is_file()}
 
 
 def stop(proc):
@@ -67,26 +81,38 @@ def run(args):
     receipt['head'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     receipt['inputScriptSha256'] = {x: hashlib.sha256((ROOT / x).read_bytes()).hexdigest()
                                     for x in command if x.endswith(('.py','.js','.mjs')) and (ROOT/x).is_file()}
+    receipt['evaluatedInputsBefore'] = artifact_hashes()
     start = time.monotonic()
     peak = 0
     proc = None
     stopped = []
     reason = None
+    revision = TASK / 'revision-r1/baseline.json'
+    baseline = json.loads(revision.read_text()) if revision.exists() else None
+    receipt['diskFreeBytesAtAdmission'] = shutil.disk_usage(ROOT).free
+    receipt['diskReserveBytes'] = 9 * 1024**3
+    receipt['reapedScope'] = 'owned process group; deliberately detached descendants are not covered'
+    observed = set()
     lock = (TASK / '.cpu-lane.lock').open('a')
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if receipt['diskFreeBytesAtAdmission'] < receipt['diskReserveBytes']:
+            raise RuntimeError('disk admission: retain 8 GiB reserve plus 1 GiB output allowance')
         for signum in (signal.SIGINT, signal.SIGTERM):
             signal.signal(signum, lambda s, f: (_ for _ in ()).throw(InterruptedError(str(s))))
         with (attempt / 'output.txt').open('x') as output:
             proc = subprocess.Popen(command, cwd=ROOT, env=env, stdout=output,
                                     stderr=subprocess.STDOUT, start_new_session=True)
             while proc.poll() is None:
-                peak = max(peak, sum(r for p, r, s in processes(proc.pid)))
+                group = processes(proc.pid)
+                observed.update(p for p, r, s in group)
+                peak = max(peak, sum(r for p, r, s in group))
                 elapsed = time.monotonic() - start
                 renders = list((ROOT / 'assets/renders/cities/ixari').rglob('*.png'))
                 output_paths = list(TASK.rglob('*')) + list((ROOT / 'assets/blend/cities').glob('ixari_*.blend'))
                 output_paths += list((ROOT / 'packages/client/public/models/cities').glob('ixari_*.glb'))
                 image_bytes = file_bytes(renders)
+                new_images = [p for p in renders if baseline and str(p.relative_to(ROOT)) not in baseline['files']]
                 if elapsed > args.seconds:
                     reason = 'wall limit'
                 elif peak > args.rss_mib * 1024:
@@ -95,7 +121,11 @@ def run(args):
                     reason = 'log limit'
                 elif len(renders) > 48 or image_bytes > 512 * 1024**2:
                     reason = 'compact image budget'
-                elif file_bytes(output_paths) > 4096 * 1024**2:
+                elif baseline and (len(new_images) > 12 or file_bytes(new_images) > 128 * 1024**2):
+                    reason = 'revision compact image budget'
+                elif shutil.disk_usage(ROOT).free < 8 * 1024**3:
+                    reason = 'disk reserve'
+                elif file_bytes(output_paths, unique=True) > 4096 * 1024**2:
                     reason = 'owned artifact output limit'
                 if reason:
                     break
@@ -108,6 +138,8 @@ def run(args):
         receipt.update(exitCode=proc.returncode if proc else None, stoppedBy=reason,
                        signals=stopped, reaped=proc is None or not processes(proc.pid),
                        elapsedSeconds=round(time.monotonic()-start, 3), peakGroupRssKiB=peak)
+        receipt['observedGroupPids'] = sorted(observed)
+        receipt['evaluatedInputsAfter'] = artifact_hashes()
         if (attempt / 'output.txt').exists():
             receipt['last20Lines'] = (attempt / 'output.txt').read_text(errors='replace').splitlines()[-20:]
         (attempt / 'process.json').write_text(json.dumps(receipt, indent=2)+'\n')

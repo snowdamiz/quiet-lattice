@@ -1,5 +1,11 @@
 # P1.E10.T06 — Ixari and Quavel
 
+Current qualification is exclusively [reports/CURRENT.json](reports/CURRENT.json).
+Accept only `PASS` and verify the three report hashes it names. Any other status
+is unqualified. The original root `manifest.json`, `APPENDIX-C2.json` and
+`SHA256SUMS` are preserved historical evidence for commit `2d23ecb3c`; they do
+not qualify later source edits. Each new report set has an exclusive directory.
+
 This is the complete CPU/source handoff: 33 assets, eight editable Blender files,
 eight compressed GLBs, four saved LODs per asset, and retained CPU evidence.
 GPU Review, performance qualification, blind visual grading, and city runtime
@@ -23,6 +29,13 @@ triangle count, marker, route, source/export hash, and final CPU image.
 `APPENDIX-C2.json` records full commands, results, interpretation decisions,
 integration boundaries, and retained last-20-line failure tails. `attempts.jsonl`
 and `receipts/` preserve the complete run history, including failed attempts.
+
+Revision R1 removes the noncanonical box ribbons from the anchor, terminal and
+board. Its replacement surfaces are Ixari fault colonies and tactile crystal
+pressure facets, using violet/lilac and biolume cyan. They are decorative growth
+and controls, not Cartographer writing. Complete canonical alphabet application,
+2–4 cm V-cuts, stroke/orientation rules and exclusive network light remain with
+E10.T08. The anchor's stone architecture is retained for that future application.
 
 ## Inventory
 

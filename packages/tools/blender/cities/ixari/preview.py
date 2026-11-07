@@ -24,6 +24,10 @@ def main():
     p.add_argument('--lod',type=int,choices=(0,2),default=0)
     p.add_argument('--detail',action='store_true')
     p.add_argument('--export',action='store_true',help='render the actual compressed artifact after stock CPU decoding')
+    p.add_argument('--focus',nargs=3,type=float,help='saved surface detail centre in source metres')
+    p.add_argument('--span',type=float,default=6,help='metres across a focused surface view')
+    p.add_argument('--night',action='store_true',help='CPU iteration of material emission, not engine lighting')
+    p.add_argument('--assets',help='comma-separated saved assets for a focused composite')
     a=p.parse_args(sys.argv[sys.argv.index('--')+1:])
     source=ROOT/f'assets/blend/cities/ixari_{a.group}.blend'
     out=ROOT/'assets/renders/cities/ixari'/a.name
@@ -34,6 +38,9 @@ def main():
         with bpy.data.libraries.load(str(source),link=False) as (src,dst):dst.collections=['REF']
         bpy.context.scene.collection.children.link(dst.collections[0])
     variants=[v for aa in model.assets for v in aa.variants.values()]
+    if a.assets:
+        requested=set(a.assets.split(','));assert requested <= {v.id for v in variants}
+        variants=[v for v in variants if v.id in requested]
     sc=bpy.context.scene
     sc.render.engine='CYCLES';sc.cycles.device='CPU';sc.cycles.samples=12
     sc.cycles.use_denoising=True;sc.cycles.max_bounces=4
@@ -41,7 +48,7 @@ def main():
     sc.render.resolution_x=a.cell;sc.render.resolution_y=a.cell;sc.render.resolution_percentage=100
     sc.world=bpy.data.worlds.new('CPUStudio');sc.world.use_nodes=True
     sc.world.node_tree.nodes['Background'].inputs[0].default_value=(.13,.16,.24,1)
-    sc.world.node_tree.nodes['Background'].inputs[1].default_value=.45
+    sc.world.node_tree.nodes['Background'].inputs[1].default_value=.02 if a.night else .45
     sc.view_settings.view_transform='AgX'
     sc.view_settings.exposure=.4
     for o in sc.objects:o.hide_render=True
@@ -77,6 +84,8 @@ def main():
         lo,hi=(Vector(x) for x in S.bounds(meshes));size=max(hi-lo);center=(lo+hi)*.5
         if a.detail:
             size=min(size,12);center=Vector((0,lo.y+1.5,2.2))
+        if a.focus:
+            size=a.span;center=Vector(a.focus)
         ref.location=(min(hi.x,4.1),lo.y-.8,0)
         for col in range(a.views):
             angle=-math.pi/2+col*math.pi/4
@@ -90,7 +99,7 @@ def main():
             for ob,d,e in lights:
                 ob.location=center+d*size
                 ob.rotation_euler=(center-ob.location).to_track_quat('-Z','Y').to_euler()
-                ob.data.size=size*.75;ob.data.energy=e*(size/10)**2
+                ob.data.size=size*.75;ob.data.energy=e*(size/10)**2*(.04 if a.night else 1)
             sc.render.filepath=str(scratch)
             bpy.ops.render.render(write_still=True)
             im=bpy.data.images.load(str(scratch),check_existing=False)
@@ -106,7 +115,8 @@ def main():
     (out/'readout.json').write_text(json.dumps(dict(backend='CYCLES_CPU',claim='CPU iteration, not GPU visual PASS',
         source=str(asset.relative_to(ROOT)),sourceSha256=hashlib.sha256(asset.read_bytes()).hexdigest(),
         artifactKind='compressed GLB, stock CPU decoded' if a.export else 'saved source',
-        threads=2,samples=12,lod=a.lod,exposure=.4,cells=cells,rawSequence=False),indent=2)+'\n')
+        threads=2,samples=12,lod=a.lod,exposure=.4,cells=cells,rawSequence=False,
+        focus=a.focus,span=a.span if a.focus else None,nightMaterialIteration=a.night),indent=2)+'\n')
     print('CPU ITERATION SHEET',out/'sheet.png')
 
 

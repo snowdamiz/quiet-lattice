@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_complete_publication_and_duplicate/packages/tools/blender/cities/ixari/build_report.py", line 382, in publish
+    require(not destination.exists() and not destination.is_symlink(),'attempt output already exists')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/test_complete_publication_and_duplicate/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: attempt output already exists
+

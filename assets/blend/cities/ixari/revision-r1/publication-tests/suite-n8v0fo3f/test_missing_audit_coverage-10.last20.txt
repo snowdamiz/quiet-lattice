@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-n8v0fo3f/test_missing_audit_coverage/packages/tools/blender/cities/ixari/build_report.py", line 368, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-n8v0fo3f/test_missing_audit_coverage/packages/tools/blender/cities/ixari/build_report.py", line 184, in collect
+    source_audit=audits(config['sourceAudit'],'source',sources,assets)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-n8v0fo3f/test_missing_audit_coverage/packages/tools/blender/cities/ixari/build_report.py", line 92, in audits
+    rows=audit['files'];require(len(rows)==8 and {f['path'] for f in rows}==set(files),'audit file coverage')
+                        ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-n8v0fo3f/test_missing_audit_coverage/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: audit file coverage
+

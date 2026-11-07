@@ -1,0 +1,38 @@
+{
+  "status": "PASS_PUBLICATION_FIXTURES_ONLY",
+  "baseReproduction": {
+    "status": "REPRODUCED",
+    "evidence": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/base-7nk1v97y/reproduction.json",
+    "baseHEAD": "2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00",
+    "scriptSha256": "1fdae783d510869cd23880ef256b621f2b3265389a3e49684b7595eafd6470b5"
+  },
+  "finalScriptSha256": "94cb7756a4e440c3cbae5bde119bfbdc407a331e92134e6bc8ebc34624e93be4",
+  "tests": 12,
+  "results": "suite-kvp3delk/results.json",
+  "testCommand": [
+    "python3",
+    "packages/tools/blender/cities/ixari/test_publication.py"
+  ],
+  "inputInterface": "INPUTS.md",
+  "syntax": "PASS",
+  "scopedDiffCheck": "PASS",
+  "legacyReportsMatchBaseline": true,
+  "productionInputsQualified": false,
+  "limits": [
+    "No Blender, GPU, browser, services, database or network execution.",
+    "No commits, installs, PRs or merges.",
+    "Inputs are producer receipts; publication checks their hashes and coverage without rerunning receipt producers.",
+    "Input files must be quiescent during publication; command histories must be frozen if runners append later.",
+    "If a read-only filesystem prevents both pointer replacement and deletion, the invocation exits nonzero and cannot revoke an existing pointer.",
+    "Concurrency test holds the real publisher lock and runs the actual CLI loser; it does not launch two simultaneously successful publishers."
+  ],
+  "failedFixtureRunsRetained": [
+    "suite-gzs8l3f1",
+    "suite-p5njoljy"
+  ],
+  "earlierSuccessfulRunsRetained": [
+    "suite-n8v0fo3f",
+    "suite-652kwmzr",
+    "suite-hf6eonw9"
+  ]
+}

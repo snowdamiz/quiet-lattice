@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-p5njoljy/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 366, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-p5njoljy/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 190, in collect
+    summaries[f'stock-{index}']=receipt(batch['receipt'],names)
+                                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-p5njoljy/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 84, in receipt
+    for name,h in p.get('inputScriptSha256',{}).items():checked(input_path(name),h)
+                                                        ~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-p5njoljy/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 60, in checked
+    value=digest(path)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-p5njoljy/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 42, in digest
+    with path.open('rb') as f:
+         ~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-p5njoljy/test_late_eslint/packages/tools/blender/validate.py'
+

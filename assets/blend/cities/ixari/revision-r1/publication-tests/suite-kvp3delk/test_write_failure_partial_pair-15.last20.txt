@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_write_failure_partial_pair/packages/tools/blender/cities/ixari/build_report.py", line 374, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_write_failure_partial_pair/packages/tools/blender/cities/ixari/build_report.py", line 318, in collect
+    write_json(stage/'APPENDIX-C2.json',report)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_write_failure_partial_pair/packages/tools/blender/cities/ixari/build_report.py", line 325, in write_json
+    json.dump(value,f,indent=2);f.write('\n');f.flush();os.fsync(f.fileno())
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 182, in dump
+    fp.write(chunk)
+    ~~~~~~~~^^^^^^^
+OSError: [Errno 27] File too large
+

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-6vifl1kk/test_execution_input_binding_mismatch/packages/tools/blender/cities/ixari/build_report.py", line 391, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-6vifl1kk/test_execution_input_binding_mismatch/packages/tools/blender/cities/ixari/build_report.py", line 210, in collect
+    summaries['consumer']=receipt(config['consumer'],sources|exports|{rel(p) for p in inventories})
+                          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-6vifl1kk/test_execution_input_binding_mismatch/packages/tools/blender/cities/ixari/build_report.py", line 86, in receipt
+    require(p['evaluatedInputsBefore'][name]==h and p.get('evaluatedInputsAfter',{}).get(name)==h,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            'receipt input changed during or after execution: '+name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-6vifl1kk/test_execution_input_binding_mismatch/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: receipt input changed during or after execution: assets/blend/cities/ixari_anchor.blend
+

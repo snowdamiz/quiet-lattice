@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_missing_and_malformed_inputs/packages/tools/blender/cities/ixari/build_report.py", line 370, in publish
+    config_path=input_path(args.inputs);checked(config_path)
+                                        ~~~~~~~^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_missing_and_malformed_inputs/packages/tools/blender/cities/ixari/build_report.py", line 60, in checked
+    value=digest(path)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_missing_and_malformed_inputs/packages/tools/blender/cities/ixari/build_report.py", line 42, in digest
+    with path.open('rb') as f:
+         ~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_missing_and_malformed_inputs/missing.json'
+

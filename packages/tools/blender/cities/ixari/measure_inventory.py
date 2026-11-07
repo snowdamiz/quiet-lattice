@@ -1,5 +1,6 @@
 """Refresh measured fields from authoritative saved sources after edit sessions."""
 import hashlib
+import argparse
 import json
 import math
 from pathlib import Path
@@ -13,7 +14,11 @@ sys.path.insert(0,str(ROOT/'packages/tools/blender'))
 from artlib import core, rules as R, scene as S
 
 rules=R.load()
+parser=argparse.ArgumentParser()
+parser.add_argument('--only', help='comma-separated owned families to refresh')
+args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 for ip in sorted((ROOT/'assets/blend/cities/ixari/inventory').glob('*.json')):
+    if args.only and ip.stem not in args.only.split(','):continue
     inventory=json.loads(ip.read_text());path=ROOT/inventory[0]['source']
     core.load(path);model=S.collect_source(rules);S.assign_classes(rules,'cities',model)
     variants={v.id:v for a in model.assets for v in a.variants.values()}

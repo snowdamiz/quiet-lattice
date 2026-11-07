@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_changed_source_cannot_publish_old_glb/packages/tools/blender/cities/ixari/build_report.py", line 374, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_changed_source_cannot_publish_old_glb/packages/tools/blender/cities/ixari/build_report.py", line 172, in collect
+    require(meta['export']['sha256']!=baseline[rel(export)]['sha256'],'changed source still has baseline GLB')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-kvp3delk/test_changed_source_cannot_publish_old_glb/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: changed source still has baseline GLB
+

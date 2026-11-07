@@ -1,0 +1,893 @@
+{
+  "TASK": "P1.E10.T06 revision R1",
+  "STATUS": "PASS_CPU_SOURCE_REVISION",
+  "revisionBaseHEAD": "2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00",
+  "revisionBaseTree": "30ac4e907dbaebb537b9b87fa83aa40424c370e8",
+  "SUMMARY": "Remove noncanonical network-light ribbons; save nine localized crystal fault colonies on the anchor and three tactile pressure facets each on the terminal and board. Regenerate only affected saved LODs and export only anchor/props. Publish current qualification only through an atomic complete report set.",
+  "changedArtifacts": [
+    {
+      "path": "assets/blend/cities/ixari_anchor.blend",
+      "beforeSha256": "e0458a91dd141ac0c235947186007ee6593967adb4f82b6b21d04ae9a34ee40b",
+      "afterSha256": "d72c741e6cce0ac4591c561889e07b4a060a6a952b19dded0f512357ac5bc77a",
+      "bytes": 7675535
+    },
+    {
+      "path": "assets/blend/cities/ixari_props.blend",
+      "beforeSha256": "3b21e602c9b1f464fcc2b908f3a102aa1a16ab14bd77eb522c4dad3adaa676c9",
+      "afterSha256": "133ff3ef15e5b202af7de682d2f0218ed35d12243cd0b236de658f21e162da15",
+      "bytes": 2098064
+    },
+    {
+      "path": "packages/client/public/models/cities/ixari_anchor.glb",
+      "beforeSha256": "dd84e0b2bcc8f476264a338a8387a65e5917e85e385a989954b25a762f206974",
+      "afterSha256": "5df8fb4a90efbb68b476ce481bfd569e74d0b61eb1706d05fc5dde3b8c2db35b",
+      "bytes": 3323312
+    },
+    {
+      "path": "packages/client/public/models/cities/ixari_props.glb",
+      "beforeSha256": "864800e8e363c4e6f27ba24864ff68d12206f4a8799e529e862786f43e9bf3a2",
+      "afterSha256": "465f2e6acb3688efef7bc3811bc722e40d2e818bbc7863230f25bc4ef98ead6f",
+      "bytes": 1472232
+    }
+  ],
+  "unchangedBundles": [
+    "civic",
+    "kit",
+    "landmarks",
+    "low",
+    "mid",
+    "tall"
+  ],
+  "preservedHistoricalFiles": [
+    "assets/blend/cities/ixari/APPENDIX-C2.json",
+    "assets/blend/cities/ixari/SHA256SUMS",
+    "assets/blend/cities/ixari/manifest.json",
+    "assets/blend/cities/ixari/receipts/anchor-light-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/anchor-light-r1/process.json",
+    "assets/blend/cities/ixari/receipts/audit-export-final/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-export-final/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-export-final/process.json",
+    "assets/blend/cities/ixari/receipts/audit-export-r1/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-export-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-export-r1/process.json",
+    "assets/blend/cities/ixari/receipts/audit-source-final/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-source-final/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-source-final/process.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r1/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-source-r1/process.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r2/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-source-r2/process.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r3/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r3/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-source-r3/process.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r4/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r4/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-source-r4/process.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r5/audit.json",
+    "assets/blend/cities/ixari/receipts/audit-source-r5/output.txt",
+    "assets/blend/cities/ixari/receipts/audit-source-r5/process.json",
+    "assets/blend/cities/ixari/receipts/author-anchor-r5/output.txt",
+    "assets/blend/cities/ixari/receipts/author-anchor-r5/process.json",
+    "assets/blend/cities/ixari/receipts/author-civic-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/author-civic-r1/process.json",
+    "assets/blend/cities/ixari/receipts/author-civic-r4/output.txt",
+    "assets/blend/cities/ixari/receipts/author-civic-r4/process.json",
+    "assets/blend/cities/ixari/receipts/author-kit-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/author-kit-r1/process.json",
+    "assets/blend/cities/ixari/receipts/author-kit-r4/output.txt",
+    "assets/blend/cities/ixari/receipts/author-kit-r4/process.json",
+    "assets/blend/cities/ixari/receipts/author-landmarks-r5/output.txt",
+    "assets/blend/cities/ixari/receipts/author-landmarks-r5/process.json",
+    "assets/blend/cities/ixari/receipts/author-low-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/author-low-r1/process.json",
+    "assets/blend/cities/ixari/receipts/author-low-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/author-low-r2/process.json",
+    "assets/blend/cities/ixari/receipts/author-low-r3/output.txt",
+    "assets/blend/cities/ixari/receipts/author-low-r3/process.json",
+    "assets/blend/cities/ixari/receipts/author-low-r4/output.txt",
+    "assets/blend/cities/ixari/receipts/author-low-r4/process.json",
+    "assets/blend/cities/ixari/receipts/author-mid-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/author-mid-r1/process.json",
+    "assets/blend/cities/ixari/receipts/author-mid-r4/output.txt",
+    "assets/blend/cities/ixari/receipts/author-mid-r4/process.json",
+    "assets/blend/cities/ixari/receipts/author-props-r4/output.txt",
+    "assets/blend/cities/ixari/receipts/author-props-r4/process.json",
+    "assets/blend/cities/ixari/receipts/author-props-r5/output.txt",
+    "assets/blend/cities/ixari/receipts/author-props-r5/process.json",
+    "assets/blend/cities/ixari/receipts/author-tall-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/author-tall-r1/process.json",
+    "assets/blend/cities/ixari/receipts/author-tall-r4/output.txt",
+    "assets/blend/cities/ixari/receipts/author-tall-r4/process.json",
+    "assets/blend/cities/ixari/receipts/consumer-baseline-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/consumer-baseline-r1/process.json",
+    "assets/blend/cities/ixari/receipts/consumer-final-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/consumer-final-r1/process.json",
+    "assets/blend/cities/ixari/receipts/consumer-final-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/consumer-final-r2/process.json",
+    "assets/blend/cities/ixari/receipts/control-churn-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/control-churn-r1/process.json",
+    "assets/blend/cities/ixari/receipts/control-lock-r1/process.json",
+    "assets/blend/cities/ixari/receipts/control-timeout-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/control-timeout-r1/process.json",
+    "assets/blend/cities/ixari/receipts/eslint-final/output.txt",
+    "assets/blend/cities/ixari/receipts/eslint-final/process.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/process.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_anchor.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_anchor.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_civic.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_civic.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_kit.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_kit.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_landmarks.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_landmarks.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_low.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_low.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_mid.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_mid.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_props.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_props.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_tall.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r1/validators/cities__ixari_tall.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/process.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_anchor.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_anchor.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_civic.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_civic.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_kit.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_kit.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_landmarks.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_landmarks.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_low.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_low.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_mid.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_mid.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_props.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_props.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_tall.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r2/validators/cities__ixari_tall.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/output.txt",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/process.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/validators/cities__ixari_civic.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/validators/cities__ixari_civic.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/validators/cities__ixari_kit.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/validators/cities__ixari_kit.glb.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/validators/cities__ixari_landmarks.blend.json",
+    "assets/blend/cities/ixari/receipts/export-stock-r3/validators/cities__ixari_landmarks.glb.json",
+    "assets/blend/cities/ixari/receipts/fit-civic-collider-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/fit-civic-collider-r1/process.json",
+    "assets/blend/cities/ixari/receipts/fit-landings-r1/edits.json",
+    "assets/blend/cities/ixari/receipts/fit-landings-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/fit-landings-r1/process.json",
+    "assets/blend/cities/ixari/receipts/format-final/output.txt",
+    "assets/blend/cities/ixari/receipts/format-final/process.json",
+    "assets/blend/cities/ixari/receipts/local-lfs-final.json",
+    "assets/blend/cities/ixari/receipts/materials-anchor-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-anchor-final/process.json",
+    "assets/blend/cities/ixari/receipts/materials-civic-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-civic-final/process.json",
+    "assets/blend/cities/ixari/receipts/materials-kit-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-kit-final/process.json",
+    "assets/blend/cities/ixari/receipts/materials-landmarks-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-landmarks-final/process.json",
+    "assets/blend/cities/ixari/receipts/materials-low-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-low-final/process.json",
+    "assets/blend/cities/ixari/receipts/materials-mid-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-mid-final/process.json",
+    "assets/blend/cities/ixari/receipts/materials-props-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-props-final/process.json",
+    "assets/blend/cities/ixari/receipts/materials-tall-final/output.txt",
+    "assets/blend/cities/ixari/receipts/materials-tall-final/process.json",
+    "assets/blend/cities/ixari/receipts/measure-inventory-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/measure-inventory-r1/process.json",
+    "assets/blend/cities/ixari/receipts/mesh-validity-final/audit.json",
+    "assets/blend/cities/ixari/receipts/mesh-validity-final/output.txt",
+    "assets/blend/cities/ixari/receipts/mesh-validity-final/process.json",
+    "assets/blend/cities/ixari/receipts/mesh-validity-r1/findings.json",
+    "assets/blend/cities/ixari/receipts/mesh-validity-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/mesh-validity-r1/process.json",
+    "assets/blend/cities/ixari/receipts/mesh-validity-r2/findings.json",
+    "assets/blend/cities/ixari/receipts/mesh-validity-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/mesh-validity-r2/process.json",
+    "assets/blend/cities/ixari/receipts/preview-anchor-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-anchor-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-anchor-shape-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-anchor-shape-r2/process.json",
+    "assets/blend/cities/ixari/receipts/preview-civic-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-civic-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-civic-shape-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-civic-shape-r2/process.json",
+    "assets/blend/cities/ixari/receipts/preview-export-landmarks-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-export-landmarks-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-export-low-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-export-low-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-export-props-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-export-props-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-kit-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-kit-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-landmarks-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-landmarks-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-landmarks-shape-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-landmarks-shape-r2/process.json",
+    "assets/blend/cities/ixari/receipts/preview-low-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-low-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-low-shape-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-low-shape-r1/process.json",
+    "assets/blend/cities/ixari/receipts/preview-low-shape-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-low-shape-r2/process.json",
+    "assets/blend/cities/ixari/receipts/preview-mid-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-mid-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-props-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-props-final/process.json",
+    "assets/blend/cities/ixari/receipts/preview-tall-final/output.txt",
+    "assets/blend/cities/ixari/receipts/preview-tall-final/process.json",
+    "assets/blend/cities/ixari/receipts/python-syntax-final/output.txt",
+    "assets/blend/cities/ixari/receipts/python-syntax-final/process.json",
+    "assets/blend/cities/ixari/receipts/refine-saved-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/refine-saved-r1/process.json",
+    "assets/blend/cities/ixari/receipts/refine-saved-r2/edits.json",
+    "assets/blend/cities/ixari/receipts/refine-saved-r2/output.txt",
+    "assets/blend/cities/ixari/receipts/refine-saved-r2/process.json",
+    "assets/blend/cities/ixari/receipts/refine-saved-r3/edits.json",
+    "assets/blend/cities/ixari/receipts/refine-saved-r3/output.txt",
+    "assets/blend/cities/ixari/receipts/refine-saved-r3/process.json",
+    "assets/blend/cities/ixari/receipts/resource-controls.json",
+    "assets/blend/cities/ixari/receipts/setup-offline-r1/output.txt",
+    "assets/blend/cities/ixari/receipts/setup-offline-r1/process.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/output.txt",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/process.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_anchor.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_anchor.glb.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_civic.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_civic.glb.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_kit.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_kit.glb.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_landmarks.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_landmarks.glb.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_low.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_low.glb.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_mid.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_mid.glb.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_props.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_props.glb.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_tall.blend.json",
+    "assets/blend/cities/ixari/receipts/stock-validate-final/validators/cities__ixari_tall.glb.json",
+    "assets/blend/cities/ixari_civic.blend",
+    "assets/blend/cities/ixari_kit.blend",
+    "assets/blend/cities/ixari_landmarks.blend",
+    "assets/blend/cities/ixari_low.blend",
+    "assets/blend/cities/ixari_mid.blend",
+    "assets/blend/cities/ixari_tall.blend",
+    "assets/renders/cities/ixari/anchor-shape-r2/readout.json",
+    "assets/renders/cities/ixari/anchor-shape-r2/sheet.png",
+    "assets/renders/cities/ixari/export-landmarks-final/readout.json",
+    "assets/renders/cities/ixari/export-landmarks-final/sheet.png",
+    "assets/renders/cities/ixari/export-low-final/readout.json",
+    "assets/renders/cities/ixari/export-low-final/sheet.png",
+    "assets/renders/cities/ixari/export-props-final/readout.json",
+    "assets/renders/cities/ixari/export-props-final/sheet.png",
+    "assets/renders/cities/ixari/landmarks-shape-r2/readout.json",
+    "assets/renders/cities/ixari/landmarks-shape-r2/sheet.png",
+    "assets/renders/cities/ixari/low-shape-r1/readout.json",
+    "assets/renders/cities/ixari/low-shape-r1/sheet.png",
+    "assets/renders/cities/ixari/low-shape-r2/readout.json",
+    "assets/renders/cities/ixari/low-shape-r2/sheet.png",
+    "assets/renders/cities/ixari/materials-anchor-final/readout.json",
+    "assets/renders/cities/ixari/materials-anchor-final/sheet.png",
+    "assets/renders/cities/ixari/materials-civic-final/readout.json",
+    "assets/renders/cities/ixari/materials-civic-final/sheet.png",
+    "assets/renders/cities/ixari/materials-kit-final/readout.json",
+    "assets/renders/cities/ixari/materials-kit-final/sheet.png",
+    "assets/renders/cities/ixari/materials-landmarks-final/readout.json",
+    "assets/renders/cities/ixari/materials-landmarks-final/sheet.png",
+    "assets/renders/cities/ixari/materials-low-final/readout.json",
+    "assets/renders/cities/ixari/materials-low-final/sheet.png",
+    "assets/renders/cities/ixari/materials-mid-final/readout.json",
+    "assets/renders/cities/ixari/materials-mid-final/sheet.png",
+    "assets/renders/cities/ixari/materials-props-final/readout.json",
+    "assets/renders/cities/ixari/materials-props-final/sheet.png",
+    "assets/renders/cities/ixari/materials-tall-final/readout.json",
+    "assets/renders/cities/ixari/materials-tall-final/sheet.png",
+    "assets/renders/cities/ixari/source-anchor-final/readout.json",
+    "assets/renders/cities/ixari/source-anchor-final/sheet.png",
+    "assets/renders/cities/ixari/source-civic-final/readout.json",
+    "assets/renders/cities/ixari/source-civic-final/sheet.png",
+    "assets/renders/cities/ixari/source-kit-final/readout.json",
+    "assets/renders/cities/ixari/source-kit-final/sheet.png",
+    "assets/renders/cities/ixari/source-landmarks-final/readout.json",
+    "assets/renders/cities/ixari/source-landmarks-final/sheet.png",
+    "assets/renders/cities/ixari/source-low-final/readout.json",
+    "assets/renders/cities/ixari/source-low-final/sheet.png",
+    "assets/renders/cities/ixari/source-mid-final/readout.json",
+    "assets/renders/cities/ixari/source-mid-final/sheet.png",
+    "assets/renders/cities/ixari/source-props-final/readout.json",
+    "assets/renders/cities/ixari/source-props-final/sheet.png",
+    "assets/renders/cities/ixari/source-tall-final/readout.json",
+    "assets/renders/cities/ixari/source-tall-final/sheet.png",
+    "packages/client/public/models/cities/ixari_civic.glb",
+    "packages/client/public/models/cities/ixari_kit.glb",
+    "packages/client/public/models/cities/ixari_landmarks.glb",
+    "packages/client/public/models/cities/ixari_low.glb",
+    "packages/client/public/models/cities/ixari_mid.glb",
+    "packages/client/public/models/cities/ixari_tall.glb"
+  ],
+  "protectedHashesUnchanged": 19,
+  "dependencyLaunchersUnchanged": {
+    "node_modules/.bin/vitest": {
+      "resolved": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/node_modules/.bin/vitest",
+      "sha256": "7de22f0fa8465e3480cb4b5396d7e1d1ad87c8cb34a6e679508696be4a549639",
+      "mtimeNs": 1794028836448289626,
+      "bytes": 4845
+    },
+    "node_modules/.bin/eslint": {
+      "resolved": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/node_modules/.bin/eslint",
+      "sha256": "5e8167a6d7e378fa083d49d8b00349f90c34db1ccf02070004144108e6ac6a9d",
+      "mtimeNs": 1794028836448544960,
+      "bytes": 4019
+    },
+    "node_modules/.bin/prettier": {
+      "resolved": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/node_modules/.bin/prettier",
+      "sha256": "2b27d28a44d1dbf1a235d528c093e69930aea47c2c807e469c8f861dbe8090c6",
+      "mtimeNs": 1794028836447458749,
+      "bytes": 4069
+    },
+    "node_modules/vitest/vitest.mjs": {
+      "resolved": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/vitest.mjs",
+      "sha256": "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6",
+      "mtimeNs": 1794010575584418384,
+      "bytes": 43
+    },
+    "node_modules/vitest/package.json": {
+      "resolved": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/node_modules/.pnpm/vitest@5.0.5_@types+node@22.20.5_vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15_/node_modules/vitest/package.json",
+      "sha256": "d00333f3a13ed44fedc77184c8675bae45246534f06684d94cff5e4f8a9f7c10",
+      "mtimeNs": 1794010575560406829,
+      "bytes": 5737
+    },
+    "node_modules/.cache/ktx-software-4.4.2/bin/ktx": {
+      "resolved": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      "sha256": "abd30109cbf84859b2f34951f7967e801111abadaac588468d98ed075100ad37",
+      "mtimeNs": 1793102880559853520,
+      "bytes": 2041776
+    }
+  },
+  "DECISIONS": [
+    "Per orchestrator art-bible 2.2/3.1-3.4 scope decision, complete canonical alphabet application belongs to E10.T08. T06 decorative growth/controls do not represent network writing and cannot use reserved #D8F6FF/#7FD8FF.",
+    "Remove actual GlyphStem/GlyphFork/RecordedStroke faces, not labels alone. New asymmetric stepped rhombic crystal geometry uses Ixari violet/lilac and localized #64E3FF fracture light. The anchor marker changes to #B9A6FF without moving.",
+    "Preserve every unaffected architecture vertex-group coordinate/face/UV hash, COL mesh, interaction pose, scale reference, opening and route. Unaffected six bundles remain byte-identical.",
+    "Canonical 2\u20134 cm V-cuts, 8% sign stroke weight, canonical seven-node alphabet and top orientation remain future T08 application on retained anchor architecture.",
+    "The stopped preview counted symlink aliases repeatedly. Output accounting now counts unique filesystem objects at the same 4GiB limit; the failed attempt remains retained. Fresh disk admission reserves 8GiB plus1GiB allowance.",
+    "The supervisor reaps its process group. Stock KTX/Meshopt producers use synchronous inherited-group subprocesses; intentionally detached setsid descendants remain outside the guarantee."
+  ],
+  "VERIFY": {
+    "surface": {
+      "status": "PASS",
+      "claim": "CPU saved-source and decoded-export surface evidence; not GPU visual PASS",
+      "canonicalGlyphApplication": "E10.T08 pending; no network alphabet claimed by these decorative surfaces",
+      "files": [
+        {
+          "path": "assets/blend/cities/ixari_anchor.blend",
+          "sha256": "d72c741e6cce0ac4591c561889e07b4a060a6a952b19dded0f512357ac5bc77a",
+          "variants": [
+            {
+              "asset": "anchor_quavel",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ],
+              "nativeEditableGrowthVertexCounts": {
+                "FaultColony0Socket": 12,
+                "FaultColony0Prism": 24,
+                "FaultColony0Fracture": 24,
+                "FaultColony1Socket": 12,
+                "FaultColony1Prism": 24,
+                "FaultColony1Fracture": 24,
+                "FaultColony2Socket": 12,
+                "FaultColony2Prism": 24,
+                "FaultColony2Fracture": 24,
+                "FaultColony3Socket": 12,
+                "FaultColony3Prism": 24,
+                "FaultColony3Fracture": 24,
+                "FaultColony4Socket": 12,
+                "FaultColony4Prism": 24,
+                "FaultColony4Fracture": 24,
+                "FaultColony5Socket": 12,
+                "FaultColony5Prism": 24,
+                "FaultColony5Fracture": 24,
+                "FaultColony6Socket": 12,
+                "FaultColony6Prism": 24,
+                "FaultColony6Fracture": 24,
+                "FaultColony7Socket": 12,
+                "FaultColony7Prism": 24,
+                "FaultColony7Fracture": 24,
+                "FaultColony8Socket": 12,
+                "FaultColony8Prism": 24,
+                "FaultColony8Fracture": 24
+              },
+              "architectureGroupsUnchanged": 266
+            }
+          ]
+        },
+        {
+          "path": "assets/blend/cities/ixari_props.blend",
+          "sha256": "133ff3ef15e5b202af7de682d2f0218ed35d12243cd0b236de658f21e162da15",
+          "variants": [
+            {
+              "asset": "prop_ixari_terminal",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ],
+              "nativeEditableGrowthVertexCounts": {
+                "PressureFacet0Socket": 12,
+                "PressureFacet0Prism": 24,
+                "PressureFacet1Socket": 12,
+                "PressureFacet1Prism": 24,
+                "PressureFacet2Socket": 12,
+                "PressureFacet2Prism": 24
+              },
+              "architectureGroupsUnchanged": 37
+            },
+            {
+              "asset": "prop_ixari_board",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ],
+              "nativeEditableGrowthVertexCounts": {
+                "PressureFacet0Socket": 12,
+                "PressureFacet0Prism": 24,
+                "PressureFacet1Socket": 12,
+                "PressureFacet1Prism": 24,
+                "PressureFacet2Socket": 12,
+                "PressureFacet2Prism": 24
+              },
+              "architectureGroupsUnchanged": 55
+            },
+            {
+              "asset": "prop_ixari_stall",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            },
+            {
+              "asset": "prop_ixari_seat",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            },
+            {
+              "asset": "prop_ixari_basin",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "packages/client/public/models/cities/ixari_anchor.glb",
+          "sha256": "5df8fb4a90efbb68b476ce481bfd569e74d0b61eb1706d05fc5dde3b8c2db35b",
+          "variants": [
+            {
+              "asset": "anchor_quavel",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "packages/client/public/models/cities/ixari_props.glb",
+          "sha256": "465f2e6acb3688efef7bc3811bc722e40d2e818bbc7863230f25bc4ef98ead6f",
+          "variants": [
+            {
+              "asset": "prop_ixari_basin",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            },
+            {
+              "asset": "prop_ixari_board",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            },
+            {
+              "asset": "prop_ixari_seat",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            },
+            {
+              "asset": "prop_ixari_stall",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            },
+            {
+              "asset": "prop_ixari_terminal",
+              "errors": [],
+              "levels": [
+                {
+                  "lod": 0,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 1,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 2,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                },
+                {
+                  "lod": 3,
+                  "reservedCellFaces": 0,
+                  "reservedCellArea": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "negativeControls": [
+        {
+          "case": "anchor actual face assigned reserved cell",
+          "status": "REJECTED",
+          "errors": [
+            "LOD0: 1 visible faces use reserved atlas cell"
+          ]
+        },
+        {
+          "case": "anchor exclusive network light marker",
+          "status": "REJECTED",
+          "errors": [
+            "exclusive network light on decorative surface"
+          ]
+        },
+        {
+          "case": "props actual face assigned reserved cell",
+          "status": "REJECTED",
+          "errors": [
+            "LOD0: 1 visible faces use reserved atlas cell"
+          ]
+        },
+        {
+          "case": "props exclusive network light marker",
+          "status": "REJECTED",
+          "errors": [
+            "exclusive network light on decorative surface"
+          ]
+        }
+      ]
+    },
+    "publicationTests": {
+      "path": "assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/results.json",
+      "sha256": "15501a0f3a01379eddb3bf0d57867f3889ae0aad7b9df724c9ded846008cf545"
+    },
+    "resourceControls": {
+      "path": "assets/blend/cities/ixari/revision-r1/resource-tests/report.json",
+      "sha256": "90339e82f954f648b64e25ed529ae537390834236961a4ea9da5eb288a31a063"
+    },
+    "consumer68": true,
+    "stock": "Fresh changed4 plus original unchanged12 with byte/hash proof",
+    "nativeGeometry": "Saved Blender source and decoded GLB; not runtime walking or GPU visual acceptance"
+  },
+  "newCpuImages": [
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-export-anchor/sheet.png",
+      "sha256": "d4d1e0332fbd2282344069d22bab6c2ccbe294820fee5e1774bdca4848dd2ee4",
+      "bytes": 253343
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-export-props/sheet.png",
+      "sha256": "82ccf9cd3cb7160e7d9ccdacdb7165c547a784981f2848394f27fd93b3e1021e",
+      "bytes": 1617498
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-materials-anchor/sheet.png",
+      "sha256": "4c532b1bc8b162f9782d19ad6cb9112c6f63a6fca894c1b352629ad2827f8d9c",
+      "bytes": 408610
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-materials-props/sheet.png",
+      "sha256": "2c71f971342aff5f8ff28e57ce32b6d7a0ba753c53683877d49f9ba1f87b3d89",
+      "bytes": 2173174
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-materials-props-r2/sheet.png",
+      "sha256": "98a16dcb8cb0cffc4a6f3c014fd28536adf9bed8af997b6e67b4eac87b920dfb",
+      "bytes": 965460
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-night-anchor/sheet.png",
+      "sha256": "efabc0ab3eb9c8dbc0490098ed4817a7b2ad976a798d741bd40430cdf3237349",
+      "bytes": 389744
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-night-props/sheet.png",
+      "sha256": "1bd49f930c87a9ccc7e52424d45761965c3fa37ce4bc4556d0e29d42974c84ef",
+      "bytes": 2087255
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-night-props-r2/sheet.png",
+      "sha256": "bac681d3a11a9619cd6427540b79b063dcc86721a47d8bb08a0b4b87c5908009",
+      "bytes": 861981
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-source-anchor-r2/sheet.png",
+      "sha256": "0c134d40d44a4e19f0352eb70405e656503f249906d02b30fbb662044d1ae80c",
+      "bytes": 1104526
+    },
+    {
+      "path": "assets/renders/cities/ixari/revision-r1-source-props/sheet.png",
+      "sha256": "0d5d682d821e047e8ae54605df4f616cfe0c6a021136b88f51d2e7629a7256d1",
+      "bytes": 8121038
+    }
+  ],
+  "retainedOriginalPngCount": 23,
+  "newPngCount": 10,
+  "newPngBytes": 17982629,
+  "futureNativeInventory": {
+    "path": "assets/blend/cities/ixari/revision-r1/preparation-r2/GPU_HANDOFF.json",
+    "sha256": "ba6a30b14bb60970ffc692d76be97ed816a8c1f8b950549be84030b8621b0722"
+  },
+  "futureNativeExecution": "NOT_EXECUTED; parent T15 owns GPU; no browser/server/DB/grants",
+  "publicationCommand": "python3 packages/tools/blender/cities/ixari/build_report.py --attempt revision-r1-publication-01 --inputs assets/blend/cities/ixari/revision-r1/preparation-r2/publication-inputs.json",
+  "evidenceRefs": [
+    {
+      "path": "assets/blend/cities/ixari/receipts/revise-r1-surfaces/edits.json",
+      "sha256": "0917e49f05bd80170077128689870ca7fb796dde2077c98c961defde3d90f3c1"
+    },
+    {
+      "path": "assets/blend/cities/ixari/receipts/revise-r1-surface-audit/audit.json",
+      "sha256": "e4a2b393854c402d7cda8dbdfb71f114e28d2ac102b0d72dc728bfd2b5b94bdb"
+    },
+    {
+      "path": "assets/blend/cities/ixari/revision-r1/resource-tests/report.json",
+      "sha256": "90339e82f954f648b64e25ed529ae537390834236961a4ea9da5eb288a31a063"
+    },
+    {
+      "path": "assets/blend/cities/ixari/revision-r1/publication-tests/suite-fpyy205m/results.json",
+      "sha256": "15501a0f3a01379eddb3bf0d57867f3889ae0aad7b9df724c9ded846008cf545"
+    },
+    {
+      "path": "assets/blend/cities/ixari/revision-r1/publication-tests/BASE_REPRO_DONE.json",
+      "sha256": "f7d055ca9afa39b41240fd0c7724d45880d86f08635406062821f94287f4f936"
+    },
+    {
+      "path": "assets/blend/cities/ixari/revision-r1/preparation-r2/reviewer-r1.md",
+      "sha256": "ff7e35389bdc3d3acb9723e59920b0d1d7199dfafe1a60330abdf0d153f05dd3"
+    },
+    {
+      "path": "assets/blend/cities/ixari/revision-r1/preparation-r2/GPU_HANDOFF.json",
+      "sha256": "ba6a30b14bb60970ffc692d76be97ed816a8c1f8b950549be84030b8621b0722"
+    },
+    {
+      "path": "assets/blend/cities/ixari/revision-r1/preparation-failed-r1.json",
+      "sha256": "be3ab2f2312b57c358a8271c8a772f5168964a653a49607b5ca887d01b5c954c"
+    }
+  ]
+}

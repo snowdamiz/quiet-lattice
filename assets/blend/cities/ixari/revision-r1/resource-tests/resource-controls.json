@@ -1,0 +1,168 @@
+[
+  {
+    "control": "timeout interrupts and reaps before releasing lock",
+    "status": "PASS",
+    "receipt": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-c",
+        "import time; time.sleep(10)"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/resource-tests/fixture",
+      "backend": "CPU iteration; not GPU visual PASS",
+      "threadEnv": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "BLIS_NUM_THREADS": "2",
+        "TBB_NUM_THREADS": "2",
+        "RAYON_NUM_THREADS": "2",
+        "UV_THREADPOOL_SIZE": "2"
+      },
+      "wallLimitSeconds": 1,
+      "rssLimitMiB": 8192,
+      "logLimitMiB": 32,
+      "imageLimit": 48,
+      "imageBudgetMiB": 512,
+      "outputLimitMiB": 4096,
+      "startedUtc": "2026-11-07T08:17:58Z",
+      "head": "2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00",
+      "inputScriptSha256": {},
+      "evaluatedInputsBefore": {},
+      "diskFreeBytesAtAdmission": 33621536768,
+      "diskReserveBytes": 9663676416,
+      "reapedScope": "owned process group; deliberately detached descendants are not covered",
+      "exitCode": -2,
+      "stoppedBy": "wall limit",
+      "signals": [
+        "SIGINT"
+      ],
+      "reaped": true,
+      "elapsedSeconds": 1.348,
+      "peakGroupRssKiB": 14496,
+      "observedGroupPids": [
+        10930
+      ],
+      "evaluatedInputsAfter": {},
+      "last20Lines": [
+        "Traceback (most recent call last):",
+        "  File \"<string>\", line 1, in <module>",
+        "    import time; time.sleep(10)",
+        "                 ~~~~~~~~~~^^^^",
+        "KeyboardInterrupt"
+      ]
+    }
+  },
+  {
+    "control": "second lane owner is rejected before launch",
+    "status": "PASS",
+    "receipt": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-c",
+        "raise RuntimeError(\"must never run\")"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/resource-tests/fixture",
+      "backend": "CPU iteration; not GPU visual PASS",
+      "threadEnv": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "BLIS_NUM_THREADS": "2",
+        "TBB_NUM_THREADS": "2",
+        "RAYON_NUM_THREADS": "2",
+        "UV_THREADPOOL_SIZE": "2"
+      },
+      "wallLimitSeconds": 5,
+      "rssLimitMiB": 8192,
+      "logLimitMiB": 32,
+      "imageLimit": 48,
+      "imageBudgetMiB": 512,
+      "outputLimitMiB": 4096,
+      "startedUtc": "2026-11-07T08:18:00Z",
+      "head": "2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00",
+      "inputScriptSha256": {},
+      "evaluatedInputsBefore": {},
+      "diskFreeBytesAtAdmission": 33599430656,
+      "diskReserveBytes": 9663676416,
+      "reapedScope": "owned process group; deliberately detached descendants are not covered",
+      "exitCode": null,
+      "stoppedBy": "BlockingIOError(35, 'Resource temporarily unavailable')",
+      "signals": [],
+      "reaped": true,
+      "elapsedSeconds": 0.0,
+      "peakGroupRssKiB": 0,
+      "observedGroupPids": [],
+      "evaluatedInputsAfter": {}
+    }
+  },
+  {
+    "control": "scratch create/delete race survives monitoring",
+    "status": "PASS",
+    "receipt": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-c",
+        "from pathlib import Path\nimport time\np=Path(\"assets/blend/cities/ixari/receipts/control-churn-r1/scratch.txt\")\nend=time.monotonic()+2\nwhile time.monotonic()<end:\n    p.write_bytes(b\"cpu scratch\"*100)\n    p.unlink()\n"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/resource-tests/fixture",
+      "backend": "CPU iteration; not GPU visual PASS",
+      "threadEnv": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "BLIS_NUM_THREADS": "2",
+        "TBB_NUM_THREADS": "2",
+        "RAYON_NUM_THREADS": "2",
+        "UV_THREADPOOL_SIZE": "2"
+      },
+      "wallLimitSeconds": 10,
+      "rssLimitMiB": 8192,
+      "logLimitMiB": 32,
+      "imageLimit": 48,
+      "imageBudgetMiB": 512,
+      "outputLimitMiB": 4096,
+      "startedUtc": "2026-11-07T08:18:00Z",
+      "head": "2d23ecb3cbf2b78a54b949a5e3bb9c70ebb4ff00",
+      "inputScriptSha256": {},
+      "evaluatedInputsBefore": {},
+      "diskFreeBytesAtAdmission": 33599422464,
+      "diskReserveBytes": 9663676416,
+      "reapedScope": "owned process group; deliberately detached descendants are not covered",
+      "exitCode": 0,
+      "stoppedBy": null,
+      "signals": [],
+      "reaped": true,
+      "elapsedSeconds": 2.194,
+      "peakGroupRssKiB": 15392,
+      "observedGroupPids": [
+        10983
+      ],
+      "evaluatedInputsAfter": {},
+      "last20Lines": []
+    }
+  },
+  {
+    "control": "existing receipt cannot be overwritten",
+    "status": "PASS",
+    "failureTail": [
+      "Traceback (most recent call last):",
+      "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/resource-tests/fixture/packages/tools/blender/cities/ixari/run_cpu.py\", line 159, in <module>",
+      "    raise SystemExit(run(p.parse_args()))",
+      "                     ~~~^^^^^^^^^^^^^^^^",
+      "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/resource-tests/fixture/packages/tools/blender/cities/ixari/run_cpu.py\", line 73, in run",
+      "    attempt.mkdir(parents=True, exist_ok=False)",
+      "    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 1011, in mkdir",
+      "    os.mkdir(self, mode)",
+      "    ~~~~~~~~^^^^^^^^^^^^",
+      "FileExistsError: [Errno 17] File exists: '/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/resource-tests/fixture/assets/blend/cities/ixari/receipts/control-churn-r1'"
+    ]
+  }
+]

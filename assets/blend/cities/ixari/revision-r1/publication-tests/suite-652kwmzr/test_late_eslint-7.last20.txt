@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-652kwmzr/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 368, in publish
+    summary=collect(config,stage,destination)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-652kwmzr/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 260, in collect
+    summaries[name]=receipt(entry,[rel(Path(__file__).resolve())] if name=='pythonSyntax' else ())
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-652kwmzr/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 77, in receipt
+    require(type(p['exitCode']) is int and p['exitCode']==0 and p['reaped'] is True and p['stoppedBy'] is None,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"failed process receipt: {entry['process']['path']}")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9050cf78/assets/blend/cities/ixari/revision-r1/publication-tests/suite-652kwmzr/test_late_eslint/packages/tools/blender/cities/ixari/build_report.py", line 49, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: failed process receipt: assets/blend/cities/ixari/receipts/eslint-final/process.json
+
