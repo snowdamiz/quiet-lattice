@@ -1097,3 +1097,9 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **Blind visual REVISE** mean **3.60** on promote `928ec63c` / packet INDEX `2680d920…` (49/49 PNGs viewed; SEAL `dc143130…`). Failing: design (husked not Hollow §6), materials (husked purple atlas; damaged Glass scribbles), topology (LOD2 faceting/holes), fitness (canopy pane cross; missing BAY_*). Passing: silhouette, proportion, detail, consistency (peers absent), placeholder, performance (hull cost; scene ms disclosed as planet).
 - Density ≥512 / SOURCE/CPU PASS / canonical promote remain accepted. Author owns a scoped R3 visual fix under one-atlas density preservation; fresh capture + regrade after delivery. Screenshot cleanup STOPPED. Disk ~18 GiB free — tight bounds. No main/remote/PR/Trunk action.
 - Seal retained under `docs/review-records/p1-e12-t02/lark-blind-visual-928ec63c/` (index `20261107-lark-blind-visual-revise-928ec63c.json`).
+
+## 2026-11-07 — Lark R3 visual REVISE fix committed; SOURCE/CPU review assigned
+
+- **Lark `8b6c3604b`:** husked Hollow §6 (24% plate loss, husk black/rust/glyphs), husked atlas rebake + `#9FE8DA` emissive, damaged Glass replaced, LOD2 ratio 0.20, canopy aft hinge, `BAY_1` added. Parent-verified blend `4d0eec86…` / glb `659b084f…`. Author density min_median **590.6** ≥512; validate PASS 5/5 claimed.
+- Independent SOURCE/CPU review assigned (density/export/contracts + REVISE-item CPU checks). Fresh visual capture/blind grade HELD until that PASS. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+- Notes retained under `docs/review-records/p1-e12-t02/lark-r3-visual-revise-fix-8b6c360/` (index `20261107-lark-r3-visual-revise-fix-8b6c360.json`).

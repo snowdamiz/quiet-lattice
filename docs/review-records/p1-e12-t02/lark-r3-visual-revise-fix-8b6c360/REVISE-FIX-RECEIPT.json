@@ -1,0 +1,198 @@
+{
+  "input_blend_sha256": "68a327711238d437666fb5f76f04f8f4d519c67e44e820c0d7b3199097e825e1",
+  "output_blend_sha256": "227627386561601af21a54b09828ec91160ac49dd04bb70883cc46e0fed8adcb",
+  "notes": {
+    "design": [
+      {
+        "object": "Body_husk",
+        "plate_ids_total": 147,
+        "plate_ids_removed": 35,
+        "faces_removed": 2478,
+        "fraction_ids": 0.23809523809523808,
+        "remaining_hull_accent_faces": 11069,
+        "removed_pids": [
+          20,
+          21,
+          23,
+          27,
+          28,
+          29,
+          30,
+          31,
+          34,
+          41,
+          42,
+          43,
+          46,
+          49,
+          50,
+          51,
+          52,
+          53,
+          57,
+          58,
+          59,
+          207,
+          208,
+          209,
+          210,
+          211,
+          212,
+          213,
+          246,
+          247,
+          248,
+          250,
+          251,
+          252,
+          253
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "husk_base_mean_after": [
+          0.06479840725660324,
+          0.06837102025747299,
+          0.06942123174667358
+        ],
+        "emissive": "lark_husked_4k_emissive"
+      },
+      {
+        "damaged_glass": "lark_damaged_Glass_baseColor",
+        "replaced": "dark_crazed"
+      }
+    ],
+    "topology": [
+      {
+        "variant": "lark",
+        "lod0_tris": 107054,
+        "generated": [
+          {
+            "lod": 1,
+            "tris": 32111,
+            "target": 32116,
+            "ratio": 0.3
+          },
+          {
+            "lod": 2,
+            "tris": 21406,
+            "target": 21410,
+            "ratio": 0.2
+          },
+          {
+            "lod": 3,
+            "tris": 3741,
+            "target": 3746,
+            "ratio": 0.035
+          }
+        ]
+      },
+      {
+        "variant": "lark_damaged",
+        "lod0_tris": 111862,
+        "generated": [
+          {
+            "lod": 1,
+            "tris": 33553,
+            "target": 33558,
+            "ratio": 0.3
+          },
+          {
+            "lod": 2,
+            "tris": 22368,
+            "target": 22372,
+            "ratio": 0.2
+          },
+          {
+            "lod": 3,
+            "tris": 3910,
+            "target": 3915,
+            "ratio": 0.035
+          }
+        ]
+      },
+      {
+        "variant": "lark_husked",
+        "lod0_tris": 112746,
+        "generated": [
+          {
+            "lod": 1,
+            "tris": 33818,
+            "target": 33823,
+            "ratio": 0.3
+          },
+          {
+            "lod": 2,
+            "tris": 22546,
+            "target": 22549,
+            "ratio": 0.2
+          },
+          {
+            "lod": 3,
+            "tris": 4370,
+            "target": 3946,
+            "ratio": 0.035
+          }
+        ]
+      }
+    ],
+    "fitness": [
+      {
+        "canopy": "Canopy",
+        "hinge": [
+          0.0,
+          -1.120093584060669,
+          1.8043180704116821
+        ],
+        "glass_y": [
+          -1.1600935459136963,
+          3.3867621421813965
+        ],
+        "open55_overlap": false,
+        "frame": "CanopyFrame"
+      },
+      {
+        "canopy": "Canopy_dmg",
+        "hinge": [
+          0.0,
+          -1.120093584060669,
+          1.8043180704116821
+        ],
+        "glass_y": [
+          -1.1600935459136963,
+          3.3867621421813965
+        ],
+        "open55_overlap": false,
+        "frame": "CanopyFrame_dmg"
+      },
+      {
+        "canopy": "Canopy_husk",
+        "hinge": [
+          0.0,
+          -1.120093584060669,
+          1.8043180704116821
+        ],
+        "glass_y": [
+          -1.1600935459136963,
+          3.3867621421813965
+        ],
+        "open55_overlap": false,
+        "frame": "CanopyFrame_husk"
+      },
+      {
+        "BAY_1": [
+          0.0,
+          0.027864789590239525,
+          -1.317500114440918
+        ]
+      }
+    ]
+  },
+  "constraints": {
+    "force_fit_scale": 1.0,
+    "atlas": 4096,
+    "uv_layer": "UVMap",
+    "no_multi_atlas": true
+  }
+}
