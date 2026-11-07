@@ -1,0 +1,25 @@
+{
+  "retained_utc": "2026-11-07T20:04:40.932047+00:00",
+  "source": "/tmp/space-e04-t06-packet-inventory-f1766f0-20261107",
+  "source_sha256": {
+    "REPORT.md": "11238f311c068ec71058d0b8894b217c90633e0727c7576120dd667c9a7ae4fe",
+    "inventory.jsonl": "a94a7a6642b8812fba7e880c38ae7c1c163d7b0bb13789d9458c54c7061c2fc4"
+  },
+  "historical_verdict_commit": "725d153f47710b6440a133096cfbbeb27e7f26bc",
+  "historical_verdict_sha256": "84b5ef76e6be8a7b74f5ffd041070756f93731d03950e285aa3eba51f12a5ce7",
+  "verdict_already_present_in_parent": true,
+  "current_feature_pin": "f1766f0db294bbd325cfa43e4b1494adc2dd0baf",
+  "captured_feature_pin": "e72ea15182ea02df5ebd7fba780cedad16c85d6b",
+  "parent_scope": "The packet was already graded REVISE 3.86 for runtime motion and whole-UI cost; no new cosmetic defect. Do not regrade unchanged payloads as fresh evidence. Forced-false toggle retains class-state semantics; its measured browser impact is not established by unit tests.",
+  "required_followup": [
+    "Observed runtime motion at required rate",
+    "Qualified whole-UI budget evidence",
+    "Smoke and fresh candidate-bound evidence before acceptance"
+  ],
+  "not_additional_requirements": [
+    "40 percent dim is an alternative to dropping the name, not required alongside it",
+    "NPC is conditional on P1.E08.T05, which is not done",
+    "Do not infer that every screen needs an additional 21:9 motion clip merely from the inventory absence"
+  ],
+  "claims": "Parent verified report/inventory hashes and historical grade identity; did not rehash 393811576 bytes or regrade pixels."
+}
