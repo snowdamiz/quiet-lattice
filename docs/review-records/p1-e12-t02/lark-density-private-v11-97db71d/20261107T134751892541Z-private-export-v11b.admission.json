@@ -1,0 +1,18 @@
+{
+  "admitted": true,
+  "time_utc": "2026-11-07T13:47:51.990843+00:00",
+  "disk_free_bytes": 35066830848,
+  "disk_reserve_bytes": 12884901888,
+  "fauna_reserved_bytes": 0,
+  "required_free_before_every_stage": 19327352832,
+  "host_ram_bytes": 51539607552,
+  "vm_pressure_level": 1,
+  "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                   534445.\nPages active:                                 871742.\nPages inactive:                               867309.\nPages speculative:                             24726.\nPages throttled:                                   0.\nPages wired down:                             323295.\nPages purgeable:                               16272.\n\"Translation faults\":                    30381513384.\nPages copy-on-write:                      1612709683.\nPages zero filled:                       15549409477.\nPages reactivated:                        1214985183.\nPages purged:                               33652158.\nFile-backed pages:                            614313.\nAnonymous pages:                             1149464.\nPages stored in compressor:                   846445.\nPages occupied by compressor:                 465552.\nDecompressions:                            879299408.\nCompressions:                             1220954971.\nPageins:                                   705513188.\nPageouts:                                     518232.\nSwapins:                                     4102551.\nSwapouts:                                    6075280.\nPages tagged:                                 180455.\nPages tagged resident:                        163928.\nPages tagged compressed:                       16527.\nPages tag-storage:                             98304.\nPages tag-storage holding tags:                11587.\nPages tag-storage free:                          894.\nPages tag-storage non-tag pageable:            85728.\nPages tag-storage non-tag wired:                   8.\nBytes of compressed tags:                    2567616.\nTagged compressions:                         7777747.\nTagged decompressions:                       7537019.\n",
+  "cohort_rss_kib": 0,
+  "cohort_cap_mib": 8192,
+  "requested_tree_mib": 8192,
+  "requested_growth_mib": 6144,
+  "evidence_bytes": 732454785,
+  "cohort_processes": [],
+  "basis": "Parent r3 release: reserve full 6 GiB stage growth plus 12 GiB floor before EVERY stage; fauna reservation explicitly released at 12:37:23Z; no history cleanup"
+}

@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-07T13:54:01.735350+00:00",
+  "task": "P1.E12.T02",
+  "candidateHead": "97db71de9379744da2f1957db91552ad474d0fa1",
+  "canonicalUnchanged": true,
+  "privateMinMedianPxPerM": 347.6891304594518,
+  "artBibleTargetPxPerM": 512,
+  "redApproxPxPerM": 35,
+  "decision": "CONTINUE_UNIQUE_PAINT_SHRINK_TOWARD_512",
+  "rejected": [
+    "force-fit promote of ~250\u2013350 px/m private candidate",
+    "multi-atlas / UDIM waiver"
+  ],
+  "rationale": "Lark R3 REVISE was specifically ~35 vs ~512 px/m under the stock one-atlas hero max 4096. Private v11 is stock-valid and \u226b RED (347.7), but still below art-bible 512. UDIM already failed naming/engine_name/tri/uniform. Do not promote canonical; continue unique-paint shrink under one-atlas without regenerating protected geometry. Source/visual/GPU review remain after a \u2265512 private candidate (or explicit later waiver).",
+  "canonicalPromotion": "held",
+  "heavyCpu": "released_for_exact_mask_serial_then_lark_shrink_requeue"
+}

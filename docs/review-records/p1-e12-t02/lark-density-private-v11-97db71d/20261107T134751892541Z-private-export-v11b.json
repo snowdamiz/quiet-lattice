@@ -1,0 +1,360 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/hulls/lark-round3/density_private_export.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-46f90470",
+  "head_at_start": "a89dd7f8a2d9375ed5df94f77e6c83d972f42f73",
+  "code_inputs": [
+    {
+      "path": "packages/tools/blender/hulls/lark-round3/density_private_export.py",
+      "bytes": 6197,
+      "sha256": "a5fa5bbbb1b382369ceb1afbc47f05826a118a87ec5a8a64830557eb4ccba414",
+      "snapshot": "assets/renders/hulls/lark-round3-current/density-20261107/20261107T134751892541Z-private-export-v11b.input-0.py"
+    }
+  ],
+  "lane": "lark-t2",
+  "thread_environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "ART_KTX_JOBS": "1"
+  },
+  "wall_limit_seconds": 2700,
+  "rss_limit_mib": 8192,
+  "elapsed_seconds": 189.655,
+  "peak_tree_rss_kib": 4333008,
+  "exit_code": 0,
+  "termination_reason": null,
+  "before": [
+    {
+      "path": "assets/blend/hulls/lark.blend",
+      "bytes": 65357176,
+      "sha256": "bc08c784ef37413cd3b51c593c4109a340a8d99edc15f5da30e3dcfaba04ff75"
+    },
+    {
+      "path": "packages/client/public/models/hulls/lark.glb",
+      "bytes": 25633924,
+      "sha256": "7f11e2bd2818045c1a861d4e959f2a985828bdcc9b60d44ed2fda8ff41300bad"
+    }
+  ],
+  "after": [
+    {
+      "path": "assets/blend/hulls/lark.blend",
+      "bytes": 65357176,
+      "sha256": "bc08c784ef37413cd3b51c593c4109a340a8d99edc15f5da30e3dcfaba04ff75"
+    },
+    {
+      "path": "packages/client/public/models/hulls/lark.glb",
+      "bytes": 25633924,
+      "sha256": "7f11e2bd2818045c1a861d4e959f2a985828bdcc9b60d44ed2fda8ff41300bad"
+    }
+  ],
+  "log": "assets/renders/hulls/lark-round3-current/density-20261107/20261107T134751892541Z-private-export-v11b.log",
+  "private_tmpdir": "/tmp/lr3-d7kcl2xz",
+  "tmpdir_mode": "0o700",
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "node_version": "22.23.3",
+  "observed_processes": [
+    {
+      "pid": 8352,
+      "ppid": 8342,
+      "pgid": 8352,
+      "command": "/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P packages/tools/blender/hulls/lark-round3/density_private_export.py"
+    },
+    {
+      "pid": 8448,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode uastc --uastc-quality 2 --uastc-rdo --uastc-rdo-l 4.0 --zstd 18 --normalize /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/0.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/0.ktx2"
+    },
+    {
+      "pid": 9688,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/1.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/1.ktx2"
+    },
+    {
+      "pid": 9766,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_SRGB --assign-tf srgb --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/2.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/2.ktx2"
+    },
+    {
+      "pid": 9885,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode uastc --uastc-quality 2 --uastc-rdo --uastc-rdo-l 4.0 --zstd 18 --normalize /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/3.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/3.ktx2"
+    },
+    {
+      "pid": 10021,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_SRGB --assign-tf srgb --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/4.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/4.ktx2"
+    },
+    {
+      "pid": 10210,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/5.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/5.ktx2"
+    },
+    {
+      "pid": 10309,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode uastc --uastc-quality 2 --uastc-rdo --uastc-rdo-l 4.0 --zstd 18 --normalize /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/6.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/6.ktx2"
+    },
+    {
+      "pid": 21461,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/7.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/7.ktx2"
+    },
+    {
+      "pid": 22524,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_SRGB --assign-tf srgb --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/8.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/8.ktx2"
+    },
+    {
+      "pid": 23777,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode uastc --uastc-quality 2 --uastc-rdo --uastc-rdo-l 4.0 --zstd 18 --normalize /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/9.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/9.ktx2"
+    },
+    {
+      "pid": 24195,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/10.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/10.ktx2"
+    },
+    {
+      "pid": 24243,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode uastc --uastc-quality 2 --uastc-rdo --uastc-rdo-l 4.0 --zstd 18 --normalize /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/11.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/11.ktx2"
+    },
+    {
+      "pid": 24520,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_UNORM --assign-tf linear --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/12.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/12.ktx2"
+    },
+    {
+      "pid": 24598,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_SRGB --assign-tf srgb --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/13.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/13.ktx2"
+    },
+    {
+      "pid": 25852,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_SRGB --assign-tf srgb --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/14.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/14.ktx2"
+    },
+    {
+      "pid": 26355,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx create --format R8G8B8_SRGB --assign-tf srgb --generate-mipmap --threads 2 --encode basis-lz --clevel 2 --qlevel 128 /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/15.png /tmp/lr3-d7kcl2xz/art-ktx-oofdjojq/15.ktx2"
+    },
+    {
+      "pid": 26645,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/Documents/dev/space/node_modules/tsx/dist/cli.mjs /Users/andreyyurlov/Documents/dev/space/packages/tools/src/art/meshopt.ts /tmp/lr3-d7kcl2xz/art-export-hu9hcaew/ktx2/lark.glb /tmp/lr3-d7kcl2xz/art-export-hu9hcaew/meshopt/lark.glb {\"level\": \"high\", \"quantize\": true, \"positionBits\": 14, \"texcoordBits\": 14}"
+    },
+    {
+      "pid": 26646,
+      "ppid": 26645,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --require /Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/preflight.cjs --import file:///Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs /Users/andreyyurlov/Documents/dev/space/packages/tools/src/art/meshopt.ts /tmp/lr3-d7kcl2xz/art-export-hu9hcaew/ktx2/lark.glb /tmp/lr3-d7kcl2xz/art-export-hu9hcaew/meshopt/lark.glb {\"level\": \"high\", \"quantize\": true, \"positionBits\": 14, \"texcoordBits\": 14}"
+    },
+    {
+      "pid": 26649,
+      "ppid": 26646,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.28.2 --ping"
+    },
+    {
+      "pid": 26657,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/0.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/0.png"
+    },
+    {
+      "pid": 26677,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/1.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/1.png"
+    },
+    {
+      "pid": 26690,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/2.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/2.png"
+    },
+    {
+      "pid": 26699,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/3.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/3.png"
+    },
+    {
+      "pid": 26710,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/4.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/4.png"
+    },
+    {
+      "pid": 26723,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/5.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/5.png"
+    },
+    {
+      "pid": 26737,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/6.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/6.png"
+    },
+    {
+      "pid": 26752,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/7.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/7.png"
+    },
+    {
+      "pid": 26763,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/8.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/8.png"
+    },
+    {
+      "pid": 26802,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/9.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/9.png"
+    },
+    {
+      "pid": 26828,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/10.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/10.png"
+    },
+    {
+      "pid": 26852,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/11.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/11.png"
+    },
+    {
+      "pid": 26871,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/12.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/12.png"
+    },
+    {
+      "pid": 26883,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/13.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/13.png"
+    },
+    {
+      "pid": 26894,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/14.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/14.png"
+    },
+    {
+      "pid": 26908,
+      "ppid": 8352,
+      "pgid": 8352,
+      "command": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx extract --transcode rgba8 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/15.ktx2 /tmp/lr3-d7kcl2xz/art-unktx-6n_atle8/15.png"
+    }
+  ],
+  "watchdog_receipt": "assets/renders/hulls/lark-round3-current/density-20261107/20261107T134751892541Z-private-export-v11b.watchdog.json",
+  "cleanup": {
+    "guardian_pid": 8353,
+    "guardian_group": 8353,
+    "owner_pid": 8342,
+    "process_group": 8352,
+    "first_members": [
+      {
+        "pid": 8352,
+        "ppid": 8342,
+        "pgid": 8352,
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/hulls/lark-round3/density_dispatch.py 7 [\"/Applications/Blender.app/Contents/MacOS/Blender\", \"-b\", \"-t\", \"2\", \"--factory-startup\", \"--python-exit-code\", \"1\", \"-P\", \"packages/tools/blender/hulls/lark-round3/density_private_export.py\"]"
+      }
+    ],
+    "termination_reason": null,
+    "remaining_members": [],
+    "elapsed_seconds": 189.61689620901598
+  },
+  "private_tmpdir_preserved": true,
+  "peak_codec_processes": 1,
+  "supervisor_pid": 8342,
+  "child_process_group": 8352,
+  "guardian": {
+    "pid": 8353,
+    "process_group": 8353,
+    "exit_code": 0,
+    "wait_completed": true
+  },
+  "guardian_registration_before_dispatch": {
+    "guardian_pid": 8353,
+    "guardian_group": 8353,
+    "owner_pid": 8342,
+    "process_group": 8352,
+    "first_members": [
+      {
+        "pid": 8352,
+        "ppid": 8342,
+        "pgid": 8352,
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-46f90470/packages/tools/blender/hulls/lark-round3/density_dispatch.py 7 [\"/Applications/Blender.app/Contents/MacOS/Blender\", \"-b\", \"-t\", \"2\", \"--factory-startup\", \"--python-exit-code\", \"1\", \"-P\", \"packages/tools/blender/hulls/lark-round3/density_private_export.py\"]"
+      }
+    ],
+    "registered_before_dispatch": true
+  },
+  "admission": {
+    "admitted": true,
+    "time_utc": "2026-11-07T13:47:51.990843+00:00",
+    "disk_free_bytes": 35066830848,
+    "disk_reserve_bytes": 12884901888,
+    "fauna_reserved_bytes": 0,
+    "required_free_before_every_stage": 19327352832,
+    "host_ram_bytes": 51539607552,
+    "vm_pressure_level": 1,
+    "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                   534445.\nPages active:                                 871742.\nPages inactive:                               867309.\nPages speculative:                             24726.\nPages throttled:                                   0.\nPages wired down:                             323295.\nPages purgeable:                               16272.\n\"Translation faults\":                    30381513384.\nPages copy-on-write:                      1612709683.\nPages zero filled:                       15549409477.\nPages reactivated:                        1214985183.\nPages purged:                               33652158.\nFile-backed pages:                            614313.\nAnonymous pages:                             1149464.\nPages stored in compressor:                   846445.\nPages occupied by compressor:                 465552.\nDecompressions:                            879299408.\nCompressions:                             1220954971.\nPageins:                                   705513188.\nPageouts:                                     518232.\nSwapins:                                     4102551.\nSwapouts:                                    6075280.\nPages tagged:                                 180455.\nPages tagged resident:                        163928.\nPages tagged compressed:                       16527.\nPages tag-storage:                             98304.\nPages tag-storage holding tags:                11587.\nPages tag-storage free:                          894.\nPages tag-storage non-tag pageable:            85728.\nPages tag-storage non-tag wired:                   8.\nBytes of compressed tags:                    2567616.\nTagged compressions:                         7777747.\nTagged decompressions:                       7537019.\n",
+    "cohort_rss_kib": 0,
+    "cohort_cap_mib": 8192,
+    "requested_tree_mib": 8192,
+    "requested_growth_mib": 6144,
+    "evidence_bytes": 732454785,
+    "cohort_processes": [],
+    "basis": "Parent r3 release: reserve full 6 GiB stage growth plus 12 GiB floor before EVERY stage; fauna reservation explicitly released at 12:37:23Z; no history cleanup"
+  },
+  "peak_cohort_rss_kib": 4278048,
+  "peak_new_disk_bytes": 179978459,
+  "canonical_output_sizes_before": {
+    "assets/blend/hulls/lark.blend": 65357176,
+    "packages/client/public/models/hulls/lark.glb": 25633924
+  },
+  "canonical_output_sizes_after": {
+    "assets/blend/hulls/lark.blend": 65357176,
+    "packages/client/public/models/hulls/lark.glb": 25633924
+  },
+  "disk_growth_scope": "New evidence and private scratch plus positive growth of canonical files and adjacent replacement-save temporaries; existing history preserved",
+  "process_sample_interval_seconds": 0.1,
+  "rss_scope": "Dispatched process group and descendants plus supervisor and registered guardian; aggregate sum"
+}

@@ -1050,3 +1050,9 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - F1 exact-float export and native/visual gates remain open; whole-task incomplete. No Blender/codec/GPU/asset regen, push, PR, Trunk, or merge.
 - Seal retained under `docs/review-records/p1-e08-t08/f2-r2-review-aea791f/` (index `20261107-creature-f2-r2-review-pass-aea791f.json`). Report SHA256 `8761350a951d2d4d5fa16c9a17054ed7d80dc838f87ba028b02fdfdae9f7b4d0`.
 - Lark density remains in flight and still owns the heavy CPU lane; exact-mask serial node unit stays HELD. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+
+## 2026-11-07 — Lark density private v11; parent holds force-fit; exact-mask serial admitted
+
+- **Lark `97db71de9`:** private single-4096 density candidate is stock-valid (export+validate 5/5). Measured private LOD0 min median **347.7 px/m** (≫ ~35 RED; below art-bible **512** under one-atlas/4096). Canonical blend/glb hashes unchanged (`bc08c784…` / `7f11e2bd…`). Dual-UV Dark split fixed by collapsing UVDensity onto a single UVMap before export.
+- **Parent decision:** do **not** promote the force-fit candidate; do **not** grant a multi-atlas/UDIM waiver. Continue unique-paint shrink toward ≥512 under the stock one-atlas rule after the exact-mask serial unit returns the heavy/light CPU lane. Source/visual/GPU review remain gated on that later candidate. Packet retained under `docs/review-records/p1-e12-t02/lark-density-private-v11-97db71d/` (index `20261107-lark-density-private-v11-97db71d.json`); large private binaries kept as hash pointers.
+- **Exact-mask serial node unit:** Lark released the heavy CPU slot (no Blender). Parent admits the held `modelLibrary`×6 + `meshopt`×4 serial unit (workers=1, ≤90s / 256MiB RSS / 64MiB scratch, independent guardian) on head `e11acd393` / executable parity `2156fe66`. No Blender/codec/bake/production asset regen. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
