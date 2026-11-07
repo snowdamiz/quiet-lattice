@@ -6,10 +6,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SHIP_GEAR_HEIGHT } from '@astra/shared/ships';
 import {
   createSourceFile,
+  forEachChild,
+  isAwaitExpression,
+  isCallExpression,
   isClassDeclaration,
   isConstructorDeclaration,
   isFunctionDeclaration,
   isMethodDeclaration,
+  isVariableDeclaration,
+  type Node,
   ScriptTarget,
   transpileModule,
 } from 'typescript';
@@ -733,4 +738,157 @@ describe('real UI admission before fixture keyboard input', () => {
     expect(owner.calls).toEqual(['front', 'resume', 'requestPointerLock']);
     expect(owner.input.keys.size).toBe(0);
   });
+});
+
+// The frozen combat sample in space-symbiotic-live-9848d004-487f1c39cc4d57f9bced/playwright.json.
+// These are diagnostic CPU inputs, never live fixture state or a replacement for native picking assertions.
+const combatGeometry = [
+  {
+    id: 34,
+    species: 0,
+    mode: 'attack',
+    hp: 1,
+    owner: 1,
+    rendered: [90457.03809262079, 8199.367566916892, -24253.958297447407],
+    wire: [90457.03297558716, 8199.376903541552, -24253.98479883791],
+    quat: [0.14048591137210042, 0.33486291991414313, -0.6607986374984974, 0.6568680950180591],
+  },
+  {
+    id: 35,
+    species: 4,
+    mode: 'attack',
+    hp: 0.7000000000000001,
+    rendered: [90457.82516529005, 8198.049426978165, -24252.514899896356],
+    wire: [90457.73960799232, 8198.124450097484, -24252.54537550884],
+    quat: [0.6608023407141798, 0.6568665413412355, 0.14049317568162029, -0.3348556121076031],
+  },
+];
+const { Fauna } = await import(/* @vite-ignore */ new URL('../../../client/src/gameplay/Fauna.js', import.meta.url).href);
+const { RemoteEntities } = await import(/* @vite-ignore */ new URL('../../../client/src/remote/RemoteEntities.js', import.meta.url).href);
+const { Player } = await import(/* @vite-ignore */ new URL('../../../client/src/entities/Player.js', import.meta.url).href);
+const { Body, FrameState } = await import(/* @vite-ignore */ new URL('../../../client/src/universe/Body.js', import.meta.url).href);
+
+async function pickingScene(positions: 'rendered' | 'wire', historicalObserver: boolean) {
+  const system = describeZoneSystem(31),
+    body = system.bodies[7]!;
+  const terrain = groundOf(system, 7, 1)!.terrain;
+  const planet = new Body({ kind: 'planet', radius: body.radius });
+  Object.assign(planet, {
+    params: body.params,
+    sampler: terrain,
+    surfaceRadius(dir: { x: number; y: number; z: number }) {
+      return body.radius + terrain.sample([dir.x, dir.y, dir.z]);
+    },
+  });
+  const game = {
+    time: 26816794.463613212,
+    mode: 'foot',
+    system: { seed: system.seed, planets: system.bodies.map((_, i) => (i === 7 ? planet : null)) },
+    cam: new FrameState(),
+    camWorld: new three.Vector3(),
+    audio: { creature() {} },
+    player: new Player({}),
+  };
+  const fauna = new Fauna(game);
+  const remotes = new RemoteEntities(game, { view: { group: new three.Group(), draws: () => false, update() {} }, fauna });
+  const g = {
+    ...game,
+    fauna,
+    remotes,
+    frame() {
+      game.player.cameraState(game.cam, game.time);
+      game.cam.worldPosition(game.camWorld);
+      remotes.update(0);
+    },
+  };
+  vi.stubGlobal('window', { game: g });
+  const source = createSourceFile('spec.ts', spec, ScriptTarget.Latest, true);
+  let groundCode: string | undefined;
+  const visit = (n: Node) => {
+    if (isVariableDeclaration(n) && n.name.getText(source) === 'ground' && n.initializer && isAwaitExpression(n.initializer)) {
+      const call = n.initializer.expression;
+      if (isCallExpression(call)) groundCode = call.arguments[0]!.getText(source);
+    }
+    forEachChild(n, visit);
+  };
+  visit(source);
+  if (!groundCode) throw new Error('Missing real arena ground callback');
+  const ground = new Function(transpileModule(`return (${groundCode});`, { compilerOptions: { target: ScriptTarget.ES2022 } }).outputText)()({
+    body: 7,
+    gearHeight: SHIP_GEAR_HEIGHT,
+  });
+  const at = await placement('observer', 31, 7, ground.observer.join(','));
+  const shipState = new FrameState();
+  shipState.frame = planet;
+  shipState.pos.fromArray(at.pose.pos);
+  shipState.quat.fromArray(at.pose.quat);
+  gameMethods.exitShip.call({ player: game.player, ship: { state: shipState, setCockpit() {} }, director: { startPoseBlend() {} }, audio: { play() {} } });
+  const movement = new MovementAuthority({ zone: 'picker-cpu', system, grounds: planHere, tier: () => 1 });
+  movement.add(2, at.pose, at.mode, { ship: LARK, characterId: 'observer', accountId: 'observer' }, 1e6);
+  const feet = { ...at.pose, pos: game.player.state.pos.toArray() };
+  expect(movement.check(2, { t: 'input', seq: 1, time: 1e6 + 0.05, pose: feet, mode: 'foot', buttons: 0 }, 1e6 + 0.05)).toMatchObject({
+    ok: true,
+    mode: 'foot',
+  });
+  expect(movement.parkedOf(2)).toEqual(at.pose);
+  if (historicalObserver) game.player.state.pos.fromArray([90459.63067075181, 8182.309815300965, -24244.532920952992]);
+  game.player.grounded = true;
+  const entities = combatGeometry.map((e) => ({
+    id: e.id,
+    kind: 'mob',
+    species: e.species,
+    mode: e.mode,
+    hp: e.hp,
+    owner: e.owner,
+    frame: '1262081916:7',
+    pos: e[positions],
+    quat: e.quat,
+    vel: [0, 0, 0],
+  }));
+  remotes.ingest(new Map(entities.map((e) => [e.id, e])), game.time, game.time, null);
+  g.frame();
+  const aimSource = source.statements.find((s) => isFunctionDeclaration(s) && s.name?.text === 'aim');
+  if (!aimSource) throw new Error('Missing real aim');
+  const aim = new Function(
+    'until',
+    transpileModule(aimSource.getText(source), { compilerOptions: { target: ScriptTarget.ES2022 } }).outputText + ';return aim;',
+  )(async () => {});
+  const positionsBefore = remotes.list.map((r: { pos: { toArray(): number[] } }) => r.pos.toArray());
+  await aim({ evaluate: async (fn: (id: number) => unknown, id: number) => fn(id) }, 34);
+  return { g, positionsBefore, dispose: () => fauna.reset() };
+}
+
+describe('companion picker sightline through real camera and instances', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  for (const positions of ['rendered', 'wire'] as const) {
+    it(`reproduces the historical nearer enemy using ${positions} positions`, async () => {
+      const s = await pickingScene(positions, true);
+      try {
+        const dir = new three.Vector3(0, 0, -1).applyQuaternion(s.g.cam.quat);
+        expect(s.g.fauna.pick(s.g.cam.frame, s.g.cam.pos, dir, 70)?.id).toBe(35);
+      } finally {
+        s.dispose();
+      }
+    });
+    it(`places the observer with a clear companion sightline using ${positions} positions`, async () => {
+      const s = await pickingScene(positions, false);
+      try {
+        const dir = new three.Vector3(0, 0, -1).applyQuaternion(s.g.cam.quat);
+        expect(s.g.fauna.pick(s.g.cam.frame, s.g.cam.pos, dir, 70)?.id, JSON.stringify({ eye: s.g.cam.pos.toArray(), ray: dir.toArray() })).toBe(34);
+        expect(s.g.remotes.list.map((r: { pos: { toArray(): number[] } }) => r.pos.toArray())).toEqual(s.positionsBefore);
+        for (const r of s.g.remotes.list) {
+          expect(r.drawn).toBe(true);
+          const d = s.g.fauna.worlds.get(r.frame).drawn.get(r.species);
+          expect(d.mesh.isInstancedMesh).toBe(true);
+          expect(d.mesh.count).toBe(1);
+          const matrix = new three.Matrix4();
+          d.mesh.getMatrixAt(0, matrix);
+          expect(new three.Vector3().setFromMatrixPosition(matrix).distanceTo(r.world.clone().sub(s.g.camWorld))).toBeLessThan(1e-4);
+          expect(new three.Vector3().setFromMatrixScale(matrix).x).toBeCloseTo(d.sp.size, 5);
+        }
+      } finally {
+        s.dispose();
+      }
+    });
+  }
 });

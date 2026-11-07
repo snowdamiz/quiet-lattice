@@ -321,7 +321,8 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
             if (heights.every((h) => h > 30) && Math.max(...heights) - Math.min(...heights) < 4)
               return {
                 owner: at(0, 0, gearHeight).toArray(),
-                observer: at(0, 12, gearHeight).toArray(),
+                // Watch from behind the owner's retreat so the live enemy does not mask the companion's pick sphere.
+                observer: at(-24, -24, gearHeight).toArray(),
                 companion: at(12, 0).toArray(),
                 east: east.toArray(),
               };
@@ -477,10 +478,10 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
 
     await aim(b.page, companion);
     const beforeRelease = await inspect(b.page, companion);
+    evidence.beforeRelease = beforeRelease;
     drawn(beforeRelease, arena, companion, arena.companion.index, owner);
     expect(beforeRelease.wire.hp).toBeGreaterThan(0);
     expect(beforeRelease.picked).toBe(companion);
-    evidence.beforeRelease = beforeRelease;
     const release = await b.page.evaluate(
       ({ observer, enemy }) => ({
         tick: window.game.net.store.tick,
