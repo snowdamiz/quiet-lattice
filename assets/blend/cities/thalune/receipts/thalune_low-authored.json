@@ -1,0 +1,570 @@
+[
+  {
+    "id": "thalune_low_0",
+    "title": "Hinge Court",
+    "role": "low",
+    "class": "building",
+    "boundsBlender": [
+      [
+        -7.0,
+        -7.0,
+        0.0
+      ],
+      [
+        7.0,
+        6.405721187591553,
+        8.384963989257812
+      ]
+    ],
+    "footprintRadius": 7.161012496232571,
+    "authoredHeight": 8.384963989257812,
+    "lodTriangles": [
+      35888,
+      10765,
+      3587,
+      1255
+    ],
+    "lodNodes": [
+      "thalune_low_0_LOD0",
+      "thalune_low_0_LOD1",
+      "thalune_low_0_LOD2",
+      "thalune_low_0_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 2.6,
+        "height": 3.2,
+        "floor": 0.36,
+        "entry": [
+          0,
+          -4.800000000000001,
+          0.36
+        ]
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -7.0,
+          0.36
+        ],
+        "to": [
+          0,
+          0,
+          0.36
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Interact_Service_thalune_low_0",
+        "positionBlender": [
+          0.0,
+          -4.0,
+          1.4600000381469727
+        ],
+        "properties": {}
+      },
+      {
+        "name": "Light_Nacre_20_thalune_low_0",
+        "positionBlender": [
+          -2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_36_thalune_low_0",
+        "positionBlender": [
+          2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      }
+    ],
+    "colliders": [
+      "COL_thalune_low_0_Deck_2",
+      "COL_thalune_low_0_EntryApron_4",
+      "COL_thalune_low_0_LanternShadeHull_18",
+      "COL_thalune_low_0_LanternShadeHull_34",
+      "COL_thalune_low_0_Pier_38",
+      "COL_thalune_low_0_Pier_40",
+      "COL_thalune_low_0_Pier_42",
+      "COL_thalune_low_0_Pier_44",
+      "COL_thalune_low_0_Pier_46",
+      "COL_thalune_low_0_Pier_48",
+      "COL_thalune_low_0_Pier_50",
+      "COL_thalune_low_0_Pier_52",
+      "COL_thalune_low_0_Pier_54",
+      "COL_thalune_low_0_Pier_56",
+      "COL_thalune_low_0_Pier_58",
+      "COL_thalune_low_0_RoomWall_61",
+      "COL_thalune_low_0_RoomWall_63",
+      "COL_thalune_low_0_RoomWall_68",
+      "COL_thalune_low_0_RoomWall_70",
+      "COL_thalune_low_0_RoomWall_75",
+      "COL_thalune_low_0_RoomWall_77",
+      "COL_thalune_low_0_RoomWall_82",
+      "COL_thalune_low_0_RoomWall_84",
+      "COL_thalune_low_0_RoomWall_89",
+      "COL_thalune_low_0_RoomWall_91",
+      "COL_thalune_low_0_RoomWall_96",
+      "COL_thalune_low_0_RoomWall_98",
+      "COL_thalune_low_0_RoomWall_103",
+      "COL_thalune_low_0_RoomWall_105",
+      "COL_thalune_low_0_RoomWall_110",
+      "COL_thalune_low_0_RoomWall_112",
+      "COL_thalune_low_0_HingeVaultHull_136"
+    ],
+    "padDiameter": null,
+    "planner": {
+      "class": 0,
+      "variant": 0,
+      "policy": "choose only slots whose foot >= footprintRadius; preserve metre-scale base; do not rescale the whole building to planner height"
+    },
+    "source": "assets/blend/cities/thalune_low.blend",
+    "glb": "packages/client/public/models/cities/thalune_low.glb",
+    "node": "thalune_low_0",
+    "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4"
+  },
+  {
+    "id": "thalune_low_1",
+    "title": "Paired Tide Houses",
+    "role": "low",
+    "class": "building",
+    "boundsBlender": [
+      [
+        -7.0,
+        -7.0,
+        0.0
+      ],
+      [
+        7.0,
+        6.229744911193848,
+        10.540925979614258
+      ]
+    ],
+    "footprintRadius": 7.161012496232571,
+    "authoredHeight": 10.540925979614258,
+    "lodTriangles": [
+      44064,
+      13219,
+      4406,
+      1542
+    ],
+    "lodNodes": [
+      "thalune_low_1_LOD0",
+      "thalune_low_1_LOD1",
+      "thalune_low_1_LOD2",
+      "thalune_low_1_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 2.6,
+        "height": 3.2,
+        "floor": 0.36,
+        "entry": [
+          0,
+          -4.800000000000001,
+          0.36
+        ]
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -7.0,
+          0.36
+        ],
+        "to": [
+          0,
+          0,
+          0.36
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Interact_Service_thalune_low_1",
+        "positionBlender": [
+          0.0,
+          -4.0,
+          1.4600000381469727
+        ],
+        "properties": {}
+      },
+      {
+        "name": "Light_Nacre_20_thalune_low_1",
+        "positionBlender": [
+          -2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_36_thalune_low_1",
+        "positionBlender": [
+          2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      }
+    ],
+    "colliders": [
+      "COL_thalune_low_1_Deck_2",
+      "COL_thalune_low_1_EntryApron_4",
+      "COL_thalune_low_1_LanternShadeHull_18",
+      "COL_thalune_low_1_LanternShadeHull_34",
+      "COL_thalune_low_1_Pier_38",
+      "COL_thalune_low_1_Pier_40",
+      "COL_thalune_low_1_Pier_42",
+      "COL_thalune_low_1_Pier_44",
+      "COL_thalune_low_1_Pier_46",
+      "COL_thalune_low_1_Pier_48",
+      "COL_thalune_low_1_Pier_50",
+      "COL_thalune_low_1_Pier_52",
+      "COL_thalune_low_1_Pier_54",
+      "COL_thalune_low_1_Pier_56",
+      "COL_thalune_low_1_Pier_58",
+      "COL_thalune_low_1_RoomWall_61",
+      "COL_thalune_low_1_RoomWall_63",
+      "COL_thalune_low_1_RoomWall_68",
+      "COL_thalune_low_1_RoomWall_70",
+      "COL_thalune_low_1_RoomWall_75",
+      "COL_thalune_low_1_RoomWall_77",
+      "COL_thalune_low_1_RoomWall_82",
+      "COL_thalune_low_1_RoomWall_84",
+      "COL_thalune_low_1_RoomWall_89",
+      "COL_thalune_low_1_RoomWall_91",
+      "COL_thalune_low_1_RoomWall_96",
+      "COL_thalune_low_1_RoomWall_98",
+      "COL_thalune_low_1_RoomWall_103",
+      "COL_thalune_low_1_RoomWall_105",
+      "COL_thalune_low_1_RoomWall_110",
+      "COL_thalune_low_1_RoomWall_112",
+      "COL_thalune_low_1_NorthValveHull_132",
+      "COL_thalune_low_1_SouthValveHull_147"
+    ],
+    "padDiameter": null,
+    "planner": {
+      "class": 0,
+      "variant": 1,
+      "policy": "choose only slots whose foot >= footprintRadius; preserve metre-scale base; do not rescale the whole building to planner height"
+    },
+    "source": "assets/blend/cities/thalune_low.blend",
+    "glb": "packages/client/public/models/cities/thalune_low.glb",
+    "node": "thalune_low_1",
+    "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4"
+  },
+  {
+    "id": "thalune_low_2",
+    "title": "Three Shell Courtyard",
+    "role": "low",
+    "class": "building",
+    "boundsBlender": [
+      [
+        -7.0,
+        -7.0,
+        0.0
+      ],
+      [
+        7.0,
+        6.0,
+        12.344385147094727
+      ]
+    ],
+    "footprintRadius": 7.161012496232571,
+    "authoredHeight": 12.344385147094727,
+    "lodTriangles": [
+      52776,
+      15832,
+      5276,
+      1847
+    ],
+    "lodNodes": [
+      "thalune_low_2_LOD0",
+      "thalune_low_2_LOD1",
+      "thalune_low_2_LOD2",
+      "thalune_low_2_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 2.6,
+        "height": 3.2,
+        "floor": 0.36,
+        "entry": [
+          0,
+          -4.800000000000001,
+          0.36
+        ]
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -7.0,
+          0.36
+        ],
+        "to": [
+          0,
+          0,
+          0.36
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Interact_Service_thalune_low_2",
+        "positionBlender": [
+          0.0,
+          -4.0,
+          1.4600000381469727
+        ],
+        "properties": {}
+      },
+      {
+        "name": "Light_Nacre_20_thalune_low_2",
+        "positionBlender": [
+          -2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_36_thalune_low_2",
+        "positionBlender": [
+          2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      }
+    ],
+    "colliders": [
+      "COL_thalune_low_2_Deck_2",
+      "COL_thalune_low_2_EntryApron_4",
+      "COL_thalune_low_2_LanternShadeHull_18",
+      "COL_thalune_low_2_LanternShadeHull_34",
+      "COL_thalune_low_2_Pier_38",
+      "COL_thalune_low_2_Pier_40",
+      "COL_thalune_low_2_Pier_42",
+      "COL_thalune_low_2_Pier_44",
+      "COL_thalune_low_2_Pier_46",
+      "COL_thalune_low_2_Pier_48",
+      "COL_thalune_low_2_Pier_50",
+      "COL_thalune_low_2_Pier_52",
+      "COL_thalune_low_2_Pier_54",
+      "COL_thalune_low_2_Pier_56",
+      "COL_thalune_low_2_Pier_58",
+      "COL_thalune_low_2_RoomWall_61",
+      "COL_thalune_low_2_RoomWall_63",
+      "COL_thalune_low_2_RoomWall_68",
+      "COL_thalune_low_2_RoomWall_70",
+      "COL_thalune_low_2_RoomWall_75",
+      "COL_thalune_low_2_RoomWall_77",
+      "COL_thalune_low_2_RoomWall_82",
+      "COL_thalune_low_2_RoomWall_84",
+      "COL_thalune_low_2_RoomWall_89",
+      "COL_thalune_low_2_RoomWall_91",
+      "COL_thalune_low_2_RoomWall_96",
+      "COL_thalune_low_2_RoomWall_98",
+      "COL_thalune_low_2_RoomWall_103",
+      "COL_thalune_low_2_RoomWall_105",
+      "COL_thalune_low_2_RoomWall_110",
+      "COL_thalune_low_2_RoomWall_112",
+      "COL_thalune_low_2_CourtyardValveHull_130",
+      "COL_thalune_low_2_CourtyardValveHull_145",
+      "COL_thalune_low_2_CourtyardValveHull_160"
+    ],
+    "padDiameter": null,
+    "planner": {
+      "class": 0,
+      "variant": 2,
+      "policy": "choose only slots whose foot >= footprintRadius; preserve metre-scale base; do not rescale the whole building to planner height"
+    },
+    "source": "assets/blend/cities/thalune_low.blend",
+    "glb": "packages/client/public/models/cities/thalune_low.glb",
+    "node": "thalune_low_2",
+    "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4"
+  },
+  {
+    "id": "thalune_low_3",
+    "title": "Lantern House",
+    "role": "low",
+    "class": "building",
+    "boundsBlender": [
+      [
+        -7.0,
+        -7.0,
+        0.0
+      ],
+      [
+        7.0,
+        6.211696147918701,
+        13.723063468933105
+      ]
+    ],
+    "footprintRadius": 7.161012496232571,
+    "authoredHeight": 13.723063468933105,
+    "lodTriangles": [
+      48284,
+      14485,
+      4827,
+      1689
+    ],
+    "lodNodes": [
+      "thalune_low_3_LOD0",
+      "thalune_low_3_LOD1",
+      "thalune_low_3_LOD2",
+      "thalune_low_3_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 2.6,
+        "height": 3.2,
+        "floor": 0.36,
+        "entry": [
+          0,
+          -4.800000000000001,
+          0.36
+        ]
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -7.0,
+          0.36
+        ],
+        "to": [
+          0,
+          0,
+          0.36
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Interact_Service_thalune_low_3",
+        "positionBlender": [
+          0.0,
+          -4.0,
+          1.4600000381469727
+        ],
+        "properties": {}
+      },
+      {
+        "name": "Light_Nacre_20_thalune_low_3",
+        "positionBlender": [
+          -2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_36_thalune_low_3",
+        "positionBlender": [
+          2.299999952316284,
+          -5.0,
+          1.5479999780654907
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      }
+    ],
+    "colliders": [
+      "COL_thalune_low_3_Deck_2",
+      "COL_thalune_low_3_EntryApron_4",
+      "COL_thalune_low_3_LanternShadeHull_18",
+      "COL_thalune_low_3_LanternShadeHull_34",
+      "COL_thalune_low_3_Pier_38",
+      "COL_thalune_low_3_Pier_40",
+      "COL_thalune_low_3_Pier_42",
+      "COL_thalune_low_3_Pier_44",
+      "COL_thalune_low_3_Pier_46",
+      "COL_thalune_low_3_Pier_48",
+      "COL_thalune_low_3_Pier_50",
+      "COL_thalune_low_3_Pier_52",
+      "COL_thalune_low_3_Pier_54",
+      "COL_thalune_low_3_Pier_56",
+      "COL_thalune_low_3_Pier_58",
+      "COL_thalune_low_3_RoomWall_61",
+      "COL_thalune_low_3_RoomWall_63",
+      "COL_thalune_low_3_RoomWall_68",
+      "COL_thalune_low_3_RoomWall_70",
+      "COL_thalune_low_3_RoomWall_75",
+      "COL_thalune_low_3_RoomWall_77",
+      "COL_thalune_low_3_RoomWall_82",
+      "COL_thalune_low_3_RoomWall_84",
+      "COL_thalune_low_3_RoomWall_89",
+      "COL_thalune_low_3_RoomWall_91",
+      "COL_thalune_low_3_RoomWall_96",
+      "COL_thalune_low_3_RoomWall_98",
+      "COL_thalune_low_3_RoomWall_103",
+      "COL_thalune_low_3_RoomWall_105",
+      "COL_thalune_low_3_RoomWall_110",
+      "COL_thalune_low_3_RoomWall_112",
+      "COL_thalune_low_3_BroadSkirtHull_138",
+      "COL_thalune_low_3_LanternCrownHull_180"
+    ],
+    "padDiameter": null,
+    "planner": {
+      "class": 0,
+      "variant": 3,
+      "policy": "choose only slots whose foot >= footprintRadius; preserve metre-scale base; do not rescale the whole building to planner height"
+    },
+    "source": "assets/blend/cities/thalune_low.blend",
+    "glb": "packages/client/public/models/cities/thalune_low.glb",
+    "node": "thalune_low_3",
+    "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4"
+  }
+]

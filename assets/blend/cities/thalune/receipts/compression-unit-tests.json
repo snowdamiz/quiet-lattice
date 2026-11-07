@@ -1,0 +1,25 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "packages/tools/src/art/meshopt.test.ts",
+    "packages/tools/src/art/ktx.test.ts",
+    "--maxWorkers",
+    "1"
+  ],
+  "exit": 0,
+  "deadlineSeconds": 120,
+  "timedOut": false,
+  "elapsedSeconds": 1.35,
+  "peakProcessTreeRssKiB": 334336,
+  "rssSamples": [
+    [
+      0.03,
+      256
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2
+}

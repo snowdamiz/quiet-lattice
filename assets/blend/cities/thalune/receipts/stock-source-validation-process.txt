@@ -1,0 +1,209 @@
+00:00.411  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_low.blend"
+00:00.860  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_mid.blend"
+00:01.496  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_tall.blend"
+00:02.108  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_civic.blend"
+
+validate assets/blend/cities/thalune_low.blend  (family cities, source .blend)
+  thalune_low_0 / thalune_low_0 [building]  tris LOD0 35,888, LOD1 10,765, LOD2 3,587, LOD3 1,255  size 14.00 x 13.41 x 8.38 m
+  thalune_low_1 / thalune_low_1 [building]  tris LOD0 44,064, LOD1 13,219, LOD2 4,406, LOD3 1,542  size 14.00 x 13.23 x 10.54 m
+  thalune_low_2 / thalune_low_2 [building]  tris LOD0 52,776, LOD1 15,832, LOD2 5,276, LOD3 1,847  size 14.00 x 13.00 x 12.34 m
+  thalune_low_3 / thalune_low_3 [building]  tris LOD0 48,284, LOD1 14,485, LOD2 4,827, LOD3 1,689  size 14.00 x 13.21 x 13.72 m
+  PASS  naming
+        ok    thalune_low.blend: 4 variant(s) in 4 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    thalune_low_0: LOD0 35,888 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_low_1: LOD0 44,064 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_low_2: LOD0 52,776 triangles within the building budget 8,000-60,000 (families.json)
+        ok    ... 1 more
+  PASS  LODs
+        ok    thalune_low_0: 35,888 > 10,765 > 3,587 > 1,255 triangles; LOD3 3.5% of LOD0
+        ok    thalune_low_1: 44,064 > 13,219 > 4,406 > 1,542 triangles; LOD3 3.5% of LOD0
+        ok    thalune_low_2: 52,776 > 15,832 > 5,276 > 1,847 triangles; LOD3 3.5% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO
+        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    thalune_low_0: longest side 14.00 m within 1-400 m
+        ok    ... 3 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_low.blend.json
+
+validate assets/blend/cities/thalune_mid.blend  (family cities, source .blend)
+  thalune_mid_0 / thalune_mid_0 [building]  tris LOD0 57,828, LOD1 17,348, LOD2 5,781, LOD3 2,022  size 16.40 x 15.00 x 24.14 m
+  thalune_mid_1 / thalune_mid_1 [building]  tris LOD0 57,702, LOD1 17,310, LOD2 5,770, LOD3 2,019  size 16.40 x 14.99 x 32.13 m
+  thalune_mid_2 / thalune_mid_2 [building]  tris LOD0 57,578, LOD1 17,273, LOD2 5,757, LOD3 2,014  size 17.68 x 15.55 x 46.14 m
+  thalune_mid_3 / thalune_mid_3 [building]  tris LOD0 57,688, LOD1 17,305, LOD2 5,768, LOD3 2,018  size 16.40 x 14.99 x 58.11 m
+  PASS  naming
+        ok    thalune_mid.blend: 4 variant(s) in 4 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    thalune_mid_0: LOD0 57,828 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_mid_1: LOD0 57,702 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_mid_2: LOD0 57,578 triangles within the building budget 8,000-60,000 (families.json)
+        ok    ... 1 more
+  PASS  LODs
+        ok    thalune_mid_0: 57,828 > 17,348 > 5,781 > 2,022 triangles; LOD3 3.5% of LOD0
+        ok    thalune_mid_1: 57,702 > 17,310 > 5,770 > 2,019 triangles; LOD3 3.5% of LOD0
+        ok    thalune_mid_2: 57,578 > 17,273 > 5,757 > 2,014 triangles; LOD3 3.5% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO
+        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    thalune_mid_0: longest side 24.14 m within 1-400 m
+        ok    ... 3 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_mid.blend.json
+
+validate assets/blend/cities/thalune_tall.blend  (family cities, source .blend)
+  thalune_tall_0 / thalune_tall_0 [building]  tris LOD0 57,832, LOD1 17,348, LOD2 5,783, LOD3 2,023  size 18.40 x 17.00 x 184.13 m
+  thalune_tall_1 / thalune_tall_1 [building]  tris LOD0 57,710, LOD1 17,313, LOD2 5,771, LOD3 2,019  size 18.40 x 17.00 x 224.10 m
+  thalune_tall_2 / thalune_tall_2 [building]  tris LOD0 57,577, LOD1 17,272, LOD2 5,757, LOD3 2,014  size 19.71 x 17.48 x 264.10 m
+  thalune_tall_3 / thalune_tall_3 [building]  tris LOD0 57,689, LOD1 17,306, LOD2 5,768, LOD3 2,018  size 18.40 x 17.00 x 308.05 m
+  PASS  naming
+        ok    thalune_tall.blend: 4 variant(s) in 4 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    thalune_tall_0: LOD0 57,832 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_tall_1: LOD0 57,710 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_tall_2: LOD0 57,577 triangles within the building budget 8,000-60,000 (families.json)
+        ok    ... 1 more
+  PASS  LODs
+        ok    thalune_tall_0: 57,832 > 17,348 > 5,783 > 2,023 triangles; LOD3 3.5% of LOD0
+        ok    thalune_tall_1: 57,710 > 17,313 > 5,771 > 2,019 triangles; LOD3 3.5% of LOD0
+        ok    thalune_tall_2: 57,577 > 17,272 > 5,757 > 2,014 triangles; LOD3 3.5% of LOD0
+        ok    ... 1 more
+  PASS  materials
+        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO
+        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    thalune_tall_0: longest side 184.13 m within 1-400 m
+        ok    ... 3 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_tall.blend.json
+
+validate assets/blend/cities/thalune_civic.blend  (family cities, source .blend)
+  thalune_plaza / thalune_plaza [building]  tris LOD0 57,723, LOD1 17,316, LOD2 5,772, LOD3 2,020  size 47.99 x 48.99 x 2.69 m
+  thalune_market_hall / thalune_market_hall [building]  tris LOD0 54,672, LOD1 16,401, LOD2 5,467, LOD3 1,912  size 26.00 x 23.05 x 12.58 m
+  thalune_skill_house / thalune_skill_house [building]  tris LOD0 44,700, LOD1 13,410, LOD2 4,469, LOD3 1,564  size 26.00 x 23.00 x 14.00 m
+  thalune_compact_office / thalune_compact_office [building]  tris LOD0 44,736, LOD1 13,419, LOD2 4,472, LOD3 1,564  size 26.00 x 23.00 x 20.84 m
+  thalune_listening_house / thalune_listening_house [building]  tris LOD0 50,056, LOD1 15,015, LOD2 5,004, LOD3 1,751  size 26.00 x 23.00 x 20.15 m
+  thalune_shipyard / thalune_shipyard [building]  tris LOD0 49,616, LOD1 14,883, LOD2 4,960, LOD3 1,735  size 42.00 x 37.00 x 10.92 m
+  thalune_salvage_yard / thalune_salvage_yard [building]  tris LOD0 57,824, LOD1 17,347, LOD2 5,782, LOD3 2,021  size 36.00 x 37.00 x 10.92 m
+  thalune_tide_hall / thalune_tide_hall [building]  tris LOD0 56,760, LOD1 17,028, LOD2 5,676, LOD3 1,985  size 26.00 x 23.37 x 15.78 m
+  PASS  naming
+        ok    thalune_civic.blend: 8 variant(s) in 8 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    thalune_plaza: LOD0 57,723 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_market_hall: LOD0 54,672 triangles within the building budget 8,000-60,000 (families.json)
+        ok    thalune_skill_house: LOD0 44,700 triangles within the building budget 8,000-60,000 (families.json)
+        ok    ... 5 more
+  PASS  LODs
+        ok    thalune_plaza: 57,723 > 17,316 > 5,772 > 2,020 triangles; LOD3 3.5% of LOD0
+        ok    thalune_market_hall: 54,672 > 16,401 > 5,467 > 1,912 triangles; LOD3 3.5% of LOD0
+        ok    thalune_skill_house: 44,700 > 13,410 > 4,469 > 1,564 triangles; LOD3 3.5% of LOD0
+        ok    ... 5 more
+  PASS  materials
+        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO
+        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)00:02.829  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_waterfront.blend"
+00:03.133  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_props.blend"
+00:03.233  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune_anchor.blend"
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    thalune_plaza: longest side 48.99 m within 1-400 m
+        ok    ... 7 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_civic.blend.json
+
+validate assets/blend/cities/thalune_waterfront.blend  (family cities, source .blend)
+  wall_thalune_straight / wall_thalune_straight [kit]  tris LOD0 4,752, LOD1 1,425, LOD2 474, LOD3 165  size 16.42 x 3.75 x 3.82 m
+  wall_thalune_curve / wall_thalune_curve [kit]  tris LOD0 4,752, LOD1 1,425, LOD2 475, LOD3 164  size 14.94 x 6.20 x 3.82 m
+  wall_thalune_steps / wall_thalune_steps [kit]  tris LOD0 8,512, LOD1 2,552, LOD2 850, LOD3 297  size 16.42 x 9.46 x 3.82 m
+  gate_thalune_land / gate_thalune_land [kit]  tris LOD0 14,434, LOD1 4,330, LOD2 1,443, LOD3 503  size 8.05 x 3.07 x 6.58 m
+  gate_thalune_water / gate_thalune_water [kit]  tris LOD0 14,434, LOD1 4,330, LOD2 1,442, LOD3 503  size 12.05 x 3.07 x 9.58 m
+  bridge_thalune_flat / bridge_thalune_flat [kit]  tris LOD0 14,385, LOD1 4,315, LOD2 1,437, LOD3 502  size 5.40 x 20.14 x 1.86 m
+  bridge_thalune_arch / bridge_thalune_arch [kit]  tris LOD0 14,386, LOD1 4,315, LOD2 1,438, LOD3 502  size 6.90 x 28.12 x 2.31 m
+  kit_thalune_pad_24 / kit_thalune_pad_24 [kit]  tris LOD0 10,140, LOD1 3,042, LOD2 1,014, LOD3 354  size 26.40 x 26.40 x 0.32 m
+  kit_thalune_pad_36 / kit_thalune_pad_36 [kit]  tris LOD0 10,140, LOD1 3,042, LOD2 1,013, LOD3 354  size 38.40 x 38.40 x 0.32 m
+  lamp_thalune_single / lamp_thalune_single [kit]  tris LOD0 7,104, LOD1 2,131, LOD2 709, LOD3 247  size 2.01 x 1.79 x 4.31 m
+  lamp_thalune_double / lamp_thalune_double [kit]  tris LOD0 14,048, LOD1 4,213, LOD2 1,403, LOD3 491  size 2.78 x 1.10 x 3.34 m
+  PASS  naming
+        ok    thalune_waterfront.blend: 11 variant(s) in 11 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    wall_thalune_straight: LOD0 4,752 triangles within the kit budget 500-15,000 (families.json)
+        ok    wall_thalune_curve: LOD0 4,752 triangles within the kit budget 500-15,000 (families.json)
+        ok    wall_thalune_steps: LOD0 8,512 triangles within the kit budget 500-15,000 (families.json)
+        ok    ... 8 more
+  PASS  LODs
+        ok    wall_thalune_straight: 4,752 > 1,425 > 474 > 165 triangles; LOD3 3.5% of LOD0
+        ok    wall_thalune_curve: 4,752 > 1,425 > 475 > 164 triangles; LOD3 3.5% of LOD0
+        ok    wall_thalune_steps: 8,512 > 2,552 > 850 > 297 triangles; LOD3 3.5% of LOD0
+        ok    ... 8 more
+  PASS  materials
+        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO
+        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    wall_thalune_straight: longest side 16.42 m within 0.2-60 m
+        ok    ... 10 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_waterfront.blend.json
+
+validate assets/blend/cities/thalune_props.blend  (family cities, source .blend)
+  prop_thalune_bench / prop_thalune_bench [prop]  tris LOD0 3,024, LOD1 906, LOD2 301, LOD3 104  size 2.90 x 0.92 x 1.12 m
+  prop_thalune_terminal / prop_thalune_terminal [prop]  tris LOD0 9,488, LOD1 2,845, LOD2 948, LOD3 332  size 2.06 x 1.56 x 1.94 m
+  prop_thalune_crate / prop_thalune_crate [prop]  tris LOD0 9,477, LOD1 2,843, LOD2 946, LOD3 331  size 2.56 x 1.94 x 1.56 m
+  prop_thalune_bollard / prop_thalune_bollard [prop]  tris LOD0 4,504, LOD1 1,351, LOD2 450, LOD3 157  size 1.40 x 1.40 x 1.25 m
+  prop_thalune_basin / prop_thalune_basin [prop]  tris LOD0 5,240, LOD1 1,571, LOD2 524, LOD3 182  size 2.00 x 2.00 x 0.90 m
+  prop_thalune_stall / prop_thalune_stall [prop]  tris LOD0 9,468, LOD1 2,840, LOD2 946, LOD3 330  size 4.08 x 2.99 x 3.57 m
+  PASS  naming
+        ok    thalune_props.blend: 6 variant(s) in 6 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    prop_thalune_bench: LOD0 3,024 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    prop_thalune_terminal: LOD0 9,488 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    prop_thalune_crate: LOD0 9,477 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)
+        ok    ... 3 more
+  PASS  LODs
+        ok    prop_thalune_bench: 3,024 > 906 > 301 > 104 triangles; LOD3 3.4% of LOD0
+        ok    prop_thalune_terminal: 9,488 > 2,845 > 948 > 332 triangles; LOD3 3.5% of LOD0
+        ok    prop_thalune_crate: 9,477 > 2,843 > 946 > 331 triangles; LOD3 3.5% of LOD0
+        ok    ... 3 more
+  PASS  materials
+        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO
+        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    prop_thalune_bench: longest side 2.90 m within 0.05-6 m
+        ok    ... 5 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_props.blend.json
+
+validate assets/blend/cities/thalune_anchor.blend  (family cities, source .blend)
+  anchor_sarelun / anchor_sarelun [hero]  tris LOD0 79,587, LOD1 23,875, LOD2 7,957, LOD3 2,784  size 20.80 x 20.35 x 49.00 m
+  PASS  naming
+        ok    thalune_anchor.blend: 1 variant(s) in 1 asset(s) follow the cities rules
+  PASS  triangle budget
+        ok    anchor_sarelun: LOD0 79,587 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)
+  PASS  LODs
+        ok    anchor_sarelun: 79,587 > 23,875 > 7,957 > 2,784 triangles; LOD3 3.5% of LOD0
+  PASS  materials
+        ok    LIB_GlyphLight_Sarelun: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)
+        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    anchor_sarelun: longest side 49.00 m within 0.5-400 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_anchor.blend.json
+
+7 of 7 file(s) passed validation

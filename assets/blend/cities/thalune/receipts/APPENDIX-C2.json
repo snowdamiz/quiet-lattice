@@ -1,0 +1,220 @@
+{
+  "TASK": "P1.E10.T05",
+  "STATUS": "BLOCKED",
+  "statusReason": "Full source/export implementation is ready; independent code review, full blind visual grade, engine review and runtime/performance gates belong to parent and remain pending.",
+  "BASE": "634c51d2378748c6a514af2a792ee4500b912643",
+  "branch": "task/P1-E10-T05-thalune-sarelun",
+  "SUMMARY": "38 shell-ribbed Thalune/Sarelun assets; seven editable blends, 152 saved LODs, seven KTX2/meshopt GLBs, 1.85m refs, fitted collision and interaction/light markers, shared packed PBR trim sheets.",
+  "inventory": {
+    "low": 4,
+    "mid": 4,
+    "tall": 4,
+    "plaza": 1,
+    "market_hall": 1,
+    "skill_house": 1,
+    "compact_office": 1,
+    "listening_house": 1,
+    "shipyard": 1,
+    "salvage_yard": 1,
+    "tide_hall": 1,
+    "wall": 3,
+    "gate": 2,
+    "bridge": 2,
+    "landing_pad": 2,
+    "lamp": 2,
+    "prop": 6,
+    "anchor": 1
+  },
+  "sourceFiles": [
+    "assets/blend/cities/thalune_anchor.blend",
+    "assets/blend/cities/thalune_civic.blend",
+    "assets/blend/cities/thalune_low.blend",
+    "assets/blend/cities/thalune_mid.blend",
+    "assets/blend/cities/thalune_props.blend",
+    "assets/blend/cities/thalune_tall.blend",
+    "assets/blend/cities/thalune_waterfront.blend"
+  ],
+  "exportFiles": [
+    "packages/client/public/models/cities/thalune_anchor.glb",
+    "packages/client/public/models/cities/thalune_civic.glb",
+    "packages/client/public/models/cities/thalune_low.glb",
+    "packages/client/public/models/cities/thalune_mid.glb",
+    "packages/client/public/models/cities/thalune_props.glb",
+    "packages/client/public/models/cities/thalune_tall.glb",
+    "packages/client/public/models/cities/thalune_waterfront.glb"
+  ],
+  "assetManifest": "assets/blend/cities/thalune/manifest.json",
+  "assetManifestSha256": "9ef5d4a980b6ba8e7837a9bbe67207ea9e11b486b00ac779910a1159f9cf2a3d",
+  "VERIFY": {
+    "stockSourceFilesPassed": 7,
+    "stockExportFilesPassed": 7,
+    "stockExportSucceeded": 7,
+    "savedLODs": 152,
+    "sourceAuditChecks": 1371,
+    "exportAuditChecks": 1371,
+    "negativeMutationsRejected": 5,
+    "compressionUnitTestsPassed": 12,
+    "static": [
+      "Python compileall exit 0",
+      "git diff --check exit 0",
+      "git diff --cached --check exit 0"
+    ],
+    "stockReports": [
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_anchor.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 1
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_anchor.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 1
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_civic.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 8
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_civic.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 8
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_low.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_low.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_mid.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_mid.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_props.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 6
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_props.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 6
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_tall.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_tall.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 4
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_waterfront.blend.json",
+        "mode": "source",
+        "status": "PASS",
+        "variantCount": 11
+      },
+      {
+        "path": "assets/blend/cities/thalune/receipts/stock-validation/cities__thalune_waterfront.glb.json",
+        "mode": "export",
+        "status": "PASS",
+        "variantCount": 11
+      }
+    ],
+    "commandLedger": "assets/blend/cities/thalune/receipts/command-ledger.json",
+    "runtimeSmoke": "NOT RUN: no GPU/browser/native capture/server/DB authorized"
+  },
+  "budgets": {
+    "LOD0Triangles": {
+      "building": [
+        35888,
+        57832
+      ],
+      "kit": [
+        4752,
+        14434
+      ],
+      "prop": [
+        3024,
+        9488
+      ],
+      "hero": [
+        79587,
+        79587
+      ]
+    },
+    "LOD3MaxRatio": 0.03499696831893285,
+    "gpuTextureMiBPerVariant": {
+      "hero": 64,
+      "building": 16,
+      "kit": 16,
+      "prop": 4
+    },
+    "textureSizes": {
+      "hero": 4096,
+      "building": 2048,
+      "kit": 2048,
+      "prop": 1024
+    }
+  },
+  "resourceUse": {
+    "peakProcessTreeRssKiB": 2543472,
+    "blenderThreads": 2,
+    "blenderProcessesInOwnLane": 1,
+    "ktxThreads": 2,
+    "ktxJobs": 1,
+    "backend": "CPU",
+    "deadlinesEnforced": true,
+    "timedOutCommands": 0,
+    "canonicalPreviewBytes": 10773992,
+    "ownLaneProcessesRemaining": []
+  },
+  "DECISIONS": [
+    "38-piece kit: 12 residences, 8 civic/yard assets, 11 waterfront pieces, 6 props and one anchor.",
+    "Plaza is a 48m central module for the 95-140m-radius planner plaza; surrounding district paving belongs to E10.T01.",
+    "Specific Sarelun shoal anchor description takes precedence over general capital anatomy: anchor is independently placeable, without a permanent bridge.",
+    "Preserve authored metre-scale bases and service openings. Select planner slots by circular footprint; do not stretch the whole asset to the planner height.",
+    "Use flat thalune_* family filenames to preserve existing discovery, source inference and exporter contracts. Exporter and shared art library are unchanged.",
+    "Saved LODs and painted trim atlases are authoritative. Authoring scripts are explicit studio operations and are never imported by export.",
+    "Atlas wear uses placed seam, tide, salt and contact masks; AO is painted into trim joins, not represented as an asset geometry bake."
+  ],
+  "OUT OF SCOPE FOUND": [
+    "E10.T01: current renderer selects three variants and generic cylinder colliders; it must select all four variants and named COL_/Interact/Light_ nodes.",
+    "E10.T01: planner class thresholds 34/95m differ from art bands 6-14/20-60/170-340m; city plain is dry and has no shoal/canal placement.",
+    "Independent code review and blind grading are pending with parent; compact CPU sheets are authoring evidence only."
+  ],
+  "ARTIFACTS": {
+    "previews": "assets/blend/cities/thalune/receipts/preview-index.json",
+    "futureGpuPacket": "assets/blend/cities/thalune/receipts/final-capture-inventory.json",
+    "sourceAudit": "assets/blend/cities/thalune/receipts/final-source-audit.json",
+    "exportAudit": "assets/blend/cities/thalune/receipts/final-export-audit.json"
+  },
+  "sharedFilesUnchanged": {
+    "librarySha256": "33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c",
+    "exportCitiesMatchesBase": true
+  }
+}

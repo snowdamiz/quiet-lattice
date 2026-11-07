@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "assets/blend/cities/thalune/authoring/author_kit.py",
+    "--",
+    "anchor",
+    "--replace"
+  ],
+  "exit": 0,
+  "deadlineSeconds": 240,
+  "timedOut": false,
+  "elapsedSeconds": 4.79,
+  "peakProcessTreeRssKiB": 2021632,
+  "rssSamples": [
+    [
+      0.03,
+      208
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2
+}

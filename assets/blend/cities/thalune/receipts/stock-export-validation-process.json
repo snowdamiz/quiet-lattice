@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/validate.py",
+    "--",
+    "--report-dir",
+    "assets/blend/cities/thalune/receipts/stock-validation",
+    "packages/client/public/models/cities/thalune_low.glb",
+    "packages/client/public/models/cities/thalune_mid.glb",
+    "packages/client/public/models/cities/thalune_tall.glb",
+    "packages/client/public/models/cities/thalune_civic.glb",
+    "packages/client/public/models/cities/thalune_waterfront.glb",
+    "packages/client/public/models/cities/thalune_props.glb",
+    "packages/client/public/models/cities/thalune_anchor.glb"
+  ],
+  "exit": 0,
+  "deadlineSeconds": 300,
+  "timedOut": false,
+  "elapsedSeconds": 10.39,
+  "peakProcessTreeRssKiB": 1348224,
+  "rssSamples": [
+    [
+      0.03,
+      160
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2
+}

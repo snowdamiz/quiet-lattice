@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "assets/blend/cities/thalune/authoring/fit_bridge_rails.py"
+  ],
+  "exit": 0,
+  "deadlineSeconds": 90,
+  "timedOut": false,
+  "elapsedSeconds": 3.96,
+  "peakProcessTreeRssKiB": 508864,
+  "rssSamples": [
+    [
+      0.04,
+      496
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2
+}

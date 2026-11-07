@@ -1,0 +1,922 @@
+[
+  {
+    "id": "wall_thalune_straight",
+    "title": "Battered seawall: straight",
+    "role": "wall",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -8.210000038146973,
+        -1.9527792930603027,
+        0.0
+      ],
+      [
+        8.210000038146973,
+        1.7999999523162842,
+        3.820000171661377
+      ]
+    ],
+    "footprintRadius": 8.394438672500579,
+    "authoredHeight": 3.820000171661377,
+    "lodTriangles": [
+      4752,
+      1425,
+      474,
+      165
+    ],
+    "lodNodes": [
+      "wall_thalune_straight_LOD0",
+      "wall_thalune_straight_LOD1",
+      "wall_thalune_straight_LOD2",
+      "wall_thalune_straight_LOD3"
+    ],
+    "clearances": [],
+    "walkRoutes": [],
+    "markers": [],
+    "colliders": [
+      "COL_wall_thalune_straight_WallHull_2"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "wall_thalune_straight",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "wall_thalune_curve",
+    "title": "Battered seawall: curve",
+    "role": "wall",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -7.4722371101379395,
+        -1.9527792930603027,
+        0.0
+      ],
+      [
+        7.4722371101379395,
+        4.246994495391846,
+        3.820000171661377
+      ]
+    ],
+    "footprintRadius": 8.412909694849255,
+    "authoredHeight": 3.820000171661377,
+    "lodTriangles": [
+      4752,
+      1425,
+      475,
+      164
+    ],
+    "lodNodes": [
+      "wall_thalune_curve_LOD0",
+      "wall_thalune_curve_LOD1",
+      "wall_thalune_curve_LOD2",
+      "wall_thalune_curve_LOD3"
+    ],
+    "clearances": [],
+    "walkRoutes": [],
+    "markers": [],
+    "colliders": [
+      "COL_wall_thalune_curve_WallHull_2"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "wall_thalune_curve",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "wall_thalune_steps",
+    "title": "Battered seawall: steps",
+    "role": "wall",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -8.210000038146973,
+        -7.659999847412109,
+        -2.384185791015625e-07
+      ],
+      [
+        8.210000038146973,
+        1.7999999523162842,
+        3.820000171661377
+      ]
+    ],
+    "footprintRadius": 8.394438672500579,
+    "authoredHeight": 3.820000410079956,
+    "lodTriangles": [
+      8512,
+      2552,
+      850,
+      297
+    ],
+    "lodNodes": [
+      "wall_thalune_steps_LOD0",
+      "wall_thalune_steps_LOD1",
+      "wall_thalune_steps_LOD2",
+      "wall_thalune_steps_LOD3"
+    ],
+    "clearances": [
+      {
+        "stepRise": 0.18,
+        "stepGoing": 0.3,
+        "width": 3,
+        "height": 4
+      }
+    ],
+    "walkRoutes": [],
+    "markers": [],
+    "colliders": [
+      "COL_wall_thalune_steps_WallHull_2",
+      "COL_wall_thalune_steps_Step_17",
+      "COL_wall_thalune_steps_Step_19",
+      "COL_wall_thalune_steps_Step_21",
+      "COL_wall_thalune_steps_Step_23",
+      "COL_wall_thalune_steps_Step_25",
+      "COL_wall_thalune_steps_Step_27",
+      "COL_wall_thalune_steps_Step_29",
+      "COL_wall_thalune_steps_Step_31",
+      "COL_wall_thalune_steps_Step_33",
+      "COL_wall_thalune_steps_Step_35",
+      "COL_wall_thalune_steps_Step_37",
+      "COL_wall_thalune_steps_Step_39",
+      "COL_wall_thalune_steps_Step_41",
+      "COL_wall_thalune_steps_Step_43",
+      "COL_wall_thalune_steps_Step_45",
+      "COL_wall_thalune_steps_Step_47",
+      "COL_wall_thalune_steps_Step_49",
+      "COL_wall_thalune_steps_Step_51",
+      "COL_wall_thalune_steps_Step_53",
+      "COL_wall_thalune_steps_Step_55"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "wall_thalune_steps",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "gate_thalune_land",
+    "title": "Shell gate: land",
+    "role": "gate",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -4.00380277633667,
+        -1.5358757972717285,
+        8.001978130778298e-05
+      ],
+      [
+        4.043911457061768,
+        1.5358757972717285,
+        6.580796718597412
+      ]
+    ],
+    "footprintRadius": 4.043920006577517,
+    "authoredHeight": 6.580716698816104,
+    "lodTriangles": [
+      14434,
+      4330,
+      1443,
+      503
+    ],
+    "lodNodes": [
+      "gate_thalune_land_LOD0",
+      "gate_thalune_land_LOD1",
+      "gate_thalune_land_LOD2",
+      "gate_thalune_land_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 3.9,
+        "height": 3.5,
+        "floor": 0,
+        "entry": [
+          0,
+          -2,
+          0
+        ]
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -3,
+          0
+        ],
+        "to": [
+          0,
+          3,
+          0
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Light_Nacre_50_gate_thalune_land",
+        "positionBlender": [
+          -2.799999952316284,
+          0.0,
+          6.059999942779541
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_66_gate_thalune_land",
+        "positionBlender": [
+          2.799999952316284,
+          0.0,
+          6.059999942779541
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Interact_Gate_gate_thalune_land",
+        "positionBlender": [
+          2.299999952316284,
+          -1.100000023841858,
+          1.2000000476837158
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_gate_thalune_land_Pier_2",
+      "COL_gate_thalune_land_GatePierCrownHull_15",
+      "COL_gate_thalune_land_Pier_17",
+      "COL_gate_thalune_land_GatePierCrownHull_30",
+      "COL_gate_thalune_land_ArchHighCollision_34",
+      "COL_gate_thalune_land_LanternShadeHull_48",
+      "COL_gate_thalune_land_LanternShadeHull_64"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "gate_thalune_land",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "gate_thalune_water",
+    "title": "Shell gate: water",
+    "role": "gate",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -6.00380277633667,
+        -1.5358757972717285,
+        8.000939124030992e-05
+      ],
+      [
+        6.043911457061768,
+        1.5358757972717285,
+        9.580785751342773
+      ]
+    ],
+    "footprintRadius": 6.0439171778652305,
+    "authoredHeight": 9.580705741951533,
+    "lodTriangles": [
+      14434,
+      4330,
+      1442,
+      503
+    ],
+    "lodNodes": [
+      "gate_thalune_water_LOD0",
+      "gate_thalune_water_LOD1",
+      "gate_thalune_water_LOD2",
+      "gate_thalune_water_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 7.9,
+        "height": 6.5,
+        "floor": 0,
+        "entry": [
+          0,
+          -2,
+          0
+        ]
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -3,
+          0
+        ],
+        "to": [
+          0,
+          3,
+          0
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Light_Nacre_50_gate_thalune_water",
+        "positionBlender": [
+          -4.800000190734863,
+          0.0,
+          9.0600004196167
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_66_gate_thalune_water",
+        "positionBlender": [
+          4.800000190734863,
+          0.0,
+          9.0600004196167
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Interact_Gate_gate_thalune_water",
+        "positionBlender": [
+          4.300000190734863,
+          -1.100000023841858,
+          1.2000000476837158
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_gate_thalune_water_Pier_2",
+      "COL_gate_thalune_water_GatePierCrownHull_15",
+      "COL_gate_thalune_water_Pier_17",
+      "COL_gate_thalune_water_GatePierCrownHull_30",
+      "COL_gate_thalune_water_ArchHighCollision_34",
+      "COL_gate_thalune_water_LanternShadeHull_48",
+      "COL_gate_thalune_water_LanternShadeHull_64"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "gate_thalune_water",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "bridge_thalune_flat",
+    "title": "Canal bridge: flat",
+    "role": "bridge",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -2.6951913833618164,
+        -10.06995964050293,
+        0.03999999165534973
+      ],
+      [
+        2.706648826599121,
+        10.065574645996094,
+        1.9016423225402832
+      ]
+    ],
+    "footprintRadius": 10.328035425312654,
+    "authoredHeight": 1.8616423308849335,
+    "lodTriangles": [
+      14385,
+      4315,
+      1437,
+      502
+    ],
+    "lodNodes": [
+      "bridge_thalune_flat_LOD0",
+      "bridge_thalune_flat_LOD1",
+      "bridge_thalune_flat_LOD2",
+      "bridge_thalune_flat_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 4.06,
+        "height": 20,
+        "floor": 0.36,
+        "railingHeight": 1.05
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -10.0,
+          0.36
+        ],
+        "to": [
+          0,
+          10.0,
+          0.36
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Light_Nacre_43_bridge_thalune_flat",
+        "positionBlender": [
+          -2.25,
+          -9.5,
+          1.440000057220459
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_59_bridge_thalune_flat",
+        "positionBlender": [
+          -2.25,
+          9.5,
+          1.440000057220459
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_93_bridge_thalune_flat",
+        "positionBlender": [
+          2.25,
+          -9.5,
+          1.440000057220459
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_109_bridge_thalune_flat",
+        "positionBlender": [
+          2.25,
+          9.5,
+          1.440000057220459
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Interact_Bridge_bridge_thalune_flat",
+        "positionBlender": [
+          1.5499999523162842,
+          -9.0,
+          1.5
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_bridge_thalune_flat_LanternShadeHull_41",
+      "COL_bridge_thalune_flat_LanternShadeHull_57",
+      "COL_bridge_thalune_flat_LanternShadeHull_91",
+      "COL_bridge_thalune_flat_LanternShadeHull_107",
+      "COL_bridge_thalune_flat_BridgeGuardrail_10001",
+      "COL_bridge_thalune_flat_BridgeGuardrail_10002",
+      "COL_bridge_thalune_flat_ContinuousDeck_20001"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "bridge_thalune_flat",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "bridge_thalune_arch",
+    "title": "Canal bridge: arch",
+    "role": "bridge",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -3.4451913833618164,
+        -14.05772590637207,
+        0.04000239074230194
+      ],
+      [
+        3.456648826599121,
+        14.065574645996094,
+        2.351020097732544
+      ]
+    ],
+    "footprintRadius": 14.394257816805162,
+    "authoredHeight": 2.311017706990242,
+    "lodTriangles": [
+      14386,
+      4315,
+      1438,
+      502
+    ],
+    "lodNodes": [
+      "bridge_thalune_arch_LOD0",
+      "bridge_thalune_arch_LOD1",
+      "bridge_thalune_arch_LOD2",
+      "bridge_thalune_arch_LOD3"
+    ],
+    "clearances": [
+      {
+        "width": 5.56,
+        "height": 20,
+        "floor": 0.36,
+        "railingHeight": 1.05
+      }
+    ],
+    "walkRoutes": [
+      {
+        "from": [
+          0,
+          -14.0,
+          0.36
+        ],
+        "to": [
+          0,
+          14.0,
+          0.36
+        ],
+        "width": 3,
+        "height": 3.2
+      }
+    ],
+    "markers": [
+      {
+        "name": "Light_Nacre_43_bridge_thalune_arch",
+        "positionBlender": [
+          -3.0,
+          -13.5,
+          1.4426722526550293
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_59_bridge_thalune_arch",
+        "positionBlender": [
+          -3.0,
+          13.5,
+          1.4426722526550293
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_93_bridge_thalune_arch",
+        "positionBlender": [
+          3.0,
+          -13.5,
+          1.4426722526550293
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_109_bridge_thalune_arch",
+        "positionBlender": [
+          3.0,
+          13.5,
+          1.4426722526550293
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Interact_Bridge_bridge_thalune_arch",
+        "positionBlender": [
+          2.299999952316284,
+          -13.0,
+          1.5
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_bridge_thalune_arch_LanternShadeHull_41",
+      "COL_bridge_thalune_arch_LanternShadeHull_57",
+      "COL_bridge_thalune_arch_LanternShadeHull_91",
+      "COL_bridge_thalune_arch_LanternShadeHull_107",
+      "COL_bridge_thalune_arch_BridgeGuardrail_10001",
+      "COL_bridge_thalune_arch_BridgeGuardrail_10002",
+      "COL_bridge_thalune_arch_ContinuousDeck_20001"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "bridge_thalune_arch",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "kit_thalune_pad_24",
+    "title": "24 metre shell pad",
+    "role": "landing_pad",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -13.199999809265137,
+        -13.199999809265137,
+        0.0
+      ],
+      [
+        13.199999809265137,
+        13.199999809265137,
+        0.31657394766807556
+      ]
+    ],
+    "footprintRadius": 13.200000482158677,
+    "authoredHeight": 0.31657394766807556,
+    "lodTriangles": [
+      10140,
+      3042,
+      1014,
+      354
+    ],
+    "lodNodes": [
+      "kit_thalune_pad_24_LOD0",
+      "kit_thalune_pad_24_LOD1",
+      "kit_thalune_pad_24_LOD2",
+      "kit_thalune_pad_24_LOD3"
+    ],
+    "clearances": [],
+    "walkRoutes": [],
+    "markers": [
+      {
+        "name": "BAY_Landing_kit_thalune_pad_24",
+        "positionBlender": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "properties": {
+          "diameter": 24
+        }
+      },
+      {
+        "name": "Interact_Pad_kit_thalune_pad_24",
+        "positionBlender": [
+          0.0,
+          -12.600000381469727,
+          1.25
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_kit_thalune_pad_24_Deck_2"
+    ],
+    "padDiameter": 24,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "kit_thalune_pad_24",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "kit_thalune_pad_36",
+    "title": "36 metre shell pad",
+    "role": "landing_pad",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -19.200000762939453,
+        -19.200000762939453,
+        0.0
+      ],
+      [
+        19.200000762939453,
+        19.200000762939453,
+        0.31657394766807556
+      ]
+    ],
+    "footprintRadius": 19.200000762939453,
+    "authoredHeight": 0.31657394766807556,
+    "lodTriangles": [
+      10140,
+      3042,
+      1013,
+      354
+    ],
+    "lodNodes": [
+      "kit_thalune_pad_36_LOD0",
+      "kit_thalune_pad_36_LOD1",
+      "kit_thalune_pad_36_LOD2",
+      "kit_thalune_pad_36_LOD3"
+    ],
+    "clearances": [],
+    "walkRoutes": [],
+    "markers": [
+      {
+        "name": "BAY_Landing_kit_thalune_pad_36",
+        "positionBlender": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "properties": {
+          "diameter": 36
+        }
+      },
+      {
+        "name": "Interact_Pad_kit_thalune_pad_36",
+        "positionBlender": [
+          0.0,
+          -18.600000381469727,
+          1.25
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_kit_thalune_pad_36_Deck_2"
+    ],
+    "padDiameter": 36,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "kit_thalune_pad_36",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "lamp_thalune_single",
+    "title": "Nacre lantern: single",
+    "role": "lamp",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -0.9867750406265259,
+        -0.896736741065979,
+        0.0
+      ],
+      [
+        1.0187489986419678,
+        0.896736741065979,
+        4.306026458740234
+      ]
+    ],
+    "footprintRadius": 1.0188207848766246,
+    "authoredHeight": 4.306026458740234,
+    "lodTriangles": [
+      7104,
+      2131,
+      709,
+      247
+    ],
+    "lodNodes": [
+      "lamp_thalune_single_LOD0",
+      "lamp_thalune_single_LOD1",
+      "lamp_thalune_single_LOD2",
+      "lamp_thalune_single_LOD3"
+    ],
+    "clearances": [],
+    "walkRoutes": [],
+    "markers": [
+      {
+        "name": "Light_Nacre_18_lamp_thalune_single",
+        "positionBlender": [
+          0.0,
+          0.0,
+          3.240000009536743
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Interact_Maintenance_lamp_thalune_single",
+        "positionBlender": [
+          0.6499999761581421,
+          0.0,
+          1.0
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_lamp_thalune_single_Socket_2",
+      "COL_lamp_thalune_single_LanternShadeHull_16"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "lamp_thalune_single",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  },
+  {
+    "id": "lamp_thalune_double",
+    "title": "Nacre lantern: double",
+    "role": "lamp",
+    "class": "kit",
+    "boundsBlender": [
+      [
+        -1.3804646730422974,
+        -0.550000011920929,
+        0.0
+      ],
+      [
+        1.3971740007400513,
+        0.550000011920929,
+        3.3408074378967285
+      ]
+    ],
+    "footprintRadius": 1.3972263422094022,
+    "authoredHeight": 3.3408074378967285,
+    "lodTriangles": [
+      14048,
+      4213,
+      1403,
+      491
+    ],
+    "lodNodes": [
+      "lamp_thalune_double_LOD0",
+      "lamp_thalune_double_LOD1",
+      "lamp_thalune_double_LOD2",
+      "lamp_thalune_double_LOD3"
+    ],
+    "clearances": [],
+    "walkRoutes": [],
+    "markers": [
+      {
+        "name": "Light_Nacre_19_lamp_thalune_double",
+        "positionBlender": [
+          -0.800000011920929,
+          0.0,
+          2.7300000190734863
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Light_Nacre_35_lamp_thalune_double",
+        "positionBlender": [
+          0.800000011920929,
+          0.0,
+          2.7300000190734863
+        ],
+        "properties": {
+          "color": "#FFE7C2",
+          "intensity": 0.65,
+          "distance": 9
+        }
+      },
+      {
+        "name": "Interact_Maintenance_lamp_thalune_double",
+        "positionBlender": [
+          0.6499999761581421,
+          0.0,
+          1.0
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_lamp_thalune_double_Socket_2",
+      "COL_lamp_thalune_double_LanternShadeHull_17",
+      "COL_lamp_thalune_double_LanternShadeHull_33"
+    ],
+    "padDiameter": null,
+    "source": "assets/blend/cities/thalune_waterfront.blend",
+    "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+    "node": "lamp_thalune_double",
+    "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5"
+  }
+]

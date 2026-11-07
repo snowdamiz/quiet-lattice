@@ -1,0 +1,27 @@
+[
+  {
+    "mutation": "missing_collider",
+    "expectedGate": "naming",
+    "rejected": true
+  },
+  {
+    "mutation": "missing_lod",
+    "expectedGate": "lods",
+    "rejected": true
+  },
+  {
+    "mutation": "uniform_material",
+    "expectedGate": "materials",
+    "rejected": true
+  },
+  {
+    "mutation": "wrong_reference_height",
+    "expectedGate": "scale",
+    "rejected": true
+  },
+  {
+    "mutation": "under_triangle_budget",
+    "expectedGate": "triangles",
+    "rejected": true
+  }
+]

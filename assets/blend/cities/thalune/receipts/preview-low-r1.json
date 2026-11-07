@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "assets/blend/cities/thalune/authoring/preview.py",
+    "--",
+    "assets/blend/cities/thalune/thalune_low.blend",
+    "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.png",
+    "--cell",
+    "512",
+    "--samples",
+    "12"
+  ],
+  "exit": 0,
+  "deadlineSeconds": 240,
+  "timedOut": false,
+  "elapsedSeconds": 8.96,
+  "peakProcessTreeRssKiB": 1019712,
+  "rssSamples": [
+    [
+      0.03,
+      352
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2
+}

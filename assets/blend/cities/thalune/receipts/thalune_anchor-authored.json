@@ -1,0 +1,84 @@
+[
+  {
+    "id": "anchor_sarelun",
+    "title": "The Tide Remembers \u2014 shoal anchor",
+    "role": "anchor",
+    "class": "hero",
+    "boundsBlender": [
+      [
+        -10.913859367370605,
+        -11.00784683227539,
+        0.0
+      ],
+      [
+        9.888632774353027,
+        9.344011306762695,
+        49.0
+      ]
+    ],
+    "footprintRadius": 11.562980592452952,
+    "authoredHeight": 49.0,
+    "lodTriangles": [
+      79587,
+      23875,
+      7957,
+      2784
+    ],
+    "lodNodes": [
+      "anchor_sarelun_LOD0",
+      "anchor_sarelun_LOD1",
+      "anchor_sarelun_LOD2",
+      "anchor_sarelun_LOD3"
+    ],
+    "clearances": [],
+    "walkRoutes": [],
+    "markers": [
+      {
+        "name": "Interact_Anchor_anchor_sarelun",
+        "positionBlender": [
+          0.0,
+          -4.199999809265137,
+          1.2000000476837158
+        ],
+        "properties": {}
+      },
+      {
+        "name": "Light_Glyph_anchor_sarelun",
+        "positionBlender": [
+          0.0,
+          -2.4000000953674316,
+          24.0
+        ],
+        "properties": {
+          "color": "#D8F6FF",
+          "intensity": 1.1,
+          "distance": 12
+        }
+      },
+      {
+        "name": "Interact_Recall_anchor_sarelun",
+        "positionBlender": [
+          0.0,
+          -5.0,
+          1.100000023841858
+        ],
+        "properties": {}
+      }
+    ],
+    "colliders": [
+      "COL_anchor_sarelun_ShoalRock_39",
+      "COL_anchor_sarelun_ShoalRock_41",
+      "COL_anchor_sarelun_ShoalRock_43",
+      "COL_anchor_sarelun_ShoalRock_45",
+      "COL_anchor_sarelun_ShoalRock_47",
+      "COL_anchor_sarelun_ShoalRock_49",
+      "COL_anchor_sarelun_AnchorHull_50"
+    ],
+    "padDiameter": null,
+    "placement": "Independent shoal placement, ground z=0 at exposed low-tide shelf; no permanent bridge. Tide simulation belongs to E10.T01.",
+    "source": "assets/blend/cities/thalune_anchor.blend",
+    "glb": "packages/client/public/models/cities/thalune_anchor.glb",
+    "node": "anchor_sarelun",
+    "sourceSha256": "7739c6429bcc93d7b9f8738002a3e6cd6431d65c9d19d32dd99e24f3fda5198a"
+  }
+]

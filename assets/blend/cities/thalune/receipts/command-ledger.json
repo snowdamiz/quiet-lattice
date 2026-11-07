@@ -1,0 +1,2842 @@
+{
+  "note": "Historical iteration commands retain then-current paths. Current reproducible gates are stock-source-validation, stock-export, stock-export-validation, final-source-audit, final-export-audit, final-negative-validation, compression-unit-tests and final-static-checks. Nested paths were relocated byte-for-byte; the temporary exporter extension was removed. Duplicate intermediate reports and verbose success logs were compacted here with hashes and summaries. Full initial failing audits and final gate reports remain.",
+  "commands": [
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/audit-source-r1.json"
+      ],
+      "exit": 1,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 5.74,
+      "peakProcessTreeRssKiB": 1455664,
+      "receipt": "assets/blend/cities/thalune/receipts/audit-source-r1-process.json",
+      "log": "assets/blend/cities/thalune/receipts/audit-source-r1-process.txt",
+      "last20Lines": [
+        "00:00.314  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+        "00:00.938  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+        "00:01.839  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+        "00:02.728  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+        "00:03.980  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+        "00:04.639  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+        "00:04.837  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+        "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+        "PASS  assets/blend/cities/thalune/thalune_low.blend",
+        "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+        "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+        "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+        "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+        "PASS  assets/blend/cities/thalune/thalune_props.blend",
+        "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+        "{\"pass\": false, \"checks\": 1373, \"failures\": [\"anchor_sarelun ground origin\"]}"
+      ]
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/audit-source-r2.json"
+      ],
+      "exit": 1,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 5.76,
+      "peakProcessTreeRssKiB": 1440720,
+      "receipt": "assets/blend/cities/thalune/receipts/audit-source-r2-process.json",
+      "log": "assets/blend/cities/thalune/receipts/audit-source-r2-process.txt",
+      "last20Lines": [
+        "00:00.310  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+        "00:00.915  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+        "00:01.808  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+        "00:02.708  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+        "00:04.057  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+        "00:04.712  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+        "00:04.913  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+        "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+        "PASS  assets/blend/cities/thalune/thalune_low.blend",
+        "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+        "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+        "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+        "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+        "PASS  assets/blend/cities/thalune/thalune_props.blend",
+        "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+        "{\"pass\": false, \"checks\": 1372, \"failures\": [\"thalune_mid_0 unobstructed declared-width and height public walk sweep\", \"thalune_plaza unobstructed declared-width and height public walk sweep\", \"thalune_plaza unobstructed declared-width and height public walk sweep\"]}"
+      ]
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/audit-source-r3.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 7.85,
+      "peakProcessTreeRssKiB": 1402752,
+      "receipt": "assets/blend/cities/thalune/receipts/audit-source-r3-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/audit-source-r3-process.txt",
+        "sha256": "1d36b84fec1ca0e2fa943e0038bf80a3f5fd8dc7ac8fda2cabaeb69051e75cc5",
+        "last20Lines": [
+          "00:00.507  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:01.405  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+          "00:02.685  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+          "00:04.002  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+          "00:05.703  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "00:06.509  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:06.761  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  assets/blend/cities/thalune/thalune_low.blend",
+          "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+          "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+          "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+          "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+          "PASS  assets/blend/cities/thalune/thalune_props.blend",
+          "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+          "{\"pass\": true, \"checks\": 1372, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "anchor",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 4.31,
+      "peakProcessTreeRssKiB": 1997824,
+      "receipt": "assets/blend/cities/thalune/receipts/author-anchor-final.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-anchor-final.txt",
+        "sha256": "b23b3c5664b3085f95e717d99d3a16f15d2a12c5b3cfb467b48ce28d39a0ea9f",
+        "last20Lines": [
+          "AUTHORED anchor_sarelun [100667, 30199, 10066, 3523] height 49.149126783013344",
+          "Info: Saved as \"thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "anchor",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 3.63,
+      "peakProcessTreeRssKiB": 1994496,
+      "receipt": "assets/blend/cities/thalune/receipts/author-anchor-r2.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-anchor-r2.txt",
+        "sha256": "1ce49b366903c04eddcbb91370f8031413bfde2f060af75aff4b87e85621ff8e",
+        "last20Lines": [
+          "AUTHORED anchor_sarelun [100667, 30199, 10065, 3523] height 49.0",
+          "Info: Saved as \"thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "anchor",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 4.79,
+      "peakProcessTreeRssKiB": 2021632,
+      "receipt": "assets/blend/cities/thalune/receipts/author-anchor-r3-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-anchor-r3-process.txt",
+        "sha256": "4b518f34401355912b056641b05e310f38f742410bd1603ae0543a2ab71d2377",
+        "last20Lines": [
+          "AUTHORED anchor_sarelun [101835, 30550, 10183, 3564] height 49.0",
+          "Info: Saved as \"thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "anchor",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 3.11,
+      "peakProcessTreeRssKiB": 1988928,
+      "receipt": "assets/blend/cities/thalune/receipts/author-anchor-r4-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-anchor-r4-process.txt",
+        "sha256": "c95f7a889dd2aa9d407eef5545b88b8f2d4253002f6490cb25f1896f849d12a2",
+        "last20Lines": [
+          "AUTHORED anchor_sarelun [79587, 23875, 7957, 2784] height 49.0",
+          "Info: Saved as \"thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "civic",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 14.59,
+      "peakProcessTreeRssKiB": 725504,
+      "receipt": "assets/blend/cities/thalune/receipts/author-civic-final.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-civic-final.txt",
+        "sha256": "7f1dc8291c8d0f790450b836e23921ba5f7c86b3765ff6342cb7e5e825b6f109",
+        "last20Lines": [
+          "AUTHORED thalune_plaza [57722, 17315, 5772, 2018] height 2.686731872789096",
+          "AUTHORED thalune_market_hall [54672, 16401, 5467, 1912] height 12.582682609558105",
+          "AUTHORED thalune_skill_house [44700, 13410, 4469, 1564] height 13.999452590942383",
+          "AUTHORED thalune_compact_office [44736, 13419, 4472, 1564] height 20.836467742919922",
+          "AUTHORED thalune_listening_house [50056, 15015, 5004, 1751] height 20.150798797607422",
+          "AUTHORED thalune_shipyard [49616, 14883, 4960, 1735] height 10.920000076293945",
+          "AUTHORED thalune_salvage_yard [49616, 14883, 4960, 1735] height 10.920000076293945",
+          "AUTHORED thalune_tide_hall [56760, 17028, 5676, 1985] height 15.77768325805664",
+          "Info: Saved as \"thalune_civic.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "civic",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 18.52,
+      "peakProcessTreeRssKiB": 708928,
+      "receipt": "assets/blend/cities/thalune/receipts/author-civic-r2.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-civic-r2.txt",
+        "sha256": "8fe67e5456234d36bb225d6c51386af645e2934bc0611620498e9b12c3a3a44e",
+        "last20Lines": [
+          "AUTHORED thalune_plaza [57722, 17315, 5772, 2018] height 2.686731872789096",
+          "AUTHORED thalune_market_hall [54672, 16401, 5467, 1912] height 12.582682609558105",
+          "AUTHORED thalune_skill_house [44700, 13410, 4469, 1564] height 13.999452590942383",
+          "AUTHORED thalune_compact_office [44736, 13419, 4472, 1564] height 20.836467742919922",
+          "AUTHORED thalune_listening_house [50056, 15015, 5004, 1751] height 20.150798797607422",
+          "AUTHORED thalune_shipyard [49616, 14883, 4960, 1735] height 10.920000076293945",
+          "AUTHORED thalune_salvage_yard [57824, 17347, 5782, 2021] height 10.920002443896465",
+          "AUTHORED thalune_tide_hall [56760, 17028, 5676, 1985] height 15.77768325805664",
+          "Info: Saved as \"thalune_civic.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "civic",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 18.85,
+      "peakProcessTreeRssKiB": 710160,
+      "receipt": "assets/blend/cities/thalune/receipts/author-civic-r3.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-civic-r3.txt",
+        "sha256": "8088a15d87802322f462c2d9548994778184ad02cccf93db611d0e5704fdda0a",
+        "last20Lines": [
+          "AUTHORED thalune_plaza [57723, 17316, 5772, 2020] height 2.6866343595902435",
+          "AUTHORED thalune_market_hall [54672, 16401, 5467, 1912] height 12.582682609558105",
+          "AUTHORED thalune_skill_house [44700, 13410, 4469, 1564] height 13.999452590942383",
+          "AUTHORED thalune_compact_office [44736, 13419, 4472, 1564] height 20.836467742919922",
+          "AUTHORED thalune_listening_house [50056, 15015, 5004, 1751] height 20.150798797607422",
+          "AUTHORED thalune_shipyard [49616, 14883, 4960, 1735] height 10.920000076293945",
+          "AUTHORED thalune_salvage_yard [57824, 17347, 5782, 2021] height 10.920002443896465",
+          "AUTHORED thalune_tide_hall [56760, 17028, 5676, 1985] height 15.77768325805664",
+          "Info: Saved as \"thalune_civic.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "low",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 3.96,
+      "peakProcessTreeRssKiB": 711472,
+      "receipt": "assets/blend/cities/thalune/receipts/author-low-final.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-low-final.txt",
+        "sha256": "b18dcb84cc9a4bdd6e7b52bf89dd606006c71915905907cb267140fd0e6fafd0",
+        "last20Lines": [
+          "AUTHORED thalune_low_0 [35888, 10765, 3587, 1255] height 8.384963989257812",
+          "AUTHORED thalune_low_1 [44064, 13219, 4406, 1542] height 10.540925979614258",
+          "AUTHORED thalune_low_2 [52776, 15832, 5276, 1847] height 12.344385147094727",
+          "AUTHORED thalune_low_3 [48284, 14485, 4827, 1689] height 13.723063468933105",
+          "Info: Saved as \"thalune_low.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "low"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 5.18,
+      "peakProcessTreeRssKiB": 761552,
+      "receipt": "assets/blend/cities/thalune/receipts/author-low-r1.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-low-r1.txt",
+        "sha256": "b7f5a2c9f362511cd314f16f26eef9da28c1feaba26ff53f115f379f6610c98e",
+        "last20Lines": [
+          "AUTHORED thalune_low_0 [43376, 13011, 4337, 1517] height 8.377424240112305",
+          "AUTHORED thalune_low_1 [54760, 16428, 5476, 1916] height 10.535246849060059",
+          "AUTHORED thalune_low_2 [67136, 20140, 6712, 2349] height 12.33885383605957",
+          "AUTHORED thalune_low_3 [63636, 19090, 6362, 2226] height 13.718363761901855",
+          "Info: Saved as \"thalune_low.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "low",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 8.52,
+      "peakProcessTreeRssKiB": 756064,
+      "receipt": "assets/blend/cities/thalune/receipts/author-low-r2.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-low-r2.txt",
+        "sha256": "cf9ec99f0fd8f7af8f32e681c30268d93b0942c2603c6271e13d62360d35cf29",
+        "last20Lines": [
+          "AUTHORED thalune_low_0 [28972, 8691, 2897, 1014] height 8.384966850280762",
+          "AUTHORED thalune_low_1 [36112, 10832, 3609, 1262] height 10.540865898132324",
+          "AUTHORED thalune_low_2 [43788, 13136, 4377, 1532] height 12.344382286071777",
+          "AUTHORED thalune_low_3 [40332, 12098, 4032, 1410] height 13.723054885864258",
+          "Info: Saved as \"thalune_low.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "mid",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 72.0,
+      "peakProcessTreeRssKiB": 807664,
+      "receipt": "assets/blend/cities/thalune/receipts/author-mid-final.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-mid-final.txt",
+        "sha256": "6ff5fadb548b641caacdbfe2cee5403c0b7d0a17bf20e75206f00bd8df7b5d9c",
+        "last20Lines": [
+          "AUTHORED thalune_mid_0 [57825, 17347, 5781, 2023] height 24.13839017131818",
+          "AUTHORED thalune_mid_1 [57702, 17310, 5770, 2019] height 32.12643555831164",
+          "AUTHORED thalune_mid_2 [57578, 17273, 5757, 2014] height 46.13650635909289",
+          "AUTHORED thalune_mid_3 [57688, 17305, 5768, 2018] height 58.11435441207141",
+          "Info: Saved as \"thalune_mid.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "mid"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 8.29,
+      "peakProcessTreeRssKiB": 730656,
+      "receipt": "assets/blend/cities/thalune/receipts/author-mid-r1.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-mid-r1.txt",
+        "sha256": "3617b286cd5285be8a566fa3be76cf5910e51da420f120692fea183a6a1ccea0",
+        "last20Lines": [
+          "AUTHORED thalune_mid_0 [57304, 17190, 5729, 2004] height 24.138385772705078",
+          "AUTHORED thalune_mid_1 [89612, 26882, 8960, 3135] height 32.1156120300293",
+          "AUTHORED thalune_mid_2 [93212, 27962, 9320, 3261] height 46.12275314331055",
+          "AUTHORED thalune_mid_3 [91440, 27432, 9144, 3199] height 58.11250305175781",
+          "Info: Saved as \"thalune_mid.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "mid",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 52.98,
+      "peakProcessTreeRssKiB": 752976,
+      "receipt": "assets/blend/cities/thalune/receipts/author-mid-r3.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-mid-r3.txt",
+        "sha256": "590ff441e3342d937ebe8b9d7271795d06c9cd20b16a50a6b0eb5c19861c6451",
+        "last20Lines": [
+          "AUTHORED thalune_mid_0 [57828, 17348, 5781, 2022] height 24.13839017131818",
+          "AUTHORED thalune_mid_1 [57702, 17310, 5770, 2019] height 32.12643555831164",
+          "AUTHORED thalune_mid_2 [57578, 17273, 5757, 2014] height 46.13650635909289",
+          "AUTHORED thalune_mid_3 [57688, 17305, 5768, 2018] height 58.11435441207141",
+          "Info: Saved as \"thalune_mid.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "props",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 1.72,
+      "peakProcessTreeRssKiB": 385120,
+      "receipt": "assets/blend/cities/thalune/receipts/author-props-final.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-props-final.txt",
+        "sha256": "7f0442c603b6b076eed38e0858dc5c2170ef2cca4b1f263dd28cc7e60a2e5301",
+        "last20Lines": [
+          "AUTHORED prop_thalune_bench [9483, 2844, 948, 330] height 1.1199941635131836",
+          "AUTHORED prop_thalune_terminal [9488, 2845, 948, 332] height 1.9364868338730616",
+          "AUTHORED prop_thalune_crate [9477, 2843, 946, 331] height 1.5595814501737095",
+          "AUTHORED prop_thalune_bollard [4504, 1351, 450, 157] height 1.2484030723571777",
+          "AUTHORED prop_thalune_basin [5240, 1571, 524, 182] height 0.8999999761581421",
+          "AUTHORED prop_thalune_stall [9468, 2840, 946, 330] height 3.569319248199463",
+          "Info: Saved as \"thalune_props.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "props",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 1.79,
+      "peakProcessTreeRssKiB": 377616,
+      "receipt": "assets/blend/cities/thalune/receipts/author-props-r4-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-props-r4-process.txt",
+        "sha256": "b446e7b42331ccac50a489c10f1354fd7a43aaeb486d88474c374fbd523f6e01",
+        "last20Lines": [
+          "AUTHORED prop_thalune_bench [3024, 906, 301, 104] height 1.1200000047683716",
+          "AUTHORED prop_thalune_terminal [9488, 2845, 948, 332] height 1.9364868338730616",
+          "AUTHORED prop_thalune_crate [9477, 2843, 946, 331] height 1.5595814501737095",
+          "AUTHORED prop_thalune_bollard [4504, 1351, 450, 157] height 1.2484030723571777",
+          "AUTHORED prop_thalune_basin [5240, 1571, 524, 182] height 0.8999999761581421",
+          "AUTHORED prop_thalune_stall [9468, 2840, 946, 330] height 3.569319248199463",
+          "Info: Saved as \"thalune_props.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "props",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 90,
+      "timedOut": false,
+      "elapsedSeconds": 1.55,
+      "peakProcessTreeRssKiB": 388256,
+      "receipt": "assets/blend/cities/thalune/receipts/author-props-r6-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-props-r6-process.txt",
+        "sha256": "b446e7b42331ccac50a489c10f1354fd7a43aaeb486d88474c374fbd523f6e01",
+        "last20Lines": [
+          "AUTHORED prop_thalune_bench [3024, 906, 301, 104] height 1.1200000047683716",
+          "AUTHORED prop_thalune_terminal [9488, 2845, 948, 332] height 1.9364868338730616",
+          "AUTHORED prop_thalune_crate [9477, 2843, 946, 331] height 1.5595814501737095",
+          "AUTHORED prop_thalune_bollard [4504, 1351, 450, 157] height 1.2484030723571777",
+          "AUTHORED prop_thalune_basin [5240, 1571, 524, 182] height 0.8999999761581421",
+          "AUTHORED prop_thalune_stall [9468, 2840, 946, 330] height 3.569319248199463",
+          "Info: Saved as \"thalune_props.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "tall",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 52.88,
+      "peakProcessTreeRssKiB": 817360,
+      "receipt": "assets/blend/cities/thalune/receipts/author-tall-final.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-tall-final.txt",
+        "sha256": "349029370754562fca2e77c73853463c7b67b202a11ffc9b89271c1a2aea6290",
+        "last20Lines": [
+          "AUTHORED thalune_tall_0 [57832, 17348, 5783, 2023] height 184.12753599429539",
+          "AUTHORED thalune_tall_1 [57710, 17313, 5771, 2019] height 224.09866124740802",
+          "AUTHORED thalune_tall_2 [57577, 17272, 5757, 2014] height 264.0989969407674",
+          "AUTHORED thalune_tall_3 [57689, 17306, 5768, 2018] height 308.05340367904864",
+          "Info: Saved as \"thalune_tall.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/author_kit.py",
+        "--",
+        "waterfront",
+        "--replace"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 8.53,
+      "peakProcessTreeRssKiB": 750480,
+      "receipt": "assets/blend/cities/thalune/receipts/author-waterfront-final.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/author-waterfront-final.txt",
+        "sha256": "73e793bb1540861b42cf27aa6bca703a44c1d71309998a1d4de956f71180c4ea",
+        "last20Lines": [
+          "AUTHORED wall_thalune_straight [4752, 1425, 474, 165] height 3.820000171661377",
+          "AUTHORED wall_thalune_curve [4752, 1425, 475, 164] height 3.820000171661377",
+          "AUTHORED wall_thalune_steps [8512, 2552, 850, 297] height 3.820000410079956",
+          "AUTHORED gate_thalune_land [14434, 4330, 1443, 503] height 6.580716698816104",
+          "AUTHORED gate_thalune_water [14434, 4330, 1442, 503] height 9.580705741951533",
+          "AUTHORED bridge_thalune_flat [14385, 4315, 1437, 502] height 1.8616423308849335",
+          "AUTHORED bridge_thalune_arch [14386, 4315, 1438, 502] height 2.311017706990242",
+          "AUTHORED kit_thalune_pad_24 [10140, 3042, 1014, 354] height 0.31657394766807556",
+          "AUTHORED kit_thalune_pad_36 [10140, 3042, 1013, 354] height 0.31657394766807556",
+          "AUTHORED lamp_thalune_single [7104, 2131, 709, 247] height 4.306026458740234",
+          "AUTHORED lamp_thalune_double [14048, 4213, 1403, 491] height 3.3408074378967285",
+          "Info: Saved as \"thalune_waterfront.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/tmp/thalune-inspect-floor.py"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 45,
+      "timedOut": false,
+      "elapsedSeconds": 1.72,
+      "peakProcessTreeRssKiB": 355712,
+      "receipt": "assets/blend/cities/thalune/receipts/bridge-ray-diagnostic.json",
+      "log": "assets/blend/cities/thalune/receipts/bridge-ray-diagnostic.txt"
+    },
+    {
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "packages/tools/src/art/meshopt.test.ts",
+        "packages/tools/src/art/ktx.test.ts",
+        "--maxWorkers",
+        "1"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 120,
+      "timedOut": false,
+      "elapsedSeconds": 1.35,
+      "peakProcessTreeRssKiB": 334336,
+      "receipt": "assets/blend/cities/thalune/receipts/compression-unit-tests.json",
+      "log": "assets/blend/cities/thalune/receipts/compression-unit-tests.txt"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--exports",
+        "--report",
+        "assets/blend/cities/thalune/receipts/export-final.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 12.45,
+      "peakProcessTreeRssKiB": 1515568,
+      "receipt": "assets/blend/cities/thalune/receipts/export-audit-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-audit-process.txt",
+        "sha256": "066663204c0008fa2a0d87c34c8fb2fd8b18da9743681553e3666d47e9f2124a",
+        "last20Lines": [
+          "23:27:59 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:27:59 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:27:59 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_AnchorHull_122_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_SaltWornShoalStoneHull_50_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_SaltWornShoalStoneHull_64_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_SaltWornShoalStoneHull_78_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_SaltWornShoalStoneHull_92_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_SaltWornShoalStoneHull_106_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_SaltWornShoalStoneHull_120_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_51_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_65_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_79_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_93_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_107_mesh",
+          "23:27:59 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_121_mesh",
+          "23:27:59 | INFO: glTF import finished in 0.13s",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  packages/client/public/models/cities/thalune/thalune_anchor.glb",
+          "{\"pass\": true, \"checks\": 1380, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--exports",
+        "--report",
+        "assets/blend/cities/thalune/receipts/export-final-r4.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 12.34,
+      "peakProcessTreeRssKiB": 1511712,
+      "receipt": "assets/blend/cities/thalune/receipts/export-audit-r4-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-audit-r4-process.txt",
+        "sha256": "0c59dc11aa78bcd7f34ed64b3e81a9d356ca543c77069a7b552b08a94cdbc011",
+        "last20Lines": [
+          "23:32:26 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_30_mesh",
+          "23:32:26 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_32_mesh",
+          "23:32:26 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_34_mesh",
+          "23:32:26 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_36_mesh",
+          "23:32:26 | INFO: Blender create Mesh node Cube",
+          "23:32:26 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:32:27 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:32:27 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:32:27 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:32:27 | INFO: Blender create Mesh node COL_anchor_sarelun_AnchorHull_50_mesh",
+          "23:32:27 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_39_mesh",
+          "23:32:27 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_41_mesh",
+          "23:32:27 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_43_mesh",
+          "23:32:27 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_45_mesh",
+          "23:32:27 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_47_mesh",
+          "23:32:27 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_49_mesh",
+          "23:32:27 | INFO: glTF import finished in 0.10s",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  packages/client/public/models/cities/thalune/thalune_anchor.glb",
+          "{\"pass\": true, \"checks\": 1373, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--exports",
+        "--report",
+        "assets/blend/cities/thalune/receipts/export-final-r5.json"
+      ],
+      "exit": 1,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 10.19,
+      "peakProcessTreeRssKiB": 890320,
+      "receipt": "assets/blend/cities/thalune/receipts/export-audit-r5-process.json",
+      "log": "assets/blend/cities/thalune/receipts/export-audit-r5-process.txt",
+      "last20Lines": [
+        "23:33:58 | INFO: Blender create Mesh node wall_thalune_straight_LappedCoping_5_mesh",
+        "23:33:58 | INFO: Blender create Mesh node wall_thalune_straight_SaltTideLip_4_mesh",
+        "23:33:58 | INFO: Blender create Mesh node wall_thalune_straight_SaltTideLip_6_mesh",
+        "23:33:58 | INFO: Blender create Mesh node wall_thalune_straight_BatteredStone_1_mesh",
+        "23:33:58 | INFO: Blender create Mesh node wall_thalune_straight_BatteredStone_1_mesh",
+        "23:33:58 | INFO: Blender create Mesh node wall_thalune_straight_BatteredStone_1_mesh",
+        "23:33:58 | INFO: glTF import finished in 0.32s",
+        "Traceback (most recent call last):",
+        "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/authoring/audit.py\", line 164, in <module>",
+        "    raise SystemExit(main())",
+        "                     ~~~~^^",
+        "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/authoring/audit.py\", line 104, in main",
+        "    floor = max(hit.z for hit in floor_hits if hit is not None)",
+        "ValueError: max() iterable argument is empty",
+        "PASS  packages/client/public/models/cities/thalune/thalune_waterfront.glb",
+        "",
+        "Error: script failed, file: 'assets/blend/cities/thalune/authoring/audit.py', exiting.",
+        "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+        "",
+        "Blender quit"
+      ]
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_cities.py",
+        "--",
+        "--only",
+        "thalune_low,thalune_mid,thalune_tall,thalune_civic,thalune_waterfront,thalune_props,thalune_anchor",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/export-validation"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 900,
+      "timedOut": false,
+      "elapsedSeconds": 115.95,
+      "peakProcessTreeRssKiB": 2197952,
+      "receipt": "assets/blend/cities/thalune/receipts/export-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-final-process.txt",
+        "sha256": "1fa8a015d7f252877250079724b32db5bbc1e232eb23d35b8fb0f02efc9177a4",
+        "last20Lines": [
+          "        ok    ... 9 more",
+          "  PASS  LODs",
+          "        ok    bridge_thalune_arch: 14,386 > 4,315 > 1,438 > 502 triangles; LOD3 3.5% of LOD0",
+          "        ok    bridge_thalune_flat: 14,385 > 4,315 > 1,437 > 502 triangles; LOD3 3.5% of LOD0",
+          "        ok    gate_thalune_land: 14,434 > 4,330 > 1,443 > 503 triangles; LOD3 3.5% of LOD0",
+          "        ok    ... 8 more",
+          "  PASS  materials",
+          "        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO",
+          "        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)",
+          "        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB",
+          "        ok    ... 11 more",
+          "  PASS  scale references",
+          "        ok    source: assets/blend/cities/thalune/thalune_waterfront.blend holds the 1 m grid and 1.85 m biped (validated with the source)",
+          "        ok    bridge_thalune_arch: longest side 28.12 m within 0.2-60 m",
+          "        ok    bridge_thalune_flat: longest side 20.14 m within 0.2-60 m",
+          "        ok    ... 9 more",
+          "RESULT: PASS (5 of 5 checks passed)",
+          "  report: assets/blend/cities/thalune/receipts/export-validation/cities__thalune_waterfront.glb.json",
+          "  wrote packages/client/public/models/cities/thalune/thalune_waterfront.glb (2,057,376 bytes)",
+          "export cities: 7 of 7 source(s) exported"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_cities.py",
+        "--",
+        "--only",
+        "thalune_props",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/export-validation"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 4.76,
+      "peakProcessTreeRssKiB": 513840,
+      "receipt": "assets/blend/cities/thalune/receipts/export-props-r6-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-props-r6-process.txt",
+        "sha256": "f4b93ebd014e89b5babbf8a3d81d91e8e61c918dcfe2faf20fe66e4ed5571d2f",
+        "last20Lines": [
+          "        ok    ... 4 more",
+          "  PASS  LODs",
+          "        ok    prop_thalune_basin: 5,240 > 1,571 > 524 > 182 triangles; LOD3 3.5% of LOD0",
+          "        ok    prop_thalune_bench: 3,024 > 906 > 301 > 104 triangles; LOD3 3.4% of LOD0",
+          "        ok    prop_thalune_bollard: 4,504 > 1,351 > 450 > 157 triangles; LOD3 3.5% of LOD0",
+          "        ok    ... 3 more",
+          "  PASS  materials",
+          "        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO",
+          "        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)",
+          "        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.1 MB",
+          "        ok    ... 6 more",
+          "  PASS  scale references",
+          "        ok    source: assets/blend/cities/thalune/thalune_props.blend holds the 1 m grid and 1.85 m biped (validated with the source)",
+          "        ok    prop_thalune_basin: longest side 2.00 m within 0.05-6 m",
+          "        ok    prop_thalune_bench: longest side 2.90 m within 0.05-6 m",
+          "        ok    ... 4 more",
+          "RESULT: PASS (5 of 5 checks passed)",
+          "  report: assets/blend/cities/thalune/receipts/export-validation/cities__thalune_props.glb.json",
+          "  wrote packages/client/public/models/cities/thalune/thalune_props.glb (682,916 bytes)",
+          "export cities: 1 of 1 source(s) exported"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--exports",
+        "--report",
+        "assets/blend/cities/thalune/receipts/export-qualified.json"
+      ],
+      "exit": 1,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 10.73,
+      "peakProcessTreeRssKiB": 929136,
+      "receipt": "assets/blend/cities/thalune/receipts/export-qualified-process.json",
+      "log": "assets/blend/cities/thalune/receipts/export-qualified-process.txt",
+      "last20Lines": [
+        "23:35:25 | INFO: Blender create Mesh node wall_thalune_straight_LappedCoping_5_mesh",
+        "23:35:25 | INFO: Blender create Mesh node wall_thalune_straight_SaltTideLip_4_mesh",
+        "23:35:25 | INFO: Blender create Mesh node wall_thalune_straight_SaltTideLip_6_mesh",
+        "23:35:25 | INFO: Blender create Mesh node wall_thalune_straight_BatteredStone_1_mesh",
+        "23:35:25 | INFO: Blender create Mesh node wall_thalune_straight_BatteredStone_1_mesh",
+        "23:35:25 | INFO: Blender create Mesh node wall_thalune_straight_BatteredStone_1_mesh",
+        "23:35:25 | INFO: glTF import finished in 0.37s",
+        "Traceback (most recent call last):",
+        "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/authoring/audit.py\", line 164, in <module>",
+        "    raise SystemExit(main())",
+        "                     ~~~~^^",
+        "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/authoring/audit.py\", line 104, in main",
+        "    floor = max(hit.z for hit in floor_hits if hit is not None)",
+        "ValueError: max() iterable argument is empty",
+        "PASS  packages/client/public/models/cities/thalune/thalune_waterfront.glb",
+        "",
+        "Error: script failed, file: 'assets/blend/cities/thalune/authoring/audit.py', exiting.",
+        "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+        "",
+        "Blender quit"
+      ]
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--exports",
+        "--report",
+        "assets/blend/cities/thalune/receipts/export-qualified-r7.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 16.8,
+      "peakProcessTreeRssKiB": 1513504,
+      "receipt": "assets/blend/cities/thalune/receipts/export-qualified-r7-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-qualified-r7-process.txt",
+        "sha256": "98c0596a09222633a9b2fe1bbf50eec6ba4bdf5e39d59cc9eff8eff4131e0f56",
+        "last20Lines": [
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_30_mesh",
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_32_mesh",
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_34_mesh",
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_IncisedGlyphCore_36_mesh",
+          "23:37:54 | INFO: Blender create Mesh node Cube",
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:37:54 | INFO: Blender create Mesh node anchor_sarelun_WeatheredAnchorCore_1_mesh",
+          "23:37:54 | INFO: Blender create Mesh node COL_anchor_sarelun_AnchorHull_50_mesh",
+          "23:37:54 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_39_mesh",
+          "23:37:54 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_41_mesh",
+          "23:37:54 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_43_mesh",
+          "23:37:54 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_45_mesh",
+          "23:37:54 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_47_mesh",
+          "23:37:54 | INFO: Blender create Mesh node COL_anchor_sarelun_ShoalRock_49_mesh",
+          "23:37:54 | INFO: glTF import finished in 0.22s",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  packages/client/public/models/cities/thalune/thalune_anchor.glb",
+          "{\"pass\": true, \"checks\": 1371, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_cities.py",
+        "--",
+        "--only",
+        "thalune_props,thalune_anchor",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/export-validation"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 420,
+      "timedOut": false,
+      "elapsedSeconds": 45.58,
+      "peakProcessTreeRssKiB": 2543472,
+      "receipt": "assets/blend/cities/thalune/receipts/export-r4-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-r4-process.txt",
+        "sha256": "bc60a7f80f1e7c6467d92f05a745ff57d0759857baa376d4fcf72759a762a00a",
+        "last20Lines": [
+          "        ok    ... 4 more",
+          "  PASS  LODs",
+          "        ok    prop_thalune_basin: 5,240 > 1,571 > 524 > 182 triangles; LOD3 3.5% of LOD0",
+          "        ok    prop_thalune_bench: 3,024 > 906 > 301 > 104 triangles; LOD3 3.4% of LOD0",
+          "        ok    prop_thalune_bollard: 4,504 > 1,351 > 450 > 157 triangles; LOD3 3.5% of LOD0",
+          "        ok    ... 3 more",
+          "  PASS  materials",
+          "        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO",
+          "        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)",
+          "        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.1 MB",
+          "        ok    ... 6 more",
+          "  PASS  scale references",
+          "        ok    source: assets/blend/cities/thalune/thalune_props.blend holds the 1 m grid and 1.85 m biped (validated with the source)",
+          "        ok    prop_thalune_basin: longest side 2.00 m within 0.05-6 m",
+          "        ok    prop_thalune_bench: longest side 2.90 m within 0.05-6 m",
+          "        ok    ... 4 more",
+          "RESULT: PASS (5 of 5 checks passed)",
+          "  report: assets/blend/cities/thalune/receipts/export-validation/cities__thalune_props.glb.json",
+          "  wrote packages/client/public/models/cities/thalune/thalune_props.glb (682,940 bytes)",
+          "export cities: 2 of 2 source(s) exported"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_cities.py",
+        "--",
+        "--only",
+        "thalune_waterfront",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/export-validation"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 12.1,
+      "peakProcessTreeRssKiB": 908400,
+      "receipt": "assets/blend/cities/thalune/receipts/export-r5-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-r5-process.txt",
+        "sha256": "ab5973c23de6314b49bf42b922575af1b22a0a3ce856d5bf24cd910490c26d3e",
+        "last20Lines": [
+          "        ok    ... 9 more",
+          "  PASS  LODs",
+          "        ok    bridge_thalune_arch: 14,386 > 4,315 > 1,438 > 502 triangles; LOD3 3.5% of LOD0",
+          "        ok    bridge_thalune_flat: 14,385 > 4,315 > 1,437 > 502 triangles; LOD3 3.5% of LOD0",
+          "        ok    gate_thalune_land: 14,434 > 4,330 > 1,443 > 503 triangles; LOD3 3.5% of LOD0",
+          "        ok    ... 8 more",
+          "  PASS  materials",
+          "        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO",
+          "        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)",
+          "        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB",
+          "        ok    ... 11 more",
+          "  PASS  scale references",
+          "        ok    source: assets/blend/cities/thalune/thalune_waterfront.blend holds the 1 m grid and 1.85 m biped (validated with the source)",
+          "        ok    bridge_thalune_arch: longest side 28.12 m within 0.2-60 m",
+          "        ok    bridge_thalune_flat: longest side 20.14 m within 0.2-60 m",
+          "        ok    ... 9 more",
+          "RESULT: PASS (5 of 5 checks passed)",
+          "  report: assets/blend/cities/thalune/receipts/export-validation/cities__thalune_waterfront.glb.json",
+          "  wrote packages/client/public/models/cities/thalune/thalune_waterfront.glb (2,061,952 bytes)",
+          "export cities: 1 of 1 source(s) exported"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_cities.py",
+        "--",
+        "--only",
+        "thalune_waterfront",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/export-validation"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 15.29,
+      "peakProcessTreeRssKiB": 848848,
+      "receipt": "assets/blend/cities/thalune/receipts/export-waterfront-r7-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/export-waterfront-r7-process.txt",
+        "sha256": "41ca893fece3d899584442e62e0172b442429b707fee5aa04416a6effe1f3b1a",
+        "last20Lines": [
+          "        ok    ... 9 more",
+          "  PASS  LODs",
+          "        ok    bridge_thalune_arch: 14,386 > 4,315 > 1,438 > 502 triangles; LOD3 3.5% of LOD0",
+          "        ok    bridge_thalune_flat: 14,385 > 4,315 > 1,437 > 502 triangles; LOD3 3.5% of LOD0",
+          "        ok    gate_thalune_land: 14,434 > 4,330 > 1,443 > 503 triangles; LOD3 3.5% of LOD0",
+          "        ok    ... 8 more",
+          "  PASS  materials",
+          "        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO",
+          "        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)",
+          "        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB",
+          "        ok    ... 11 more",
+          "  PASS  scale references",
+          "        ok    source: assets/blend/cities/thalune/thalune_waterfront.blend holds the 1 m grid and 1.85 m biped (validated with the source)",
+          "        ok    bridge_thalune_arch: longest side 28.12 m within 0.2-60 m",
+          "        ok    bridge_thalune_flat: longest side 20.14 m within 0.2-60 m",
+          "        ok    ... 9 more",
+          "RESULT: PASS (5 of 5 checks passed)",
+          "  report: assets/blend/cities/thalune/receipts/export-validation/cities__thalune_waterfront.glb.json",
+          "  wrote packages/client/public/models/cities/thalune/thalune_waterfront.glb (2,058,884 bytes)",
+          "export cities: 1 of 1 source(s) exported"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/test_export_cities.py"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 60,
+      "timedOut": false,
+      "elapsedSeconds": 0.77,
+      "peakProcessTreeRssKiB": 248384,
+      "receipt": "assets/blend/cities/thalune/receipts/exporter-unit-tests-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/exporter-unit-tests-process.txt",
+        "sha256": "04ccd9396809677aa17f431f3cf22fb512908a612cf55b1b880203198c3fb08c",
+        "last20Lines": [
+          "test_exact_relative_selection_does_not_select_another_people (__main__.CityExportTests.test_exact_relative_selection_does_not_select_another_people) ... ok",
+          "test_flat_and_nested_sources_keep_relative_paths (__main__.CityExportTests.test_flat_and_nested_sources_keep_relative_paths) ... ok",
+          "test_nested_output_and_failure_removes_only_its_stale_model (__main__.CityExportTests.test_nested_output_and_failure_removes_only_its_stale_model) ... ok",
+          "test_uncompressed_shipped_output_is_refused (__main__.CityExportTests.test_uncompressed_shipped_output_is_refused) ... ok",
+          "test_unknown_selection_fails_instead_of_successfully_exporting_nothing (__main__.CityExportTests.test_unknown_selection_fails_instead_of_successfully_exporting_nothing) ... ok",
+          "",
+          "----------------------------------------------------------------------",
+          "Ran 5 tests in 0.006s",
+          "",
+          "OK",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--exports",
+        "--report",
+        "assets/blend/cities/thalune/receipts/final-export-audit.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 12.47,
+      "peakProcessTreeRssKiB": 1524400,
+      "receipt": "assets/blend/cities/thalune/receipts/final-export-audit-process.json",
+      "log": "assets/blend/cities/thalune/receipts/final-export-audit-process.txt"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/test_negative_validation.py"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 90,
+      "timedOut": false,
+      "elapsedSeconds": 2.8,
+      "peakProcessTreeRssKiB": 599296,
+      "receipt": "assets/blend/cities/thalune/receipts/final-negative-validation-process.json",
+      "log": "assets/blend/cities/thalune/receipts/final-negative-validation-process.txt"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/final-source-audit.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 5.97,
+      "peakProcessTreeRssKiB": 1361024,
+      "receipt": "assets/blend/cities/thalune/receipts/final-source-audit-process.json",
+      "log": "assets/blend/cities/thalune/receipts/final-source-audit-process.txt"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/fit_bridge_rails.py"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 90,
+      "timedOut": false,
+      "elapsedSeconds": 3.96,
+      "peakProcessTreeRssKiB": 508864,
+      "receipt": "assets/blend/cities/thalune/receipts/fit-bridge-rails-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/fit-bridge-rails-process.txt",
+        "sha256": "9b2632a2673670ca24d2415048b615560a546964b92f31b31155f7cf55630598",
+        "last20Lines": [
+          "00:00.563  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "Info: Saved as \"thalune_waterfront.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/fit_bridge_rails.py"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 90,
+      "timedOut": false,
+      "elapsedSeconds": 3.98,
+      "peakProcessTreeRssKiB": 513504,
+      "receipt": "assets/blend/cities/thalune/receipts/fit-continuous-bridge-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/fit-continuous-bridge-process.txt",
+        "sha256": "d988846a700d14cbb767be5e23032ec03c8d84075d34f261d3278d53aeeadf62",
+        "last20Lines": [
+          "00:00.374  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "Info: Saved as \"thalune_waterfront.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/test_negative_validation.py"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 90,
+      "timedOut": false,
+      "elapsedSeconds": 2.3,
+      "peakProcessTreeRssKiB": 591984,
+      "receipt": "assets/blend/cities/thalune/receipts/negative-validation-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/negative-validation-process.txt",
+        "sha256": "9008a148fa202bce0b252bf0e8e2e1f2048f36a0f9b5da38721db12dc5089f37",
+        "last20Lines": [
+          "00:00.288  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:00.671  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:01.029  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:01.345  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:01.686  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "missing_collider REJECTED",
+          "missing_lod REJECTED",
+          "uniform_material REJECTED",
+          "wrong_reference_height REJECTED",
+          "under_triangle_budget REJECTED"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_anchor.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 2.85,
+      "peakProcessTreeRssKiB": 1130944,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-anchor-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-anchor-final-process.txt",
+        "sha256": "a8b7bd9881f6bf456e3b9310c5eb3652fc5f43e33c12c14bbdf892e2ea07d4c0",
+        "last20Lines": [
+          "00:00.424  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "00:02.362  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_anchor_sarelun.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_anchor.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12",
+        "--direct"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 2.81,
+      "peakProcessTreeRssKiB": 1120512,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-anchor-r4-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-anchor-r4-process.txt",
+        "sha256": "338c635d1616129689d791be44df76d68e426bd40ff7ebcce26f12a2290c28c5",
+        "last20Lines": [
+          "00:00.450  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "00:02.332  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/anchor.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_civic.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/civic.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 17.02,
+      "peakProcessTreeRssKiB": 1187392,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-civic-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-civic-final-process.txt",
+        "sha256": "6b940c0e334b612394df22ff151b76177b03c3562afd6883db6dd790d90b020d",
+        "last20Lines": [
+          "00:00.328  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+          "00:02.114  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_plaza.png'",
+          "00:03.917  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_market_hall.png'",
+          "00:05.614  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_skill_house.png'",
+          "00:07.331  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_compact_office.png'",
+          "00:09.606  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_listening_house.png'",
+          "00:11.798  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_shipyard.png'",
+          "00:13.856  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_salvage_yard.png'",
+          "00:16.365  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_tide_hall.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_low.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12",
+        "--stage"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 8.8,
+      "peakProcessTreeRssKiB": 2431168,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-low-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-low-final-process.txt",
+        "sha256": "44953c2280010b8afa9827a53b7332c9b9888f63361d421d6cd998d07e45729c",
+        "last20Lines": [
+          "00:00.285  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:08.486  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_low.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/low.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 8.96,
+      "peakProcessTreeRssKiB": 1019712,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-low-r1.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-low-r1.txt",
+        "sha256": "fbd52c064d5eb57dc326a7b11675f5cfa09a75da4343ec4f2c69b76b1f0f8154",
+        "last20Lines": [
+          "00:00.310  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:02.368  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_low_0.png'",
+          "00:04.297  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_low_1.png'",
+          "00:06.316  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_low_2.png'",
+          "00:08.527  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_low_3.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_mid.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/mid.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 5.97,
+      "peakProcessTreeRssKiB": 1066608,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-mid-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-mid-final-process.txt",
+        "sha256": "315fdacaf34c51401845c72d142a60010627b6e0bfbb4a58c473015b9819290f",
+        "last20Lines": [
+          "00:00.280  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+          "00:01.899  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_mid_0.png'",
+          "00:03.293  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_mid_1.png'",
+          "00:04.453  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_mid_2.png'",
+          "00:05.501  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_mid_3.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_props.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 11.09,
+      "peakProcessTreeRssKiB": 935904,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-props-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-props-final-process.txt",
+        "sha256": "a88851164d14301d00398656a7fe6b5e9bed505579a9671180e1758a58918eb1",
+        "last20Lines": [
+          "00:00.303  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:01.893  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_prop_thalune_bench.png'",
+          "00:03.731  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_prop_thalune_terminal.png'",
+          "00:05.324  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_prop_thalune_crate.png'",
+          "00:07.271  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_prop_thalune_bollard.png'",
+          "00:08.802  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_prop_thalune_basin.png'",
+          "00:10.599  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_prop_thalune_stall.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_props.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12",
+        "--stage"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 5.86,
+      "peakProcessTreeRssKiB": 2376304,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-props-r4-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-props-r4-process.txt",
+        "sha256": "0c434274418063745a1a4ab935fd0c3169695800dd4c71fd39402329b4dc2089",
+        "last20Lines": [
+          "00:00.272  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:05.436  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/props.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_props.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r2/props.png",
+        "--stage",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 90,
+      "timedOut": false,
+      "elapsedSeconds": 7.96,
+      "peakProcessTreeRssKiB": 2383824,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-props-r7-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-props-r7-process.txt",
+        "sha256": "a15c0a64ed8a8f6bcf21906d9d2238e6b5d75ab1720e6a95e74511897d347dc3",
+        "last20Lines": [
+          "00:00.700  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:07.352  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r2/props.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_tall.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/tall.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 4.88,
+      "peakProcessTreeRssKiB": 1076704,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-tall-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-tall-final-process.txt",
+        "sha256": "b94d1e459ad00d12f12c61456565a5cbc391590e36a8a6263ca582261589956b",
+        "last20Lines": [
+          "00:00.266  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+          "00:01.421  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_tall_0.png'",
+          "00:02.445  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_tall_1.png'",
+          "00:03.432  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_tall_2.png'",
+          "00:04.402  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_thalune_tall_3.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/preview.py",
+        "--",
+        "assets/blend/cities/thalune/thalune_waterfront.blend",
+        "assets/renders/cities/thalune/P1-E10-T05-cpu-r1/waterfront.png",
+        "--cell",
+        "512",
+        "--samples",
+        "12"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 16.09,
+      "peakProcessTreeRssKiB": 1112208,
+      "receipt": "assets/blend/cities/thalune/receipts/preview-waterfront-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/preview-waterfront-final-process.txt",
+        "sha256": "051583e69a942905317146fcfa1ef9162a555d0a28db3aca088252e9b55c87bc",
+        "last20Lines": [
+          "00:00.507  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "00:02.228  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_wall_thalune_straight.png'",
+          "00:03.864  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_wall_thalune_curve.png'",
+          "00:05.168  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_wall_thalune_steps.png'",
+          "00:06.597  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_gate_thalune_land.png'",
+          "00:07.862  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_gate_thalune_water.png'",
+          "00:09.027  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_bridge_thalune_flat.png'",
+          "00:10.218  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_bridge_thalune_arch.png'",
+          "00:11.593  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_kit_thalune_pad_24.png'",
+          "00:12.858  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_kit_thalune_pad_36.png'",
+          "00:14.013  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_lamp_thalune_single.png'",
+          "00:15.479  render           | Saved: 'assets/renders/cities/thalune/P1-E10-T05-cpu-r1/_lamp_thalune_double.png'",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "",
+          "Blender quit"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/source-final.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 6.42,
+      "peakProcessTreeRssKiB": 1450416,
+      "receipt": "assets/blend/cities/thalune/receipts/source-final-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/source-final-process.txt",
+        "sha256": "a74c699c6185272f2c536079cf618036e4210a0495fceb5d6cc73e80db2be6c2",
+        "last20Lines": [
+          "00:00.309  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:00.952  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+          "00:01.954  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+          "00:02.941  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+          "00:04.396  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "00:05.102  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:05.324  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  assets/blend/cities/thalune/thalune_low.blend",
+          "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+          "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+          "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+          "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+          "PASS  assets/blend/cities/thalune/thalune_props.blend",
+          "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+          "{\"pass\": true, \"checks\": 1372, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/source-final-r4.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 5.98,
+      "peakProcessTreeRssKiB": 1451296,
+      "receipt": "assets/blend/cities/thalune/receipts/source-final-r4-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/source-final-r4-process.txt",
+        "sha256": "9e7a302e0de7a8c1297b8a930e353c7363124312b60b857f261e41ce3a90a867",
+        "last20Lines": [
+          "00:00.365  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:01.014  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+          "00:01.963  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+          "00:02.919  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+          "00:04.235  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "00:04.882  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:05.106  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  assets/blend/cities/thalune/thalune_low.blend",
+          "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+          "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+          "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+          "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+          "PASS  assets/blend/cities/thalune/thalune_props.blend",
+          "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+          "{\"pass\": true, \"checks\": 1373, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/source-final-r5.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 6.01,
+      "peakProcessTreeRssKiB": 1461744,
+      "receipt": "assets/blend/cities/thalune/receipts/source-final-r5-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/source-final-r5-process.txt",
+        "sha256": "7e269090562dac0d3afbdcd1f17214e588d035138c8218ca89651411a288d799",
+        "last20Lines": [
+          "00:00.297  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:00.927  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+          "00:01.861  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+          "00:02.884  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+          "00:04.207  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "00:04.906  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:05.130  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  assets/blend/cities/thalune/thalune_low.blend",
+          "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+          "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+          "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+          "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+          "PASS  assets/blend/cities/thalune/thalune_props.blend",
+          "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+          "{\"pass\": true, \"checks\": 1381, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/source-qualified.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 7.03,
+      "peakProcessTreeRssKiB": 1460608,
+      "receipt": "assets/blend/cities/thalune/receipts/source-qualified-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/source-qualified-process.txt",
+        "sha256": "da1b0227a05971a4384a44b9bb9d2b54a4a2c04a1b523b62deec9f79344770fa",
+        "last20Lines": [
+          "00:00.456  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:01.192  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+          "00:02.228  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+          "00:03.288  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+          "00:04.862  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "00:05.715  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:05.987  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  assets/blend/cities/thalune/thalune_low.blend",
+          "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+          "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+          "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+          "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+          "PASS  assets/blend/cities/thalune/thalune_props.blend",
+          "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+          "{\"pass\": true, \"checks\": 1381, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "assets/blend/cities/thalune/authoring/audit.py",
+        "--",
+        "--report",
+        "assets/blend/cities/thalune/receipts/source-qualified-r7.json"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 7.05,
+      "peakProcessTreeRssKiB": 1472896,
+      "receipt": "assets/blend/cities/thalune/receipts/source-qualified-r7-process.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/source-qualified-r7-process.txt",
+        "sha256": "dd00a8f20cdad7baf4c3e2382114512fed6c7ddd28d2a19ecbf9b371eac3a529",
+        "last20Lines": [
+          "00:00.368  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_low.blend\"",
+          "00:01.132  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_mid.blend\"",
+          "00:02.259  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_tall.blend\"",
+          "00:03.396  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_civic.blend\"",
+          "00:05.039  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_waterfront.blend\"",
+          "00:05.821  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_props.blend\"",
+          "00:06.082  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e/assets/blend/cities/thalune/thalune_anchor.blend\"",
+          "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+          "PASS  assets/blend/cities/thalune/thalune_low.blend",
+          "PASS  assets/blend/cities/thalune/thalune_mid.blend",
+          "PASS  assets/blend/cities/thalune/thalune_tall.blend",
+          "PASS  assets/blend/cities/thalune/thalune_civic.blend",
+          "PASS  assets/blend/cities/thalune/thalune_waterfront.blend",
+          "PASS  assets/blend/cities/thalune/thalune_props.blend",
+          "PASS  assets/blend/cities/thalune/thalune_anchor.blend",
+          "{\"pass\": true, \"checks\": 1371, \"failures\": []}"
+        ]
+      }
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/export_cities.py",
+        "--",
+        "--only",
+        "thalune_low,thalune_mid,thalune_tall,thalune_civic,thalune_waterfront,thalune_props,thalune_anchor",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/stock-validation"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 900,
+      "timedOut": false,
+      "elapsedSeconds": 116.99,
+      "peakProcessTreeRssKiB": 2538912,
+      "receipt": "assets/blend/cities/thalune/receipts/stock-export-process.json",
+      "log": "assets/blend/cities/thalune/receipts/stock-export-process.txt"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/validate.py",
+        "--",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/stock-validation",
+        "packages/client/public/models/cities/thalune_low.glb",
+        "packages/client/public/models/cities/thalune_mid.glb",
+        "packages/client/public/models/cities/thalune_tall.glb",
+        "packages/client/public/models/cities/thalune_civic.glb",
+        "packages/client/public/models/cities/thalune_waterfront.glb",
+        "packages/client/public/models/cities/thalune_props.glb",
+        "packages/client/public/models/cities/thalune_anchor.glb"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 300,
+      "timedOut": false,
+      "elapsedSeconds": 10.39,
+      "peakProcessTreeRssKiB": 1348224,
+      "receipt": "assets/blend/cities/thalune/receipts/stock-export-validation-process.json",
+      "log": "assets/blend/cities/thalune/receipts/stock-export-validation-process.txt"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/validate.py",
+        "--",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/stock-validation",
+        "assets/blend/cities/thalune_low.blend",
+        "assets/blend/cities/thalune_mid.blend",
+        "assets/blend/cities/thalune_tall.blend",
+        "assets/blend/cities/thalune_civic.blend",
+        "assets/blend/cities/thalune_waterfront.blend",
+        "assets/blend/cities/thalune_props.blend",
+        "assets/blend/cities/thalune_anchor.blend"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 4.29,
+      "peakProcessTreeRssKiB": 1450608,
+      "receipt": "assets/blend/cities/thalune/receipts/stock-source-validation-process.json",
+      "log": "assets/blend/cities/thalune/receipts/stock-source-validation-process.txt"
+    },
+    {
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "packages/tools/blender/validate.py",
+        "--",
+        "--family",
+        "cities",
+        "--report-dir",
+        "assets/blend/cities/thalune/receipts/validation",
+        "assets/blend/cities/thalune/thalune_low.blend"
+      ],
+      "exit": 0,
+      "deadlineSeconds": 240,
+      "timedOut": false,
+      "elapsedSeconds": 1.03,
+      "peakProcessTreeRssKiB": 160,
+      "receipt": "assets/blend/cities/thalune/receipts/validate-low-r1.json",
+      "historicalLog": {
+        "originalPath": "assets/blend/cities/thalune/receipts/validate-low-r1.txt",
+        "sha256": "46c53bdd2b2748c4c64aa9bfd1cc42bf76311d6baabc44ea4461e3715669d41c",
+        "last20Lines": [
+          "        ok    thalune_low_1: LOD0 36,112 triangles within the building budget 8,000-60,000 (families.json)",
+          "        ok    thalune_low_2: LOD0 43,788 triangles within the building budget 8,000-60,000 (families.json)",
+          "        ok    ... 1 more",
+          "  PASS  LODs",
+          "        ok    thalune_low_0: 28,972 > 8,691 > 2,897 > 1,014 triangles; LOD3 3.5% of LOD0",
+          "        ok    thalune_low_1: 36,112 > 10,832 > 3,609 > 1,262 triangles; LOD3 3.5% of LOD0",
+          "        ok    thalune_low_2: 43,788 > 13,136 > 4,377 > 1,532 triangles; LOD3 3.5% of LOD0",
+          "        ok    ... 1 more",
+          "  PASS  materials",
+          "        ok    LIB_Nacre_SarelunTrim: pbr: base colour, roughness, metallic, normal, AO",
+          "        ok    LIB_Nav_SarelunNacre: signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)",
+          "  PASS  scale references",
+          "        ok    REF_Grid: grid spacing 1.000 m",
+          "        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane",
+          "        ok    thalune_low_0: longest side 14.00 m within 1-400 m",
+          "        ok    ... 3 more",
+          "RESULT: PASS (5 of 5 checks passed)",
+          "  report: assets/blend/cities/thalune/receipts/validation/cities__thalune_low.blend.json",
+          "",
+          "1 of 1 file(s) passed validation"
+        ]
+      }
+    }
+  ],
+  "historicalReports": [
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/audit-source-r3.json",
+      "sha256": "d806fd8a1a9f0e4cd05a2f033a6ba852f7d750c74a632cdbe07c77cf5c1ee7a9",
+      "pass": true,
+      "checkCount": 1372,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-final-r4.json",
+      "sha256": "5dc728f32ee0363d08bcffbaceb9b5f25059f690b1e9cf042c3ef545c4a04ed6",
+      "pass": true,
+      "checkCount": 1373,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-final.json",
+      "sha256": "3afd767c00172f336286b5ec8ca192a2debd01ff50597fd9b107e7cc8d32e189",
+      "pass": true,
+      "checkCount": 1380,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-qualified-r7.json",
+      "sha256": "dc3a73352c6422ee3866e2e6cf69de4397566c5f808af0f2d97bdcb52d8b7991",
+      "pass": true,
+      "checkCount": 1371,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/source-final-r4.json",
+      "sha256": "5658f5cf4e62be71469bfac028196da423105553a68e158719a54cebb4dcc70d",
+      "pass": true,
+      "checkCount": 1373,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/source-final-r5.json",
+      "sha256": "7c33c53d2ee8a2f7e88d4ef0b948ef9b8d66a07686c611ce6e1bde389590d787",
+      "pass": true,
+      "checkCount": 1381,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/source-final.json",
+      "sha256": "2d98931863d1116ddb97a7ed1ec39d3beb25b44e6afc44b01b61c27eeb2cdc2a",
+      "pass": true,
+      "checkCount": 1372,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/source-qualified-r7.json",
+      "sha256": "b241ba3611c796fd752e9202260d76ac849ae5619e353a52cce2c2a422604b39",
+      "pass": true,
+      "checkCount": 1371,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/source-qualified.json",
+      "sha256": "c10571742ae42c4e8fdf1a9205be266a1a6368a612e0c15f4f6c9b3189953cb6",
+      "pass": true,
+      "checkCount": 1381,
+      "failures": []
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/cities__thalune_low.blend.json",
+      "sha256": "d4a6e9d64ac77d14b1ac7546e6586e7658c4a478ac1e0ac195cbe9d3cccef17b",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_anchor-export.json",
+      "sha256": "26e5cf8467e0c51d0203549eaa7d1c8e9609f7a06e4fdc6039ce26d108d9f6d2",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_anchor-source.json",
+      "sha256": "e1be7d4907f5129b9203674da0f65983d40959a96968ae48ae3a548c93a8bc61",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_civic-export.json",
+      "sha256": "1f6027388ac3ee53dc1d26571bbe6300d405d5e99556d7cf26855e76bd52148c",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_civic-source.json",
+      "sha256": "7cab2d1e34047c961b24c989f23f1e19c60897504a95a67d6cd3e36ffe4cd116",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_low-export.json",
+      "sha256": "fc26ef36466d9a001739a929399f73e50860025ba6c32d9d3892a4f06330d519",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_low-source.json",
+      "sha256": "b8864b63f5ef6f9de46e3006be8dd48b7193b4ac95c74109b9908f110c8c5d46",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_mid-export.json",
+      "sha256": "95ef1518d5774162a080ec3eb42536c6d68e00d0748a36d6556d6b1d0ef3605c",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_mid-source.json",
+      "sha256": "efa61cf7543f7f45f5e6dc89e997f91548e96d36fdd6df2ae15036c9b6c7b521",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_props-export.json",
+      "sha256": "799e268acefffb039395f260ff4ae7220c4e17505e1ddcde83375eeb3621d073",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_props-source.json",
+      "sha256": "215117157854c2c32b72e3d31be0dca37c5e7a82fd20bffbdaf25391f7a07dbc",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_tall-export.json",
+      "sha256": "be787ff0c597ed957599596f2416025e06668e6db43d2441829ec91e559ddd78",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_tall-source.json",
+      "sha256": "2d174636fa39646629da205c24dbd385c82758fa1572c87d9201b13cd6199824",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_waterfront-export.json",
+      "sha256": "8a61844c56019422e72083cd087ac3aff5e5e0a039aa6a2044ee18dc95654eeb",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/validation/thalune_waterfront-source.json",
+      "sha256": "17de12ef594e08c962332fa3084fad5db05f5cbabed96bab956c97f5f05675b8",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_anchor.blend.json",
+      "sha256": "f8dbb55331d3040423166dffc69ca5a7f574770e882befadd903d4c054c887b2",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_anchor.glb.json",
+      "sha256": "37e114900e1b552192b4940ddc8669b5b6b9487e593ebbf9b62eaa122e4dbea5",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_civic.blend.json",
+      "sha256": "7396030119013d4e43a9ef112e179e8cf912c6fad91060fb76eab0e04ae76a86",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_civic.glb.json",
+      "sha256": "136fd5f1286607764e08680447c5e09f4640f6fdce41e901a4b146643c0f5e80",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_low.blend.json",
+      "sha256": "bd181c6eb83058675951db84fcb13ae4694910c47c4a79e486b137a15f35c4ad",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_low.glb.json",
+      "sha256": "a40ebcdf9a480c0be33d9608f6ef3925e1b35ea360fc7776fc129048ba099637",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_mid.blend.json",
+      "sha256": "ce120c344613d59cf04cae61273002a5cc28f0cddc3cc406910b8847a88516eb",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_mid.glb.json",
+      "sha256": "4b281f3d684a75be32e25752ce6235fd496797e7f53cf3681b86e656c7adc65c",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_props.blend.json",
+      "sha256": "e32f23a4327ef8ae93c1db8c225f1f26838318ec8a8445c41205a5a70cc2d7b7",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_props.glb.json",
+      "sha256": "ca66a8e040c1533a59b64eb883ca9c4dadf1cce4b091c26171a090b7043b6957",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_tall.blend.json",
+      "sha256": "a5146aac0e36449f7df076ae753790ad07226563b72961815f9993059b27c7d1",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_tall.glb.json",
+      "sha256": "ccd3ec7c17642ed262d78061f25e0e7f06488288f30273510868d28ace245656",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_waterfront.blend.json",
+      "sha256": "ada306c931c09fb0247df515fc5aa9320d70a44cb4cf8bb6f033523785bf86b5",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    },
+    {
+      "originalPath": "assets/blend/cities/thalune/receipts/export-validation/cities__thalune_waterfront.glb.json",
+      "sha256": "011d4d20f433eb5b73bd3e05b2e98c9269566d9b8bce8970df63be17ca02b209",
+      "status": "PASS",
+      "summary": {
+        "checks": {
+          "naming": "PASS",
+          "triangles": "PASS",
+          "lods": "PASS",
+          "materials": "PASS",
+          "scale": "PASS"
+        },
+        "fail": 0,
+        "warn": 0
+      }
+    }
+  ]
+}

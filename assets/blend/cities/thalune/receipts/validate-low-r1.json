@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/validate.py",
+    "--",
+    "--family",
+    "cities",
+    "--report-dir",
+    "assets/blend/cities/thalune/receipts/validation",
+    "assets/blend/cities/thalune/thalune_low.blend"
+  ],
+  "exit": 0,
+  "deadlineSeconds": 240,
+  "timedOut": false,
+  "elapsedSeconds": 1.03,
+  "peakProcessTreeRssKiB": 160,
+  "rssSamples": [
+    [
+      0.03,
+      160
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2
+}
