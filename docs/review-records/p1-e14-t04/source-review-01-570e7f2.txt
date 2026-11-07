@@ -1,0 +1,97 @@
+VERDICT: REVISE
+SCOPE: source and CPU only. This is not a runtime, visual, GPU, native-capture, or full-task acceptance. T07 adoption was not reviewed.
+
+The committed nineteen-variant payload matches its audits, stock budgets, and consumer contract. The task-local runner does not. Four reproduced lifecycle defects block a source PASS. Plan 0.9.5's mandatory REVISE list (client authority, missing tests, leftover demo code, a perf-budget regression, an unlogged spec interpretation) does not name these. The review brief does: a bad source must not leave a stale accepted GLB or receipt, history must be immutable, and the receipt must record the real outcome. Style notes below are not findings.
+
+PIN
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975
+Branch: task/P1-E14-T04-trees
+HEAD: 570e7f2f9cb700075697438f8cc0757b8ffa7400
+Tree: 327bd0238461b76069369023a57a0b9cfc4712c6
+Base: 55a8d58c27db35782b89142fc8a4f8d25f52f379 (ancestor of HEAD)
+Payload: 90f884429bda22001bc9e4757dd5e9e93b08a3ef tree ce2be4e93417fff360e5663eaa56815f8229bfee
+Diff of HEAD against the payload commit: assets/blend/flora/trees/REPORT.md only.
+Diff of HEAD against the base: 639 paths, none outside the T04 blends, trees evidence, flora GLBs, t04 renders, floraTreesT04.test.js, flora_trees/*, and the three shared files below.
+git status --porcelain at the start and after every tool run: empty.
+Shared material pin 515ba1f00810a50b499970b5468ef7bf0af84c32 versus cherry-pick 60aa8bfb5a771e14944b6a130c96cd9a2cb83228 and versus HEAD: empty diff for
+  packages/tools/blender/artlib/checks.py
+  packages/tools/blender/artlib/materials.py
+  packages/tools/blender/material_mask_selftest.py
+No new permissive validation override was found in flora_trees. export_saved.py calls stock export, then promote_masks.mjs, then core.validate_path, and publishes only after that PASS (export_saved.py:22-33). It does not import author.py.
+
+Host measured this run: 15 CPUs, load 9.35 9.70 9.41 at the pin check, 33522888 KiB free on the volume. Both are inside the runner's admission window (load <= 20, free disk >= 12 GiB), so the quarantine branch was armed. Blender 5.2.3 LTS e13b728c6880. Node v22.23.3 at /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node. Vitest 5.0.5 via its pnpm vitest.mjs, not pnpm and not the .bin shim. KTX-Software v4.4.2, 2041776 bytes, sha256 abd30109cbf84859b2f34951f7967e801111abadaac588468d98ed075100ad37, at the path run.py hardcodes. Harness Python: Homebrew 3.14.8. The user's live Blender was not used.
+
+Protected set: 642 files hashed before the static pass and again after the census. 0 mismatches, 0 missing. The set includes the eight blends, eight GLBs, trees evidence, vitest package.json, node_modules/.bin/vitest, and the external ktx binary.
+
+FINDINGS
+
+F-A. P2. A bad source aborts before the current GLB is quarantined and before a receipt exists.
+File: packages/tools/blender/flora_trees/run.py:22-23, 57-58, 67-71, 99-106, 127-132.
+sha() hashes with Path.read_bytes() while building the receipt, after run.mkdir() and before any quarantine. An unreadable file raises there. The export move is later, and only if source.exists() got past copyfile.
+Repro, exact run.py bytes, scratch root shaped so parents[4] is that root, action export, kind round. Not the product tree.
+1. chmod 000 on the blend. Result: evidence/20261107T023705_export_round_a5f41bd4 is an empty directory. No receipt.json. Canonical GLB remains b'CURRENT-GLB'. candidate.json remains {"status":"PASS","export":"CURRENT-GLB"}. PermissionError from read_bytes. The lane lock is released when the process dies.
+2. Source path is a directory. shutil.copyfile raises IsADirectoryError after the candidate move and before the export move. Result: evidence/20261107T023705_export_round_eec29721 contains only previous-candidate.json. No receipt. Canonical GLB remains b'CURRENT-GLB'. candidate.json is gone.
+This is the failure the brief names. It is worse than the T03 viewmodel contract, which at least retired the current PASS. T03 records are under docs/review-records/p1-e05-t03/.
+
+F-B. P2. Archiving a symlink export keeps a live symlink, so history is mutable.
+File: packages/tools/blender/flora_trees/run.py:104-106. shutil.move of a symlink on the same filesystem renames the link. It does not copy bytes.
+Repro: exact run.py, action seal, canonical GLB is a symlink to a scratch backing file. Receipt 20261107T023707_seal_round_a1ef17e0, exit 1, source hashes equal, remaining_owned_children []. previous-historical.glb is still a symlink. After the runner returned, the backing file was overwritten to b'MUTATED-OUTSIDE-ATTEMPT'. Reading the archived path returns those new bytes. previous-source.blend is a regular file because that path uses copyfile.
+T05 review /tmp/t05-r2-review-653e768-l2zog4x7/REPORT.txt finding F3, reproduced on this runner. The committed T04 evidence currently has no symlinks (git ls-files mode 120000 empty; find -type l under the flora T04 paths empty). This is a runner defect, not a corrupted deliverable.
+
+F-C. P2. A source mutation is recorded as receipt exit 0, and the published GLB stays.
+File: packages/tools/blender/flora_trees/run.py:127-132. receipt.update(exit=rc, ...) runs while rc is still the child's code. The following lines set source_mutation and rc = 1, but they do not write receipt['exit']. The JSON file therefore says success. manifest.latest() (manifest.py:17-22) treats exit 0 and no children as the successful export. The hash assert at manifest.py:36 then refuses to bind a candidate, so this is not a silent candidate.json PASS. It is a false-success receipt plus a GLB that no longer matches the source.
+Repro: exact run.py, scratch export_saved.py stub (not the real exporter) writes b'PUBLISHED-GLB', rewrites the source to b'MUTATED-SOURCE', and exits 0. Receipt 20261107T023957_export_round_057f3503: exit 0, reason exit, source_mutation true, source_unchanged false, source_before a50cb312f529ffc8b25200af4dda9a0da314e48d8ca28452a1e1903e86fbb2c0, source_after be0bd1b1407a4884404fdabe5ec45b8c6e28f136aedb49fcd699076cdb7747e2, export_sha256 a357f4a2ad0a82c63ae4628806439a6c3c484cff9a18fe896299a21c49b426bc, remaining_owned_children []. Process print said exit 1. Peak group RSS 231.2 MiB. Canonical GLB stayed b'PUBLISHED-GLB'.
+The real export_saved.py asserts the source hash immediately before rename (export_saved.py:31-33). This review did not time a race against that real child. The receipt bug is entirely in run.py and fires for every child that exits 0 after changing the source, including a change after that assert and before the parent's source_after hash.
+
+F-D. P2. SIGINT cleanup is not exception-safe, so the attempt has no receipt.
+File: packages/tools/blender/flora_trees/run.py:31-38, 119, 122. stop() calls os.killpg and catches only ProcessLookupError. PermissionError [Errno 1] skips the SIGKILL pass and skips receipt.json, because the exception leaves main before line 132. The finally block calls stop() again and raises the same error.
+Repro, exact run.py, child script prints blender-alive and sleeps. Two runs:
+- 20261107T023951_export_round_3fc3ffb2, signal before any log text. No receipt. Canonical GLB and candidate already moved.
+- 20261107T024344_export_round_b8179109, signal after process.log contained blender-alive. Runner exit 1. No receipt. Same PermissionError traceback at line 34 from line 119 and again from line 122. LEFT process list empty about 0.6 s later.
+A surviving Blender was not demonstrated. Isolated os.killpg of sleep and of a short-lived Blender, from a normal Python parent, returns -15. A dead group returns ESRCH, which stop() already catches. Why this runner's killpg returns EPERM was not isolated to a particular unsignable member of the group. Do not treat F-D as an orphaned-process finding.
+
+CONTROLS THAT HELD
+
+Lock held: the second runner prints "T04 lane already owned" (run.py:55, return 75). Scratch canonical GLB stayed b'CURRENT-GLB' and candidate.json stayed. No receipt. No Blender.
+
+Missing regular source: quarantine runs, previous-historical.glb is a regular file of the old bytes, receipt exit 1, canonical GLB and candidate removed, children empty. The scratch Blender then failed with ModuleNotFoundError for artlib because that copy did not put the worktree on sys.path. The quarantine result does not depend on a successful export.
+
+Unreadable prior GLB (mode 000): shutil.move archived it as a regular previous-historical.glb containing the prior bytes, receipt exit 1, canonical paths cleared. T05 F2 is not reproduced for a single owner-unreadable regular file. The inspector restored that archived file from mode 000 to 644 after the runner; the product tree was not involved.
+
+T05 F1 (retarget by resolving the caller path): not reproduced. flora_trees does not Path.resolve() caller inputs. A scratch manifest.py of the exact bytes, with receipts planted on SOURCE-A and the caller symlink then pointed at SOURCE-B, exited 1 with AssertionError at manifest.py:36. candidate.json was not written.
+
+validate, audit, preview, and packet do not move candidate.json, and manifest creates it with open('x'), so an already-present candidate can be stale until the next author/seal/export. latest() and the consumer test rehash the caller paths and fail closed. That is not F1.
+
+ASSET AND CONSUMER CENSUS (these passed)
+
+Eight saved sources and eight compressed exports. Nineteen consumer variants: round 3, conifer 3, palm 2, mushroom 3, spiral 2, coral 2, blob 2, cactus 2. Seventy-six LOD meshes. Cactus consumer prefix is cactus_; the other kinds use tree_<kind>_. Mesh datablock names are <node>_editable (author.py:137) so they do not collide with empties. glTF node names are the consumer contract. libraryMesh looks up object names. A static comparison of datablock names to node names is not a defect. REPORT.md sizes use thousands separators; a checker that searched for the raw integer was wrong.
+
+Pure-Python read of all eight current GLBs (artlib.glb / artlib.ktx.header, no ktx process): every expected consumer node is present; structural form nodes are present (15 for three-variant kinds, 10 for two-variant kinds); no KHR_mesh_quantization; extensionsRequired contains EXT_meshopt_compression and KHR_texture_basisu; POSITION, NORMAL, TEXCOORD_0, and COLOR_0 are componentType 5126, unnormalized, COLOR_0 VEC4; no _T04_MASK carriers in the GLB; index-count triangles match the committed source audits. Maps are 1024², 11 levels, full chain, KHR_texture_basisu. Normals are UASTC and linear. Base, ORM, and emissive are ETC1S. Base and emissive are sRGB. ORM is linear. LOD chains are strictly decreasing and LOD3 is 1.80% to 3.80% of LOD0. LOD0 is inside flora_tree 3000–15000 or, for cactus, flora 150–6000.
+
+One factory Blender, the launcher command from run.py:
+  /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -t 2 --python-exit-code 1 --python /tmp/t04-r570e7f2-review/census.py
+Env: OMP/OPENBLAS/MKL/NUMEXPR/VECLIB=2, ART_KTX_JOBS=1, CUDA_VISIBLE_DEVICES empty, PYTHONDONTWRITEBYTECODE=1, KTX=the worktree ktx_one.py, T04_KTX_REAL=the pinned 4.4.2 binary, T04_CODEC_LOCK under /tmp. Exit 0 in 18.315 s. Peak process-group RSS 415.7 MiB. Remaining children []. The eight source position/mask clouds from audit.snapshot_source match the latest committed audit.json for all 76 meshes, including triangle counts. Saved sources still carry _T04_MASK_RGB and _T04_MASK_AO; the GLBs do not. Packed images are 1024². UV density, world triangle area against the 1024² atlas, ranged from 17473 texels/m² (mushroom) to 862096 texels/m² (palm). author.py:52-54 intentionally shares an organ's UV quadrant. Stock checks.py:421-430 gates texel variation under the surface UVs, not a numeric density. This review does not grade that density.
+packet.surface on the six kinds whose preview proof is not exact bytes (round, conifer, palm, mushroom, spiral, blob) matched the historical previous-source.blend and the committed preview-manifest.json. Coral and cactus are exact source bytes and still hash to the manifest. All 16 stock validate_path reports, written only under /tmp/t04-r570e7f2-review/stock-reports, are PASS. Pair hashes before and after this process match. No .blend1 and no new lock beside the blends. git status empty.
+
+Consumer, pinned Node on vitest 5.0.5 vitest.mjs, cacheDir /tmp/t04-r570e7f2-review/vite-cache, --maxWorkers=1 --no-file-parallelism:
+  floraTreesT04.test.js and modelLibrary.test.js: 29 passed, 29 total, exit 0, duration 882 ms.
+The flora test loads the real GLBs through GLTFLoader and Meshopt, checks FLOAT position/mask clouds against the latest audit, LOD budgets, and the five mask mutations. recolor() in modelLibrary.js:117 replaces UVs with a zero BufferAttribute. The flora test does not claim those UVs. That is a T07/consumer behavior, not a T04 asset defect.
+
+Previews: 46 PNGs, 54805448 bytes, under assets/renders/flora/t04/. Unchanged after the census. Receipt files 139, run-ledger.tsv data rows 139.
+
+CODEC
+Exact ktx_one.py bytes in scratch. Fake codec: --threads 99 becomes --threads 1, two callers serialize (second start 0.023 s after the first end). Real ktx v4.4.2, create --threads 99 rewritten by the wrapper: a 768² UASTC encode ran as one OS thread (ps -M), peak RSS 29552 KiB, 0.859 s, exit 0. Two concurrent 512² encodes kept the lock (lsof saw the lock file). The waiter stayed in state S at about 0.01 s of CPU while the first ran, then ran after it. Intervals where both accumulated CPU: 0. Pair wall 0.739 s against 0.890 s for two copies of the 0.445 s single run. The CPU samples, not the wall clock, are the evidence that the second encoder did not run concurrently. artlib/ktx.py:437-438 still computes threads as cpu_count // jobs, and line 509 sizes the decode pool at max(2, jobs()). The wrapper's flock is what keeps the real codec at one process. The census driver sampled once a second and saw no ktx binary; short ktx extract calls can fall between samples. That sample is not evidence the decode pool overlapped.
+
+COMMANDS AND EXITS
+- python3 -B /tmp/t04-r570e7f2-review/static_inventory.py : exit 1. Only false positives (comma-formatted sizes; datablock names versus node names). Hashes matched. protected-before.json written.
+- Lifecycle repros in /tmp/t04-r570e7f2-review/lifecycle.py and lifecycle_rest.py. Harness exit 0 means the cases were recorded, not that the runner is safe. Outcomes are the directories cited above.
+- python3 -B /tmp/t04-r570e7f2-review/codec_probe.py : exit 0.
+- python3 -B /tmp/t04-r570e7f2-review/glb_structure.py : exit 1 only because the checker compared codec names in the wrong case. Header codecs are UASTC and ETC1S. No structural problem remained.
+- compile() of 16 task Python files, no pyc written: success.
+- Pinned Node vitest run: exit 0, 29/29.
+- python3 -B /tmp/t04-r570e7f2-review/census_driver.py : exit 0, Blender exit 0, 18.315 s, 415.7 MiB, no remaining children.
+- Protected rehash: 642/642 match. git status empty.
+
+LIMITS
+No original asset was regenerated, exported, or saved. No GPU, browser, service DB, hydration, fetch, screenshot cleanup, commit, push, or merge. At most one factory Blender and, during the codec pair, two ktx processes contending for one lock. Test workers: 1. The mutation child was a stub. The SIGINT EPERM cause inside stop() was not reduced to a specific process. Census ktx concurrency was not sampled tightly enough to count extract processes. UV density is reported, not graded. Identical packed normal and ORM hashes across round, conifer, palm, mushroom, spiral, and blob are visible in the committed packet surface records; this review does not score them. Plan line 328 still says "two models each"; the checked payload is the nineteen-variant inventory in the brief and in candidate.json. Vitest refreshed nothing in the protected set. A gitignored node_modules/.vite result file on disk is older than this vitest run. artlib __pycache__ mtimes are older than this Blender run.
+Scratch evidence stays under /tmp/t04-r570e7f2-review/. No large preview or GLB was copied into this report.

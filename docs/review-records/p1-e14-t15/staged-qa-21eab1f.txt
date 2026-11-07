@@ -1,0 +1,138 @@
+TASK: P1.E14.T15 — independent staged-tree QA, Appendix C.2
+STATUS: DONE
+TEST VERDICT: PASS WITH EXPECTED SKIPS. GPU RELEASED after terminal process/profile/fixture cleanup.
+SUMMARY: Independently proved the exact reviewed two-file capture lifecycle patch and runtime/config/package payload equality in the existing parent checkout. Ran all four package typechecks, the complete unit/golden suite (2,800 tests), relevant capture regressions within that single suite, scoped lint/format/whitespace and removed-code gates, then exactly one standard hang-aware full Metal smoke. No source/docs edits, install, network fetch, Blender/export, capture caller adoption, main-ref operation, commit, push, PR or merge. This is local smoke qualification, not performance timing, CI, release or caller-specific native qualification.
+FILES CHANGED: None by QA in the checkout. QA scripts, logs and retained results only under /tmp/space-t15-staged-qa-ijyeact7. Parent documentation edits/commits are recorded separately below.
+
+PIN / PATCH / FILES
+head: 21eab1f74110c8f7120013ebc4e119f4cc45a824
+tree: a46cd9795a7af54f4e71a65678112f7ce41e4782
+review: 38b6c4b58db43146df20cd760808d1461d7a667b
+review_tree: b8ba53c6acdf6eb604b9c046a8165f1985634be8
+patch_id: 8e90cd71186b236a00402a6bd9b985256e9b5ec7
+raw_patch_sha256: febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345
+parent: 78bda9de1d2ca9ecdd28acdea931e65835437a91
+Raw full-index binary patches are exactly byte-equal; changed-file scope exactly: packages/tools/src/capture/capture.lifecycle.test.ts, packages/tools/src/capture/capture.ts
+packages/tools/src/capture/capture.lifecycle.test.ts SHA256 ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18
+packages/tools/src/capture/capture.ts SHA256 42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d
+Source review PASS and worker reports: /tmp/p1-e14-t15-independent-gzn1kbbe/REPORT.txt; /tmp/p1-e14-t15-capture-lifecycle-aDSoP9/REPORT.txt. These are prior source/control evidence, not fresh native execution. Their exact hashes and inspected T14 guard-script hashes are in inherited-reference-hashes.json.
+Final docHEAD: b65bd7fd06ace3b883aa1b22486cbfd0c5f2760b; tree: a4b2f82c271c4f2aa8817464b039d83afec933c9; branch: t3/continue-implementation-plan-1; UTC: 2026-11-07T08:10:17Z
+Final git status: clean
+Files committed since tested pin: docs/IMPLEMENTATION_PLAN.md, docs/PROGRESS.md, docs/review-records/20261107-capture-review-and-live-attempt-manifest.json, docs/review-records/p1-e05-t02/native-review-03-609f454.txt, docs/review-records/p1-e05-t02/native-revision-03-609f454.txt, docs/review-records/p1-e07-t07-t09/live-attempt-02-cleanup.json, docs/review-records/p1-e07-t07-t09/live-attempt-02-result.json, docs/review-records/p1-e07-t07-t09/source-review-02-d3985b2.txt, docs/review-records/p1-e07-t14/pilot-revision-02-587989a.txt, docs/review-records/p1-e08-t09/caller-review-07-7dbc3ee.txt, docs/review-records/p1-e12-t02/lark-source-review-03-a89dd7f.txt, docs/review-records/p1-e14-t05/source-review-03-a46e7c4.txt, docs/review-records/p1-e14-t15/source-review-01-38b6c4b.txt. All such changes are documentation-only.
+
+PRE/POST IMMUTABILITY AND REUSE
+runtime: 3908 entries; before SHA256 327551010d8a008733bb29ca5005c7606ee988ec063e78ef7be70c3b1df460a2; after SHA256 327551010d8a008733bb29ca5005c7606ee988ec063e78ef7be70c3b1df460a2; equal=True
+dependencies: 13006 entries; before SHA256 6ce604fe77b1d138309347920361a9b6c3e8d537d47aa8e186bb0a8df85b71a8; after SHA256 6ce604fe77b1d138309347920361a9b6c3e8d537d47aa8e186bb0a8df85b71a8; equal=True
+frozen: 9 entries; before SHA256 4243709bccdb7d897e5e9c961819391031f8176f6e651000f87359e780021bfc; after SHA256 4243709bccdb7d897e5e9c961819391031f8176f6e651000f87359e780021bfc; equal=True
+Runtime manifest includes tracked source/config, public payloads and archived assets. All 3,908 entries match exact pinned ordinary Git bytes or exact LFS pointer/hydrated object bytes. Existing unhydrated archives stay unhydrated; no LFS operation occurred. No .env file found. Per-file SHA256, bytes, Git blob and LFS identity/materialization are retained in before/after-provenance.json.
+The first inventory script assumed all LFS entries were hydrated and reported pointer entries as mismatches. No product execution followed that diagnostic. The corrected comparison explicitly recognizes unchanged pointer bytes; initial-before-provenance.json and initial-before-summary.json preserve the initial evidence. The accepted before/after comparisons have no mismatch.
+Reviewed installation equality: 12889 package payload/link entries, zero different/missing/extra; zero runtime/config/public-asset byte differences. Path-dependent command shims and generated cache/manager metadata are excluded from the cross-checkout payload comparison. Invoked CLI entrypoints have exact recorded hashes. The complete local dependency manifest covers 13,006 package file/link entries and is unchanged before/after.
+Dependency inventory excludes generated .vite, .vite-temp, .cache, .vitest-cache, .pnpm-task-run-state-v1 and .pnpm-workspace-state-v1.json. These are caches/manager state, not installed package code; no dependency installation or verification was invoked through linked node_modules.
+Exact T14 pipeline reuse: all nine frozen input-directory entries match; all unchanged runtime pipeline/art files and package payloads match, with only capture.ts and its new lifecycle test different. Existing 28 pipeline tests and six-asset/validator results remain prior evidence; no fresh Blender/export is claimed. reused-pipeline-evidence.json pins the original report, logs, result files and manifests.
+
+VERIFY — EXACT COMMANDS, EXIT STATUS, DEADLINES
+Root cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+Node v22.23.3 exact /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node; SHA256 68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b. Installed pnpm 12.15.0; Vitest 5.0.5; Playwright 1.64.1. All tool paths, resolved paths and entrypoint hashes: versions.json.
+
+COMMAND route-proof: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /tmp/space-t15-staged-qa-ijyeact7/route-proof.mjs
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:58:06Z -> 2026-11-07T07:58:08Z; deadline=60s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=route-proof.log
+
+COMMAND typecheck-shared: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/shared
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:58:29Z -> 2026-11-07T07:58:33Z; deadline=300s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=typecheck-shared.log
+
+COMMAND typecheck-client: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/client
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:58:33Z -> 2026-11-07T07:58:38Z; deadline=300s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=typecheck-client.log
+
+COMMAND typecheck-server: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/server
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:58:38Z -> 2026-11-07T07:58:44Z; deadline=300s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=typecheck-server.log
+
+COMMAND typecheck-tools: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/tools
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:58:44Z -> 2026-11-07T07:58:48Z; deadline=300s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=typecheck-tools.log
+
+COMMAND unit: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs run --maxWorkers=2 --no-cache --no-fsModuleCache --fsModuleCachePath /tmp/space-t15-staged-qa-ijyeact7/vitest-cache --configLoader runner --reporter=default --reporter=json --outputFile.json=/tmp/space-t15-staged-qa-ijyeact7/unit.json
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:58:48Z -> 2026-11-07T07:59:45Z; deadline=600s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=unit.log
+
+COMMAND lint: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/eslint/bin/eslint.js packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:59:45Z -> 2026-11-07T07:59:47Z; deadline=120s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=lint.log
+
+COMMAND format: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/capture/capture.ts packages/tools/src/capture/capture.lifecycle.test.ts
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:59:47Z -> 2026-11-07T07:59:50Z; deadline=120s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=format.log
+
+COMMAND removed: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import tsx packages/tools/src/gates/removed.ts
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:59:50Z -> 2026-11-07T07:59:52Z; deadline=120s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=removed.log
+
+COMMAND diff-check: git diff --check '21eab1f74110c8f7120013ebc4e119f4cc45a824^' 21eab1f74110c8f7120013ebc4e119f4cc45a824
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+  exit=0; UTC 2026-11-07T07:59:52Z -> 2026-11-07T07:59:54Z; deadline=60s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=diff-check.log
+
+COMMAND smoke: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --import tsx src/smoke/run.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=900000 --trace=off --reporter=list,json --output /tmp/space-t15-staged-qa-ijyeact7/test-results
+  cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools
+  exit=0; UTC 2026-11-07T08:00:54Z -> 2026-11-07T08:09:17Z; deadline=960s; actual root waited/reaped; process group remains=False; owned_alive=0; abort=None; log=smoke.log
+
+Counts: four package typechecks PASS; unit/golden 213 files, 2,800 passed, zero failed/skipped/todo, maxWorkers=2. Vitest JSON includes 863 nested suites, which is not the file count.
+Capture-related subset (already included, no duplicate execution):
+  /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/art/targets.test.ts: 16 passed
+  /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/capture/capture.lifecycle.test.ts: 100 passed
+  /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/capture/classes.test.ts: 3 passed
+  /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/gl.test.ts: 2 passed
+  /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/harness-imports.test.ts: 20 passed
+  /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/targets.test.ts: 4 passed
+Subset total 145 = 100 lifecycle + 45 related regressions. Scoped ESLint and Prettier both exit 0, no ignored-file/no-configuration warnings. Removed-code gate: 10 enforced, 14 awaiting replacement tasks. git diff --check for exact candidate commit: exit 0.
+Six negative routing controls each exit 1 as expected, blocked before forbidden SQL/Redis protocol bytes. Exact command, stdout, stderr and stack for each are in guard-controls.json; these intentional guard failures are not application test failures.
+
+ONE FULL STANDARD METAL SMOKE
+Repository src/smoke/run.ts, smokeArgs default smoke selection, original playwright.config.ts and original hang-aware harness are unchanged. No file selector. workers=1, retries=0, repeat-each=1, max-failures=1, global timeout=900000ms, outer timeout=960s plus finite owned-process termination. Trace off; default video off; no rawframe capture or xctrace. Native screenshots produced by standard tests are retained in test-results.
+Direct installed Node/tsx entry is equivalent to pnpm smoke. The config's unchanged pnpm --filter @astra/client exec vite --port <port> --strictPort command is handled by a scratch-only strict argv adapter: same installed Vite CLI, same client cwd and arguments, no pnpm verification/install/fetch. It refuses every other pnpm command. Exact receipt: pnpm-adapter.jsonl. No repository config/spec is patched.
+Environment: {"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "DATABASE_URL": "postgres://astra:astra@127.0.0.1:53055/astra_t15_qa_20261107075806_842f04_54e61374", "NODE_OPTIONS": "--require=/tmp/space-t15-staged-qa-ijyeact7/guard.cjs", "PATH": "/tmp/space-t15-staged-qa-ijyeact7/bin:/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/54696_1794038019655/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PLAYWRIGHT_JSON_OUTPUT_FILE": "/tmp/space-t15-staged-qa-ijyeact7/playwright.json", "REDIS_URL": "redis://127.0.0.1:53058/7", "SMOKE_GL": "metal", "SMOKE_PORT": "50389", "TEMP": "/tmp/space-t15-staged-qa-ijyeact7/tmp", "TMP": "/tmp/space-t15-staged-qa-ijyeact7/tmp", "TMPDIR": "/tmp/space-t15-staged-qa-ijyeact7/tmp/", "npm_config_verify_deps_before_run": "false"}
+Actual result: 41 total; expected/pass=38, skipped=3, unexpected=0, flaky=0; exit=0. Duration is execution accounting only, not a performance qualification.
+SKIP: smoke/cross-engine.spec.ts — world generation in Firefox gives Node’s bits; [{"type": "skip", "description": "Firefox cannot start on this machine: Could not find profile folder.", "location": {"file": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/cross-engine.spec.ts", "line": 74, "column": 12}}]
+SKIP: smoke/harness-hang.spec.ts — a page that never answers; [{"type": "skip", "description": "run by harness.spec.ts", "location": {"file": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/harness-hang.spec.ts", "line": 4, "column": 6}}]
+SKIP: smoke/harness-hang.spec.ts — the next test gets a working browser; [{"type": "skip", "description": "run by harness.spec.ts", "location": {"file": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/harness-hang.spec.ts", "line": 4, "column": 6}}]
+The three outer hang/recovery tests deliberately run a nested hanging test and a successor; expected nested failures are required test behavior. Their full outer outcomes are in smoke-summary.json. No outer smoke rerun was made.
+Prelaunch procedural refusal: before the only smoke launch, the guard detected Blender commands not in its initial inventory and refused without starting a browser or application test. Fresh source/cwd/hash inspection established CPU stock exports or geometry audits; the guard was changed to compare audited script bytes rather than changing audit argv. Initial refusal snapshot is preserved as browser-prelaunch-refused-before-smoke.json. This was not a failed smoke run.
+Browser warning categories (exact examples in browser-warnings.json; complete browser severity/source census in browser-log-categories.json; full raw smoke.log):
+  CVDisplayLink: 184; example=  pw:browser [pid=14891][err] [1107/030058.887050:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +109ms
+  Metal cache: 91; example=  pw:browser [pid=14891][err] [1107/030101.504811:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +827ms
+  daemon: 1; example=  pw:browser [pid=14891][err] [1107/030100.020589:ERROR:sandbox/mac/system_services.cc:31] SetApplicationIsDaemon: Error Domain=NSOSStatusErrorDomain Code=-50 "paramErr: error in user parameter list" (-50) +328ms
+  overlay: 0; example=None
+  invalid mailbox: 0; example=None
+  audio: 0; example=None
+  deprecated shadowmap: 51; example=  pw:browser [pid=14891][err] [1107/030059.692678:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:50420/@vite/client (368) +544ms
+  NO_COLOR: 2; example=[WebServer] (node:14846) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+  Firefox missing profile: 2; example=  pw:browser [pid=17227][err] Could not find profile folder. +54ms
+  TLS: 0; example=None
+  GPU stall: 0; example=None
+Unit stderr: expected client invalid-request refusals in mining, beacons and discoveries tests; exact payload diagnostics remain in unit.log. No CPU gate failed.
+Warnings are retained, not suppressed; no warning-free/native-platform or visual-quality claim. Failure tail: no failed outer smoke or application gate; expected guard-negative stderr remains in guard-controls.json.
+
+PRIVATE FIXTURE ROUTING / CLAIM
+PostgreSQL: space-t16-pg-20261106 / 66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb, host 127.0.0.1:53055 -> 5432. Redis: space-t16-redis-20261106 / d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4, host 127.0.0.1:53058 -> 6379. Exact IDs, ports and healthy states checked; containers never restarted.
+Redis7 was initially empty, without application clients or an existing claim; an exclusive filesystem claim was acquired and checked again immediately before browser launch. No stale-key deletion was needed. Every Redis metadata CLI command specifies -n 7, including preflight, observation and cleanup. No Redis0/8 data access, FLUSH or unknown-key deletion.
+Coordinator database: astra_t15_qa_20261107075806_842f04_54e61374; owned namespace prefix: astra_t15_qa_20261107075806_842f04_
+Copied and inspected prior guard adapted only into fresh scratch; NODE_OPTIONS loads it before imports in roots, subprocesses and planner workers. The guard maps harness astra_smoke_* CREATE/DROP statements and DATABASE_URL/ADMIN_URL to fresh owned astra_t15_qa_* names, validates user/database at actual PostgreSQL socket startup, enforces Redis SELECT7 before data traffic, rejects shared astra/default ports and destructive Redis operations, and records actual writes.
+route-proof.json retains live current_database/current_user/backend PID/internal address/port and Redis CLIENT INFO db=7. during-*-snapshot.json retains actual server cwd/lsof routes to 53055/53058 and server-side PG/Redis sessions; live-fixture-sessions.jsonl repeatedly samples live ownership.
+Guard coverage: 310 pre-import events / 283 PIDs / 27 worker-thread events; Node versions ['v22.23.3']. Exactly 6 blocked negative controls; every test-time route accepted. 72 real SQL startup events and 12 real Redis7 selections retained.
+
+RESOURCE BOUNDS / TERMINAL SETTLEMENT / EXPLICIT GPU RELEASE
+Exclusive slot: parent:t15-21eab1f-metal-20261107. Fresh prelaunch competitor list=[]; resource snapshot={"free_bytes": 38600421376, "scratch_bytes": 24002827, "scratch_limit_bytes": 4294967296, "free_reserve_bytes": 8589934592, "load": [10.072265625, 10.96240234375, 10.2685546875]}
+Observed unrelated Blender stock exports pin Cycles device CPU; other inspected scripts run numeric geometry/BVH/codec audits. Their identity/cwd/script/hash evidence is preserved in blender-gpu-audit.json. No unrelated process, service or companion run artifact/ticket was modified. Desktop/system GPU clients are outside this exclusive test workload; this is not timing qualification.
+Own scratch ceiling 4GiB; free-space cleanup reserve 8GiB, sampled every 2s by the runner; admission requires >12GiB free. Peak recorded scratch bytes=43381500; final resources={"free_bytes": 37559271424, "scratch_bytes": 45622653, "scratch_limit_bytes": 4294967296, "free_reserve_bytes": 8589934592, "load": [7.2080078125, 7.93798828125, 9.1015625]}. No growth/capacity abort.
+Owned processes are tied to PID + observed start time, argv, parentage and private profiles. Root children were waited/reaped; detached harness/browser descendants were observed and checked. Final observed identities=154; owned live=[]; manual cleanup signals=[]. Browser launch/exit receipts remain in smoke.log.
+Owned database claims=["astra_t15_qa_20261107075806_842f04_d1bdea9c3b2d", "astra_t15_qa_20261107075806_842f04_db4cce090f74", "astra_t15_qa_20261107075806_842f04_abd59c32c9a7", "astra_t15_qa_20261107075806_842f04_842103910fd8", "astra_t15_qa_20261107075806_842f04_41e7436b1505", "astra_t15_qa_20261107075806_842f04_c812c51104f9", "astra_t15_qa_20261107075806_842f04_28d4590d2bea", "astra_t15_qa_20261107075806_842f04_54e61374", "astra_t15_qa_20261107075806_842f04_894ecc5b9da8", "astra_t15_qa_20261107075806_842f04_59700a69aafd", "astra_t15_qa_20261107075806_842f04_f00f7b9c5ff4"]; remaining before final drop=["astra_t15_qa_20261107075806_842f04_54e61374"]; owned sessions before drop=''; remaining after=''. Cleanup drops only exact claimed names, after zero sessions.
+Redis owned key cleanup=[{"key": "astra:shard:main:world", "value_sha256": "2c3c6da8242d2de7c25a2082a096e075470e21a353506cdb5586665e19407a64"}]; final Redis7 DBSIZE=0; no application DB7 clients; exclusive claim removed. Both containers remain healthy. Only run-owned private TMPDIR profiles, caches and disposable unit-test fixture directories were removed after actual process settlement; their exact directory list is in cleanup-final.json. Retained test results, native screenshots, logs and all frozen input evidence remain.
+Final resource verification: {"utc": "2026-11-07T08:09:47.733052+00:00", "df": "Filesystem   1024-blocks      Used Available Capacity  iused     ifree %iused  Mounted on\n/dev/disk3s5   971298980 892407508  36456044    97% 21261753 364560440    6%   /System/Volumes/Data\n", "scratch_bytes": 38877365, "owned_tmp_empty": true, "forbidden_trace_video_files": []}; browser executable bytes compared with during-run pins in browser-executables-after.json.
+GPU EXPLICITLY RELEASED: 2026-11-07T08:09:24Z; slot parent:t15-21eab1f-metal-20261107. cleanup-final.json is the terminal receipt.
+
+DECISIONS: TS-only correction -> reuse exact unchanged pipeline/art hashes, no Blender/export and no full test:int. Standard smoke still uses real private fixture routes. Full unit already contains all capture regressions -> no duplicated 100-test lifecycle invocation. Parent docs may advance -> pin tested runtime tree and separately report final docHEAD, with pre/post runtime and dependency equality. Existing repository hang-aware workflow -> run it directly with installed CLIs and a narrow web-server adapter to prevent package-manager side effects.
+OUT OF SCOPE FOUND: No new product defect from this QA. Optional Firefox availability and retained native browser warnings remain. Actual Review/UI callers still require their own adoption, raw AggregateError inspection, source rebinding and native cleanup gates; standard smoke does not certify those callers.
+UNVERIFIED BOUNDARIES: No production/deployment/CI/Trunk/merge, broad integration suite, visual grading, performance timing, or direct native captureReview/captureUi caller qualification is claimed. Prior source review and baseline RED are reused by exact provenance, not rerun or counted as fresh test totals.
+ARTIFACTS: /tmp/space-t15-staged-qa-ijyeact7/REPORT.txt; patch-identity.json; candidate.patch; before/after-provenance.json; equality.json; versions.json; *-run.json and *.log; unit.json; capture-regression-summary.json; guard-controls.json; route-proof.json; routes.jsonl; route-summary.json; live-fixture-sessions.jsonl; during-*-snapshot.json; browser-prelaunch*.json; blender-gpu-audit.json; playwright.json; smoke-summary.json; browser-warnings.json; test-results/; cleanup-final.json; reused-pipeline-evidence.json; evidence-sha256.json.

@@ -1,0 +1,151 @@
+{
+  "task": "P1.E05.T03 reviewed T15 adoption + combined disabled packet",
+  "base": "58ae819f2e9d2a8d221e90f0fe808fde2683b010",
+  "baseTree": "f91c5f5402f206a9254563e54bffd970894cec8e",
+  "reviewedT15": "38b6c4b58db43146df20cd760808d1461d7a667b",
+  "adoptionCommit": "dea07963a32227cc3eaecad86d128026350b9082",
+  "head": "182fc27d1a5459270e2a3c4673f8e70b86ef3a33",
+  "tree": "546f57bc68c5a19f8144ae2ccd205a368bd9982f",
+  "branch": "task/P1-E05-T03",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "clean": true,
+  "adoptionPatchByteParity": true,
+  "patchSha256": "febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345",
+  "sharedFiles": {
+    "packages/tools/src/capture/capture.ts": "42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d",
+    "packages/tools/src/capture/capture.lifecycle.test.ts": "ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18"
+  },
+  "metadataChanges": [
+    "packages/tools/src/capture/viewmodel_packet/T15-ADOPTION.md",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/T15-independent-SOURCE-PASS.txt.gz",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/adoption.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/archive-index.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/archive-manifest.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/combined-freeze.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/combined-probe-summary.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/commands.jsonl",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/cpu-evidence.tar.gz",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/failure-tails.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/probe-source-overrides.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/review-copy.json",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/source-closure.json.gz",
+    "packages/tools/src/capture/viewmodel_packet/readiness.json"
+  ],
+  "pins": {
+    "packages/tools/src/capture/viewmodel_packet/T15-ADOPTION.md": "865aff67d90d71c58b06a2622a49eafe6bf201ff8cd09b2ac77580224f0359b4",
+    "packages/tools/src/capture/viewmodel_packet/readiness.json": "4926852df1adfb8f1afe0a1e2592415eba9e2942771f1e69ff3edf8abcfa93de",
+    "packages/tools/src/capture/viewmodel_packet/inventory.json": "98958acf95dfdd56eba3b9f86172498f4f60b8d38993046dd4d17d863f1263ae",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/combined-freeze.json": "798ff554c967773433f6e85f445a887dcfe6a11e3c26793d7f5f7f0d0026cf28",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/source-closure.json.gz": "8f6cf11a731f250cf90935ccb721433e056451e776cf889c7ce2f298c9ce7f5d",
+    "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/cpu-evidence.tar.gz": "04aff9bfe9eae249d4c9596c3e85d67b7c15d87ee17a205a3782011423ab11df"
+  },
+  "actualCombinedSourceDigest": "cfd22c5cf2d6736cce266f26f39b1c0bd76e04f1eb292915aed12791fa40d0d4",
+  "sourceClosureRows": 12921,
+  "sharedTestIncluded": true,
+  "allPriorPacketBytesExceptReadinessUnchanged": true,
+  "assets": {
+    "accepted_bodies": {
+      "assets/blend/characters/thalune.blend": {
+        "bytes": 69378059,
+        "sha256": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b"
+      },
+      "packages/client/public/models/characters/thalune.glb": {
+        "bytes": 41128548,
+        "sha256": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+      },
+      "assets/blend/characters/ixari.blend": {
+        "bytes": 170752716,
+        "sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c"
+      },
+      "packages/client/public/models/characters/ixari.glb": {
+        "bytes": 43870856,
+        "sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b"
+      },
+      "assets/blend/characters/ulgani.blend": {
+        "bytes": 73478111,
+        "sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b"
+      },
+      "packages/client/public/models/characters/ulgani.glb": {
+        "bytes": 47796920,
+        "sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682"
+      }
+    },
+    "viewmodels": {
+      "assets/blend/characters/viewmodels/fp_thalune.blend": {
+        "bytes": 24733334,
+        "sha256": "46d483c8cc0b10f555dc35f60008d64f7b883d392daa4bf4e87abb91da97b1db"
+      },
+      "packages/client/public/models/characters/viewmodels/fp_thalune.glb": {
+        "bytes": 3891516,
+        "sha256": "b4859735bd2f203bd30ca41705a156858cc362dd6de1000d308bd1e12b53e76f"
+      },
+      "assets/blend/characters/viewmodels/fp_ixari.blend": {
+        "bytes": 18934076,
+        "sha256": "44c408a64b59353810119640471b2faf9506da57250bdb47e7ce067445f2c4b5"
+      },
+      "packages/client/public/models/characters/viewmodels/fp_ixari.glb": {
+        "bytes": 3248228,
+        "sha256": "78f90acfc0087b63e97c3ae50cb7c1f5e045e447e12975b6ec21a0dd5f038abc"
+      },
+      "assets/blend/characters/viewmodels/fp_ulgani.blend": {
+        "bytes": 10586540,
+        "sha256": "aabb32cb139c544d7a57f2fe22c34931fe720d2215e02936876f2dd02dd1aa3b"
+      },
+      "packages/client/public/models/characters/viewmodels/fp_ulgani.glb": {
+        "bytes": 1593132,
+        "sha256": "8319097e97e3ccf2f9fdcbbe114742ea45f1f24eb8ba98420f12678d3511e954"
+      }
+    }
+  },
+  "protectedCounts": {
+    "accepted_bodies": 6,
+    "viewmodels": 6,
+    "cpu_previews": 6,
+    "accepted_review_packets": 745,
+    "retained_R1_files_and_runtime": 59
+  },
+  "helpers": {
+    "assets/blend/stations/_authoring/round4_job_boundary.py": "3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c",
+    "assets/blend/stations/_authoring/round4_capture_children.py": "e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07",
+    "assets/blend/stations/_authoring/run_round4_browser_proof.py": "f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab",
+    "assets/blend/stations/_authoring/run_round4_remaining8.py": "4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8"
+  },
+  "freshChecks": {
+    "sharedLifecycle": 100,
+    "Python": 46,
+    "Node": 18,
+    "clientRuntime": 110,
+    "additionalCombinedCases": 72,
+    "allFinalExits": 0,
+    "expectedOldSharedRedFailedCases": 54,
+    "expectedOldSharedRedExit": 1,
+    "packagingWhitespaceInitialExit": 2,
+    "packagingWhitespaceFinalExit": 0
+  },
+  "runtimeEnabled": false,
+  "entryEnabled": false,
+  "unusedPaths": 31,
+  "nativeAcceptance": false,
+  "pending": "Fresh independent combined VM R2; subsequent native slot/grants and visual qualification remain parent-owned.",
+  "packagingLogRelocations": [
+    {
+      "from": "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/staged-verbatim-report-diff.log",
+      "preservedCopy": "/private/tmp/vm-t15-adopt-9p6j5wtk/packaging-copy-staged-verbatim-report-diff.log",
+      "originalRawLog": "/private/tmp/vm-t15-adopt-9p6j5wtk/staged-verbatim-report-diff.log",
+      "bytes": 126,
+      "sha256": "e860c87daa73037f13be1e70456a652f70590d68ad8aff2b77f30756a389895a",
+      "gitIgnored": true,
+      "scope": "exact new task-owned copy; no foreign file touched"
+    },
+    {
+      "from": "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/staged-diff-final.log",
+      "preservedCopy": "/private/tmp/vm-t15-adopt-9p6j5wtk/packaging-copy-staged-diff-final.log",
+      "originalRawLog": "/private/tmp/vm-t15-adopt-9p6j5wtk/staged-diff-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitIgnored": true,
+      "scope": "exact new task-owned copy; no foreign file touched"
+    }
+  ],
+  "postCommitCommands": "/private/tmp/vm-t15-adopt-9p6j5wtk/commands.jsonl"
+}

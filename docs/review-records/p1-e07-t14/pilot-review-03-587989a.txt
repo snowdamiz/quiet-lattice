@@ -1,0 +1,117 @@
+TASK: P1.E07.T14 — fresh independent R3 SOURCE/CPU review of the disabled one-root effects capture pilot.
+VERDICT: PASS (SOURCE/CPU ONLY).
+Findings: no unresolved correctness finding and no advisory requiring a source change. All three R1 findings and all four R2 findings are FIXED. The additional worker-discovered undefined-cause serialization regression is FIXED.
+
+This is the requested fresh reviewer verdict on the exact combined candidate. It supplies no approval, merge authorization, whole-art-task acceptance, native/browser/GPU acceptance, performance grade, visual grade or gameplay/Recall playback acceptance. Parent authorization for future native execution is neither consumed nor revoked by this review. Screenshot cleanup remains stopped.
+
+PROVENANCE
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects
+Branch: task/P1-E07-T14-effects
+HEAD: 587989af34fab480703f282084d20e2a27bbee48
+Tree: 4d87ff72f0a72dbbcbbfde0fcc4ba3ede41d89c5
+R2 reviewed base: 4ec25fcef7d7cedada964bbef986c30459eedcc0
+R2 base tree: 0e20b55d8ac055f34a1f4d26964c3c0220848a03
+Task-local correction: c48df848e654ff40e86011dc5013c3391fc26b62
+Shared original reviewed commit: 38b6c4b58db43146df20cd760808d1461d7a667b
+Separate exact adoption: 18add9e19f65260d4201be1b23344ead827dd32e
+Asset head: 2643aca9d8b85a45498d85eb637d20260ebf06d1
+Helper recovery: 22506166571d4045eeb4902b1f278bdcafa2ad19; original source ca7d91e378e9d2f3f0ce8f0651475dcb843875d9.
+
+The requested HEAD/tree and clean branch were verified before deep inspection and again at completion. Read plan 0.3, 0.4, 0.9.5, the P1.E07.T14 task and Appendix C; actual candidate, R1/R2 reports and actual independent reproducers, worker APPENDIX-C2, and retained independent shared-capture report. Traced task-local R2 changes, actual caller/entry/publication, helper constructor/start/wait/drain/observer crossings, cache acquisition and decoder paths, freeze/readiness and preserved ownership controls. No worker transcript or nested reviewer was used. No applicable AGENTS.md was found in the ancestor chain or target packages/assets/docs. The explicit task limits override the plan's general runtime verification commands.
+
+FILES CHANGED BY THIS REVIEW
+None in the checkout. No source, docs, assets, shared dependency/cache, branch, commit, PR, merge, enable flag, readiness, actual grant or native identity was changed. Only fresh scratch control/evidence files were created. Stock tests remove their own newly allocated scratch fixtures; independently retained failed/consumed fixtures remain. No existing screenshot was removed or regenerated.
+
+PRIOR FINDINGS — COMPLETE DISPOSITIONS
+1. R1-1 (P2), partial constructor ownership: FIXED. Current caller.py:76-78 registers the single attempted job before initialization; :118 and :135 retain full available ownership before/after cleanup. Original actual-constructor repro now preserves scratch/output/target/root/cohort/known/registered attributes and unknown fields. Constructor receipt failure, real SIGALRM and all-sink failure remain refused with release unproved. The retained partial is not deleted or retried. Evidence: original-r1.log and independent-run-4aw1nyfi/independent-results.json; stock-boundary.log. Correction verified: retain available instance attributes and explicit missing/unproved facts, rather than only job.state. Reachability remains the actual constructor before its first boundary save, now safely accounted.
+
+2. R1-2 (P2), bootstrap producer facts lost on receipt failure: FIXED. NativePorts.start at native_ports.py:176 observes the actual retained helper producer before bootstrap.json can fail. The original exit17/stdout/stderr reproducer passes. Stock actual start-body controls also preserve exit0 uncertainty, non-UTF8/NUL bytes and unknown CompletedProcess fields with failed receipt, SIGALRM and all sinks. Exactly one start attempt is recorded; false registration attributes do not prove absence or permit relaunch. Observation ports/timers restore. Evidence: original-r1.log, independent-run-4aw1nyfi/independent-results.json, stock-boundary.log. Correction verified: wrap the original subprocess/ownership ports at the producer boundary.
+
+3. R1-3 (P2), missing competing-cache-owner admission: FIXED. caller.py:47 and :85 enforce the actual owner guard before consumption/snapshot and again immediately before launch. Fresh real harmless O_RDWR holder tests refuse at both crossings; the second retains spent consumption and never launches or waits. The real task-cwd Node holder is refused; unrelated holder passes. Guard uncertainty and bounded probe failure remain refusal. Harmless holders are released through their own stdin and observed exiting; no competitor is signalled. Evidence: stock-boundary.log, all 12 tests PASS; readiness.log records the current CLEAR audit. Correction verified: exact-cache and task-route scoped bounded owner observation. These are point-in-time observations, not a host lock.
+
+4. R2-1 (P2), resource-observer raw facts and primary precedence lost inside StationJob.wait/save: FIXED. caller.py:91-107 retains the first original callback failure before the frozen wait helper normalizes it or attempts another save. native_ports.py:198-233 registers incomplete writer observations and individual probes before filesystem work. The actual prior native-cross producer path now preserves complete supplied raw exception fields (including NUL/non-UTF8 bytes and unknown ownership fields) as the first error; later helper-save and cleanup failures remain secondary. StageReceipts and writer paths both pass. Additional writer/stage plus helper-save plus terminal/result/packet/stderr failures preserve original facts in memory without claiming durable proof. Actual helper deadline controls unwind through ObservationUnwind, retain DeadlineExpired, restore timers and do no post-deadline helper save. No decoder, release success or successor launch is inferred. Evidence: native-cross.log, budget-only.json, budget-plus-receipt.json, stage-original-plus-receipt.json, budget-all-sinks.json, stage-all-sinks.json; stock-revision.log. Correction verified at the original callback/wait/save crossing, not a canned wait result.
+
+5. R2-2 (P2), browser/Vite cleanup masks original shared capture failure: FIXED through the exact reviewed owner-level adoption. capture.ts:77-94 and :334 retain the work failure and attempt both acquired-resource closes. Actual entry.mjs:237-250 uses its default loader and the actual shared captureReview/openReview exports. Fresh adaptations of the original three reproductions plus simultaneous both-close and all-publication-sinks cases preserve the navigation failure first, browser close second and Vite close third. Every acquired resource closes exactly once in original order. A separate call to the same actual shared export verifies cause === primary and errors[0..2] are the original primary/browser/Vite objects by identity. Default entry receipts preserve their full supplied byte/unknown attributes. Evidence: capture-cross.log, capture-cross-results.json, shared-identity.json; stock actual-entry.log provides 13 additional actual-entry cases, including partial listen/launch and raw/falsy values. Correction verified at the real shared owner and the task's serialization boundary; no production page/browser/Vite-method interception workaround was added.
+
+6. R2-3 (P2), cache verification follows replaced symlinks and reads beyond admitted size: FIXED. cache_io.py:24 acquires all ancestors using descriptor-relative no-follow/nonblocking opens, reconciles metadata/identity and keeps descriptors; :126 bounds copy and both verification reads; :157 uses that same reader at all three stages. NativePorts.snapshot_caches at :56 charges every attempted file before copy and retains failed partials. Fresh stock races and 36 independently authored full-caller races cover leaf symlink/FIFO/same-byte inode replacement/growth and ancestor same-byte directory/symlink replacement at copy/source verification/destination verification. Replacements before the relevant open cause zero payload reads. Replacements after admission use the original descriptor, stay within admitted+1 bytes and refuse before launch. Growth from one admitted byte reads at most two bytes. All opened descriptors close; phase timer restores; failed snapshots remain charged and consumed with no attempted native job. A separate actual reader case preserves the original read exception by identity and all attached close failures, while performing the real descriptor closes. Stable nested/empty-file snapshots pass; real atime-only changes remain accepted. Evidence: stock-revision.log, cache-final/cache-fresh-results.json and each retained result.json; cache-fresh-final.log (38 cases, 36 races + read/close + stable). Correction verified: finite descriptor-safe verification, not EOF hashing after pathname sampling.
+
+7. R2-4 (P2), duplicate/empty PLTE accepted: FIXED. inspect_packet.py:21,43,49-54 track first IDAT and PLTE presence independently of nonempty compressed data. Actual prior authenticated full-packet duplicate/empty-PLTE repros now refuse after positive inert release at released-cpu-decode. Fresh revision controls also reject late/oversized/partial palettes and interrupted IDAT after empty IDAT, and accept valid optional 1/256-entry RGB/RGBA palettes and contiguous empty IDAT. Prior missing-Adler/trailing-zlib/duplicate-IHDR/unknown-critical controls remain refused. Evidence: png-cross.log, png-cross-results.json, duplicate-PLTE.json, empty-PLTE.json and stock-revision.log. Correction verified: single nonempty bounded palette only before first IDAT, with complete bounded zlib/filter/CRC checks retained.
+
+Additional worker-discovered undefined-cause serialization defect: FIXED at entry.mjs:70. Thirteen actual-entry controls freshly pass, including undefined/null/false/0/empty-string/frozen-object causes with both cleanup failures. Undefined is explicitly tagged in both cause and errors; durable receipts no longer drop it or substitute null. All-sink failure remains an in-memory result only. This is a task-local integration correction; shared reviewed bytes are unchanged.
+
+SHARED PATCH AND FINAL BINDINGS
+Fresh full-index binary patches for original 38b6c4b^..38b6c4b and adoption 18add9e^..18add9e are byte-identical. Both preimages are exact: capture.ts matches original base and lifecycle.test.ts is absent in both bases. Both postimages equal the original reviewed commit, the adoption and final HEAD. The separate adoption changes exactly those two files. Final readiness directly binds both current file hashes and the independent shared review report; shared_capture.json equals readiness.sharedCaptureLifecycle. Fresh Python readiness and independent Node dependency-tree computations pass (412 file bindings, six dependency trees).
+
+The retained shared report supplies SOURCE PASS for its 325 prior assertions and 68 expected baseline RED failures; those counts were NOT rerun or added to this review's totals. Its four owner-level dispositions (failed listen cleanup, browser acquisition scope, original-plus-both-close preservation, and UI page-error precedence) are adopted unchanged. This review reruns the requested actual effects entry and shared-export identity scenario, not the entire shared review.
+
+VERIFICATION RESULTS
+All exact argv/cwd/environment/exits/durations/logs are in commands.json and COMMANDS.md. Direct Node v22.23.3 and the bound Python 3.14.8 launcher were used. No pnpm, package installation, package repair, browser/Vite application launch, server, DB, native capture, Blender, export, codec subprocess, hydration, cloud machine or real grant was invoked. External Playwright/Vite/net/process ports in the actual-entry harness are inert; child-process APIs throw. The normal classes and capture runtime control flow execute from actual source using Node's type stripper. Helper function/class bodies are extracted unchanged and native OS ports are inert. CPU PNG generation/inspection uses in-process Python zlib only.
+
+Final green control cases: 131, counted at top-level test/case granularity, not as individual assertions or inflated with loop subcases:
+- 47 existing: Python26 + retained boundary12 + Node9; exits0.
+- 9 revision tests, with their 39 fault/valid subcases; exit0.
+- 13 actual-entry controls; exit0.
+- 9 independent native-cross cases: four StageReceipts schema/ownership controls and five actual wait/save observer cases; exit0.
+- 2 original actual constructor/bootstrap reproductions with corrected expected polarity; exit0.
+- 6 original PNG controls: four adverse stream/chunk refusals and two corrected full-packet PLTE refusals; exit0.
+- 5 original/default-entry capture failure scenarios plus 1 direct original-object identity check; exit0.
+- 38 independently authored cache cases, including 36 full-caller races; exit0.
+- 1 complete positive default-loader/original-consumer packet, followed by full actual CPU inspection; exits0/0. It writes exactly 11 PNGs plus perf.json, all 12 final names in original order. Eleven PNGs decode completely; packet total111421 bytes. This content is synthetic and has no visual meaning.
+
+Other fresh checks: exact-head disabled readiness PASS; six Node/Python dependency-tree bindings agree; tools noEmit typecheck PASS; scoped ESLint PASS; Prettier check PASS; 13 Python sources compile without bytecode; git diff --check PASS; actual disabled Python/Node CLIs exit78/78; disabled Python import excludes native_ports, Station helpers and inspector. Stock controls also exercise the actual clean-Git successor rejection in a private inert repository, exclusive one-use admission, attempted-write caps, real harmless caller OS exit, parent hash/OS-exit gate, late receipt failure and no decode before positive release. No false successor success or missing attempted job was observed.
+
+Every attempted verification invocation is retained. Two nonzero harness attempts are not candidate failures and are not hidden:
+- stock-python, exit1: macOS sandbox-exec denied executing /bin/ps with PermissionError [Errno 1] Operation not permitted; 26 tests ran, 8 failures and 2 errors at owner-admission prerequisites. The unchanged suite was rerun outside that extra review sandbox and passed26/26; real boundary owner suite also passed12/12 directly. Private cache and no-bytecode settings remained. No production guard was bypassed in those runs.
+- cache-fresh, exit1: the independent fixture labelled an ancestor replacement 'before-open' but injected it only at the later leaf open, after the ancestor descriptor was already retained. Candidate correctly read one admitted original byte and refused at route reconciliation. The fixture was corrected to inject before opening the actual ancestor, in a new scratch run; all38 final cases pass. Original script, failing log, partial results and exact fixture correction diff are preserved.
+Expected disabled exits78/78 are not failures. No verification timeout occurred. A targeted rg AGENTS.md search returned1 because no matches existed; it was a source lookup, not a failed test. Initial combined source outputs that exceeded display limits were re-read in bounded ranges.
+
+CURRENT SCOPE, BUDGET AND READINESS
+Only captureReview('effects/gravitic', {asset:'gravitic_pull',outDir}) is proposed. The original six-bundle/59-root/64-file source collection remains byte-identical. The pilot names one root; the other58 roots are unqualified. All32 motion records still need gameplay/Recall playback. Requested LOD2 selects authored LOD0 (shown0/lods[0]); one mesh/576 triangles/LIB_FX_Gravitic/nonzero compressed textures are required. No second LOD, general renderer, batch capture or motion player was introduced. No performance claim is inferred from the retained perf shape.
+
+The exact output cap is184565760 bytes; admission is5402312704 bytes. It includes one actual output and separate future LFS/parent-copy reserves, two32MiB controlled-metadata allowances,64MiB cache snapshot, profile/TMP/log copy-before-remove reserves, cache-growth allowance, filesystem reserve and1GiB safety. No actual image staging/archive or later LFS/parent copy occurs. Native thresholds are observations and can overshoot between samples; they are not OS quotas. Capture600s; cleanup60s with drain45s inside; CPU decode45s only after positive release; cache snapshot64MiB/30s; owner check10s with256KiB per command/384KiB total and0.5s owned-probe reap. Full exact rows are appended below and also in provenance.json.
+
+Both source runtime flags and readiness.runtimeEnabled remain false. Real grant, consumption, evidence and output paths in readiness remain absent. check_ready.py returns PASS_SOURCE_ONLY_DISABLED at the exact pinned head. Current disabled audit CLEAR is not a future owner guarantee or a grant. Enabling/rebinding, serialized slot, real ownership/release/capture, actual image/perf acceptance and independent visual grading remain separate parent-owned work.
+
+PRESERVATION AND LIMITS
+All10428 tracked entries match the before snapshot byte-for-byte. All13092 ignored nondirectory entries retain their set/mode/size/mtime/link observations; no ignored changes. Branch/head/tree and clean all-untracked Git status remain exact. All64 protected asset bytes match the retained asset manifest and original asset commit; all four helpers match original/recovery/current blobs, sizes and SHA256. Client/shared/server and untouched capture classes/screens/dependency manifests match the asset base. Access times may change from reads and are not classified as writes.
+
+All Node tests/static commands and non-owner Python controls ran under readonly.sb denying target/dependency/cache writes and network. ps/lsof-dependent Python suites/readiness ran directly because of the macOS sandbox restriction, after source inspection of their bounded harmless process behavior. Private TMPDIR/XDG/Node compile caches and no-bytecode environment are recorded. There is no claim of a complete before/after inventory of unrelated host state. No actual GPU/browser/service/runtime process or native owner existed in these controls; cleanup and release assertions are source/CPU boundaries only. All-sink failures have no durable proof and the report does not pretend a write succeeded.
+
+No new mandatory plan0.9.5 failure was found: no client-authority change, untested system, retained replacement demo, demonstrated runtime performance regression, or unlogged product interpretation in this source unit. The PASS is limited to corrected source/caller contracts at this exact disabled HEAD, not CI, native execution, visual acceptance or shipping.
+
+ARTIFACTS
+REPORT.md; COMMANDS.md and commands.json; provenance.json; pins-before.json; preservation.json; source.patch; shared-original.patch and shared-adopted.patch; ready-original.json; adaptations.json and per-script adaptation diffs; raw result/log/script files named above; cache-final/; capture-positive-results.json and capture-positive-inspection.json; retained-identities.json; evidence-manifest.json; seal.json. All are under this fresh R3 directory except explicitly enumerated fresh inert control identities and stock actual-entry scratch evidence. No old evidence was overwritten. REPORT.md is set read-only and user-immutable after hashing; seal.json records its digest and seal observation.
+
+EXACT BUDGET ROWS (bytes)
+- capture_outputs: 184565760 — 11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root
+- future_lfs_copy: 184565760 — Reserved for later Git LFS adoption; this pilot performs no git add or LFS write
+- future_main_hydration: 184565760 — Reserved for later parent hydration; this pilot makes no main-worktree copy
+- controlled_metadata: 67108864 — Node and Python each reserve attempted receipt bytes before writing, 32 MiB each
+- cache_snapshot: 67108864 — One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained
+- profile_work_and_archive: 2147483648 — StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive
+- private_tmp_work_and_archive: 1073741824 — preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles
+- helper_logs_work_and_archive: 134217728 — StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job
+- generated_cache_growth: 268435456 — Observed additional Vite cache growth; original cache bytes already reduce free space
+- filesystem_metadata: 16777216 — Directory and filesystem overhead reserve
+- safety: 1073741824 — Fresh disk safety reserve, checked at admission and while observing
+
+HASHES
+- readinessSha256: 7978e31584c5152eca089fb1b6d2838c8f2ff2acf88d7be3908b008bfa76fa8b
+- sourcePatchSha256: 965d9a5b7d4a532957ced981d4e184014816039fab021dd621cd4c5160680569
+- sharedPatchSha256: febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345
+- packages/tools/src/capture/capture.lifecycle.test.ts: sha256 ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18; blob 2e33cab7a3a3cdb8f929b51e45a7f894a09c6133; preimage sha256 None
+- packages/tools/src/capture/capture.ts: sha256 42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d; blob 555c71d140a36004200ac04ff66609eeb4458136; preimage sha256 3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc
+- assets/blend/stations/_authoring/round4_job_boundary.py: 3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c
+- assets/blend/stations/_authoring/round4_capture_children.py: e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07
+- assets/blend/stations/_authoring/run_round4_browser_proof.py: f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab
+- assets/blend/stations/_authoring/run_round4_remaining8.py: 4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8
+- Retained report /private/tmp/p1-e07-t14-r2-independent-glgoak9c/REPORT.md: db7b35080a75699d640776a6a1add0891a8a42bb8e57bc4d2a862b7ea1350089
+- Retained report /private/tmp/p1-e07-t14-independent-e60r9lcb/REPORT.md: 18e17b6e9b7d39a5bd7ec78ebfcc79c6a71c890d96f97e0ae5cf2dd946ad57c7
+- Retained report /private/tmp/p1-e07-t14-r2-fix-qto9bskm/APPENDIX-C2.md: 7a387f655525998acb8cedc11df52b6cbc53194b78bc61c9f4b3158855d4a500
+- Retained report /private/tmp/p1-e14-t15-independent-gzn1kbbe/REPORT.txt: 944f849660b40540f253612159f49f02c31083a83b178cbabee5171326591af9
+
+UNUSED REAL PATHS
+- grant: /private/tmp/egg-be606b3443e34d99ad10334183b84f3e.json (absent)
+- consumption: /private/tmp/egc-be606b3443e34d99ad10334183b84f3e.json (absent)
+- evidence: /private/tmp/egp-be606b3443e34d99ad10334183b84f3e (absent)
+- output: /Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-be606b3443e34d99ad10334183b84f3e (absent)

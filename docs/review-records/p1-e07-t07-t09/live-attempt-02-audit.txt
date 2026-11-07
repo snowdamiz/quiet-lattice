@@ -1,0 +1,141 @@
+Appendix C.2 — completed focused live QA / read-only postrun audit
+P1.E07.T07 + P1.E08.T09
+RESULT: FAIL. One required test ran and failed. This is not the old COULD NOT RUN result.
+Audit packet: /private/tmp/symbiotic-postrun-d3985b2-gkjb1ks8
+Original failed run: /private/tmp/space-symbiotic-live-next-5lftum9v
+No test, server, browser, private service connection or new claim was launched by this audit. No source/harness/dependency edit, retry, signal, deletion, screenshot cleanup, commit, push, PR or merge was performed. Only a new private mode0700 scratch evidence packet was written. GPU remains RELEASED; this report starts no new assignment.
+
+Observed result and failure boundary
+The Playwright child exited 1, not timeout. Exactly 1 test / 1 file, 0 passed, 1 failed, 0 skipped, 0 flaky, result retry=0; actualWorkers=1, repeatEach=1, maxFailures=1. The reporter's additional top-level error is “Testing stopped early after 1 maximum allowed failures.” It is not a second executed test. Parent reports unified exec session16529 exited1; this audit independently corroborates the test child's exit from result.json, without claiming access to that parent session's terminal transport.
+Timing: test result22150ms; complete Playwright reporter25752.998ms; supervisor wall26.391s, including its final drain0.135s. Thus26.391s is not the individual test duration. Global timeout420000ms, test-specific timeout300000ms, outer450s and owned drain limit20s. None was hit. All failure evidence is preserved, with no automatic retry.
+
+The assertion at symbiotic-online.spec.ts:104:42, called at:274:7, expected the first station placement to return {ok:true}. Actual response:
+  {"ok":false,"error":"invalid","message":"Dev Bondffbf was disconnected but not moved: pose: board_range: on foot with no ship of its own here"}
+The pinned fixture sends mode='foot', pose='docked', frame='station' into a different system before arranging an owned parked ship at that destination. Production AdminService.moveAcross (service.ts:294-309) disconnects/leaves then reports persistence refusal; MovementAuthority placement legality (authority.ts:649-652) requires an owned parked ship in the same foot frame. This explains the observed arena-fixture boundary; it is not evidence of a Bond combat/eligibility regression. The author correction remains with the parent/original author.
+Two real contexts/pages had already joined, each explicitly1280x720 in the pinned walker. The JSON records actual gateway skills replies for unlock, buy and equip Bond in ground slot0; only the one symbiotic fragment was staged before first join. Arena selection is system31, seed1262081916, body7, frame1262081916:7, companion species0, enemy species4. Ground selection, spawning/analysis/refusal, actual Bond casting, companion rendering/picking, follow, attributed damage and retirement were not reached. No assertions were changed for this result.
+
+Additional preserved failure information
+The JSON contains two client console resource errors, one per client: net::ERR_NAME_NOT_RESOLVED. Their URLs are not recorded in those messages. The final zero-console-error assertion was not reached. The browser log also retains CVDisplayLinkCreateWithCGDisplay failures (CVReturn -6670), Metal library-cache trim warnings, SetApplicationIsDaemon error -50 and the THREE shadow-map warning. These are not silently discarded, and no unsupported causal link to board_range is asserted. The captured server-output attachment contains five auth/dev warning/login records through the test's finally block; it is not a complete teardown log. Child-exit/drain receipts provide the separate shutdown evidence.
+
+Provenance and independent gate
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Branch at audit start: t3/P1-E07-T07-T09-live-qa
+Run HEAD: d3985b2e3c52e3f9b28771b0b4dea143be20d9b1
+Run tree: 4b6db1cab2ba0016c8dcff0b20cdfb07638e8f63
+Source commit: d8f3f41caba90e5d5250dca033af907d28bef605
+Source tree: 3192e439a08b853a4345cfae88724ba16a841fd6
+Actual independent R2 SOURCE/CPU PASS: /private/tmp/symbiotic-r2-d3985b2-y4j6rdho/review.txt
+Review SHA256: 0cf162a726c247bf2435e054e3d40503d2d13d31fd012b77b801a9dd39903ee9
+The review's actual bytes match the assigned ticket hash; all46 files in its SHA256SUMS verify. R2 source/CPU PASS is a separate gate and does not turn this live FAIL into PASS. Its counted CPU evidence/reuse qualifications remain in the copied review, not relabeled as newly executed here.
+Assigned ticket: /private/tmp/space-symbiotic-harness-prep-0ygrikp4/future/parent-ticket.assigned-r2.json
+Ticket SHA256: b3543b378de798999437db3cb008d6edbc7a74439a5ef7206b661399f3e71573
+AssignedAt: 2026-11-07T07:44:00.616202+00:00; slot: parent:symbiotic-d3985b2-r2-metal-20261107
+Claim: 20261107_074400_42380301
+The original ticket, context, claim-journal and run-started receipt remain unchanged. They are consumed historical inputs; do not execute them again. The ticket's claim placeholder was replaced only in the fresh staged context. Per-root exclusive claim-journal/run-started files prevent repeat use of that root; the launcher does not globally consume the ticket file. Therefore “execute once” is not a safe authorization to call it again with the old ticket.
+
+Source/config/protected integrity
+The run's source-before.json records4228 tracked hashes and equals the prepared final R1 source snapshot. All six authorized fixture/config hashes match the source manifest and Git blobs at the run pin; exact SHA256/blob values are in source-provenance.json and retained/r1-docs/manifest.json. Pinned source copies, rather than the now-editing checkout, are retained for the failure trace. All20 protected object IDs match the manifest at this HEAD, including runtime/persistence/skills/render/model/config/lockfile/assets/public/Blender scope. The runtime cleanup code compares all tracked hashes and installed dependency inventory to their before baselines before it can write cleanup.json; the successful receipt therefore records passage of that check. A separate runtime source-after hash file was not saved, so it is not invented here.
+The initial audit Git read was clean at the pinned HEAD/tree. While this read-only audit ran, symbiotic-private.test.ts changed (mtime07:56:47Z, after cleanup at07:44:46Z), and later symbiotic-online.spec.ts also became modified. source-audit-after.json/source-provenance.json retain the first drift observation; audit-completion.json records the later one. This is concurrent post-run fixture work, consistent with the parent's correction handoff; this audit does not attribute the writer from timestamps alone and does not claim the current checkout is unchanged/ready. No product source was changed by this task.
+
+Toolchain, dependencies and private caches
+Pinned Node executable: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node
+Node SHA256: 68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b
+The final live environment's separate node-version and Playwright-version subprocesses exited0, reporting v22.23.3 and Version1.64.1. Actual test launch uses the installed Playwright CLI directly; pnpm/Corepack is not in its argv. The earlier harmless final-environment qualification of cached pnpm12.15.0 remains retained; this audit did not rerun it. Copied and original pnpm distributions both match all451 pinned files, and Corepack matches54 files. All727 prepared-harness manifest entries verify unchanged, including launcher, guards and supervisor.
+The current installed dependency hash inventory matches all12422 baseline entries. Its documented exclusions are generated .vite, .vite-temp, .cache, .vitest-cache, .pnpm-task-run-state-v1 directories and .pnpm-workspace-state-v1.json. This does not claim an exhaustive hash of every external cache. No dependency installation/update is present in the actual launch.
+All output roots are canonical /private/tmp. The live root and tmp were exclusive0700. TMPDIR/TMP/TEMP, XDG/npm/Node/Playwright compiler paths and PNPM_HOME route into this root. Vite interception reports cacheDir=/private/tmp/space-symbiotic-live-next-5lftum9v/tmp/vite-cache with configLoader=native; browser console URLs independently show this private transformed dependency path. The disposable-temp manifest retains1375 file hashes under node-compile, playwright-transform, tsx-501 and vite-cache before authorized removal. The run did not write through linked node_modules; OS sandbox allowed file writes only below its root and /dev/null.
+
+Historical launch — evidence, not a new ready-to-run instruction
+Parent-reported entry:
+  PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/bin/python3 /private/tmp/space-symbiotic-harness-prep-0ygrikp4/execute-once.py --ticket /private/tmp/space-symbiotic-harness-prep-0ygrikp4/future/parent-ticket.assigned-r2.json
+Recorded child cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Recorded exact supervised argv:
+  /usr/bin/sandbox-exec -f /private/tmp/space-symbiotic-live-next-5lftum9v/live.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/node_modules/@playwright/test/cli.js test --config packages/tools/src/smoke/symbiotic.config.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=420000 --trace=off --reporter=list,json --output /private/tmp/space-symbiotic-live-next-5lftum9v/results
+command.json, run-started.json, result.json and Playwright config.argv agree on the dedicated spec/config and bounds. webServer is null; no default smoke webServer/full smoke is started. Dedicated config use.trace/use.video are both off. The inherited baseURL5190 is not the dynamically allocated page URL; actual browser console records127.0.0.1:61907. Node routes also record only53055,53058,61880,61889 plus owned Unix IPC.
+Exact environment is copied verbatim in retained/run/environment.json and appended below. The sandbox file is retained byte-for-byte. It denies writes outside the private root, denies non-loopback networking and explicitly denies default/private-unapproved localhost ports5432,6379,55432,56379. It permits other loopback traffic for the fixture. The Node guard supplies the narrower SQL/Redis payload/identity restrictions.
+
+Actual native browser evidence and limits
+A native arm64 chromium_headless_shell-1248 browser launched as PID13904 with kernel birth1794037458.456978, in PGID13904 separate from runner PGID13804. Actual argv includes --use-angle=metal --enable-gpu --ignore-gpu-blocklist; a native GPU process13909 and two renderer processes13924/14063 were recorded by PID/birth/argv. ANGLE Metal cache messages corroborate the requested backend. Browser/GPU complete argv and the audit-time executable hash are in browser-provenance.json. No prelaunch browser binary hash or WebGL renderer/vendor query was saved; the postrun hash is explicitly not called a prelaunch pin. No FPS claim, visible-pixel grade or companion-instance success follows from these launch/console records.
+
+Private service admission and application entry
+PG: space-t16-pg-20261106, ID66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb, running/healthy,127.0.0.1:53055->5432.
+Redis: space-t16-redis-20261106, IDd06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4, running/healthy,127.0.0.1:53058->6379, private DB8.
+All36 recorded service-control commands exit0. The exact raw commands/stdout/stderr remain in service-commands.jsonl; service-command-audit.json is a smaller lossless command index with container metadata summarized. No service command was rerun by this audit.
+Admission lines1-7 establish exact healthy identities/mappings, postgres administrative identity astra/serverport5432, explicit Redis DB8, no application clients, DBSIZE0 and fresh database absence. Line8 performs the exact atomic empty-DB/SET NX marker claim and returns1. Line10 CREATEs only astra_symbiotic_smoke_20261107_074400_42380301 OWNER astra. Lines11-15 establish actual fresh SQL identity and empty public schema, marker-only DBSIZE1 and no application clients before application imports. No application uses the astra database, Redis0/7, FLUSH or shared restart. Administrative metadata queries intentionally use postgres, not an application database. Redis CLIENT LIST is metadata filtered to DB8; all redis-cli calls explicitly use -n8, and all key operations are within DB8.
+Live route receipts contain15 parsed SQL StartupMessages, all database=astra_symbiotic_smoke_20261107_074400_42380301 and user=astra, and11 Redis SELECT8 records. Nine preimport proofs cover Playwright CLI, worker, claim-verifier child, migration process, stepped server, SQL helper and loader worker threads; actual SQL current_database/current_user/server_port and Redis CLIENT INFO db8/claim marker were checked before application entry. There are37 recorded Node socket connections, no guard-refusal event, two SET mutations of the fresh SQL shard main's astra:shard:main:world key, and the private Vite-cache event. These are actual driver/wire records, not environment-only assertions.
+The retained bootstrap validates exact child route/cache/NODE_OPTIONS inheritance, intercepts process and worker construction, and registers PID/birth/argv. Native browser children inherit the OS sandbox; they do not execute the Node wire guard. This is not universal kernel packet capture or continuous per-native-child environment attestation. Successful before-import checks do not claim that every OS socket was individually logged. Disk admission in the gate checks current free bytes>=2GiB at execution time, but no exact free-byte value was saved. The earlier ~40GB parent estimate is not promoted to a run-time measurement.
+
+Drain and cleanup audit
+The actual test supervisor tracked19 distinct process PIDs,20 identity-history entries, with native browser descendants in a separate process group. PID/birth/argv snapshots and bootstrap registry establish ownership; no broad-name/PID-only kill was used. The normal path required no outer signals (signals=[]). Server child13866 and browser13904 each report exit0; browser debug records graceful close and temporary-directory cleanup. The test runner itself exited1 due to the assertion. result.json remaining=[], remainingRegistered=[], primaryError=null, cleanupErrors=[]; outer-outcome errors=[], retryPerformed=false. Empty outer errors means no Python admission/execution/cleanup exception, not a passed test.
+After drain, service lines19-28 establish no application SQL sessions/Redis8 clients, unchanged marker, same fresh DB/astra identity, SQL shard main, and exactly marker plus astra:shard:main:world. cleanup-key-proof.json correlates that key with both the freshly created SQL shard and guarded mutation records. Line29 DROP DATABASE removes only the fresh exact namespace, without FORCE. Line30 atomically rechecks marker, cardinality, all expected keys and the whole DB8 keyset, then DELs the explicit two-key list; return2. Lines31-34 show DBSIZE0, marker EXISTS0, only the control CLIENT LIST connection, and fresh DB count0. Lines35-36 recheck both original healthy container identities/mappings. No unknown key deletion, flush or shared restart occurred.
+cleanup.json was written07:44:46.423385Z after these checks, runtime source/dependency comparisons and private temp removal; it records databaseAbsent,redis8Empty,noOwnedProcesses,noPrivateApplicationClients,profilesAndTempAbsent and gpuReleased=true. These are supported by the command/process receipts, not inferred from the test's JS finally alone. Containers/DB/Redis are asserted at that recorded cleanup time only; this audit makes no new live service-state claim.
+Fresh read-only audit at 2026-11-07T07:58:38.106168+00:00 finds no matching recorded PID/birth/argv, no process referring to the run tmp path, no recorded browser profile, and an empty tmp directory. A bounded lsof probe of the three recorded application ports61880,61889,61907 exits1 with empty stdout/stderr (no matching listener). No recovery was necessary or attempted.
+Instrumentation limitation: the run did not save a separate contemporaneous listener inventory immediately before DROP. Its cleanup asserted absence of recorded owned processes and tmp-referencing processes; the audit's later port check is additional evidence, not retroactive proof of the exact pre-DROP socket state. Sampling every~100ms may miss short-lived descendants or unobservable process identities, although the native browser/GPU/renderer cohort was actually captured. These limits remain explicit. GPU is RELEASED; archive screenshot cleanup remains STOPPED.
+
+Artifacts for independent inspection
+Actual runner stdout/stderr: /private/tmp/space-symbiotic-live-next-5lftum9v/supervision/single-metal-test/stdout.txt
+Playwright reporter: /private/tmp/space-symbiotic-live-next-5lftum9v/playwright.json
+The path test.log does not exist in this run root; it belongs only to the old launcher-failure packet.
+Decoded original inline attachment, byte-for-byte: /private/tmp/symbiotic-postrun-d3985b2-gkjb1ks8/extracted/symbiotic-evidence.json
+  SHA256 1d661b43ca6bb917d0a2fb133a4748a196c6f5c81a2563d13ed524afff85c968 (4561bytes)
+Decoded server-output attachment: /private/tmp/symbiotic-postrun-d3985b2-gkjb1ks8/extracted/server-output.log
+  SHA256 ca97335337a8a8048949a86289016b5d8378c2dae4f815d6ea5454bfdd8d2bce (1280bytes)
+Failure tail: /private/tmp/symbiotic-postrun-d3985b2-gkjb1ks8/failure-tail.txt
+PNG count0. All eight intended outputs are absent because the test failed before the first pixels() call: bond-owner, bond-observer, follow-owner, follow-observer, combat-owner, combat-observer, disconnect-owner, disconnect-observer. summary.json gives each a null path and “not reached”. No screenshot path, replacement image, video, trace or raw-frame recording is invented. The duplicated error-context attachment entries point to the same actual text file; they are not images. Test assertions are not a blind visual grade.
+All40 original run files were copied under retained/run and their original hashes are recorded in original-packets-before.json. Exact route/process/command/environment/cleanup receipts, pinned fixture/config copies, R1 docs, R2 review, old COULD NOT RUN report, harness sources/provenance, extracted attachments, audit code and verification are preserved in this fresh audit root. Original packets are rehashed at audit completion; SHA256SUMS then covers this audit packet.
+
+Older attempt remains COULD NOT RUN
+/private/tmp/space-symbiotic-live-20261107_070646_2f0be248
+Old HEADc115e93786890160fcc0592aeb3bc15934343fd3/tree9bd3faef187925791573d86c4673922df099c5f6. Corepack could not see cached pnpm through the isolated cache, and network was disabled; it exited1 before Playwright/discovery. Zero test bodies,zero browsers,zero pixels; no-skip gate was not established. Its canonical-path guard issue is separately documented. This audit verifies all59 current packet files against the saved preparation baseline and all58 original SHA256SUMS entries; no old failure or dependency artifact was removed or rewritten. The new gameplay setup FAIL is a distinct attempted run, not a retry hidden inside the old result.
+
+Future rebind requirements — no active new run
+The parent already owns the author arena-fixture correction. A future run needs its new final source commit/HEAD/tree, clean checkout and new independent source PASS for that exact pin, preserving production assertions. Copy/rebind the private harness to that pin in a new root, retaining this failed harness/packet and verifying unchanged protected runtime/config/assets/dependencies/toolchain; qualify any changed guard/environment/cache behavior with bounded harmless processes before services or GPU. Do not edit source or assertions in this audit.
+Require a new explicit parent serial GPU assignment and a newly assigned ticket; do not reuse the consumed ticket, claim, marker or database from this failed run. Freshly inspect disk capacity, exact service identities/health/mappings, empty/unclaimed Redis8/no app clients and fresh DB absence at that future execution time. Acquire a new atomic marker before creating only the fresh namespace; verify wire/startup and inherited routes before imports. No earlier cleanup or disk result substitutes for admission.
+Retain the same one-test, one-worker, retries0/repeat1/maxfailure1/global420s/outer450s+20s drain and artifact limits. Preserve failure boundaries and stop on failure; no automatic rerun. For complete future receipts, persist measured free bytes, explicit runtime source-after hashes, native-browser executable prelaunch hash and owned listener absence before namespace deletion; do not retroactively manufacture those records for this run. Cleanup still requires verified ownership/drain, exact namespace identity and atomic marker/keyset recheck before explicit deletion. No fresh claim, ticket or runnable rebound launch has been created here.
+
+Exact recorded test environment (JSON; historical values)
+{
+  "HOME": "/Users/andreyyurlov",
+  "USER": "andreyyurlov",
+  "LOGNAME": "andreyyurlov",
+  "LANG": "C.UTF-8",
+  "LC_ALL": "C.UTF-8",
+  "TERM": "dumb",
+  "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/private/tmp/space-symbiotic-harness-prep-0ygrikp4/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+  "SHELL": "/bin/zsh",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "QA_CONTEXT_FILE": "/private/tmp/space-symbiotic-live-next-5lftum9v/context.json",
+  "QA_PYTHON": "/opt/homebrew/bin/python3",
+  "QA_HARNESS_ROOT": "/private/tmp/space-symbiotic-harness-prep-0ygrikp4",
+  "QA_OUT": "/private/tmp/space-symbiotic-live-next-5lftum9v",
+  "QA_ROUTE_GUARD": "/private/tmp/space-symbiotic-harness-prep-0ygrikp4/bootstrap.mjs",
+  "TMPDIR": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp/",
+  "TMP": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp",
+  "TEMP": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp",
+  "XDG_CACHE_HOME": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp/xdg-cache",
+  "NODE_COMPILE_CACHE": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp/node-compile",
+  "PWTEST_CACHE_DIR": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp/playwright-transform",
+  "PLAYWRIGHT_JSON_OUTPUT_FILE": "/private/tmp/space-symbiotic-live-next-5lftum9v/playwright.json",
+  "NODE_OPTIONS": "--import /private/tmp/space-symbiotic-harness-prep-0ygrikp4/bootstrap.mjs",
+  "COREPACK_HOME": "/private/tmp/space-symbiotic-harness-prep-0ygrikp4/tools/corepack",
+  "COREPACK_ENABLE_NETWORK": "0",
+  "COREPACK_ENABLE_AUTO_PIN": "0",
+  "COREPACK_DEFAULT_TO_LATEST": "0",
+  "npm_config_offline": "true",
+  "npm_config_frozen_lockfile": "true",
+  "npm_config_manage_package_manager_versions": "false",
+  "npm_config_manage_dependencies": "false",
+  "npm_config_ignore_scripts": "true",
+  "npm_config_userconfig": "/private/tmp/space-symbiotic-harness-prep-0ygrikp4/empty.npmrc",
+  "npm_config_cache": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp/npm-cache",
+  "PNPM_HOME": "/private/tmp/space-symbiotic-live-next-5lftum9v/tmp/pnpm-home",
+  "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+  "CI": "1",
+  "SMOKE_GL": "metal",
+  "DEBUG": "pw:browser",
+  "DATABASE_URL": "postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_074400_42380301",
+  "REDIS_URL": "redis://127.0.0.1:53058/8",
+  "SYMBIOTIC_QA_CLAIM": "20261107_074400_42380301"
+}
+
+Audit completion addendum
+At 2026-11-07T08:05:02.490072+00:00 the author checkout has advanced to HEAD 63b61308ed6a64fdc35994fdfaf782bbb79752a2, tree 3b9184014f7e95f530af84e1773e0d04edb79caa. Observed status: ''. The two fixture paths differ from the tested pin; concurrent-fixture-diff.txt records that pinned-to-current difference without treating it as an acceptance review. This later source is not the source of the failed run and has not been executed or approved by this audit. Future rebinding still requires the parent final pin, corresponding independent PASS and a new explicit GPU slot. All original run, old failure, harness (including consumed ticket), and R2 review files remained byte-identical through this audit.
