@@ -2468,10 +2468,10 @@
       "sha256": "7c64e5ce2f6f87ba6a01fcccb41559df58ff02e95bf14831804ee2a579240214"
     },
     {
-      "bytes": 42287,
+      "bytes": 42386,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py",
-      "sha256": "c3673b1f6831ccf401a2ecc13d1023cf5f09a567342566cadcf438129ecbcbe5"
+      "sha256": "5aef40ddf7dfc8bc207c1fd83fd0c5921fac20df39b3b80ea148e6a997b13683"
     },
     {
       "bytes": 9600,
@@ -2486,10 +2486,10 @@
       "sha256": "f1db5f003d8ee4063c0fa71156b5b49afa3580eb804cccabeb4950f8eabafca1"
     },
     {
-      "bytes": 121004,
+      "bytes": 121961,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py",
-      "sha256": "8b091654169963e0a2fe3e7d0b2284ff19716b699f76defaeda1765c9a8fe49c"
+      "sha256": "279bf31e96d17fe1049f2b0fcc46709d1464c5652c58bc2f7dca347c9ff3000c"
     },
     {
       "bytes": 20256,
@@ -2773,18 +2773,18 @@
     "nativeCaptureStarted": false,
     "observation": {
       "identityAfter": {
-        "birth": [1794039754, 439095],
-        "pgid": 40342,
-        "pid": 40349,
-        "ppid": 40348,
+        "birth": [1794040380, 556108],
+        "pgid": 7386,
+        "pid": 7428,
+        "ppid": 7414,
         "status": 2,
         "uid": 501
       },
       "identityBefore": {
-        "birth": [1794039754, 439095],
-        "pgid": 40342,
-        "pid": 40349,
-        "ppid": 40348,
+        "birth": [1794040380, 556108],
+        "pgid": 7386,
+        "pid": 7428,
+        "ppid": 7414,
         "status": 2,
         "uid": 501
       },
@@ -2800,13 +2800,13 @@
         "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
         "sha256": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a"
       },
-      "pid": 40349,
+      "pid": 7428,
       "scope": "CPU_SELF_PROCESS_ONLY_NOT_CAPTURE",
       "uid": 501
     },
     "processExitedAndReaped": true,
     "stderr": "",
-    "stdout": "{\"scope\": \"CPU_SELF_PROCESS_ONLY_NOT_CAPTURE\", \"pid\": 40349, \"uid\": 501, \"identityBefore\": {\"pid\": 40349, \"ppid\": 40348, \"pgid\": 40342, \"birth\": [1794039754, 439095], \"status\": 2, \"uid\": 501}, \"identityAfter\": {\"pid\": 40349, \"ppid\": 40348, \"pgid\": 40342, \"birth\": [1794039754, 439095], \"status\": 2, \"uid\": 501}, \"launcher\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"sha256\": \"e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a\", \"bytes\": 34640}, \"kernelExecutable\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"sha256\": \"b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22\", \"bytes\": 33568}}\n"
+    "stdout": "{\"scope\": \"CPU_SELF_PROCESS_ONLY_NOT_CAPTURE\", \"pid\": 7428, \"uid\": 501, \"identityBefore\": {\"pid\": 7428, \"ppid\": 7414, \"pgid\": 7386, \"birth\": [1794040380, 556108], \"status\": 2, \"uid\": 501}, \"identityAfter\": {\"pid\": 7428, \"ppid\": 7414, \"pgid\": 7386, \"birth\": [1794040380, 556108], \"status\": 2, \"uid\": 501}, \"launcher\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"sha256\": \"e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a\", \"bytes\": 34640}, \"kernelExecutable\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"sha256\": \"b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22\", \"bytes\": 33568}}\n"
   },
   "pythonVersion": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
   "resolver": {
@@ -2861,8 +2861,8 @@
   "units": {
     "fauna-combat": {
       "aspect": "16x9",
-      "attemptId": "450979f495994addbcb0c46a5307ade4",
-      "authorizationId": "fauna-450979f495994addbcb0c46a5307ade4",
+      "attemptId": "4e6e6a438f9b4f21b0ec8e23f0422eae",
+      "authorizationId": "fauna-4e6e6a438f9b4f21b0ec8e23f0422eae",
       "budget": {
         "fileCount": 220,
         "futureLfsAdditionalBytes": 3674226688,
@@ -2871,9 +2871,9 @@
         "newOutputCapBytes": 3674226688,
         "oneUnitAdmissionBytes": 15871295488
       },
-      "consumption": "/private/tmp/fhc-450979f495994addbcb0c46a5307ade4.json",
-      "evidence": "/private/tmp/fhp-450979f495994addbcb0c46a5307ade4",
-      "grant": "/private/tmp/fhg-450979f495994addbcb0c46a5307ade4.json",
+      "consumption": "/private/tmp/fhc-4e6e6a438f9b4f21b0ec8e23f0422eae.json",
+      "evidence": "/private/tmp/fhp-4e6e6a438f9b4f21b0ec8e23f0422eae",
+      "grant": "/private/tmp/fhg-4e6e6a438f9b4f21b0ec8e23f0422eae.json",
       "inventory": {
         "frames": 204,
         "readouts": 1,
@@ -2882,13 +2882,13 @@
       },
       "kind": "broad",
       "light": "day",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-450979f495994addbcb0c46a5307ade4",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-4e6e6a438f9b4f21b0ec8e23f0422eae",
       "screen": "fauna-combat"
     },
     "fauna-combat-night": {
       "aspect": "16x9",
-      "attemptId": "f39cbd218b2245a381bebab3f9e18d8e",
-      "authorizationId": "fauna-f39cbd218b2245a381bebab3f9e18d8e",
+      "attemptId": "fa8dbfdf1cbd4a02a13b177272b9da26",
+      "authorizationId": "fauna-fa8dbfdf1cbd4a02a13b177272b9da26",
       "budget": {
         "fileCount": 220,
         "futureLfsAdditionalBytes": 3674226688,
@@ -2897,9 +2897,9 @@
         "newOutputCapBytes": 3674226688,
         "oneUnitAdmissionBytes": 15871295488
       },
-      "consumption": "/private/tmp/fhc-f39cbd218b2245a381bebab3f9e18d8e.json",
-      "evidence": "/private/tmp/fhp-f39cbd218b2245a381bebab3f9e18d8e",
-      "grant": "/private/tmp/fhg-f39cbd218b2245a381bebab3f9e18d8e.json",
+      "consumption": "/private/tmp/fhc-fa8dbfdf1cbd4a02a13b177272b9da26.json",
+      "evidence": "/private/tmp/fhp-fa8dbfdf1cbd4a02a13b177272b9da26",
+      "grant": "/private/tmp/fhg-fa8dbfdf1cbd4a02a13b177272b9da26.json",
       "inventory": {
         "frames": 204,
         "readouts": 1,
@@ -2908,13 +2908,13 @@
       },
       "kind": "broad",
       "light": "night",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-f39cbd218b2245a381bebab3f9e18d8e",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-fa8dbfdf1cbd4a02a13b177272b9da26",
       "screen": "fauna-combat-night"
     },
     "fauna-hit-turn-day-16x9": {
       "aspect": "16x9",
-      "attemptId": "356a33d93ff74b2981f3784afe245cf1",
-      "authorizationId": "fauna-356a33d93ff74b2981f3784afe245cf1",
+      "attemptId": "51b0617d00104cc79533206ffcbad03d",
+      "authorizationId": "fauna-51b0617d00104cc79533206ffcbad03d",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -2923,9 +2923,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-356a33d93ff74b2981f3784afe245cf1.json",
-      "evidence": "/private/tmp/fhp-356a33d93ff74b2981f3784afe245cf1",
-      "grant": "/private/tmp/fhg-356a33d93ff74b2981f3784afe245cf1.json",
+      "consumption": "/private/tmp/fhc-51b0617d00104cc79533206ffcbad03d.json",
+      "evidence": "/private/tmp/fhp-51b0617d00104cc79533206ffcbad03d",
+      "grant": "/private/tmp/fhg-51b0617d00104cc79533206ffcbad03d.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -2934,13 +2934,13 @@
       },
       "kind": "correction",
       "light": "day",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-356a33d93ff74b2981f3784afe245cf1",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-51b0617d00104cc79533206ffcbad03d",
       "screen": "fauna-hit-turn-day-16x9"
     },
     "fauna-hit-turn-day-21x9": {
       "aspect": "21x9",
-      "attemptId": "48487745ba324373953ec71cfa795f1d",
-      "authorizationId": "fauna-48487745ba324373953ec71cfa795f1d",
+      "attemptId": "6db615deda92409aa0bcaf17323f2837",
+      "authorizationId": "fauna-6db615deda92409aa0bcaf17323f2837",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -2949,9 +2949,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-48487745ba324373953ec71cfa795f1d.json",
-      "evidence": "/private/tmp/fhp-48487745ba324373953ec71cfa795f1d",
-      "grant": "/private/tmp/fhg-48487745ba324373953ec71cfa795f1d.json",
+      "consumption": "/private/tmp/fhc-6db615deda92409aa0bcaf17323f2837.json",
+      "evidence": "/private/tmp/fhp-6db615deda92409aa0bcaf17323f2837",
+      "grant": "/private/tmp/fhg-6db615deda92409aa0bcaf17323f2837.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -2960,13 +2960,13 @@
       },
       "kind": "correction",
       "light": "day",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-48487745ba324373953ec71cfa795f1d",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-6db615deda92409aa0bcaf17323f2837",
       "screen": "fauna-hit-turn-day-21x9"
     },
     "fauna-hit-turn-night-16x9": {
       "aspect": "16x9",
-      "attemptId": "cd87fddb1cd94d45b599901f3c247369",
-      "authorizationId": "fauna-cd87fddb1cd94d45b599901f3c247369",
+      "attemptId": "f5b1c7f00096451d9de3662c1fb6392b",
+      "authorizationId": "fauna-f5b1c7f00096451d9de3662c1fb6392b",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -2975,9 +2975,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-cd87fddb1cd94d45b599901f3c247369.json",
-      "evidence": "/private/tmp/fhp-cd87fddb1cd94d45b599901f3c247369",
-      "grant": "/private/tmp/fhg-cd87fddb1cd94d45b599901f3c247369.json",
+      "consumption": "/private/tmp/fhc-f5b1c7f00096451d9de3662c1fb6392b.json",
+      "evidence": "/private/tmp/fhp-f5b1c7f00096451d9de3662c1fb6392b",
+      "grant": "/private/tmp/fhg-f5b1c7f00096451d9de3662c1fb6392b.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -2986,13 +2986,13 @@
       },
       "kind": "correction",
       "light": "night",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-cd87fddb1cd94d45b599901f3c247369",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-f5b1c7f00096451d9de3662c1fb6392b",
       "screen": "fauna-hit-turn-night-16x9"
     },
     "fauna-hit-turn-night-21x9": {
       "aspect": "21x9",
-      "attemptId": "b86f289bfd504127b926a96ba5553a80",
-      "authorizationId": "fauna-b86f289bfd504127b926a96ba5553a80",
+      "attemptId": "09bad855e3ec455c96cd7a73226c9c11",
+      "authorizationId": "fauna-09bad855e3ec455c96cd7a73226c9c11",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -3001,9 +3001,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-b86f289bfd504127b926a96ba5553a80.json",
-      "evidence": "/private/tmp/fhp-b86f289bfd504127b926a96ba5553a80",
-      "grant": "/private/tmp/fhg-b86f289bfd504127b926a96ba5553a80.json",
+      "consumption": "/private/tmp/fhc-09bad855e3ec455c96cd7a73226c9c11.json",
+      "evidence": "/private/tmp/fhp-09bad855e3ec455c96cd7a73226c9c11",
+      "grant": "/private/tmp/fhg-09bad855e3ec455c96cd7a73226c9c11.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -3012,7 +3012,7 @@
       },
       "kind": "correction",
       "light": "night",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-b86f289bfd504127b926a96ba5553a80",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-09bad855e3ec455c96cd7a73226c9c11",
       "screen": "fauna-hit-turn-night-21x9"
     }
   }

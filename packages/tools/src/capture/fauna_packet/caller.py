@@ -289,7 +289,8 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
                 and prior_result.get('accepted') is False
                 and prior_result.get('publication') == {'status': 'AWAITING_CALLER_COMPLETION', 'completeReceipt': None}
                 and prior_result.get('primaryFailure') is None and prior_result.get('cleanupFailures') == []
-                and prior_result.get('persistenceFailures') == [], 'Predecessor result is failed/indeterminate')
+                and prior_result.get('persistenceFailures') == [] and prior_result.get('secondaryFailures', []) == [],
+                'Predecessor result is failed/indeterminate')
         predecessor_outputs.append((prior, prior_result['raw'].get('outputManifest')))
     expiry = datetime.datetime.fromisoformat(grant['expiresUtc'])
     require(expiry.tzinfo is not None and expiry > datetime.datetime.now(datetime.timezone.utc), 'Grant expired')
@@ -660,7 +661,7 @@ def run_unit(ready, spec, record):
                 result['persistenceFailures'].append(failure(error))
     try:
         receipt('raw-before-acceptance.json', result)
-        if result['primaryFailure'] or result['cleanupFailures'] or result['persistenceFailures']:
+        if result['primaryFailure'] or result['secondaryFailures'] or result['cleanupFailures'] or result['persistenceFailures']:
             raise Refused('Capture/cleanup failed; raw outcome retained')
         result['raw']['outputManifest'] = read_json(evidence / 'entry-result.json')['writes']
         command = [ready['decoderPython'], '-I', '-B', str(HERE / 'inspect.py'), str(READY), record['unit']]

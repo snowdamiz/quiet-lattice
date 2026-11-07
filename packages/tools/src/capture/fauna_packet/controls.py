@@ -1112,6 +1112,20 @@ class BoundaryControls(unittest.TestCase):
                 for fd in fds:
                     with self.assertRaises(OSError):os.fstat(fd)
 
+    def test_authenticated_secondary_failure_cannot_authorize_a_successor(self):
+        with self.boundary(clean=True, real_git=True) as case:
+            previous = case.next_grant['previousUnitsAccepted'][0]
+            ref = case.next_grant['previousUnitReceipts'][previous]['result']
+            result = caller.read_json(ref['path'])
+            result['secondaryFailures'] = [{'phase': 'capture-wait', 'message': 'RETAINED_HELPER_FAILURE'}]
+            Path(ref['path']).write_text(json.dumps(result));ref['sha256'] = caller.sha(ref['path'])
+            Path(case.next_spec['grant']).write_text(json.dumps(case.next_grant))
+            with self.assertRaisesRegex(caller.Refused, 'failed/indeterminate'):
+                self.next_consumption(case)
+            for field in ('output', 'evidence', 'consumption'):
+                self.assertFalse(Path(case.next_spec[field]).exists())
+            self.assertEqual(case.calls.count('inert-start'), 1)
+
     def test_actual_admission_uses_one_authenticated_snapshot_for_result_and_consumption(self):
         for key in ('result', 'consumption'):
             with self.subTest(key=key), self.boundary(clean=True, real_git=True) as case:
