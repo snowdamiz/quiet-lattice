@@ -460,7 +460,7 @@ def copy_file(source, destination, row, budget):
             copied = read_content(source, row['bytes'], expected_stamp=row['stamp'], budget=budget, consume=write)
             if fd is None:
                 write(b'')
-            os.fchmod(fd, row['stamp'][2] & 0o777)
+            os.fchmod(fd, stat.S_IMODE(row['stamp'][2]))
             os.fsync(fd)
             parent.verify()
             target_stamp = stamp(os.fstat(fd))
@@ -485,18 +485,34 @@ def copy_tree(source, destination, *, count=20000, cap=512 * 1024 * 1024):
         expected = []
         for row in admitted['files']:
             target = destination / row['path']
+            sha = None
             if row['kind'] == 'directory':
                 with Directory(target, create=True):
                     pass
             else:
                 sha = copy_file(Path(source) / row['path'], target, row, budget)
-                expected.append({'path': row['path'], 'bytes': row['bytes'], 'sha256': sha, 'mode': row['stamp'][2] & 0o777})
+            expected.append({'path': row['path'], 'kind': row['kind'], 'bytes': row['bytes'], 'sha256': sha,
+                             'mode': stat.S_IMODE(row['stamp'][2])})
+        # Populate under private writable modes, then restore directories deepest first.
+        # The retained namespace verifier compares empty directories and modes as well as bytes.
+        for row in sorted(admitted['directories'], key=lambda r: len(Path(r['path']).parts), reverse=True):
+            target = destination / row['path']
+            with Directory(target) as directory:
+                original = directory_identity(os.fstat(directory.fd))
+                mode = stat.S_IMODE(row['stamp'][2])
+                os.fchmod(directory.fd, mode)
+                expected_identity = [original[0], original[1], stat.S_IFDIR | mode, original[3]]
+                with Directory(target) as verified:
+                    if directory_identity(os.fstat(directory.fd)) != expected_identity or directory_identity(os.fstat(verified.fd)) != expected_identity:
+                        raise Refused('Archive directory identity or mode changed; originals retained')
         after = inventory(source, count=count, cap=cap)
         if admitted != after:
             raise Refused('Archive source changed; originals retained')
         copied = ledger(destination, count=count, cap=cap)
-        actual = [{'path': row['path'], 'bytes': row['bytes'], 'sha256': row.get('sha256'), 'mode': row['stamp'][2] & 0o777}
-                  for row in copied['files'] if row['kind'] == 'file']
-        if actual != expected:
+        actual = [{'path': row['path'], 'kind': row['kind'], 'bytes': row['bytes'], 'sha256': row.get('sha256'), 'mode': stat.S_IMODE(row['stamp'][2])}
+                  for row in copied['files']]
+        source_root = next(row for row in admitted['directories'] if row['path'] == '')
+        copied_root = next(row for row in copied['directories'] if row['path'] == '')
+        if actual != expected or stat.S_IMODE(source_root['stamp'][2]) != stat.S_IMODE(copied_root['stamp'][2]):
             raise Refused('Archive copy differs; originals retained')
         return str(destination)

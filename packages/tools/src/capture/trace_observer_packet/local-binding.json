@@ -61,6 +61,61 @@
       }
     }
   },
+  "appleSetStoreBinding": {
+    "atEpochSeconds": 1794044458.6566331,
+    "commands": [
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "-d",
+          "--verbose=4",
+          "-r-",
+          "/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService"
+        ],
+        "exit": 0,
+        "stderr": "Executable=/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService\nIdentifier=com.apple.SetStoreUpdateService\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=472 flags=0x0(none) hashes=4+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=729180c1ef8d8657ace973e55f3853923d942d20\nCandidateCDHashFull sha256=729180c1ef8d8657ace973e55f3853923d942d20485ad03b7ece90b70e682d1f\nHash choices=sha256\nCMSDigest=729180c1ef8d8657ace973e55f3853923d942d20485ad03b7ece90b70e682d1f\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=729180c1ef8d8657ace973e55f3853923d942d20\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 8, 2026 at 7:21:44\u202fPM\nInfo.plist entries=20\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n",
+        "stdout": "designated => identifier \"com.apple.SetStoreUpdateService\" and anchor apple\n"
+      },
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "--verify",
+          "--strict",
+          "-R",
+          "=identifier \"com.apple.SetStoreUpdateService\" and anchor apple",
+          "/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    ],
+    "identities": {
+      "/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService": {
+        "binding": {
+          "bytes": 220272,
+          "path": "/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService",
+          "sha256": "6ed9e684540cdeeece3efb21da956596371dc2f823413c9964f20a105fef32d9"
+        },
+        "currentUserWritable": false,
+        "groupOrOtherWritable": false,
+        "stamp": [16777232, 1152921500312277080, 33261, 0, 220272, 1790233837000000000, 1790233837000000000]
+      },
+      "/usr/bin/codesign": {
+        "binding": {
+          "bytes": 973408,
+          "path": "/usr/bin/codesign",
+          "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+        },
+        "currentUserWritable": false,
+        "groupOrOtherWritable": false,
+        "stamp": [16777232, 1152921500312607711, 33261, 0, 973408, 1790233837000000000, 1790233837000000000]
+      }
+    },
+    "kind": "T13_EXACT_SIGNED_APPLE_EXECUTABLE_OBSERVATION_V1",
+    "runtimeAuthorized": false,
+    "scope": "Read-only identity/signature; later actual current UID/birth/coalition still required. External XPC ownership UNQUALIFIED."
+  },
   "assetPath": "/Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8/packages/client/public/models/characters/thalune.glb",
   "binaries": [
     {
@@ -2792,10 +2847,15 @@
       "bytes": 973408,
       "path": "/usr/bin/codesign",
       "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+    },
+    {
+      "bytes": 220272,
+      "path": "/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService",
+      "sha256": "6ed9e684540cdeeece3efb21da956596371dc2f823413c9964f20a105fef32d9"
     }
   ],
   "browser": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
-  "consumption": "/private/tmp/t13-observer-consumed-7b836b7a",
+  "consumption": "/private/tmp/t13-observer-consumed-5ba6b515",
   "controlledLoad": {
     "externalContenders": "unknown-not-excluded",
     "logicalCores": 15,
@@ -2810,14 +2870,14 @@
     "provenance": "read-only system_profiler; actual GL device must still be observed",
     "rendererContains": "Apple M5 Pro"
   },
-  "fallback": "/private/tmp/t13-observer-fallback-7b836b7a",
-  "grant": "/private/tmp/t13-observer-grant-7b836b7a.json",
+  "fallback": "/private/tmp/t13-observer-fallback-5ba6b515",
+  "grant": "/private/tmp/t13-observer-grant-5ba6b515.json",
   "kind": "T13_OBSERVER_DISABLED_LOCAL_PATHS_V1",
   "launchPath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
   "osBuild": "26A434",
-  "output": "/private/tmp/t13-observer-native-7b836b7a",
-  "prefix": "bwt-7b836b7ae1754aac9d95e3b74a980efd",
+  "output": "/private/tmp/t13-observer-native-5ba6b515",
+  "prefix": "bwt-5ba6b51563fb45f6950bbd05dc88702b",
   "pythonKernel": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
   "pythonLauncher": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
   "runtimeAuthorized": false,

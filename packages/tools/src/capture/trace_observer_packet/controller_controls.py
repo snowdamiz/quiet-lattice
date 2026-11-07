@@ -8,7 +8,7 @@ sys.path.insert(0,str(ROOT/'packages/tools/src/capture/trace_observer_packet'))
 import launch, freeze, metadata
 boundary,proof,stages=launch.native_helpers(ROOT)
 allresults=[]
-cases = ['helper-read-failure','helper-ancestor','bootstrap-timeout','bootstrap-decode','bootstrap-bootout-error','predrain-stall','positive','bootstrap17-write','bootstrap0-write','partial-constructor','observer-raw','observer-save','terminal-audit','ledger-growth','ledger-unreadable','terminal-ledger','terminal-publish','terminal-all-sinks']
+cases = ['namespace-cache','namespace-mode-error','namespace-mode-ignored','helper-read-failure','helper-ancestor','bootstrap-timeout','bootstrap-decode','bootstrap-bootout-error','predrain-stall','positive','bootstrap17-write','bootstrap0-write','partial-constructor','observer-raw','observer-save','terminal-audit','ledger-growth','ledger-unreadable','terminal-ledger','terminal-publish','terminal-all-sinks']
 selected=sys.argv[2:] or cases
 assert all(case in cases for case in selected)
 for fault in selected:
@@ -34,6 +34,13 @@ for fault in selected:
     owned_child.append(child);assert child.stdout.readline()==b'ready\n'
    self.root=rows[0];self.coalition_id=123;self.known={str(r['pid']):r for r in rows}
    private=pathlib.Path(self.env['TMPDIR']);profile=private/'playwright_chromiumdev_profile-fixture';profile.mkdir()
+   if fault.startswith('namespace-'):
+    # Actual native failure shape: an unrelated tsx cache survives profile/scratch archival.
+    cache=private/'tsx-501';cache.mkdir(mode=0o755);cache.chmod(0o755)
+    (cache/'cache-entry').write_bytes(b'CPU fixture of retained native cache\0\xff')
+    for name,mode in [('empty',0o750),('readonly',0o550),('shared',0o1770)]:
+     directory=cache/name;directory.mkdir();directory.chmod(mode)
+    (profile/'profile-entry').write_bytes(b'profile archived before namespace')
    metadata.atomic(self.out.parent/'capture/browser-launch.json',metadata.encode({'kind':'T13_BROWSER_LAUNCH_CHILD_PROCESS_V1','provenance':'BrowserServer.process() ChildProcess','prefix':prefix,'pid':rows[1]['pid'],'spawnfile':str(binary),'spawnargs':[str(binary),'--use-angle=metal','--user-data-dir='+str(profile)],'at':'2026-11-07T00:00:00Z','monotonicNs':'1'}))
    metadata.atomic(self.out.parent/'capture/kernel-request.json',metadata.encode({'prefix':prefix,'browserPid':rows[1]['pid'],'processes':[{'id':rows[3]['pid'],'type':'renderer'}]}))
    packet={'kind':'T13_TRACE_OBSERVER_V1','status':'observed','failure':None,'cleanupErrors':[],'portSettlement':{'kind':'ports-settled'},'summary':{'budgetQualified':False},'steps':[{}]*12,'applicability':{'missingControls':0},'totals':{**{k:freeze.BOUNDS[k] for k in ('preparations','frames','dependentPasses','preflightFences','controlFences','png','queries','segments')},'warmUpFrames':1080,'bytes':100,'events':24,'reads':6}}
@@ -108,6 +115,12 @@ for fault in selected:
    terminalTimers.append(signal.getitimer(signal.ITIMER_REAL))
   return realledger(path,*a,**k)
  real_open,real_read,real_fsync,real_close=metadata.os.open,metadata.os.read,metadata.os.fsync,metadata.os.close
+ real_chmod=metadata.os.fchmod
+ def chmod(fd,mode):
+  if __import__('stat').S_ISDIR(os.fstat(fd).st_mode) and fault.startswith('namespace-mode-'):
+   if fault=='namespace-mode-ignored':return
+   error=OSError('DIRECTORY_MODE_FAILED');error.unknown=b'RAW_DIRECTORY_MODE\xff';raise error
+  return real_chmod(fd,mode)
  capture=case/'out/capture';held=case/'out/capture-held'
  def opening(path,flags,*args,**kwargs):
   target=str(path)==str(capture/'browser-launch.json') or (str(path)=='browser-launch.json' and kwargs.get('dir_fd') is not None)
@@ -139,7 +152,7 @@ for fault in selected:
    assert owned_child[0].poll() is None
    while True:signal.pause()  # The actual product deadline, with its own handler, must interrupt.
   return real_fsync(fd)
- with patch.object(metadata.os,'open',opening),patch.object(metadata.os,'read',reading),patch.object(metadata.os,'fsync',syncing),patch.object(metadata.os,'close',closing),patch.object(launch,'LIMITS',{**launch.LIMITS,'frozenBytes':8 if fault.startswith('ledger-') else launch.LIMITS['frozenBytes']}),patch.object(metadata,'file_hash',growhash),patch.object(boundary,'write',write),patch.object(boundary.subprocess,'run',command),patch.object(boundary,'identity',ident),patch.object(stages,'identity',ident),patch.object(stages,'coalition',return_value=[123,0]),patch.object(boundary,'coalition',return_value=[123,0]),patch.object(stages,'executable_path',executable),patch.object(boundary,'kernel_tasks',tasks),patch.object(proof,'kernel_tasks',tasks),patch.object(stages,'kernel_tasks',tasks),patch.object(stages.subprocess,'check_output',return_value=''),patch.object(launch,'ledger',ledger):
+ with patch.object(metadata.os,'fchmod',chmod),patch.object(metadata.os,'open',opening),patch.object(metadata.os,'read',reading),patch.object(metadata.os,'fsync',syncing),patch.object(metadata.os,'close',closing),patch.object(launch,'LIMITS',{**launch.LIMITS,'frozenBytes':8 if fault.startswith('ledger-') else launch.LIMITS['frozenBytes']}),patch.object(metadata,'file_hash',growhash),patch.object(boundary,'write',write),patch.object(boundary.subprocess,'run',command),patch.object(boundary,'identity',ident),patch.object(stages,'identity',ident),patch.object(stages,'coalition',return_value=[123,0]),patch.object(boundary,'coalition',return_value=[123,0]),patch.object(stages,'executable_path',executable),patch.object(boundary,'kernel_tasks',tasks),patch.object(proof,'kernel_tasks',tasks),patch.object(stages,'kernel_tasks',tasks),patch.object(stages.subprocess,'check_output',return_value=''),patch.object(launch,'ledger',ledger):
   result=launch.run_owned(ready,{'value':{},'sha256':'a'*64},{'readiness':{'sha256':'b'*64}},(boundary,proof,stages),job_factory=Job)
  assert stages.os is os and all(module.Path is pathlib.Path for module in (boundary,proof,stages))
  for child in owned_child:
@@ -152,6 +165,19 @@ for fault in selected:
  row['preDrainTimers']=pre_timers
  row['ownedCPUChildren']=[{'pid':child.pid,'argv':child.args,'observedExit':child.returncode,'waited':child.returncode is not None} for child in owned_child]
  allresults.append(row)
+ if fault=='namespace-cache':
+  assert result['candidate'] is True and result['physicalSettlement']=='DRAINED_ARCHIVED_AUDITED',result['secondary']
+  assert not pathlib.Path(created[-1].env['TMPDIR']).exists()
+  cache=case/'out/preserved-private-tmp/tsx-501'
+  assert (cache/'cache-entry').read_bytes()==b'CPU fixture of retained native cache\0\xff'
+  for name,mode in [('',0o755),('empty',0o750),('readonly',0o550),('shared',0o1770)]:
+   assert __import__('stat').S_IMODE((cache/name).stat().st_mode)==mode
+  assert (case/'out/owned_job/preserved_playwright_chromiumdev_profile-fixture/profile-entry').read_bytes()==b'profile archived before namespace'
+ elif fault.startswith('namespace-mode-'):
+  assert result['candidate'] is False and result['physicalSettlement']=='UNPROVED'
+  assert pathlib.Path(created[-1].env['TMPDIR']).exists() and (case/'out/preserved-controller-scratch').exists()
+  assert result['outputLedger']['complete'] and result['terminalPublication']['durable']
+  if fault=='namespace-mode-error':assert 'RAW_DIRECTORY_MODE' in json.dumps(result['secondary']) or metadata.base64.b64encode(b'RAW_DIRECTORY_MODE\xff').decode() in json.dumps(result['secondary'])
  if fault=='helper-read-failure':
   assert result['candidate'] is False and payload_reads==[1]
   assert 'PRIMARY_RETAINED_READ' in json.dumps(result['failure'])
