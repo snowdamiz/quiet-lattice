@@ -1067,3 +1067,8 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **Lark private v12j:** unique-paint shrink under one 4096 atlas reaches measured min median **618.8 px/m** (≥512; was 347.7 on rejected force-fit v11). Layout fits at true 512 (`force_fit_scale=1.0`); stock export+validate PASS 5/5. Canonical blend/glb hashes unchanged. Husked Trim pack fixed by area-preserving strip reshape after Dark’s finish square.
 - **Parent:** density gate SATISFIED. Canonical promote remains HELD until the author commits the sealed private candidate, then independent SOURCE/CPU review PASSes. Visual/GPU remain later. Force-fit and multi-atlas stay rejected.
 - Evidence retained under `docs/review-records/p1-e12-t02/lark-density-shrink512-v12j/` (index `20261107-lark-density-shrink512-v12j.json`); large private binaries as hash pointers. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+
+## 2026-11-07 — Lark shrink-512 committed; SOURCE/CPU review assigned
+
+- **Lark `bafae4c869`:** sealed shrink-512 private v12j committed clean (tree `5857cc64b`). Private GLB/blend hashes match `e377daea…` / `68a32771…`; canonical `bc08c784…` / `7f11e2bd…` unchanged. Density gate remains SATISFIED (min_median 618.8 ≥512; stock PASS 5/5; true-512 one-atlas).
+- Independent SOURCE/CPU review of the private density/export contract is assigned. Canonical promote stays HELD until that review PASSes. Visual/GPU remain later. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
