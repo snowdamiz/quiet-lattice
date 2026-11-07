@@ -1,0 +1,121 @@
+{
+  "mode": "leader_loss",
+  "base": true,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss",
+    "leader_loss",
+    "base",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss",
+    "leader"
+  ],
+  "start": 1794052596.277478,
+  "assertions": {
+    "retry rejected while descendant alive": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": false,
+    "cleanup terminal": false,
+    "direct child reaped": false,
+    "no surviving fixture worker": false,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true
+  },
+  "workerPIDs": [
+    96395,
+    96397
+  ],
+  "supervisorPID": 96394,
+  "beforeAction": [
+    "96395 96394 96395 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss leader",
+    "96397 96395 96397 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss leaf"
+  ],
+  "leafDuringRetry": "96397     1 96397 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss leaf",
+  "retryWhileOwned": 1,
+  "supervisorExit": 247,
+  "terminal": {
+    "stage": "work",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss/root",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/leader_loss",
+      "leader"
+    ],
+    "beforeFree": 30813270016,
+    "beforePayload": 1528106,
+    "beforeSources": {},
+    "beforeExports": {},
+    "start": 1794052596.301428,
+    "samples": [
+      {
+        "time": 1794052596.342588,
+        "rss": 5701632,
+        "free": 30813261824,
+        "processes": [
+          {
+            "pid": 96395,
+            "ppid": 96394,
+            "pgid": 96395,
+            "rss": 5701632,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      },
+      {
+        "time": 1794052596.920036,
+        "rss": 34209792,
+        "free": 30813224960,
+        "processes": [
+          {
+            "pid": 96395,
+            "ppid": 96394,
+            "pgid": 96395,
+            "rss": 17252352,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          },
+          {
+            "pid": 96397,
+            "ppid": 96395,
+            "pgid": 96397,
+            "rss": 16957440,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "pid": 96395,
+    "exit": -9,
+    "end": 1794052597.421101,
+    "afterFree": 30814199808,
+    "afterPayload": 1528106,
+    "afterSources": {},
+    "afterExports": {},
+    "remainingProcesses": [
+      {
+        "pid": 96397,
+        "ppid": 1,
+        "pgid": 96397,
+        "rss": 16957440,
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      }
+    ],
+    "stopReason": null,
+    "sampling": "process group and descendant closure",
+    "maxRSS": 34209792
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 0,
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794052598.4124658,
+  "passed": false
+}

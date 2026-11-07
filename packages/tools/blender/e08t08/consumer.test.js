@@ -208,6 +208,8 @@ it('P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and 
     expect(model.helpers.some((o) => /^(Door|Interact|Socket_|HP_|Mount|Spin)/i.test(nodeName(o)))).toBe(false);
     const first = meshes(model.assets[0].variants[0].lods.get(0))[0];
     if (file.family === 'creatures') {
+      // Mutations below exercise task assertions, not production-loader rejection.
+      // Stock Review intentionally falls back when a requested LOD is absent.
       const raw = first.geometry;
       const fractured = raw.clone(); fractured.attributes._limb.setX(0, 1.5);
       expect(() => checkRig(fractured, file.stem !== 'flyer')).toThrow('integer limb'); controls++;
@@ -237,5 +239,5 @@ it('P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and 
   expect(totalVariants).toBe(38); expect(totalLods).toBe(152);
   expect(parseSpec('creatures').url).toBe('/models/creatures.glb');
   expect(hash(readFileSync(`${ROOT}packages/client/public/models/creatures.glb`))).toBe('4065f277d602a1ef0e5e79ecb597258c313b710a32cc89256c0b17d9d8f09b2b');
-  writeFileSync(new URL('./reports/consumer-contract.json',import.meta.url),JSON.stringify({ totalVariants,totalLods,malformedControls:controls,maskBoundary:'FLOAT_COLOR source; pinned stock Blender writes normalized UINT16 COLOR_0, error <= 0.5/65535 plus float tolerance per channel; not exact float export',textureBoundary:'metadata proxy in GLTFLoader; actual CPU transcode and PBR checks in stock validation',files:reports },null,2)+'\n');
+  writeFileSync(new URL('./reports/consumer-contract.json',import.meta.url),JSON.stringify({ totalVariants,totalLods,malformedControls:controls,malformedControlBoundary:'custom checkRig/checkMarkers/checkInventory assertion rejections; not GLTFLoader/Review rejection routes',maskBoundary:'FLOAT_COLOR source; pinned stock Blender writes normalized UINT16 COLOR_0, error <= 0.5/65535 plus float tolerance per channel; not exact float export',textureBoundary:'metadata proxy in GLTFLoader; actual CPU transcode and PBR checks in stock validation',files:reports },null,2)+'\n');
 });

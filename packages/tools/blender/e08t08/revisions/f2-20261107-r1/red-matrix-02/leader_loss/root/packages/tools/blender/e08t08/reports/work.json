@@ -1,0 +1,72 @@
+{
+  "stage": "work",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_loss/root",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_loss",
+    "leader"
+  ],
+  "beforeFree": 51349565440,
+  "beforePayload": 1529228,
+  "beforeSources": {},
+  "beforeExports": {},
+  "start": 1794053319.4789891,
+  "samples": [
+    {
+      "time": 1794053319.520032,
+      "rss": 5980160,
+      "free": 51349557248,
+      "processes": [
+        {
+          "pid": 58586,
+          "ppid": 58585,
+          "pgid": 58586,
+          "rss": 5980160,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    },
+    {
+      "time": 1794053320.073385,
+      "rss": 33931264,
+      "free": 51349499904,
+      "processes": [
+        {
+          "pid": 58586,
+          "ppid": 58585,
+          "pgid": 58586,
+          "rss": 16973824,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 58588,
+          "ppid": 58586,
+          "pgid": 58588,
+          "rss": 16957440,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 58586,
+  "exit": -9,
+  "end": 1794053320.5834591,
+  "afterFree": 51349635072,
+  "afterPayload": 1529228,
+  "afterSources": {},
+  "afterExports": {},
+  "remainingProcesses": [
+    {
+      "pid": 58588,
+      "ppid": 1,
+      "pgid": 58588,
+      "rss": 16957440,
+      "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    }
+  ],
+  "stopReason": null,
+  "sampling": "process group and descendant closure",
+  "maxRSS": 33931264
+}

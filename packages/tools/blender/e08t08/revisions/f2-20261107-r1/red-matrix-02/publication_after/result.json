@@ -1,0 +1,39 @@
+{
+  "mode": "publication_after",
+  "base": true,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/publication_after/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/publication_after",
+    "publication_after",
+    "base",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/publication_after/command-ran').touch(); print(\"finite success\")"
+  ],
+  "start": 1794053336.719404,
+  "assertions": {
+    "publication retains admission": false,
+    "terminal or durable unfinished admission exists": false,
+    "supervisor outcome": false,
+    "cleanup terminal": false,
+    "direct child reaped": false,
+    "no surviving fixture worker": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": false,
+    "admission after settlement only": true
+  },
+  "workerPIDs": [],
+  "supervisorPID": 58952,
+  "retryDuringPublication": 0,
+  "supervisorExit": -15,
+  "workersAfterSupervisorExit": [],
+  "terminal": null,
+  "finalizeExit": 0,
+  "retryAfterExit": 0,
+  "workersDuringRetryAfterExit": [],
+  "cleanupRemaining": [],
+  "end": 1794053338.9940312,
+  "passed": false
+}

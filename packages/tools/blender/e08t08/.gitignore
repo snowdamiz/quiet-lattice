@@ -2,3 +2,8 @@ __pycache__/
 reports/*.lock
 reports/vite-cache/
 !reports/*.log
+!revisions/**/*.log
+revisions/**/lane.lock
+revisions/**/root/assets
+revisions/**/root/pnpm-lock.yaml
+revisions/**/root/packages/client/public/models

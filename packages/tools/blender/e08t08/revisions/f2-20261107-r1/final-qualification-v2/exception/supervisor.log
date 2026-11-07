@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v2/exception/root/packages/tools/blender/e08t08/stage.py", line 170, in run
+    progress(directory, owned)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py", line 74, in progress
+    raise RuntimeError('injected exception after ownership acquisition')
+RuntimeError: injected exception after ownership acquisition
+{"stage": "work", "runId": "479bc945f6c948d08e7d0de5a7ded3f6", "outcome": "failed", "exit": -15, "cleanup": "verified", "errors": ["RuntimeError('injected exception after ownership acquisition')"], "cancelSignals": [], "maxRSS": 34258944}

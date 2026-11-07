@@ -1,0 +1,100 @@
+{
+  "mode": "failed",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/failed/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/failed",
+    "failed",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/failed/command-ran').touch(); raise SystemExit(7)"
+  ],
+  "start": 1794054296.730987,
+  "assertions": {
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": true,
+    "cleanup terminal": true,
+    "direct child reaped": true,
+    "no surviving fixture worker": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "successful retry does not erase failed admission": true
+  },
+  "workerPIDs": [],
+  "supervisorPID": 32845,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "5a05359f7c374f22a63ea0912b05536a",
+    "supervisorPID": 32845,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/failed/command-ran').touch(); raise SystemExit(7)"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/failed/root",
+    "beforeFree": 50017259520,
+    "beforePayload": 1538274,
+    "start": 1794054296.775455,
+    "samples": [
+      {
+        "time": 1794054296.823219,
+        "rss": 131072,
+        "free": 50017251328,
+        "processes": [
+          {
+            "pid": 32847,
+            "ppid": 32845,
+            "pgid": 32847,
+            "rss": 131072,
+            "command": "(python3.14)"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [],
+    "stopReason": null,
+    "exit": 7,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 32847,
+    "ownership": {
+      "directChild": {
+        "pid": 32847,
+        "birth": [
+          1794054296,
+          775751
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": []
+    },
+    "end": 1794054296.875276,
+    "maxRSS": 131072,
+    "afterFree": 50017251328,
+    "afterPayload": 1538832,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "failed"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 0,
+  "workersDuringRetryAfterExit": [],
+  "cleanupRemaining": [],
+  "end": 1794054297.3250701,
+  "passed": true
+}

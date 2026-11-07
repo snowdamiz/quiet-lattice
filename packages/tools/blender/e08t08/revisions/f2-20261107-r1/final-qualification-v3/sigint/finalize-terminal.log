@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 93, in settled_runs
+    raise ValueError('failed/cancelled run cannot promote')
+ValueError: failed/cancelled run cannot promote
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/sigint/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/sigint/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 96, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: failed/cancelled run cannot promote

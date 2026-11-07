@@ -1,0 +1,62 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "86086b3380ea478fa18f0fd8dd4700c6",
+  "supervisorPID": 33225,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/publication_after/command-ran').touch(); print(\"finite success\")"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/publication_after/root",
+  "beforeFree": 49961005056,
+  "beforePayload": 1538274,
+  "start": 1794054301.3877592,
+  "samples": [
+    {
+      "time": 1794054301.437102,
+      "rss": 6062080,
+      "free": 49960988672,
+      "processes": [
+        {
+          "pid": 33226,
+          "ppid": 33225,
+          "pgid": 33226,
+          "rss": 6062080,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 33226,
+  "ownership": {
+    "directChild": {
+      "pid": 33226,
+      "birth": [
+        1794054301,
+        388106
+      ],
+      "waiterLost": false
+    },
+    "knownDescendants": []
+  },
+  "end": 1794054301.482212,
+  "maxRSS": 6062080,
+  "afterFree": 49960898560,
+  "afterPayload": 1538864,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "success"
+}

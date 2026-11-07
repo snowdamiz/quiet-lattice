@@ -1,0 +1,46 @@
+{
+  "mode": "observation_failure",
+  "base": true,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/observation_failure/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/observation_failure",
+    "observation_failure",
+    "base",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/observation_failure",
+    "leader"
+  ],
+  "start": 1794052594.017979,
+  "assertions": {
+    "retry rejected while descendant alive": true,
+    "terminal or durable unfinished admission exists": false,
+    "supervisor outcome": true,
+    "actual finalizer outcome": false,
+    "no failed/incomplete promotion": false,
+    "admission after settlement only": false
+  },
+  "workerPIDs": [
+    96365,
+    96367
+  ],
+  "supervisorPID": 96364,
+  "beforeAction": [
+    "96365 96364 96365 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/observation_failure leader",
+    "96367 96365 96367 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/observation_failure leaf"
+  ],
+  "leafDuringRetry": "96367 96365 96367 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/observation_failure leaf",
+  "retryWhileOwned": 1,
+  "supervisorExit": 1,
+  "terminal": null,
+  "finalizeExit": 0,
+  "retryAfterExit": 0,
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794052596.246717,
+  "passed": false
+}

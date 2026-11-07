@@ -1,0 +1,20 @@
+{
+  "stageSHA256": "65f142c9dda0c6fd89fe5bbd8479690745c12c96aed8dc001f96ed746b2e97cb",
+  "wrapperPID": 33089,
+  "childPID": 33090,
+  "beforeSignal": "33090 33089 33090 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)",
+  "wrapperExit": -15,
+  "childAfterWrapperExit": "33090     1 33090 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)",
+  "terminalReceiptExists": false,
+  "secondStageCommand": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red/lifecycle-root/packages/tools/blender/e08t08/stage.py",
+    "next_lane",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "pass"
+  ],
+  "secondStageExit": 0,
+  "originalChildDuringSecondStage": "33090     1 33090 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -c import os,time,json;from pathlib import Path;Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red/owned-child.json').write_text(json.dumps({'pid':os.getpid(),'pgid':os.getpgrp()}));time.sleep(20)",
+  "cleanupRemainingChild": ""
+}

@@ -1,0 +1,63 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "32dcceb2c63244fa8a6e356dac661712",
+  "supervisorPID": 5315,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "print(\"finite success\")"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/receipt_failure/root",
+  "beforeFree": 30657126400,
+  "beforePayload": 1535994,
+  "start": 1794052673.296621,
+  "samples": [
+    {
+      "time": 1794052673.3725052,
+      "rss": 6078464,
+      "free": 30657101824,
+      "processes": [
+        {
+          "pid": 5316,
+          "ppid": 5315,
+          "pgid": 5316,
+          "rss": 6078464,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [
+    "terminal publication failed: OSError(5, 'injected terminal receipt persistence failure')"
+  ],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 5316,
+  "ownership": {
+    "directChild": {
+      "pid": 5316,
+      "birth": [
+        1794052673,
+        297236
+      ]
+    },
+    "knownDescendants": []
+  },
+  "end": 1794052673.44512,
+  "maxRSS": 6078464,
+  "afterFree": 30656045056,
+  "afterPayload": 1536354,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "publication-failed"
+}

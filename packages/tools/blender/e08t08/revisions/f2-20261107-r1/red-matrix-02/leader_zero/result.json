@@ -1,0 +1,129 @@
+{
+  "mode": "leader_zero",
+  "base": true,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero",
+    "leader_zero",
+    "base",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero",
+    "leader"
+  ],
+  "start": 1794053321.620809,
+  "assertions": {
+    "retry rejected while descendant alive": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": false,
+    "cleanup terminal": false,
+    "direct child reaped": false,
+    "no surviving fixture worker": false,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true
+  },
+  "workerPIDs": [
+    58625,
+    58627
+  ],
+  "supervisorPID": 58624,
+  "beforeAction": [
+    "58625 58624 58625 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero leader",
+    "58627 58625 58627 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero leaf"
+  ],
+  "leafDuringRetry": "58627     1 58627 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero leaf",
+  "retryWhileOwned": 1,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [
+    "",
+    "58627     1 58627 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero leaf"
+  ],
+  "terminal": {
+    "stage": "work",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero/root",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero",
+      "leader"
+    ],
+    "beforeFree": 51341324288,
+    "beforePayload": 1529228,
+    "beforeSources": {},
+    "beforeExports": {},
+    "start": 1794053321.644495,
+    "samples": [
+      {
+        "time": 1794053321.6858282,
+        "rss": 6045696,
+        "free": 51341312000,
+        "processes": [
+          {
+            "pid": 58625,
+            "ppid": 58624,
+            "pgid": 58625,
+            "rss": 6045696,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      },
+      {
+        "time": 1794053322.238666,
+        "rss": 34062336,
+        "free": 51341275136,
+        "processes": [
+          {
+            "pid": 58625,
+            "ppid": 58624,
+            "pgid": 58625,
+            "rss": 17088512,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          },
+          {
+            "pid": 58627,
+            "ppid": 58625,
+            "pgid": 58627,
+            "rss": 16973824,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "pid": 58625,
+    "exit": 0,
+    "end": 1794053322.748806,
+    "afterFree": 51341307904,
+    "afterPayload": 1529228,
+    "afterSources": {},
+    "afterExports": {},
+    "remainingProcesses": [
+      {
+        "pid": 58627,
+        "ppid": 1,
+        "pgid": 58627,
+        "rss": 16973824,
+        "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      }
+    ],
+    "stopReason": null,
+    "sampling": "process group and descendant closure",
+    "maxRSS": 34062336
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 0,
+  "workersDuringRetryAfterExit": [
+    "",
+    "58627     1 58627 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/leader_zero leaf"
+  ],
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794053323.7616582,
+  "passed": false
+}

@@ -1,0 +1,83 @@
+{
+  "mode": "watch_failure",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/watch_failure/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/watch_failure",
+    "watch_failure",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/watch_failure/command-ran').touch(); import time; time.sleep(10)"
+  ],
+  "start": 1794053015.416877,
+  "assertions": {
+    "Popen handle survives watcher exception": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "uncertainty survives manual fixture cleanup": true,
+    "finalizer still rejects unresolved ownership": true
+  },
+  "workerPIDs": [
+    39254
+  ],
+  "supervisorPID": 39253,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [
+    ""
+  ],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "69e23abaf7a74b17af9215e6d313c222",
+    "supervisorPID": 39253,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/watch_failure/command-ran').touch(); import time; time.sleep(10)"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/watch_failure/root",
+    "beforeFree": 39481339904,
+    "beforePayload": 1536766,
+    "start": 1794053015.460275,
+    "samples": [],
+    "limitSeconds": 2700,
+    "errors": [
+      "RuntimeError('injected watch acquisition failure after Popen')"
+    ],
+    "cancelSignals": [],
+    "stopReason": null,
+    "exit": -9,
+    "directChildReaped": true,
+    "cleanup": "unknown",
+    "remainingProcesses": [],
+    "observationUncertain": true,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 39254,
+    "end": 1794053015.494098,
+    "maxRSS": 0,
+    "afterFree": 39481327616,
+    "afterPayload": 1537177,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "uncertain"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 1,
+  "workersDuringRetryAfterExit": [
+    ""
+  ],
+  "cleanupRemaining": [
+    ""
+  ],
+  "end": 1794053015.785467,
+  "passed": true
+}

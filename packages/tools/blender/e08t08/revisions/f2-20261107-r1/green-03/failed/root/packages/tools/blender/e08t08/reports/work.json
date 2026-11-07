@@ -1,0 +1,61 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "744e27b1452649e3bbabb5829d88dbc6",
+  "supervisorPID": 39199,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/failed/command-ran').touch(); raise SystemExit(7)"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/failed/root",
+  "beforeFree": 39510138880,
+  "beforePayload": 1536766,
+  "start": 1794053013.795846,
+  "samples": [
+    {
+      "time": 1794053013.8435972,
+      "rss": 131072,
+      "free": 39510126592,
+      "processes": [
+        {
+          "pid": 39200,
+          "ppid": 39199,
+          "pgid": 39200,
+          "rss": 131072,
+          "command": "(Python)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 7,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 39200,
+  "ownership": {
+    "directChild": {
+      "pid": 39200,
+      "birth": [
+        1794053013,
+        796200
+      ]
+    },
+    "knownDescendants": []
+  },
+  "end": 1794053013.884867,
+  "maxRSS": 131072,
+  "afterFree": 39510126592,
+  "afterPayload": 1537285,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "failed"
+}

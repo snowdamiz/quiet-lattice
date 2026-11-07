@@ -1,0 +1,103 @@
+{
+  "mode": "publication_before",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/publication_before/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/publication_before",
+    "publication_before",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/publication_before/command-ran').touch(); print(\"finite success\")"
+  ],
+  "start": 1794053365.4450922,
+  "assertions": {
+    "publication retains admission": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": true,
+    "cleanup terminal": true,
+    "direct child reaped": true,
+    "no surviving fixture worker": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "successful retry does not erase failed admission": true
+  },
+  "workerPIDs": [],
+  "supervisorPID": 59754,
+  "retryDuringPublication": 1,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "fee3e156833243c7b935be1d3d5b71d0",
+    "supervisorPID": 59754,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/publication_before/command-ran').touch(); print(\"finite success\")"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/publication_before/root",
+    "beforeFree": 51162619904,
+    "beforePayload": 1536813,
+    "start": 1794053365.488292,
+    "samples": [
+      {
+        "time": 1794053365.53272,
+        "rss": 0,
+        "free": 51162603520,
+        "processes": [
+          {
+            "pid": 59760,
+            "ppid": 59754,
+            "pgid": 59760,
+            "rss": 0,
+            "command": "(python3.14)"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [
+      15
+    ],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 59760,
+    "ownership": {
+      "directChild": {
+        "pid": 59760,
+        "birth": [
+          1794053365,
+          488616
+        ]
+      },
+      "knownDescendants": []
+    },
+    "end": 1794053365.5734441,
+    "maxRSS": 0,
+    "afterFree": 51162603520,
+    "afterPayload": 1537376,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "cancelled"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 0,
+  "workersDuringRetryAfterExit": [],
+  "cleanupRemaining": [],
+  "end": 1794053365.981847,
+  "passed": true
+}

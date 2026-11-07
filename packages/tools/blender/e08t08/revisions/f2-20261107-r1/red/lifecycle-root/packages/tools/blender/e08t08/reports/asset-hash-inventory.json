@@ -1,0 +1,175 @@
+{
+  "task": "P1.E08.T08",
+  "scope": "CPU source/export unit only",
+  "base": "5731dc4c92954dd995c4a8ed5975bdbd2f7fdb45",
+  "branch": "task/P1-E08-T08-creatures",
+  "assets": [
+    {
+      "path": "assets/blend/creatures/quad_heavy.blend",
+      "bytes": 7841862,
+      "sha256": "879d9ac53ed14da1005b179adc5617c4f7ba2873bb00828c0f644e0a2df00e6c"
+    },
+    {
+      "path": "packages/client/public/models/creatures/quad_heavy.glb",
+      "bytes": 3990980,
+      "sha256": "2a76d8d75d722167dbc8f7e654bd8b102e0d597943c82afab7d3c638719e0f04"
+    },
+    {
+      "path": "assets/blend/creatures/quad_grazer.blend",
+      "bytes": 5218009,
+      "sha256": "0600f84627e042e7a2e80c5a6ce7837bddb52cd6c6a0ee89134b3dbde8f2e619"
+    },
+    {
+      "path": "packages/client/public/models/creatures/quad_grazer.glb",
+      "bytes": 2627512,
+      "sha256": "c4662bc612a5db3d0d7a296f3f34fce87387d0114ac1396d885c8895b9c0f026"
+    },
+    {
+      "path": "assets/blend/creatures/quad_small.blend",
+      "bytes": 7235789,
+      "sha256": "e265bee1b997cede003f58d89b8e7f9c9cffc540e8c1eaafab5b78f250b0966d"
+    },
+    {
+      "path": "packages/client/public/models/creatures/quad_small.glb",
+      "bytes": 4254000,
+      "sha256": "06a1a3442303b35ef65837b5e698674787f8ac47385c665c2fd15bb5cc619ffb"
+    },
+    {
+      "path": "assets/blend/creatures/biped.blend",
+      "bytes": 11353717,
+      "sha256": "bc486b2d4084e25e4d42ddb6b71ba51cbf42df7d6923db73d64108643081022e"
+    },
+    {
+      "path": "packages/client/public/models/creatures/biped.glb",
+      "bytes": 6854584,
+      "sha256": "7a6bd58cb7cad053c090660d15daf024911799a0d09b1186cb8e2070210525ad"
+    },
+    {
+      "path": "assets/blend/creatures/flyer.blend",
+      "bytes": 10059364,
+      "sha256": "efa3752ff7bb7f19dd7e58474ca65d52ccb17a74f232fc60f52df10c9b087f84"
+    },
+    {
+      "path": "packages/client/public/models/creatures/flyer.glb",
+      "bytes": 6224420,
+      "sha256": "41f8e4ba6091eefc01013ef1e9f98890eb72d9a7937368409b294390bdc73450"
+    },
+    {
+      "path": "assets/blend/constructs/outpost_drone.blend",
+      "bytes": 2081372,
+      "sha256": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7"
+    },
+    {
+      "path": "packages/client/public/models/constructs/outpost_drone.glb",
+      "bytes": 478904,
+      "sha256": "aac406aeb15e230b5f2122b8ee154bfc9657208cebf38689ed67bba3670437d5"
+    },
+    {
+      "path": "assets/blend/constructs/outpost_overseer.blend",
+      "bytes": 3918753,
+      "sha256": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+    },
+    {
+      "path": "packages/client/public/models/constructs/outpost_overseer.glb",
+      "bytes": 1143008,
+      "sha256": "9dc1a40d72875cc42eb966fb35cc6eae4cf4cfd0229abbc37086acab3b7a89c8"
+    }
+  ],
+  "protectedUnchanged": {
+    "assets/blend/_library.blend": "33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c",
+    "packages/client/public/models/creatures.glb": "4065f277d602a1ef0e5e79ecb597258c313b710a32cc89256c0b17d9d8f09b2b",
+    "pnpm-lock.yaml": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f"
+  },
+  "resources": {
+    "qualifiedMaxAggregateRSS": 1655619584,
+    "sampling": "0.5 second process group plus descendant closure; samples, not an unsampled peak claim",
+    "initialExportResourceLimit": "export-creatures-01 tracked only its initial process group; superseded by export-creatures-02",
+    "maxStageSeconds": 93.46471500396729,
+    "minimumPreStageFreeBytes": 18511024128,
+    "minimumSampledFreeBytes": 18510462976,
+    "codecCalls": 144,
+    "codecThreadsSampled": 1,
+    "codecMaximumConcurrent": 1,
+    "previewPNGs": 79,
+    "previewBytes": 34696900,
+    "allStageProcessesReaped": true,
+    "worktreeBaselineKiB": 4521824,
+    "worktreeFinalKiB": 16632,
+    "worktreeGrowthBytes": -4613316608
+  },
+  "sourceContract": "reports/source-contract.json",
+  "consumerContract": "reports/consumer-contract.json",
+  "stockValidations": [
+    {
+      "file": "assets/blend/creatures/quad_heavy.blend",
+      "status": "PASS"
+    },
+    {
+      "file": "assets/blend/constructs/outpost_overseer.blend",
+      "status": "PASS"
+    },
+    {
+      "file": "packages/client/public/models/constructs/outpost_drone.glb",
+      "status": "PASS"
+    },
+    {
+      "file": "assets/blend/creatures/quad_grazer.blend",
+      "status": "PASS"
+    },
+    {
+      "file": "packages/client/public/models/creatures/flyer.glb",
+      "status": "PASS"
+    },
+    {
+      "file": "assets/blend/creatures/flyer.blend",
+      "status": "PASS"
+    },
+    {
+      "file": "assets/blend/constructs/outpost_drone.blend",
+      "status": "PASS"
+    },
+    {
+      "file": "packages/client/public/models/creatures/quad_heavy.glb",
+      "status": "PASS"
+    },
+    {
+      "file": "assets/blend/creatures/biped.blend",
+      "status": "PASS"
+    },
+    {
+      "file": "packages/client/public/models/creatures/quad_small.glb",
+      "status": "PASS"
+    },
+    {
+      "file": "assets/blend/creatures/quad_small.blend",
+      "status": "PASS"
+    },
+    {
+      "file": "packages/client/public/models/constructs/outpost_overseer.glb",
+      "status": "PASS"
+    },
+    {
+      "file": "packages/client/public/models/creatures/biped.glb",
+      "status": "PASS"
+    },
+    {
+      "file": "packages/client/public/models/creatures/quad_grazer.glb",
+      "status": "PASS"
+    }
+  ],
+  "toolchain": {
+    "blender": "5.2.3 LTS",
+    "ktx": "4.4.2",
+    "ktxSHA256": "abd30109cbf84859b2f34951f7967e801111abadaac588468d98ed075100ad37"
+  },
+  "dependencies": {
+    "strategy": "read-only local symlinks, matching parent lockfile; no install",
+    "vitestCache": "reports/vite-cache",
+    "links": {
+      "node_modules": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules",
+      "packages/tools/node_modules": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules",
+      "packages/client/node_modules": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/client/node_modules"
+    }
+  },
+  "openMaskPrecisionLimit": "reports/export-mask-limit.json"
+}

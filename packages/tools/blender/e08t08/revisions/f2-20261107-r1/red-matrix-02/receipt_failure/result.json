@@ -1,0 +1,34 @@
+{
+  "mode": "receipt_failure",
+  "base": true,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/receipt_failure/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/receipt_failure",
+    "receipt_failure",
+    "base",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/receipt_failure/command-ran').touch(); print(\"finite success\")"
+  ],
+  "start": 1794053330.326839,
+  "assertions": {
+    "terminal or durable unfinished admission exists": false,
+    "supervisor outcome": true,
+    "actual finalizer outcome": false,
+    "no failed/incomplete promotion": false,
+    "admission after settlement only": false
+  },
+  "workerPIDs": [],
+  "supervisorPID": 58820,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [],
+  "terminal": null,
+  "finalizeExit": 0,
+  "retryAfterExit": 0,
+  "workersDuringRetryAfterExit": [],
+  "cleanupRemaining": [],
+  "end": 1794053331.9970078,
+  "passed": false
+}

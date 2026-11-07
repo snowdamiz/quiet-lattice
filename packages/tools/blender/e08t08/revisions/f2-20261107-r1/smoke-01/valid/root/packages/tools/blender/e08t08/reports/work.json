@@ -1,0 +1,61 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "d5287f55b11140d5bdfc5874fea710b2",
+  "supervisorPID": 83015,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "print(\"finite success\")"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/smoke-01/valid/root",
+  "beforeFree": 30951026688,
+  "beforePayload": 1535385,
+  "start": 1794052515.467113,
+  "samples": [
+    {
+      "time": 1794052515.51096,
+      "rss": 4587520,
+      "free": 30950993920,
+      "processes": [
+        {
+          "pid": 83020,
+          "ppid": 83015,
+          "pgid": 83020,
+          "rss": 4587520,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 83020,
+  "ownership": {
+    "directChild": {
+      "pid": 83020,
+      "birth": [
+        1794052515,
+        467400
+      ]
+    },
+    "knownDescendants": []
+  },
+  "end": 1794052515.551157,
+  "maxRSS": 4587520,
+  "afterFree": 30950993920,
+  "afterPayload": 1535747,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "success"
+}

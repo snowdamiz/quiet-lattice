@@ -1,0 +1,42 @@
+{
+  "stage": "overlap",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02/supervisor_loss/root",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "pass"
+  ],
+  "beforeFree": 51336327168,
+  "beforePayload": 1529228,
+  "beforeSources": {},
+  "beforeExports": {},
+  "start": 1794053326.9207082,
+  "samples": [
+    {
+      "time": 1794053326.96433,
+      "rss": 5488640,
+      "free": 51336327168,
+      "processes": [
+        {
+          "pid": 58734,
+          "ppid": 58733,
+          "pgid": 58734,
+          "rss": 5488640,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 58734,
+  "exit": 0,
+  "end": 1794053327.474426,
+  "afterFree": 51336499200,
+  "afterPayload": 1529228,
+  "afterSources": {},
+  "afterExports": {},
+  "remainingProcesses": [],
+  "stopReason": null,
+  "sampling": "process group and descendant closure",
+  "maxRSS": 5488640
+}

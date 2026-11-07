@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/admission_failure/root/packages/tools/blender/e08t08/stage.py", line 244, in main
+    return run(args[0], args[1:], cancellation)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/admission_failure/root/packages/tools/blender/e08t08/stage.py", line 134, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification/admission_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 111, in admit
+    write_json(directory / 'admitted.json', admission)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py", line 99, in journal_write
+    raise OSError(errno.EIO, 'injected admission persistence failure')
+OSError: [Errno 5] injected admission persistence failure

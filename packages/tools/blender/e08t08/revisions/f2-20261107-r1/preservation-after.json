@@ -1,0 +1,59 @@
+{
+  "base": "f9294a466d6223f695f102dc1a13ed526f155e67",
+  "tree": "5cea052761a4c037d28c2d09bd7d731885f09fda",
+  "time": 1794053459.000708,
+  "assetsPreserved": 14,
+  "pngsPreserved": 79,
+  "priorChangedFilesCompared": 412,
+  "protectedHashesPreserved": 82,
+  "reviewOriginalFilesPreserved": 60,
+  "historicalReceiptsAndLogsPreserved": true,
+  "dependencyMetadata": {
+    "node_modules": {
+      "target": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules",
+      "entries": 17259,
+      "metadataSHA256": "2e6058d50a901acf30707f6686bbc25258d5a241934b033a7339d3bf18d46d7f"
+    },
+    "packages/client/node_modules": {
+      "target": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/client/node_modules",
+      "entries": 46,
+      "metadataSHA256": "42382a42dc0536d75729b5943ca9a22dcb4e9093e50d1699c884b605248a2fb9"
+    },
+    "packages/tools/node_modules": {
+      "target": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/node_modules",
+      "entries": 14,
+      "metadataSHA256": "5616fbd363b2d2849b141765f8b2178471ef266aa6cd8c709144da11884c0a47"
+    }
+  },
+  "checks": [
+    {
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--check",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/consumer.test.js"
+      ],
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "/bin/sh",
+        "-n",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/bin/blender"
+      ],
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "output": ""
+    }
+  ],
+  "remainingOwnedProcesses": [],
+  "freeBytes": 50772123648
+}

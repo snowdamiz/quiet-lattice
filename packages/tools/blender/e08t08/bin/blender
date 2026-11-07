@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /Applications/Blender.app/Contents/MacOS/Blender -t 2 "$@"
+exec /Applications/Blender.app/Contents/MacOS/Blender -t 2 --factory-startup --python-exit-code 1 "$@"

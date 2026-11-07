@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/publication_failure/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/publication_failure/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/publication_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 74, in settled_runs
+    raise RuntimeError('ownership publication remains uncertain: ' + directory.name)
+RuntimeError: ownership publication remains uncertain: work

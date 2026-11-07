@@ -1,0 +1,79 @@
+TASK: P1.E08.T08 (art) Creatures at the new bar — independent R1 finding F2 only
+STATUS: F2 implementation and local process qualification complete; fresh independent review required. Full task remains incomplete. F1 exact-float export and all native/visual gates remain open. No whole-task, native, visual, or production-loader rejection PASS claim.
+SUMMARY: The old supervisor lost its ownership on SIGTERM, leaving a real child alive while the next stage admitted. The revision persists admission before dispatch, retains the actual Popen plus instance-watched known descendants, drains in finally, and requires a hash-bound durable settlement. Missing, failed, cancelled, corrupt, or uncertain new runs cannot promote through the actual finalize.py caller. Uncertain cleanup/publication keeps later admission closed even after external fixture cleanup.
+
+PINS:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13 (same app-bound checkout).
+- Actual branch: task/P1-E08-T08-creatures (unchanged in this revision).
+- Parent/base: f9294a466d6223f695f102dc1a13ed526f155e67; tree 5cea052761a4c037d28c2d09bd7d731885f09fda.
+- Original art base: 5731dc4c92954dd995c4a8ed5975bdbd2f7fdb45 (history only; not this revision parent).
+- Sealed independent review: /tmp/space-e08t08-independent-c2-iimrHP/C2-independent-review-final.txt; SHA256 e0f017545582804d4dc1624529388ec63ef4dc83bf5ec2d5f75ebbdd355ce3b5. Complete report and original interrupt receipts read before implementation; originals untouched.
+- Exact old stage.py SHA256: 65f142c9dda0c6fd89fe5bbd8479690745c12c96aed8dc001f96ed746b2e97cb.
+- Exact old finalize.py SHA256: 3d7d28f711812343a68d0a04324c5c53f6517b0decd01ff94734fb5e0f115283.
+- Revision commit/tree are returned in the handoff, outside this self-contained committed report. final-qualification-v3.receipt.json pins every tested tool byte before/after the run.
+
+FILES:
+- Only packages/tools/blender/e08t08/**. stage.py, stage_ownership.py, stage_processes.py: admission, macOS ownership, bounded cancellation, finally receipts and settlement.
+- finalize.py and legacy-stages.json: actual finalizer gates every new admission under the same lock; 63 old stage receipt/log pairs are explicitly hash-pinned historical inputs. New outputs use exclusive generations and a final PUBLISHED.json marker.
+- stage_lifecycle_test.py, lifecycle_driver.py, lifecycle_worker.py: serial actual-process fixtures and actual finalize.py caller. Fault injection is only in fixture drivers, not production entry points.
+- bin/blender: future commands force -t 2 --factory-startup --python-exit-code 1. Static syntax checked only; Blender was not launched.
+- consumer.test.js, README.md: correct malformed-control descriptions; custom assertions are not production GLTFLoader/Review rejection routes. No mask-format assertion or asset altered.
+- .gitignore/.gitattributes and revisions/f2-20261107-r1/**: exclusive revision evidence; raw failure logs retained. Byte-identical historical fixture input copies remain on disk and are referenced by hashes rather than redundantly committed.
+
+VERIFY (all commands ran from the pinned worktree; no heavy application/art execution):
+- Exact-base RED reproducer: python3 packages/tools/blender/e08t08/revisions/f2-20261107-r1/red/stage-interrupt.py (copied reviewer harness with exclusive fixture location). Result: old supervisor -15, actual child alive/reparented, terminal receipt absent, next stage exit 0. Harness explicitly killed/reaped its fixture child; see red/stage-interrupt-result.json and original reviewer copy.
+- Exact-base actual-finalizer RED: python3 packages/tools/blender/e08t08/revisions/f2-20261107-r1/red/lifecycle-root/packages/tools/blender/e08t08/finalize.py; exit 0 despite interrupted.log lacking interrupted.json. It assembled the real report with readonly source/asset hashes and copied historical proof. red/finalize-orphan-02.receipt.json records this. The earlier missing validate-final fixture error (exit 1) remains in red/finalize-orphan.log; it was not treated as the RED.
+- Exact-base regression matrix: /opt/homebrew/bin/python3 /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-02 --base --cases sigterm,sigint,exception,observation_failure,leader_loss,leader_zero,uncertain_cleanup,supervisor_loss,failed,receipt_failure,publication_before,publication_during,publication_after; exit 1. Thirteen intended contract failures, all fixture workers exited. Byte-identical old stage/finalize snapshots and hashes in each fixture. This RED is not a fake implementation or helper-only assertion.
+- Additional intermediate RED: python3 packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence packages/tools/blender/e08t08/revisions/f2-20261107-r1/fsync-red --cases seal_sync_failure; exit 1. A real fsync(-1) fault after a visible seal showed the provisional implementation could reopen/promote. Preserved result names every failed assertion. Fixed by retaining pending names through successful directory sync and rejecting pending/failure records.
+- Final GREEN: /opt/homebrew/opt/python@3.14/bin/python3.14 /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/stage_lifecycle_test.py --evidence /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3; exit 0; 22/22 cases; stable tested tool hashes; all fixture workers exited. See final-qualification-v3/results.json and per-case result.json/receipts/logs.
+- Final readonly audit: PYTHONDONTWRITEBYTECODE=1 python3 packages/tools/blender/e08t08/revisions/f2-20261107-r1/audit.py packages/tools/blender/e08t08/revisions/f2-20261107-r1/preservation-final.json; exit 0. Python AST parse, pinned Node --check consumer.test.js, /bin/sh -n bin/blender, and git diff --check all passed.
+- Readonly pre-stage scope check initially exited 1 because three readonly lifecycle-root fixture links lacked ignore entries; fixed exact local ignore rules, links preserved. Raw error: scope-check-01.txt. No files were staged during that failed check.
+- Full command/exit index: command-index.json. Last 20 lines of every retained failing command/control log: failure-tails.txt (574 logs). Early smoke-01, green-01, and provisional implementation results remain; only final-qualification-v3 qualifies current tool hashes.
+
+FINAL MATRIX BOUNDARIES:
+- valid: real finite child exits 0, actual finalizer publishes after sealed settlement, next stage admits.
+- sigterm/sigint: real supervisor receives signal; leader and TERM-resistant detached known leaf drain; direct child reaped; receipt cancelled; concurrent retry denied; actual finalizer refuses.
+- exception/observation_failure: real workloads run while injected Python/ps boundary error enters finally; actual handles retained, bounded drain. Observation uncertainty remains charged even after external cleanup.
+- leader_loss/leader_zero: real command SIGKILL or exit 0 with live detached known leaf; known leaf drains; neither condition promotes.
+- waiter_loss: a competing real waitpid reaps the command; known descendant still drains. Lost wait ownership cannot synthesize exit 0 or settlement.
+- supervisor_loss: real SIGKILL supervisor; durable unfinished admission keeps retries and actual finalizer closed while leaf lives and after harness cleanup. No claim that an uncatchable SIGKILL can execute finally.
+- failed: child exits 7; verified cleanup permits another execution, but failed admitted run still blocks actual finalization after a successful retry.
+- uncertain_cleanup: injected termination refusal leaves actual workload alive; bounded drain returns uncertain; retries/finalizer remain denied before and after manual fixture cleanup.
+- receipt_failure/seal_failure/admission_failure: directories obstruct real os.link publication; actual FileExistsError with pending bytes preserved. Admission failure dispatches no child. A terminal proposal without settlement cannot promote.
+- seal_sync_failure: real fsync syscall returns EBADF after the seal name is visible; durable pending/failure evidence blocks admission and promotion, including after cleanup.
+- watch_failure: watcher construction raises after actual Popen returns; real child handle survives, is terminated/reaped, but uncertain descendant acquisition does not free admission.
+- publication_before/during/after/failure: barriers at the real terminal writer/settler; SIGTERM before decision cancels; signals during/after the sealed completion transaction defer to completion. Lane stays held through publication. Seal failure wins over apparent success and leaves admission closed.
+- finalizer_sigterm/finalizer_sigint: actual full finalize.py caller interrupted before final PUBLISHED marker; partial outputs remain unpromoted; a later successful invocation publishes a new exclusive generation and preserves partial file hashes.
+
+DECISIONS (question -> choice -> why):
+- What owns the lane after wrapper death? -> Durable runs/<name>/admitted.json plus its directory, persisted before Popen -> flock alone ends when a supervisor dies. Missing/partial/unknown settlement must keep admission closed; no PID-death or elapsed-time recovery.
+- How to retain process authority? -> Actual unreaped Popen/waitid(WNOWAIT) leader plus libproc birth identity and kqueue NOTE_EXIT watches for known descendants -> leader reaping cannot erase known detached-child obligations. Observation, exit checks, and termination attempts are independent during drain, including competing waiter loss.
+- When can cancellation lose to completion? -> At the signal-masked terminal decision after verified cleanup; a successful persisted receipt+seal wins -> deferred signals cannot unwind publication or turn sealed completion into a late -SIGTERM. Any publication failure leaves durable uncertainty.
+- What proves persistence? -> fsynced immutable bytes, link publication, directory sync, then removal of the pending name as the last operation -> visible-but-unsynced seal cannot pass. A crash that resurrects the unsynced pending-name deletion conservatively blocks; no automatic deletion/recovery.
+- Can failed stages free the lane? -> Only after verified cleanup and matching persisted terminal/seal; promotion still refuses every new failed/cancelled run -> successful retry cannot hide failure. Old 63 pinned receipts are grandfathered historical input, not new lifecycle qualification.
+- Why task-local macOS code? -> Current pinned host provides waitid, libproc and kqueue; no dependencies/shared framework -> bounded F2 change without toolchain upgrades. Swift/props/ownership lessons inform retaining uncertainty, not copied infrastructure.
+- How to honor no LFS during commit? -> git -c core.hooksPath=/dev/null commit for this one commit -> the only active hook is post-commit invoking git lfs; no validation hook exists. Staged changes contain only task-local text evidence/tools; no asset/LFS filter path is staged.
+
+PRESERVATION AND RESOURCE EVIDENCE:
+- preservation-final.json verifies all 14 source/export assets by SHA256, all 79 PNGs by SHA256, old task receipts/history, 82 protected hashes, all 60 reviewer originals, and unchanged dependency metadata (17259/46/14 entries). Full asset inventory is embedded there; original reports/asset-hash-inventory.json remains unchanged.
+- Final GREEN elapsed 37.432 s; maximum sampled harness+descendant RSS 130203648 bytes; maximum two workload workers. Exact-base RED sampled RSS 165888000 bytes. These are sampled resource observations, not timing benchmarks or unsampled peak claims.
+- Finite workload fixtures use at most one leader and one detached leaf; stage drain has 2 s TERM plus 2 s KILL grace (bounded individual observation/wait calls add latency). Harness outer runs have a 180 s bound. Latest fixture terminal results and readonly ps audit show no remaining owned processes.
+- Readonly audit free bytes 49855700992; revision allocated 985567232 bytes before final text report/index staging; below 6 GiB budget. No cleanup credited; all failed partials/history remain. No Lark process was signalled or touched.
+
+OUTOFSCOPE (owner/task):
+- F1 exact-float COLOR_0 format: separate shared-exporter owner. Required format unchanged; normalized UINT16 is not waived, cast, or declared compliant. All fourteen assets preserved.
+- Native Review, turntables, three-light/wireframe/far views, performance and fresh blind rubric: parent P1.E08.T08 gates. Exact unchanged inventory: reports/native-pending.json: 38 selectable targets, 380 Review PNGs, 38 Review contacts, 38 perf reports/114 light measurements, 38 turntable sheets, 38 material sheets, 9 sibling sheets. Stock pose selection, no invented animation playback.
+- Future strict Blender source/export validation belongs to admitted parent/exporter work. The wrapper now supplies --factory-startup --python-exit-code 1, but this revision performs no Blender/codec/export/bake/native/browser/GPU/service/DB/install/LFS/hydration work and no source-validation rerun.
+- Known-descendant scope: retained kqueue handles prove exits for discovered descendants and the unreaped actual command anchors its group. This is not kernel containment of an arbitrary daemon that detaches and is reparented before any observation. Unknown observation/cleanup stays charged; no full arbitrary-process containment claim.
+- Independent R2: parent reviewer must review this exact revision commit/tree. Do not merge or consider the full art task accepted from this local result.
+
+ARTIFACTS (relative to revisions/f2-20261107-r1 unless noted):
+- review-inputs/: sealed original report and interrupt receipts; preservation-before.json pins all originals.
+- red/ and red-matrix-02/: exact-base actual-process/finalizer RED and cleanup; input/source snapshots.
+- fsync-red/: intermediate real syscall regression preserved.
+- final-qualification-v3.receipt.json, final-qualification-v3/results.json, final-qualification-v3/*/: authoritative current GREEN, process observations, real terminal/journal bytes, all failure controls and actual finalizer outputs.
+- preservation-final.json: asset/protected/dependency/reviewer hash preservation and process cleanup audit.
+- command-index.json and failure-tails.txt: exact commands, exits and raw last-20 failure lines.
+- preserved-input-copies-final-v2.json: hashes/counts for byte-identical historical fixture inputs retained locally and excluded from duplicate Git payload.
+- Earlier smoke/green/final-qualification attempts remain as revision history, not current qualification.
+- No push, PR, merge, branch/base/worktree switch, or orchestration-doc edit.

@@ -1,0 +1,98 @@
+{
+  "mode": "seal_sync_failure",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/seal_sync_failure/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/seal_sync_failure",
+    "seal_sync_failure",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/seal_sync_failure/command-ran').touch(); print(\"finite success\")"
+  ],
+  "start": 1794054298.337752,
+  "assertions": {
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "unsealed proposal cannot count as completion": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "uncertainty survives manual fixture cleanup": true,
+    "finalizer still rejects unresolved ownership": true
+  },
+  "workerPIDs": [],
+  "supervisorPID": 32933,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "c38d3f7fb9484c2cab6bbd935c97f5e3",
+    "supervisorPID": 32933,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/seal_sync_failure/command-ran').touch(); print(\"finite success\")"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/seal_sync_failure/root",
+    "beforeFree": 49991135232,
+    "beforePayload": 1538274,
+    "start": 1794054298.387328,
+    "samples": [
+      {
+        "time": 1794054298.437824,
+        "rss": 1277952,
+        "free": 49991118848,
+        "processes": [
+          {
+            "pid": 32934,
+            "ppid": 32933,
+            "pgid": 32934,
+            "rss": 1277952,
+            "command": "(python3.14)"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 32934,
+    "ownership": {
+      "directChild": {
+        "pid": 32934,
+        "birth": [
+          1794054298,
+          387660
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": []
+    },
+    "end": 1794054298.483146,
+    "maxRSS": 1277952,
+    "afterFree": 49991098368,
+    "afterPayload": 1538864,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "success"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 1,
+  "workersDuringRetryAfterExit": [],
+  "cleanupRemaining": [],
+  "end": 1794054298.8547862,
+  "passed": true
+}

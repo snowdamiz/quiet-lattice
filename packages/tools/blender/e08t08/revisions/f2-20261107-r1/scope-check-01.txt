@@ -1,0 +1,17 @@
+Read-only pre-staging check returned exit 1 before git add.
+The path-prefix and no-LFS-filter assertions passed. The no-symlink assertion failed:
+
+Traceback (most recent call last):
+  File "<stdin>", line 10, in <module>
+AssertionError
+
+Actual untracked paths:
+red/lifecycle-root/assets -> worktree/assets
+red/lifecycle-root/packages/client/public/models -> worktree/packages/client/public/models
+red/lifecycle-root/pnpm-lock.yaml -> worktree/pnpm-lock.yaml
+
+These are readonly input links for the original exact-base finalizer fixture.
+Existing ignore patterns covered root/, while this fixture uses lifecycle-root/.
+Correction: added three exact revision-local ignore entries. Links remain intact
+on disk; no asset, dependency, link, or failed evidence was deleted or changed.
+The subsequent staged-scope check records actual Git index paths and attributes.

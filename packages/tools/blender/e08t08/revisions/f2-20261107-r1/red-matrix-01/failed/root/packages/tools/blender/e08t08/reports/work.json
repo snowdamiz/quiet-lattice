@@ -1,0 +1,42 @@
+{
+  "stage": "work",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/red-matrix-01/failed/root",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "raise SystemExit(7)"
+  ],
+  "beforeFree": 30806663168,
+  "beforePayload": 1528106,
+  "beforeSources": {},
+  "beforeExports": {},
+  "start": 1794052598.4673011,
+  "samples": [
+    {
+      "time": 1794052598.509383,
+      "rss": 5767168,
+      "free": 30806663168,
+      "processes": [
+        {
+          "pid": 96437,
+          "ppid": 96435,
+          "pgid": 96437,
+          "rss": 5767168,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "pid": 96437,
+  "exit": 7,
+  "end": 1794052599.019616,
+  "afterFree": 30805516288,
+  "afterPayload": 1528106,
+  "afterSources": {},
+  "afterExports": {},
+  "remainingProcesses": [],
+  "stopReason": null,
+  "sampling": "process group and descendant closure",
+  "maxRSS": 5767168
+}

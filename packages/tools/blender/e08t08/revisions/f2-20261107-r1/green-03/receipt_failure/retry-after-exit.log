@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 72, in settled_runs
+    terminal = read(receipt)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 40, in read
+    return json.loads(path.read_text())
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/reports/work.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/stage.py", line 244, in main
+    return run(args[0], args[1:], cancellation)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/stage.py", line 134, in run
+    directory, admission = admit(REPORTS, name, cmd)
+                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 100, in admit
+    settled_runs(reports)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/stage_ownership.py", line 87, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-03/receipt_failure/root/packages/tools/blender/e08t08/reports/work.json'

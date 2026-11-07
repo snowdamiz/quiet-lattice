@@ -1,0 +1,333 @@
+TASK: P1.E08.T08 (art) Creatures at the new bar
+STATUS: BLOCKED for full task acceptance: CPU authorship/export and behavioral checks delivered, but stock RGBA mask precision conflicts with the brief; parent/exporter-owner resolution and separate native gates remain. Whole-task/native/visual PASS is NOT CLAIMED.
+SUMMARY: Seven editable saved Blender sources and seven stock-compressed GLBs; 34 creature rest/attack variants, one Compact outpost drone, three Overseer phase reads; all 152 LODs saved and exported. Integer point limb IDs, Z-up joints, sparse glow tips, active POINT masks and shaped knee/ankle loops are preserved. Shared packed 2k PBR paint sets. Sources link the frozen library by relative path. Compact CPU previews were inspected and revised; all previous images and failed-stage logs remain.
+BRANCH: task/P1-E08-T08-creatures
+BASE: 5731dc4c92954dd995c4a8ed5975bdbd2f7fdb45
+COMMIT: final SHA/tree are returned with this report in the handoff; this report does not self-reference its enclosing commit.
+FILES CHANGED: assets/blend/creatures/quad_heavy.blend, packages/client/public/models/creatures/quad_heavy.glb, assets/blend/creatures/quad_grazer.blend, packages/client/public/models/creatures/quad_grazer.glb, assets/blend/creatures/quad_small.blend, packages/client/public/models/creatures/quad_small.glb, assets/blend/creatures/biped.blend, packages/client/public/models/creatures/biped.glb, assets/blend/creatures/flyer.blend, packages/client/public/models/creatures/flyer.glb, assets/blend/constructs/outpost_drone.blend, packages/client/public/models/constructs/outpost_drone.glb, assets/blend/constructs/outpost_overseer.blend, packages/client/public/models/constructs/outpost_overseer.glb; packages/tools/blender/e08t08/**; assets/renders/{creatures,constructs}/e08t08/**.
+VERIFY:
+- author-heavy-01: exit 1; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- quad_heavy; 2.047s; remaining processes 0. Log: reports/author-heavy-01.log
+  Last 20 lines of retained failure:
+    File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/author.py", line 498, in main
+      m,notes=quadruped(stem,which,pose) if stem.startswith('quad') else (biped(which,pose) if stem=='biped' else flyer(which,pose))
+              ~~~~~~~~~^^^^^^^^^^^^^^^^^
+    File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/author.py", line 275, in quadruped
+      head(m,necktip,hs,(0,ny,nz),kind,pose=='bite_swarm',crest=.35 if alt and stem!='quad_heavy' else 0)
+      ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/author.py", line 223, in head
+      m.tube('Eye_catch'+str(s),[(ex+s*w*.099,ey-.05*l,ez+.055*h),(ex+s*w*.10,ey-.05*l,ez+.065*h)],
+      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+             [h*.026,h*.02],limb=6,pivot=pivot,mask=S,glow=1,steps=4,sides=8,tile=7)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/author.py", line 93, in tube
+      p=Vector(row[:3])+r*(b*math.cos(a)+c*math.sin(a))
+        ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  AttributeError: Vector addition: (Vector + numpy.ndarray) invalid type for this operation
+
+  Error: script failed, file: 'packages/tools/blender/e08t08/author.py', exiting.
+  Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+  Blender quit
+- author-heavy-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- quad_heavy; 4.115s; remaining processes 0. Log: reports/author-heavy-02.log
+- preview-heavy-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- quad_heavy r01; 22.533s; remaining processes 0. Log: reports/preview-heavy-01.log
+- author-heavy-03: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- quad_heavy; 2.052s; remaining processes 0. Log: reports/author-heavy-03.log
+- validate-heavy-source-01: exit 0; pnpm art:validate -- assets/blend/creatures/quad_heavy.blend --report-dir packages/tools/blender/e08t08/reports/source-first; 2.056s; remaining processes 0. Log: reports/validate-heavy-source-01.log
+- author-grazer-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- quad_grazer; 1.636s; remaining processes 0. Log: reports/author-grazer-01.log
+- author-small-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- quad_small; 2.185s; remaining processes 0. Log: reports/author-small-01.log
+- author-biped-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- biped; 2.199s; remaining processes 0. Log: reports/author-biped-01.log
+- author-flyer-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- flyer; 2.181s; remaining processes 0. Log: reports/author-flyer-01.log
+- validate-biped-source-01: exit 1; pnpm art:validate -- assets/blend/creatures/biped.blend --report-dir packages/tools/blender/e08t08/reports/source-first; 1.102s; remaining processes 0. Log: reports/validate-biped-source-01.log
+  Last 20 lines of retained failure:
+    FAIL  triangle budget  (2 failed, 0 warnings)
+          fail  biped/biped_predator_leap: LOD0 has 40,160 triangles, over the creature budget 15,000-40,000 (DESIGN 19.2)
+          fail  biped/biped_predator_claw_combo: LOD0 has 40,160 triangles, over the creature budget 15,000-40,000 (DESIGN 19.2)
+    PASS  LODs
+          ok    biped/biped_0: LOD1-LOD3 generated at export
+          ok    biped/biped_0_leap: LOD1-LOD3 generated at export
+          ok    biped/biped_0_claw_combo: LOD1-LOD3 generated at export
+          ok    ... 6 more
+    PASS  materials
+          ok    FaunaHide: pbr: base colour, roughness, metallic, normal, AO
+    PASS  scale references
+          ok    REF_Grid: grid spacing 1.000 m
+          ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+          ok    biped/biped_0: longest side 1.90 m within 0.2-80 m
+          ok    ... 8 more
+  RESULT: FAIL (4 of 5 checks passed)
+    report: packages/tools/blender/e08t08/reports/source-first/creatures__biped.blend.json
+
+  0 of 1 file(s) passed validation
+  [ELIFECYCLE] Command failed with exit code 1.
+- author-biped-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- biped; 2.190s; remaining processes 0. Log: reports/author-biped-02.log
+- author-drone-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- outpost_drone; 1.650s; remaining processes 0. Log: reports/author-drone-01.log
+- author-overseer-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- outpost_overseer; 1.649s; remaining processes 0. Log: reports/author-overseer-01.log
+- preview-heavy-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- quad_heavy r02; 26.349s; remaining processes 0. Log: reports/preview-heavy-02.log
+- preview-grazer-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- quad_grazer r01; 16.981s; remaining processes 0. Log: reports/preview-grazer-01.log
+- preview-small-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- quad_small r01; 24.703s; remaining processes 0. Log: reports/preview-small-01.log
+- preview-biped-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- biped r01; 40.113s; remaining processes 0. Log: reports/preview-biped-01.log
+- preview-flyer-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- flyer r01; 36.765s; remaining processes 0. Log: reports/preview-flyer-01.log
+- preview-drone-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- outpost_drone r01; 6.057s; remaining processes 0. Log: reports/preview-drone-01.log
+- preview-overseer-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- outpost_overseer r01; 18.812s; remaining processes 0. Log: reports/preview-overseer-01.log
+- author-heavy-04: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- quad_heavy; 2.776s; remaining processes 0. Log: reports/author-heavy-04.log
+- author-small-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- quad_small; 2.214s; remaining processes 0. Log: reports/author-small-02.log
+- author-flyer-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- flyer; 2.186s; remaining processes 0. Log: reports/author-flyer-02.log
+- author-overseer-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/author.py -- outpost_overseer; 1.648s; remaining processes 0. Log: reports/author-overseer-02.log
+- source-contract-01: exit 1; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/source_contract.py; 0.548s; remaining processes 0. Log: reports/source-contract-01.log
+  Last 20 lines of retained failure:
+  00:00.252  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/quad_heavy.blend"
+  Traceback (most recent call last):
+    File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/source_contract.py", line 35, in <module>
+      assert any(Path(lib.filepath).name=='_library.blend' for lib in bpy.data.libraries),'linked library'
+             ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  AssertionError: linked library
+
+  Error: script failed, file: 'packages/tools/blender/e08t08/source_contract.py', exiting.
+  Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+  Blender quit
+- reference-library-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/reference_library.py; 1.646s; remaining processes 0. Log: reports/reference-library-01.log
+- source-contract-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/source_contract.py; 1.654s; remaining processes 0. Log: reports/source-contract-02.log
+- preview-heavy-03: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- quad_heavy r03; 26.316s; remaining processes 0. Log: reports/preview-heavy-03.log
+- preview-small-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- quad_small r02; 24.697s; remaining processes 0. Log: reports/preview-small-02.log
+- preview-flyer-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- flyer r02; 39.758s; remaining processes 0. Log: reports/preview-flyer-02.log
+- preview-overseer-02: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/preview.py -- outpost_overseer r02; 16.993s; remaining processes 0. Log: reports/preview-overseer-02.log
+- source-contract-03: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/source_contract.py; 1.660s; remaining processes 0. Log: reports/source-contract-03.log
+- export-creatures-01: exit 0; pnpm art:export -- creatures --only quad_heavy,quad_grazer,quad_small,biped,flyer --report-dir packages/tools/blender/e08t08/reports/export; 68.001s; remaining processes 0. Log: reports/export-creatures-01.log
+- probe-lods-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/probe_lods.py; 1.091s; remaining processes 0. Log: reports/probe-lods-01.log
+- save-lods-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/save_lods.py; 16.477s; remaining processes 0. Log: reports/save-lods-01.log
+- source-contract-04: exit 1; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/source_contract.py; 1.090s; remaining processes 0. Log: reports/source-contract-04.log
+  Last 20 lines of retained failure:
+  00:00.247  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/creatures/quad_heavy.blend"
+  Traceback (most recent call last):
+    File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/source_contract.py", line 36, in <module>
+      assert all(lib.filepath.startswith('//') for lib in bpy.data.libraries),('portable library paths',[lib.filepath for lib in bpy.data.libraries])
+             ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  AssertionError: ('portable library paths', ['/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend'])
+  Info: Read library: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/assets/blend/_library.blend', parent '<direct>'
+
+  Error: script failed, file: 'packages/tools/blender/e08t08/source_contract.py', exiting.
+  Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+  Blender quit
+- portable-paths-01: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/portable_paths.py; 2.196s; remaining processes 0. Log: reports/portable-paths-01.log
+- source-contract-05: exit 0; packages/tools/blender/e08t08/bin/blender -b --factory-startup --python-exit-code 1 -P packages/tools/blender/e08t08/source_contract.py; 2.187s; remaining processes 0. Log: reports/source-contract-05.log
+- export-creatures-02: exit 0; pnpm art:export -- creatures --only quad_heavy,quad_grazer,quad_small,biped,flyer --report-dir packages/tools/blender/e08t08/reports/export-final; 93.465s; remaining processes 0. Log: reports/export-creatures-02.log
+- export-constructs-01: exit 0; pnpm art:export -- constructs --only outpost_drone,outpost_overseer --report-dir packages/tools/blender/e08t08/reports/export-final; 23.623s; remaining processes 0. Log: reports/export-constructs-01.log
+- validate-sources-creatures: exit 0; pnpm art:validate -- assets/blend/creatures/quad_heavy.blend assets/blend/creatures/quad_grazer.blend assets/blend/creatures/quad_small.blend assets/blend/creatures/biped.blend assets/blend/creatures/flyer.blend --report-dir packages/tools/blender/e08t08/reports/validate-final; 3.351s; remaining processes 0. Log: reports/validate-sources-creatures.log
+- validate-sources-constructs: exit 0; pnpm art:validate -- assets/blend/constructs/outpost_drone.blend assets/blend/constructs/outpost_overseer.blend --report-dir packages/tools/blender/e08t08/reports/validate-final; 2.230s; remaining processes 0. Log: reports/validate-sources-constructs.log
+- validate-glbs-creatures: exit 0; pnpm art:validate -- packages/client/public/models/creatures/quad_heavy.glb packages/client/public/models/creatures/quad_grazer.glb packages/client/public/models/creatures/quad_small.glb packages/client/public/models/creatures/biped.glb packages/client/public/models/creatures/flyer.glb --report-dir packages/tools/blender/e08t08/reports/validate-final; 10.597s; remaining processes 0. Log: reports/validate-glbs-creatures.log
+- validate-glbs-constructs: exit 0; pnpm art:validate -- packages/client/public/models/constructs/outpost_drone.glb packages/client/public/models/constructs/outpost_overseer.glb --report-dir packages/tools/blender/e08t08/reports/validate-final; 4.453s; remaining processes 0. Log: reports/validate-glbs-constructs.log
+- consumer-01: exit 1; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 0.554s; remaining processes 0. Log: reports/consumer-01.log
+  Last 20 lines of retained failure:
+  ⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+   FAIL  packages/tools/blender/e08t08/consumer.test.js [ packages/tools/blender/e08t08/consumer.test.js ]
+  Error: Cannot find package 'three' imported from /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/consumer.test.js
+   ❯ packages/tools/blender/e08t08/consumer.test.js:5:1
+        3| import { fileURLToPath } from 'node:url';
+        4| import { expect, it } from 'vitest';
+        5| import * as THREE from 'three';
+         | ^
+        6| import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        7| import { MeshoptDecoder } from 'meshoptimizer';
+
+  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+   Test Files  1 failed (1)
+        Tests  no tests
+     Start at  06:05:25
+     Duration  81ms (worker 97%, environment 3%)
+
+- consumer-02: exit 1; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 1.109s; remaining processes 0. Log: reports/consumer-02.log
+  Last 20 lines of retained failure:
+
+   FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+  Error: mask sum contract
+   ❯ checkRig packages/tools/blender/e08t08/consumer.test.js:76:83
+       74|     if (![0, 1].includes(glow.getX(i))) throw new Error('binary glow c…
+       75|     glowCount += glow.getX(i);
+       76|     if (Math.abs(color.getX(i) + color.getY(i) + color.getZ(i) - 1) > …
+         |                                                                                   ^
+       77|     if (walker && id >= 1 && id <= 4 && pivot.getZ(i) <= 0) throw new …
+       78|   }
+   ❯ packages/tools/blender/e08t08/consumer.test.js:138:44
+
+  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+   Test Files  1 failed (1)
+        Tests  1 failed (1)
+     Start at  06:05:52
+     Duration  524ms (transform 63%, import 32%, tests 4%, worker 1%)
+
+- consumer-03: exit 1; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 1.112s; remaining processes 0. Log: reports/consumer-03.log
+  Last 20 lines of retained failure:
+
+   ❯ packages/tools/blender/e08t08/consumer.test.js (1 test | 1 failed) 26ms
+     × P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers 25ms
+
+  ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+   FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+  Error: mask sum contract at 817: 0.7000076295109483,0,0.30000762951094834; Uint16Array; normalized=true
+   ❯ checkRig packages/tools/blender/e08t08/consumer.test.js:76:83
+
+   ❯ packages/tools/blender/e08t08/consumer.test.js:138:44
+
+  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+   Test Files  1 failed (1)
+        Tests  1 failed (1)
+     Start at  06:08:56
+     Duration  389ms (import 58%, transform 33%, tests 8%, worker 1%)
+
+- consumer-04: exit 1; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 0.546s; remaining processes 0. Log: reports/consumer-04.log
+  Last 20 lines of retained failure:
+
+   FAIL  packages/tools/blender/e08t08/consumer.test.js > P1.E08.T08: actual compressed geometry reaches stock Review pose, mask, and LOD consumers
+  Error: integer limb contract
+   ❯ checkRig packages/tools/blender/e08t08/consumer.test.js:79:58
+       77|   for (let i = 0; i < position.count; i++) {
+       78|     const id = limb.getX(i);
+       79|     if (!Number.isInteger(id) || id < 0 || id > 8) throw new Error('in…
+         |                                                          ^
+       80|     if (![0, 1].includes(glow.getX(i))) throw new Error('binary glow c…
+       81|     glowCount += glow.getX(i);
+   ❯ packages/tools/blender/e08t08/consumer.test.js:144:44
+
+  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+   Test Files  1 failed (1)
+        Tests  1 failed (1)
+     Start at  06:09:38
+     Duration  221ms (import 61%, transform 22%, tests 16%, worker 1%)
+
+- consumer-05: exit 1; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 0.551s; remaining processes 0. Log: reports/consumer-05.log
+  Last 20 lines of retained failure:
+   ❯ packages/tools/blender/e08t08/consumer.test.js:145:88
+      143|           count += (o.geometry.index?.count ?? o.geometry.attributes.p…
+      144|           if (file.family === 'creatures') {
+      145|             try { checkRig(o.geometry, file.stem !== 'flyer'); } catch…
+         |                                                                                        ^
+      146|           }
+      147|           else {
+
+  Caused by: Error: integer limb contract at 1825: 3.000000238418579
+   ❯ checkRig packages/tools/blender/e08t08/consumer.test.js:79:58
+   ❯ packages/tools/blender/e08t08/consumer.test.js:145:19
+
+  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+   Test Files  1 failed (1)
+        Tests  1 failed (1)
+     Start at  06:09:52
+     Duration  217ms (import 59%, transform 23%, tests 18%, worker 1%)
+
+- snap-lod-attributes-01: exit 0; packages/tools/blender/e08t08/bin/blender --background --python packages/tools/blender/e08t08/snap_lod_attributes.py; 2.758s; remaining processes 0. Log: reports/snap-lod-attributes-01.log
+- source-contract-06: exit 0; packages/tools/blender/e08t08/bin/blender --background --python packages/tools/blender/e08t08/source_contract.py; 1.652s; remaining processes 0. Log: reports/source-contract-06.log
+- export-creatures-03: exit 0; pnpm art:export -- creatures --only quad_heavy,quad_grazer,quad_small,biped,flyer --report-dir packages/tools/blender/e08t08/reports/export-final; 55.461s; remaining processes 0. Log: reports/export-creatures-03.log
+- source-contract-07: exit 0; packages/tools/blender/e08t08/bin/blender --background --python packages/tools/blender/e08t08/source_contract.py; 1.651s; remaining processes 0. Log: reports/source-contract-07.log
+- consumer-06: exit 1; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 1.101s; remaining processes 0. Log: reports/consumer-06.log
+  Last 20 lines of retained failure:
+
+  - true
+  + false
+
+   ❯ packages/tools/blender/e08t08/consumer.test.js:187:79
+      185|       expect(object, marker.name).toBeDefined();
+      186|       const actual = object.getWorldPosition(new THREE.Vector3()).toAr…
+      187|       expect(actual.every((x, k) => Math.abs(x - marker.position[k]) <…
+         |                                                                               ^
+      188|       if (marker.type === 'EMPTY') expect(object.isMesh).not.toBe(true…
+      189|     }
+
+  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+   Test Files  1 failed (1)
+        Tests  1 failed (1)
+     Start at  06:13:23
+     Duration  539ms (tests 72%, import 20%, transform 8%)
+
+- consumer-07: exit 1; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 1.105s; remaining processes 0. Log: reports/consumer-07.log
+  Last 20 lines of retained failure:
+
+  - true
+  + false
+
+   ❯ packages/tools/blender/e08t08/consumer.test.js:187:143
+      185|       expect(object, marker.name).toBeDefined();
+      186|       const actual = object.getWorldPosition(new THREE.Vector3()).toAr…
+      187|       expect(actual.every((x, k) => Math.abs(x - marker.position[k]) <…
+         |                                                                                                                                               ^
+      188|       if (marker.type === 'EMPTY') expect(object.isMesh).not.toBe(true…
+      189|     }
+
+  ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+   Test Files  1 failed (1)
+        Tests  1 failed (1)
+     Start at  06:13:44
+     Duration  533ms (tests 71%, import 21%, transform 8%)
+
+- source-contract-08: exit 0; packages/tools/blender/e08t08/bin/blender --background --python packages/tools/blender/e08t08/source_contract.py; 2.192s; remaining processes 0. Log: reports/source-contract-08.log
+- consumer-08: exit 0; node node_modules/vitest/vitest.mjs run --config packages/tools/blender/e08t08/vitest.config.mjs; 1.108s; remaining processes 0. Log: reports/consumer-08.log
+- validate-sources-creatures-02: exit 0; pnpm art:validate -- assets/blend/creatures/quad_heavy.blend assets/blend/creatures/quad_grazer.blend assets/blend/creatures/quad_small.blend assets/blend/creatures/biped.blend assets/blend/creatures/flyer.blend --report-dir packages/tools/blender/e08t08/reports/validate-final; 2.769s; remaining processes 0. Log: reports/validate-sources-creatures-02.log
+- validate-sources-constructs-02: exit 0; pnpm art:validate -- assets/blend/constructs/outpost_drone.blend assets/blend/constructs/outpost_overseer.blend --report-dir packages/tools/blender/e08t08/reports/validate-final; 1.100s; remaining processes 0. Log: reports/validate-sources-constructs-02.log
+- validate-glbs-creatures-02: exit 0; pnpm art:validate -- packages/client/public/models/creatures/quad_heavy.glb packages/client/public/models/creatures/quad_grazer.glb packages/client/public/models/creatures/quad_small.glb packages/client/public/models/creatures/biped.glb packages/client/public/models/creatures/flyer.glb --report-dir packages/tools/blender/e08t08/reports/validate-final; 7.722s; remaining processes 0. Log: reports/validate-glbs-creatures-02.log
+- validate-glbs-constructs-02: exit 0; pnpm art:validate -- packages/client/public/models/constructs/outpost_drone.glb packages/client/public/models/constructs/outpost_overseer.glb --report-dir packages/tools/blender/e08t08/reports/validate-final; 2.750s; remaining processes 0. Log: reports/validate-glbs-constructs-02.log
+- staged-diff-check-01: exit 2; git diff --cached --check; 0.552s; remaining processes 0. Log: reports/staged-diff-check-01.log
+  Last 20 lines of retained failure:
+  packages/tools/blender/e08t08/C2-report.txt:258: trailing whitespace.
+  +
+  packages/tools/blender/e08t08/C2-report.txt:261: trailing whitespace.
+  +
+  packages/tools/blender/e08t08/C2-report.txt:269: trailing whitespace.
+  +
+  packages/tools/blender/e08t08/C2-report.txt:271: trailing whitespace.
+  +
+  packages/tools/blender/e08t08/C2-report.txt:272: trailing whitespace.
+  +
+  packages/tools/blender/e08t08/C2-report.txt:277: trailing whitespace.
+  +
+  packages/tools/blender/e08t08/reports/consumer-01.log:25: new blank line at EOF.
+  packages/tools/blender/e08t08/reports/consumer-02.log:27: new blank line at EOF.
+  packages/tools/blender/e08t08/reports/consumer-03.log:22: new blank line at EOF.
+  packages/tools/blender/e08t08/reports/consumer-04.log:27: new blank line at EOF.
+  packages/tools/blender/e08t08/reports/consumer-05.log:30: new blank line at EOF.
+  packages/tools/blender/e08t08/reports/consumer-06.log:33: new blank line at EOF.
+  packages/tools/blender/e08t08/reports/consumer-07.log:33: new blank line at EOF.
+  packages/tools/blender/e08t08/reports/consumer-08.log:9: new blank line at EOF.
+- staged-diff-check-02: exit 0; git diff --cached --check; 0.547s; remaining processes 0. Log: reports/staged-diff-check-02.log
+- during_publication: exit 0; /opt/homebrew/opt/python@3.14/bin/python3.14 -c pass; 0.549s; remaining processes 0. Log: reports/during_publication.log
+- Four explicit stock validate commands passed all fourteen files. Stock export sources unchanged before/after; all source/export hashes in reports/asset-hash-inventory.json.
+- Actual GLTFLoader + MeshoptDecoder, stock collectLods/showLod/parseSpec/applyGameLook: 38 variants, 152 LODs, 23 malformed decoded consumer controls rejected. Saved source geometry/joint/mask samples checked after real decode. Source audit rejected four additional malformed attribute controls.
+- Texture boundary: the CPU consumer test substitutes texture metadata only to avoid browser/WebGL. Actual KTX pixels, PBR, mips, codecs, quantization and budgets are checked by the unchanged stock exporter and validator, which transcode the actual images. No native image equivalence claim.
+- Mask precision boundary: sources are POINT FLOAT_COLOR, but pinned stock Blender exports RGBA COLOR_0 as normalized UINT16. Actual decoded samples are within 0.5/65535 plus float tolerance per channel; this is not exact float preservation. _limb, _pivot and _glow are exact Float32. reports/export-mask-limit.json records the actual accessor formats and tooling source lines.
+DECISIONS:
+- How to express hand weights with an integer consumer? -> Place authored knee/ankle rings inside the existing shader bend bands; keep integer IDs and one pose joint per limb -> fractional weights are rounded away. No armature or new weight channel.
+- How to represent attacks? -> Separate posed geometry variants -> stock Review never drives morphTargetInfluences or the fauna shader.
+- Which predators? -> quad_small pack, biped stalker, flyer diver -> the concrete temperament contract selects these three only.
+- How to contain stock codecs? -> Task-local KTX launcher serializes encode/decode and changes only --threads to 1 -> stock jobs=1 otherwise requests all 15 host CPUs, and decode otherwise permits two calls. Process-thread samples prove one actual codec thread.
+- How to remove low-LOD warnings? -> Save lower LODs produced by stock artlib.lods.generate and remove its duplicate collapsed faces with Blender mesh.validate -> LOD0 hashes and lower-LOD point attributes remain unchanged; final stock export has no invalid-mesh warning.
+- How to preserve discrete attributes through decimation? -> Snap sub-1e-5 arithmetic drift in saved lower-LOD IDs and joints to the authored exact values -> decoded consumer test found 3.000000238 as a limb ID. All geometry and LOD0 remain unchanged; source audit now checks all 152 LODs and actual decoded IDs are integers.
+- Where do Overseer helpers live? -> One shared root COL_Body and four Muzzle_laser empties, inherited by all three phase reads -> stock source layout cannot have a second collection with the same name as the asset. Body massing and laser positions are shared; no duplicate helper sets.
+- Why relative library paths? -> //../_library.blend -> source can move to the parent checkout without retaining this worktree path.
+- Scope incident -> helper imports generated 11 local artlib .pyc cache files; tracked source was never edited. Files were preserved in reports/history/artlib-bytecode.zip and moved under task evidence; artlib cache directory restored absent. Explicit sys.dont_write_bytecode prevents recurrence. Details: reports/bytecode-restoration.json.
+OUT OF SCOPE FOUND:
+- Parent P1.E08.T08 / P1.E14.T12: exact-float mask wording conflicts with pinned stock RGBA export. No forbidden exporter edits or post-export GLB rewrite made. The normalized mask passes the actual consumer and stock validator, but exact-float acceptance is unresolved.
+- Parent P1.E08.T08 gates: native Review for the exact 38-target inventory, three lighting cases at LOD0/2, wireframes, overlays, 100 m views, paired performance, native turntable/material/family sheets, fresh code review and blind grade. reports/native-pending.json enumerates all targets and counts. None run here.
+- P1.E08.T02 owns gait and attack-phase playback and per-instance runtime scale; P1.E08.T06 owns drone/Overseer live behavior; P1.E14.T07 owns loader adoption and generator removal. P1.E14.T13 owns native frame-budget qualification. Legacy creatures.glb and all runtime code remain unchanged.
+ARTIFACTS:
+- reports/asset-hash-inventory.json: fourteen exact SHA-256 digests, resource evidence and pinned toolchain.
+- reports/source-contract.json, reports/consumer-contract.json, reports/validate-final/*.json, reports/export-final/*.json.
+- reports/saved-lods.json and reports/lod-repair-probe.json: real lower-LOD repair evidence; reports/history preserves prior sources/exports.
+- assets/renders/creatures/e08t08/* and assets/renders/constructs/e08t08/*: 79 compact CPU PNGs; not a grader packet.
+- reports/native-pending.json: exact remaining native inventory. reports/*.log and reports/*.json retain every bounded stage, failures, samples, terminal exits and process cleanup.
+RESOURCE SUMMARY: {"allStageProcessesReaped": true, "codecCalls": 144, "codecMaximumConcurrent": 1, "codecThreadsSampled": 1, "initialExportResourceLimit": "export-creatures-01 tracked only its initial process group; superseded by export-creatures-02", "maxStageSeconds": 93.46471500396729, "minimumPreStageFreeBytes": 18511024128, "minimumSampledFreeBytes": 18510462976, "previewBytes": 34696900, "previewPNGs": 79, "qualifiedMaxAggregateRSS": 1655619584, "sampling": "0.5 second process group plus descendant closure; samples, not an unsampled peak claim", "worktreeBaselineKiB": 4521824, "worktreeFinalKiB": 6948, "worktreeGrowthBytes": -4623233024}
+No push, PR, merge, native/browser/server/database run, cloud launch, installation, toolchain upgrade, or screenshot cleanup.

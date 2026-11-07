@@ -1,0 +1,97 @@
+{
+  "mode": "publication_failure",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-02/publication_failure/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-02/publication_failure",
+    "publication_failure",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "print(\"finite success\")"
+  ],
+  "start": 1794052782.605008,
+  "assertions": {
+    "publication retains admission": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "unsealed proposal cannot count as completion": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true
+  },
+  "workerPIDs": [],
+  "supervisorPID": 17189,
+  "retryDuringPublication": 1,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "f5431184b9434baebd57e17562b08f86",
+    "supervisorPID": 17189,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "print(\"finite success\")"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-02/publication_failure/root",
+    "beforeFree": 30540730368,
+    "beforePayload": 1536539,
+    "start": 1794052782.651259,
+    "samples": [
+      {
+        "time": 1794052782.697502,
+        "rss": 6029312,
+        "free": 30540673024,
+        "processes": [
+          {
+            "pid": 17190,
+            "ppid": 17189,
+            "pgid": 17190,
+            "rss": 6029312,
+            "command": "(python3.14)"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 17190,
+    "ownership": {
+      "directChild": {
+        "pid": 17190,
+        "birth": [
+          1794052782,
+          651598
+        ]
+      },
+      "knownDescendants": []
+    },
+    "end": 1794052782.740439,
+    "maxRSS": 6029312,
+    "afterFree": 30540656640,
+    "afterPayload": 1536901,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "success"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 1,
+  "workersDuringRetryAfterExit": [],
+  "cleanupRemaining": [],
+  "end": 1794052782.9373682,
+  "passed": true
+}

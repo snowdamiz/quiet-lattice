@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/watch_failure/root/packages/tools/blender/e08t08/stage.py", line 162, in run
+    owned = OwnedProcesses(child)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py", line 124, in fail_watch
+    raise RuntimeError('injected watch acquisition failure after Popen')
+RuntimeError: injected watch acquisition failure after Popen
+{"stage": "work", "runId": "c8643638d9ee453f9b130a10fc2ebd54", "outcome": "uncertain", "exit": -9, "cleanup": "unknown", "errors": ["RuntimeError('injected watch acquisition failure after Popen')"], "cancelSignals": [], "maxRSS": 0}

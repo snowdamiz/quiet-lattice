@@ -1,0 +1,38 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "d9b1c78a578f44499332fd859f300116",
+  "supervisorPID": 1523,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v2/watch_failure/command-ran').touch(); import time; time.sleep(10)"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v2/watch_failure/root",
+  "beforeFree": 50521030656,
+  "beforePayload": 1537623,
+  "start": 1794053845.590184,
+  "samples": [],
+  "limitSeconds": 2700,
+  "errors": [
+    "RuntimeError('injected watch acquisition failure after Popen')"
+  ],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": -9,
+  "directChildReaped": true,
+  "cleanup": "unknown",
+  "remainingProcesses": [],
+  "observationUncertain": true,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 1525,
+  "end": 1794053845.624435,
+  "maxRSS": 0,
+  "afterFree": 50521014272,
+  "afterPayload": 1538047,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "uncertain"
+}

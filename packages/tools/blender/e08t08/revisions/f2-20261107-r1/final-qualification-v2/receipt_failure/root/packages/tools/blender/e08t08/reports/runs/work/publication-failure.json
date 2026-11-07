@@ -1,0 +1,64 @@
+{
+  "schema": 2,
+  "stage": "work",
+  "runId": "58f6fef3da8541c5a21cbd389212b9ce",
+  "supervisorPID": 1491,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v2/receipt_failure/command-ran').touch(); print(\"finite success\")"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v2/receipt_failure/root",
+  "beforeFree": 50546606080,
+  "beforePayload": 1537623,
+  "start": 1794053844.3302028,
+  "samples": [
+    {
+      "time": 1794053844.376907,
+      "rss": 6062080,
+      "free": 50546593792,
+      "processes": [
+        {
+          "pid": 1492,
+          "ppid": 1491,
+          "pgid": 1492,
+          "rss": 6062080,
+          "command": "(python3.14)"
+        }
+      ]
+    }
+  ],
+  "limitSeconds": 2700,
+  "errors": [
+    "terminal publication failed: OSError(5, 'injected terminal receipt persistence failure')"
+  ],
+  "cancelSignals": [],
+  "stopReason": null,
+  "exit": 0,
+  "directChildReaped": true,
+  "cleanup": "verified",
+  "remainingProcesses": [],
+  "observationUncertain": false,
+  "sampling": "process group and instance-watched descendant closure",
+  "beforeSources": {},
+  "beforeExports": {},
+  "pid": 1492,
+  "ownership": {
+    "directChild": {
+      "pid": 1492,
+      "birth": [
+        1794053844,
+        330538
+      ],
+      "waiterLost": false
+    },
+    "knownDescendants": []
+  },
+  "end": 1794053844.42097,
+  "maxRSS": 6062080,
+  "afterFree": 50546593792,
+  "afterPayload": 1538209,
+  "afterSources": {},
+  "afterExports": {},
+  "outcome": "publication-failed"
+}

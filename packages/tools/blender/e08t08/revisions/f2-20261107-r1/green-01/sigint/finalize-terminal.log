@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 73, in settled_runs
+    seal = read(directory / 'settled.json')
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 40, in read
+    return json.loads(path.read_text())
+                      ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/sigint/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/sigint/root/packages/tools/blender/e08t08/finalize.py", line 178, in <module>
+    main()
+    ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/sigint/root/packages/tools/blender/e08t08/finalize.py", line 174, in main
+    registered=settled_runs(REPORTS,promotion=True)
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/sigint/root/packages/tools/blender/e08t08/stage_ownership.py", line 86, in settled_runs
+    raise RuntimeError(f'ownership unresolved: {directory.name}: {error}') from error
+RuntimeError: ownership unresolved: work: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/green-01/sigint/root/packages/tools/blender/e08t08/reports/runs/work/settled.json'

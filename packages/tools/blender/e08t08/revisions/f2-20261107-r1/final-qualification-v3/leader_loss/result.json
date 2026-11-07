@@ -1,0 +1,189 @@
+{
+  "mode": "leader_loss",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss/root/packages/tools/blender/e08t08/stage.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss",
+    "leader_loss",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss",
+    "leader"
+  ],
+  "start": 1794054280.043349,
+  "assertions": {
+    "retry rejected while descendant alive": true,
+    "actual finalizer rejects active/uncertain ownership": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": true,
+    "cleanup terminal": true,
+    "direct child reaped": true,
+    "no surviving fixture worker": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "successful retry does not erase failed admission": true
+  },
+  "workerPIDs": [
+    31246,
+    31248
+  ],
+  "supervisorPID": 31245,
+  "beforeAction": [
+    "31246 31245 31246 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss leader",
+    "31248 31246 31248 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss leaf"
+  ],
+  "leafDuringRetry": "31248     1 31248 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss leaf",
+  "retryWhileOwned": 1,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [
+    "",
+    ""
+  ],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "64ef5e8a0c63470f93b280e9df5b625c",
+    "supervisorPID": 31245,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss",
+      "leader"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/revisions/f2-20261107-r1/final-qualification-v3/leader_loss/root",
+    "beforeFree": 50061893632,
+    "beforePayload": 1538274,
+    "start": 1794054280.085723,
+    "samples": [
+      {
+        "time": 1794054280.1308851,
+        "rss": 4816896,
+        "free": 50061877248,
+        "processes": [
+          {
+            "pid": 31246,
+            "ppid": 31245,
+            "pgid": 31246,
+            "rss": 4816896,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      },
+      {
+        "time": 1794054280.276096,
+        "rss": 34193408,
+        "free": 50061877248,
+        "processes": [
+          {
+            "pid": 31246,
+            "ppid": 31245,
+            "pgid": 31246,
+            "rss": 16957440,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          },
+          {
+            "pid": 31248,
+            "ppid": 31246,
+            "pgid": 31248,
+            "rss": 17235968,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      },
+      {
+        "time": 1794054280.427718,
+        "rss": 17235968,
+        "free": 50061873152,
+        "processes": [
+          {
+            "pid": 31246,
+            "ppid": 31245,
+            "pgid": 31246,
+            "rss": 0,
+            "command": "<defunct>"
+          },
+          {
+            "pid": 31248,
+            "ppid": 1,
+            "pgid": 31248,
+            "rss": 17235968,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [],
+    "stopReason": "leader exited with live descendants",
+    "exit": -9,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 31246,
+    "ownership": {
+      "directChild": {
+        "pid": 31246,
+        "birth": [
+          1794054280,
+          85987
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": [
+        {
+          "pid": 31248,
+          "birth": [
+            1794054280,
+            106697
+          ],
+          "exitObserved": true
+        }
+      ]
+    },
+    "end": 1794054282.697494,
+    "maxRSS": 34193408,
+    "afterFree": 50056396800,
+    "afterPayload": 114805290,
+    "afterSources": {
+      "assets/blend/creatures/biped.blend": "bc486b2d4084e25e4d42ddb6b71ba51cbf42df7d6923db73d64108643081022e",
+      "assets/blend/creatures/quad_grazer.blend": "0600f84627e042e7a2e80c5a6ce7837bddb52cd6c6a0ee89134b3dbde8f2e619",
+      "assets/blend/creatures/quad_small.blend": "e265bee1b997cede003f58d89b8e7f9c9cffc540e8c1eaafab5b78f250b0966d",
+      "assets/blend/creatures/flyer.blend": "efa3752ff7bb7f19dd7e58474ca65d52ccb17a74f232fc60f52df10c9b087f84",
+      "assets/blend/creatures/quad_heavy.blend": "879d9ac53ed14da1005b179adc5617c4f7ba2873bb00828c0f644e0a2df00e6c",
+      "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+      "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+    },
+    "afterExports": {
+      "packages/client/public/models/creatures/quad_heavy.glb": "2a76d8d75d722167dbc8f7e654bd8b102e0d597943c82afab7d3c638719e0f04",
+      "packages/client/public/models/creatures/quad_small.glb": "06a1a3442303b35ef65837b5e698674787f8ac47385c665c2fd15bb5cc619ffb",
+      "packages/client/public/models/creatures/biped.glb": "7a6bd58cb7cad053c090660d15daf024911799a0d09b1186cb8e2070210525ad",
+      "packages/client/public/models/creatures/flyer.glb": "41f8e4ba6091eefc01013ef1e9f98890eb72d9a7937368409b294390bdc73450",
+      "packages/client/public/models/creatures/quad_grazer.glb": "c4662bc612a5db3d0d7a296f3f34fce87387d0114ac1396d885c8895b9c0f026",
+      "packages/client/public/models/constructs/outpost_overseer.glb": "9dc1a40d72875cc42eb966fb35cc6eae4cf4cfd0229abbc37086acab3b7a89c8",
+      "packages/client/public/models/constructs/outpost_drone.glb": "aac406aeb15e230b5f2122b8ee154bfc9657208cebf38689ed67bba3670437d5"
+    },
+    "outcome": "failed"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 0,
+  "workersDuringRetryAfterExit": [
+    "",
+    ""
+  ],
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794054283.1779861,
+  "passed": true
+}
