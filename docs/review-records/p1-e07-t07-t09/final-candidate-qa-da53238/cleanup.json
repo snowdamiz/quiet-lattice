@@ -1,0 +1,70 @@
+{
+  "ownedIdentities": 85,
+  "ownedProcessGroupRemaining": 0,
+  "ownedLive": [],
+  "ownedSqlSessionsBeforeDrop": 0,
+  "droppedDatabase": "astra_final_da532383_9a5266838498",
+  "databaseAbsent": true,
+  "redisDb": 8,
+  "verifiedOwnedKeysDeleted": 36,
+  "redisDbSizeAfter": 0,
+  "markerRemoved": true,
+  "containers": [
+    {
+      "id": "66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb",
+      "name": "/space-t16-pg-20261106",
+      "status": "running",
+      "health": "healthy",
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "53055"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4",
+      "name": "/space-t16-redis-20261106",
+      "status": "running",
+      "health": "healthy",
+      "ports": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "53058"
+          }
+        ]
+      }
+    }
+  ],
+  "privateTmpEmpty": true,
+  "privateTmpRetainedForEvidence": [
+    "gate-FuH8kH",
+    "ktx-release-jk4xDn",
+    "gate-t9grXv",
+    "ktx-root-35LACX",
+    "art-8MGkn7",
+    "gate-mdLCXo",
+    "gate-9bUqHI",
+    "ktx-root-emlnq9",
+    "ktx-root-pj47rt",
+    "gate-O4Uct4",
+    "gate-k2Azau",
+    "gate-WLoiY3",
+    "ktx-release-weA1Mp",
+    "gate-mYazFQ",
+    "tsx-501",
+    "gate-0YcljW",
+    "gate-oXPMWr",
+    "gate-b4TJ1A"
+  ],
+  "gpuLaunched": false,
+  "gpuSlot": "parent:symbiotic-fauna-da53238-full-metal-20261107",
+  "gpuSlotReleased": true,
+  "gpuReleaseReason": "Full smoke not launched: unchanged online fixture requires unauthorized Redis7; no GPU process was started by this task",
+  "finishedUTC": "2026-11-07T10:51:22.768839+00:00",
+  "allGuardKnownPidsAbsent": true,
+  "guardKnownPids": 276
+}

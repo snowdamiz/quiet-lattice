@@ -1,0 +1,269 @@
+[
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-pg-20261106",
+      "psql",
+      "-U",
+      "astra",
+      "-d",
+      "postgres",
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-Atc",
+      "SELECT coalesce(json_agg(row_to_json(s)),'[]'::json) FROM (SELECT pid,datname,usename,application_name,state FROM pg_stat_activity WHERE datname='astra_final_da532383_9a5266838498' OR application_name LIKE 'final\\_da532383\\_9a5266838498%') s"
+    ],
+    "seconds": 0.047,
+    "exit": 0,
+    "stdout": "[]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-pg-20261106",
+      "psql",
+      "-U",
+      "astra",
+      "-d",
+      "astra_final_da532383_9a5266838498",
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-Atc",
+      "SELECT id FROM shards ORDER BY id"
+    ],
+    "seconds": 0.042,
+    "exit": 0,
+    "stdout": "main\ntest_mw6a10qlonbqlwrx\ntest_mw6a14oltefgyirp\ntest_mw6a152olwmtyxgr\ntest_mw6a1h0ahdkijuyn\ntest_mw6a1n8kyxroojun\ntest_mw6a1n8yqevkxznu\ntest_mw6a1n93etqrwksf\ntest_mw6a1yvglrfqtqtg\ntest_mw6a1yvnqrfikxyp\ntest_mw6a2o9hywuubulw\ntest_mw6a3mm0tmhrfhst\ntest_mw6a3morrqqenblr\ntest_mw6a3ol7efaxxvwo\ntest_mw6a3pirtssnarzh\ntest_mw6a3shfbvcvpzev\ntest_mw6a4v2mkhofesdc\ntest_mw6a5genyykrfvff\ntest_mw6a5t14hstnbzaf\ntest_mw6a5t6hrbwjweln\ntest_mw6a5t9wyvnfuqvq\ntest_mw6a68luipltghsm\ntest_mw6a68nhzomykepv\ntest_mw6a68o0yejxkkiu\ntest_mw6a6drrypctopjc\ntest_mw6a6dvwkeclkgkj\ntest_mw6a6dxymtmtcuaf\ntest_mw6a6dz6iwkvdlbu\ntest_mw6a6e15hygztntk\ntest_mw6a6eepyhaptzox\ntest_mw6a7bh8ulclkaqg\ntest_mw6a7ylgioiwklpw\ntest_mw6a7yp4gomiebqn\ntest_mw6a7yppgjonaiqs\ntest_mw6a7yq0jbfjgqkg\ntest_mw6a7yrgsegzxobd\ntest_mw6a7z5olevesqih\ntest_mw6a80tevoaerrxn\ntest_mw6a829dijtnqmlx\ntest_mw6a8a94sugsewqz\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-redis-20261106",
+      "redis-cli",
+      "-n",
+      "8",
+      "--raw",
+      "CLIENT",
+      "LIST"
+    ],
+    "seconds": 0.033,
+    "exit": 0,
+    "stdout": "id=16200 addr=127.0.0.1:52662 laddr=127.0.0.1:6379 fd=12 name= age=0 idle=0 flags=N db=8 sub=0 psub=0 ssub=0 multi=-1 watch=0 qbuf=26 qbuf-free=20448 argv-mem=10 multi-mem=0 rbs=16384 rbp=16384 obl=0 oll=0 omem=0 tot-mem=37786 events=r cmd=client|list user=default redir=-1 resp=2 lib-name= lib-ver=\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-redis-20261106",
+      "redis-cli",
+      "-n",
+      "8",
+      "--raw",
+      "GET",
+      "qa:owner:final_da532383_9a5266838498"
+    ],
+    "seconds": 0.029,
+    "exit": 0,
+    "stdout": "final_da532383_9a5266838498\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-redis-20261106",
+      "redis-cli",
+      "-n",
+      "8",
+      "--raw",
+      "KEYS",
+      "*"
+    ],
+    "seconds": 0.031,
+    "exit": 0,
+    "stdout": "astra:shard:test_mw6a3morrqqenblr:world\nastra:shard:test_mw6a6drrypctopjc:world\nastra:shard:test_mw6a7z5olevesqih:world\nastra:shard:test_mw6a7bh8ulclkaqg:world\nastra:shard:test_mw6a5t14hstnbzaf:world\nastra:shard:test_mw6a10qlonbqlwrx:world\nastra:shard:test_mw6a4v2mkhofesdc:world\nastra:shard:main:world\nastra:shard:test_mw6a7yq0jbfjgqkg:world\nastra:shard:test_mw6a80tevoaerrxn:world\nastra:shard:test_mw6a3shfbvcvpzev:world\nastra:shard:test_mw6a14oltefgyirp:world\nastra:shard:test_mw6a829dijtnqmlx:world\nastra:shard:test_mw6a3pirtssnarzh:world\nastra:shard:test_mw6a6eepyhaptzox:world\nastra:shard:test_mw6a3mm0tmhrfhst:world\nastra:shard:test_mw6a6dz6iwkvdlbu:world\nastra:shard:test_mw6a8a94sugsewqz:world\nastra:shard:test_mw6a6e15hygztntk:world\nastra:shard:test_mw6a1h0ahdkijuyn:world\nastra:shard:test_mw6a6dvwkeclkgkj:world\nastra:shard:test_mw6a3ol7efaxxvwo:world\nastra:shard:test_mw6a1yvnqrfikxyp:world\nastra:shard:test_mw6a152olwmtyxgr:world\nastra:shard:test_mw6a68luipltghsm:world\nastra:shard:test_mw6a6dxymtmtcuaf:world\nqa:owner:final_da532383_9a5266838498\nastra:shard:test_mw6a2o9hywuubulw:world\nastra:shard:test_mw6a5t9wyvnfuqvq:world\nastra:shard:test_mw6a7yrgsegzxobd:world\nastra:shard:test_mw6a5t6hrbwjweln:world\nastra:shard:test_mw6a1n8kyxroojun:world\nastra:shard:test_mw6a7ylgioiwklpw:world\nastra:shard:test_mw6a68o0yejxkkiu:world\nastra:shard:test_mw6a5genyykrfvff:world\nastra:shard:test_mw6a1n93etqrwksf:world\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-redis-20261106",
+      "redis-cli",
+      "-n",
+      "8",
+      "--raw",
+      "DBSIZE"
+    ],
+    "seconds": 0.032,
+    "exit": 0,
+    "stdout": "36\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-redis-20261106",
+      "redis-cli",
+      "-n",
+      "8",
+      "--raw",
+      "EVAL",
+      "if redis.call('GET',KEYS[1])~=ARGV[1] then return redis.error_reply('marker changed') end local seen={} for _,k in ipairs(KEYS) do seen[k]=true end local current=redis.call('KEYS','*') for _,k in ipairs(current) do if not seen[k] then return redis.error_reply('unknown key appeared') end end return redis.call('DEL',unpack(KEYS))",
+      "36",
+      "qa:owner:final_da532383_9a5266838498",
+      "astra:shard:main:world",
+      "astra:shard:test_mw6a10qlonbqlwrx:world",
+      "astra:shard:test_mw6a14oltefgyirp:world",
+      "astra:shard:test_mw6a152olwmtyxgr:world",
+      "astra:shard:test_mw6a1h0ahdkijuyn:world",
+      "astra:shard:test_mw6a1n8kyxroojun:world",
+      "astra:shard:test_mw6a1n93etqrwksf:world",
+      "astra:shard:test_mw6a1yvnqrfikxyp:world",
+      "astra:shard:test_mw6a2o9hywuubulw:world",
+      "astra:shard:test_mw6a3mm0tmhrfhst:world",
+      "astra:shard:test_mw6a3morrqqenblr:world",
+      "astra:shard:test_mw6a3ol7efaxxvwo:world",
+      "astra:shard:test_mw6a3pirtssnarzh:world",
+      "astra:shard:test_mw6a3shfbvcvpzev:world",
+      "astra:shard:test_mw6a4v2mkhofesdc:world",
+      "astra:shard:test_mw6a5genyykrfvff:world",
+      "astra:shard:test_mw6a5t14hstnbzaf:world",
+      "astra:shard:test_mw6a5t6hrbwjweln:world",
+      "astra:shard:test_mw6a5t9wyvnfuqvq:world",
+      "astra:shard:test_mw6a68luipltghsm:world",
+      "astra:shard:test_mw6a68o0yejxkkiu:world",
+      "astra:shard:test_mw6a6drrypctopjc:world",
+      "astra:shard:test_mw6a6dvwkeclkgkj:world",
+      "astra:shard:test_mw6a6dxymtmtcuaf:world",
+      "astra:shard:test_mw6a6dz6iwkvdlbu:world",
+      "astra:shard:test_mw6a6e15hygztntk:world",
+      "astra:shard:test_mw6a6eepyhaptzox:world",
+      "astra:shard:test_mw6a7bh8ulclkaqg:world",
+      "astra:shard:test_mw6a7ylgioiwklpw:world",
+      "astra:shard:test_mw6a7yq0jbfjgqkg:world",
+      "astra:shard:test_mw6a7yrgsegzxobd:world",
+      "astra:shard:test_mw6a7z5olevesqih:world",
+      "astra:shard:test_mw6a80tevoaerrxn:world",
+      "astra:shard:test_mw6a829dijtnqmlx:world",
+      "astra:shard:test_mw6a8a94sugsewqz:world",
+      "final_da532383_9a5266838498"
+    ],
+    "seconds": 0.032,
+    "exit": 0,
+    "stdout": "36\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-redis-20261106",
+      "redis-cli",
+      "-n",
+      "8",
+      "--raw",
+      "DBSIZE"
+    ],
+    "seconds": 0.031,
+    "exit": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-redis-20261106",
+      "redis-cli",
+      "-n",
+      "8",
+      "--raw",
+      "EXISTS",
+      "qa:owner:final_da532383_9a5266838498"
+    ],
+    "seconds": 0.029,
+    "exit": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-pg-20261106",
+      "psql",
+      "-U",
+      "astra",
+      "-d",
+      "postgres",
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-Atc",
+      "SELECT count(*) FROM pg_stat_activity WHERE datname='astra_final_da532383_9a5266838498'"
+    ],
+    "seconds": 0.044,
+    "exit": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-pg-20261106",
+      "psql",
+      "-U",
+      "astra",
+      "-d",
+      "postgres",
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-Atc",
+      "DROP DATABASE \"astra_final_da532383_9a5266838498\""
+    ],
+    "seconds": 0.049,
+    "exit": 0,
+    "stdout": "DROP DATABASE\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "exec",
+      "space-t16-pg-20261106",
+      "psql",
+      "-U",
+      "astra",
+      "-d",
+      "postgres",
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-Atc",
+      "SELECT count(*) FROM pg_database WHERE datname='astra_final_da532383_9a5266838498'"
+    ],
+    "seconds": 0.041,
+    "exit": 0,
+    "stdout": "0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "docker",
+      "inspect",
+      "space-t16-pg-20261106",
+      "space-t16-redis-20261106"
+    ],
+    "seconds": 0.017,
+    "exit": 0,
+    "stdout": "[\n    {\n        \"Id\": \"66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb\",\n        \"Created\": \"2026-11-07T03:01:46.343914505Z\",\n        \"Path\": \"docker-entrypoint.sh\",\n        \"Args\": [\n            \"postgres\"\n        ],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 4335,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-11-07T03:01:47.235595381Z\",\n            \"FinishedAt\": \"0001-01-01T00:00:00Z\",\n            \"Health\": {\n                \"Status\": \"healthy\",\n                \"FailingStreak\": 0,\n                \"Log\": [\n                    {\n                        \"Start\": \"2026-11-07T10:51:14.364415751Z\",\n                        \"End\": \"2026-11-07T10:51:14.39004096Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:16.396660086Z\",\n                        \"End\": \"2026-11-07T10:51:16.423203961Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:18.430007003Z\",\n                        \"End\": \"2026-11-07T10:51:18.455618753Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:20.463366963Z\",\n                        \"End\": \"2026-11-07T10:51:20.488777879Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:22.490049964Z\",\n                        \"End\": \"2026-11-07T10:51:22.512937755Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"/var/run/postgresql:5432 - accepting connections\\n\"\n                    }\n                ]\n            }\n        },\n        \"Image\": \"sha256:f9a7b9ebf6f56201f949db745e47bc423c0f0f8294bafe991cc10bf74b029657\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb/hosts\",\n        \"LogPath\": \"\",\n        \"Name\": \"/space-t16-pg-20261106\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": null,\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"local\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"bridge\",\n            \"PortBindings\": {\n                \"5432/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"\"\n                    }\n                ]\n            },\n            \"RestartPolicy\": {\n                \"Name\": \"no\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": null,\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": null,\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": false,\n            \"SecurityOpt\": null,\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 0,\n            \"NanoCpus\": 0,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": [],\n            \"BlkioDeviceReadBps\": [],\n            \"BlkioDeviceWriteBps\": [],\n            \"BlkioDeviceReadIOps\": [],\n            \"BlkioDeviceWriteIOps\": [],\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": [],\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 0,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": null,\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"volume\",\n                \"Name\": \"c7b858d66593a8e30f3d0f0493a402f4c3006528bdbb05000d4d3777efeaa74d\",\n                \"Source\": \"/var/lib/docker/volumes/c7b858d66593a8e30f3d0f0493a402f4c3006528bdbb05000d4d3777efeaa74d/_data\",\n                \"Destination\": \"/var/lib/postgresql/data\",\n                \"Driver\": \"local\",\n                \"Mode\": \"\",\n                \"RW\": true,\n                \"Propagation\": \"\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"66c3a97097e4\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": false,\n            \"AttachStderr\": false,\n            \"ExposedPorts\": {\n                \"5432/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"POSTGRES_USER=astra\",\n                \"POSTGRES_PASSWORD=astra\",\n                \"POSTGRES_DB=astra\",\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/16/bin\",\n                \"GOSU_VERSION=1.19\",\n                \"LANG=en_US.utf8\",\n                \"PG_MAJOR=16\",\n                \"PG_VERSION=16.15-1.pgdg13+2\",\n                \"PGDATA=/var/lib/postgresql/data\"\n            ],\n            \"Cmd\": [\n                \"postgres\"\n            ],\n            \"Healthcheck\": {\n                \"Test\": [\n                    \"CMD-SHELL\",\n                    \"pg_isready -U astra -d astra\"\n                ],\n                \"Interval\": 2000000000,\n                \"Timeout\": 3000000000,\n                \"Retries\": 30\n            },\n            \"Image\": \"postgres:16\",\n            \"Volumes\": {\n                \"/var/lib/postgresql/data\": {}\n            },\n            \"WorkingDir\": \"\",\n            \"Entrypoint\": [\n                \"docker-entrypoint.sh\"\n            ],\n            \"Labels\": {\n                \"codex.task\": \"space-t16\"\n            },\n            \"StopSignal\": \"SIGINT\"\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"9e7ede14f8f6f3cdb6846d2563151fe9a6b71110d506825e3de07c63abb16b0d\",\n            \"SandboxKey\": \"/var/run/docker/netns/9e7ede14f8f6\",\n            \"Ports\": {\n                \"5432/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"53055\"\n                    }\n                ]\n            },\n            \"Networks\": {\n                \"bridge\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": null,\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"58cb2af93e40d510edebe9909ab595397eb1efbf454a7fd3f92679e50c5b1269\",\n                    \"EndpointID\": \"4c46129052a00b215547b46d9726f6fcfdcf524369a3f06d31768f7ca3b5b198\",\n                    \"Gateway\": \"172.17.0.1\",\n                    \"IPAddress\": \"172.17.0.2\",\n                    \"MacAddress\": \"e2:ab:e5:03:44:ab\",\n                    \"IPPrefixLen\": 16,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": null\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:dbac72df02f02f9f7c63e0e45735bbe37902608390ad9bd983d1cc3a018160fd\",\n            \"size\": 3630,\n            \"annotations\": {\n                \"com.docker.official-images.bashbrew.arch\": \"arm64v8\",\n                \"org.opencontainers.image.base.digest\": \"sha256:24a01011d10eba3a023bc8585b9650b8b29021240d4217c05b905e09ef4a5232\",\n                \"org.opencontainers.image.base.name\": \"debian:trixie-slim\",\n                \"org.opencontainers.image.created\": \"2026-11-05T07:33:17Z\",\n                \"org.opencontainers.image.revision\": \"9d15534160ade17f2b6c455a39ee967c49b1937d\",\n                \"org.opencontainers.image.source\": \"https://github.com/docker-library/postgres.git#9d15534160ade17f2b6c455a39ee967c49b1937d:16/trixie\",\n                \"org.opencontainers.image.url\": \"https://hub.docker.com/_/postgres\",\n                \"org.opencontainers.image.version\": \"16.15\"\n            },\n            \"platform\": {\n                \"architecture\": \"arm64\",\n                \"os\": \"linux\",\n                \"variant\": \"v8\"\n            }\n        }\n    },\n    {\n        \"Id\": \"d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4\",\n        \"Created\": \"2026-11-07T03:01:47.339702506Z\",\n        \"Path\": \"docker-entrypoint.sh\",\n        \"Args\": [\n            \"redis-server\",\n            \"--save\",\n            \"\",\n            \"--appendonly\",\n            \"no\"\n        ],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 4425,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-11-07T03:01:47.380596297Z\",\n            \"FinishedAt\": \"0001-01-01T00:00:00Z\",\n            \"Health\": {\n                \"Status\": \"healthy\",\n                \"FailingStreak\": 0,\n                \"Log\": [\n                    {\n                        \"Start\": \"2026-11-07T10:51:13.972529918Z\",\n                        \"End\": \"2026-11-07T10:51:13.988219293Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"PONG\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:15.999312002Z\",\n                        \"End\": \"2026-11-07T10:51:16.012595419Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"PONG\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:18.02394942Z\",\n                        \"End\": \"2026-11-07T10:51:18.037061087Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"PONG\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:20.045522671Z\",\n                        \"End\": \"2026-11-07T10:51:20.061284754Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"PONG\\n\"\n                    },\n                    {\n                        \"Start\": \"2026-11-07T10:51:22.068842755Z\",\n                        \"End\": \"2026-11-07T10:51:22.08198663Z\",\n                        \"ExitCode\": 0,\n                        \"Output\": \"PONG\\n\"\n                    }\n                ]\n            }\n        },\n        \"Image\": \"sha256:2e3eb11462c4e3759e6972678dd051d150ff54b1e60714b3c33b701260172a90\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4/hosts\",\n        \"LogPath\": \"\",\n        \"Name\": \"/space-t16-redis-20261106\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": null,\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"local\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"bridge\",\n            \"PortBindings\": {\n                \"6379/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"\"\n                    }\n                ]\n            },\n            \"RestartPolicy\": {\n                \"Name\": \"no\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": null,\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": null,\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": false,\n            \"SecurityOpt\": null,\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 0,\n            \"NanoCpus\": 0,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": [],\n            \"BlkioDeviceReadBps\": [],\n            \"BlkioDeviceWriteBps\": [],\n            \"BlkioDeviceReadIOps\": [],\n            \"BlkioDeviceWriteIOps\": [],\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": [],\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 0,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": null,\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"volume\",\n                \"Name\": \"a82f5691efbe23868bd089eef12ce35fe072bdbde418e0b1d4c84b180b44d38d\",\n                \"Source\": \"/var/lib/docker/volumes/a82f5691efbe23868bd089eef12ce35fe072bdbde418e0b1d4c84b180b44d38d/_data\",\n                \"Destination\": \"/data\",\n                \"Driver\": \"local\",\n                \"Mode\": \"\",\n                \"RW\": true,\n                \"Propagation\": \"\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"d06423c2a793\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": false,\n            \"AttachStderr\": false,\n            \"ExposedPorts\": {\n                \"6379/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",\n                \"REDIS_VERSION=7.4.12\"\n            ],\n            \"Cmd\": [\n                \"redis-server\",\n                \"--save\",\n                \"\",\n                \"--appendonly\",\n                \"no\"\n            ],\n            \"Healthcheck\": {\n                \"Test\": [\n                    \"CMD-SHELL\",\n                    \"redis-cli ping\"\n                ],\n                \"Interval\": 2000000000,\n                \"Timeout\": 3000000000,\n                \"Retries\": 30\n            },\n            \"Image\": \"redis:7\",\n            \"Volumes\": {\n                \"/data\": {}\n            },\n            \"WorkingDir\": \"/data\",\n            \"Entrypoint\": [\n                \"docker-entrypoint.sh\"\n            ],\n            \"Labels\": {\n                \"codex.task\": \"space-t16\"\n            }\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"abbec8429d1914011b599b09be535b6bb0ade33dfcc84e11e753c07101579f86\",\n            \"SandboxKey\": \"/var/run/docker/netns/abbec8429d19\",\n            \"Ports\": {\n                \"6379/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"53058\"\n                    }\n                ]\n            },\n            \"Networks\": {\n                \"bridge\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": null,\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"58cb2af93e40d510edebe9909ab595397eb1efbf454a7fd3f92679e50c5b1269\",\n                    \"EndpointID\": \"54359819cbe9264ec496f6042b04ca6340fe18ecda7fcc05310c7e18690fe6e4\",\n                    \"Gateway\": \"172.17.0.1\",\n                    \"IPAddress\": \"172.17.0.3\",\n                    \"MacAddress\": \"6e:c5:60:ec:66:a8\",\n                    \"IPPrefixLen\": 16,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": null\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:dbd05155efb852010d576fc1f09b6ade858944f84d333bb7a2efb1c1c8074a22\",\n            \"size\": 2290,\n            \"annotations\": {\n                \"com.docker.official-images.bashbrew.arch\": \"arm64v8\",\n                \"org.opencontainers.image.base.digest\": \"sha256:ec8534cda2cb30f29f44f23e135297af7a1496f2990fd8e4e84aa36b081a757a\",\n                \"org.opencontainers.image.base.name\": \"debian:bookworm-slim\",\n                \"org.opencontainers.image.created\": \"2026-11-05T07:34:29Z\",\n                \"org.opencontainers.image.revision\": \"786872f8c248c1f0990f93244cbcb3949329016d\",\n                \"org.opencontainers.image.source\": \"https://github.com/redis/docker-library-redis.git#786872f8c248c1f0990f93244cbcb3949329016d:debian\",\n                \"org.opencontainers.image.url\": \"https://hub.docker.com/_/redis\",\n                \"org.opencontainers.image.version\": \"7.4.12\"\n            },\n            \"platform\": {\n                \"architecture\": \"arm64\",\n                \"os\": \"linux\",\n                \"variant\": \"v8\"\n            }\n        }\n    }\n]\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "base": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
+  "captureQualified": false,
+  "enabledReadinessUnchanged": true,
+  "grantIssued": false,
+  "launchGrant": false,
+  "limits": [
+    "Future effects cohort membership unproved",
+    "External native XPC ownership UNQUALIFIED",
+    "SetStore remains unbound conditional coverage limit",
+    "Current owner/disk admission and serialized native slot remain parent responsibilities",
+    "Future native run and parent OS-exit/hash/release/inspection acceptance not exercised"
+  ],
+  "liveCacheSourceCpuVerdict": "PASS_RETAINED_BY_EXACT_HASH",
+  "mergeAuthorization": false,
+  "nativeAcceptance": false,
+  "nativeOwnershipQualified": false,
+  "oldPilot": "FAILED_SPENT_UNCHANGED",
+  "priorFinding": {
+    "disposition": "FIXED",
+    "id": "C2-MTL-1",
+    "severity": "P2",
+    "sourceReachability": "Actual NativePorts.observer and StageReceipts using retained exact VM member; inert OS ports"
+  },
+  "qualification": "SOURCE_CPU_ONLY",
+  "readiness": {
+    "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json",
+    "sha256": "6b9994549579d394b6bfa60642ab435e80308bdc74e93bd06bb52935713122b4"
+  },
+  "report": {
+    "path": "/private/tmp/p1-e07-t14-mtl-independent-Zl4iKI7x/APPENDIX-C2.md",
+    "sha256": "47cec1403a9c8a0ac16fca97ab6f3222313d33272dff693bb4202077137a7c6a"
+  },
+  "reviewedUnit": "Exact MTLCompilerService binding and unchanged enabled readiness",
+  "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+  "source": {
+    "clean": true,
+    "head": "4795d01fa0098d0b29310124fdeee06fd5fa4e24",
+    "tree": "7f96a3f6bfdfa8d81b3a9dce110df1b1863b409d"
+  },
+  "sourcePatchSha256": "9731930bfe1007eac8206f2004effe551fde522c0fabb5c0bf215e7b8c0eabec",
+  "timestampUtc": "2026-11-07T10:55:27.214244+00:00",
+  "verdict": "PASS",
+  "visualAcceptance": false
+}

@@ -1,0 +1,210 @@
+[
+  {
+    "command": {
+      "name": "replay-red",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/vm-native-fix-ydkbvouf/replay.py",
+        "red"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 0.08618887496413663,
+      "logSha256": "178ed363553d09d6c7fe6a0a804757225331eba72d4f6c46bd1547781481c6f3",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "Traceback (most recent call last):",
+      "  File \"/private/tmp/vm-native-fix-ydkbvouf/replay.py\", line 6, in <module>",
+      "    sys.path.insert(0,str(SOURCE));import bindings;bindings.HELPERS=R/'assets/blend/stations/_authoring';sys.path.insert(0,str(bindings.HELPERS))",
+      "                                   ^^^^^^^^^^^^^^^",
+      "  File \"/private/tmp/vm-native-fix-ydkbvouf/base/bindings.py\", line 15, in <module>",
+      "    ROOT = HERE.parents[4]",
+      "           ~~~~~~~~~~~~^^^",
+      "  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 68, in __getitem__",
+      "    raise IndexError(idx)",
+      "IndexError: 4"
+    ]
+  },
+  {
+    "command": {
+      "name": "replay-red-v2",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/vm-native-fix-ydkbvouf/replay.py",
+        "red"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.533970040967688,
+      "logSha256": "4ab4eee58d930c9872d767e1da23748df45015ee695cfe33c121cdb783e9503c",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "{\"mode\": \"red\", \"case\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/red-replay-89oo24aw\", \"exit\": 1, \"durable\": true, \"parentAllPidCount\": 1297, \"helperCalls\": 8081, \"helperObservationBytes\": 640981, \"trace\": [\"inert-start\", \"mandatory-inert-drain\"], \"primary\": {\"type\": \"AssertionError\", \"message\": \"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\", \"attributes\": {}}, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"ValueError\", \"message\": \"Capture release unproved\", \"attributes\": {}}], \"persistenceErrors\": [], \"encoding\": {\"primaryFailure\": {\"bytes\": 669878}, \"observations\": {\"bytes\": 670480}, \"whole\": {\"bytes\": 1341336}}, \"resultExists\": true, \"fallbackExists\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "replay-red-alias",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/vm-native-fix-ydkbvouf/replay.py",
+        "red"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 2.0548472920199856,
+      "logSha256": "4e0b5c08ad002f68f40971b8706b72b3cc14d8f2862c65af2c3a57d8fb212601",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "{\"mode\": \"red\", \"case\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/red-replay-vdnegt7m\", \"exit\": 1, \"durable\": false, \"parentAllPidCount\": 1297, \"helperCalls\": 6748, \"helperObservationBytes\": 548898, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"primary\": {\"type\": \"AssertionError\", \"message\": \"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\", \"attributes\": {}}, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"path\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/red-replay-vdnegt7m/evidence/review-thalune/result.json\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}, {\"path\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/red-replay-vdnegt7m/review-thalune.consumed.json.fallback.json\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}, {\"sink\": \"stderr\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}], \"encoding\": {\"primaryFailure\": {\"error\": \"Raw observation node ceiling\", \"type\": \"ValueError\"}, \"observations\": {\"bytes\": 2404631}, \"whole\": {\"error\": \"Raw observation node ceiling\", \"type\": \"ValueError\"}}, \"resultExists\": false, \"fallbackExists\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "replay-red-cli",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/vm-native-fix-ydkbvouf/replay.py",
+        "red"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 2.036886041983962,
+      "logSha256": "3a7383aa1db88e5fb890f4b38c5a2c5b4a823138ae85dfbeab07b78f6b07161f",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "{\"type\": \"SystemExit\", \"message\": \"1\", \"attributes\": {}}",
+      "{\"mode\": \"red\", \"case\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/red-replay-dy2c2xdd\", \"exit\": 1, \"durable\": false, \"parentAllPidCount\": 1297, \"helperCalls\": 6748, \"helperObservationBytes\": 548898, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"primary\": {\"type\": \"AssertionError\", \"message\": \"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\", \"attributes\": {}}, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"path\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/red-replay-dy2c2xdd/evidence/review-thalune/result.json\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}, {\"path\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/red-replay-dy2c2xdd/review-thalune.consumed.json.fallback.json\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}, {\"sink\": \"stderr\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}], \"encoding\": {\"primaryFailure\": {\"error\": \"Raw observation node ceiling\", \"type\": \"ValueError\"}, \"observations\": {\"bytes\": 2404631}, \"whole\": {\"error\": \"Raw observation node ceiling\", \"type\": \"ValueError\"}}, \"resultExists\": false, \"fallbackExists\": false}",
+      "{\"exit\": 1, \"durable\": false, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "replay-green-cli",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/vm-native-fix-ydkbvouf/replay.py",
+        "green"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.646609666000586,
+      "logSha256": "7ebbdf797b7ec793de8a53e2da21993a142edbceac87e85c3817570729b2109e",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "{\"mode\": \"green\", \"case\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/green-replay-_qxm0cmq\", \"exit\": 1, \"durable\": true, \"parentAllPidCount\": 1297, \"helperCalls\": 6748, \"helperObservationBytes\": 549018, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"primary\": {\"type\": \"AssertionError\", \"message\": \"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\", \"attributes\": {}}, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [], \"encoding\": {\"primaryFailure\": {\"bytes\": 2403408}, \"observations\": {\"bytes\": 2404787}, \"whole\": {\"bytes\": 4809177}}, \"resultExists\": true, \"fallbackExists\": false}",
+      "{\"exit\": 1, \"durable\": true, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "replay-green-final",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/vm-native-fix-ydkbvouf/replay.py",
+        "green"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.3813902089605108,
+      "logSha256": "3b485cd91a8e4a98bb802abd93faf26b2db9b652dfa1935e2b17a9a87fac83f8",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "{\"mode\": \"green\", \"case\": \"/private/tmp/vm-native-fix-ydkbvouf/tmp/green-replay-zxlc5w5l\", \"exit\": 1, \"durable\": true, \"parentAllPidCount\": 1297, \"helperCalls\": 6748, \"helperObservationBytes\": 549030, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"primary\": {\"type\": \"AssertionError\", \"message\": \"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\", \"attributes\": {}}, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [], \"encoding\": {\"primaryFailure\": {\"bytes\": 2403419}, \"observations\": {\"bytes\": 2404798}, \"whole\": {\"bytes\": 4809199}, \"completeNativeEqual\": {\"sha256\": \"163552ba70bf1b74ee67543afbeb7cfc307ef66414404d52ab997060ef53408b\", \"bytes\": 576818}}, \"resultExists\": true, \"fallbackExists\": false}",
+      "{\"exit\": 1, \"durable\": true, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "auth-check",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/vm-native-fix-ydkbvouf/auth-check.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 0.1372640829649754,
+      "logSha256": "576470379f47248febccde1dc9b85340c98508c8b4b339ddbd4fa3cc27b3c1fa",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "Traceback (most recent call last):",
+      "  File \"/private/tmp/vm-native-fix-ydkbvouf/auth-check.py\", line 9, in <module>",
+      "    if name=='entry':assert b'Missing authenticated entry authorization' in p.stderr",
+      "                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "AssertionError"
+    ]
+  },
+  {
+    "command": {
+      "name": "staged-check",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 2,
+      "seconds": 0.010574124986305833,
+      "logSha256": "58ffe573b46f35873fe7c97afc29283c2122a83ffcbb74db1e2f137a9dbe805d",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/vm-native-fix-ydkbvouf/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/vm-native-fix-ydkbvouf/tmp"
+      }
+    },
+    "tail": [
+      "packages/tools/src/capture/viewmodel_packet/evidence/native-failure-correction/COMMANDS.md:697: new blank line at EOF."
+    ]
+  }
+]
