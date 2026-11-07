@@ -1,7 +1,7 @@
 """Real source/GLB validation plus kit-specific geometry, planner and ownership checks.
 
-Uses the repository validator with an explicit source path for the nested kit. No
-family rule overrides, geometry rebuilding, network or rendering.
+Uses the repository validator with an explicit source path. Reads the current
+manifest; writes only fresh receipts, never the manifest or historical packets.
 """
 import argparse
 import hashlib
@@ -18,7 +18,9 @@ sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[5]
 HOME = ROOT / "assets/blend/cities/thalune"
 sys.path.insert(0, str(ROOT / "packages/tools/blender"))
-from artlib import core, rules as R, scene as S
+sys.path.insert(0, str(HOME / "authoring"))
+from artlib import core, rules as R, scene as S, checks as C
+from clearance import probe_route
 
 STEMS = ["thalune_" + k for k in ("low", "mid", "tall", "civic", "waterfront", "props", "anchor")]
 
@@ -37,8 +39,14 @@ def main():
     p.add_argument("--exports", action="store_true")
     p.add_argument("--report", required=True)
     a = p.parse_args(sys.argv[sys.argv.index("--") + 1:])
+    out = Path(a.report)
+    if out.exists():
+        raise FileExistsError("Audit receipts are immutable: " + str(out))
+    stock = out.parent / (out.stem + "-stock")
+    stock.mkdir(parents=True, exist_ok=False)
     rules = R.load()
-    entries = [e for stem in STEMS for e in json.loads((HOME / "receipts" / (stem + "-authored.json")).read_text())]
+    manifest_path = HOME / "manifest.json"
+    entries = json.loads(manifest_path.read_text())["assets"]
     errors, checks = [], []
     def check(ok, label):
         checks.append({"label": label, "pass": bool(ok)})
@@ -51,14 +59,14 @@ def main():
     check({e["padDiameter"] for e in entries if e["padDiameter"]} == {24, 36}, "24 and 36 metre pad inventory")
     check(sha(ROOT / "assets/blend/_library.blend") == "33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c",
           "shared library unchanged from verified local LFS object")
-    reports = []
+    reports, measurements = [], []
     for stem in STEMS:
         source = HOME.parent / (stem + ".blend")
         expected = {e["sourceSha256"] for e in entries if Path(e["source"]).stem == stem}
         check(expected == {sha(source)}, stem + " authored source unchanged by export/validation")
         path = ROOT / f"packages/client/public/models/cities/{stem}.glb" if a.exports else source
         report = core.validate_path(rules, path, family="cities", source=source)
-        core.write_and_print(report, HOME / "receipts/validation" / (stem + ("-export.json" if a.exports else "-source.json")), quiet=True)
+        core.write_and_print(report, stock / (stem + ".json"), quiet=True)
         reports.append({"path": str(path.relative_to(ROOT)), "status": report.status, "sha256": sha(path) if path.exists() else None})
         check(report.status == "PASS", stem + " actual repository validator")
         if report.status != "PASS":
@@ -69,6 +77,13 @@ def main():
                 check(e is not None, v.id + " declared in manifest")
                 if e is None:
                     continue
+                check(e["source"] == str(source.relative_to(ROOT)) and e["glb"] == f"packages/client/public/models/cities/{stem}.glb",
+                      v.id + " correct named source/export pairing")
+                if a.exports:
+                    check(e["glbSha256"] == sha(path), v.id + " manifest export hash")
+                counts = C.lod_tris(rules, v)
+                lod_key = "exportLodTriangles" if a.exports else "sourceLodTriangles"
+                check([counts[n] for n in range(4)] == e[lod_key], v.id + " measured " + lod_key)
                 meshes = S.render_meshes(rules, v.lods[0])
                 points = np.concatenate([S.world_coords(o) for o in meshes])
                 lo, hi = points.min(0), points.max(0)
@@ -119,50 +134,29 @@ def main():
                           v.id + " seating surface 0.45m high")
                     piers = [o for o in meshes if "_TidePier_" in o.name]
                     check(S.bounds(piers)[1][2] <= .35, v.id + " supports terminate beneath seating surface")
-                for route in e["walkRoutes"]:
-                    start, end = Vector(route["from"]), Vector(route["to"])
-                    direction = (end - start).normalized()
-                    right = Vector((direction.y, -direction.x, 0))
-                    blocked = False
-                    for t in np.linspace(0, 1, 25):
-                        point = start.lerp(end, float(t))
-                        floor = point.z
-                        hits = [tree.ray_cast(Vector((point.x, point.y, 2.0)), Vector((0, 0, -1)), 2.1)[0] for tree in trees]
-                        floors = [hit.z for hit in hits if hit is not None and hit.z < 1.6]
-                        if floors:
-                            floor = max(floors)
-                        for h in (.2, 1.0, 2.0, route["height"] - .02):
-                            origin = Vector((point.x, point.y, floor + h)) - right * (route["width"] / 2 - .02)
-                            if any(tree.ray_cast(origin, right, route["width"] - .04)[0] is not None for tree in trees):
-                                blocked = True
-                        for offset in (-.49, 0, .49):
-                            origin = Vector((point.x, point.y, floor + .20)) + right * (offset * route["width"])
-                            if any(tree.ray_cast(origin, Vector((0, 0, 1)), route["height"] - .22)[0] is not None for tree in trees):
-                                blocked = True
-                    check(not blocked, v.id + " unobstructed declared-width and height public walk sweep")
+                named_trees = [(R.strip(o.name), tree) for o, tree in zip(colliders, trees)]
+                for index, route in enumerate(e["walkRoutes"]):
+                    measured = probe_route(named_trees, route)
+                    check(route["height"] >= 2.4 and route["width"] >= 1.4, v.id + " minimum doorway dimensions")
+                    check(measured["pass"], v.id + " unobstructed full declared-width and height public walk sweep")
+                    measurements.append({"asset": v.id, "route": index, "path": str(path.relative_to(ROOT)),
+                                         "sha256": sha(path), "declared": route, **measured})
+                # Entry records describe doors; bridge rails and stairs have separate dimensions.
+                for index, door in enumerate(d for d in e["clearances"] if "entry" in d):
+                    point = door["entry"]
+                    route = {"from": point, "to": [point[0], point[1] + .01, point[2]], "width": door["width"], "height": door["height"]}
+                    measured = probe_route(named_trees, route)
+                    check(door["height"] >= 2.4 and door["width"] >= 1.4 and measured["pass"], v.id + " certified entry " + str(index))
                 if e["padDiameter"]:
                     # All pad light/trim geometry must leave the specified circle clear above .32 m.
                     high_points = points[points[:, 2] > .32]
                     check(not len(high_points) or float(np.linalg.norm(high_points[:, :2], axis=1).min()) >= e["padDiameter"] / 2,
                           v.id + " full landing circle clear")
-                if not a.exports:
-                    e["sourceSha256"] = sha(source)
-                else:
-                    e["glbSha256"] = sha(path)
     data = {"task": "P1.E10.T05", "mode": "export" if a.exports else "source", "pass": not errors,
-            "checkCount": len(checks), "failures": errors, "checks": checks, "validatorReports": reports}
-    Path(a.report).write_text(json.dumps(data, indent=2) + "\n")
-    manifest = {"schema": 1, "task": "P1.E10.T05", "people": "thalune", "capital": "Sarelun",
-                "units": "metres", "sourceUp": "+Z", "glbUp": "+Y", "sourceFront": "-Y", "glbFront": "+Z",
-                "base": "634c51d2378748c6a514af2a792ee4500b912643", "assets": entries,
-                "placementContract": {"footIsRadius": True, "preserveAuthoredScale": True,
-                   "selection": "class and variant map directly; reject slots smaller than footprintRadius. Keep the authored base at scale 1."
-                   ,"plannerHeightConflict": "Planner classes use 34/95m thresholds, unlike the art bands. E10.T01 must select nominal-height art without scaling service doors or pads.",
-                   "anchor": "Place independently in low-tide shoals per DESIGN 5.2. Current planner has dry city plains, not tidal canals.",
-                   "plaza": "48m central council/Recall module inside the planner's 95-140m plaza radius; surrounding paving/canals belong to E10.T01.",
-                   "renderer": "Select all four variants; import named COL meshes and point markers. Existing modulo-three models and cylinder collision are not this kit's integration."},
-                "reviewGates": {"codeReview": "PENDING_PARENT", "blindVisualGrade": "PENDING_PARENT", "engineReview": "PENDING_GPU_SLOT", "performance": "NOT_MEASURED"}}
-    (HOME / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+            "manifestSha256": sha(manifest_path), "checkCount": len(checks), "failures": errors, "checks": checks,
+            "validatorReports": reports, "clearanceMeasurements": measurements}
+    with out.open("x") as handle:
+        handle.write(json.dumps(data, indent=2) + "\n")
     print(json.dumps({"pass": not errors, "checks": len(checks), "failures": errors}))
     return 0 if not errors else 1
 

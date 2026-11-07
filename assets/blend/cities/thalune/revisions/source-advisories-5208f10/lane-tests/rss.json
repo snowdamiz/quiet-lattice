@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "import time; data=bytearray(2000000); time.sleep(20)"
+  ],
+  "exit": -15,
+  "deadlineSeconds": 5,
+  "timedOut": false,
+  "elapsedSeconds": 0.12,
+  "peakProcessTreeRssKiB": 512,
+  "rssSamples": [
+    [
+      0.03,
+      512
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2,
+  "rssLimitKiB": 1,
+  "outputLimitBytes": 16777216,
+  "limitExceeded": "rss",
+  "remainingOwnedPids": [],
+  "processTreeReapedBeforeUnlock": true,
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-07044f6e",
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1"
+  },
+  "runnerSha256": "2705e7deb5ac1d222fdd41ed8de5b9e984344a3b780eb936fa9c11ea474401b8"
+}

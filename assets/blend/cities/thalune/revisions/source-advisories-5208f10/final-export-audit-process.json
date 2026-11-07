@@ -1,0 +1,39 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "-t",
+    "2",
+    "--factory-startup",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "assets/blend/cities/thalune/authoring/audit.py",
+    "--",
+    "--exports",
+    "--report",
+    "assets/blend/cities/thalune/revisions/source-advisories-5208f10/final-export-audit.json"
+  ],
+  "exit": 0,
+  "deadlineSeconds": 240,
+  "timedOut": false,
+  "elapsedSeconds": 17.62,
+  "peakProcessTreeRssKiB": 1371024,
+  "rssSamples": [
+    [
+      0.03,
+      336
+    ],
+    [
+      15.12,
+      1119168
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2,
+  "rssLimitKiB": 6291456,
+  "outputLimitBytes": 16777216,
+  "limitExceeded": null,
+  "remainingOwnedPids": [],
+  "processTreeReapedBeforeUnlock": true
+}

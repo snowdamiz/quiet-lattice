@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "task": "P1.E10.T05",
   "people": "thalune",
   "capital": "Sarelun",
@@ -29,12 +29,6 @@
       ],
       "footprintRadius": 7.161012496232571,
       "authoredHeight": 8.384963989257812,
-      "lodTriangles": [
-        35888,
-        10765,
-        3587,
-        1255
-      ],
       "lodNodes": [
         "thalune_low_0_LOD0",
         "thalune_low_0_LOD1",
@@ -44,7 +38,7 @@
       "clearances": [
         {
           "width": 2.6,
-          "height": 3.2,
+          "height": 3.189,
           "floor": 0.36,
           "entry": [
             0,
@@ -66,7 +60,7 @@
             0.36
           ],
           "width": 3,
-          "height": 3.2
+          "height": 3.189
         }
       ],
       "markers": [
@@ -150,7 +144,27 @@
       "glb": "packages/client/public/models/cities/thalune_low.glb",
       "node": "thalune_low_0",
       "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4",
-      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd"
+      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "sourceLodTriangles": [
+        35888,
+        10765,
+        3587,
+        1255
+      ],
+      "exportLodTriangles": [
+        35888,
+        10765,
+        3587,
+        1255
+      ],
+      "clearanceCertification": {
+        "height": 3.189,
+        "sourceMinimumSampledHeight": 3.1899994611740112,
+        "exportMinimumSampledHeight": 3.1895978450775146,
+        "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4",
+        "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+        "method": "25 route stations, full declared width, three vertical probes per station; floor-relative minimum rounded down to a whole millimetre. Full certified-height rays with no endpoint shortening. Finite CPU probes, not live collision or a continuous-volume proof."
+      }
     },
     {
       "id": "thalune_low_1",
@@ -171,12 +185,6 @@
       ],
       "footprintRadius": 7.161012496232571,
       "authoredHeight": 10.540925979614258,
-      "lodTriangles": [
-        44064,
-        13219,
-        4406,
-        1542
-      ],
       "lodNodes": [
         "thalune_low_1_LOD0",
         "thalune_low_1_LOD1",
@@ -293,7 +301,19 @@
       "glb": "packages/client/public/models/cities/thalune_low.glb",
       "node": "thalune_low_1",
       "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4",
-      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd"
+      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "sourceLodTriangles": [
+        44064,
+        13219,
+        4406,
+        1542
+      ],
+      "exportLodTriangles": [
+        44064,
+        13219,
+        4406,
+        1542
+      ]
     },
     {
       "id": "thalune_low_2",
@@ -314,12 +334,6 @@
       ],
       "footprintRadius": 7.161012496232571,
       "authoredHeight": 12.344385147094727,
-      "lodTriangles": [
-        52776,
-        15832,
-        5276,
-        1847
-      ],
       "lodNodes": [
         "thalune_low_2_LOD0",
         "thalune_low_2_LOD1",
@@ -437,7 +451,19 @@
       "glb": "packages/client/public/models/cities/thalune_low.glb",
       "node": "thalune_low_2",
       "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4",
-      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd"
+      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "sourceLodTriangles": [
+        52776,
+        15832,
+        5276,
+        1847
+      ],
+      "exportLodTriangles": [
+        52776,
+        15832,
+        5276,
+        1847
+      ]
     },
     {
       "id": "thalune_low_3",
@@ -458,12 +484,6 @@
       ],
       "footprintRadius": 7.161012496232571,
       "authoredHeight": 13.723063468933105,
-      "lodTriangles": [
-        48284,
-        14485,
-        4827,
-        1689
-      ],
       "lodNodes": [
         "thalune_low_3_LOD0",
         "thalune_low_3_LOD1",
@@ -580,7 +600,19 @@
       "glb": "packages/client/public/models/cities/thalune_low.glb",
       "node": "thalune_low_3",
       "sourceSha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4",
-      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd"
+      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "sourceLodTriangles": [
+        48284,
+        14485,
+        4827,
+        1689
+      ],
+      "exportLodTriangles": [
+        48284,
+        14485,
+        4827,
+        1689
+      ]
     },
     {
       "id": "thalune_mid_0",
@@ -601,12 +633,6 @@
       ],
       "footprintRadius": 8.199999809265137,
       "authoredHeight": 24.13839017131818,
-      "lodTriangles": [
-        57828,
-        17348,
-        5781,
-        2022
-      ],
       "lodNodes": [
         "thalune_mid_0_LOD0",
         "thalune_mid_0_LOD1",
@@ -723,7 +749,19 @@
       "glb": "packages/client/public/models/cities/thalune_mid.glb",
       "node": "thalune_mid_0",
       "sourceSha256": "75ff96492eeb1c28f264f4ea6be3691dd54325440bc728c1b099957f747316f9",
-      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e"
+      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "sourceLodTriangles": [
+        57828,
+        17348,
+        5781,
+        2022
+      ],
+      "exportLodTriangles": [
+        57828,
+        17348,
+        5781,
+        2022
+      ]
     },
     {
       "id": "thalune_mid_1",
@@ -744,12 +782,6 @@
       ],
       "footprintRadius": 8.199999809265137,
       "authoredHeight": 32.12643555831164,
-      "lodTriangles": [
-        57702,
-        17310,
-        5770,
-        2019
-      ],
       "lodNodes": [
         "thalune_mid_1_LOD0",
         "thalune_mid_1_LOD1",
@@ -869,7 +901,19 @@
       "glb": "packages/client/public/models/cities/thalune_mid.glb",
       "node": "thalune_mid_1",
       "sourceSha256": "75ff96492eeb1c28f264f4ea6be3691dd54325440bc728c1b099957f747316f9",
-      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e"
+      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "sourceLodTriangles": [
+        57702,
+        17310,
+        5770,
+        2019
+      ],
+      "exportLodTriangles": [
+        57702,
+        17310,
+        5770,
+        2019
+      ]
     },
     {
       "id": "thalune_mid_2",
@@ -890,12 +934,6 @@
       ],
       "footprintRadius": 9.485015547227663,
       "authoredHeight": 46.13650635909289,
-      "lodTriangles": [
-        57578,
-        17273,
-        5757,
-        2014
-      ],
       "lodNodes": [
         "thalune_mid_2_LOD0",
         "thalune_mid_2_LOD1",
@@ -1017,7 +1055,19 @@
       "glb": "packages/client/public/models/cities/thalune_mid.glb",
       "node": "thalune_mid_2",
       "sourceSha256": "75ff96492eeb1c28f264f4ea6be3691dd54325440bc728c1b099957f747316f9",
-      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e"
+      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "sourceLodTriangles": [
+        57578,
+        17273,
+        5757,
+        2014
+      ],
+      "exportLodTriangles": [
+        57578,
+        17273,
+        5757,
+        2009
+      ]
     },
     {
       "id": "thalune_mid_3",
@@ -1038,12 +1088,6 @@
       ],
       "footprintRadius": 8.199999809265137,
       "authoredHeight": 58.11435441207141,
-      "lodTriangles": [
-        57688,
-        17305,
-        5768,
-        2018
-      ],
       "lodNodes": [
         "thalune_mid_3_LOD0",
         "thalune_mid_3_LOD1",
@@ -1164,7 +1208,19 @@
       "glb": "packages/client/public/models/cities/thalune_mid.glb",
       "node": "thalune_mid_3",
       "sourceSha256": "75ff96492eeb1c28f264f4ea6be3691dd54325440bc728c1b099957f747316f9",
-      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e"
+      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "sourceLodTriangles": [
+        57688,
+        17305,
+        5768,
+        2018
+      ],
+      "exportLodTriangles": [
+        57688,
+        17305,
+        5768,
+        2018
+      ]
     },
     {
       "id": "thalune_tall_0",
@@ -1185,12 +1241,6 @@
       ],
       "footprintRadius": 9.199999809265137,
       "authoredHeight": 184.12753599429539,
-      "lodTriangles": [
-        57832,
-        17348,
-        5783,
-        2023
-      ],
       "lodNodes": [
         "thalune_tall_0_LOD0",
         "thalune_tall_0_LOD1",
@@ -1307,7 +1357,19 @@
       "glb": "packages/client/public/models/cities/thalune_tall.glb",
       "node": "thalune_tall_0",
       "sourceSha256": "078b638c81cea87fdcc287dd6b9c1aab1ec8b287ac551de06e45d9fa56502768",
-      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b"
+      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "sourceLodTriangles": [
+        57832,
+        17348,
+        5783,
+        2023
+      ],
+      "exportLodTriangles": [
+        57832,
+        17348,
+        5783,
+        2023
+      ]
     },
     {
       "id": "thalune_tall_1",
@@ -1328,12 +1390,6 @@
       ],
       "footprintRadius": 9.199999809265137,
       "authoredHeight": 224.09866124740802,
-      "lodTriangles": [
-        57710,
-        17313,
-        5771,
-        2019
-      ],
       "lodNodes": [
         "thalune_tall_1_LOD0",
         "thalune_tall_1_LOD1",
@@ -1453,7 +1509,19 @@
       "glb": "packages/client/public/models/cities/thalune_tall.glb",
       "node": "thalune_tall_1",
       "sourceSha256": "078b638c81cea87fdcc287dd6b9c1aab1ec8b287ac551de06e45d9fa56502768",
-      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b"
+      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "sourceLodTriangles": [
+        57710,
+        17313,
+        5771,
+        2019
+      ],
+      "exportLodTriangles": [
+        57710,
+        17313,
+        5771,
+        2019
+      ]
     },
     {
       "id": "thalune_tall_2",
@@ -1474,12 +1542,6 @@
       ],
       "footprintRadius": 10.509898095287873,
       "authoredHeight": 264.0989969407674,
-      "lodTriangles": [
-        57577,
-        17272,
-        5757,
-        2014
-      ],
       "lodNodes": [
         "thalune_tall_2_LOD0",
         "thalune_tall_2_LOD1",
@@ -1601,7 +1663,19 @@
       "glb": "packages/client/public/models/cities/thalune_tall.glb",
       "node": "thalune_tall_2",
       "sourceSha256": "078b638c81cea87fdcc287dd6b9c1aab1ec8b287ac551de06e45d9fa56502768",
-      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b"
+      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "sourceLodTriangles": [
+        57577,
+        17272,
+        5757,
+        2014
+      ],
+      "exportLodTriangles": [
+        57577,
+        17272,
+        5757,
+        2004
+      ]
     },
     {
       "id": "thalune_tall_3",
@@ -1622,12 +1696,6 @@
       ],
       "footprintRadius": 9.199999809265137,
       "authoredHeight": 308.05340367904864,
-      "lodTriangles": [
-        57689,
-        17306,
-        5768,
-        2018
-      ],
       "lodNodes": [
         "thalune_tall_3_LOD0",
         "thalune_tall_3_LOD1",
@@ -1748,7 +1816,19 @@
       "glb": "packages/client/public/models/cities/thalune_tall.glb",
       "node": "thalune_tall_3",
       "sourceSha256": "078b638c81cea87fdcc287dd6b9c1aab1ec8b287ac551de06e45d9fa56502768",
-      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b"
+      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "sourceLodTriangles": [
+        57689,
+        17306,
+        5768,
+        2018
+      ],
+      "exportLodTriangles": [
+        57689,
+        17306,
+        5768,
+        2018
+      ]
     },
     {
       "id": "thalune_plaza",
@@ -1769,12 +1849,6 @@
       ],
       "footprintRadius": 25.042429274012942,
       "authoredHeight": 2.6866343595902435,
-      "lodTriangles": [
-        57723,
-        17316,
-        5772,
-        2020
-      ],
       "lodNodes": [
         "thalune_plaza_LOD0",
         "thalune_plaza_LOD1",
@@ -1989,7 +2063,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_plaza",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        57723,
+        17316,
+        5772,
+        2020
+      ],
+      "exportLodTriangles": [
+        57723,
+        17316,
+        5772,
+        2020
+      ]
     },
     {
       "id": "thalune_market_hall",
@@ -2010,12 +2096,6 @@
       ],
       "footprintRadius": 13.352092504640229,
       "authoredHeight": 12.582682609558105,
-      "lodTriangles": [
-        54672,
-        16401,
-        5467,
-        1912
-      ],
       "lodNodes": [
         "thalune_market_hall_LOD0",
         "thalune_market_hall_LOD1",
@@ -2176,7 +2256,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_market_hall",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        54672,
+        16401,
+        5467,
+        1912
+      ],
+      "exportLodTriangles": [
+        54672,
+        16401,
+        5467,
+        1912
+      ]
     },
     {
       "id": "thalune_skill_house",
@@ -2197,12 +2289,6 @@
       ],
       "footprintRadius": 13.0,
       "authoredHeight": 13.999452590942383,
-      "lodTriangles": [
-        44700,
-        13410,
-        4469,
-        1564
-      ],
       "lodNodes": [
         "thalune_skill_house_LOD0",
         "thalune_skill_house_LOD1",
@@ -2311,7 +2397,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_skill_house",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        44700,
+        13410,
+        4469,
+        1564
+      ],
+      "exportLodTriangles": [
+        44700,
+        13410,
+        4469,
+        1564
+      ]
     },
     {
       "id": "thalune_compact_office",
@@ -2332,12 +2430,6 @@
       ],
       "footprintRadius": 13.0,
       "authoredHeight": 20.836467742919922,
-      "lodTriangles": [
-        44736,
-        13419,
-        4472,
-        1564
-      ],
       "lodNodes": [
         "thalune_compact_office_LOD0",
         "thalune_compact_office_LOD1",
@@ -2455,7 +2547,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_compact_office",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        44736,
+        13419,
+        4472,
+        1564
+      ],
+      "exportLodTriangles": [
+        44736,
+        13419,
+        4472,
+        1564
+      ]
     },
     {
       "id": "thalune_listening_house",
@@ -2476,12 +2580,6 @@
       ],
       "footprintRadius": 13.0,
       "authoredHeight": 20.150798797607422,
-      "lodTriangles": [
-        50056,
-        15015,
-        5004,
-        1751
-      ],
       "lodNodes": [
         "thalune_listening_house_LOD0",
         "thalune_listening_house_LOD1",
@@ -2590,7 +2688,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_listening_house",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        50056,
+        15015,
+        5004,
+        1751
+      ],
+      "exportLodTriangles": [
+        50056,
+        15015,
+        5004,
+        1751
+      ]
     },
     {
       "id": "thalune_shipyard",
@@ -2611,12 +2721,6 @@
       ],
       "footprintRadius": 21.0,
       "authoredHeight": 10.920000076293945,
-      "lodTriangles": [
-        49616,
-        14883,
-        4960,
-        1735
-      ],
       "lodNodes": [
         "thalune_shipyard_LOD0",
         "thalune_shipyard_LOD1",
@@ -2749,7 +2853,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_shipyard",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        49616,
+        14883,
+        4960,
+        1735
+      ],
+      "exportLodTriangles": [
+        49616,
+        14883,
+        4960,
+        1735
+      ]
     },
     {
       "id": "thalune_salvage_yard",
@@ -2770,12 +2886,6 @@
       ],
       "footprintRadius": 19.059908183703275,
       "authoredHeight": 10.920002443896465,
-      "lodTriangles": [
-        57824,
-        17347,
-        5782,
-        2021
-      ],
       "lodNodes": [
         "thalune_salvage_yard_LOD0",
         "thalune_salvage_yard_LOD1",
@@ -2904,7 +3014,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_salvage_yard",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        57824,
+        17347,
+        5782,
+        2021
+      ],
+      "exportLodTriangles": [
+        57824,
+        17347,
+        5782,
+        2021
+      ]
     },
     {
       "id": "thalune_tide_hall",
@@ -2925,12 +3047,6 @@
       ],
       "footprintRadius": 13.0,
       "authoredHeight": 15.77768325805664,
-      "lodTriangles": [
-        56760,
-        17028,
-        5676,
-        1985
-      ],
       "lodNodes": [
         "thalune_tide_hall_LOD0",
         "thalune_tide_hall_LOD1",
@@ -3040,7 +3156,19 @@
       "glb": "packages/client/public/models/cities/thalune_civic.glb",
       "node": "thalune_tide_hall",
       "sourceSha256": "41a7e6cea4631721e71a6dc7a528bf9f17bd1321d2c6b810df19add96db8aeba",
-      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a"
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "sourceLodTriangles": [
+        56760,
+        17028,
+        5676,
+        1985
+      ],
+      "exportLodTriangles": [
+        56760,
+        17028,
+        5676,
+        1985
+      ]
     },
     {
       "id": "wall_thalune_straight",
@@ -3061,12 +3189,6 @@
       ],
       "footprintRadius": 8.394438672500579,
       "authoredHeight": 3.820000171661377,
-      "lodTriangles": [
-        4752,
-        1425,
-        474,
-        165
-      ],
       "lodNodes": [
         "wall_thalune_straight_LOD0",
         "wall_thalune_straight_LOD1",
@@ -3084,7 +3206,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "wall_thalune_straight",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        4752,
+        1425,
+        474,
+        165
+      ],
+      "exportLodTriangles": [
+        4752,
+        1425,
+        474,
+        165
+      ]
     },
     {
       "id": "wall_thalune_curve",
@@ -3105,12 +3239,6 @@
       ],
       "footprintRadius": 8.412909694849255,
       "authoredHeight": 3.820000171661377,
-      "lodTriangles": [
-        4752,
-        1425,
-        475,
-        164
-      ],
       "lodNodes": [
         "wall_thalune_curve_LOD0",
         "wall_thalune_curve_LOD1",
@@ -3128,7 +3256,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "wall_thalune_curve",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        4752,
+        1425,
+        475,
+        164
+      ],
+      "exportLodTriangles": [
+        4752,
+        1425,
+        475,
+        164
+      ]
     },
     {
       "id": "wall_thalune_steps",
@@ -3149,12 +3289,6 @@
       ],
       "footprintRadius": 8.394438672500579,
       "authoredHeight": 3.820000410079956,
-      "lodTriangles": [
-        8512,
-        2552,
-        850,
-        297
-      ],
       "lodNodes": [
         "wall_thalune_steps_LOD0",
         "wall_thalune_steps_LOD1",
@@ -3199,7 +3333,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "wall_thalune_steps",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        8512,
+        2552,
+        850,
+        297
+      ],
+      "exportLodTriangles": [
+        8512,
+        2552,
+        850,
+        297
+      ]
     },
     {
       "id": "gate_thalune_land",
@@ -3220,12 +3366,6 @@
       ],
       "footprintRadius": 4.043920006577517,
       "authoredHeight": 6.580716698816104,
-      "lodTriangles": [
-        14434,
-        4330,
-        1443,
-        503
-      ],
       "lodNodes": [
         "gate_thalune_land_LOD0",
         "gate_thalune_land_LOD1",
@@ -3311,7 +3451,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "gate_thalune_land",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        14434,
+        4330,
+        1443,
+        503
+      ],
+      "exportLodTriangles": [
+        14434,
+        4330,
+        1443,
+        503
+      ]
     },
     {
       "id": "gate_thalune_water",
@@ -3332,12 +3484,6 @@
       ],
       "footprintRadius": 6.0439171778652305,
       "authoredHeight": 9.580705741951533,
-      "lodTriangles": [
-        14434,
-        4330,
-        1442,
-        503
-      ],
       "lodNodes": [
         "gate_thalune_water_LOD0",
         "gate_thalune_water_LOD1",
@@ -3423,7 +3569,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "gate_thalune_water",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        14434,
+        4330,
+        1442,
+        503
+      ],
+      "exportLodTriangles": [
+        14434,
+        4330,
+        1442,
+        503
+      ]
     },
     {
       "id": "bridge_thalune_flat",
@@ -3444,12 +3602,6 @@
       ],
       "footprintRadius": 10.328035425312654,
       "authoredHeight": 1.8616423308849335,
-      "lodTriangles": [
-        14385,
-        4315,
-        1437,
-        502
-      ],
       "lodNodes": [
         "bridge_thalune_flat_LOD0",
         "bridge_thalune_flat_LOD1",
@@ -3557,7 +3709,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "bridge_thalune_flat",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        14385,
+        4315,
+        1437,
+        502
+      ],
+      "exportLodTriangles": [
+        14385,
+        4315,
+        1437,
+        502
+      ]
     },
     {
       "id": "bridge_thalune_arch",
@@ -3578,12 +3742,6 @@
       ],
       "footprintRadius": 14.394257816805162,
       "authoredHeight": 2.311017706990242,
-      "lodTriangles": [
-        14386,
-        4315,
-        1438,
-        502
-      ],
       "lodNodes": [
         "bridge_thalune_arch_LOD0",
         "bridge_thalune_arch_LOD1",
@@ -3691,7 +3849,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "bridge_thalune_arch",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        14386,
+        4315,
+        1438,
+        502
+      ],
+      "exportLodTriangles": [
+        14386,
+        4315,
+        1438,
+        502
+      ]
     },
     {
       "id": "kit_thalune_pad_24",
@@ -3712,12 +3882,6 @@
       ],
       "footprintRadius": 13.200000482158677,
       "authoredHeight": 0.31657394766807556,
-      "lodTriangles": [
-        10140,
-        3042,
-        1014,
-        354
-      ],
       "lodNodes": [
         "kit_thalune_pad_24_LOD0",
         "kit_thalune_pad_24_LOD1",
@@ -3756,7 +3920,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "kit_thalune_pad_24",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        10140,
+        3042,
+        1014,
+        354
+      ],
+      "exportLodTriangles": [
+        10140,
+        3042,
+        1014,
+        354
+      ]
     },
     {
       "id": "kit_thalune_pad_36",
@@ -3777,12 +3953,6 @@
       ],
       "footprintRadius": 19.200000762939453,
       "authoredHeight": 0.31657394766807556,
-      "lodTriangles": [
-        10140,
-        3042,
-        1013,
-        354
-      ],
       "lodNodes": [
         "kit_thalune_pad_36_LOD0",
         "kit_thalune_pad_36_LOD1",
@@ -3821,7 +3991,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "kit_thalune_pad_36",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        10140,
+        3042,
+        1013,
+        354
+      ],
+      "exportLodTriangles": [
+        10140,
+        3042,
+        1013,
+        354
+      ]
     },
     {
       "id": "lamp_thalune_single",
@@ -3842,12 +4024,6 @@
       ],
       "footprintRadius": 1.0188207848766246,
       "authoredHeight": 4.306026458740234,
-      "lodTriangles": [
-        7104,
-        2131,
-        709,
-        247
-      ],
       "lodNodes": [
         "lamp_thalune_single_LOD0",
         "lamp_thalune_single_LOD1",
@@ -3889,7 +4065,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "lamp_thalune_single",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        7104,
+        2131,
+        709,
+        247
+      ],
+      "exportLodTriangles": [
+        7104,
+        2131,
+        709,
+        247
+      ]
     },
     {
       "id": "lamp_thalune_double",
@@ -3910,12 +4098,6 @@
       ],
       "footprintRadius": 1.3972263422094022,
       "authoredHeight": 3.3408074378967285,
-      "lodTriangles": [
-        14048,
-        4213,
-        1403,
-        491
-      ],
       "lodNodes": [
         "lamp_thalune_double_LOD0",
         "lamp_thalune_double_LOD1",
@@ -3971,7 +4153,19 @@
       "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
       "node": "lamp_thalune_double",
       "sourceSha256": "237b525aa726e75afffd5b6549de1bbddbdd665d3c856d3638ca1d037a7dccc5",
-      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622"
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "sourceLodTriangles": [
+        14048,
+        4213,
+        1403,
+        491
+      ],
+      "exportLodTriangles": [
+        14048,
+        4213,
+        1403,
+        491
+      ]
     },
     {
       "id": "prop_thalune_bench",
@@ -3992,12 +4186,6 @@
       ],
       "footprintRadius": 1.4861105014951064,
       "authoredHeight": 1.1200000047683716,
-      "lodTriangles": [
-        3024,
-        906,
-        301,
-        104
-      ],
       "lodNodes": [
         "prop_thalune_bench_LOD0",
         "prop_thalune_bench_LOD1",
@@ -4027,7 +4215,19 @@
       "glb": "packages/client/public/models/cities/thalune_props.glb",
       "node": "prop_thalune_bench",
       "sourceSha256": "d77c30529b57bab97ab1767376f3f54e961bb373cc370db02bf2e23d30d9e36e",
-      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14"
+      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "sourceLodTriangles": [
+        3024,
+        906,
+        301,
+        104
+      ],
+      "exportLodTriangles": [
+        3024,
+        906,
+        301,
+        104
+      ]
     },
     {
       "id": "prop_thalune_terminal",
@@ -4048,12 +4248,6 @@
       ],
       "footprintRadius": 1.0474299153691362,
       "authoredHeight": 1.9364868338730616,
-      "lodTriangles": [
-        9488,
-        2845,
-        948,
-        332
-      ],
       "lodNodes": [
         "prop_thalune_terminal_LOD0",
         "prop_thalune_terminal_LOD1",
@@ -4082,7 +4276,19 @@
       "glb": "packages/client/public/models/cities/thalune_props.glb",
       "node": "prop_thalune_terminal",
       "sourceSha256": "d77c30529b57bab97ab1767376f3f54e961bb373cc370db02bf2e23d30d9e36e",
-      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14"
+      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "sourceLodTriangles": [
+        9488,
+        2845,
+        948,
+        332
+      ],
+      "exportLodTriangles": [
+        9488,
+        2845,
+        948,
+        332
+      ]
     },
     {
       "id": "prop_thalune_crate",
@@ -4103,12 +4309,6 @@
       ],
       "footprintRadius": 1.3164349252098313,
       "authoredHeight": 1.5595814501737095,
-      "lodTriangles": [
-        9477,
-        2843,
-        946,
-        331
-      ],
       "lodNodes": [
         "prop_thalune_crate_LOD0",
         "prop_thalune_crate_LOD1",
@@ -4137,7 +4337,19 @@
       "glb": "packages/client/public/models/cities/thalune_props.glb",
       "node": "prop_thalune_crate",
       "sourceSha256": "d77c30529b57bab97ab1767376f3f54e961bb373cc370db02bf2e23d30d9e36e",
-      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14"
+      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "sourceLodTriangles": [
+        9477,
+        2843,
+        946,
+        331
+      ],
+      "exportLodTriangles": [
+        9477,
+        2843,
+        946,
+        331
+      ]
     },
     {
       "id": "prop_thalune_bollard",
@@ -4158,12 +4370,6 @@
       ],
       "footprintRadius": 0.7000000297824376,
       "authoredHeight": 1.2484030723571777,
-      "lodTriangles": [
-        4504,
-        1351,
-        450,
-        157
-      ],
       "lodNodes": [
         "prop_thalune_bollard_LOD0",
         "prop_thalune_bollard_LOD1",
@@ -4191,7 +4397,19 @@
       "glb": "packages/client/public/models/cities/thalune_props.glb",
       "node": "prop_thalune_bollard",
       "sourceSha256": "d77c30529b57bab97ab1767376f3f54e961bb373cc370db02bf2e23d30d9e36e",
-      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14"
+      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "sourceLodTriangles": [
+        4504,
+        1351,
+        450,
+        157
+      ],
+      "exportLodTriangles": [
+        4504,
+        1351,
+        450,
+        157
+      ]
     },
     {
       "id": "prop_thalune_basin",
@@ -4212,12 +4430,6 @@
       ],
       "footprintRadius": 1.0000000232108108,
       "authoredHeight": 0.8999999761581421,
-      "lodTriangles": [
-        5240,
-        1571,
-        524,
-        182
-      ],
       "lodNodes": [
         "prop_thalune_basin_LOD0",
         "prop_thalune_basin_LOD1",
@@ -4245,7 +4457,19 @@
       "glb": "packages/client/public/models/cities/thalune_props.glb",
       "node": "prop_thalune_basin",
       "sourceSha256": "d77c30529b57bab97ab1767376f3f54e961bb373cc370db02bf2e23d30d9e36e",
-      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14"
+      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "sourceLodTriangles": [
+        5240,
+        1571,
+        524,
+        182
+      ],
+      "exportLodTriangles": [
+        5240,
+        1571,
+        524,
+        182
+      ]
     },
     {
       "id": "prop_thalune_stall",
@@ -4266,12 +4490,6 @@
       ],
       "footprintRadius": 2.0594953571129824,
       "authoredHeight": 3.569319248199463,
-      "lodTriangles": [
-        9468,
-        2840,
-        946,
-        330
-      ],
       "lodNodes": [
         "prop_thalune_stall_LOD0",
         "prop_thalune_stall_LOD1",
@@ -4304,7 +4522,19 @@
       "glb": "packages/client/public/models/cities/thalune_props.glb",
       "node": "prop_thalune_stall",
       "sourceSha256": "d77c30529b57bab97ab1767376f3f54e961bb373cc370db02bf2e23d30d9e36e",
-      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14"
+      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "sourceLodTriangles": [
+        9468,
+        2840,
+        946,
+        330
+      ],
+      "exportLodTriangles": [
+        9468,
+        2840,
+        946,
+        330
+      ]
     },
     {
       "id": "anchor_sarelun",
@@ -4325,12 +4555,6 @@
       ],
       "footprintRadius": 11.562980592452952,
       "authoredHeight": 49.0,
-      "lodTriangles": [
-        79587,
-        23875,
-        7957,
-        2784
-      ],
       "lodNodes": [
         "anchor_sarelun_LOD0",
         "anchor_sarelun_LOD1",
@@ -4387,7 +4611,19 @@
       "glb": "packages/client/public/models/cities/thalune_anchor.glb",
       "node": "anchor_sarelun",
       "sourceSha256": "7739c6429bcc93d7b9f8738002a3e6cd6431d65c9d19d32dd99e24f3fda5198a",
-      "glbSha256": "71ad323fde521208e0cb9096b49a275e2c2d2f30f8ad572a8f72f5c557a3b7c3"
+      "glbSha256": "71ad323fde521208e0cb9096b49a275e2c2d2f30f8ad572a8f72f5c557a3b7c3",
+      "sourceLodTriangles": [
+        79587,
+        23875,
+        7957,
+        2784
+      ],
+      "exportLodTriangles": [
+        79587,
+        23875,
+        7957,
+        2784
+      ]
     }
   ],
   "placementContract": {
@@ -4403,6 +4639,15 @@
     "codeReview": "PENDING_PARENT",
     "blindVisualGrade": "PENDING_PARENT",
     "engineReview": "PENDING_GPU_SLOT",
-    "performance": "NOT_MEASURED"
+    "performance": "NOT_MEASURED",
+    "historicalCodeReview": {
+      "head": "5208f10ce367d3fb179fe19458ab263423ef5432",
+      "verdict": "PASS",
+      "scope": "Historical source/CPU contracts only; does not approve amended head or visuals."
+    }
+  },
+  "lodCountContract": {
+    "sourceLodTriangles": "Measured evaluated saved Blender render meshes, excluding COL; ordered LOD0..3.",
+    "exportLodTriangles": "Decoded final GLB indexed triangles, excluding COL; ordered LOD0..3. E10.T01 uses these export counts. Compression may remove triangles; source counts need not equal export counts."
   }
 }

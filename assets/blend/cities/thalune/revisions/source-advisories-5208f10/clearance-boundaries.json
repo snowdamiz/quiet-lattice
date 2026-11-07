@@ -1,0 +1,73 @@
+{
+  "manifestSha256": "b0a8f4cbbad3a66bf53d8abb4b57392d7a7f322e2de1f2d62258c005fb0591f5",
+  "asset": "thalune_low_0",
+  "files": [
+    {
+      "path": "assets/blend/cities/thalune_low.blend",
+      "sha256": "ed6a0824b8f4061c2efd2ddabdd1403872584a9de46ad11c6a8cb3afe3c851e4",
+      "mode": "source",
+      "measured": {
+        "pass": true,
+        "minimumSampledCeiling": 3.1899994611740112,
+        "limitingWitness": {
+          "collider": "COL_thalune_low_0_HingeVaultHull_136",
+          "position": [
+            1.5,
+            -4.083333492279053,
+            3.549999475479126
+          ],
+          "floor": 0.36000001430511475,
+          "t": 0.41666666666666663,
+          "offset": 0.5
+        },
+        "hits": []
+      },
+      "mutatedCollider": "COL_thalune_low_0_HingeVaultHull_136",
+      "tests": {
+        "certifiedFullExtentAccepted": true,
+        "historical3_2Rejected": true,
+        "halfMillimetreBelowMeasuredAccepted": true,
+        "halfMillimetreAboveMeasuredRejected": true,
+        "certifiedPlusOneMillimetreRejected": true,
+        "minimum2_4By1_4Accepted": true,
+        "actualRoofLoweredOneCentimetreRejected": true,
+        "restoredGeometryAccepted": true,
+        "savedBytesUnchanged": true
+      }
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_low.glb",
+      "sha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "mode": "glb",
+      "measured": {
+        "pass": true,
+        "minimumSampledCeiling": 3.1895978450775146,
+        "limitingWitness": {
+          "collider": "COL_thalune_low_0_HingeVaultHull_136",
+          "position": [
+            -1.5,
+            -0.5833331942558289,
+            3.5499014854431152
+          ],
+          "floor": 0.3603036403656006,
+          "t": 0.9166666666666666,
+          "offset": -0.5
+        },
+        "hits": []
+      },
+      "mutatedCollider": "COL_thalune_low_0_HingeVaultHull_136",
+      "tests": {
+        "certifiedFullExtentAccepted": true,
+        "historical3_2Rejected": true,
+        "halfMillimetreBelowMeasuredAccepted": true,
+        "halfMillimetreAboveMeasuredRejected": true,
+        "certifiedPlusOneMillimetreRejected": true,
+        "minimum2_4By1_4Accepted": true,
+        "actualRoofLoweredOneCentimetreRejected": true,
+        "restoredGeometryAccepted": true,
+        "savedBytesUnchanged": true
+      }
+    }
+  ],
+  "pass": true
+}

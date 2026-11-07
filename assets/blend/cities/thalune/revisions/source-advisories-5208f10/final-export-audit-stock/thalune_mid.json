@@ -1,0 +1,280 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/cities/thalune_mid.glb",
+  "family": "cities",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:43:50Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "thalune_mid_0",
+      "variants": [
+        {
+          "id": "thalune_mid_0",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57828,
+            "1": 17348,
+            "2": 5781,
+            "3": 2022
+          },
+          "implicitLods": false,
+          "dims": [
+            16.4,
+            15.0,
+            24.139
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "thalune_mid_1",
+      "variants": [
+        {
+          "id": "thalune_mid_1",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57702,
+            "1": 17310,
+            "2": 5770,
+            "3": 2019
+          },
+          "implicitLods": false,
+          "dims": [
+            16.4,
+            14.995,
+            32.126
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "thalune_mid_2",
+      "variants": [
+        {
+          "id": "thalune_mid_2",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57578,
+            "1": 17273,
+            "2": 5757,
+            "3": 2009
+          },
+          "implicitLods": false,
+          "dims": [
+            17.685,
+            15.552,
+            46.137
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "thalune_mid_3",
+      "variants": [
+        {
+          "id": "thalune_mid_3",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57688,
+            "1": 17305,
+            "2": 5768,
+            "3": 2018
+          },
+          "implicitLods": false,
+          "dims": [
+            16.4,
+            14.995,
+            58.114
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune_mid.glb",
+          "message": "4 variant(s) in 4 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune_mid_0",
+          "message": "LOD0 57,828 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "thalune_mid_1",
+          "message": "LOD0 57,702 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "thalune_mid_2",
+          "message": "LOD0 57,578 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "thalune_mid_3",
+          "message": "LOD0 57,688 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 2.7 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune_mid_0",
+          "message": "57,828 > 17,348 > 5,781 > 2,022 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "thalune_mid_1",
+          "message": "57,702 > 17,310 > 5,770 > 2,019 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "thalune_mid_2",
+          "message": "57,578 > 17,273 > 5,757 > 2,009 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "thalune_mid_3",
+          "message": "57,688 > 17,305 > 5,768 > 2,018 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_Nacre_SarelunTrim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "LIB_Nav_SarelunNacre",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "textures",
+          "message": "3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB"
+        },
+        {
+          "subject": "thalune_mid_0",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "thalune_mid_1",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "thalune_mid_2",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "thalune_mid_3",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/cities/thalune_mid.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "thalune_mid_0",
+          "message": "longest side 24.14 m within 1-400 m"
+        },
+        {
+          "subject": "thalune_mid_1",
+          "message": "longest side 32.13 m within 1-400 m"
+        },
+        {
+          "subject": "thalune_mid_2",
+          "message": "longest side 46.14 m within 1-400 m"
+        },
+        {
+          "subject": "thalune_mid_3",
+          "message": "longest side 58.11 m within 1-400 m"
+        }
+      ]
+    }
+  ]
+}

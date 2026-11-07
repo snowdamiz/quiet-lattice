@@ -1,0 +1,2128 @@
+{
+  "manifestSha256": "b0a8f4cbbad3a66bf53d8abb4b57392d7a7f322e2de1f2d62258c005fb0591f5",
+  "method": "MeshoptDecoder indexed primitive counts; Khronos KTX 4.4.2 extract rgba8 raw, every mip; G roughness, B metallic, linear data with material factors. Full bronze UV band floor enforced irrespective of metallic cutoff; >=0.5 metallic is a separate diagnostic.",
+  "files": [
+    {
+      "path": "packages/client/public/models/cities/thalune_low.glb",
+      "sha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "assets": {
+        "thalune_low_0": {
+          "lodNodes": [
+            "thalune_low_0_LOD0",
+            "thalune_low_0_LOD1",
+            "thalune_low_0_LOD2",
+            "thalune_low_0_LOD3"
+          ],
+          "lodTriangles": [
+            35888,
+            10765,
+            3587,
+            1255
+          ]
+        },
+        "thalune_low_1": {
+          "lodNodes": [
+            "thalune_low_1_LOD0",
+            "thalune_low_1_LOD1",
+            "thalune_low_1_LOD2",
+            "thalune_low_1_LOD3"
+          ],
+          "lodTriangles": [
+            44064,
+            13219,
+            4406,
+            1542
+          ]
+        },
+        "thalune_low_2": {
+          "lodNodes": [
+            "thalune_low_2_LOD0",
+            "thalune_low_2_LOD1",
+            "thalune_low_2_LOD2",
+            "thalune_low_2_LOD3"
+          ],
+          "lodTriangles": [
+            52776,
+            15832,
+            5276,
+            1847
+          ]
+        },
+        "thalune_low_3": {
+          "lodNodes": [
+            "thalune_low_3_LOD0",
+            "thalune_low_3_LOD1",
+            "thalune_low_3_LOD2",
+            "thalune_low_3_LOD3"
+          ],
+          "lodTriangles": [
+            48284,
+            14485,
+            4827,
+            1689
+          ]
+        }
+      },
+      "materials": [
+        {
+          "name": "LIB_Nacre_SarelunTrim",
+          "texture": "Sarelun_2048_ORM",
+          "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+          "width": 2048,
+          "height": 2048,
+          "roughnessFactor": 1,
+          "metallicFactor": 1,
+          "levels": [
+            {
+              "level": 0,
+              "width": 2048,
+              "height": 2048,
+              "rawSha256": "dfc85d0cb72ed40313b58cb05c71474e6709565bf18706962b6be402304ee09a",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7176470588235294,
+              "bronzeTexels": 524288,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 2024450,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 1,
+              "width": 1024,
+              "height": 1024,
+              "rawSha256": "e7b2ff913e9fc99526e63b2439c2fa275951ed7b7b0477755dbb868c3536a89e",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 131072,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 512453,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 2,
+              "width": 512,
+              "height": 512,
+              "rawSha256": "e33e132e3c17ff0cdbfdf4bbc1bd1613f8d4ff4fd816d866dcd2a0c22eb18faa",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 32768,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 118430,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 3,
+              "width": 256,
+              "height": 256,
+              "rawSha256": "6ea308265d3503dd0f8c99a85aef69f3e02da6c05fb6c9c424ce37342609b0f2",
+              "bronzeLaneMinimum": 0.2549019607843137,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 8192,
+              "bronzeMinimum": 0.2549019607843137,
+              "positiveMetalTexels": 26502,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 4,
+              "width": 128,
+              "height": 128,
+              "rawSha256": "7c6fcf622a92972ef8daee7fee009ef3eaaa87d34c2140cb3c18dab086d92ffe",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 2048,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 8136,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 5,
+              "width": 64,
+              "height": 64,
+              "rawSha256": "15d2d331ba243a3087e1e70a5c8b65e5fef4183914c17887c7c529308626186c",
+              "bronzeLaneMinimum": 0.32941176470588235,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 512,
+              "bronzeMinimum": 0.32941176470588235,
+              "positiveMetalTexels": 1323,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 6,
+              "width": 32,
+              "height": 32,
+              "rawSha256": "eeb8da9b841e8d4e96438b95fbeb15fb303ca64c8e338bb79b0a0bd61d07aa8f",
+              "bronzeLaneMinimum": 0.34509803921568627,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 128,
+              "bronzeMinimum": 0.34509803921568627,
+              "positiveMetalTexels": 374,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 7,
+              "width": 16,
+              "height": 16,
+              "rawSha256": "1ff4b9dacc937d9c079a38b83f70ef8c171b2a7c908ed605396ed5e35ce0a201",
+              "bronzeLaneMinimum": 0.5882352941176471,
+              "bronzeLaneMaximumMetallic": 0.35294117647058826,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 160,
+              "positiveMetalMinimum": 0.47058823529411764,
+              "metallicAtPositiveMinimum": 0.0196078431372549
+            },
+            {
+              "level": 8,
+              "width": 8,
+              "height": 8,
+              "rawSha256": "80eb492ec020160d450cd823b597760e64a083e9fa9a8c6e329615572b6b8704",
+              "bronzeLaneMinimum": 0.6235294117647059,
+              "bronzeLaneMaximumMetallic": 0.26666666666666666,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 48,
+              "positiveMetalMinimum": 0.4588235294117647,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            },
+            {
+              "level": 9,
+              "width": 4,
+              "height": 4,
+              "rawSha256": "fd832113bf0fd44c5f1921895aab090f2bf4e7a83b67d3fe0e558a6be0cd281b",
+              "bronzeLaneMinimum": 0.6470588235294118,
+              "bronzeLaneMaximumMetallic": 0.22745098039215686,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 16,
+              "positiveMetalMinimum": 0.43137254901960786,
+              "metallicAtPositiveMinimum": 0.011764705882352941
+            },
+            {
+              "level": 10,
+              "width": 2,
+              "height": 2,
+              "rawSha256": "5fd657fae99acd9cf8be515df9b6ad2de24b177e6080e228acbff5b536b16ea0",
+              "bronzeLaneMinimum": 0.5490196078431373,
+              "bronzeLaneMaximumMetallic": 0.09411764705882353,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 4,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.07058823529411765
+            },
+            {
+              "level": 11,
+              "width": 1,
+              "height": 1,
+              "rawSha256": "ff64f9080c8f684828cc6e5d7a105dd28d5829f8f472bdbf516b702e18dcc5ba",
+              "bronzeLaneMinimum": 0.5254901960784314,
+              "bronzeLaneMaximumMetallic": 0.10196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 1,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            }
+          ],
+          "bronzePrimitiveNames": [
+            "thalune_low_0_HingeVaultLapLip_134",
+            "thalune_low_0_LanternShadeLapLip_16",
+            "thalune_low_0_LanternShadeLapLip_32",
+            "thalune_low_0_ReducedSurface1",
+            "thalune_low_0_ReducedSurface2",
+            "thalune_low_0_ReducedSurface3",
+            "thalune_low_1_LanternShadeLapLip_16",
+            "thalune_low_1_LanternShadeLapLip_32",
+            "thalune_low_1_NorthValveLapLip_130",
+            "thalune_low_1_SouthValveLapLip_145",
+            "thalune_low_1_ReducedSurface1",
+            "thalune_low_1_ReducedSurface2",
+            "thalune_low_1_ReducedSurface3",
+            "thalune_low_2_CourtyardValveLapLip_128",
+            "thalune_low_2_CourtyardValveLapLip_143",
+            "thalune_low_2_CourtyardValveLapLip_158",
+            "thalune_low_2_LanternShadeLapLip_16",
+            "thalune_low_2_LanternShadeLapLip_32",
+            "thalune_low_2_ReducedSurface1",
+            "thalune_low_2_ReducedSurface2",
+            "thalune_low_2_ReducedSurface3",
+            "thalune_low_3_BroadSkirtLapLip_136",
+            "thalune_low_3_LanternCrownLapLip_178",
+            "thalune_low_3_LanternShadeLapLip_16",
+            "thalune_low_3_LanternShadeLapLip_32",
+            "thalune_low_3_ReducedSurface1",
+            "thalune_low_3_ReducedSurface2",
+            "thalune_low_3_ReducedSurface3"
+          ],
+          "bronzeUsage": "used on named primitives"
+        }
+      ]
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_mid.glb",
+      "sha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "assets": {
+        "thalune_mid_0": {
+          "lodNodes": [
+            "thalune_mid_0_LOD0",
+            "thalune_mid_0_LOD1",
+            "thalune_mid_0_LOD2",
+            "thalune_mid_0_LOD3"
+          ],
+          "lodTriangles": [
+            57828,
+            17348,
+            5781,
+            2022
+          ]
+        },
+        "thalune_mid_1": {
+          "lodNodes": [
+            "thalune_mid_1_LOD0",
+            "thalune_mid_1_LOD1",
+            "thalune_mid_1_LOD2",
+            "thalune_mid_1_LOD3"
+          ],
+          "lodTriangles": [
+            57702,
+            17310,
+            5770,
+            2019
+          ]
+        },
+        "thalune_mid_2": {
+          "lodNodes": [
+            "thalune_mid_2_LOD0",
+            "thalune_mid_2_LOD1",
+            "thalune_mid_2_LOD2",
+            "thalune_mid_2_LOD3"
+          ],
+          "lodTriangles": [
+            57578,
+            17273,
+            5757,
+            2009
+          ]
+        },
+        "thalune_mid_3": {
+          "lodNodes": [
+            "thalune_mid_3_LOD0",
+            "thalune_mid_3_LOD1",
+            "thalune_mid_3_LOD2",
+            "thalune_mid_3_LOD3"
+          ],
+          "lodTriangles": [
+            57688,
+            17305,
+            5768,
+            2018
+          ]
+        }
+      },
+      "materials": [
+        {
+          "name": "LIB_Nacre_SarelunTrim",
+          "texture": "Sarelun_2048_ORM",
+          "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+          "width": 2048,
+          "height": 2048,
+          "roughnessFactor": 1,
+          "metallicFactor": 1,
+          "levels": [
+            {
+              "level": 0,
+              "width": 2048,
+              "height": 2048,
+              "rawSha256": "dfc85d0cb72ed40313b58cb05c71474e6709565bf18706962b6be402304ee09a",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7176470588235294,
+              "bronzeTexels": 524288,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 2024450,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 1,
+              "width": 1024,
+              "height": 1024,
+              "rawSha256": "e7b2ff913e9fc99526e63b2439c2fa275951ed7b7b0477755dbb868c3536a89e",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 131072,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 512453,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 2,
+              "width": 512,
+              "height": 512,
+              "rawSha256": "e33e132e3c17ff0cdbfdf4bbc1bd1613f8d4ff4fd816d866dcd2a0c22eb18faa",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 32768,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 118430,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 3,
+              "width": 256,
+              "height": 256,
+              "rawSha256": "6ea308265d3503dd0f8c99a85aef69f3e02da6c05fb6c9c424ce37342609b0f2",
+              "bronzeLaneMinimum": 0.2549019607843137,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 8192,
+              "bronzeMinimum": 0.2549019607843137,
+              "positiveMetalTexels": 26502,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 4,
+              "width": 128,
+              "height": 128,
+              "rawSha256": "7c6fcf622a92972ef8daee7fee009ef3eaaa87d34c2140cb3c18dab086d92ffe",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 2048,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 8136,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 5,
+              "width": 64,
+              "height": 64,
+              "rawSha256": "15d2d331ba243a3087e1e70a5c8b65e5fef4183914c17887c7c529308626186c",
+              "bronzeLaneMinimum": 0.32941176470588235,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 512,
+              "bronzeMinimum": 0.32941176470588235,
+              "positiveMetalTexels": 1323,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 6,
+              "width": 32,
+              "height": 32,
+              "rawSha256": "eeb8da9b841e8d4e96438b95fbeb15fb303ca64c8e338bb79b0a0bd61d07aa8f",
+              "bronzeLaneMinimum": 0.34509803921568627,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 128,
+              "bronzeMinimum": 0.34509803921568627,
+              "positiveMetalTexels": 374,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 7,
+              "width": 16,
+              "height": 16,
+              "rawSha256": "1ff4b9dacc937d9c079a38b83f70ef8c171b2a7c908ed605396ed5e35ce0a201",
+              "bronzeLaneMinimum": 0.5882352941176471,
+              "bronzeLaneMaximumMetallic": 0.35294117647058826,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 160,
+              "positiveMetalMinimum": 0.47058823529411764,
+              "metallicAtPositiveMinimum": 0.0196078431372549
+            },
+            {
+              "level": 8,
+              "width": 8,
+              "height": 8,
+              "rawSha256": "80eb492ec020160d450cd823b597760e64a083e9fa9a8c6e329615572b6b8704",
+              "bronzeLaneMinimum": 0.6235294117647059,
+              "bronzeLaneMaximumMetallic": 0.26666666666666666,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 48,
+              "positiveMetalMinimum": 0.4588235294117647,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            },
+            {
+              "level": 9,
+              "width": 4,
+              "height": 4,
+              "rawSha256": "fd832113bf0fd44c5f1921895aab090f2bf4e7a83b67d3fe0e558a6be0cd281b",
+              "bronzeLaneMinimum": 0.6470588235294118,
+              "bronzeLaneMaximumMetallic": 0.22745098039215686,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 16,
+              "positiveMetalMinimum": 0.43137254901960786,
+              "metallicAtPositiveMinimum": 0.011764705882352941
+            },
+            {
+              "level": 10,
+              "width": 2,
+              "height": 2,
+              "rawSha256": "5fd657fae99acd9cf8be515df9b6ad2de24b177e6080e228acbff5b536b16ea0",
+              "bronzeLaneMinimum": 0.5490196078431373,
+              "bronzeLaneMaximumMetallic": 0.09411764705882353,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 4,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.07058823529411765
+            },
+            {
+              "level": 11,
+              "width": 1,
+              "height": 1,
+              "rawSha256": "ff64f9080c8f684828cc6e5d7a105dd28d5829f8f472bdbf516b702e18dcc5ba",
+              "bronzeLaneMinimum": 0.5254901960784314,
+              "bronzeLaneMaximumMetallic": 0.10196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 1,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            }
+          ],
+          "bronzePrimitiveNames": [
+            "thalune_mid_0_CrownLapLip_249",
+            "thalune_mid_0_LanternShadeLapLip_16",
+            "thalune_mid_0_LanternShadeLapLip_32",
+            "thalune_mid_0_SingleValveLapCollar_130",
+            "thalune_mid_0_SingleValveLapCollar_155",
+            "thalune_mid_0_SingleValveLapCollar_180",
+            "thalune_mid_0_SingleValveLapCollar_205",
+            "thalune_mid_0_ReducedSurface1",
+            "thalune_mid_0_ReducedSurface2",
+            "thalune_mid_0_ReducedSurface3",
+            "thalune_mid_1_ConnectingMantleLapLip_344",
+            "thalune_mid_1_LanternShadeLapLip_16",
+            "thalune_mid_1_LanternShadeLapLip_32",
+            "thalune_mid_1_SisterCrownLapLip_218",
+            "thalune_mid_1_SisterCrownLapLip_323",
+            "thalune_mid_1_SisterValveLapCollar_130",
+            "thalune_mid_1_SisterValveLapCollar_155",
+            "thalune_mid_1_SisterValveLapCollar_180",
+            "thalune_mid_1_SisterValveLapCollar_235",
+            "thalune_mid_1_SisterValveLapCollar_260",
+            "thalune_mid_1_SisterValveLapCollar_285",
+            "thalune_mid_1_ReducedSurface1",
+            "thalune_mid_1_ReducedSurface2",
+            "thalune_mid_1_ReducedSurface3",
+            "thalune_mid_2_ConchCoreLapCollar_130",
+            "thalune_mid_2_ConchCoreLapCollar_155",
+            "thalune_mid_2_ConchCoreLapCollar_180",
+            "thalune_mid_2_ConchCrownLapLip_303",
+            "thalune_mid_2_LanternShadeLapLip_16",
+            "thalune_mid_2_LanternShadeLapLip_32",
+            "thalune_mid_2_TurningTerraceLapLip_220",
+            "thalune_mid_2_TurningTerraceLapLip_237",
+            "thalune_mid_2_TurningTerraceLapLip_254",
+            "thalune_mid_2_TurningTerraceLapLip_271",
+            "thalune_mid_2_TurningTerraceLapLip_288",
+            "thalune_mid_2_ReducedSurface1",
+            "thalune_mid_2_ReducedSurface2",
+            "thalune_mid_2_ReducedSurface3",
+            "thalune_mid_3_CurrentCrownLapLip_193",
+            "thalune_mid_3_CurrentCrownLapLip_273",
+            "thalune_mid_3_CurrentCrownLapLip_353",
+            "thalune_mid_3_CurrentValveLapCollar_130",
+            "thalune_mid_3_CurrentValveLapCollar_155",
+            "thalune_mid_3_CurrentValveLapCollar_210",
+            "thalune_mid_3_CurrentValveLapCollar_235",
+            "thalune_mid_3_CurrentValveLapCollar_290",
+            "thalune_mid_3_CurrentValveLapCollar_315",
+            "thalune_mid_3_LanternShadeLapLip_16",
+            "thalune_mid_3_LanternShadeLapLip_32",
+            "thalune_mid_3_ReducedSurface1",
+            "thalune_mid_3_ReducedSurface2",
+            "thalune_mid_3_ReducedSurface3"
+          ],
+          "bronzeUsage": "used on named primitives"
+        }
+      ]
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_tall.glb",
+      "sha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "assets": {
+        "thalune_tall_0": {
+          "lodNodes": [
+            "thalune_tall_0_LOD0",
+            "thalune_tall_0_LOD1",
+            "thalune_tall_0_LOD2",
+            "thalune_tall_0_LOD3"
+          ],
+          "lodTriangles": [
+            57832,
+            17348,
+            5783,
+            2023
+          ]
+        },
+        "thalune_tall_1": {
+          "lodNodes": [
+            "thalune_tall_1_LOD0",
+            "thalune_tall_1_LOD1",
+            "thalune_tall_1_LOD2",
+            "thalune_tall_1_LOD3"
+          ],
+          "lodTriangles": [
+            57710,
+            17313,
+            5771,
+            2019
+          ]
+        },
+        "thalune_tall_2": {
+          "lodNodes": [
+            "thalune_tall_2_LOD0",
+            "thalune_tall_2_LOD1",
+            "thalune_tall_2_LOD2",
+            "thalune_tall_2_LOD3"
+          ],
+          "lodTriangles": [
+            57577,
+            17272,
+            5757,
+            2004
+          ]
+        },
+        "thalune_tall_3": {
+          "lodNodes": [
+            "thalune_tall_3_LOD0",
+            "thalune_tall_3_LOD1",
+            "thalune_tall_3_LOD2",
+            "thalune_tall_3_LOD3"
+          ],
+          "lodTriangles": [
+            57689,
+            17306,
+            5768,
+            2018
+          ]
+        }
+      },
+      "materials": [
+        {
+          "name": "LIB_Nacre_SarelunTrim",
+          "texture": "Sarelun_2048_ORM",
+          "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+          "width": 2048,
+          "height": 2048,
+          "roughnessFactor": 1,
+          "metallicFactor": 1,
+          "levels": [
+            {
+              "level": 0,
+              "width": 2048,
+              "height": 2048,
+              "rawSha256": "dfc85d0cb72ed40313b58cb05c71474e6709565bf18706962b6be402304ee09a",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7176470588235294,
+              "bronzeTexels": 524288,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 2024450,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 1,
+              "width": 1024,
+              "height": 1024,
+              "rawSha256": "e7b2ff913e9fc99526e63b2439c2fa275951ed7b7b0477755dbb868c3536a89e",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 131072,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 512453,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 2,
+              "width": 512,
+              "height": 512,
+              "rawSha256": "e33e132e3c17ff0cdbfdf4bbc1bd1613f8d4ff4fd816d866dcd2a0c22eb18faa",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 32768,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 118430,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 3,
+              "width": 256,
+              "height": 256,
+              "rawSha256": "6ea308265d3503dd0f8c99a85aef69f3e02da6c05fb6c9c424ce37342609b0f2",
+              "bronzeLaneMinimum": 0.2549019607843137,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 8192,
+              "bronzeMinimum": 0.2549019607843137,
+              "positiveMetalTexels": 26502,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 4,
+              "width": 128,
+              "height": 128,
+              "rawSha256": "7c6fcf622a92972ef8daee7fee009ef3eaaa87d34c2140cb3c18dab086d92ffe",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 2048,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 8136,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 5,
+              "width": 64,
+              "height": 64,
+              "rawSha256": "15d2d331ba243a3087e1e70a5c8b65e5fef4183914c17887c7c529308626186c",
+              "bronzeLaneMinimum": 0.32941176470588235,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 512,
+              "bronzeMinimum": 0.32941176470588235,
+              "positiveMetalTexels": 1323,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 6,
+              "width": 32,
+              "height": 32,
+              "rawSha256": "eeb8da9b841e8d4e96438b95fbeb15fb303ca64c8e338bb79b0a0bd61d07aa8f",
+              "bronzeLaneMinimum": 0.34509803921568627,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 128,
+              "bronzeMinimum": 0.34509803921568627,
+              "positiveMetalTexels": 374,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 7,
+              "width": 16,
+              "height": 16,
+              "rawSha256": "1ff4b9dacc937d9c079a38b83f70ef8c171b2a7c908ed605396ed5e35ce0a201",
+              "bronzeLaneMinimum": 0.5882352941176471,
+              "bronzeLaneMaximumMetallic": 0.35294117647058826,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 160,
+              "positiveMetalMinimum": 0.47058823529411764,
+              "metallicAtPositiveMinimum": 0.0196078431372549
+            },
+            {
+              "level": 8,
+              "width": 8,
+              "height": 8,
+              "rawSha256": "80eb492ec020160d450cd823b597760e64a083e9fa9a8c6e329615572b6b8704",
+              "bronzeLaneMinimum": 0.6235294117647059,
+              "bronzeLaneMaximumMetallic": 0.26666666666666666,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 48,
+              "positiveMetalMinimum": 0.4588235294117647,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            },
+            {
+              "level": 9,
+              "width": 4,
+              "height": 4,
+              "rawSha256": "fd832113bf0fd44c5f1921895aab090f2bf4e7a83b67d3fe0e558a6be0cd281b",
+              "bronzeLaneMinimum": 0.6470588235294118,
+              "bronzeLaneMaximumMetallic": 0.22745098039215686,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 16,
+              "positiveMetalMinimum": 0.43137254901960786,
+              "metallicAtPositiveMinimum": 0.011764705882352941
+            },
+            {
+              "level": 10,
+              "width": 2,
+              "height": 2,
+              "rawSha256": "5fd657fae99acd9cf8be515df9b6ad2de24b177e6080e228acbff5b536b16ea0",
+              "bronzeLaneMinimum": 0.5490196078431373,
+              "bronzeLaneMaximumMetallic": 0.09411764705882353,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 4,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.07058823529411765
+            },
+            {
+              "level": 11,
+              "width": 1,
+              "height": 1,
+              "rawSha256": "ff64f9080c8f684828cc6e5d7a105dd28d5829f8f472bdbf516b702e18dcc5ba",
+              "bronzeLaneMinimum": 0.5254901960784314,
+              "bronzeLaneMaximumMetallic": 0.10196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 1,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            }
+          ],
+          "bronzePrimitiveNames": [
+            "thalune_tall_0_CrownLapLip_249",
+            "thalune_tall_0_LanternShadeLapLip_16",
+            "thalune_tall_0_LanternShadeLapLip_32",
+            "thalune_tall_0_SingleValveLapCollar_130",
+            "thalune_tall_0_SingleValveLapCollar_155",
+            "thalune_tall_0_SingleValveLapCollar_180",
+            "thalune_tall_0_SingleValveLapCollar_205",
+            "thalune_tall_0_ReducedSurface1",
+            "thalune_tall_0_ReducedSurface2",
+            "thalune_tall_0_ReducedSurface3",
+            "thalune_tall_1_ConnectingMantleLapLip_344",
+            "thalune_tall_1_LanternShadeLapLip_16",
+            "thalune_tall_1_LanternShadeLapLip_32",
+            "thalune_tall_1_SisterCrownLapLip_218",
+            "thalune_tall_1_SisterCrownLapLip_323",
+            "thalune_tall_1_SisterValveLapCollar_130",
+            "thalune_tall_1_SisterValveLapCollar_155",
+            "thalune_tall_1_SisterValveLapCollar_180",
+            "thalune_tall_1_SisterValveLapCollar_235",
+            "thalune_tall_1_SisterValveLapCollar_260",
+            "thalune_tall_1_SisterValveLapCollar_285",
+            "thalune_tall_1_ReducedSurface1",
+            "thalune_tall_1_ReducedSurface2",
+            "thalune_tall_1_ReducedSurface3",
+            "thalune_tall_2_ConchCoreLapCollar_130",
+            "thalune_tall_2_ConchCoreLapCollar_155",
+            "thalune_tall_2_ConchCoreLapCollar_180",
+            "thalune_tall_2_ConchCrownLapLip_303",
+            "thalune_tall_2_LanternShadeLapLip_16",
+            "thalune_tall_2_LanternShadeLapLip_32",
+            "thalune_tall_2_TurningTerraceLapLip_220",
+            "thalune_tall_2_TurningTerraceLapLip_237",
+            "thalune_tall_2_TurningTerraceLapLip_254",
+            "thalune_tall_2_TurningTerraceLapLip_271",
+            "thalune_tall_2_TurningTerraceLapLip_288",
+            "thalune_tall_2_ReducedSurface1",
+            "thalune_tall_2_ReducedSurface2",
+            "thalune_tall_2_ReducedSurface3",
+            "thalune_tall_3_CurrentCrownLapLip_193",
+            "thalune_tall_3_CurrentCrownLapLip_273",
+            "thalune_tall_3_CurrentCrownLapLip_353",
+            "thalune_tall_3_CurrentValveLapCollar_130",
+            "thalune_tall_3_CurrentValveLapCollar_155",
+            "thalune_tall_3_CurrentValveLapCollar_210",
+            "thalune_tall_3_CurrentValveLapCollar_235",
+            "thalune_tall_3_CurrentValveLapCollar_290",
+            "thalune_tall_3_CurrentValveLapCollar_315",
+            "thalune_tall_3_LanternShadeLapLip_16",
+            "thalune_tall_3_LanternShadeLapLip_32",
+            "thalune_tall_3_ReducedSurface1",
+            "thalune_tall_3_ReducedSurface2",
+            "thalune_tall_3_ReducedSurface3"
+          ],
+          "bronzeUsage": "used on named primitives"
+        }
+      ]
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_civic.glb",
+      "sha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "assets": {
+        "thalune_compact_office": {
+          "lodNodes": [
+            "thalune_compact_office_LOD0",
+            "thalune_compact_office_LOD1",
+            "thalune_compact_office_LOD2",
+            "thalune_compact_office_LOD3"
+          ],
+          "lodTriangles": [
+            44736,
+            13419,
+            4472,
+            1564
+          ]
+        },
+        "thalune_listening_house": {
+          "lodNodes": [
+            "thalune_listening_house_LOD0",
+            "thalune_listening_house_LOD1",
+            "thalune_listening_house_LOD2",
+            "thalune_listening_house_LOD3"
+          ],
+          "lodTriangles": [
+            50056,
+            15015,
+            5004,
+            1751
+          ]
+        },
+        "thalune_market_hall": {
+          "lodNodes": [
+            "thalune_market_hall_LOD0",
+            "thalune_market_hall_LOD1",
+            "thalune_market_hall_LOD2",
+            "thalune_market_hall_LOD3"
+          ],
+          "lodTriangles": [
+            54672,
+            16401,
+            5467,
+            1912
+          ]
+        },
+        "thalune_plaza": {
+          "lodNodes": [
+            "thalune_plaza_LOD0",
+            "thalune_plaza_LOD1",
+            "thalune_plaza_LOD2",
+            "thalune_plaza_LOD3"
+          ],
+          "lodTriangles": [
+            57723,
+            17316,
+            5772,
+            2020
+          ]
+        },
+        "thalune_salvage_yard": {
+          "lodNodes": [
+            "thalune_salvage_yard_LOD0",
+            "thalune_salvage_yard_LOD1",
+            "thalune_salvage_yard_LOD2",
+            "thalune_salvage_yard_LOD3"
+          ],
+          "lodTriangles": [
+            57824,
+            17347,
+            5782,
+            2021
+          ]
+        },
+        "thalune_shipyard": {
+          "lodNodes": [
+            "thalune_shipyard_LOD0",
+            "thalune_shipyard_LOD1",
+            "thalune_shipyard_LOD2",
+            "thalune_shipyard_LOD3"
+          ],
+          "lodTriangles": [
+            49616,
+            14883,
+            4960,
+            1735
+          ]
+        },
+        "thalune_skill_house": {
+          "lodNodes": [
+            "thalune_skill_house_LOD0",
+            "thalune_skill_house_LOD1",
+            "thalune_skill_house_LOD2",
+            "thalune_skill_house_LOD3"
+          ],
+          "lodTriangles": [
+            44700,
+            13410,
+            4469,
+            1564
+          ]
+        },
+        "thalune_tide_hall": {
+          "lodNodes": [
+            "thalune_tide_hall_LOD0",
+            "thalune_tide_hall_LOD1",
+            "thalune_tide_hall_LOD2",
+            "thalune_tide_hall_LOD3"
+          ],
+          "lodTriangles": [
+            56760,
+            17028,
+            5676,
+            1985
+          ]
+        }
+      },
+      "materials": [
+        {
+          "name": "LIB_Nacre_SarelunTrim",
+          "texture": "Sarelun_2048_ORM",
+          "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+          "width": 2048,
+          "height": 2048,
+          "roughnessFactor": 1,
+          "metallicFactor": 1,
+          "levels": [
+            {
+              "level": 0,
+              "width": 2048,
+              "height": 2048,
+              "rawSha256": "dfc85d0cb72ed40313b58cb05c71474e6709565bf18706962b6be402304ee09a",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7176470588235294,
+              "bronzeTexels": 524288,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 2024450,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 1,
+              "width": 1024,
+              "height": 1024,
+              "rawSha256": "e7b2ff913e9fc99526e63b2439c2fa275951ed7b7b0477755dbb868c3536a89e",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 131072,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 512453,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 2,
+              "width": 512,
+              "height": 512,
+              "rawSha256": "e33e132e3c17ff0cdbfdf4bbc1bd1613f8d4ff4fd816d866dcd2a0c22eb18faa",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 32768,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 118430,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 3,
+              "width": 256,
+              "height": 256,
+              "rawSha256": "6ea308265d3503dd0f8c99a85aef69f3e02da6c05fb6c9c424ce37342609b0f2",
+              "bronzeLaneMinimum": 0.2549019607843137,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 8192,
+              "bronzeMinimum": 0.2549019607843137,
+              "positiveMetalTexels": 26502,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 4,
+              "width": 128,
+              "height": 128,
+              "rawSha256": "7c6fcf622a92972ef8daee7fee009ef3eaaa87d34c2140cb3c18dab086d92ffe",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 2048,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 8136,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 5,
+              "width": 64,
+              "height": 64,
+              "rawSha256": "15d2d331ba243a3087e1e70a5c8b65e5fef4183914c17887c7c529308626186c",
+              "bronzeLaneMinimum": 0.32941176470588235,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 512,
+              "bronzeMinimum": 0.32941176470588235,
+              "positiveMetalTexels": 1323,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 6,
+              "width": 32,
+              "height": 32,
+              "rawSha256": "eeb8da9b841e8d4e96438b95fbeb15fb303ca64c8e338bb79b0a0bd61d07aa8f",
+              "bronzeLaneMinimum": 0.34509803921568627,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 128,
+              "bronzeMinimum": 0.34509803921568627,
+              "positiveMetalTexels": 374,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 7,
+              "width": 16,
+              "height": 16,
+              "rawSha256": "1ff4b9dacc937d9c079a38b83f70ef8c171b2a7c908ed605396ed5e35ce0a201",
+              "bronzeLaneMinimum": 0.5882352941176471,
+              "bronzeLaneMaximumMetallic": 0.35294117647058826,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 160,
+              "positiveMetalMinimum": 0.47058823529411764,
+              "metallicAtPositiveMinimum": 0.0196078431372549
+            },
+            {
+              "level": 8,
+              "width": 8,
+              "height": 8,
+              "rawSha256": "80eb492ec020160d450cd823b597760e64a083e9fa9a8c6e329615572b6b8704",
+              "bronzeLaneMinimum": 0.6235294117647059,
+              "bronzeLaneMaximumMetallic": 0.26666666666666666,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 48,
+              "positiveMetalMinimum": 0.4588235294117647,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            },
+            {
+              "level": 9,
+              "width": 4,
+              "height": 4,
+              "rawSha256": "fd832113bf0fd44c5f1921895aab090f2bf4e7a83b67d3fe0e558a6be0cd281b",
+              "bronzeLaneMinimum": 0.6470588235294118,
+              "bronzeLaneMaximumMetallic": 0.22745098039215686,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 16,
+              "positiveMetalMinimum": 0.43137254901960786,
+              "metallicAtPositiveMinimum": 0.011764705882352941
+            },
+            {
+              "level": 10,
+              "width": 2,
+              "height": 2,
+              "rawSha256": "5fd657fae99acd9cf8be515df9b6ad2de24b177e6080e228acbff5b536b16ea0",
+              "bronzeLaneMinimum": 0.5490196078431373,
+              "bronzeLaneMaximumMetallic": 0.09411764705882353,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 4,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.07058823529411765
+            },
+            {
+              "level": 11,
+              "width": 1,
+              "height": 1,
+              "rawSha256": "ff64f9080c8f684828cc6e5d7a105dd28d5829f8f472bdbf516b702e18dcc5ba",
+              "bronzeLaneMinimum": 0.5254901960784314,
+              "bronzeLaneMaximumMetallic": 0.10196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 1,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            }
+          ],
+          "bronzePrimitiveNames": [
+            "thalune_compact_office_ArchiveCapLapLip_108",
+            "thalune_compact_office_LanternShadeLapLip_16",
+            "thalune_compact_office_LanternShadeLapLip_32",
+            "thalune_compact_office_RecordVaultLapLip_90",
+            "thalune_compact_office_ReducedSurface1",
+            "thalune_compact_office_ReducedSurface2",
+            "thalune_compact_office_ReducedSurface3",
+            "thalune_listening_house_InnerResonatorLapLip_113",
+            "thalune_listening_house_LanternShadeLapLip_16",
+            "thalune_listening_house_LanternShadeLapLip_32",
+            "thalune_listening_house_ListeningConchLapLip_92",
+            "thalune_listening_house_ResonanceBowl_116",
+            "thalune_listening_house_ResonanceBowl_117",
+            "thalune_listening_house_ReducedSurface1",
+            "thalune_listening_house_ReducedSurface2",
+            "thalune_listening_house_ReducedSurface3",
+            "thalune_market_hall_LanternShadeLapLip_16",
+            "thalune_market_hall_LanternShadeLapLip_32",
+            "thalune_market_hall_MarketLeafLapLip_84",
+            "thalune_market_hall_MarketLeafLapLip_103",
+            "thalune_market_hall_MarketLeafLapLip_122",
+            "thalune_market_hall_ReducedSurface1",
+            "thalune_market_hall_ReducedSurface2",
+            "thalune_market_hall_ReducedSurface3",
+            "thalune_plaza_CouncilSeatShellLapLip_50",
+            "thalune_plaza_CouncilSeatShellLapLip_79",
+            "thalune_plaza_CouncilSeatShellLapLip_108",
+            "thalune_plaza_CouncilSeatShellLapLip_137",
+            "thalune_plaza_CouncilSeatShellLapLip_166",
+            "thalune_plaza_CouncilSeatShellLapLip_195",
+            "thalune_plaza_CouncilSeatShellLapLip_224",
+            "thalune_plaza_CouncilSeatShellLapLip_253",
+            "thalune_plaza_LanternShadeLapLip_16",
+            "thalune_plaza_LanternShadeLapLip_32",
+            "thalune_plaza_LanternShadeLapLip_64",
+            "thalune_plaza_LanternShadeLapLip_93",
+            "thalune_plaza_LanternShadeLapLip_122",
+            "thalune_plaza_LanternShadeLapLip_151",
+            "thalune_plaza_LanternShadeLapLip_180",
+            "thalune_plaza_LanternShadeLapLip_209",
+            "thalune_plaza_LanternShadeLapLip_238",
+            "thalune_plaza_LanternShadeLapLip_267",
+            "thalune_plaza_ReducedSurface1",
+            "thalune_plaza_ReducedSurface2",
+            "thalune_plaza_ReducedSurface3",
+            "thalune_salvage_yard_CradleRunner_71",
+            "thalune_salvage_yard_CradleRunner_72",
+            "thalune_salvage_yard_LanternShadeLapLip_16",
+            "thalune_salvage_yard_LanternShadeLapLip_32",
+            "thalune_salvage_yard_RecoveredShellPlateLapLip_92",
+            "thalune_salvage_yard_RecoveredShellPlateLapLip_109",
+            "thalune_salvage_yard_RecoveredShellPlateLapLip_126",
+            "thalune_salvage_yard_ShipwrightWorkshopLapLip_68",
+            "thalune_salvage_yard_ReducedSurface1",
+            "thalune_salvage_yard_ReducedSurface2",
+            "thalune_salvage_yard_ReducedSurface3",
+            "thalune_shipyard_CradleRunner_105",
+            "thalune_shipyard_CradleRunner_106",
+            "thalune_shipyard_LanternShadeLapLip_16",
+            "thalune_shipyard_LanternShadeLapLip_32",
+            "thalune_shipyard_ShipwrightWorkshopLapLip_68",
+            "thalune_shipyard_ShipwrightWorkshopLapLip_102",
+            "thalune_shipyard_ReducedSurface1",
+            "thalune_shipyard_ReducedSurface2",
+            "thalune_shipyard_ReducedSurface3",
+            "thalune_skill_house_LanternShadeLapLip_16",
+            "thalune_skill_house_LanternShadeLapLip_32",
+            "thalune_skill_house_PracticeValveLapLip_105",
+            "thalune_skill_house_TeachingValveLapLip_88",
+            "thalune_skill_house_ReducedSurface1",
+            "thalune_skill_house_ReducedSurface2",
+            "thalune_skill_house_ReducedSurface3",
+            "thalune_tide_hall_CouncilLappedValveLapLip_88",
+            "thalune_tide_hall_CouncilLappedValveLapLip_111",
+            "thalune_tide_hall_CouncilLappedValveLapLip_134",
+            "thalune_tide_hall_LanternShadeLapLip_16",
+            "thalune_tide_hall_LanternShadeLapLip_32",
+            "thalune_tide_hall_ReducedSurface1",
+            "thalune_tide_hall_ReducedSurface2",
+            "thalune_tide_hall_ReducedSurface3"
+          ],
+          "bronzeUsage": "used on named primitives"
+        }
+      ]
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_waterfront.glb",
+      "sha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "assets": {
+        "bridge_thalune_arch": {
+          "lodNodes": [
+            "bridge_thalune_arch_LOD0",
+            "bridge_thalune_arch_LOD1",
+            "bridge_thalune_arch_LOD2",
+            "bridge_thalune_arch_LOD3"
+          ],
+          "lodTriangles": [
+            14386,
+            4315,
+            1438,
+            502
+          ]
+        },
+        "bridge_thalune_flat": {
+          "lodNodes": [
+            "bridge_thalune_flat_LOD0",
+            "bridge_thalune_flat_LOD1",
+            "bridge_thalune_flat_LOD2",
+            "bridge_thalune_flat_LOD3"
+          ],
+          "lodTriangles": [
+            14385,
+            4315,
+            1437,
+            502
+          ]
+        },
+        "gate_thalune_land": {
+          "lodNodes": [
+            "gate_thalune_land_LOD0",
+            "gate_thalune_land_LOD1",
+            "gate_thalune_land_LOD2",
+            "gate_thalune_land_LOD3"
+          ],
+          "lodTriangles": [
+            14434,
+            4330,
+            1443,
+            503
+          ]
+        },
+        "gate_thalune_water": {
+          "lodNodes": [
+            "gate_thalune_water_LOD0",
+            "gate_thalune_water_LOD1",
+            "gate_thalune_water_LOD2",
+            "gate_thalune_water_LOD3"
+          ],
+          "lodTriangles": [
+            14434,
+            4330,
+            1442,
+            503
+          ]
+        },
+        "kit_thalune_pad_24": {
+          "lodNodes": [
+            "kit_thalune_pad_24_LOD0",
+            "kit_thalune_pad_24_LOD1",
+            "kit_thalune_pad_24_LOD2",
+            "kit_thalune_pad_24_LOD3"
+          ],
+          "lodTriangles": [
+            10140,
+            3042,
+            1014,
+            354
+          ]
+        },
+        "kit_thalune_pad_36": {
+          "lodNodes": [
+            "kit_thalune_pad_36_LOD0",
+            "kit_thalune_pad_36_LOD1",
+            "kit_thalune_pad_36_LOD2",
+            "kit_thalune_pad_36_LOD3"
+          ],
+          "lodTriangles": [
+            10140,
+            3042,
+            1013,
+            354
+          ]
+        },
+        "lamp_thalune_double": {
+          "lodNodes": [
+            "lamp_thalune_double_LOD0",
+            "lamp_thalune_double_LOD1",
+            "lamp_thalune_double_LOD2",
+            "lamp_thalune_double_LOD3"
+          ],
+          "lodTriangles": [
+            14048,
+            4213,
+            1403,
+            491
+          ]
+        },
+        "lamp_thalune_single": {
+          "lodNodes": [
+            "lamp_thalune_single_LOD0",
+            "lamp_thalune_single_LOD1",
+            "lamp_thalune_single_LOD2",
+            "lamp_thalune_single_LOD3"
+          ],
+          "lodTriangles": [
+            7104,
+            2131,
+            709,
+            247
+          ]
+        },
+        "wall_thalune_curve": {
+          "lodNodes": [
+            "wall_thalune_curve_LOD0",
+            "wall_thalune_curve_LOD1",
+            "wall_thalune_curve_LOD2",
+            "wall_thalune_curve_LOD3"
+          ],
+          "lodTriangles": [
+            4752,
+            1425,
+            475,
+            164
+          ]
+        },
+        "wall_thalune_steps": {
+          "lodNodes": [
+            "wall_thalune_steps_LOD0",
+            "wall_thalune_steps_LOD1",
+            "wall_thalune_steps_LOD2",
+            "wall_thalune_steps_LOD3"
+          ],
+          "lodTriangles": [
+            8512,
+            2552,
+            850,
+            297
+          ]
+        },
+        "wall_thalune_straight": {
+          "lodNodes": [
+            "wall_thalune_straight_LOD0",
+            "wall_thalune_straight_LOD1",
+            "wall_thalune_straight_LOD2",
+            "wall_thalune_straight_LOD3"
+          ],
+          "lodTriangles": [
+            4752,
+            1425,
+            474,
+            165
+          ]
+        }
+      },
+      "materials": [
+        {
+          "name": "LIB_Nacre_SarelunTrim",
+          "texture": "Sarelun_2048_ORM",
+          "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+          "width": 2048,
+          "height": 2048,
+          "roughnessFactor": 1,
+          "metallicFactor": 1,
+          "levels": [
+            {
+              "level": 0,
+              "width": 2048,
+              "height": 2048,
+              "rawSha256": "dfc85d0cb72ed40313b58cb05c71474e6709565bf18706962b6be402304ee09a",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7176470588235294,
+              "bronzeTexels": 524288,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 2024450,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 1,
+              "width": 1024,
+              "height": 1024,
+              "rawSha256": "e7b2ff913e9fc99526e63b2439c2fa275951ed7b7b0477755dbb868c3536a89e",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 131072,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 512453,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 2,
+              "width": 512,
+              "height": 512,
+              "rawSha256": "e33e132e3c17ff0cdbfdf4bbc1bd1613f8d4ff4fd816d866dcd2a0c22eb18faa",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 32768,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 118430,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 3,
+              "width": 256,
+              "height": 256,
+              "rawSha256": "6ea308265d3503dd0f8c99a85aef69f3e02da6c05fb6c9c424ce37342609b0f2",
+              "bronzeLaneMinimum": 0.2549019607843137,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 8192,
+              "bronzeMinimum": 0.2549019607843137,
+              "positiveMetalTexels": 26502,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 4,
+              "width": 128,
+              "height": 128,
+              "rawSha256": "7c6fcf622a92972ef8daee7fee009ef3eaaa87d34c2140cb3c18dab086d92ffe",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 2048,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 8136,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 5,
+              "width": 64,
+              "height": 64,
+              "rawSha256": "15d2d331ba243a3087e1e70a5c8b65e5fef4183914c17887c7c529308626186c",
+              "bronzeLaneMinimum": 0.32941176470588235,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 512,
+              "bronzeMinimum": 0.32941176470588235,
+              "positiveMetalTexels": 1323,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 6,
+              "width": 32,
+              "height": 32,
+              "rawSha256": "eeb8da9b841e8d4e96438b95fbeb15fb303ca64c8e338bb79b0a0bd61d07aa8f",
+              "bronzeLaneMinimum": 0.34509803921568627,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 128,
+              "bronzeMinimum": 0.34509803921568627,
+              "positiveMetalTexels": 374,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 7,
+              "width": 16,
+              "height": 16,
+              "rawSha256": "1ff4b9dacc937d9c079a38b83f70ef8c171b2a7c908ed605396ed5e35ce0a201",
+              "bronzeLaneMinimum": 0.5882352941176471,
+              "bronzeLaneMaximumMetallic": 0.35294117647058826,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 160,
+              "positiveMetalMinimum": 0.47058823529411764,
+              "metallicAtPositiveMinimum": 0.0196078431372549
+            },
+            {
+              "level": 8,
+              "width": 8,
+              "height": 8,
+              "rawSha256": "80eb492ec020160d450cd823b597760e64a083e9fa9a8c6e329615572b6b8704",
+              "bronzeLaneMinimum": 0.6235294117647059,
+              "bronzeLaneMaximumMetallic": 0.26666666666666666,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 48,
+              "positiveMetalMinimum": 0.4588235294117647,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            },
+            {
+              "level": 9,
+              "width": 4,
+              "height": 4,
+              "rawSha256": "fd832113bf0fd44c5f1921895aab090f2bf4e7a83b67d3fe0e558a6be0cd281b",
+              "bronzeLaneMinimum": 0.6470588235294118,
+              "bronzeLaneMaximumMetallic": 0.22745098039215686,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 16,
+              "positiveMetalMinimum": 0.43137254901960786,
+              "metallicAtPositiveMinimum": 0.011764705882352941
+            },
+            {
+              "level": 10,
+              "width": 2,
+              "height": 2,
+              "rawSha256": "5fd657fae99acd9cf8be515df9b6ad2de24b177e6080e228acbff5b536b16ea0",
+              "bronzeLaneMinimum": 0.5490196078431373,
+              "bronzeLaneMaximumMetallic": 0.09411764705882353,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 4,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.07058823529411765
+            },
+            {
+              "level": 11,
+              "width": 1,
+              "height": 1,
+              "rawSha256": "ff64f9080c8f684828cc6e5d7a105dd28d5829f8f472bdbf516b702e18dcc5ba",
+              "bronzeLaneMinimum": 0.5254901960784314,
+              "bronzeLaneMaximumMetallic": 0.10196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 1,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            }
+          ],
+          "bronzePrimitiveNames": [
+            "bridge_thalune_arch_BridgeShellRail_10",
+            "bridge_thalune_arch_BridgeShellRail_60",
+            "bridge_thalune_arch_LanternShadeLapLip_39",
+            "bridge_thalune_arch_LanternShadeLapLip_55",
+            "bridge_thalune_arch_LanternShadeLapLip_89",
+            "bridge_thalune_arch_LanternShadeLapLip_105",
+            "bridge_thalune_arch_ReducedSurface1",
+            "bridge_thalune_arch_ReducedSurface2",
+            "bridge_thalune_arch_ReducedSurface3",
+            "bridge_thalune_flat_BridgeShellRail_10",
+            "bridge_thalune_flat_BridgeShellRail_60",
+            "bridge_thalune_flat_LanternShadeLapLip_39",
+            "bridge_thalune_flat_LanternShadeLapLip_55",
+            "bridge_thalune_flat_LanternShadeLapLip_89",
+            "bridge_thalune_flat_LanternShadeLapLip_105",
+            "bridge_thalune_flat_ReducedSurface1",
+            "bridge_thalune_flat_ReducedSurface2",
+            "bridge_thalune_flat_ReducedSurface3",
+            "gate_thalune_land_GatePierCrownLapLip_13",
+            "gate_thalune_land_GatePierCrownLapLip_28",
+            "gate_thalune_land_LanternShadeLapLip_46",
+            "gate_thalune_land_LanternShadeLapLip_62",
+            "gate_thalune_land_ReducedSurface1",
+            "gate_thalune_land_ReducedSurface2",
+            "gate_thalune_land_ReducedSurface3",
+            "gate_thalune_water_GatePierCrownLapLip_13",
+            "gate_thalune_water_GatePierCrownLapLip_28",
+            "gate_thalune_water_LanternShadeLapLip_46",
+            "gate_thalune_water_LanternShadeLapLip_62",
+            "gate_thalune_water_ReducedSurface1",
+            "gate_thalune_water_ReducedSurface2",
+            "gate_thalune_water_ReducedSurface3",
+            "lamp_thalune_double_LanternShadeLapLip_15",
+            "lamp_thalune_double_LanternShadeLapLip_31",
+            "lamp_thalune_double_ReducedSurface1",
+            "lamp_thalune_double_ReducedSurface2",
+            "lamp_thalune_double_ReducedSurface3",
+            "lamp_thalune_single_LanternShadeLapLip_14",
+            "lamp_thalune_single_ReducedSurface1",
+            "lamp_thalune_single_ReducedSurface2",
+            "lamp_thalune_single_ReducedSurface3"
+          ],
+          "bronzeUsage": "used on named primitives"
+        }
+      ]
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_props.glb",
+      "sha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "assets": {
+        "prop_thalune_basin": {
+          "lodNodes": [
+            "prop_thalune_basin_LOD0",
+            "prop_thalune_basin_LOD1",
+            "prop_thalune_basin_LOD2",
+            "prop_thalune_basin_LOD3"
+          ],
+          "lodTriangles": [
+            5240,
+            1571,
+            524,
+            182
+          ]
+        },
+        "prop_thalune_bench": {
+          "lodNodes": [
+            "prop_thalune_bench_LOD0",
+            "prop_thalune_bench_LOD1",
+            "prop_thalune_bench_LOD2",
+            "prop_thalune_bench_LOD3"
+          ],
+          "lodTriangles": [
+            3024,
+            906,
+            301,
+            104
+          ]
+        },
+        "prop_thalune_bollard": {
+          "lodNodes": [
+            "prop_thalune_bollard_LOD0",
+            "prop_thalune_bollard_LOD1",
+            "prop_thalune_bollard_LOD2",
+            "prop_thalune_bollard_LOD3"
+          ],
+          "lodTriangles": [
+            4504,
+            1351,
+            450,
+            157
+          ]
+        },
+        "prop_thalune_crate": {
+          "lodNodes": [
+            "prop_thalune_crate_LOD0",
+            "prop_thalune_crate_LOD1",
+            "prop_thalune_crate_LOD2",
+            "prop_thalune_crate_LOD3"
+          ],
+          "lodTriangles": [
+            9477,
+            2843,
+            946,
+            331
+          ]
+        },
+        "prop_thalune_stall": {
+          "lodNodes": [
+            "prop_thalune_stall_LOD0",
+            "prop_thalune_stall_LOD1",
+            "prop_thalune_stall_LOD2",
+            "prop_thalune_stall_LOD3"
+          ],
+          "lodTriangles": [
+            9468,
+            2840,
+            946,
+            330
+          ]
+        },
+        "prop_thalune_terminal": {
+          "lodNodes": [
+            "prop_thalune_terminal_LOD0",
+            "prop_thalune_terminal_LOD1",
+            "prop_thalune_terminal_LOD2",
+            "prop_thalune_terminal_LOD3"
+          ],
+          "lodTriangles": [
+            9488,
+            2845,
+            948,
+            332
+          ]
+        }
+      },
+      "materials": [
+        {
+          "name": "LIB_Nacre_SarelunTrim",
+          "texture": "Sarelun_1024_ORM",
+          "ktxSha256": "ca7186b2cc7178f517853d5d1d56e1d6aaa1bb8785781a19d4d67092a6d3933a",
+          "width": 1024,
+          "height": 1024,
+          "roughnessFactor": 1,
+          "metallicFactor": 1,
+          "levels": [
+            {
+              "level": 0,
+              "width": 1024,
+              "height": 1024,
+              "rawSha256": "9a8c5c2d284c1e7b7b5601831e8c5735a732c92cf3966a7be7f2079e6ea9807c",
+              "bronzeLaneMinimum": 0.24313725490196078,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 131072,
+              "bronzeMinimum": 0.24313725490196078,
+              "positiveMetalTexels": 523649,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 1,
+              "width": 512,
+              "height": 512,
+              "rawSha256": "449f5ad81f5379ffc3e679dad82f94de7d5529e75be62353231fee59d261a79e",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 32768,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 121991,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 2,
+              "width": 256,
+              "height": 256,
+              "rawSha256": "bfc4769adb4c6a26612f1dd964305e1994a624889289e8a89fe4736056822b3b",
+              "bronzeLaneMinimum": 0.2549019607843137,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 8192,
+              "bronzeMinimum": 0.2549019607843137,
+              "positiveMetalTexels": 27452,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 3,
+              "width": 128,
+              "height": 128,
+              "rawSha256": "4e39d8bd905006d3d16791bdfc0159804c871b3a392a859a8fc0bcb285f52b36",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 2048,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 7976,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 4,
+              "width": 64,
+              "height": 64,
+              "rawSha256": "d3664d1f85e6726a6cb5775ce311e0690103f1274c91bccfee1446c433560a88",
+              "bronzeLaneMinimum": 0.32941176470588235,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 512,
+              "bronzeMinimum": 0.32941176470588235,
+              "positiveMetalTexels": 1291,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 5,
+              "width": 32,
+              "height": 32,
+              "rawSha256": "5743543bd123c36a091ef2efa1fbef44d547f2713d2d2571189c8c2e522ffb19",
+              "bronzeLaneMinimum": 0.34509803921568627,
+              "bronzeLaneMaximumMetallic": 0.6705882352941176,
+              "bronzeTexels": 128,
+              "bronzeMinimum": 0.34509803921568627,
+              "positiveMetalTexels": 351,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 6,
+              "width": 16,
+              "height": 16,
+              "rawSha256": "6bab6af17a01da1757a479cb4dba46a71d5644fc1670865834c4a37b4c5f5bec",
+              "bronzeLaneMinimum": 0.5882352941176471,
+              "bronzeLaneMaximumMetallic": 0.32941176470588235,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 160,
+              "positiveMetalMinimum": 0.47058823529411764,
+              "metallicAtPositiveMinimum": 0.0196078431372549
+            },
+            {
+              "level": 7,
+              "width": 8,
+              "height": 8,
+              "rawSha256": "80eb492ec020160d450cd823b597760e64a083e9fa9a8c6e329615572b6b8704",
+              "bronzeLaneMinimum": 0.6235294117647059,
+              "bronzeLaneMaximumMetallic": 0.26666666666666666,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 48,
+              "positiveMetalMinimum": 0.4588235294117647,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            },
+            {
+              "level": 8,
+              "width": 4,
+              "height": 4,
+              "rawSha256": "fd832113bf0fd44c5f1921895aab090f2bf4e7a83b67d3fe0e558a6be0cd281b",
+              "bronzeLaneMinimum": 0.6470588235294118,
+              "bronzeLaneMaximumMetallic": 0.22745098039215686,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 16,
+              "positiveMetalMinimum": 0.43137254901960786,
+              "metallicAtPositiveMinimum": 0.011764705882352941
+            },
+            {
+              "level": 9,
+              "width": 2,
+              "height": 2,
+              "rawSha256": "5fd657fae99acd9cf8be515df9b6ad2de24b177e6080e228acbff5b536b16ea0",
+              "bronzeLaneMinimum": 0.5490196078431373,
+              "bronzeLaneMaximumMetallic": 0.09411764705882353,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 4,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.07058823529411765
+            },
+            {
+              "level": 10,
+              "width": 1,
+              "height": 1,
+              "rawSha256": "ff64f9080c8f684828cc6e5d7a105dd28d5829f8f472bdbf516b702e18dcc5ba",
+              "bronzeLaneMinimum": 0.5254901960784314,
+              "bronzeLaneMaximumMetallic": 0.10196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 1,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            }
+          ],
+          "bronzePrimitiveNames": [
+            "prop_thalune_bollard_WornSpiralHorn_2",
+            "prop_thalune_bollard_ReducedSurface1",
+            "prop_thalune_bollard_ReducedSurface2",
+            "prop_thalune_bollard_ReducedSurface3",
+            "prop_thalune_crate_CargoValveLapLip_20",
+            "prop_thalune_crate_PolishedHandle_23",
+            "prop_thalune_crate_PolishedHandle_24",
+            "prop_thalune_crate_ReducedSurface1",
+            "prop_thalune_crate_ReducedSurface2",
+            "prop_thalune_crate_ReducedSurface3",
+            "prop_thalune_stall_StallAwningLapLip_23",
+            "prop_thalune_stall_ReducedSurface1",
+            "prop_thalune_stall_ReducedSurface2",
+            "prop_thalune_stall_ReducedSurface3",
+            "prop_thalune_terminal_TerminalHoodLapLip_16",
+            "prop_thalune_terminal_ReducedSurface1",
+            "prop_thalune_terminal_ReducedSurface2",
+            "prop_thalune_terminal_ReducedSurface3"
+          ],
+          "bronzeUsage": "used on named primitives"
+        }
+      ]
+    },
+    {
+      "path": "packages/client/public/models/cities/thalune_anchor.glb",
+      "sha256": "71ad323fde521208e0cb9096b49a275e2c2d2f30f8ad572a8f72f5c557a3b7c3",
+      "assets": {
+        "anchor_sarelun": {
+          "lodNodes": [
+            "anchor_sarelun_LOD0",
+            "anchor_sarelun_LOD1",
+            "anchor_sarelun_LOD2",
+            "anchor_sarelun_LOD3"
+          ],
+          "lodTriangles": [
+            79587,
+            23875,
+            7957,
+            2784
+          ]
+        }
+      },
+      "materials": [
+        {
+          "name": "LIB_Nacre_SarelunTrim",
+          "texture": "Sarelun_4096_ORM",
+          "ktxSha256": "21fde80c13afd338b4437e14c8a8549d92175948ef242b8a6a6fb9537901192f",
+          "width": 4096,
+          "height": 4096,
+          "roughnessFactor": 1,
+          "metallicFactor": 1,
+          "levels": [
+            {
+              "level": 0,
+              "width": 4096,
+              "height": 4096,
+              "rawSha256": "9871358afc7828b995cab5078ea88b6045ac38a59f41ef31abc5476a30cb2e32",
+              "bronzeLaneMinimum": 0.23137254901960785,
+              "bronzeLaneMaximumMetallic": 0.7019607843137254,
+              "bronzeTexels": 2097152,
+              "bronzeMinimum": 0.23137254901960785,
+              "positiveMetalTexels": 8028030,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 1,
+              "width": 2048,
+              "height": 2048,
+              "rawSha256": "58b11323fdce9ca35f49c173234535146c18c31ae69d6b2a51691f8ec4116ba6",
+              "bronzeLaneMinimum": 0.23137254901960785,
+              "bronzeLaneMaximumMetallic": 0.7019607843137254,
+              "bronzeTexels": 524288,
+              "bronzeMinimum": 0.23137254901960785,
+              "positiveMetalTexels": 2005626,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 2,
+              "width": 1024,
+              "height": 1024,
+              "rawSha256": "a9eb622838bcffee37ecf852d7f3f6b73ff185e1493ca1bf9bc886c7d12d22a7",
+              "bronzeLaneMinimum": 0.23137254901960785,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 131072,
+              "bronzeMinimum": 0.23137254901960785,
+              "positiveMetalTexels": 501241,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 3,
+              "width": 512,
+              "height": 512,
+              "rawSha256": "daeb977a7ff6ff796ecc7f893813decabb7d74920d5f8e9d40d5d2fa8972d5c1",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7176470588235294,
+              "bronzeTexels": 32768,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 118548,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 4,
+              "width": 256,
+              "height": 256,
+              "rawSha256": "74ab81e8cfd2f1041e482a9d1694498bd610c278cf515daec1f3da68176a4789",
+              "bronzeLaneMinimum": 0.2549019607843137,
+              "bronzeLaneMaximumMetallic": 0.7411764705882353,
+              "bronzeTexels": 8192,
+              "bronzeMinimum": 0.2549019607843137,
+              "positiveMetalTexels": 26400,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 5,
+              "width": 128,
+              "height": 128,
+              "rawSha256": "5ef59fad5c6f0e620cf6e510096feef54ad05f85eabfbd42df407ecb344df772",
+              "bronzeLaneMinimum": 0.25098039215686274,
+              "bronzeLaneMaximumMetallic": 0.7098039215686275,
+              "bronzeTexels": 2048,
+              "bronzeMinimum": 0.25098039215686274,
+              "positiveMetalTexels": 8236,
+              "positiveMetalMinimum": 0.16862745098039217,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 6,
+              "width": 64,
+              "height": 64,
+              "rawSha256": "7786a490e666c0bb234cabc1a6cd3ae9b1db44e2a9c26a306182fe67aecf32c0",
+              "bronzeLaneMinimum": 0.3215686274509804,
+              "bronzeLaneMaximumMetallic": 0.6862745098039216,
+              "bronzeTexels": 512,
+              "bronzeMinimum": 0.3215686274509804,
+              "positiveMetalTexels": 1298,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 7,
+              "width": 32,
+              "height": 32,
+              "rawSha256": "39a3612b6a81e25b17d873dbfa1b05f47867ba330bd71d3d7521a6133fb7dda9",
+              "bronzeLaneMinimum": 0.34509803921568627,
+              "bronzeLaneMaximumMetallic": 0.6705882352941176,
+              "bronzeTexels": 128,
+              "bronzeMinimum": 0.34509803921568627,
+              "positiveMetalTexels": 297,
+              "positiveMetalMinimum": 0.26666666666666666,
+              "metallicAtPositiveMinimum": 0.00784313725490196
+            },
+            {
+              "level": 8,
+              "width": 16,
+              "height": 16,
+              "rawSha256": "f6b3fa632cba5792cfaf59999cd2decc4a6877bd99490e6d5a17906b482a1b1e",
+              "bronzeLaneMinimum": 0.6313725490196078,
+              "bronzeLaneMaximumMetallic": 0.4196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 160,
+              "positiveMetalMinimum": 0.47058823529411764,
+              "metallicAtPositiveMinimum": 0.0196078431372549
+            },
+            {
+              "level": 9,
+              "width": 8,
+              "height": 8,
+              "rawSha256": "636f152e2ce3b9321a00285b2ec5f48bbcf434fcfa9b1031fde35ca69e5addb1",
+              "bronzeLaneMinimum": 0.6235294117647059,
+              "bronzeLaneMaximumMetallic": 0.26666666666666666,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 48,
+              "positiveMetalMinimum": 0.4588235294117647,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            },
+            {
+              "level": 10,
+              "width": 4,
+              "height": 4,
+              "rawSha256": "fd832113bf0fd44c5f1921895aab090f2bf4e7a83b67d3fe0e558a6be0cd281b",
+              "bronzeLaneMinimum": 0.6470588235294118,
+              "bronzeLaneMaximumMetallic": 0.22745098039215686,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 16,
+              "positiveMetalMinimum": 0.43137254901960786,
+              "metallicAtPositiveMinimum": 0.011764705882352941
+            },
+            {
+              "level": 11,
+              "width": 2,
+              "height": 2,
+              "rawSha256": "5fd657fae99acd9cf8be515df9b6ad2de24b177e6080e228acbff5b536b16ea0",
+              "bronzeLaneMinimum": 0.5490196078431373,
+              "bronzeLaneMaximumMetallic": 0.09411764705882353,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 4,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.07058823529411765
+            },
+            {
+              "level": 12,
+              "width": 1,
+              "height": 1,
+              "rawSha256": "ff64f9080c8f684828cc6e5d7a105dd28d5829f8f472bdbf516b702e18dcc5ba",
+              "bronzeLaneMinimum": 0.5254901960784314,
+              "bronzeLaneMaximumMetallic": 0.10196078431372549,
+              "bronzeTexels": 0,
+              "bronzeMinimum": null,
+              "positiveMetalTexels": 1,
+              "positiveMetalMinimum": 0.5254901960784314,
+              "metallicAtPositiveMinimum": 0.10196078431372549
+            }
+          ],
+          "bronzePrimitiveNames": [],
+          "bronzeUsage": "unused lane retained in shared atlas; floor checked conservatively"
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "boundaryTests": [
+    {
+      "glb": "packages/client/public/models/cities/thalune_low.glb",
+      "glbSha256": "1b1b2dc7e85357abd12a09b8f37e3ca8ed915d185bea1f67e12728619ddba3bd",
+      "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+      "belowAt50of255Rejected": true,
+      "exactAt51of255Accepted": true,
+      "reducedMaterialFactorRejected": true
+    },
+    {
+      "asset": "thalune_mid_2",
+      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "exactCountsAccepted": true,
+      "swappedAssetCountsRejected": true,
+      "wrongNodeNameRejected": true
+    },
+    {
+      "glb": "packages/client/public/models/cities/thalune_mid.glb",
+      "glbSha256": "54f53cb32cb05e626cd6d00657b4eee7bd2a61dfbad332d2660ed33d7581493e",
+      "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+      "belowAt50of255Rejected": true,
+      "exactAt51of255Accepted": true,
+      "reducedMaterialFactorRejected": true
+    },
+    {
+      "asset": "thalune_tall_2",
+      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "exactCountsAccepted": true,
+      "swappedAssetCountsRejected": true,
+      "wrongNodeNameRejected": true
+    },
+    {
+      "glb": "packages/client/public/models/cities/thalune_tall.glb",
+      "glbSha256": "ac971ab048f225c2e8a9fb9c4563f4810834194dff59085e8bce620b082d966b",
+      "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+      "belowAt50of255Rejected": true,
+      "exactAt51of255Accepted": true,
+      "reducedMaterialFactorRejected": true
+    },
+    {
+      "glb": "packages/client/public/models/cities/thalune_civic.glb",
+      "glbSha256": "50907caa09597fe3d4668310f8ee883a89431c210bc1e1e4f7b22f466930169a",
+      "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+      "belowAt50of255Rejected": true,
+      "exactAt51of255Accepted": true,
+      "reducedMaterialFactorRejected": true
+    },
+    {
+      "glb": "packages/client/public/models/cities/thalune_waterfront.glb",
+      "glbSha256": "331be5cbc939ddd60b0b018904c9fd9f384fc81dacb90417d8ae41f5d039c622",
+      "ktxSha256": "f8d89c332306a1eefd2cd88828d9525ecd5e75cda2101fb13097e9ca62924b8c",
+      "belowAt50of255Rejected": true,
+      "exactAt51of255Accepted": true,
+      "reducedMaterialFactorRejected": true
+    },
+    {
+      "glb": "packages/client/public/models/cities/thalune_props.glb",
+      "glbSha256": "5b8c7c51f3452f93d4f46677ffe1bc690fa6f27688abfcf660f083d604484f14",
+      "ktxSha256": "ca7186b2cc7178f517853d5d1d56e1d6aaa1bb8785781a19d4d67092a6d3933a",
+      "belowAt50of255Rejected": true,
+      "exactAt51of255Accepted": true,
+      "reducedMaterialFactorRejected": true
+    },
+    {
+      "glb": "packages/client/public/models/cities/thalune_anchor.glb",
+      "glbSha256": "71ad323fde521208e0cb9096b49a275e2c2d2f30f8ad572a8f72f5c557a3b7c3",
+      "ktxSha256": "21fde80c13afd338b4437e14c8a8549d92175948ef242b8a6a6fb9537901192f",
+      "belowAt50of255Rejected": true,
+      "exactAt51of255Accepted": true,
+      "reducedMaterialFactorRejected": true
+    }
+  ],
+  "pass": true
+}

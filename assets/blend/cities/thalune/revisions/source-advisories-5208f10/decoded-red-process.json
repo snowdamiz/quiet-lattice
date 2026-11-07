@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/bin/zsh",
+    "-c",
+    "cd packages/tools && node --input-type=module < ../../assets/blend/cities/thalune/authoring/decode_exports.mjs"
+  ],
+  "exit": 1,
+  "deadlineSeconds": 180,
+  "timedOut": false,
+  "elapsedSeconds": 6.93,
+  "peakProcessTreeRssKiB": 456800,
+  "rssSamples": [
+    [
+      0.04,
+      3632
+    ]
+  ],
+  "backend": "CPU",
+  "blenderThreads": 2,
+  "rssLimitKiB": 6291456,
+  "outputLimitBytes": 16777216,
+  "limitExceeded": null,
+  "remainingOwnedPids": [],
+  "processTreeReapedBeforeUnlock": true
+}

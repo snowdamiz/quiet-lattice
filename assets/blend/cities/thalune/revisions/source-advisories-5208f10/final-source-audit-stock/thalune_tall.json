@@ -1,0 +1,256 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/thalune_tall.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:42:24Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "thalune_tall_0",
+      "variants": [
+        {
+          "id": "thalune_tall_0",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57832,
+            "1": 17348,
+            "2": 5783,
+            "3": 2023
+          },
+          "implicitLods": false,
+          "dims": [
+            18.4,
+            17.0,
+            184.128
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "thalune_tall_1",
+      "variants": [
+        {
+          "id": "thalune_tall_1",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57710,
+            "1": 17313,
+            "2": 5771,
+            "3": 2019
+          },
+          "implicitLods": false,
+          "dims": [
+            18.4,
+            17.0,
+            224.099
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "thalune_tall_2",
+      "variants": [
+        {
+          "id": "thalune_tall_2",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57577,
+            "1": 17272,
+            "2": 5757,
+            "3": 2014
+          },
+          "implicitLods": false,
+          "dims": [
+            19.71,
+            17.478,
+            264.099
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "thalune_tall_3",
+      "variants": [
+        {
+          "id": "thalune_tall_3",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 57689,
+            "1": 17306,
+            "2": 5768,
+            "3": 2018
+          },
+          "implicitLods": false,
+          "dims": [
+            18.4,
+            17.0,
+            308.053
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune_tall.blend",
+          "message": "4 variant(s) in 4 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune_tall_0",
+          "message": "LOD0 57,832 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "thalune_tall_1",
+          "message": "LOD0 57,710 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "thalune_tall_2",
+          "message": "LOD0 57,577 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "thalune_tall_3",
+          "message": "LOD0 57,689 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune_tall_0",
+          "message": "57,832 > 17,348 > 5,783 > 2,023 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "thalune_tall_1",
+          "message": "57,710 > 17,313 > 5,771 > 2,019 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "thalune_tall_2",
+          "message": "57,577 > 17,272 > 5,757 > 2,014 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "thalune_tall_3",
+          "message": "57,689 > 17,306 > 5,768 > 2,018 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_Nacre_SarelunTrim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "LIB_Nav_SarelunNacre",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "thalune_tall_0",
+          "message": "longest side 184.13 m within 1-400 m"
+        },
+        {
+          "subject": "thalune_tall_1",
+          "message": "longest side 224.10 m within 1-400 m"
+        },
+        {
+          "subject": "thalune_tall_2",
+          "message": "longest side 264.10 m within 1-400 m"
+        },
+        {
+          "subject": "thalune_tall_3",
+          "message": "longest side 308.05 m within 1-400 m"
+        }
+      ]
+    }
+  ]
+}

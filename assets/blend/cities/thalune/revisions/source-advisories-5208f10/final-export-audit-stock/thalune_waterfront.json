@@ -1,0 +1,620 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/cities/thalune_waterfront.glb",
+  "family": "cities",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T05:43:58Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "bridge_thalune_arch",
+      "variants": [
+        {
+          "id": "bridge_thalune_arch",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 14386,
+            "1": 4315,
+            "2": 1438,
+            "3": 502
+          },
+          "implicitLods": false,
+          "dims": [
+            6.902,
+            28.123,
+            2.311
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "bridge_thalune_flat",
+      "variants": [
+        {
+          "id": "bridge_thalune_flat",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 14385,
+            "1": 4315,
+            "2": 1437,
+            "3": 502
+          },
+          "implicitLods": false,
+          "dims": [
+            5.402,
+            20.136,
+            1.861
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "gate_thalune_land",
+      "variants": [
+        {
+          "id": "gate_thalune_land",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 14434,
+            "1": 4330,
+            "2": 1443,
+            "3": 503
+          },
+          "implicitLods": false,
+          "dims": [
+            8.048,
+            3.072,
+            6.581
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "gate_thalune_water",
+      "variants": [
+        {
+          "id": "gate_thalune_water",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 14434,
+            "1": 4330,
+            "2": 1442,
+            "3": 503
+          },
+          "implicitLods": false,
+          "dims": [
+            12.048,
+            3.072,
+            9.581
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "kit_thalune_pad_24",
+      "variants": [
+        {
+          "id": "kit_thalune_pad_24",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 10140,
+            "1": 3042,
+            "2": 1014,
+            "3": 354
+          },
+          "implicitLods": false,
+          "dims": [
+            26.4,
+            26.4,
+            0.317
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "kit_thalune_pad_36",
+      "variants": [
+        {
+          "id": "kit_thalune_pad_36",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 10140,
+            "1": 3042,
+            "2": 1013,
+            "3": 354
+          },
+          "implicitLods": false,
+          "dims": [
+            38.4,
+            38.4,
+            0.316
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "lamp_thalune_double",
+      "variants": [
+        {
+          "id": "lamp_thalune_double",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 14048,
+            "1": 4213,
+            "2": 1403,
+            "3": 491
+          },
+          "implicitLods": false,
+          "dims": [
+            2.778,
+            1.1,
+            3.341
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "lamp_thalune_single",
+      "variants": [
+        {
+          "id": "lamp_thalune_single",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 7104,
+            "1": 2131,
+            "2": 709,
+            "3": 247
+          },
+          "implicitLods": false,
+          "dims": [
+            2.006,
+            1.794,
+            4.306
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim",
+            "LIB_Nav_SarelunNacre"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "wall_thalune_curve",
+      "variants": [
+        {
+          "id": "wall_thalune_curve",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4752,
+            "1": 1425,
+            "2": 475,
+            "3": 164
+          },
+          "implicitLods": false,
+          "dims": [
+            14.945,
+            6.2,
+            3.82
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "wall_thalune_steps",
+      "variants": [
+        {
+          "id": "wall_thalune_steps",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 8512,
+            "1": 2552,
+            "2": 850,
+            "3": 297
+          },
+          "implicitLods": false,
+          "dims": [
+            16.42,
+            9.46,
+            3.82
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    },
+    {
+      "asset": "wall_thalune_straight",
+      "variants": [
+        {
+          "id": "wall_thalune_straight",
+          "class": "kit",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4752,
+            "1": 1425,
+            "2": 474,
+            "3": 165
+          },
+          "implicitLods": false,
+          "dims": [
+            16.42,
+            3.753,
+            3.82
+          ],
+          "materials": [
+            "LIB_Nacre_SarelunTrim"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "thalune_waterfront.glb",
+          "message": "11 variant(s) in 11 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "bridge_thalune_arch",
+          "message": "LOD0 14,386 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "bridge_thalune_flat",
+          "message": "LOD0 14,385 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "gate_thalune_land",
+          "message": "LOD0 14,434 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "gate_thalune_water",
+          "message": "LOD0 14,434 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "kit_thalune_pad_24",
+          "message": "LOD0 10,140 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "kit_thalune_pad_36",
+          "message": "LOD0 10,140 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "lamp_thalune_double",
+          "message": "LOD0 14,048 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "lamp_thalune_single",
+          "message": "LOD0 7,104 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "wall_thalune_curve",
+          "message": "LOD0 4,752 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "wall_thalune_steps",
+          "message": "LOD0 8,512 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "wall_thalune_straight",
+          "message": "LOD0 4,752 triangles within the kit budget 500-15,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 1.2 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "bridge_thalune_arch",
+          "message": "14,386 > 4,315 > 1,438 > 502 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "bridge_thalune_flat",
+          "message": "14,385 > 4,315 > 1,437 > 502 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "gate_thalune_land",
+          "message": "14,434 > 4,330 > 1,443 > 503 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "gate_thalune_water",
+          "message": "14,434 > 4,330 > 1,442 > 503 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "kit_thalune_pad_24",
+          "message": "10,140 > 3,042 > 1,014 > 354 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "kit_thalune_pad_36",
+          "message": "10,140 > 3,042 > 1,013 > 354 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "lamp_thalune_double",
+          "message": "14,048 > 4,213 > 1,403 > 491 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "lamp_thalune_single",
+          "message": "7,104 > 2,131 > 709 > 247 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "wall_thalune_curve",
+          "message": "4,752 > 1,425 > 475 > 164 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "wall_thalune_steps",
+          "message": "8,512 > 2,552 > 850 > 297 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "wall_thalune_straight",
+          "message": "4,752 > 1,425 > 474 > 165 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_Nacre_SarelunTrim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "LIB_Nav_SarelunNacre",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "textures",
+          "message": "3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.2 MB"
+        },
+        {
+          "subject": "bridge_thalune_arch",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "bridge_thalune_flat",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "gate_thalune_land",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "gate_thalune_water",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "kit_thalune_pad_24",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "kit_thalune_pad_36",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "lamp_thalune_double",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "lamp_thalune_single",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "wall_thalune_curve",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "wall_thalune_steps",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        },
+        {
+          "subject": "wall_thalune_straight",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the kit budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/cities/thalune_waterfront.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "bridge_thalune_arch",
+          "message": "longest side 28.12 m within 0.2-60 m"
+        },
+        {
+          "subject": "bridge_thalune_flat",
+          "message": "longest side 20.14 m within 0.2-60 m"
+        },
+        {
+          "subject": "gate_thalune_land",
+          "message": "longest side 8.05 m within 0.2-60 m"
+        },
+        {
+          "subject": "gate_thalune_water",
+          "message": "longest side 12.05 m within 0.2-60 m"
+        },
+        {
+          "subject": "kit_thalune_pad_24",
+          "message": "longest side 26.40 m within 0.2-60 m"
+        },
+        {
+          "subject": "kit_thalune_pad_36",
+          "message": "longest side 38.40 m within 0.2-60 m"
+        },
+        {
+          "subject": "lamp_thalune_double",
+          "message": "longest side 3.34 m within 0.2-60 m"
+        },
+        {
+          "subject": "lamp_thalune_single",
+          "message": "longest side 4.31 m within 0.2-60 m"
+        },
+        {
+          "subject": "wall_thalune_curve",
+          "message": "longest side 14.94 m within 0.2-60 m"
+        },
+        {
+          "subject": "wall_thalune_steps",
+          "message": "longest side 16.42 m within 0.2-60 m"
+        },
+        {
+          "subject": "wall_thalune_straight",
+          "message": "longest side 16.42 m within 0.2-60 m"
+        }
+      ]
+    }
+  ]
+}
