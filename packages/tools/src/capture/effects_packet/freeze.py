@@ -15,6 +15,7 @@ import zlib
 import cache_owners
 import cache_io
 import apple_encoder
+import apple_mtl
 
 from bindings import file_binding, git, tree_binding
 from contract import ASSET, ASSET_HEAD, FILE, HERE, ROOT, ledger, plan, read_json, require, sha
@@ -50,7 +51,8 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
     browser = browser_root / 'chrome-headless-shell'
     require(browser.is_file(), 'Installed browser missing; no network fetch authorized')
     encoder = apple_encoder.binding()
-    processes = [Path(python), Path(actual), Path(node), browser, Path(routes['esbuildBinary']), Path('/usr/bin/caffeinate'), Path(encoder['executable']['path'])]
+    compiler = apple_mtl.binding()
+    processes = [Path(python), Path(actual), Path(node), browser, Path(routes['esbuildBinary']), Path('/usr/bin/caffeinate'), Path(encoder['executable']['path']), Path(compiler['executable']['path'])]
     tracked = git(ROOT, 'ls-files', 'packages/client/src', 'packages/shared/src', 'packages/tools/src/capture').splitlines()
     asset_paths = git(ROOT, 'diff', '--name-only', '634c51d2378748c6a514af2a792ee4500b912643', ASSET_HEAD).splitlines()
     require(len(asset_paths) == 64, 'Reviewed 64-file source unit changed')
@@ -100,6 +102,7 @@ console.log(JSON.stringify({playwright,core,tsxApi,esbuild,esbuildBinary,nodeVer
                           'probe': {'scope': 'CURRENT_CPU_SELF_PROCESS_ONLY', 'pid': os.getpid(), 'uid': os.getuid(), 'nativeCaptureStarted': False}},
         'process_binary_sha256': {str(p): sha(p) for p in processes},
         'appleEncoder': encoder,
+        'appleMetalCompiler': compiler,
         'resolver': {'selectedExecutable': {'path': str(browser), 'sha256': sha(browser)}},
         'bindings': [file_binding(p) for p in sorted(files)],
         'dependencyTrees': [tree_binding(p) for p in dependency_roots],

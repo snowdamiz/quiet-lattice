@@ -42,6 +42,181 @@
     "requirement": "identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
     "scope": "Exact kernel-owned executable only; no external XPC ownership inferred."
   },
+  "appleMetalCompiler": {
+    "codesign": {
+      "bytes": 973408,
+      "path": "/usr/bin/codesign",
+      "realpath": "/usr/bin/codesign",
+      "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+    },
+    "codesignRoute": [
+      {
+        "path": "/",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 2,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/usr",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312607501,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/usr/bin",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312607504,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/usr/bin/codesign",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312607711,
+        "st_mode": 33261,
+        "st_uid": 0
+      }
+    ],
+    "executable": {
+      "bytes": 389760,
+      "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "realpath": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "sha256": "65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b"
+    },
+    "observations": [
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "--verify",
+          "--strict",
+          "-R",
+          "=identifier \"com.apple.MTLCompilerService\" and anchor apple",
+          "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "-d",
+          "--verbose=4",
+          "-r-",
+          "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+        ],
+        "exit": 0,
+        "stderr": "Executable=/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\nIdentifier=com.apple.MTLCompilerService\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=565 flags=0x0(none) hashes=7+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=0564f4ea2063dbc3a9de0ac47ded14661384d230\nCandidateCDHashFull sha256=0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9\nHash choices=sha256\nCMSDigest=0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=32768\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=0564f4ea2063dbc3a9de0ac47ded14661384d230\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 10, 2026 at 2:13:14\u202fAM\nInfo.plist entries=21\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n",
+        "stdout": "designated => identifier \"com.apple.MTLCompilerService\" and anchor apple\n"
+      }
+    ],
+    "requirement": "identifier \"com.apple.MTLCompilerService\" and anchor apple",
+    "route": [
+      {
+        "path": "/",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 2,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500311879703,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500311918287,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312149173,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166596,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166600,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166601,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166629,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166630,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166631,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166634,
+        "st_mode": 16877,
+        "st_uid": 0
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+        "st_dev": 16777232,
+        "st_gid": 0,
+        "st_ino": 1152921500312166635,
+        "st_mode": 33261,
+        "st_uid": 0
+      }
+    ],
+    "scope": "Exact executable only; unchanged current UID/birth/coalition checks still required. Future effects membership and external XPC ownership unqualified."
+  },
   "asset": {
     "assetClass": "effect",
     "boundsBlender": [
@@ -141,6 +316,12 @@
     "packages/tools/blender/effects/run.py"
   ],
   "bindings": [
+    {
+      "bytes": 389760,
+      "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "realpath": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "sha256": "65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b"
+    },
     {
       "bytes": 167280,
       "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
@@ -2278,16 +2459,22 @@
       "sha256": "3aac3f7be1fa76bd8fe8138e189b86acf25c2b725f37a1d572fcf2a4f8aba4ff"
     },
     {
-      "bytes": 26345,
+      "bytes": 28789,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
-      "sha256": "30ea78db3947c8535d44baa47b79521963455c611ccba6d872aaf03cd1cc6b8e"
+      "sha256": "af68f6a66be4eff82ff9008d658a5a295c5d807fb223b6b93f1d167d2123663a"
     },
     {
       "bytes": 2138,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/apple_encoder.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/apple_encoder.py",
       "sha256": "7851ab278463935b178c8b609aa3c085adbcf644e95590813245135405b57775"
+    },
+    {
+      "bytes": 3602,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/apple_mtl.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/apple_mtl.py",
+      "sha256": "6890386cf9c42249fb5cbd572b8e9b436f0fd76d806263f79577cf92ce6f20e0"
     },
     {
       "bytes": 5950,
@@ -2362,10 +2549,10 @@
       "sha256": "c77b7b48a9b80e94264e02f31e0fe7818df485b50e786829ad14af48bd7fc1d8"
     },
     {
-      "bytes": 10815,
+      "bytes": 10945,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py",
-      "sha256": "a1ebd9de84834adb9b7c1c6756526b1983374c7cd87b8685742fff06838eec1d"
+      "sha256": "6313cc447028e97c60bc3256acc91bf64aedbe8a065d3c5690aa05559403453e"
     },
     {
       "bytes": 8618,
@@ -2384,6 +2571,12 @@
       "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/live_cache_controls.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/live_cache_controls.py",
       "sha256": "5cdf886374721deae8db7a12a3d5fc19d407379f5a7c1a3997fd601ca9bc04b7"
+    },
+    {
+      "bytes": 12055,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/mtl_controls.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/mtl_controls.py",
+      "sha256": "d441afd5afdb7450fb2e2c0373d2c9e412b194c0721566b05679b3c3eb9b8f81"
     },
     {
       "bytes": 19487,
@@ -2620,6 +2813,12 @@
       "sha256": "7fa4af83422024a19e64a80937f6c8094244c3397372a495b348dfbe44a5dd72"
     },
     {
+      "bytes": 6937,
+      "path": "/private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus/review-thalune/job/observed_execution.json",
+      "realpath": "/private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus/review-thalune/job/observed_execution.json",
+      "sha256": "b6b4c0a4f1df8fd470de49f8c3effcfdfe0ef6e5240979563fdc5a9696d7f802"
+    },
+    {
       "bytes": 18239,
       "path": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/APPENDIX-C2.md",
       "realpath": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/APPENDIX-C2.md",
@@ -2636,6 +2835,30 @@
       "path": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/seal.json",
       "realpath": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/seal.json",
       "sha256": "64b0a45a500a9f0a27c54e59c63afb4a09bb788cfa2e9a3b27045ccdc04418ad"
+    },
+    {
+      "bytes": 21765,
+      "path": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/APPENDIX-C2.md",
+      "realpath": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/APPENDIX-C2.md",
+      "sha256": "ef378dd9686379dc07d8c4caff321847a2694806c83a63b8d43a0d3d8fee74de"
+    },
+    {
+      "bytes": 978,
+      "path": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/INDEPENDENT-RECEIPT.json",
+      "realpath": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/INDEPENDENT-RECEIPT.json",
+      "sha256": "78fe7cde2063871d08569ac373dbd95959ba648daa5ac4532d955de23a976f15"
+    },
+    {
+      "bytes": 1209,
+      "path": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/seal.json",
+      "realpath": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/seal.json",
+      "sha256": "a2538374a8277be1c6d1e8e8cb56a315dac900f16a342ff38c42a45c28d33600"
+    },
+    {
+      "bytes": 33578,
+      "path": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/vm-binding-gap.json",
+      "realpath": "/private/tmp/p1-e07-t14-live-independent-d7dggrsp/vm-binding-gap.json",
+      "sha256": "fbb4fee00fc3bac3ee3c6a8224fa22f7b406c60436e6c0f7f71b99dd4acf5322"
     },
     {
       "bytes": 20826,
@@ -2827,9 +3050,9 @@
   "esbuildBinary": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
   "externalSystemXpcOwnership": "UNQUALIFIED; no recorder/encoder requested",
   "freezePredecessor": {
-    "head": "b151c82427a541754cec0d5143c7942271eed2b8",
+    "head": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
     "informativeOnly": true,
-    "tree": "442f1b7a8990bf06a719f10488c230f32aabcb50"
+    "tree": "bf40490eea5ea19a61e885420642f480e41e9e79"
   },
   "generatedCaches": [
     "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules/.vite",
@@ -2839,13 +3062,13 @@
   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
   "nodeVersion": "v22.23.3",
   "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
-  "phase": "ENABLED_LIVE_CACHE_CORRECTION_PENDING_INDEPENDENT_REVIEW_AND_PARENT_ONE_USE_GRANT",
+  "phase": "ENABLED_EXACT_MTL_BINDING_PENDING_INDEPENDENT_REVIEW_AND_PARENT_ONE_USE_GRANT",
   "pilot": {
     "asset": "gravitic_pull",
-    "attemptId": "a2002dbc58854694880dd505416ac34d",
-    "authorizationId": "effects-a2002dbc58854694880dd505416ac34d",
-    "consumption": "/private/tmp/egc-a2002dbc58854694880dd505416ac34d.json",
-    "evidence": "/private/tmp/egp-a2002dbc58854694880dd505416ac34d",
+    "attemptId": "164a9dca1cd5400c8f734587e449adeb",
+    "authorizationId": "effects-164a9dca1cd5400c8f734587e449adeb",
+    "consumption": "/private/tmp/egc-164a9dca1cd5400c8f734587e449adeb.json",
+    "evidence": "/private/tmp/egp-164a9dca1cd5400c8f734587e449adeb",
     "file": "effects/gravitic",
     "files": [
       "gravitic_pull/noon-lush_lod0.png",
@@ -2862,8 +3085,8 @@
       "gravitic_pull/sheet.png"
     ],
     "gl": "metal",
-    "grant": "/private/tmp/egg-a2002dbc58854694880dd505416ac34d.json",
-    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d",
+    "grant": "/private/tmp/egg-164a9dca1cd5400c8f734587e449adeb.json",
+    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-164a9dca1cd5400c8f734587e449adeb",
     "viewport": [
       1920,
       1080
@@ -2871,6 +3094,7 @@
   },
   "playwright": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js",
   "process_binary_sha256": {
+    "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService": "65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b",
     "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5",
     "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node": "68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b",
     "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384",
@@ -2895,19 +3119,19 @@
     },
     "probe": {
       "nativeCaptureStarted": false,
-      "pid": 34743,
+      "pid": 36759,
       "scope": "CURRENT_CPU_SELF_PROCESS_ONLY",
       "uid": 501
     }
   },
   "remainingPrerequisites": [
-    "Historical b151c82427a541754cec0d5143c7942271eed2b8 activation PASS and 6b4073305af21efe5c6cf5ecc09f78406b637a42 correction PASS are retained; current live-cache correction requires fresh independent review at exact final pin.",
-    "Original effects-b61233fdf3564205bd01d9566f306430 remains FAILED and permanently SPENT; do not reuse any historical identity.",
-    "Parent owns new one-use grant and serialized GPU slot; current owner and 5402312704-byte disk admission must pass at actual launch.",
-    "Live cache traversal retries are finite estimates, not atomic snapshots or quotas; immutable pre-copy and post-drain checks remain strict.",
-    "Known retained T13 SetStore member remains unbound; no Apple bindings added and future effects membership is not inferred.",
+    "Independent d16b7e41b1c662cc4005a9322f60a8d3522dd219 live-cache SOURCE/CPU PASS is retained; its separate MTL P2 REVISE is addressed here and final pin still needs fresh independent review.",
+    "Only reviewed exact root-protected Apple MTLCompilerService added; current UID/birth/cohort checks unchanged. Future effects membership and external XPC ownership unqualified.",
+    "Original effects-b61233fdf3564205bd01d9566f306430 remains FAILED and permanently SPENT; never reuse any historical identity.",
+    "Parent owns a new one-use grant and serialized GPU slot after current owner and 5402312704-byte disk admission pass.",
+    "Conditional T13 SetStore member remains unbound; no broad Apple/XPC allowance or automatic retry.",
     "Parent must observe actual OS exit zero and exact result/consumption hashes, complete segmented evidence and positive release through existing parent_acceptance.",
-    "Actual one-root capture and independent blind visual grade remain pending; remaining58 and motion/playback excluded. Native authority exists; no further human permission request required."
+    "Actual one-root native capture and independent blind visual grade remain pending; remaining58 and motion/playback excluded. Native authority exists; no further human permission request needed."
   ],
   "resolver": {
     "selectedExecutable": {

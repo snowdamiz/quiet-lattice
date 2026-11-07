@@ -1,3 +1,41 @@
+# P1.E07.T14 exact MTLCompilerService binding correction
+
+Independent review retained SOURCE/CPU PASS for the live-cache algorithm at
+`d16b7e41b1c662cc4005a9322f60a8d3522dd219`, while returning separate P2 REVISE
+for the missing MTLCompilerService executable. That report and its REVISE receipt
+remain unchanged at `/private/tmp/p1-e07-t14-live-independent-d7dggrsp/`.
+
+This unit adds only the exact MTLCompilerService executable observed in the
+retained VM cohort on effects' byte-identical headless browser route. The new
+`apple_mtl.binding` checks every canonical executable and codesign route component
+for root ownership, non-writability and directory/regular executable type. It
+requires the reviewed exact executable/codesign bytes, strict Apple designated
+requirement, identifier, platform identifier and CDHash, then rechecks routes and
+bytes after signature observation. It executes only the existing codesign
+verification tool; it never executes the compiler service. Freeze records this
+one file/process binding and the verification observations. The original Apple
+encoder and every other process binding remain unchanged.
+
+The unchanged actual NativePorts/StageReceipts path still requires current UID,
+birth and coalition membership and rechecks birth/cohort after executable lookup.
+Unknown or substituted executables do not acquire an allowance. The MTL service
+keeps its existing observed role; no Apple/XPC category or automatic retry is
+introduced. Future effects membership and external XPC ownership are unqualified.
+The conditional SetStore executable remains unbound.
+
+Both existing runtime flags stay enabled with a fresh unused identity and
+readiness. The corrected final pin needs fresh independent review before a parent
+grant. Historical live-cache/activation receipts cannot approve a different pin.
+No grant, consumption, output, native/browser/GPU/codec/service/Blender run or
+screenshot cleanup is performed. All failed/spent attempts remain retained.
+
+Evidence, exact RED/GREEN, commands, protected hashes and parent launch schema:
+`/private/tmp/p1-e07-t14-mtl-binding-q2qutcjb/APPENDIX-C2.md`.
+Only the new exact binding/freeze configuration, its controls and this provenance
+change. Passed live-cache, evidence, caller/entry, shared T15, all 64 assets and
+four helpers remain byte-identical. The total admission remains 5402312704 bytes.
+The earlier checkpoint descriptions below are historical provenance.
+
 # P1.E07.T14 bounded live-cache publication correction
 
 The enabled b151c82427a541754cec0d5143c7942271eed2b8 checkpoint and its
