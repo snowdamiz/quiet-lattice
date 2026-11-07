@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-07T14:46:36.239991+00:00",
+  "packetRoot": "/private/tmp/lark-visual-packet-928ec63c-HATXLh",
+  "indexSha256": "2680d920ea58c26ca7b66ff55a3174d05ec80aae0e83dab851bc24521da19c97",
+  "parentRehash": {
+    "indexMatch": true,
+    "filesVerified": 65,
+    "mismatches": 0,
+    "pngCount": 49,
+    "totalBytes": 187181308
+  },
+  "identity": {
+    "hull": "lark",
+    "task": "P1.E12.T02",
+    "purpose": "fresh grader visual/GPU capture packet for promoted canonical; not a grade",
+    "head": "928ec63c59b691e0885fae8589c58202ccc432b1",
+    "tree": "8e72764bf8842b9238ac650fd5d5a3932d35f7e8",
+    "blend": {
+      "path": "assets/blend/hulls/lark.blend",
+      "sha256": "68a327711238d437666fb5f76f04f8f4d519c67e44e820c0d7b3199097e825e1",
+      "bytes": 35650695
+    },
+    "glb": {
+      "path": "packages/client/public/models/hulls/lark.glb",
+      "sha256": "e377daea38886af8065006bb5c53fb8e43211a9b55f44681018cf294ad7159e7",
+      "bytes": 13792612
+    },
+    "density_gate": "SATISFIED_min_median_ge_512",
+    "source_cpu_review_commit": "bafae4c86991b9fc9d889beffa5dba9495cc4073",
+    "promote_commit": "928ec63c59b691e0885fae8589c58202ccc432b1",
+    "constraints": [
+      "no re-export",
+      "no re-bake",
+      "no blend/glb mutation",
+      "no push/PR/merge/Trunk",
+      "no self-grade",
+      "cleanup STOPPED"
+    ]
+  },
+  "stages": {
+    "validate": {
+      "status": "PASS",
+      "blend": "PASS_5_of_5",
+      "glb": "PASS_5_of_5"
+    },
+    "cpu_turntables_materials": {
+      "status": "PASS",
+      "variants": [
+        "lark",
+        "lark_damaged",
+        "lark_husked"
+      ],
+      "samples": 24
+    },
+    "stills_cockpit_boarding_hardpoints": {
+      "status": "PASS",
+      "hardpoints": [
+        "HP_S_1",
+        "HP_S_2"
+      ]
+    },
+    "native_review_gpu": {
+      "status": "PASS",
+      "spec": "#review:hulls/lark",
+      "variants": [
+        "lark",
+        "lark_damaged",
+        "lark_husked"
+      ]
+    }
+  },
+  "failures": [],
+  "reviewCommit": "5f422dfbe7785de04d2db516a46a4723d6da0877",
+  "promoteHead": "928ec63c59b691e0885fae8589c58202ccc432b1",
+  "imagesRemainAt": "/private/tmp/lark-visual-packet-928ec63c-HATXLh",
+  "blindVisual": "ASSIGNING",
+  "pushPrMergeTrunk": false
+}

@@ -1,0 +1,510 @@
+{
+  "file": "hulls/lark",
+  "asset": "lark",
+  "variant": "lark_damaged",
+  "class": "hero",
+  "gl": "metal",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "stats": {
+    "file": "hulls/lark",
+    "asset": "lark",
+    "variant": "lark_damaged",
+    "lod": 0,
+    "shown": 0,
+    "lods": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "triangles": 111862,
+    "meshes": 12,
+    "materials": [
+      "NavWhite",
+      "Hull",
+      "Dark",
+      "Accent",
+      "Trim",
+      "EngineGlow",
+      "NavRed",
+      "NavGreen",
+      "Glass"
+    ],
+    "size": [
+      13.52,
+      4.49,
+      12.38
+    ],
+    "colliders": 5,
+    "markers": 11,
+    "kinds": {
+      "COL": 5,
+      "Interact": 1,
+      "HP": 2,
+      "Light": 1,
+      "Gear": 4,
+      "Blink": 1,
+      "Canopy": 1
+    },
+    "textures": {
+      "shown": {
+        "count": 6,
+        "compressed": 6,
+        "mb": 85.3
+      },
+      "file": {
+        "count": 14,
+        "compressed": 14,
+        "mb": 202.7
+      }
+    }
+  },
+  "spots": {
+    "noon-lush": {
+      "relief": 1.8,
+      "offset": 202,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    },
+    "night-exotic": {
+      "relief": 1.83,
+      "offset": 195,
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 111
+      }
+    },
+    "open-space": {
+      "settled": {
+        "frames": 180,
+        "idle": true,
+        "waits": 0
+      }
+    }
+  },
+  "perf": [
+    {
+      "case": "noon-lush",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 61,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 25.6,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 2.7,
+        "cpuMsP95": 3.3,
+        "gpuMsMedian": 22.488,
+        "gpuMsP95": 24.051,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 682,
+        "triangles": 3625616
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 2.5,
+        "cpuMsP95": 3.2,
+        "gpuMsMedian": 21.145,
+        "gpuMsP95": 22.474,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 670,
+        "triangles": 3513754
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 1.296,
+        "drawCalls": 12,
+        "triangles": 111862,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          0.764,
+          1.769
+        ],
+        "gpuMsCi95": [
+          1.115,
+          1.516
+        ],
+        "cpuMsIqr": [
+          0.05,
+          0.2
+        ],
+        "spreadMs": 1.004,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.343
+        }
+      },
+      "stats": {
+        "file": "hulls/lark",
+        "asset": "lark",
+        "variant": "lark_damaged",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 111862,
+        "meshes": 12,
+        "materials": [
+          "NavWhite",
+          "Hull",
+          "Dark",
+          "Accent",
+          "Trim",
+          "EngineGlow",
+          "NavRed",
+          "NavGreen",
+          "Glass"
+        ],
+        "size": [
+          13.52,
+          4.49,
+          12.38
+        ],
+        "colliders": 5,
+        "markers": 11,
+        "kinds": {
+          "COL": 5,
+          "Interact": 1,
+          "HP": 2,
+          "Light": 1,
+          "Gear": 4,
+          "Blink": 1,
+          "Canopy": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 6,
+            "compressed": 6,
+            "mb": 85.3
+          },
+          "file": {
+            "count": 14,
+            "compressed": 14,
+            "mb": 202.7
+          }
+        }
+      }
+    },
+    {
+      "case": "night-exotic",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 61,
+        "underBudget": false,
+        "stable": true,
+        "frameMs": 32.6,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 4.4,
+        "cpuMsP95": 5.1,
+        "gpuMsMedian": 27.284,
+        "gpuMsP95": 29.475,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1310,
+        "triangles": 3974204
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 4.3,
+        "cpuMsP95": 5,
+        "gpuMsMedian": 26.13,
+        "gpuMsP95": 28.006,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1298,
+        "triangles": 3862342
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 1.149,
+        "drawCalls": 12,
+        "triangles": 111862,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          1.115,
+          1.207
+        ],
+        "gpuMsCi95": [
+          1.126,
+          1.177
+        ],
+        "cpuMsIqr": [
+          0.05,
+          0.25
+        ],
+        "spreadMs": 0.092,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 1.154
+        }
+      },
+      "stats": {
+        "file": "hulls/lark",
+        "asset": "lark",
+        "variant": "lark_damaged",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 111862,
+        "meshes": 12,
+        "materials": [
+          "NavWhite",
+          "Hull",
+          "Dark",
+          "Accent",
+          "Trim",
+          "EngineGlow",
+          "NavRed",
+          "NavGreen",
+          "Glass"
+        ],
+        "size": [
+          13.52,
+          4.49,
+          12.38
+        ],
+        "colliders": 5,
+        "markers": 11,
+        "kinds": {
+          "COL": 5,
+          "Interact": 1,
+          "HP": 2,
+          "Light": 1,
+          "Gear": 4,
+          "Blink": 1,
+          "Canopy": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 6,
+            "compressed": 6,
+            "mb": 85.3
+          },
+          "file": {
+            "count": 14,
+            "compressed": 14,
+            "mb": 202.7
+          }
+        }
+      }
+    },
+    {
+      "case": "open-space",
+      "lod": 0,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "gpuTiming": "EXT_disjoint_timer_query_webgl2 (GPU time of the frame)",
+      "budgetMs": 16.67,
+      "settle": {
+        "frames": 30,
+        "underBudget": true,
+        "stable": true,
+        "frameMs": 4.7,
+        "steady": 30
+      },
+      "scene": {
+        "cpuMsMedian": 0.6,
+        "cpuMsP95": 1.2,
+        "gpuMsMedian": 4.041,
+        "gpuMsP95": 6.041,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 44,
+        "triangles": 160467
+      },
+      "withoutAsset": {
+        "cpuMsMedian": 0.4,
+        "cpuMsP95": 0.8,
+        "gpuMsMedian": 2.743,
+        "gpuMsP95": 4.188,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48605
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 1.297,
+        "drawCalls": 12,
+        "triangles": 111862,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          1.24,
+          1.429
+        ],
+        "gpuMsCi95": [
+          1.262,
+          1.337
+        ],
+        "cpuMsIqr": [
+          0.137,
+          0.25
+        ],
+        "spreadMs": 0.189,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.298
+        }
+      },
+      "stats": {
+        "file": "hulls/lark",
+        "asset": "lark",
+        "variant": "lark_damaged",
+        "lod": 0,
+        "shown": 0,
+        "lods": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "triangles": 111862,
+        "meshes": 12,
+        "materials": [
+          "NavWhite",
+          "Hull",
+          "Dark",
+          "Accent",
+          "Trim",
+          "EngineGlow",
+          "NavRed",
+          "NavGreen",
+          "Glass"
+        ],
+        "size": [
+          13.52,
+          4.49,
+          12.38
+        ],
+        "colliders": 5,
+        "markers": 11,
+        "kinds": {
+          "COL": 5,
+          "Interact": 1,
+          "HP": 2,
+          "Light": 1,
+          "Gear": 4,
+          "Blink": 1,
+          "Canopy": 1
+        },
+        "textures": {
+          "shown": {
+            "count": 6,
+            "compressed": 6,
+            "mb": 85.3
+          },
+          "file": {
+            "count": 14,
+            "compressed": 14,
+            "mb": 202.7
+          }
+        }
+      }
+    }
+  ],
+  "far": [
+    {
+      "range": 100,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 803,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 18
+      }
+    },
+    {
+      "range": 200,
+      "lod": 2,
+      "shown": 2,
+      "azimuth": 35,
+      "elevation": 16,
+      "lift": 0,
+      "clear": true,
+      "case": "noon-lush",
+      "plantsHidden": 18,
+      "settled": {
+        "frames": 120,
+        "idle": true,
+        "waits": 16
+      }
+    }
+  ],
+  "overlay": {
+    "counts": {
+      "COL": 5,
+      "Interact": 1,
+      "HP": 2,
+      "Light": 1,
+      "Gear": 4,
+      "Blink": 1,
+      "Canopy": 1
+    },
+    "labelled": [
+      "HP_S_1",
+      "HP_S_2",
+      "Interact",
+      "Blink_Strobes_dmg",
+      "Canopy_dmg",
+      "GearAssembly_dmg",
+      "GearFront",
+      "GearLeft",
+      "GearRight",
+      "Light_Landing_dmg"
+    ],
+    "offscreen": 0
+  },
+  "errors": []
+}

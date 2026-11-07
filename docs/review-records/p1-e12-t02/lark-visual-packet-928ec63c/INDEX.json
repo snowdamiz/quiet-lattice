@@ -1,0 +1,397 @@
+{
+  "sealed_at": "2026-11-07T14:45:23.427756+00:00",
+  "packet_root": "/private/tmp/lark-visual-packet-928ec63c-HATXLh",
+  "identity": {
+    "hull": "lark",
+    "task": "P1.E12.T02",
+    "purpose": "fresh grader visual/GPU capture packet for promoted canonical; not a grade",
+    "head": "928ec63c59b691e0885fae8589c58202ccc432b1",
+    "tree": "8e72764bf8842b9238ac650fd5d5a3932d35f7e8",
+    "blend": {
+      "path": "assets/blend/hulls/lark.blend",
+      "sha256": "68a327711238d437666fb5f76f04f8f4d519c67e44e820c0d7b3199097e825e1",
+      "bytes": 35650695
+    },
+    "glb": {
+      "path": "packages/client/public/models/hulls/lark.glb",
+      "sha256": "e377daea38886af8065006bb5c53fb8e43211a9b55f44681018cf294ad7159e7",
+      "bytes": 13792612
+    },
+    "density_gate": "SATISFIED_min_median_ge_512",
+    "source_cpu_review_commit": "bafae4c86991b9fc9d889beffa5dba9495cc4073",
+    "promote_commit": "928ec63c59b691e0885fae8589c58202ccc432b1",
+    "constraints": [
+      "no re-export",
+      "no re-bake",
+      "no blend/glb mutation",
+      "no push/PR/merge/Trunk",
+      "no self-grade",
+      "cleanup STOPPED"
+    ]
+  },
+  "stages": {
+    "validate": {
+      "status": "PASS",
+      "blend": "PASS_5_of_5",
+      "glb": "PASS_5_of_5"
+    },
+    "cpu_turntables_materials": {
+      "status": "PASS",
+      "variants": [
+        "lark",
+        "lark_damaged",
+        "lark_husked"
+      ],
+      "samples": 24
+    },
+    "stills_cockpit_boarding_hardpoints": {
+      "status": "PASS",
+      "hardpoints": [
+        "HP_S_1",
+        "HP_S_2"
+      ]
+    },
+    "native_review_gpu": {
+      "status": "PASS",
+      "spec": "#review:hulls/lark",
+      "variants": [
+        "lark",
+        "lark_damaged",
+        "lark_husked"
+      ]
+    }
+  },
+  "failures": [],
+  "file_count": 65,
+  "total_bytes": 187181308,
+  "files": [
+    {
+      "path": "IDENTITY.json",
+      "bytes": 942,
+      "sha256": "cf84ec9cc77ed10da9d1467c9ef5e080372343852e97b25574fe7e28552d3cd4"
+    },
+    {
+      "path": "cpu/lark_lark_lark_damaged_materials.png",
+      "bytes": 1929707,
+      "sha256": "bd79dd1f5eebd5a8dfb944539a23251b3a53f21a34cfb4d13a0289f4bc9eeeeb"
+    },
+    {
+      "path": "cpu/lark_lark_lark_damaged_materials.txt",
+      "bytes": 542,
+      "sha256": "2dec52f8b7ac4f3d57b402cac09a703f021b387101947a6e4a8209b574a2bbb8"
+    },
+    {
+      "path": "cpu/lark_lark_lark_damaged_turntable.png",
+      "bytes": 4446268,
+      "sha256": "d3acb3a76b8f828ad4c2842a363374065fadb91f48af5754fac45604cdc7c7db"
+    },
+    {
+      "path": "cpu/lark_lark_lark_husked_materials.png",
+      "bytes": 1678436,
+      "sha256": "afcc728503f3de18328d9f8e6a81de0d2bb4b79b7f519608d72415246ea1bf9f"
+    },
+    {
+      "path": "cpu/lark_lark_lark_husked_materials.txt",
+      "bytes": 578,
+      "sha256": "8b5ec4fc2381d7d1ce03a4f2041e8c85d3615a53531bd6e8e2c06795df436441"
+    },
+    {
+      "path": "cpu/lark_lark_lark_husked_turntable.png",
+      "bytes": 4323175,
+      "sha256": "7e55c9c6c551cf3d0f1fcfbe21cd5c2a1c178bad745543956b3ecc0a96314787"
+    },
+    {
+      "path": "cpu/lark_lark_materials.png",
+      "bytes": 1781303,
+      "sha256": "04c6ad7fc9830f16ef6dab320d6c228671d1e524c357509c246b2df9d5e8bf74"
+    },
+    {
+      "path": "cpu/lark_lark_materials.txt",
+      "bytes": 501,
+      "sha256": "41f513c9748c743ae87540a995298794ed10e2058123146246c60e65baa1f784"
+    },
+    {
+      "path": "cpu/lark_lark_turntable.png",
+      "bytes": 4341096,
+      "sha256": "42d6ba5575e5404d8671ee8eec54c3021a239cb91d975b70fa421b0ab57574e4"
+    },
+    {
+      "path": "cpu/turntable-manifest.json",
+      "bytes": 2359,
+      "sha256": "0d3c667e51c66a6ab440c5d87b4123cb55c0d96fe77f67fe92727a379b27ad66"
+    },
+    {
+      "path": "cpu/turntable.log",
+      "bytes": 11215,
+      "sha256": "81fd92e073847c8a030e40ebaca13e4eeb5ea1f7dd4d646c8ae95612aaafe364"
+    },
+    {
+      "path": "review/capture.log",
+      "bytes": 5766,
+      "sha256": "c80b4ca204c411b1c901dec91bd392ebbb67532f3b53e0a09618b5c95fb25ebb"
+    },
+    {
+      "path": "review/hulls/lark/lark/far200_lod2.png",
+      "bytes": 4088388,
+      "sha256": "566a786efb129269c0ee2909e36806cd60844495e64c529a52fd0ed40d92be66"
+    },
+    {
+      "path": "review/hulls/lark/lark/far_lod2.png",
+      "bytes": 4221695,
+      "sha256": "56853e6a5a31f4bea94d7c446ff472edb4b8b6c1bb59f1e69852f3f6e2c79f0d"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/far200_lod2.png",
+      "bytes": 4097429,
+      "sha256": "aebff06023337534970873d812cc3578e659f4910bbdeef9ef6dcb02280afbfd"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/far_lod2.png",
+      "bytes": 4219059,
+      "sha256": "807b07ac813e50de9a71de75354fbdfb4dfaa5f5a6f1f6dd84d675dafdcb1a06"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/night-exotic_lod0.png",
+      "bytes": 3391950,
+      "sha256": "fc71a9b3e810c9a2bb9895c39337f53e919058cc4fa29df856e9e0f8ad6033a4"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/night-exotic_lod2.png",
+      "bytes": 3377097,
+      "sha256": "59516743750cd03e0e49465c448f9911a01497c3b7d58835a94d92e3e2911aaa"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/noon-lush_lod0.png",
+      "bytes": 4320265,
+      "sha256": "d5a5b4a1504a28fb8e8a7100aadb4f0b7a84cd435e3ecc2368b7cbabd8f79c11"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/noon-lush_lod2.png",
+      "bytes": 4317607,
+      "sha256": "850d074b61252a4bd7b07f3ea5e6ab66fa4b4b05a8f240840f21688ff0bb00c9"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/open-space_lod0.png",
+      "bytes": 3044265,
+      "sha256": "a44ea1a932dea8cf4324d42c4a94134ceb6926b4f68693396e4d9605c950de1c"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/open-space_lod2.png",
+      "bytes": 3043294,
+      "sha256": "99f01cbf650d510e1002a53820573cd66a5e040329013764e2aadf71acef0d13"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/overlay.png",
+      "bytes": 4220183,
+      "sha256": "6332e70d9a08adc1e4379fdbfe3d45b6a0784cd4c2f10448e025597ff466f2f3"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/perf.json",
+      "bytes": 10281,
+      "sha256": "732cead613e786a5deb4658428f683fe10fc60bc3d642f7c2742a83372ba30ff"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/sheet.png",
+      "bytes": 9818229,
+      "sha256": "01a36ebe4d06e21545c4e4c2e979cc6eab6d24765e8c9b98eca1110897510987"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/wireframe_lod0.png",
+      "bytes": 4369148,
+      "sha256": "0af2f0f6a855ec3624bc8ee4849db09abfed47146346b7e25f75644c88b5643a"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_damaged/wireframe_lod2.png",
+      "bytes": 4331684,
+      "sha256": "edd3b5f550481e48487cfe8346814132c6e5b4ac25d89afa502a9b8063f73899"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/far200_lod2.png",
+      "bytes": 4096619,
+      "sha256": "dca2b133fb2bb02d4d643941bd4b59c81a35e2fc3289da75d1cb9a92f1ecd9c2"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/far_lod2.png",
+      "bytes": 4218228,
+      "sha256": "1816ecec2b9491c6b4ee1694f53e9db4d3bc663faf253407ce28c18522eaa6f4"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/night-exotic_lod0.png",
+      "bytes": 3309867,
+      "sha256": "b7d7ec8a4c155f04b268b2fd5195a253d94ad8d4dbc683c07b968cb232b59b04"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/night-exotic_lod2.png",
+      "bytes": 3311156,
+      "sha256": "b8c16ea60734d811e8a66de0f0f05cbbf8a2010f3c4f8c2c8f02419cd971d9c5"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/noon-lush_lod0.png",
+      "bytes": 4265245,
+      "sha256": "6cc663700adf79ffb885204328a93f7bcfe96005bf0a801d58dd2dc3e1893234"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/noon-lush_lod2.png",
+      "bytes": 4262508,
+      "sha256": "d4702a4e393dbaa44a76d72da6063428f04d70ce8efc4d8892d8f4d94d42bee3"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/open-space_lod0.png",
+      "bytes": 2939118,
+      "sha256": "f8286a8cab516524a5228c3d92a64ce372d504ff78af72849f37152f35736f9f"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/open-space_lod2.png",
+      "bytes": 2938771,
+      "sha256": "fdc1ff2d3da110fa8eb40be77092470fb36b48f5924ad051b9873613cab8ce84"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/overlay.png",
+      "bytes": 4197214,
+      "sha256": "7922d2a06acb9dbbe78d84e363f3891031317c18ea56748954ab2203b5c9a62d"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/perf.json",
+      "bytes": 10020,
+      "sha256": "d3e0e78e038f3b98360d71bb73d9050c7d1da8ee44b0ed642ccc0433e4cc92f9"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/sheet.png",
+      "bytes": 8803999,
+      "sha256": "7c76216eb981d5fc0381b5cf4ef3d152208b8a7438830c8556fb5b510f9e9a2a"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/wireframe_lod0.png",
+      "bytes": 4373814,
+      "sha256": "5dba68f2fa8f8690a11bcebdd0f5ff1d5a9caa605582194abf3364861d9d28c8"
+    },
+    {
+      "path": "review/hulls/lark/lark/lark_husked/wireframe_lod2.png",
+      "bytes": 4337283,
+      "sha256": "f9543f1f84b4bcb85cd689e21682eee5570b999ce20da8199f7bab51044e402b"
+    },
+    {
+      "path": "review/hulls/lark/lark/night-exotic_lod0.png",
+      "bytes": 3386212,
+      "sha256": "eb95d39474481a3b1d7ce1bf4b4a33148585efe0dddc43978232cd75fc1bac61"
+    },
+    {
+      "path": "review/hulls/lark/lark/night-exotic_lod2.png",
+      "bytes": 3374283,
+      "sha256": "e375b73e435b1be1747f2b045548199d4b8a073eb5952f24c07bd0f9105ba6f1"
+    },
+    {
+      "path": "review/hulls/lark/lark/noon-lush_lod0.png",
+      "bytes": 4310489,
+      "sha256": "00bd46848df385835f8540e43322770c23447c94fa91eea13d8abbace137645f"
+    },
+    {
+      "path": "review/hulls/lark/lark/noon-lush_lod2.png",
+      "bytes": 4317268,
+      "sha256": "4d1229850703dea9c173ae98ca56763f491e96d0c53e413903073717f91f76df"
+    },
+    {
+      "path": "review/hulls/lark/lark/open-space_lod0.png",
+      "bytes": 3029553,
+      "sha256": "00280d4bd6e035fefe0dfee2dbfcdbba81498a660a6f8ad4cc8848a09037f288"
+    },
+    {
+      "path": "review/hulls/lark/lark/open-space_lod2.png",
+      "bytes": 3034470,
+      "sha256": "c22e92463602e5facfd2255ae6c65018e343304c821c3a302056a782ba54250c"
+    },
+    {
+      "path": "review/hulls/lark/lark/overlay.png",
+      "bytes": 4243178,
+      "sha256": "ca04c03c9e2f120b2c348278a4f49726c97cd44f4b7fcf3753ff3d97edd06c9a"
+    },
+    {
+      "path": "review/hulls/lark/lark/perf.json",
+      "bytes": 10228,
+      "sha256": "e23706f71f14692212fae2729bb128c73d93549ed02d2dbf2e2d7219624c604a"
+    },
+    {
+      "path": "review/hulls/lark/lark/sheet.png",
+      "bytes": 9832761,
+      "sha256": "be847a073ad8ce34231fdae21c1325acbea05c68bb38f9015fc6c5e79f756611"
+    },
+    {
+      "path": "review/hulls/lark/lark/wireframe_lod0.png",
+      "bytes": 4362849,
+      "sha256": "9bc5ad832684aa242079b4b801f6654fe1b17e48981aafaed2c2975dff376632"
+    },
+    {
+      "path": "review/hulls/lark/lark/wireframe_lod2.png",
+      "bytes": 4326902,
+      "sha256": "34f6973de61fbeb896adb1a0b79eff4d940b5a03619a0ec68426c0f3a7bc82a5"
+    },
+    {
+      "path": "stills/lark_boarding_board.png",
+      "bytes": 2034974,
+      "sha256": "d0103d2ce58c3f0805e36d835a28f3eefd865c6e04768de72bde67043aa28d61"
+    },
+    {
+      "path": "stills/lark_cockpit_closed_side.png",
+      "bytes": 1802185,
+      "sha256": "7e1d3f8c38b31a8dc0929d946cb7fdf12e5f7eee251454a7e43ba0fecccb01c1"
+    },
+    {
+      "path": "stills/lark_cockpit_open_q.png",
+      "bytes": 1882023,
+      "sha256": "7ff506f1e478aaa2dd44acd97304583b59bdfbe51a86f30ab14db3f1c755b905"
+    },
+    {
+      "path": "stills/lark_cockpit_open_side.png",
+      "bytes": 1835514,
+      "sha256": "238d37b4610987a666c406ce70be7dc27554b5490ff3aa956175d2a39f1ba5a6"
+    },
+    {
+      "path": "stills/lark_cockpit_open_top.png",
+      "bytes": 1991593,
+      "sha256": "3bd588f4dff6f471e3e7a52b948132ce33cf3f92d677df0319f2e04537f0ea5b"
+    },
+    {
+      "path": "stills/lark_hardpoint_HP_S_1.png",
+      "bytes": 1462940,
+      "sha256": "948feeedeefee47b9fda1208e53f32d8bf5d4393307a85e01256e70d588bb697"
+    },
+    {
+      "path": "stills/lark_hardpoint_HP_S_2.png",
+      "bytes": 1431186,
+      "sha256": "74e7cee6f1b152a759b199f5cc4f9290fd1fad3bdef8ad398d79dd10fc76f893"
+    },
+    {
+      "path": "stills/stills-receipt.json",
+      "bytes": 996,
+      "sha256": "74799769682419daae59b0950e79cda1fc48af7eb808ab02dda3dca505095b8f"
+    },
+    {
+      "path": "stills/stills.log",
+      "bytes": 2142,
+      "sha256": "0d1848f00446fa1426ce92a11af655c1e2a06d729a2b714ca279d2312a076f7d"
+    },
+    {
+      "path": "validate/blend-validate.log",
+      "bytes": 3405,
+      "sha256": "c450ab5fdc44a708aba0fff98837e11aeb5c244621b2e9dfff5abcf36139a421"
+    },
+    {
+      "path": "validate/glb-validate.log",
+      "bytes": 6140,
+      "sha256": "c0ac6fe90a26a4c82bb6cef8f21ebcee121c50bc7ce2505a37f5f203f4dbdc53"
+    },
+    {
+      "path": "validate/hulls__lark.blend.json",
+      "bytes": 34068,
+      "sha256": "0a50222ea9baf889b974e401e0c5a96cc1b69fbb39ccc778580ec06308df3563"
+    },
+    {
+      "path": "validate/hulls__lark.glb.json",
+      "bytes": 9645,
+      "sha256": "cf8858c57090a35895ee7cdd6ba380e206f38a9616b7f68cd0a12b9155b663b1"
+    }
+  ],
+  "worktree_review_mirror": "assets/renders/review/hulls/lark/",
+  "not_a_grade": true,
+  "self_grade": false
+}

@@ -1084,3 +1084,9 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **Lark `928ec63c59`:** sealed private shrink-512 candidate byte-promoted to canonical. Parent-verified SHA256 match: blend `68a32771…e825e1` (35,650,695 B), glb `e377daea…159e7` (13,792,612 B). Tree `8e72764bf`. No re-export. SOURCE/CPU PASS retained at `bafae4c869`.
 - **Parent:** visual/GPU **capture packet** AUTHORIZED on promoted HEAD only (CPU turntables/material sheets → serial native `#review:hulls/lark` for base/damaged/husked + cockpit/boarding/hardpoint stills + indexed hashes). Independent blind visual grade HELD until packet. Force-fit/multi-atlas remain rejected. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
 - Evidence: `docs/review-records/p1-e12-t02/lark-canonical-promote-928ec63c/` (index `20261107-lark-canonical-promote-928ec63c.json`).
+
+## 2026-11-07 — Lark visual capture packet ready; blind visual assigned
+
+- **Packet** `/private/tmp/lark-visual-packet-928ec63c-HATXLh`: INDEX sha256 `2680d920…1da19c97`; 65 files / 187,181,308 B (49 PNG). Parent rehash 65/65 match. Stages: validate PASS 5/5; CPU turntables+materials ×3; cockpit/boarding/HP stills; native `#review:hulls/lark` ×3 — failures none. Canonical blend/glb unchanged (`68a32771…` / `e377daea…`). Promote HEAD `928ec63c59`; review-captures commit `5f422dfbe`.
+- Independent blind visual grade assigned (Models-and-environments rubric; Lark only). Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+- Metadata retained under `docs/review-records/p1-e12-t02/lark-visual-packet-928ec63c/` (index `20261107-lark-visual-packet-928ec63c.json`); PNGs remain at packet root.
