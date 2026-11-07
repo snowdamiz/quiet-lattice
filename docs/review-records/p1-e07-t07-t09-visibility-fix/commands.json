@@ -129,6 +129,32 @@
     "observedExit": true
   },
   {
+    "label": "final-receipt-check",
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/finalize.py"
+    ],
+    "cwd": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f",
+    "env": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin",
+      "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache"
+    },
+    "deadline": 120,
+    "exit": 1,
+    "seconds": 0.707,
+    "timeout": false,
+    "observedExit": true
+  },
+  {
     "label": "fixture-inventory",
     "argv": [
       "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
@@ -333,6 +359,32 @@
     "observedExit": true
   },
   {
+    "label": "preservation-audit-final",
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/audit.py"
+    ],
+    "cwd": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f",
+    "env": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin",
+      "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache"
+    },
+    "deadline": 120,
+    "exit": 0,
+    "seconds": 52.923,
+    "timeout": false,
+    "observedExit": true
+  },
+  {
     "label": "preservation-audit-raw",
     "argv": [
       "/opt/homebrew/bin/python3",
@@ -355,6 +407,98 @@
     "deadline": 120,
     "exit": 0,
     "seconds": 51.976,
+    "timeout": false,
+    "observedExit": true
+  },
+  {
+    "label": "report-commit",
+    "argv": [
+      "git",
+      "-C",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-m",
+      "P1.E07.T07/P1.E08.T09: record bounded visibility source and CPU proof"
+    ],
+    "cwd": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f",
+    "env": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin",
+      "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache"
+    },
+    "deadline": 120,
+    "exit": 0,
+    "seconds": 0.04,
+    "timeout": false,
+    "observedExit": true
+  },
+  {
+    "label": "report-stage",
+    "argv": [
+      "git",
+      "-C",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+      "add",
+      "--",
+      "docs/review-records/p1-e07-t07-t09-visibility-fix"
+    ],
+    "cwd": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f",
+    "env": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin",
+      "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache"
+    },
+    "deadline": 120,
+    "exit": 0,
+    "seconds": 0.075,
+    "timeout": false,
+    "observedExit": true
+  },
+  {
+    "label": "report-whitespace",
+    "argv": [
+      "git",
+      "-C",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f",
+    "env": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin",
+      "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache"
+    },
+    "deadline": 120,
+    "exit": 0,
+    "seconds": 0.02,
     "timeout": false,
     "observedExit": true
   },

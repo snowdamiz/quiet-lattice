@@ -1,0 +1,149 @@
+{
+  "sourceChanged": false,
+  "earlierReportCommit": "8b79daa420b01279f8c389db42cbcd39bb20f088",
+  "cause": "Audit serializer shadowed directory obj with its final child file_obj. Tree equality was checked before the loop, but stored metadata was wrong. Full corrected no-filter audit passed.",
+  "fixes": [
+    {
+      "group": "protectedObjects",
+      "path": "packages/shared/src/exosuit",
+      "old": {
+        "reviewedObject": "ae0292ce1b5ddb70182000b2273fb61128aefa05",
+        "base": "ae0292ce1b5ddb70182000b2273fb61128aefa05",
+        "current": "ae0292ce1b5ddb70182000b2273fb61128aefa05"
+      },
+      "correct": {
+        "reviewedObject": "79a0be9c0369da5271703ad1105eb8f2e9506662",
+        "base": "79a0be9c0369da5271703ad1105eb8f2e9506662",
+        "current": "79a0be9c0369da5271703ad1105eb8f2e9506662"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "packages/shared/src/skills",
+      "old": {
+        "reviewedObject": "1bfd59fd702c3c6b532daefd958c518b03f91cda",
+        "base": "1bfd59fd702c3c6b532daefd958c518b03f91cda",
+        "current": "1bfd59fd702c3c6b532daefd958c518b03f91cda"
+      },
+      "correct": {
+        "reviewedObject": "af5017b78aeabd5368daa3907f188d38491a8bce",
+        "base": "af5017b78aeabd5368daa3907f188d38491a8bce",
+        "current": "af5017b78aeabd5368daa3907f188d38491a8bce"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "packages/server/src/persistence",
+      "old": {
+        "reviewedObject": "ec45a2d9d84f218993b887d8f79440db6ead1427",
+        "base": "ec45a2d9d84f218993b887d8f79440db6ead1427",
+        "current": "ec45a2d9d84f218993b887d8f79440db6ead1427"
+      },
+      "correct": {
+        "reviewedObject": "43222c5370f3ae1b0ca359b9104dba190fba7747",
+        "base": "43222c5370f3ae1b0ca359b9104dba190fba7747",
+        "current": "43222c5370f3ae1b0ca359b9104dba190fba7747"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "packages/server/src/skills",
+      "old": {
+        "reviewedObject": "de47cbb8e6a6c6639cb73943fbb13f1ece409d92",
+        "base": "de47cbb8e6a6c6639cb73943fbb13f1ece409d92",
+        "current": "de47cbb8e6a6c6639cb73943fbb13f1ece409d92"
+      },
+      "correct": {
+        "reviewedObject": "8f624842495713517e4b95152670e1e4768271b7",
+        "base": "8f624842495713517e4b95152670e1e4768271b7",
+        "current": "8f624842495713517e4b95152670e1e4768271b7"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "packages/server/src/reputation",
+      "old": {
+        "reviewedObject": "45a40bd4fdf500d8385c8efa2bbedf2608f91f2b",
+        "base": "45a40bd4fdf500d8385c8efa2bbedf2608f91f2b",
+        "current": "45a40bd4fdf500d8385c8efa2bbedf2608f91f2b"
+      },
+      "correct": {
+        "reviewedObject": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2",
+        "base": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2",
+        "current": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "packages/client/src/render",
+      "old": {
+        "reviewedObject": "ebaaa5e73b2c796a70b37b9e16a85f292e882fa8",
+        "base": "ebaaa5e73b2c796a70b37b9e16a85f292e882fa8",
+        "current": "ebaaa5e73b2c796a70b37b9e16a85f292e882fa8"
+      },
+      "correct": {
+        "reviewedObject": "006eba39102137053d1e14f2a4df412f200391d0",
+        "base": "006eba39102137053d1e14f2a4df412f200391d0",
+        "current": "006eba39102137053d1e14f2a4df412f200391d0"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "packages/tools/src/art",
+      "old": {
+        "reviewedObject": "8bfc9c437d5023b74de1c5c4e90ce62ff3e29a31",
+        "base": "8bfc9c437d5023b74de1c5c4e90ce62ff3e29a31",
+        "current": "8bfc9c437d5023b74de1c5c4e90ce62ff3e29a31"
+      },
+      "correct": {
+        "reviewedObject": "3450d02662eb45c9f48be5de33eb3a0bf00b7742",
+        "base": "3450d02662eb45c9f48be5de33eb3a0bf00b7742",
+        "current": "3450d02662eb45c9f48be5de33eb3a0bf00b7742"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "assets",
+      "old": {
+        "reviewedObject": "5b5ac2cb3e2ef0dfb12328d9abff4f746bda7471",
+        "base": "5b5ac2cb3e2ef0dfb12328d9abff4f746bda7471",
+        "current": "5b5ac2cb3e2ef0dfb12328d9abff4f746bda7471"
+      },
+      "correct": {
+        "reviewedObject": "b9780f893547190dd896e2735e406f73e9c4ed6b",
+        "base": "b9780f893547190dd896e2735e406f73e9c4ed6b",
+        "current": "b9780f893547190dd896e2735e406f73e9c4ed6b"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "blender",
+      "old": {
+        "reviewedObject": "3b5461b2990173b956e6f7bbcdf0ace27ac0e15b",
+        "base": "3b5461b2990173b956e6f7bbcdf0ace27ac0e15b",
+        "current": "3b5461b2990173b956e6f7bbcdf0ace27ac0e15b"
+      },
+      "correct": {
+        "reviewedObject": "af124f3e13df0e47bb44a77df96adf2c74e6bc15",
+        "base": "af124f3e13df0e47bb44a77df96adf2c74e6bc15",
+        "current": "af124f3e13df0e47bb44a77df96adf2c74e6bc15"
+      }
+    },
+    {
+      "group": "protectedObjects",
+      "path": "packages/client/public",
+      "old": {
+        "reviewedObject": "7e125c3e893cfc24dac3bfcdc15b79c2e03b26d5",
+        "base": "7e125c3e893cfc24dac3bfcdc15b79c2e03b26d5",
+        "current": "7e125c3e893cfc24dac3bfcdc15b79c2e03b26d5"
+      },
+      "correct": {
+        "reviewedObject": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1",
+        "base": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1",
+        "current": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1"
+      }
+    }
+  ],
+  "failedFinalReceiptRecorded": "evidence/final-receipt-check.txt",
+  "rawOriginalManifest": "git show 8b79daa420b01279f8c389db42cbcd39bb20f088:docs/review-records/p1-e07-t07-t09-visibility-fix/manifest.json"
+}

@@ -63,6 +63,17 @@ cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
 env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/symbiotic-visibility-apply-8o_t2b8f/capture-boundary.mjs /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts
 
+final-receipt-check | exit=1 | seconds=0.707 | timeout=False
+cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
+env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
+/opt/homebrew/bin/python3 /private/tmp/symbiotic-visibility-apply-8o_t2b8f/finalize.py
+FAILURE LAST 20 LINES:
+Traceback (most recent call last):
+  File "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/finalize.py", line 12, in <module>
+    for path,item in p[group].items():assert git('rev-parse',head+':'+path)==item['reviewedObject'],path
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: packages/shared/src/exosuit
+
 fixture-inventory | exit=0 | seconds=0.844 | timeout=False
 cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
 env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
@@ -138,10 +149,30 @@ Traceback (most recent call last):
                              output=stdout, stderr=stderr)
 subprocess.CalledProcessError: Command '['git', 'hash-object', '--stdin-paths']' returned non-zero exit status 128.
 
+preservation-audit-final | exit=0 | seconds=52.923 | timeout=False
+cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
+env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
+/opt/homebrew/bin/python3 /private/tmp/symbiotic-visibility-apply-8o_t2b8f/audit.py
+
 preservation-audit-raw | exit=0 | seconds=51.976 | timeout=False
 cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
 env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
 /opt/homebrew/bin/python3 /private/tmp/symbiotic-visibility-apply-8o_t2b8f/audit.py
+
+report-commit | exit=0 | seconds=0.04 | timeout=False
+cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
+env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
+git -C /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521 -c core.hooksPath=/dev/null commit -m 'P1.E07.T07/P1.E08.T09: record bounded visibility source and CPU proof'
+
+report-stage | exit=0 | seconds=0.075 | timeout=False
+cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
+env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
+git -C /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521 add -- docs/review-records/p1-e07-t07-t09-visibility-fix
+
+report-whitespace | exit=0 | seconds=0.02 | timeout=False
+cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
+env={"COREPACK_ENABLE_NETWORK": "0", "GIT_OPTIONAL_LOCKS": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-visibility-apply-8o_t2b8f/boundary.mjs", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/pw-cache", "TEMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMP": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "TMPDIR": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-visibility-apply-8o_t2b8f/cache"}
+git -C /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521 diff --cached --check
 
 scoped-eslint | exit=1 | seconds=0.604 | timeout=False
 cwd=/private/tmp/symbiotic-visibility-apply-8o_t2b8f
