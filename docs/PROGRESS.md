@@ -1090,3 +1090,5 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **Packet** `/private/tmp/lark-visual-packet-928ec63c-HATXLh`: INDEX sha256 `2680d920…1da19c97`; 65 files / 187,181,308 B (49 PNG). Parent rehash 65/65 match. Stages: validate PASS 5/5; CPU turntables+materials ×3; cockpit/boarding/HP stills; native `#review:hulls/lark` ×3 — failures none. Canonical blend/glb unchanged (`68a32771…` / `e377daea…`). Promote HEAD `928ec63c59`; review-captures commit `5f422dfbe`.
 - Independent blind visual grade assigned (Models-and-environments rubric; Lark only). Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
 - Metadata retained under `docs/review-records/p1-e12-t02/lark-visual-packet-928ec63c/` (index `20261107-lark-visual-packet-928ec63c.json`); PNGs remain at packet root.
+- Blind visual Cursor/Opus attempt failed (weekly usage); failover to Grok `grok-4.7` on the same sealed packet (no grade produced by the failed attempt).
+
