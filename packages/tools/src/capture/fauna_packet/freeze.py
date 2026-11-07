@@ -1,4 +1,4 @@
-"""CPU-only freeze of routes/accounting. Does not import Playwright, Vite or ownership helpers."""
+"""CPU-only freeze. One self-identity probe imports the pinned helpers; no job/browser is launched."""
 import sys
 import os
 if not __debug__ or sys.flags.optimize != 0 or os.environ.get('PYTHONOPTIMIZE', '') not in ('', '0'):
@@ -18,7 +18,7 @@ spec = importlib.util.spec_from_file_location('fauna_caller', HERE / 'caller.py'
 caller = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(caller)
 
-HELPERS = Path('/Users/andreyyurlov/Documents/dev/space/.claude/worktrees/task-p1e11t01/assets/blend/stations/_authoring')
+HELPERS = ROOT / 'assets/blend/stations/_authoring'
 PINS = {
     'round4_job_boundary.py': '3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c',
     'round4_capture_children.py': 'e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07',
@@ -29,6 +29,17 @@ DECODER_PYTHON = Path('/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.2
 DECODER_SITE = Path('/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages')
 PRODUCT_REVIEW = Path('/Users/andreyyurlov/.codex/reviews/p1-e08-t09-2f36cdb2-source-rereview-sol/REVIEW.md')
 PRODUCT_REVIEW_SHA = '6305f73723f18b48da6e25be99100c6867c6d524ac5bd8ec2441eeb0a18a3fa4'
+PRODUCT_HEAD = 'd688579adf31c2a8ee9836495ba6b32708b99ccd'
+LEGACY_HEAD = '02248e6fc53bcaade146008f97bd83b6373af3d9'
+LEGACY_MANIFEST = ROOT / 'docs/review-records/p1-e08-t09-da01f7c6c/original-artifact-manifest.json'
+
+
+def unit_budget(images, common):
+    output = images * common['imagePerFileCapBytes'] + common['readoutCapBytes']
+    return {'imageCount': images, 'fileCount': images + 1, 'newOutputCapBytes': output,
+            'futureLfsAdditionalBytes': output, 'futureMainHydrationAdditionalBytes': output,
+            'oneUnitAdmissionBytes': output * 3 + common['controlledMetadataCapBytes'] + common['cacheSnapshotCapBytes']
+                                     + sum(common['nativeReservesAndObservedThresholds'].values())}
 
 
 def binding(path):
@@ -112,7 +123,7 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
     browser_libraries = list(browser_root.glob('*.dylib'))
     files = [Path('/usr/bin/git'), Path('/usr/sbin/lsof'), Path('/bin/ps'), Path('/bin/launchctl'), Path('/usr/bin/pmset')]
     files += [HELPERS / name for name in PINS]
-    files += native + browser_libraries + [PRODUCT_REVIEW] + [Path(v) for k, v in routes.items() if k != 'nodeVersion']
+    files += native + browser_libraries + [PRODUCT_REVIEW, LEGACY_MANIFEST] + [Path(v) for k, v in routes.items() if k != 'nodeVersion']
     files += [DECODER_PYTHON, core / 'lib/coreBundle.js', core / 'browsers.json']
     files += [ROOT / p for p in ('package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.base.json', 'packages/client/vite.config.js', 'packages/client/package.json', 'packages/shared/package.json', 'packages/tools/package.json')]
     tracked = subprocess.check_output(['/usr/bin/git', 'ls-files', '-z', 'packages/client/src', 'packages/client/public', 'packages/shared/src', 'packages/tools/src/capture'], cwd=ROOT).decode().split('\0')
@@ -122,27 +133,37 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
                      'packages/client/src/net/combat.js', 'packages/client/src/remote/RemoteEntities.js', 'packages/client/src/remote/replay.js',
                      'packages/tools/src/capture/capture.ts', 'packages/tools/src/capture/screens.ts']
     image_cap, metadata_cap, snapshot_cap = 16 * 1024**2, 64 * 1024**2, 64 * 1024**2
-    output_cap = 81 * image_cap + 16384
     # Native writers have no hard quota here. These are conservative reserves and observed stop thresholds.
     reserves = {'nativeProfileWorkingAndArchivePeak': 2 * 1024**3, 'privateTmpWorkingAndArchivePeak': 1024**3,
                 'helperLogWorkingAndArchivePeak': 128 * 1024**2, 'generatedCacheGrowth': 256 * 1024**2,
                 'filesystemMetadata': 16 * 1024**2, 'safetyReserveBytes': 1024**3}
-    legacy_files = caller.inventory(ROOT / 'assets/renders/ui/fauna-combat') + caller.inventory(ROOT / 'assets/renders/ui/fauna-combat-night')
-    caller.require(len(legacy_files) == 440, 'Legacy packet must remain exactly 440 artifacts')
+    budget = {'imagePerFileCapBytes': image_cap, 'readoutCapBytes': 16384,
+              'controlledMetadataCapBytes': metadata_cap, 'cacheSnapshotCapBytes': snapshot_cap,
+              'cacheSnapshotDeadlineSeconds': caller.CACHE_SNAPSHOT_SECONDS,
+              'outputCopyStagingBytes': 0, 'controlledImageTemporaryDiskBytes': 0,
+              'nativeReservesAndObservedThresholds': reserves, 'safetyReserveBytes': reserves['safetyReserveBytes'],
+              'nativeWritersHardBounded': False, 'allSixFitClaimed': False,
+              'accounting': 'Each unit: output + future LFS copy + future main hydration + controlled receipts + bounded cache copy + native working/archive reserves + safety. Existing bytes are reflected in free space; no image staging/archive copy. Fresh admission is required for each unit.'}
+    legacy = caller.legacy_binding(ROOT, '/usr/bin/git', LEGACY_HEAD)
+    legacy_files = caller.read_json(LEGACY_MANIFEST)
+    caller.require(legacy['files'] == len(legacy_files) == 440, 'Legacy packet must remain exactly 440 artifacts')
     workspace_links = [str(ROOT / 'packages' / name) for name in ('client', 'server', 'shared', 'tools')]
     caches = [str(ROOT / 'packages/client/node_modules/.vite'), str(ROOT / 'packages/client/node_modules/.vite-temp')]
     cache_owner_receipt = caller.cache_owners({'root': str(ROOT), 'uid': os.getuid(), 'generatedCaches': caches})
     initial_cache_bytes = sum(caller.observed_bytes(p) for p in caches)
     caller.require(initial_cache_bytes <= snapshot_cap, 'Pre-run cache snapshot exceeds cap')
     units = {}
-    for light in ('day', 'night'):
-        for aspect in ('16x9', '21x9'):
-            name = 'fauna-hit-turn-' + light + '-' + aspect
-            nonce = uuid.uuid4().hex
-            units[name] = {'screen': name, 'light': light, 'aspect': aspect, 'attemptId': nonce,
-                           'output': str(ROOT / 'assets/renders/ui' / ('fauna-packet-' + name + '-' + nonce)),
-                           'evidence': '/private/tmp/fhp-' + nonce, 'consumption': '/private/tmp/fhc-' + nonce + '.json'}
-    per_unit = output_cap * 3 + metadata_cap + snapshot_cap + sum(reserves.values())
+    screens = [('fauna-hit-turn-' + light + '-' + aspect, light, aspect, 'correction')
+               for light in ('day', 'night') for aspect in ('16x9', '21x9')]
+    screens += [('fauna-combat', 'day', '16x9', 'broad'), ('fauna-combat-night', 'night', '16x9', 'broad')]
+    for name, light, aspect, kind in screens:
+        nonce = uuid.uuid4().hex
+        units[name] = {'screen': name, 'light': light, 'aspect': aspect, 'kind': kind, 'attemptId': nonce,
+                       'inventory': {'stills': 14 if kind == 'broad' else 8, 'frames': 204 if kind == 'broad' else 72, 'sheets': 1, 'readouts': 1},
+                       'budget': unit_budget(219 if kind == 'broad' else 81, budget),
+                       'output': str(ROOT / 'assets/renders/ui' / ('fauna-packet-' + name + '-' + nonce)),
+                       'evidence': '/private/tmp/fhp-' + nonce, 'consumption': '/private/tmp/fhc-' + nonce + '.json',
+                       'grant': '/private/tmp/fhg-' + nonce + '.json', 'authorizationId': 'fauna-' + nonce}
     ready = {
         'runtimeEnabled': False, 'phase': 'CPU_CANDIDATE_PENDING_INDEPENDENT_CALLER_FIXTURE_REVIEW',
         'root': str(ROOT), 'uid': os.getuid(), 'python': str(Path(sys.executable).resolve()), 'pythonVersion': sys.version,
@@ -156,22 +177,14 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
         'decoderPython': str(DECODER_PYTHON.resolve()), 'decoderSite': str(DECODER_SITE),
         'decoderDependencies': caller.tree_binding(DECODER_SITE / 'PIL'),
         'productBindings': {p: caller.sha(ROOT / p) for p in product_names},
-        'reviewedCoreHead': '2f36cdb2d6bdd1f40428b6b48c2c27fddbdcfcae',
-        'priorProductSourceReview': {'verdict': 'PASS', 'path': str(PRODUCT_REVIEW), 'sha256': PRODUCT_REVIEW_SHA},
+        'productSourceHead': PRODUCT_HEAD, 'currentProductSourceReview': {'head': PRODUCT_HEAD, 'verdict': 'PASS', 'basis': 'Fresh source review PASS reported by parent; caller and runtime gates remain separate'},
+        'priorProductSourceReview': {'verdict': 'PASS', 'historicalOnly': True, 'head': '2f36cdb2d6bdd1f40428b6b48c2c27fddbdcfcae',
+                                    'path': str(PRODUCT_REVIEW), 'sha256': PRODUCT_REVIEW_SHA},
         'generatedCaches': caches, 'initialCacheBytes': initial_cache_bytes, 'cacheOwnerFreezeObservation': cache_owner_receipt,
-        'legacyFiles': legacy_files, 'legacyArtifactCount': 440, 'legacyBytesAlreadyOnDisk': sum(row['bytes'] for row in legacy_files),
-        'units': units,
-        'budget': {'imagePerFileCapBytes': image_cap, 'imageCount': 81, 'readoutCapBytes': 16384,
-                   'newOutputCapBytes': output_cap, 'controlledMetadataCapBytes': metadata_cap, 'cacheSnapshotCapBytes': snapshot_cap,
-                   'cacheSnapshotDeadlineSeconds': caller.CACHE_SNAPSHOT_SECONDS,
-                   'outputCopyStagingBytes': 0, 'controlledImageTemporaryDiskBytes': 0,
-                   'futureLfsAdditionalBytes': output_cap, 'futureMainHydrationAdditionalBytes': output_cap,
-                   'nativeReservesAndObservedThresholds': reserves, 'safetyReserveBytes': reserves['safetyReserveBytes'],
-                   'oneUnitAdmissionBytes': per_unit, 'fourUnitsConservativeBytes': 4 * (per_unit - reserves['safetyReserveBytes']) + reserves['safetyReserveBytes'],
-                   'nativeWritersHardBounded': False, 'allFourFitClaimed': False,
-                   'accounting': 'New output + future LFS object + future main hydration + controlled receipts + pre-run cache copy + native working/archive reserves + safety. Existing legacy/source/dependency bytes are already reflected in observed free space; no extra staging/output/archive image copy is requested.'},
-        'scope': {'stillsPerUnit': 8, 'framesPerUnit': 72, 'sheetsPerUnit': 1, 'readoutsPerUnit': 1,
-                  'totalProposed': {'stills': 32, 'frames': 288, 'sheets': 4, 'readouts': 4},
+        'legacyArchive': legacy, 'legacyArtifactCount': 440, 'legacyRecordedBytes': sum(row['bytes'] for row in legacy_files),
+        'legacyVerification': 'Retained Git/LFS object identities and recorded manifest; historical images not hydrated into this worktree',
+        'units': units, 'unitOrder': list(units), 'budget': budget,
+        'scope': {'totalProposed': {'stills': 60, 'frames': 696, 'sheets': 6, 'readouts': 6, 'files': 768},
                   'offlineReplayOnly': True, 'liveServerQualified': False, 'realTimeQualified': False},
         'nativeRoutes': ['StationJob Python worker via launchctl', 'caffeinate owned by StationJob', 'pinned Node + bound tsx esm API entry (no pnpm/shell route)',
                          'tsx esbuild service', 'Vite rolldown/lightningcss in-process native addons',
@@ -188,4 +201,4 @@ if __name__ == '__main__':
     with (HERE / 'readiness.json').open('x') as stream:
         json.dump(ready, stream, sort_keys=True, indent=2)
         stream.write('\n')
-    print(json.dumps({'runtimeEnabled': False, 'units': 4, 'oneUnitAdmissionBytes': ready['budget']['oneUnitAdmissionBytes']}))
+    print(json.dumps({'runtimeEnabled': False, 'unitOrder': ready['unitOrder'], 'perUnit': {name: ready['units'][name]['budget'] for name in ready['unitOrder']}}))

@@ -31,17 +31,81 @@ inspector = module('fauna_cpu_inspector', 'inspect.py')
 
 
 class CallerControls(unittest.TestCase):
+    def test_per_unit_budget_uses_219_images_for_broad_and_81_for_correction(self):
+        freeze = module('fauna_cpu_freeze', 'freeze.py')
+        common = caller.read_json(HERE / 'readiness.json')['budget']
+        correction = freeze.unit_budget(81, common)
+        broad = freeze.unit_budget(219, common)
+        self.assertEqual((correction['fileCount'], correction['newOutputCapBytes'], correction['oneUnitAdmissionBytes']), (82, 1358970880, 8925528064))
+        self.assertEqual((broad['fileCount'], broad['newOutputCapBytes'], broad['oneUnitAdmissionBytes']), (220, 3674226688, 15871295488))
+        for budget in (correction, broad):
+            self.assertEqual(budget['futureLfsAdditionalBytes'], budget['newOutputCapBytes'])
+            self.assertEqual(budget['futureMainHydrationAdditionalBytes'], budget['newOutputCapBytes'])
+
+    def test_retained_git_archive_detects_different_tree_without_hydrating_payloads(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
+            root = Path(temp)
+            def git(*args):
+                return subprocess.check_output(['/usr/bin/git', *args], cwd=root, stderr=subprocess.PIPE, text=True).strip()
+            git('init', '-q')
+            file = root / 'assets/renders/ui/fauna-combat/fixture.txt'
+            file.parent.mkdir(parents=True)
+            file.write_text('CPU archive fixture only')
+            git('add', '.')
+            git('-c', 'user.name=CPU fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'fixture')
+            pin = caller.legacy_binding(root, '/usr/bin/git', git('rev-parse', 'HEAD'))
+            ready = {'root': str(root), 'git': '/usr/bin/git', 'legacyArchive': pin}
+            self.assertEqual(pin['files'], 1)
+            caller.verify_legacy(ready)
+            file.write_text('different CPU archive fixture')
+            git('add', '.')
+            git('-c', 'user.name=CPU fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'changed')
+            caller.verify_legacy(ready)  # Its original immutable revision remains intact.
+            with self.assertRaisesRegex(caller.Refused, 'Git identities changed'):
+                caller.verify_legacy({**ready, 'legacyArchive': {**pin, 'commit': git('rev-parse', 'HEAD')}})
+            with self.assertRaisesRegex(caller.Refused, 'immutable commit'):
+                caller.legacy_binding(root, '/usr/bin/git', 'HEAD')
+
+    def test_fresh_attempt_grant_path_and_authorization_are_bound_before_allocation(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
+            grant = Path(temp) / 'grant.json'
+            grant.write_text('{"authorizationId":"cpu-only"}')
+            spec = {'grant': str(grant.resolve()), 'authorizationId': 'cpu-only'}
+            ready = {'runtimeEnabled': True, 'root': temp, 'git': '/usr/bin/git'}
+            for changed in ({'grant': str(grant) + '.wrong'}, {'authorizationId': 'wrong'}):
+                with self.subTest(changed=changed), patch.object(caller, 'grant_gate', return_value={**spec, **changed}), patch.object(caller.subprocess, 'check_output', return_value='head'), patch.object(caller, 'verify_bindings', side_effect=AssertionError('verification reached')), patch.object(caller, 'persist', side_effect=AssertionError('allocation reached')):
+                    with self.assertRaisesRegex(caller.Refused, 'Grant attempt identity changed'):
+                        caller.consume(ready, 'cpu-only', str(grant))
+
+    def test_actual_disabled_entry_has_no_subprocess_helper_import_or_allocation(self):
+        script = '''import sys, runpy
+def audit(event, args):
+    if event in ('subprocess.Popen', 'os.posix_spawn', 'os.fork', 'os.mkdir'):
+        raise AssertionError('disabled entry attempted allocation: ' + event)
+    if event == 'import' and args[0] in ('round4_job_boundary', 'round4_capture_children', 'run_round4_browser_proof', 'run_round4_remaining8'):
+        raise AssertionError('disabled entry imported an ownership helper')
+sys.addaudithook(audit)
+sys.argv = [sys.argv[1], '--execute', sys.argv[2], '--grant', '/nonexistent-cpu-control-grant']
+runpy.run_path(sys.argv[0], run_name='__main__')
+'''
+        python = caller.read_json(HERE / 'readiness.json')['python']
+        for unit in ['fauna-hit-turn-' + light + '-' + aspect for light in ('day', 'night') for aspect in ('16x9', '21x9')] + ['fauna-combat', 'fauna-combat-night']:
+            result = subprocess.run([python, '-I', '-B', '-c', script, str(HERE / 'caller.py'), unit], capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 2, result.stderr + result.stdout)
+            self.assertIn('Readiness is disabled; no helper import/allocation permitted', result.stderr)
+
     def test_disabled_before_grant_helper_or_allocation(self):
         with patch.object(caller, 'read_json', side_effect=AssertionError('grant read')), patch.object(caller.importlib, 'import_module', side_effect=AssertionError('helper import')), patch.object(caller, 'persist', side_effect=AssertionError('allocation')):
             with self.assertRaisesRegex(caller.Refused, 'Readiness is disabled'):
                 caller.consume({'runtimeEnabled': False}, 'unit', '/nonexistent-grant')
 
     def test_real_python_optimization_and_compiled_optimization(self):
+        python = caller.read_json(HERE / 'readiness.json')['python']
         for target in ('caller.py', 'freeze.py'):
             for flags, optimization in (([], '1'), ([], '2'), (['-O'], '0'), (['-OO'], '0')):
                 with self.subTest(target=target, flags=flags, environment=optimization):
                     env = {**os.environ, 'PYTHONOPTIMIZE': optimization, 'PYTHONDONTWRITEBYTECODE': '1'}
-                    result = subprocess.run([sys.executable, '-B', *flags, str(HERE / target)], env=env, capture_output=True, text=True, timeout=5)
+                    result = subprocess.run([python, '-B', *flags, str(HERE / target)], env=env, capture_output=True, text=True, timeout=5)
                     self.assertNotEqual(result.returncode, 0)
                     self.assertIn('Optimized Python is refused', result.stderr)
             for optimization in (1, 2):
@@ -54,7 +118,7 @@ class CallerControls(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
             review = Path(temp) / 'review.json'
             review.write_text('CPU test review, not a native runtime grant\n')
-            ready = {'runtimeEnabled': True, 'units': {'first': {'screen': 'first'}, 'second': {'evidence': temp}}}
+            ready = {'runtimeEnabled': True, 'units': {'second': {'evidence': temp}, 'first': {'screen': 'first'}}, 'unitOrder': ['first', 'second']}
             grant = {'purpose': 'FAUNA_ONE_SCREEN_VISUAL_REPLAY_ONLY', 'oneUse': True, 'authorizationId': 'cpu-test',
                      'readinessSha256': 'frozen', 'authorizedHead': 'head', 'unit': 'first', 'nativeReservesAccepted': True,
                      'callerReview': {'verdict': 'PASS', 'path': str(review), 'sha256': caller.sha(review)},
@@ -257,7 +321,41 @@ def synthetic_turn():
     return observations, {'frames': frames, 'events': [{'frame': i, 'amount': value, 'consumed': True} for i, value in script]}
 
 
+def synthetic_broad():
+    # Small software-decoded controls, never visual evidence.
+    hits = [(603, 12), (603, 18), (603, 9), (602, 21), (999, 11), (603, 15), (603, 24), (603, 31)]
+    events = [{'kind': 'combat', 'target': target, 'amount': amount, 'killed': i == 7} for i, (target, amount) in enumerate(hits)]
+    events += [{'kind': 'xp', 'amount': 30}, {'kind': 'loot', 'item': 'units', 'count': 7}, {'kind': 'loot', 'item': 'units', 'count': 7}]
+    rows = [{'path': '_frames/%03d.jpg' % i, 'after': {'phase': 'fight', 'clipTime': (i + 1) / 60,
+             'target': {'id': 603, 'incarnation': 1, 'visible': True}, 'numbers': [], 'events': [], 'takes': []}} for i in range(204)]
+    rows[-1]['after'].update(events=[{'phase': 'fight', 'event': event} for event in events],
+                             takes=[{'phase': 'fight', 'returned': {'dealt': [event for event in events if event['kind'] == 'combat' and event['target'] != 999],
+                                     'taken': [{'source': 602, 'amount': 11}], 'gained': [{'what': 'xp', 'count': 30}, {'what': 'units', 'count': 7}, {'what': 'units', 'count': 7}]}}])
+    return rows, 'HUD frame cost over 204 frames: CPU SYNTHETIC CONTROL ONLY\nframes over 1 ms: none'
+
+
 class InspectorControls(unittest.TestCase):
+    def test_broad_actual_frames_and_feed_are_required(self):
+        observations, readout = synthetic_broad()
+        inspector.broad_oracle(observations, readout)
+        for bad in ('clock', 'event', 'consumption', 'damage', 'reward', 'readout'):
+            rows = copy.deepcopy(observations)
+            text = readout
+            if bad == 'clock':
+                rows[100]['after']['clipTime'] = 0
+            elif bad == 'event':
+                rows[-1]['after']['events'][-1]['event']['kind'] = 'xp'
+            elif bad == 'consumption':
+                rows[-1]['after']['takes'] = []
+            elif bad == 'damage':
+                rows[-1]['after']['takes'][0]['returned']['taken'] = []
+            elif bad == 'reward':
+                rows[-1]['after']['takes'][0]['returned']['gained'].pop()
+            else:
+                text = text.replace('204', '72')
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                inspector.broad_oracle(rows, text)
+
     def test_actual_frame_and_feed_receipts_are_required(self):
         observations, trace = synthetic_turn()
         inspector.turn_oracle(observations, trace)
@@ -317,24 +415,32 @@ class InspectorControls(unittest.TestCase):
                         inspector.decode_image(file, (8, 6), fmt)
 
     def test_complete_synthetic_packet_has_no_missing_extra_or_unbound_output(self):
+        self.check_complete_synthetic_packet('correction')
+
+    def test_complete_broad_synthetic_packet_has_219_decoded_images(self):
+        self.check_complete_synthetic_packet('broad')
+
+    def check_complete_synthetic_packet(self, kind):
         from PIL import Image
+        broad = kind == 'broad'
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
             base = Path(temp)
             output, evidence = base / 'output', base / 'evidence'
             output.mkdir(); evidence.mkdir(); (output / '_frames').mkdir()
-            unit = 'fauna-hit-turn-day-16x9'
-            ready = {'units': {unit: {'light': 'day', 'aspect': '16x9', 'output': str(output), 'evidence': str(evidence)}}, 'productBindings': {'cpuFixtureOnly': '0' * 64}}
-            rows, trace = synthetic_turn()
-            names = ['16x9' + suffix + '.png' for suffix in ('', '-kill', '-offscreen', '-start')]
-            names += ['_frames/%03d.jpg' % i for i in range(72)] + ['readout.txt', 'clip-sheet.png']
-            names += ['21x9' + suffix + '.png' for suffix in ('', '-kill', '-offscreen', '-start')]
+            unit = 'fauna-combat' if broad else 'fauna-hit-turn-day-16x9'
+            ready = {'units': {unit: {'kind': kind, 'light': 'day', 'aspect': '16x9', 'output': str(output), 'evidence': str(evidence)}}, 'productBindings': {'cpuFixtureOnly': '0' * 64}}
+            rows, trace = synthetic_broad() if broad else synthetic_turn()
+            suffixes = ('', '-numbers', '-kill', '-flash', '-analysis', '-offscreen', '-start') if broad else ('', '-kill', '-offscreen', '-start')
+            names = ['16x9' + suffix + '.png' for suffix in suffixes]
+            names += ['_frames/%03d.jpg' % i for i in range(204 if broad else 72)] + ['readout.txt', 'clip-sheet.png']
+            names += ['21x9' + suffix + '.png' for suffix in suffixes]
             writes, observations, cache = [], [], {}
             for ordinal, name in enumerate(names):
                 width = 2520 if name.startswith('21x9') else 1920
                 if name == 'readout.txt':
-                    data = ('CPU SYNTHETIC CONTROL ONLY\n' + json.dumps(trace) + '\n').encode()
+                    data = ((trace if broad else 'CPU SYNTHETIC CONTROL ONLY\n' + json.dumps(trace)) + '\n').encode()
                 else:
-                    dimensions = (2400, 1228) if name == 'clip-sheet.png' else (width, 1080)
+                    dimensions = (2400, 1526 if broad else 1228) if name == 'clip-sheet.png' else (width, 1080)
                     fmt = 'JPEG' if name.endswith('.jpg') else 'PNG'
                     key = dimensions, fmt
                     if key not in cache:
@@ -348,10 +454,10 @@ class InspectorControls(unittest.TestCase):
                     continue
                 if name.startswith('_frames/'):
                     raw = copy.deepcopy(rows[int(Path(name).stem)]['after'])
-                    raw['phase'] = 'turn'
+                    raw['phase'] = 'fight' if broad else 'turn'
                 else:
                     raw = {'phase': 'base', 'target': {'id': 602, 'incarnation': 1, 'visible': True}, 'numbers': [], 'events': [], 'takes': []}
-                    if '-kill' in name:
+                    if '-kill' in name and not broad:
                         viewport = [width, 1080]
                         raw.update(phase='kill', target={'id': 606, 'incarnation': 2, 'visible': True}, numbers=[{'target': 606, 'incarnation': 2, 'sameRecord': True, 'value': '26'}])
                         raw['flyer'] = {'offlineReplay': True, 'target': 606, 'speciesKind': 'flyer', 'beforeMode': 'fly', 'mode': 'dead', 'viewport': viewport,
@@ -367,7 +473,7 @@ class InspectorControls(unittest.TestCase):
                         events = [{'target': target, 'amount': value} for target, value in ((602, 17), (603, 23), (602, 9))]
                         raw['events'] = [{'phase': 'offscreen', 'event': {**event, 'kind': 'combat'}} for event in events]
                         raw['takes'] = [{'phase': 'offscreen', 'returned': {'dealt': events}}]
-                raw.update(viewport=[width, 1080], canvas=[width, 1080], gameTime=0, clipTime=None)
+                raw.update(viewport=[width, 1080], canvas=[width, 1080], gameTime=0, clipTime=raw.get('clipTime'))
                 observations.append({'ordinal': ordinal, 'path': name, 'sha256': inspector.digest(data), 'sourceBindings': ready['productBindings'], 'before': copy.deepcopy(raw), 'after': raw})
             def save(name, value):
                 (evidence / name).write_text(json.dumps(value))
@@ -380,8 +486,8 @@ class InspectorControls(unittest.TestCase):
                 save('page-source-%d.json' % page, {'actual': methods, 'expectedMethods': methods})
             (evidence / 'capture-observations.jsonl').write_text(''.join(json.dumps(row) + '\n' for row in observations))
             accepted = inspector.inspect(ready, unit)
-            self.assertEqual(accepted['decodedImages'], 81)
-            self.assertLess(accepted['outputBytes'], 4 * 1024**2)
+            self.assertEqual(accepted['decodedImages'], 219 if broad else 81)
+            self.assertLess(accepted['outputBytes'], (12 if broad else 4) * 1024**2)
             (output / 'extra.png').write_bytes(b'x')
             with self.assertRaisesRegex(ValueError, 'Missing/extra'):
                 inspector.inspect(ready, unit)

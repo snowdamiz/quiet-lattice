@@ -1,8 +1,8 @@
 # P1.E08.T09 capture preparation
 
-This candidate is disabled. CPU checks and a frozen readiness file do not authorize a browser, GPU, native capture, Docker, or service launch. The next gate is a fresh source/caller review followed by an explicit root grant for one screen.
+This candidate is disabled. CPU checks and a frozen readiness file do not authorize a browser, GPU, native capture, Docker, or service launch. Parent reports fresh source review PASS for product commit `d688579adf31c2a8ee9836495ba6b32708b99ccd`. Caller review, live QA, capture acceptance and independent visual grading are separate gates. The next capture gate is a fresh caller review followed by an explicit parent grant for one screen after QA releases the GPU and caches.
 
-The new fixture keeps the standard `captureUi` route, starts its own loopback Vite server with HMR and watchers off, and captures four declared screens in sequence: day 16:9, day 21:9, night 16:9, night 21:9. Each screen has eight stills, 72 manual frames, one contact sheet and one readout: 82 files per screen, 328 proposed files total. The existing 440-file `fauna-combat` / `fauna-combat-night` packet is bound byte for byte and preserved.
+The new fixture keeps the standard `captureUi` route, starts its own loopback Vite server with HMR and watchers off, and captures six declared screens in the explicit `unitOrder` below. The four correction screens remain 82 files each. The two broad screens use the unchanged existing `fauna-combat` / `fauna-combat-night` definitions, 220 files each: 768 proposed files total. The historical 440-file packet remains on retained Git ref `02248e6fc53bcaade146008f97bd83b6373af3d9`, bound by its exact Git/LFS tree identities plus the recorded artifact manifest. Those historical images are neither hydrated here nor evidence for current-source visual grading.
 
 The turn consumes hits at frames 0/4/8, turns at 12–29, consumes three offscreen hits at 30, returns at 32–51, requires no old numbers at 52, and consumes a fresh hit at 54. The new kill still replays flyer 606's encoded authoritative death and consumes gold damage 26 through `CombatFeed`. Near 700 ms, it records the actual instance matrix, published fauna anchor, camera and live HUD number. The independent inspector projects the actual matrix; it does not reproduce the fall formula. Default legacy `HERD_KILLS` still kills walker 601.
 
@@ -12,19 +12,33 @@ The turn consumes hits at frames 0/4/8, turns at 12–29, consumes three offscre
 
 Each cache copy read is limited by the inventoried file length and remaining aggregate snapshot capacity; actual writes consume that capacity. A one-byte EOF probe rejects growth without writing the extra byte. Final source/copy inventories must still equal the original inventory. A separate 30-second deadline covers snapshot inventory, copying and verification. A failure retains the partial copy and source, and publishes no successful `cache-before.json` receipt.
 
-The readiness budget distinguishes enforced controlled-write caps from observed native stop thresholds. One unit reserves 81 image files × 16 MiB plus a 16 KiB readout, a future LFS copy, a future main hydration copy, 64 MiB controlled metadata (32 MiB each for Node/Python), 64 MiB pre-run cache snapshot capacity, profile/TMP/log working-and-archive reserves, generated cache growth, filesystem metadata and a 1 GiB safety reserve. Image staging and image archive copies are zero because none is requested. Native profile, TMP, cache and helper writers have no OS quota; observations may overshoot and cannot establish hard disk bounds. No all-four-fit claim is made. Every unit receives fresh disk admission and stops on its first failure.
+The readiness budget distinguishes enforced controlled-write caps from observed native stop thresholds. Each unit reserves its actual image count (81 correction or 219 broad) × 16 MiB plus a 16 KiB readout, an equal future LFS copy and an equal future main hydration copy, 64 MiB controlled metadata (32 MiB each for Node/Python), 64 MiB pre-run cache snapshot capacity, profile/TMP/log working-and-archive reserves, generated cache growth, filesystem metadata and a 1 GiB safety reserve. Image staging and image archive copies are zero because none is requested. Native profile, TMP, cache and helper writers have no OS quota; observations may overshoot and cannot establish hard disk bounds. No all-six-fit claim is made. Every unit receives fresh disk admission and stops on its first failure.
 
-Before runtime, root must review this complete candidate, record a PASS review path/hash, explicitly enable readiness, and grant a single declared screen against the exact enabled-readiness SHA and current clean HEAD. The grant must include `purpose: FAUNA_ONE_SCREEN_VISUAL_REPLAY_ONLY`, `oneUse: true`, `authorizationId` matching `FAUNA_CAPTURE_GRANT`, `readinessSha256`, `authorizedHead`, `unit`, `nativeReservesAccepted: true`, `callerReview: {verdict: PASS, path, sha256}`, `previousUnitsAccepted` in declared order, and a future timezone-aware `expiresUtc`. Exclusive consumption remains used after any failure. Later units require accepted prior-unit receipts and a clean worktree. Failure or interrupted ownership requires review/recovery; this candidate has no retry loop.
+Before runtime, root must review this complete candidate, record a PASS review path/hash, explicitly enable readiness, and grant a single declared screen against the exact enabled-readiness SHA and current clean HEAD. The grant must include `purpose: FAUNA_ONE_SCREEN_VISUAL_REPLAY_ONLY`, `oneUse: true`, `authorizationId` matching both its frozen unit identity and `FAUNA_CAPTURE_GRANT`, `readinessSha256`, `authorizedHead`, `unit`, `nativeReservesAccepted: true`, `callerReview: {verdict: PASS, path, sha256}`, `previousUnitsAccepted` in declared order, and a future timezone-aware `expiresUtc`. The grant file must be at that unit's frozen `grant` path. Exclusive consumption remains used after any failure. Later units require accepted prior-unit receipts and a clean worktree. Failure or interrupted ownership requires review/recovery; this candidate has no retry loop.
 
-CPU verification:
+Recovery and rebinding are separate commits. `6245e5ffb68f4bd4b1baf66a2cf4f4e3806e4482` recovers exactly eight `fauna_packet` files from `02248e6fc53bcaade146008f97bd83b6373af3d9` and exactly four unchanged station helper files from `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9`. Compare the following caller commit against that recovery commit to review only rebinding and the broad inventory/inspection extension. The helper pins in `freeze.py` remain unchanged. Historical readiness, spent grants and failure records remain immutable on the retained branch. Current runtime client/server/shared/smoke source remains identical to `d688579ad`.
+
+Runtime order and per-screen budgets (bytes):
+
+| Order | Screen | Stills / frames / sheet / readout | Output cap | Admission |
+| --- | --- | --- | ---: | ---: |
+| 1 | fauna-hit-turn-day-16x9 | 8 / 72 / 1 / 1 | 1,358,970,880 | 8,925,528,064 |
+| 2 | fauna-hit-turn-day-21x9 | 8 / 72 / 1 / 1 | 1,358,970,880 | 8,925,528,064 |
+| 3 | fauna-hit-turn-night-16x9 | 8 / 72 / 1 / 1 | 1,358,970,880 | 8,925,528,064 |
+| 4 | fauna-hit-turn-night-21x9 | 8 / 72 / 1 / 1 | 1,358,970,880 | 8,925,528,064 |
+| 5 | fauna-combat | 14 / 204 / 1 / 1 | 3,674,226,688 | 15,871,295,488 |
+| 6 | fauna-combat-night | 14 / 204 / 1 / 1 | 3,674,226,688 | 15,871,295,488 |
+
+Admission = three output copies (output, future LFS, future main hydration) + 67,108,864 metadata + 67,108,864 cache snapshot + 2,147,483,648 profile working/archive + 1,073,741,824 private TMP working/archive + 134,217,728 helper log working/archive + 268,435,456 cache growth + 16,777,216 filesystem metadata + 1,073,741,824 safety. Staging and extra image archive copies remain zero. The supervisor retains its 600-second capture, 60-second cleanup and 45-second decoder deadlines. A separate 30-second deadline and 64 MiB hard cap cover the cache copy. `--check` reports each unit's admission against current free space; execution repeats admission for the selected unit, serially.
+
+Each fresh output/evidence/grant/consumption identity is recorded in `readiness.json`; no grant or output directory is created during preparation. The broad inspector reuses full byte/order/source/viewport/decoder checks, requires all 204 manual frame clocks and combat-feed events/consumption, and checks the existing HUD readout. Its observation journal has a 16 MiB cap within the unchanged 32 MiB Node metadata cap (correction journal cap stays 2 MiB). Broad stills deliberately hold DOM clones from the existing fixtures, so their numbers, flash, toasts and codex banner require independent pixel grading; packet acceptance alone does not provide that grade.
+
+CPU verification (from this worktree; no browser or capture):
 
 ```sh
-pnpm typecheck
-pnpm test
-pnpm gate:removed
 node --test packages/tools/src/capture/fauna_packet/controls.mjs
-PYTHONPATH=/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -B packages/tools/src/capture/fauna_packet/controls.py
-python3 -B packages/tools/src/capture/fauna_packet/caller.py --check
+/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -I -B -c 'import sys,runpy; sys.path.insert(0,"/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages"); runpy.run_path("packages/tools/src/capture/fauna_packet/controls.py",run_name="__main__")'
+python3 -I -B -c 'import json,os,subprocess; p="packages/tools/src/capture/fauna_packet/"; r=json.load(open(p+"readiness.json")); subprocess.run([r["python"],"-I","-B",p+"caller.py","--check"],cwd=r["root"],env={**os.environ,"PATH":r["path"]},check=True)'
 ```
 
-The Python controls use small synthetic oracle/decoder fixtures solely to prove rejection behavior. They are never capture evidence. Native smoke/e2e and the task's two-client online herd check remain deferred to separately admitted QA.
+The Python controls use small synthetic oracle/decoder fixtures solely to prove rejection behavior. They are never capture evidence. The parent schedules two-client fauna-online QA through the existing smoke harness and explicit private services. No new QA wrapper is introduced. Do not finalize cache admission until QA terminal cleanup; later cache drift is admitted and copied afresh under the existing caps.

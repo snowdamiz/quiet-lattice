@@ -14,12 +14,14 @@ export const requireFact = (ok, message) => {
   if (!ok) throw Error(message);
 };
 
-export function outputPlan(aspect) {
+export function outputPlan(aspect, kind = 'correction') {
+  requireFact(kind === 'correction' || (kind === 'broad' && aspect === '16x9'), 'Unexpected capture inventory');
   const result = [];
   for (const tag of ['16x9', '21x9']) {
-    for (const name of ['', '-kill', '-offscreen', '-start']) result.push(`${tag}${name}.png`);
+    const names = kind === 'broad' ? ['', '-numbers', '-kill', '-flash', '-analysis', '-offscreen', '-start'] : ['', '-kill', '-offscreen', '-start'];
+    for (const name of names) result.push(`${tag}${name}.png`);
     if (tag === aspect) {
-      for (let i = 0; i < 72; i++) result.push(`_frames/${String(i).padStart(3, '0')}.jpg`);
+      for (let i = 0; i < (kind === 'broad' ? 204 : 72); i++) result.push(`_frames/${String(i).padStart(3, '0')}.jpg`);
       result.push('readout.txt', 'clip-sheet.png');
     }
   }
@@ -35,11 +37,11 @@ export function controlledWrite(output, plan, writes, file, data, maximum = 16 *
   writes.push({ path: relative, bytes: bytes.length, sha256: sha(bytes) });
 }
 
-function installAudit() {
+function installAudit(kind) {
   const w = window,
     g = w.game,
     feed = w.__feed;
-  const audit = (w.__faunaPacketAudit = { phase: 'base', events: [], takes: [], identities: new WeakMap(), next: 0 });
+  const audit = (w.__faunaPacketAudit = { kind, phase: 'base', events: [], takes: [], identities: new WeakMap(), next: 0 });
   audit.identity = (r) => {
     if (!r) return null;
     if (!audit.identities.has(r)) audit.identities.set(r, ++audit.next);
@@ -86,7 +88,8 @@ function samplePage() {
   const w = window,
     g = w.game,
     a = w.__faunaPacketAudit;
-  const r = g.remotes.get(a.phase === 'kill' ? 606 : 602);
+  const broadTarget = { base: 601, numbers: 601, kill: 601, flash: 601, analysis: 605, offscreen: 602, start: 603, fight: 603 };
+  const r = g.remotes.get(a.kind === 'broad' ? broadTarget[a.phase] : a.phase === 'kill' ? 606 : 602);
   return {
     phase: a.phase,
     viewport: [innerWidth, innerHeight],
@@ -111,7 +114,7 @@ function samplePage() {
   };
 }
 
-export function validateSample(raw, relative, aspect) {
+export function validateSample(raw, relative, aspect, kind = 'correction') {
   const width = relative.startsWith('21x9') || (relative.startsWith('_frames/') && aspect === '21x9') ? 2520 : 1920;
   requireFact(
     JSON.stringify(raw.viewport) === JSON.stringify([width, 1080]) && JSON.stringify(raw.canvas) === JSON.stringify(raw.viewport),
@@ -131,6 +134,13 @@ export function validateSample(raw, relative, aspect) {
         !raw.target.visible,
       'Offscreen events/consumption/suppression missing',
     );
+  }
+  if (kind === 'broad') {
+    if (relative.startsWith('_frames/')) {
+      const frame = Number(path.basename(relative, '.jpg'));
+      requireFact(raw.phase === 'fight' && Math.abs(raw.clipTime - (frame + 1) / 60) < 0.000001, 'Actual broad frame/time mismatch');
+    }
+    return; // Broad stills deliberately hold DOM clones; independent visual grading inspects their pixels.
   }
   if (relative.includes('-kill')) {
     requireFact(
@@ -178,7 +188,7 @@ export async function main() {
   for (const b of ready.bindings) requireFact(fs.realpathSync(b.path) === b.realpath && sha(fs.readFileSync(b.path)) === b.sha256, 'Input drift: ' + b.path);
   const evidence = spec.evidence,
     output = spec.output,
-    plan = outputPlan(spec.aspect),
+    plan = outputPlan(spec.aspect, spec.kind),
     writes = [];
   let metadataBytes = 0;
   const metadata = (name, value, append = false) => {
@@ -238,7 +248,7 @@ export async function main() {
           true,
         );
         requireFact(before.gameTime === after.gameTime && before.clipTime === after.clipTime, 'Game advanced during screenshot');
-        validateSample(after, relative, spec.aspect);
+        validateSample(after, relative, spec.aspect, spec.kind);
         controlledWrite(output, plan, writes, options.path, bytes);
         return bytes;
       };
@@ -262,14 +272,17 @@ export async function main() {
     const def = SCREENS[unit],
       open = def.open,
       motion = def.motion;
+    const broad = spec.kind === 'broad';
     requireFact(
-      def.clipSeconds === 1.2 && def.clipAspect === spec.aspect && JSON.stringify(Object.keys(def.stills)) === '["kill","offscreen","start"]',
+      def.clipSeconds === (broad ? 3.4 : 1.2) &&
+        (def.clipAspect ?? '16x9') === spec.aspect &&
+        JSON.stringify(Object.keys(def.stills)) === (broad ? '["numbers","kill","flash","analysis","offscreen","start"]' : '["kill","offscreen","start"]'),
       'Reviewed work definition changed',
     );
     requireFact(!def.crops?.length && !def.stills16x9 && !def.expectedErrors?.length, 'Unexpected extra capture/error exemptions');
     def.open = async (page) => {
       await open(page);
-      const methods = await page.evaluate(installAudit);
+      const methods = await page.evaluate(installAudit, spec.kind);
       const actual = Object.fromEntries(Object.entries(methods).map(([name, source]) => [name, canonical(source)]));
       metadata(`page-source-${pages}.json`, { expectedMethods, actual });
       requireFact(JSON.stringify(actual) === JSON.stringify(expectedMethods), 'Actual page method identity differs from pinned source');
@@ -282,15 +295,18 @@ export async function main() {
         await pose(page);
       };
     def.motion = async (page) => {
-      await page.evaluate(() => {
-        window.__faunaPacketAudit.phase = 'turn';
-      });
+      await page.evaluate(
+        (phase) => {
+          window.__faunaPacketAudit.phase = phase;
+        },
+        broad ? 'fight' : 'turn',
+      );
       await motion(page);
     };
     const { captureUi } = await import(pathToFileURL(path.join(ready.root, 'packages/tools/src/capture/capture.ts')).href);
     returned = await captureUi(unit, output);
     metadata('returned-entry-outcome.json', { returned, writes, pages, launched });
-    requireFact(writes.length === 82 && pages === 2 && launched === 1, 'Incomplete one-screen output');
+    requireFact(writes.length === plan.length && pages === 2 && launched === 1, 'Incomplete one-screen output');
     for (const b of ready.bindings) requireFact(sha(fs.readFileSync(b.path)) === b.sha256, 'Source changed during capture');
   } catch (e) {
     error = { name: e.name, message: e.message };

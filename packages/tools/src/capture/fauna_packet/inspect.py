@@ -96,19 +96,47 @@ def decode_image(file, dimensions, image_format):
         check(image.mode in ('RGB', 'RGBA'), 'Unexpected screenshot pixel mode')
 
 
+def broad_oracle(observations, readout):
+    frames = [row['after'] for row in observations if row['path'].startswith('_frames/')]
+    check(len(frames) == 204, 'Broad fight requires 204 actual frames')
+    for i, raw in enumerate(frames):
+        check(raw['phase'] == 'fight' and abs(raw['clipTime'] - (i + 1) / 60) < 0.000001, 'Broad actual frame clock/order differs')
+    final = frames[-1]
+    events = [row['event'] for row in final['events'] if row['phase'] == 'fight']
+    check([event['kind'] for event in events] == ['combat'] * 8 + ['xp', 'loot', 'loot'], 'Broad fight event sequence differs')
+    dealt = [event for event in events if event['kind'] == 'combat' and event['target'] in (602, 603)]
+    check([(event['target'], event['amount'], event['killed']) for event in dealt] ==
+          [(603, 12, False), (603, 18, False), (603, 9, False), (602, 21, False), (603, 15, False), (603, 24, False), (603, 31, True)], 'Broad fight hits differ')
+    consumed = [event for take in final['takes'] if take['phase'] == 'fight' for event in take['returned']['dealt']]
+    check([(event['target'], event['amount'], event['killed']) for event in consumed] ==
+          [(event['target'], event['amount'], event['killed']) for event in dealt], 'Broad fight consumption differs')
+    taken = [event for take in final['takes'] if take['phase'] == 'fight' for event in take['returned']['taken']]
+    gained = [event for take in final['takes'] if take['phase'] == 'fight' for event in take['returned']['gained']]
+    check([(event['source'], event['amount']) for event in taken] == [(602, 11)], 'Broad incoming damage consumption differs')
+    check([(event['what'], event['count']) for event in gained] == [('xp', 30), ('units', 7), ('units', 7)], 'Broad XP/loot consumption differs')
+    check(readout.startswith('HUD frame cost over 204 frames:') and '\nframes over 1 ms:' in readout, 'Broad HUD readout missing')
+
+
 def inspect(ready, unit):
     from PIL import Image, ImageFile
     ImageFile.LOAD_TRUNCATED_IMAGES = False
     Image.MAX_IMAGE_PIXELS = 4_000_000
     spec = ready['units'][unit]
     output, evidence = Path(spec['output']), Path(spec['evidence'])
-    check(unit == 'fauna-hit-turn-' + spec['light'] + '-' + spec['aspect'], 'Wrong screen identity')
+    broad = spec['kind'] == 'broad'
+    check(spec['kind'] in ('broad', 'correction'), 'Wrong capture kind')
+    if broad:
+        check(unit == ('fauna-combat' if spec['light'] == 'day' else 'fauna-combat-night') and spec['aspect'] == '16x9', 'Wrong broad screen identity')
+    else:
+        check(unit == 'fauna-hit-turn-' + spec['light'] + '-' + spec['aspect'], 'Wrong screen identity')
+    frames, stills = (204, 14) if broad else (72, 8)
     expected = []
     # Construct independently of the entry's outputPlan.
     for aspect in ('16x9', '21x9'):
-        expected.extend(aspect + suffix + '.png' for suffix in ('', '-kill', '-offscreen', '-start'))
+        suffixes = ('', '-numbers', '-kill', '-flash', '-analysis', '-offscreen', '-start') if broad else ('', '-kill', '-offscreen', '-start')
+        expected.extend(aspect + suffix + '.png' for suffix in suffixes)
         if aspect == spec['aspect']:
-            expected.extend('_frames/%03d.jpg' % i for i in range(72))
+            expected.extend('_frames/%03d.jpg' % i for i in range(frames))
             expected.extend(('readout.txt', 'clip-sheet.png'))
     actual = []
     for p in output.rglob('*'):
@@ -117,7 +145,7 @@ def inspect(ready, unit):
             check(p == output / '_frames', 'Unexpected output directory')
         if p.is_file():
             actual.append(str(p.relative_to(output)))
-    check(sorted(actual) == sorted(expected) and len(actual) == 82, 'Missing/extra output/count')
+    check(sorted(actual) == sorted(expected) and len(actual) == stills + frames + 2, 'Missing/extra output/count')
     result = load(evidence / 'entry-result.json')
     check(result['accepted'] is True and result['primaryFailure'] is None and result['unit'] == unit and result['pages'] == 2 and result['launched'] == 1, 'Raw entry outcome refused')
     check([x['path'] for x in result['writes']] == expected, 'Output writes reordered/incomplete')
@@ -129,10 +157,10 @@ def inspect(ready, unit):
         methods = load(evidence / ('page-source-%d.json' % page))
         check(methods['actual'] == methods['expectedMethods'] == sources['expectedMethods'], 'Actual page/source method mismatch')
     observations_path = evidence / 'capture-observations.jsonl'
-    check(observations_path.stat().st_size <= 2 * 1024 * 1024, 'Observation journal exceeds cap')
+    check(observations_path.stat().st_size <= (16 if broad else 2) * 1024 * 1024, 'Observation journal exceeds cap')
     observations = [json.loads(row) for row in observations_path.read_text().splitlines()]
     photo_paths = [name for name in expected if name not in ('clip-sheet.png', 'readout.txt')]
-    check([r['path'] for r in observations] == photo_paths and len(observations) == 80, 'Missing/reordered actual observations')
+    check([r['path'] for r in observations] == photo_paths and len(observations) == stills + frames, 'Missing/reordered actual observations')
     total = 0
     for index, name in enumerate(expected):
         file = output / name
@@ -145,7 +173,7 @@ def inspect(ready, unit):
         if name == 'readout.txt':
             continue
         if name == 'clip-sheet.png':
-            dimensions = (2400, 1228 if spec['aspect'] == '16x9' else 972)
+            dimensions = (2400, 1526 if broad else 1228 if spec['aspect'] == '16x9' else 972)
         else:
             width = 2520 if name.startswith('21x9') or name.startswith('_frames/') and spec['aspect'] == '21x9' else 1920
             dimensions = (width, 1080)
@@ -158,7 +186,7 @@ def inspect(ready, unit):
         check(row['sha256'] == digest((output / name).read_bytes()), 'Observation image binding differs')
         check(raw['viewport'] == raw['canvas'] == viewport and row['before']['gameTime'] == raw['gameTime'] and row['before']['clipTime'] == raw['clipTime'], 'Actual viewport/time changed during screenshot')
         check(all(n['sameRecord'] is True and isinstance(n['incarnation'], int) for n in raw['numbers']), 'HUD number changed incarnation')
-        if '-kill' in name:
+        if '-kill' in name and not broad:
             flyer_oracle(raw['flyer'], viewport)
             events = [x for x in raw['events'] if x['phase'] == 'kill' and x['event']['kind'] == 'combat']
             consumed = [x for take in raw['takes'] if take['phase'] == 'kill' for x in take['returned']['dealt']]
@@ -167,13 +195,16 @@ def inspect(ready, unit):
             events = [x for x in raw['events'] if x['phase'] == 'offscreen' and x['event']['kind'] == 'combat']
             consumed = [x for take in raw['takes'] if take['phase'] == 'offscreen' for x in take['returned']['dealt']]
             check([(x['event']['target'], x['event']['amount']) for x in events] == [(602, 17), (603, 23), (602, 9)] and [(x['target'], x['amount']) for x in consumed] == [(602, 17), (603, 23), (602, 9)] and not raw['numbers'] and not raw['target']['visible'], 'Offscreen event/take/suppression differs')
-        if name.startswith('_frames/'):
+        if name.startswith('_frames/') and not broad:
             i = int(Path(name).stem)
             check(raw['phase'] == 'turn' and raw['traceFrame']['frame'] == i and abs(raw['traceFrame']['ms'] - (i + 1) * 1000 / 60) < 0.001, 'Actual frame clock/order differs')
             check(raw['target']['id'] == 602 and (raw['target']['visible'] or not raw['numbers']), 'Actual turn target association lost')
-    trace = json.loads((output / 'readout.txt').read_text().splitlines()[1])
-    turn_oracle(observations, trace)
-    return {'accepted': True, 'unit': unit, 'stills': 8, 'frames': 72, 'sheets': 1, 'readouts': 1, 'decodedImages': 81,
+    readout = (output / 'readout.txt').read_text()
+    if broad:
+        broad_oracle(observations, readout)
+    else:
+        turn_oracle(observations, json.loads(readout.splitlines()[1]))
+    return {'accepted': True, 'unit': unit, 'stills': stills, 'frames': frames, 'sheets': 1, 'readouts': 1, 'decodedImages': stills + frames + 1,
             'outputBytes': total, 'scope': 'OFFLINE_VISUAL_REPLAY_ONLY', 'realTimeOrServerQualification': False}
 
 

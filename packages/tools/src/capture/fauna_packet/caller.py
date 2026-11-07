@@ -81,6 +81,21 @@ def inventory(root):
     return rows
 
 
+def legacy_binding(root, git, commit):
+    """Bind retained artifact trees without hydrating or copying historical LFS payloads."""
+    require(re.fullmatch(r'[0-9a-f]{40}', commit) is not None, 'Legacy revision must be an immutable commit')
+    data = subprocess.check_output([git, 'ls-tree', '-r', '-z', '--full-tree', commit, '--',
+                                    'assets/renders/ui/fauna-combat', 'assets/renders/ui/fauna-combat-night'],
+                                   cwd=root, timeout=10)
+    return {'commit': commit, 'treeListingSha256': hashlib.sha256(data).hexdigest(),
+            'files': len([row for row in data.split(b'\0') if row])}
+
+
+def verify_legacy(ready):
+    pin = ready['legacyArchive']
+    require(legacy_binding(ready['root'], ready['git'], pin['commit']) == pin, 'Legacy artifact Git identities changed')
+
+
 def tree_binding(root, workspace_links=()):
     """Hash all dependency bytes and symlink routes, without following directory links."""
     base = Path(root).resolve()
@@ -130,7 +145,7 @@ def cache_owners(ready):
     return {'taskLocalRealpaths': ready['generatedCaches'], 'openCacheOwners': [], 'conflictingTaskLocalViteOwners': []}
 
 
-def verify_bindings(ready):
+def verify_bindings(ready, unit=None):
     require(str(Path(sys.executable).resolve()) == ready['python'], 'Python route changed')
     require(os.environ.get('PATH') == ready['path'], 'Launcher PATH changed')
     require(os.environ.get('NODE_OPTIONS', '') == '', 'Inherited NODE_OPTIONS refused')
@@ -144,12 +159,14 @@ def verify_bindings(ready):
     for key in ('dependencies', 'decoderDependencies'):
         pin = ready[key]
         require(tree_binding(pin['path'], pin['workspaceLinks']) == pin, key + ' bytes/routes changed')
-    require(inventory(Path(ready['root']) / 'assets/renders/ui/fauna-combat') + inventory(Path(ready['root']) / 'assets/renders/ui/fauna-combat-night') == ready['legacyFiles'], 'Legacy 440 artifacts changed')
+    verify_legacy(ready)
     caches = cache_owners(ready)
     free = shutil.disk_usage(ready['root']).free
-    require(free >= ready['budget']['oneUnitAdmissionBytes'], 'Fresh disk below one-unit accounting')
-    return {'status': 'CPU_BINDINGS_ONLY_RUNTIME_DISABLED', 'freeBytesObserved': free,
-            'oneUnitAdmissionBytes': ready['budget']['oneUnitAdmissionBytes'], 'fourUnitsQualified': False, 'caches': caches}
+    admissions = {name: ready['units'][name]['budget']['oneUnitAdmissionBytes'] for name in ready['unitOrder']}
+    required = admissions[unit] if unit is not None else max(admissions.values())
+    require(free >= required, 'Fresh disk below one-unit accounting')
+    return {'status': 'CPU_BINDINGS_ONLY', 'runtimeEnabled': ready['runtimeEnabled'], 'freeBytesObserved': free,
+            'perUnitAdmissionBytes': admissions, 'checkedUnit': unit, 'allSixQualified': False, 'caches': caches}
 
 
 def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorization):
@@ -162,7 +179,7 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
     require(grant.get('nativeReservesAccepted') is True, 'Native reserves are not hard bounds and need explicit admission')
     review = grant.get('callerReview', {})
     require(review.get('verdict') == 'PASS' and Path(review.get('path', '')).is_file() and sha(review['path']) == review.get('sha256'), 'Independent caller review missing/drifted')
-    require(grant.get('previousUnitsAccepted') == list(ready['units'])[:list(ready['units']).index(unit)], 'Units must be admitted sequentially; no retry or continuation after failure')
+    require(grant.get('previousUnitsAccepted') == ready['unitOrder'][:ready['unitOrder'].index(unit)], 'Units must be admitted sequentially; no retry or continuation after failure')
     for previous in grant['previousUnitsAccepted']:
         require(read_json(Path(ready['units'][previous]['evidence']) / 'result.json')['accepted'] is True, 'Previous unit was not accepted')
     expiry = datetime.datetime.fromisoformat(grant['expiresUtc'])
@@ -177,8 +194,9 @@ def consume(ready, unit, grant_path):
     grant = read_json(grant_path, 16384)
     head = subprocess.check_output([ready['git'], 'rev-parse', 'HEAD'], cwd=ready['root'], text=True, timeout=5).strip()
     spec = grant_gate(ready, unit, grant, sha(READY), head, os.environ.get('FAUNA_CAPTURE_GRANT'))
+    require(str(Path(grant_path).resolve()) == spec['grant'] and grant['authorizationId'] == spec['authorizationId'], 'Grant attempt identity changed')
     require(not subprocess.check_output([ready['git'], 'status', '--porcelain'], cwd=ready['root'], text=True, timeout=5).strip(), 'Worktree is not clean')
-    verify_bindings(ready)
+    verify_bindings(ready, unit)
     for key in ('output', 'evidence', 'consumption'):
         p = Path(spec[key])
         require(p.is_absolute() and p.resolve() == p and not p.exists() and not p.is_symlink(), 'Fresh identity already used: ' + str(p))
@@ -351,7 +369,7 @@ def run_unit(ready, spec, record):
         result['raw']['inspection'] = json.loads(decoded.stdout)
         result['raw']['persistenceFailures'] = result['persistenceFailures']
         accept_outcome(result['raw'])
-        require(inventory(Path(ready['root']) / 'assets/renders/ui/fauna-combat') + inventory(Path(ready['root']) / 'assets/renders/ui/fauna-combat-night') == ready['legacyFiles'], 'Legacy artifacts changed during capture')
+        verify_legacy(ready)
         persist(evidence / 'accepted-evidence.json', result['raw'])
         result['accepted'] = True
     except BaseException as error:
@@ -370,7 +388,7 @@ def main():
     optimization_guard()
     p = argparse.ArgumentParser()
     p.add_argument('--check', action='store_true')
-    p.add_argument('--execute', choices=['fauna-hit-turn-' + light + '-' + aspect for light in ('day', 'night') for aspect in ('16x9', '21x9')])
+    p.add_argument('--execute', choices=['fauna-hit-turn-' + light + '-' + aspect for light in ('day', 'night') for aspect in ('16x9', '21x9')] + ['fauna-combat', 'fauna-combat-night'])
     p.add_argument('--grant')
     args = p.parse_args()
     ready = read_json(READY)
