@@ -1,0 +1,25 @@
+{
+  "status": "CPU_EXECUTED_REVIEW_SCENE_PREPARED_WITH_GAPS",
+  "resource": {
+    "exit": 0,
+    "peak_rss": 464240640,
+    "seconds": 3.0758267920464277
+  },
+  "render_budget": "43/48 conservative, zero new renders",
+  "source_unchanged": true,
+  "next_capture": [
+    "Select seated or individual boarding REVIEW collection with body_grid_colliders; inspect closed canopy",
+    "Select three_liveries, hide original source collections; uniform world lighting, same camera and scale",
+    "Select individual Canopy/GearAssembly diagnostic sample; inspect recorded triangle overlaps",
+    "Select HP module samples; local envelope is proxy, not actual equipment"
+  ],
+  "gaps": [
+    "245 boarding-near mesh islands measured; tread/rail semantic identification still required, adjacent island spacing is NOT certified rung pitch",
+    "Socket envelope uses nearby actual Body vertices within 0.65m, not authored socket dimensions",
+    "Production rig not loaded; anthropometric proxy only",
+    "Diagnostic angles do not establish authored mechanical limits",
+    "Original full verdict not found in this checkout; round4 metadata/hash read",
+    "Glyph finish unchanged; whole-shell denominator unresolved; only prior 19.64% dorsal claim retained"
+  ],
+  "scene": "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/tools/blender/hulls/lark-round5/scratch/capture-preparation.blend"
+}

@@ -1,0 +1,6188 @@
+{
+  "source_sha256": "ce23f092fcae26d83f7be5d280043beb9f7ef2f4967289fa23670686398a3bc6",
+  "qualification": "REVIEW_PREPARATION_ONLY",
+  "limits": [
+    "Triangle overlaps detect surface intersections, not containment or continuous motion.",
+    "Nearest vertex distances are unsigned sampled upper bounds on minimum separation.",
+    "Diagnostic articulation angles are not authored runtime limits."
+  ],
+  "setups": {},
+  "source_meshes": [
+    "Body",
+    "Lens_Strobes",
+    "CanopyGlass",
+    "CanopyFrame",
+    "LandingMechanismMesh",
+    "CockpitMechanismMesh"
+  ],
+  "ladder_islands": [
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -2.9526515007019043,
+        0.949999988079071,
+        -1.7574493885040283
+      ],
+      "bounds": [
+        [
+          -2.9981727600097656,
+          0.6100000143051147,
+          -1.8102355003356934
+        ],
+        [
+          -2.907130241394043,
+          1.2899999618530273,
+          -1.7046632766723633
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.8692951202392578,
+        1.0,
+        -1.4500000476837158
+      ],
+      "bounds": [
+        [
+          -1.9292950630187988,
+          0.7900000214576721,
+          -1.46750009059906
+        ],
+        [
+          -1.8092951774597168,
+          1.2100000381469727,
+          -1.4325000047683716
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -2.857954502105713,
+        0.949999988079071,
+        -1.3723485469818115
+      ],
+      "bounds": [
+        [
+          -2.903475761413574,
+          0.6100000143051147,
+          -1.4251346588134766
+        ],
+        [
+          -2.8124330043792725,
+          1.2899999618530273,
+          -1.3195624351501465
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.8342950344085693,
+        0.8400000333786011,
+        -1.1549999713897705
+      ],
+      "bounds": [
+        [
+          -1.8871697187423706,
+          0.8244115114212036,
+          -1.4521207809448242
+        ],
+        [
+          -1.7814204692840576,
+          0.8555884957313538,
+          -0.8578792810440063
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.8342950344085693,
+        1.159999966621399,
+        -1.1549999713897705
+      ],
+      "bounds": [
+        [
+          -1.8871697187423706,
+          1.144411563873291,
+          -1.4521207809448242
+        ],
+        [
+          -1.7814204692840576,
+          1.1755883693695068,
+          -0.8578792810440063
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -2.7632575035095215,
+        0.949999988079071,
+        -0.9872474670410156
+      ],
+      "bounds": [
+        [
+          -2.808778762817383,
+          0.6100000143051147,
+          -1.0400335788726807
+        ],
+        [
+          -2.71773624420166,
+          1.2899999618530273,
+          -0.9344612956047058
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.795039176940918,
+        1.276107668876648,
+        -0.7719642519950867
+      ],
+      "bounds": [
+        [
+          -2.1318929195404053,
+          -0.09924393892288208,
+          -0.8736058473587036
+        ],
+        [
+          -1.4581855535507202,
+          2.651459217071533,
+          -0.6703226566314697
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.8792951107025146,
+        1.0,
+        -0.6800000071525574
+      ],
+      "bounds": [
+        [
+          -1.949295163154602,
+          0.800000011920929,
+          -0.7150000333786011
+        ],
+        [
+          -1.8092950582504272,
+          1.2000000476837158,
+          -0.6449999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.8992950916290283,
+        1.0,
+        -0.6399999856948853
+      ],
+      "bounds": [
+        [
+          -1.9492950439453125,
+          0.8199999928474426,
+          -0.6474999785423279
+        ],
+        [
+          -1.8492951393127441,
+          1.1800000667572021,
+          -0.6324999928474426
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.0,
+        0.0017049014568328857,
+        -0.6286827325820923
+      ],
+      "bounds": [
+        [
+          -2.065999984741211,
+          -0.8022955060005188,
+          -0.71524977684021
+        ],
+        [
+          -1.934000015258789,
+          0.8057053089141846,
+          -0.5421156883239746
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.0,
+        0.0023519396781921387,
+        -0.6208534240722656
+      ],
+      "bounds": [
+        [
+          -2.065999984741211,
+          -0.8016472458839417,
+          -0.715269148349762
+        ],
+        [
+          -1.934000015258789,
+          0.8063511252403259,
+          -0.5264376401901245
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.0,
+        0.800000011920929,
+        -0.6078686118125916
+      ],
+      "bounds": [
+        [
+          -2.0818400382995605,
+          0.7221655249595642,
+          -0.6897085905075073
+        ],
+        [
+          -1.9181599617004395,
+          0.8778344988822937,
+          -0.5260286331176758
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -2.66856050491333,
+        0.9499999284744263,
+        -0.6021465063095093
+      ],
+      "bounds": [
+        [
+          -2.7140817642211914,
+          0.6099998950958252,
+          -0.6549325585365295
+        ],
+        [
+          -2.6230392456054688,
+          1.2899999618530273,
+          -0.5493603944778442
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.0,
+        0.800000011920929,
+        -0.6000000238418579
+      ],
+      "bounds": [
+        [
+          -2.06593918800354,
+          0.7340607047080994,
+          -0.6118701100349426
+        ],
+        [
+          -1.9340606927871704,
+          0.8659393191337585,
+          -0.5881298780441284
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.0,
+        0.800000011920929,
+        -0.5921313762664795
+      ],
+      "bounds": [
+        [
+          -2.092400074005127,
+          0.71212238073349,
+          -0.6845313906669617
+        ],
+        [
+          -1.9076000452041626,
+          0.8878776431083679,
+          -0.4997313618659973
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.5999999046325684,
+        -0.42183297872543335,
+        -0.5898776054382324
+      ],
+      "bounds": [
+        [
+          -3.235191583633423,
+          -0.8558350205421448,
+          -0.7152717113494873
+        ],
+        [
+          -1.9648083448410034,
+          0.012169081717729568,
+          -0.46448343992233276
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.8744906187057495,
+        1.2935221195220947,
+        -0.5864031314849854
+      ],
+      "bounds": [
+        [
+          -2.186237096786499,
+          -0.0923369824886322,
+          -0.6881044507026672
+        ],
+        [
+          -1.562744140625,
+          2.6793811321258545,
+          -0.4847017824649811
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.0,
+        -0.0017049014568328857,
+        -0.5715243816375732
+      ],
+      "bounds": [
+        [
+          -2.065999984741211,
+          -0.8057053089141846,
+          -0.6580914258956909
+        ],
+        [
+          -1.934000015258789,
+          0.8022955060005188,
+          -0.4849573075771332
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.5999999046325684,
+        0.378167062997818,
+        -0.569043755531311
+      ],
+      "bounds": [
+        [
+          -3.237959146499634,
+          -0.09765763580799103,
+          -0.6738667488098145
+        ],
+        [
+          -1.962040901184082,
+          0.8539917469024658,
+          -0.46422079205513
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.5999999046325684,
+        0.378167062997818,
+        -0.5601354837417603
+      ],
+      "bounds": [
+        [
+          -3.237959146499634,
+          -0.09765763580799103,
+          -0.6581220030784607
+        ],
+        [
+          -1.962040901184082,
+          0.8539917469024658,
+          -0.4621489644050598
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -2.5999999046325684,
+        -0.2796263098716736,
+        -0.5431638360023499
+      ],
+      "bounds": [
+        [
+          -3.2576897144317627,
+          -1.3913135528564453,
+          -0.6581169366836548
+        ],
+        [
+          -1.9423103332519531,
+          0.8320609331130981,
+          -0.4282107353210449
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -3.200000047683716,
+        -0.04366593062877655,
+        -0.5297935605049133
+      ],
+      "bounds": [
+        [
+          -3.2871201038360596,
+          -0.1265219748020172,
+          -0.6169135570526123
+        ],
+        [
+          -3.112879991531372,
+          0.03919010981917381,
+          -0.44267356395721436
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -3.200000047683716,
+        -0.04366593807935715,
+        -0.5287911891937256
+      ],
+      "bounds": [
+        [
+          -3.2659380435943604,
+          -0.10960449278354645,
+          -0.5338107943534851
+        ],
+        [
+          -3.1340620517730713,
+          0.022272620350122452,
+          -0.5237716436386108
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -3.200000047683716,
+        -0.04366593062877655,
+        -0.5277888774871826
+      ],
+      "bounds": [
+        [
+          -3.2871201038360596,
+          -0.1265219748020172,
+          -0.6149088740348816
+        ],
+        [
+          -3.112879991531372,
+          0.03919010981917381,
+          -0.44066888093948364
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -2.5738635063171387,
+        0.9499999284744263,
+        -0.2170456200838089
+      ],
+      "bounds": [
+        [
+          -2.619385004043579,
+          0.6099998950958252,
+          -0.2698315978050232
+        ],
+        [
+          -2.5283422470092773,
+          1.2899999618530273,
+          -0.1642596423625946
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.9174772500991821,
+        1.0,
+        -0.014999998733401299
+      ],
+      "bounds": [
+        [
+          -2.01747727394104,
+          0.8100000023841858,
+          -0.044999998062849045
+        ],
+        [
+          -1.8174772262573242,
+          1.190000057220459,
+          0.015000000596046448
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.9174772500991821,
+        1.0,
+        0.020000001415610313
+      ],
+      "bounds": [
+        [
+          -1.9974772930145264,
+          0.8299999833106995,
+          0.01400000136345625
+        ],
+        [
+          -1.837477207183838,
+          1.1699999570846558,
+          0.026000000536441803
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.6572463512420654,
+        1.7980132102966309,
+        0.027258411049842834
+      ],
+      "bounds": [
+        [
+          -2.090996265411377,
+          -0.0015731980092823505,
+          -0.42813411355018616
+        ],
+        [
+          -1.2234965562820435,
+          3.597599506378174,
+          0.4826509356498718
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -1.9482786655426025,
+        0.6100000143051147,
+        0.16948705911636353
+      ],
+      "bounds": [
+        [
+          -3.2513506412506104,
+          0.578000009059906,
+          -1.567092776298523
+        ],
+        [
+          -0.6452067494392395,
+          0.6420000195503235,
+          1.90606689453125
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -1.9482786655426025,
+        1.2899999618530273,
+        0.16948705911636353
+      ],
+      "bounds": [
+        [
+          -3.2513506412506104,
+          1.2579998970031738,
+          -1.567092776298523
+        ],
+        [
+          -0.6452067494392395,
+          1.3220000267028809,
+          1.90606689453125
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.20000000298023224,
+        1.5,
+        0.25
+      ],
+      "bounds": [
+        [
+          -0.3100000023841858,
+          1.409999966621399,
+          0.2150000035762787
+        ],
+        [
+          -0.09000000357627869,
+          1.590000033378601,
+          0.2849999964237213
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.20000000298023224,
+        1.75,
+        0.25
+      ],
+      "bounds": [
+        [
+          -0.3100000023841858,
+          1.659999966621399,
+          0.2150000035762787
+        ],
+        [
+          -0.09000000357627869,
+          1.840000033378601,
+          0.2849999964237213
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.20000000298023224,
+        1.5,
+        0.25
+      ],
+      "bounds": [
+        [
+          0.09000000357627869,
+          1.409999966621399,
+          0.2150000035762787
+        ],
+        [
+          0.3100000023841858,
+          1.590000033378601,
+          0.2849999964237213
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.20000000298023224,
+        1.75,
+        0.25
+      ],
+      "bounds": [
+        [
+          0.09000000357627869,
+          1.659999966621399,
+          0.2150000035762787
+        ],
+        [
+          0.3100000023841858,
+          1.840000033378601,
+          0.2849999964237213
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.5199999809265137,
+        0.30000001192092896
+      ],
+      "bounds": [
+        [
+          -0.6200000047683716,
+          0.5600000023841858,
+          0.2800000011920929
+        ],
+        [
+          0.6200000047683716,
+          2.4800000190734863,
+          0.320000022649765
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.8100000023841858,
+        0.328000009059906
+      ],
+      "bounds": [
+        [
+          -0.3720000088214874,
+          0.6599999666213989,
+          0.320000022649765
+        ],
+        [
+          0.3720000088214874,
+          0.9600000381469727,
+          0.335999995470047
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.2833333015441895,
+        0.328000009059906
+      ],
+      "bounds": [
+        [
+          -0.3720000088214874,
+          1.1333333253860474,
+          0.320000022649765
+        ],
+        [
+          0.3720000088214874,
+          1.4333332777023315,
+          0.335999995470047
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.756666660308838,
+        0.328000009059906
+      ],
+      "bounds": [
+        [
+          -0.3720000088214874,
+          1.6066666841506958,
+          0.320000022649765
+        ],
+        [
+          0.3720000088214874,
+          1.90666663646698,
+          0.335999995470047
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        2.2300000190734863,
+        0.328000009059906
+      ],
+      "bounds": [
+        [
+          -0.3720000088214874,
+          2.0799999237060547,
+          0.320000022649765
+        ],
+        [
+          0.3720000088214874,
+          2.380000114440918,
+          0.335999995470047
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.7111488580703735,
+        1.0,
+        0.38499999046325684
+      ],
+      "bounds": [
+        [
+          -1.8111488819122314,
+          0.8100000023841858,
+          0.35499998927116394
+        ],
+        [
+          -1.6111488342285156,
+          1.190000057220459,
+          0.41499999165534973
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.7111488580703735,
+        1.0,
+        0.41999998688697815
+      ],
+      "bounds": [
+        [
+          -1.7911489009857178,
+          0.8299999833106995,
+          0.4139999747276306
+        ],
+        [
+          -1.6311488151550293,
+          1.1699999570846558,
+          0.4259999990463257
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.12999999523162842,
+        2.180000066757202,
+        0.4399999976158142
+      ],
+      "bounds": [
+        [
+          -0.17999999225139618,
+          2.1137354373931885,
+          0.35918086767196655
+        ],
+        [
+          -0.07999999821186066,
+          2.246264696121216,
+          0.5208191275596619
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.12999999523162842,
+        2.180000066757202,
+        0.4399999976158142
+      ],
+      "bounds": [
+        [
+          0.07999999821186066,
+          2.1137354373931885,
+          0.35918086767196655
+        ],
+        [
+          0.17999999225139618,
+          2.246264696121216,
+          0.5208191275596619
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.12999999523162842,
+        2.1893999576568604,
+        0.44745934009552
+      ],
+      "bounds": [
+        [
+          -0.16999998688697815,
+          2.1373212337493896,
+          0.38292834162712097
+        ],
+        [
+          -0.08999999612569809,
+          2.241478681564331,
+          0.5119903087615967
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.12999999523162842,
+        2.1893999576568604,
+        0.44745934009552
+      ],
+      "bounds": [
+        [
+          0.08999999612569809,
+          2.1373212337493896,
+          0.38292834162712097
+        ],
+        [
+          0.16999998688697815,
+          2.241478681564331,
+          0.5119903087615967
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.8799999952316284,
+        0.47999995946884155
+      ],
+      "bounds": [
+        [
+          -0.2750000059604645,
+          0.6150000095367432,
+          0.41499999165534973
+        ],
+        [
+          0.2750000059604645,
+          1.1449999809265137,
+          0.5449999570846558
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.1799999475479126,
+        0.5199999809265137
+      ],
+      "bounds": [
+        [
+          -0.1599999964237213,
+          0.9999999403953552,
+          0.3199999928474426
+        ],
+        [
+          0.1599999964237213,
+          1.3599998950958252,
+          0.7199999690055847
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -2.384469509124756,
+        0.9499999284744263,
+        0.5531564354896545
+      ],
+      "bounds": [
+        [
+          -2.429990768432617,
+          0.6099998950958252,
+          0.5003702640533447
+        ],
+        [
+          -2.3389482498168945,
+          1.2899999618530273,
+          0.6059426069259644
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.8799999952316284,
+        0.6100000143051147
+      ],
+      "bounds": [
+        [
+          -0.10999999940395355,
+          1.7300000190734863,
+          0.39000004529953003
+        ],
+        [
+          0.10999999940395355,
+          2.0299999713897705,
+          0.8299999833106995
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.495530366897583,
+        1.1256722211837769,
+        0.6247892379760742
+      ],
+      "bounds": [
+        [
+          -1.8872934579849243,
+          -0.4835817813873291,
+          0.29080235958099365
+        ],
+        [
+          -1.1037671566009521,
+          2.734926223754883,
+          0.9587761759757996
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.6700000166893005,
+        0.6299999952316284
+      ],
+      "bounds": [
+        [
+          -0.23000000417232513,
+          0.6175000071525574,
+          0.5874999761581421
+        ],
+        [
+          0.23000000417232513,
+          0.7225000262260437,
+          0.6725000143051147
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        2.0799999237060547,
+        0.6399999856948853
+      ],
+      "bounds": [
+        [
+          -0.20000000298023224,
+          1.8799998760223389,
+          0.3700000047683716
+        ],
+        [
+          0.20000000298023224,
+          2.2799999713897705,
+          0.9099999666213989
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.459999918937683,
+        0.6499999761581421
+      ],
+      "bounds": [
+        [
+          -0.5799999833106995,
+          1.0099999904632568,
+          0.31999996304512024
+        ],
+        [
+          -0.3199999928474426,
+          1.9099998474121094,
+          0.9800000190734863
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44999998807907104,
+        1.459999918937683,
+        0.6499999761581421
+      ],
+      "bounds": [
+        [
+          0.3199999928474426,
+          1.0099999904632568,
+          0.31999996304512024
+        ],
+        [
+          0.5799999833106995,
+          1.9099998474121094,
+          0.9800000190734863
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.6000000238418579,
+        1.5199999809265137,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          -0.6200000047683716,
+          0.5600000023841858,
+          0.320000022649765
+        ],
+        [
+          -0.5800000429153442,
+          2.4800000190734863,
+          1.0199999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5699999928474426,
+        0.6599999666213989,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          -0.5899999737739563,
+          0.6349999904632568,
+          0.3500000238418579
+        ],
+        [
+          -0.550000011920929,
+          0.684999942779541,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5699999928474426,
+        1.0649999380111694,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          -0.5899999737739563,
+          1.0399999618530273,
+          0.3500000238418579
+        ],
+        [
+          -0.550000011920929,
+          1.0899999141693115,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5699999928474426,
+        1.4700000286102295,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          -0.5899999737739563,
+          1.4450000524520874,
+          0.3500000238418579
+        ],
+        [
+          -0.550000011920929,
+          1.4950000047683716,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5699999928474426,
+        1.875,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          -0.5899999737739563,
+          1.850000023841858,
+          0.3500000238418579
+        ],
+        [
+          -0.550000011920929,
+          1.899999976158142,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5699999928474426,
+        2.2799999713897705,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          -0.5899999737739563,
+          2.254999876022339,
+          0.3500000238418579
+        ],
+        [
+          -0.550000011920929,
+          2.305000066757202,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.6000000238418579,
+        1.5199999809265137,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          0.5800000429153442,
+          0.5600000023841858,
+          0.320000022649765
+        ],
+        [
+          0.6200000047683716,
+          2.4800000190734863,
+          1.0199999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5699999928474426,
+        0.6599999666213989,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          0.550000011920929,
+          0.6349999904632568,
+          0.3500000238418579
+        ],
+        [
+          0.5899999737739563,
+          0.684999942779541,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5699999928474426,
+        1.0649999380111694,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          0.550000011920929,
+          1.0399999618530273,
+          0.3500000238418579
+        ],
+        [
+          0.5899999737739563,
+          1.0899999141693115,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5699999928474426,
+        1.4700000286102295,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          0.550000011920929,
+          1.4450000524520874,
+          0.3500000238418579
+        ],
+        [
+          0.5899999737739563,
+          1.4950000047683716,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5699999928474426,
+        1.875,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          0.550000011920929,
+          1.850000023841858,
+          0.3500000238418579
+        ],
+        [
+          0.5899999737739563,
+          1.899999976158142,
+          0.9900000095367432
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.5299999713897705,
+        0.6700000166893005
+      ],
+      "bounds": [
+        [
+          -0.05999999865889549,
+          1.4700000286102295,
+          0.6200000047683716
+        ],
+        [
+          0.05999999865889549,
+          1.5899999141693115,
+          0.7200000286102295
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.1799999475479126,
+        0.7300000190734863
+      ],
+      "bounds": [
+        [
+          -0.25999999046325684,
+          0.9299999475479126,
+          0.6899999976158142
+        ],
+        [
+          0.25999999046325684,
+          1.4299999475479126,
+          0.7700000405311584
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.725000023841858,
+        0.7400000095367432
+      ],
+      "bounds": [
+        [
+          -0.07999999821186066,
+          1.718999981880188,
+          0.7200000286102295
+        ],
+        [
+          0.07999999821186066,
+          1.7310000658035278,
+          0.7599999904632568
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.6700000166893005,
+        0.75
+      ],
+      "bounds": [
+        [
+          -0.23000000417232513,
+          0.6175000071525574,
+          0.7074999809265137
+        ],
+        [
+          0.23000000417232513,
+          0.7225000262260437,
+          0.7925000190734863
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5400000214576721,
+        1.409999966621399,
+        0.7799999713897705
+      ],
+      "bounds": [
+        [
+          -0.6600000262260437,
+          0.8849999904632568,
+          0.6299999952316284
+        ],
+        [
+          -0.42000001668930054,
+          1.934999942779541,
+          0.9299999475479126
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5400000214576721,
+        1.409999966621399,
+        0.7799999713897705
+      ],
+      "bounds": [
+        [
+          0.42000001668930054,
+          0.8849999904632568,
+          0.6299999952316284
+        ],
+        [
+          0.6600000262260437,
+          1.934999942779541,
+          0.9299999475479126
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.4371974468231201,
+        1.0,
+        0.7850000262260437
+      ],
+      "bounds": [
+        [
+          -1.537197470664978,
+          0.8100000023841858,
+          0.7550000548362732
+        ],
+        [
+          -1.3371974229812622,
+          1.190000057220459,
+          0.8149999976158142
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.1799999475479126,
+        0.7900000214576721
+      ],
+      "bounds": [
+        [
+          -0.23000000417232513,
+          0.9499999284744263,
+          0.7600000500679016
+        ],
+        [
+          0.23000000417232513,
+          1.409999966621399,
+          0.8199999928474426
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.5799999833106995,
+        0.7950000166893005
+      ],
+      "bounds": [
+        [
+          -0.6200000047683716,
+          0.5600000023841858,
+          0.320000022649765
+        ],
+        [
+          0.6200000047683716,
+          0.5999999642372131,
+          1.2699999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.725000023841858,
+        0.8100000023841858
+      ],
+      "bounds": [
+        [
+          -0.07999999821186066,
+          1.718999981880188,
+          0.7900000214576721
+        ],
+        [
+          0.07999999821186066,
+          1.7310000658035278,
+          0.8299999833106995
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.4371974468231201,
+        1.0,
+        0.8199999928474426
+      ],
+      "bounds": [
+        [
+          -1.5171974897384644,
+          0.8299999833106995,
+          0.8140000104904175
+        ],
+        [
+          -1.3571974039077759,
+          1.1699999570846558,
+          0.8259999752044678
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.5299999713897705,
+        0.8200000524520874
+      ],
+      "bounds": [
+        [
+          -0.014000000432133675,
+          1.5159999132156372,
+          0.7100000381469727
+        ],
+        [
+          0.014000000432133675,
+          1.5440000295639038,
+          0.9300000071525574
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.9739999771118164,
+        0.8230000138282776
+      ],
+      "bounds": [
+        [
+          -0.20800000429153442,
+          0.9699999690055847,
+          0.8195359110832214
+        ],
+        [
+          0.20800000429153442,
+          0.9779999852180481,
+          0.8264641165733337
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.20800000429153442,
+        1.1800000667572021,
+        0.8230000138282776
+      ],
+      "bounds": [
+        [
+          0.20400001108646393,
+          0.9739999771118164,
+          0.8195359110832214
+        ],
+        [
+          0.21199999749660492,
+          1.3860000371932983,
+          0.8264641165733337
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.3860000371932983,
+        0.8230000138282776
+      ],
+      "bounds": [
+        [
+          -0.20800000429153442,
+          1.3820000886917114,
+          0.8195359110832214
+        ],
+        [
+          0.20800000429153442,
+          1.3899999856948853,
+          0.8264641165733337
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.20800000429153442,
+        1.1800000667572021,
+        0.8230000138282776
+      ],
+      "bounds": [
+        [
+          -0.21199999749660492,
+          0.9739999771118164,
+          0.8195359110832214
+        ],
+        [
+          -0.20400001108646393,
+          1.3860000371932983,
+          0.8264641165733337
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.3700000047683716,
+        0.8299999833106995
+      ],
+      "bounds": [
+        [
+          -0.03999999910593033,
+          1.350000023841858,
+          0.8050000071525574
+        ],
+        [
+          0.03999999910593033,
+          1.3899999856948853,
+          0.8549999594688416
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.120015025138855,
+        -0.20153486728668213,
+        0.8542577028274536
+      ],
+      "bounds": [
+        [
+          -2.076326370239258,
+          -4.177626132965088,
+          -0.4282754063606262
+        ],
+        [
+          -0.16370360553264618,
+          3.7745563983917236,
+          2.1367907524108887
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.6700000166893005,
+        0.8700000047683716
+      ],
+      "bounds": [
+        [
+          -0.23000000417232513,
+          0.6175000071525574,
+          0.8274999856948853
+        ],
+        [
+          0.23000000417232513,
+          0.7225000262260437,
+          0.9125000238418579
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.725000023841858,
+        0.8799999952316284
+      ],
+      "bounds": [
+        [
+          -0.07999999821186066,
+          1.718999981880188,
+          0.8600000143051147
+        ],
+        [
+          0.07999999821186066,
+          1.7310000658035278,
+          0.8999999761581421
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -0.72633296251297,
+        -0.15898585319519043,
+        0.8968981504440308
+      ],
+      "bounds": [
+        [
+          -1.3766882419586182,
+          -4.189960479736328,
+          -0.4552527070045471
+        ],
+        [
+          -0.0759776383638382,
+          3.8719887733459473,
+          2.249048948287964
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -2.2897725105285645,
+        0.9499999284744263,
+        0.9382576942443848
+      ],
+      "bounds": [
+        [
+          -2.335293769836426,
+          0.6099998950958252,
+          0.8854716420173645
+        ],
+        [
+          -2.244251251220703,
+          1.2899999618530273,
+          0.9910436868667603
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.5600000023841858,
+        0.9399999380111694
+      ],
+      "bounds": [
+        [
+          -0.3199999928474426,
+          0.40877965092658997,
+          0.4313405156135559
+        ],
+        [
+          0.3199999928474426,
+          0.711220383644104,
+          1.4486594200134277
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5400000214576721,
+        1.1200000047683716,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          -0.5950000286102295,
+          1.0850000381469727,
+          0.9225000143051147
+        ],
+        [
+          -0.48500001430511475,
+          1.1549999713897705,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5400000214576721,
+        1.2599999904632568,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          -0.5950000286102295,
+          1.225000023841858,
+          0.9225000143051147
+        ],
+        [
+          -0.48500001430511475,
+          1.2949999570846558,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5400000214576721,
+        1.399999976158142,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          -0.5950000286102295,
+          1.3650000095367432,
+          0.9225000143051147
+        ],
+        [
+          -0.48500001430511475,
+          1.434999942779541,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5400000214576721,
+        1.5399999618530273,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          -0.5950000286102295,
+          1.5049999952316284,
+          0.9225000143051147
+        ],
+        [
+          -0.48500001430511475,
+          1.5749999284744263,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5400000214576721,
+        1.6799999475479126,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          -0.5950000286102295,
+          1.6449999809265137,
+          0.9225000143051147
+        ],
+        [
+          -0.48500001430511475,
+          1.7149999141693115,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5400000214576721,
+        1.1200000047683716,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          0.48500001430511475,
+          1.0850000381469727,
+          0.9225000143051147
+        ],
+        [
+          0.5950000286102295,
+          1.1549999713897705,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5400000214576721,
+        1.2599999904632568,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          0.48500001430511475,
+          1.225000023841858,
+          0.9225000143051147
+        ],
+        [
+          0.5950000286102295,
+          1.2949999570846558,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5400000214576721,
+        1.399999976158142,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          0.48500001430511475,
+          1.3650000095367432,
+          0.9225000143051147
+        ],
+        [
+          0.5950000286102295,
+          1.434999942779541,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5400000214576721,
+        1.5399999618530273,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          0.48500001430511475,
+          1.5049999952316284,
+          0.9225000143051147
+        ],
+        [
+          0.5950000286102295,
+          1.5749999284744263,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5400000214576721,
+        1.6799999475479126,
+        0.9399999976158142
+      ],
+      "bounds": [
+        [
+          0.48500001430511475,
+          1.6449999809265137,
+          0.9225000143051147
+        ],
+        [
+          0.5950000286102295,
+          1.7149999141693115,
+          0.9574999809265137
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.725000023841858,
+        0.949999988079071
+      ],
+      "bounds": [
+        [
+          -0.07999999821186066,
+          1.718999981880188,
+          0.9300000071525574
+        ],
+        [
+          0.07999999821186066,
+          1.7310000658035278,
+          0.9699999690055847
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.1850000023841858,
+        0.8849999904632568,
+        0.9500000476837158
+      ],
+      "bounds": [
+        [
+          -0.2248915433883667,
+          0.6901895999908447,
+          0.5391838550567627
+        ],
+        [
+          -0.14510846138000488,
+          1.079810380935669,
+          1.360816240310669
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.1850000023841858,
+        0.8849999904632568,
+        0.9500000476837158
+      ],
+      "bounds": [
+        [
+          0.14510846138000488,
+          0.6901895999908447,
+          0.5391838550567627
+        ],
+        [
+          0.2248915433883667,
+          1.079810380935669,
+          1.360816240310669
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.07233870774507523,
+        1.8890185356140137,
+        0.9681448340415955
+      ],
+      "bounds": [
+        [
+          -0.08033870905637741,
+          1.8810065984725952,
+          0.9595792889595032
+        ],
+        [
+          -0.06433870643377304,
+          1.8970304727554321,
+          0.9767103791236877
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.024112902581691742,
+        1.8890185356140137,
+        0.9681448340415955
+      ],
+      "bounds": [
+        [
+          -0.03211290389299393,
+          1.8810065984725952,
+          0.9595792889595032
+        ],
+        [
+          -0.016112901270389557,
+          1.8970304727554321,
+          0.9767103791236877
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.024112902581691742,
+        1.8890185356140137,
+        0.9681448340415955
+      ],
+      "bounds": [
+        [
+          0.016112901270389557,
+          1.8810065984725952,
+          0.9595792889595032
+        ],
+        [
+          0.03211290389299393,
+          1.8970304727554321,
+          0.9767103791236877
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.07233870774507523,
+        1.8890185356140137,
+        0.9681448340415955
+      ],
+      "bounds": [
+        [
+          0.06433870643377304,
+          1.8810065984725952,
+          0.9595792889595032
+        ],
+        [
+          0.08033870905637741,
+          1.8970304727554321,
+          0.9767103791236877
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.0148285627365112,
+        1.899999976158142,
+        0.9782441854476929
+      ],
+      "bounds": [
+        [
+          -1.1295228004455566,
+          1.89047372341156,
+          0.8870921730995178
+        ],
+        [
+          -0.9001343846321106,
+          1.9095262289047241,
+          1.0693962574005127
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.459999918937683,
+        0.9850000143051147
+      ],
+      "bounds": [
+        [
+          -0.5699358582496643,
+          1.0299999713897705,
+          0.9659217596054077
+        ],
+        [
+          -0.3300641179084778,
+          1.8899998664855957,
+          1.0040782690048218
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44999998807907104,
+        1.459999918937683,
+        0.9850000143051147
+      ],
+      "bounds": [
+        [
+          0.3300641179084778,
+          1.0299999713897705,
+          0.9659217596054077
+        ],
+        [
+          0.5699358582496643,
+          1.8899998664855957,
+          1.0040782690048218
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.6700000166893005,
+        0.9900000095367432
+      ],
+      "bounds": [
+        [
+          -0.23000000417232513,
+          0.6175000071525574,
+          0.9474999904632568
+        ],
+        [
+          0.23000000417232513,
+          0.7225000262260437,
+          1.0325000286102295
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.969217300415039,
+        0.9924575090408325
+      ],
+      "bounds": [
+        [
+          -0.4699999988079071,
+          1.8545624017715454,
+          0.8002607226371765
+        ],
+        [
+          0.4699999988079071,
+          2.0838723182678223,
+          1.1846542358398438
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.3789452314376831,
+        1.1599998474121094,
+        0.9953548312187195
+      ],
+      "bounds": [
+        [
+          0.3674210011959076,
+          1.1504735946655273,
+          0.9874981641769409
+        ],
+        [
+          0.3904694616794586,
+          1.1695261001586914,
+          1.003211498260498
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.3789452314376831,
+        1.21999990940094,
+        0.9953548312187195
+      ],
+      "bounds": [
+        [
+          0.3674210011959076,
+          1.210473656654358,
+          0.9874981641769409
+        ],
+        [
+          0.3904694616794586,
+          1.229526162147522,
+          1.003211498260498
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.3789452314376831,
+        1.2799999713897705,
+        0.9953548312187195
+      ],
+      "bounds": [
+        [
+          0.3674210011959076,
+          1.2704737186431885,
+          0.9874981641769409
+        ],
+        [
+          0.3904694616794586,
+          1.2895262241363525,
+          1.003211498260498
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.3839292526245117,
+        1.1599998474121094,
+        0.9957544207572937
+      ],
+      "bounds": [
+        [
+          -0.39545348286628723,
+          1.1504735946655273,
+          0.9878977537155151
+        ],
+        [
+          -0.3724050223827362,
+          1.1695261001586914,
+          1.0036110877990723
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.3839292526245117,
+        1.21999990940094,
+        0.9957544207572937
+      ],
+      "bounds": [
+        [
+          -0.39545348286628723,
+          1.210473656654358,
+          0.9878977537155151
+        ],
+        [
+          -0.3724050223827362,
+          1.229526162147522,
+          1.0036110877990723
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.3839292526245117,
+        1.2799999713897705,
+        0.9957544207572937
+      ],
+      "bounds": [
+        [
+          -0.39545348286628723,
+          1.2704737186431885,
+          0.9878977537155151
+        ],
+        [
+          -0.3724050223827362,
+          1.2895262241363525,
+          1.0036110877990723
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.3566129207611084,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          -0.3646129071712494,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          -0.3486129343509674,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.30080646276474,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          -0.308806449174881,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          -0.292806476354599,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.24500000476837158,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          -0.2529999911785126,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          -0.2370000034570694,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.18919354677200317,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          -0.19719354808330536,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          -0.181193545460701,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.18919354677200317,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          0.181193545460701,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          0.19719354808330536,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.24500000476837158,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          0.2370000034570694,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          0.2529999911785126,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.30080646276474,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          0.292806476354599,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          0.308806449174881,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.3566129207611084,
+        1.8994159698486328,
+        0.996628999710083
+      ],
+      "bounds": [
+        [
+          0.3486129343509674,
+          1.8914040327072144,
+          0.9880634546279907
+        ],
+        [
+          0.3646129071712494,
+          1.9074279069900513,
+          1.0051945447921753
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4238013029098511,
+        1.1599998474121094,
+        0.9989509582519531
+      ],
+      "bounds": [
+        [
+          0.41227707266807556,
+          1.1504735946655273,
+          0.9910942912101746
+        ],
+        [
+          0.4353255331516266,
+          1.1695261001586914,
+          1.0068076848983765
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4238013029098511,
+        1.21999990940094,
+        0.9989509582519531
+      ],
+      "bounds": [
+        [
+          0.41227707266807556,
+          1.210473656654358,
+          0.9910942912101746
+        ],
+        [
+          0.4353255331516266,
+          1.229526162147522,
+          1.0068076848983765
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4238013029098511,
+        1.2799999713897705,
+        0.9989509582519531
+      ],
+      "bounds": [
+        [
+          0.41227707266807556,
+          1.2704737186431885,
+          0.9910942912101746
+        ],
+        [
+          0.4353255331516266,
+          1.2895262241363525,
+          1.0068076848983765
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.4287853240966797,
+        1.1599998474121094,
+        0.9993505477905273
+      ],
+      "bounds": [
+        [
+          -0.4403095543384552,
+          1.1504735946655273,
+          0.9914938807487488
+        ],
+        [
+          -0.4172610938549042,
+          1.1695261001586914,
+          1.0072072744369507
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.4287853240966797,
+        1.21999990940094,
+        0.9993505477905273
+      ],
+      "bounds": [
+        [
+          -0.4403095543384552,
+          1.210473656654358,
+          0.9914938807487488
+        ],
+        [
+          -0.4172610938549042,
+          1.229526162147522,
+          1.0072072744369507
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.4287853240966797,
+        1.2799999713897705,
+        0.9993505477905273
+      ],
+      "bounds": [
+        [
+          -0.4403095543384552,
+          1.2704737186431885,
+          0.9914938807487488
+        ],
+        [
+          -0.4172610938549042,
+          1.2895262241363525,
+          1.0072072744369507
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.459999918937683,
+        1.0
+      ],
+      "bounds": [
+        [
+          -0.4699999988079071,
+          1.2599998712539673,
+          0.9950000047683716
+        ],
+        [
+          -0.429999977350235,
+          1.659999966621399,
+          1.0049999952316284
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44872134923934937,
+        1.5099998712539673,
+        1.0009487867355347
+      ],
+      "bounds": [
+        [
+          -0.5386732220649719,
+          1.4849998950958252,
+          0.9880154132843018
+        ],
+        [
+          -0.3587694466114044,
+          1.5349998474121094,
+          1.0138821601867676
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44872134923934937,
+        1.5899999141693115,
+        1.0009487867355347
+      ],
+      "bounds": [
+        [
+          -0.5386732220649719,
+          1.5649999380111694,
+          0.9880154132843018
+        ],
+        [
+          -0.3587694466114044,
+          1.6149998903274536,
+          1.0138821601867676
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44872134923934937,
+        1.6699999570846558,
+        1.0009487867355347
+      ],
+      "bounds": [
+        [
+          -0.5386732220649719,
+          1.6449999809265137,
+          0.9880154132843018
+        ],
+        [
+          -0.3587694466114044,
+          1.6949999332427979,
+          1.0138821601867676
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44872134923934937,
+        1.5099998712539673,
+        1.0009487867355347
+      ],
+      "bounds": [
+        [
+          0.3587694466114044,
+          1.4849998950958252,
+          0.9880154132843018
+        ],
+        [
+          0.5386732220649719,
+          1.5349998474121094,
+          1.0138821601867676
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44872134923934937,
+        1.5899999141693115,
+        1.0009487867355347
+      ],
+      "bounds": [
+        [
+          0.3587694466114044,
+          1.5649999380111694,
+          0.9880154132843018
+        ],
+        [
+          0.5386732220649719,
+          1.6149998903274536,
+          1.0138821601867676
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44872134923934937,
+        1.6699999570846558,
+        1.0009487867355347
+      ],
+      "bounds": [
+        [
+          0.3587694466114044,
+          1.6449999809265137,
+          0.9880154132843018
+        ],
+        [
+          0.5386732220649719,
+          1.6949999332427979,
+          1.0138821601867676
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.701552152633667,
+        1.8309764862060547,
+        1.0012844800949097
+      ],
+      "bounds": [
+        [
+          -0.7200970649719238,
+          1.813904047012329,
+          0.982825517654419
+        ],
+        [
+          -0.6830072402954102,
+          1.8480489253997803,
+          1.0197434425354004
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.6313455700874329,
+        1.792622447013855,
+        1.0012844800949097
+      ],
+      "bounds": [
+        [
+          -0.6498904824256897,
+          1.7755500078201294,
+          0.982825517654419
+        ],
+        [
+          -0.612800657749176,
+          1.8096948862075806,
+          1.0197434425354004
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.561138927936554,
+        1.7542684078216553,
+        1.0012844800949097
+      ],
+      "bounds": [
+        [
+          -0.5796838402748108,
+          1.7371959686279297,
+          0.982825517654419
+        ],
+        [
+          -0.5425940155982971,
+          1.7713408470153809,
+          1.0197434425354004
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.561138927936554,
+        1.7542684078216553,
+        1.0012844800949097
+      ],
+      "bounds": [
+        [
+          0.5425940155982971,
+          1.7371959686279297,
+          0.982825517654419
+        ],
+        [
+          0.5796838402748108,
+          1.7713408470153809,
+          1.0197434425354004
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.6313455700874329,
+        1.792622447013855,
+        1.0012844800949097
+      ],
+      "bounds": [
+        [
+          0.612800657749176,
+          1.7755500078201294,
+          0.982825517654419
+        ],
+        [
+          0.6498904824256897,
+          1.8096948862075806,
+          1.0197434425354004
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.701552152633667,
+        1.8309764862060547,
+        1.0012844800949097
+      ],
+      "bounds": [
+        [
+          0.6830072402954102,
+          1.813904047012329,
+          0.982825517654419
+        ],
+        [
+          0.7200970649719238,
+          1.8480489253997803,
+          1.0197434425354004
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.46865737438201904,
+        1.1599998474121094,
+        1.0025471448898315
+      ],
+      "bounds": [
+        [
+          0.45713314414024353,
+          1.1504735946655273,
+          0.994690477848053
+        ],
+        [
+          0.48018160462379456,
+          1.1695261001586914,
+          1.0104038715362549
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.46865737438201904,
+        1.21999990940094,
+        1.0025471448898315
+      ],
+      "bounds": [
+        [
+          0.45713314414024353,
+          1.210473656654358,
+          0.994690477848053
+        ],
+        [
+          0.48018160462379456,
+          1.229526162147522,
+          1.0104038715362549
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.46865737438201904,
+        1.2799999713897705,
+        1.0025471448898315
+      ],
+      "bounds": [
+        [
+          0.45713314414024353,
+          1.2704737186431885,
+          0.994690477848053
+        ],
+        [
+          0.48018160462379456,
+          1.2895262241363525,
+          1.0104038715362549
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.47364139556884766,
+        1.1599998474121094,
+        1.0029467344284058
+      ],
+      "bounds": [
+        [
+          -0.48516562581062317,
+          1.1504735946655273,
+          0.9950900673866272
+        ],
+        [
+          -0.46211716532707214,
+          1.1695261001586914,
+          1.010803461074829
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.47364139556884766,
+        1.21999990940094,
+        1.0029467344284058
+      ],
+      "bounds": [
+        [
+          -0.48516562581062317,
+          1.210473656654358,
+          0.9950900673866272
+        ],
+        [
+          -0.46211716532707214,
+          1.229526162147522,
+          1.010803461074829
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.47364139556884766,
+        1.2799999713897705,
+        1.0029467344284058
+      ],
+      "bounds": [
+        [
+          -0.48516562581062317,
+          1.2704737186431885,
+          0.9950900673866272
+        ],
+        [
+          -0.46211716532707214,
+          1.2895262241363525,
+          1.010803461074829
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.39824193716049194,
+        1.5099998712539673,
+        1.0049275159835815
+      ],
+      "bounds": [
+        [
+          -0.4135136306285858,
+          1.494999885559082,
+          0.9997416138648987
+        ],
+        [
+          -0.38297024369239807,
+          1.5249998569488525,
+          1.0101134777069092
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.39824193716049194,
+        1.5899999141693115,
+        1.0049275159835815
+      ],
+      "bounds": [
+        [
+          -0.4135136306285858,
+          1.5749999284744263,
+          0.9997416138648987
+        ],
+        [
+          -0.38297024369239807,
+          1.6049998998641968,
+          1.0101134777069092
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.39824193716049194,
+        1.6699999570846558,
+        1.0049275159835815
+      ],
+      "bounds": [
+        [
+          -0.4135136306285858,
+          1.6549999713897705,
+          0.9997416138648987
+        ],
+        [
+          -0.38297024369239807,
+          1.684999942779541,
+          1.0101134777069092
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.513513445854187,
+        1.1599998474121094,
+        1.00614333152771
+      ],
+      "bounds": [
+        [
+          0.5019892454147339,
+          1.1504735946655273,
+          0.9982866644859314
+        ],
+        [
+          0.5250376462936401,
+          1.1695261001586914,
+          1.0140000581741333
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.513513445854187,
+        1.21999990940094,
+        1.00614333152771
+      ],
+      "bounds": [
+        [
+          0.5019892454147339,
+          1.210473656654358,
+          0.9982866644859314
+        ],
+        [
+          0.5250376462936401,
+          1.229526162147522,
+          1.0140000581741333
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.513513445854187,
+        1.2799999713897705,
+        1.00614333152771
+      ],
+      "bounds": [
+        [
+          0.5019892454147339,
+          1.2704737186431885,
+          0.9982866644859314
+        ],
+        [
+          0.5250376462936401,
+          1.2895262241363525,
+          1.0140000581741333
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5184974670410156,
+        1.1599998474121094,
+        1.0065429210662842
+      ],
+      "bounds": [
+        [
+          -0.5300216674804688,
+          1.1504735946655273,
+          0.9986862540245056
+        ],
+        [
+          -0.5069732666015625,
+          1.1695261001586914,
+          1.0143996477127075
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5184974670410156,
+        1.21999990940094,
+        1.0065429210662842
+      ],
+      "bounds": [
+        [
+          -0.5300216674804688,
+          1.210473656654358,
+          0.9986862540245056
+        ],
+        [
+          -0.5069732666015625,
+          1.229526162147522,
+          1.0143996477127075
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5184974670410156,
+        1.2799999713897705,
+        1.0065429210662842
+      ],
+      "bounds": [
+        [
+          -0.5300216674804688,
+          1.2704737186431885,
+          0.9986862540245056
+        ],
+        [
+          -0.5069732666015625,
+          1.2895262241363525,
+          1.0143996477127075
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.522928237915039,
+        1.0126231908798218
+      ],
+      "bounds": [
+        [
+          -0.035999998450279236,
+          1.4756560325622559,
+          0.928976833820343
+        ],
+        [
+          0.035999998450279236,
+          1.5702005624771118,
+          1.0962694883346558
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4979221224784851,
+        1.5099998712539673,
+        1.0129189491271973
+      ],
+      "bounds": [
+        [
+          0.48265042901039124,
+          1.494999885559082,
+          1.0077329874038696
+        ],
+        [
+          0.5131937861442566,
+          1.5249998569488525,
+          1.018104910850525
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4979221224784851,
+        1.5899999141693115,
+        1.0129189491271973
+      ],
+      "bounds": [
+        [
+          0.48265042901039124,
+          1.5749999284744263,
+          1.0077329874038696
+        ],
+        [
+          0.5131937861442566,
+          1.6049998998641968,
+          1.018104910850525
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4979221224784851,
+        1.6699999570846558,
+        1.0129189491271973
+      ],
+      "bounds": [
+        [
+          0.48265042901039124,
+          1.6549999713897705,
+          1.0077329874038696
+        ],
+        [
+          0.5131937861442566,
+          1.684999942779541,
+          1.018104910850525
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.4980000257492065,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.4749999940395355,
+          1.496000051498413,
+          1.0112680196762085
+        ],
+        [
+          -0.42500001192092896,
+          1.5,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.4699999988079071,
+        1.5099999904632568,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.47200000286102295,
+          1.5010000467300415,
+          1.0112680196762085
+        ],
+        [
+          -0.46799999475479126,
+          1.5190000534057617,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.5779999494552612,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.4749999940395355,
+          1.5759999752044678,
+          1.0112680196762085
+        ],
+        [
+          -0.42500001192092896,
+          1.5799999237060547,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.4699999988079071,
+        1.5899999141693115,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.47200000286102295,
+          1.5809999704360962,
+          1.0112680196762085
+        ],
+        [
+          -0.46799999475479126,
+          1.5989999771118164,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.45500001311302185,
+        1.5899999141693115,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.4570000171661377,
+          1.5809999704360962,
+          1.0112680196762085
+        ],
+        [
+          -0.453000009059906,
+          1.5989999771118164,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.6579999923706055,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.4749999940395355,
+          1.656000018119812,
+          1.0112680196762085
+        ],
+        [
+          -0.42500001192092896,
+          1.659999966621399,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.4699999988079071,
+        1.6700000762939453,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.47200000286102295,
+          1.6610000133514404,
+          1.0112680196762085
+        ],
+        [
+          -0.46799999475479126,
+          1.6790000200271606,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.45500001311302185,
+        1.6700000762939453,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.4570000171661377,
+          1.6610000133514404,
+          1.0112680196762085
+        ],
+        [
+          -0.453000009059906,
+          1.6790000200271606,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.4399999976158142,
+        1.6700000762939453,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          -0.44200000166893005,
+          1.6610000133514404,
+          1.0112680196762085
+        ],
+        [
+          -0.43799999356269836,
+          1.6790000200271606,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44999998807907104,
+        1.4980000257492065,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.42500001192092896,
+          1.496000051498413,
+          1.0112680196762085
+        ],
+        [
+          0.4749999940395355,
+          1.5,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4300000071525574,
+        1.5099999904632568,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.42800000309944153,
+          1.5010000467300415,
+          1.0112680196762085
+        ],
+        [
+          0.4320000112056732,
+          1.5190000534057617,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44999998807907104,
+        1.5779999494552612,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.42500001192092896,
+          1.5759999752044678,
+          1.0112680196762085
+        ],
+        [
+          0.4749999940395355,
+          1.5799999237060547,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4300000071525574,
+        1.5899999141693115,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.42800000309944153,
+          1.5809999704360962,
+          1.0112680196762085
+        ],
+        [
+          0.4320000112056732,
+          1.5989999771118164,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4449999928474426,
+        1.5899999141693115,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.4429999887943268,
+          1.5809999704360962,
+          1.0112680196762085
+        ],
+        [
+          0.44699999690055847,
+          1.5989999771118164,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44999998807907104,
+        1.6579999923706055,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.42500001192092896,
+          1.656000018119812,
+          1.0112680196762085
+        ],
+        [
+          0.4749999940395355,
+          1.659999966621399,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4300000071525574,
+        1.6700000762939453,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.42800000309944153,
+          1.6610000133514404,
+          1.0112680196762085
+        ],
+        [
+          0.4320000112056732,
+          1.6790000200271606,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.4449999928474426,
+        1.6700000762939453,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.4429999887943268,
+          1.6610000133514404,
+          1.0112680196762085
+        ],
+        [
+          0.44699999690055847,
+          1.6790000200271606,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.46000000834465027,
+        1.6700000762939453,
+        1.0130000114440918
+      ],
+      "bounds": [
+        [
+          0.4580000042915344,
+          1.6610000133514404,
+          1.0112680196762085
+        ],
+        [
+          0.4620000123977661,
+          1.6790000200271606,
+          1.014732003211975
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.6000000238418579,
+        1.850000023841858,
+        1.0199999809265137
+      ],
+      "bounds": [
+        [
+          -0.7577435970306396,
+          1.7121303081512451,
+          0.8688071370124817
+        ],
+        [
+          -0.44225648045539856,
+          1.9878697395324707,
+          1.1711928844451904
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.6000000238418579,
+        1.850000023841858,
+        1.0199999809265137
+      ],
+      "bounds": [
+        [
+          0.44225648045539856,
+          1.7121303081512451,
+          0.8688071370124817
+        ],
+        [
+          0.7577435970306396,
+          1.9878697395324707,
+          1.1711928844451904
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.3472728729248047,
+        0.5090571045875549,
+        1.0268176794052124
+      ],
+      "bounds": [
+        [
+          -1.7056455612182617,
+          -0.9458144903182983,
+          0.7307031154632568
+        ],
+        [
+          -0.9889001846313477,
+          1.9639286994934082,
+          1.322932243347168
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5799999833106995,
+        1.6200000047683716,
+        1.0399999618530273
+      ],
+      "bounds": [
+        [
+          -0.60999995470047,
+          0.8519999980926514,
+          1.0149999856948853
+        ],
+        [
+          -0.550000011920929,
+          2.388000011444092,
+          1.0649999380111694
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5799999833106995,
+        1.6200000047683716,
+        1.0399999618530273
+      ],
+      "bounds": [
+        [
+          0.550000011920929,
+          0.8519999980926514,
+          1.0149999856948853
+        ],
+        [
+          0.60999995470047,
+          2.388000011444092,
+          1.0649999380111694
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.5442230701446533,
+        1.045556902885437
+      ],
+      "bounds": [
+        [
+          -0.008999999612569809,
+          1.5277611017227173,
+          1.0342938899993896
+        ],
+        [
+          0.008999999612569809,
+          1.560685157775879,
+          1.0568199157714844
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.25999999046325684,
+        1.0340226888656616,
+        1.049675464630127
+      ],
+      "bounds": [
+        [
+          -0.2849999964237213,
+          0.9046669006347656,
+          0.7915161848068237
+        ],
+        [
+          -0.23499998450279236,
+          1.1633784770965576,
+          1.3078347444534302
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.25999999046325684,
+        1.0340226888656616,
+        1.049675464630127
+      ],
+      "bounds": [
+        [
+          0.23499998450279236,
+          0.9046669006347656,
+          0.7915161848068237
+        ],
+        [
+          0.2849999964237213,
+          1.1633784770965576,
+          1.3078347444534302
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.2729032337665558,
+        1.946251630783081,
+        1.0753583908081055
+      ],
+      "bounds": [
+        [
+          -0.41161292791366577,
+          1.9016376733779907,
+          0.9818238019943237
+        ],
+        [
+          -0.134193554520607,
+          1.9908655881881714,
+          1.1688929796218872
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.946251630783081,
+        1.0753583908081055
+      ],
+      "bounds": [
+        [
+          -0.127338707447052,
+          1.891240119934082,
+          0.9533395767211914
+        ],
+        [
+          0.127338707447052,
+          2.00126314163208,
+          1.1973772048950195
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.2729032337665558,
+        1.946251630783081,
+        1.0753583908081055
+      ],
+      "bounds": [
+        [
+          0.134193554520607,
+          1.9016376733779907,
+          0.9818238019943237
+        ],
+        [
+          0.41161292791366577,
+          1.9908655881881714,
+          1.1688929796218872
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.2729032337665558,
+        1.9359185695648193,
+        1.0791302919387817
+      ],
+      "bounds": [
+        [
+          -0.3916129171848297,
+          1.9054988622665405,
+          1.0057547092437744
+        ],
+        [
+          -0.15419355034828186,
+          1.9663382768630981,
+          1.152505874633789
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.9359185695648193,
+        1.0791302919387817
+      ],
+      "bounds": [
+        [
+          -0.10733871161937714,
+          1.8951013088226318,
+          0.9772705435752869
+        ],
+        [
+          0.10733871161937714,
+          1.9767358303070068,
+          1.1809899806976318
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.2729032337665558,
+        1.9359185695648193,
+        1.0791302919387817
+      ],
+      "bounds": [
+        [
+          0.15419355034828186,
+          1.9054988622665405,
+          1.0057547092437744
+        ],
+        [
+          0.3916129171848297,
+          1.9663382768630981,
+          1.152505874633789
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.459999918937683,
+        1.0799999237060547
+      ],
+      "bounds": [
+        [
+          -0.4619999825954437,
+          1.4479999542236328,
+          1.0
+        ],
+        [
+          -0.43799999356269836,
+          1.4719998836517334,
+          1.159999966621399
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44290322065353394,
+        1.9302823543548584,
+        1.0811877250671387
+      ],
+      "bounds": [
+        [
+          -0.4589032232761383,
+          1.9142823219299316,
+          0.9611877202987671
+        ],
+        [
+          -0.42690321803092957,
+          1.9462823867797852,
+          1.2011877298355103
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.10290323197841644,
+        1.9302823543548584,
+        1.0811877250671387
+      ],
+      "bounds": [
+        [
+          -0.11890323460102081,
+          1.9142823219299316,
+          0.9611877202987671
+        ],
+        [
+          -0.08690322935581207,
+          1.9462823867797852,
+          1.2011877298355103
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.1550000011920929,
+        1.9302823543548584,
+        1.0811877250671387
+      ],
+      "bounds": [
+        [
+          -0.17100000381469727,
+          1.9142823219299316,
+          0.9611877202987671
+        ],
+        [
+          -0.13899999856948853,
+          1.9462823867797852,
+          1.2011877298355103
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.1550000011920929,
+        1.9302823543548584,
+        1.0811877250671387
+      ],
+      "bounds": [
+        [
+          0.13899999856948853,
+          1.9142823219299316,
+          0.9611877202987671
+        ],
+        [
+          0.17100000381469727,
+          1.9462823867797852,
+          1.2011877298355103
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.10290323197841644,
+        1.9302823543548584,
+        1.0811877250671387
+      ],
+      "bounds": [
+        [
+          0.08690322935581207,
+          1.9142823219299316,
+          0.9611877202987671
+        ],
+        [
+          0.11890323460102081,
+          1.9462823867797852,
+          1.2011877298355103
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.44290322065353394,
+        1.9302823543548584,
+        1.0811877250671387
+      ],
+      "bounds": [
+        [
+          0.42690321803092957,
+          1.9142823219299316,
+          0.9611877202987671
+        ],
+        [
+          0.4589032232761383,
+          1.9462823867797852,
+          1.2011877298355103
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.6867566704750061,
+        1.8580594062805176,
+        1.0858279466629028
+      ],
+      "bounds": [
+        [
+          -0.7053015828132629,
+          1.840986967086792,
+          1.067368984222412
+        ],
+        [
+          -0.6682117581367493,
+          1.8751318454742432,
+          1.1042869091033936
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.616550087928772,
+        1.8197053670883179,
+        1.0858279466629028
+      ],
+      "bounds": [
+        [
+          -0.6350950002670288,
+          1.8026329278945923,
+          1.067368984222412
+        ],
+        [
+          -0.5980051755905151,
+          1.8367778062820435,
+          1.1042869091033936
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.5463435053825378,
+        1.7813513278961182,
+        1.0858279466629028
+      ],
+      "bounds": [
+        [
+          -0.5648884177207947,
+          1.7642788887023926,
+          1.067368984222412
+        ],
+        [
+          -0.527798593044281,
+          1.7984237670898438,
+          1.1042869091033936
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.5463435053825378,
+        1.7813513278961182,
+        1.0858279466629028
+      ],
+      "bounds": [
+        [
+          0.527798593044281,
+          1.7642788887023926,
+          1.067368984222412
+        ],
+        [
+          0.5648884177207947,
+          1.7984237670898438,
+          1.1042869091033936
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.616550087928772,
+        1.8197053670883179,
+        1.0858279466629028
+      ],
+      "bounds": [
+        [
+          0.5980051755905151,
+          1.8026329278945923,
+          1.067368984222412
+        ],
+        [
+          0.6350950002670288,
+          1.8367778062820435,
+          1.1042869091033936
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.6867566704750061,
+        1.8580594062805176,
+        1.0858279466629028
+      ],
+      "bounds": [
+        [
+          0.6682117581367493,
+          1.840986967086792,
+          1.067368984222412
+        ],
+        [
+          0.7053015828132629,
+          1.8751318454742432,
+          1.1042869091033936
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.499816656112671,
+        1.0982073545455933
+      ],
+      "bounds": [
+        [
+          -0.012000000104308128,
+          1.4867053031921387,
+          1.0894250869750977
+        ],
+        [
+          0.012000000104308128,
+          1.5129280090332031,
+          1.1069896221160889
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.6700000166893005,
+        1.1100000143051147
+      ],
+      "bounds": [
+        [
+          -0.23000000417232513,
+          0.6175000071525574,
+          1.0674999952316284
+        ],
+        [
+          0.23000000417232513,
+          0.7225000262260437,
+          1.152500033378601
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.0373575687408447,
+        1.1104116439819336
+      ],
+      "bounds": [
+        [
+          -0.2199999988079071,
+          0.9501100182533264,
+          0.8072287440299988
+        ],
+        [
+          0.2199999988079071,
+          1.1246051788330078,
+          1.4135944843292236
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.2029999941587448,
+        1.062999963760376,
+        1.1150000095367432
+      ],
+      "bounds": [
+        [
+          -0.2069999873638153,
+          0.9956260919570923,
+          0.8392147421836853
+        ],
+        [
+          -0.19900000095367432,
+          1.1303739547729492,
+          1.3907852172851562
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.2029999941587448,
+        1.062999963760376,
+        1.1150000095367432
+      ],
+      "bounds": [
+        [
+          0.19900000095367432,
+          0.9956260919570923,
+          0.8392147421836853
+        ],
+        [
+          0.2069999873638153,
+          1.1303739547729492,
+          1.3907852172851562
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.9929272532463074,
+        1.140841007232666
+      ],
+      "bounds": [
+        [
+          -0.25,
+          0.8753286600112915,
+          0.7656353712081909
+        ],
+        [
+          0.25,
+          1.1105258464813232,
+          1.5160466432571411
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.10000000149011612,
+        1.084607720375061,
+        1.1613273620605469
+      ],
+      "bounds": [
+        [
+          -0.125,
+          1.0134893655776978,
+          0.8583626747131348
+        ],
+        [
+          -0.07500000298023224,
+          1.1557260751724243,
+          1.464292049407959
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.10000000149011612,
+        1.084607720375061,
+        1.1613273620605469
+      ],
+      "bounds": [
+        [
+          0.07500000298023224,
+          1.0134893655776978,
+          0.8583626747131348
+        ],
+        [
+          0.125,
+          1.1557260751724243,
+          1.464292049407959
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.8199999928474426,
+        1.375,
+        1.1699999570846558
+      ],
+      "bounds": [
+        [
+          -0.8550000190734863,
+          1.0499999523162842,
+          1.1349998712539673
+        ],
+        [
+          -0.7849999666213989,
+          1.7000000476837158,
+          1.2050000429153442
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.8199999928474426,
+        1.375,
+        1.1699999570846558
+      ],
+      "bounds": [
+        [
+          0.7849999666213989,
+          1.0499999523162842,
+          1.1349998712539673
+        ],
+        [
+          0.8550000190734863,
+          1.7000000476837158,
+          1.2050000429153442
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -1.999545693397522,
+        0.949999988079071,
+        1.1715583801269531
+      ],
+      "bounds": [
+        [
+          -2.0584917068481445,
+          0.6100000143051147,
+          1.1252238750457764
+        ],
+        [
+          -1.9405996799468994,
+          1.2899999618530273,
+          1.2178927659988403
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.459999918937683,
+        1.1800000667572021
+      ],
+      "bounds": [
+        [
+          -0.48499998450279236,
+          1.4049999713897705,
+          1.149999976158142
+        ],
+        [
+          -0.41499999165534973,
+          1.5149998664855957,
+          1.2100000381469727
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.44999998807907104,
+        1.4899998903274536,
+        1.2120000123977661
+      ],
+      "bounds": [
+        [
+          -0.4749999940395355,
+          1.4749999046325684,
+          1.2070000171661377
+        ],
+        [
+          -0.42499998211860657,
+          1.5049998760223389,
+          1.2170000076293945
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        2.049999952316284,
+        1.2300000190734863
+      ],
+      "bounds": [
+        [
+          -0.49000000953674316,
+          1.8899999856948853,
+          1.2100000381469727
+        ],
+        [
+          0.49000000953674316,
+          2.2100000381469727,
+          1.25
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.6700000166893005,
+        1.2300000190734863
+      ],
+      "bounds": [
+        [
+          -0.23000000417232513,
+          0.6175000071525574,
+          1.1875
+        ],
+        [
+          0.23000000417232513,
+          0.7225000262260437,
+          1.2725000381469727
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.8899999856948853,
+        1.2400000095367432
+      ],
+      "bounds": [
+        [
+          -0.4699999988079071,
+          1.875,
+          1.2300000190734863
+        ],
+        [
+          0.4699999988079071,
+          1.9049999713897705,
+          1.25
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        2.055000066757202,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.33000001311302185,
+          2.052999973297119,
+          1.2512680292129517
+        ],
+        [
+          0.33000001311302185,
+          2.057000160217285,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.27000001072883606,
+        2.059999942779541,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.2720000147819519,
+          2.0450000762939453,
+          1.2512680292129517
+        ],
+        [
+          -0.2680000066757202,
+          2.075000047683716,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.18000000715255737,
+        2.067500114440918,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.18200001120567322,
+          2.0450000762939453,
+          1.2512680292129517
+        ],
+        [
+          -0.17800000309944153,
+          2.0899999141693115,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.09000000357627869,
+        2.059999942779541,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.09200000017881393,
+          2.0450000762939453,
+          1.2512680292129517
+        ],
+        [
+          -0.08800000697374344,
+          2.075000047683716,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        2.067500114440918,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.0020000000949949026,
+          2.0450000762939453,
+          1.2512680292129517
+        ],
+        [
+          0.0020000000949949026,
+          2.0899999141693115,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.09000000357627869,
+        2.059999942779541,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          0.08800000697374344,
+          2.0450000762939453,
+          1.2512680292129517
+        ],
+        [
+          0.09200000017881393,
+          2.075000047683716,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.18000000715255737,
+        2.067500114440918,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          0.17800000309944153,
+          2.0450000762939453,
+          1.2512680292129517
+        ],
+        [
+          0.18200001120567322,
+          2.0899999141693115,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.27000001072883606,
+        2.059999942779541,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          0.2680000066757202,
+          2.0450000762939453,
+          1.2512680292129517
+        ],
+        [
+          0.2720000147819519,
+          2.075000047683716,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.10499999672174454,
+        1.9550000429153442,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.3199999928474426,
+          1.9520000219345093,
+          1.2504019737243652
+        ],
+        [
+          0.10999999940395355,
+          1.9580000638961792,
+          1.2555980682373047
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.17499999701976776,
+        1.9900000095367432,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.3199999928474426,
+          1.9869999885559082,
+          1.2504019737243652
+        ],
+        [
+          -0.029999999329447746,
+          1.9930000305175781,
+          1.2555980682373047
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        -0.38999998569488525,
+        2.0500001907348633,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          -0.3919999897480011,
+          1.940000057220459,
+          1.2512680292129517
+        ],
+        [
+          -0.3879999816417694,
+          2.1600000858306885,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.38999998569488525,
+        2.0500001907348633,
+        1.253000020980835
+      ],
+      "bounds": [
+        [
+          0.3879999816417694,
+          1.940000057220459,
+          1.2512680292129517
+        ],
+        [
+          0.3919999897480011,
+          2.1600000858306885,
+          1.2547320127487183
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -1.5677274465560913,
+        0.949999988079071,
+        1.2949349880218506
+      ],
+      "bounds": [
+        [
+          -1.6266735792160034,
+          0.6100000143051147,
+          1.2486004829406738
+        ],
+        [
+          -1.5087813138961792,
+          1.2899999618530273,
+          1.3412694931030273
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        0.0,
+        1.5199999809265137,
+        1.315359354019165
+      ],
+      "bounds": [
+        [
+          -0.6200000047683716,
+          0.5600000023841858,
+          1.0
+        ],
+        [
+          0.6200000047683716,
+          2.4800000190734863,
+          1.6307188272476196
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.2041473388671875,
+        -0.08585166931152344,
+        1.334519386291504
+      ],
+      "bounds": [
+        [
+          -1.5313355922698975,
+          -1.3958663940429688,
+          1.0518549680709839
+        ],
+        [
+          -0.876958966255188,
+          1.2241630554199219,
+          1.6171839237213135
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.9990000128746033,
+        1.3899999856948853
+      ],
+      "bounds": [
+        [
+          -0.2029999941587448,
+          0.9950000047683716,
+          1.386535882949829
+        ],
+        [
+          0.2029999941587448,
+          1.003000020980835,
+          1.3934640884399414
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "LandingMechanismMesh",
+      "center": [
+        -1.1359091997146606,
+        0.949999988079071,
+        1.4183114767074585
+      ],
+      "bounds": [
+        [
+          -1.1948554515838623,
+          0.6100000143051147,
+          1.3719770908355713
+        ],
+        [
+          -1.076962947845459,
+          1.2899999618530273,
+          1.4646458625793457
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        0.0,
+        1.1459742784500122,
+        1.4870307445526123
+      ],
+      "bounds": [
+        [
+          -1.013196349143982,
+          -1.2780516147613525,
+          0.9220268726348877
+        ],
+        [
+          1.013196349143982,
+          3.570000171661377,
+          2.052034616470337
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.0148285627365112,
+        0.30000001192092896,
+        1.4874509572982788
+      ],
+      "bounds": [
+        [
+          -1.1295228004455566,
+          0.29047372937202454,
+          1.396298885345459
+        ],
+        [
+          -0.9001343846321106,
+          0.3095262944698334,
+          1.5786030292510986
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        0.47999998927116394,
+        1.4900000095367432
+      ],
+      "bounds": [
+        [
+          -0.20999999344348907,
+          0.3700000047683716,
+          1.3799999952316284
+        ],
+        [
+          0.20999999344348907,
+          0.5899999737739563,
+          1.600000023841858
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "CockpitMechanismMesh",
+      "center": [
+        0.0,
+        1.1171953678131104,
+        1.6049071550369263
+      ],
+      "bounds": [
+        [
+          -0.14000000059604645,
+          1.0531244277954102,
+          1.5029528141021729
+        ],
+        [
+          0.14000000059604645,
+          1.1812663078308105,
+          1.7068614959716797
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    },
+    {
+      "object": "Body",
+      "center": [
+        -1.064447045326233,
+        -0.667323648929596,
+        1.6146130561828613
+      ],
+      "bounds": [
+        [
+          -1.3616334199905396,
+          -1.8367583751678467,
+          1.3837854862213135
+        ],
+        [
+          -0.7672606706619263,
+          0.5021110773086548,
+          1.8454405069351196
+        ]
+      ],
+      "classification": "geometry island; parent identify tread versus rail"
+    }
+  ],
+  "island_vertical_spacing_m": [
+    0.3074493408203125,
+    0.0776515007019043,
+    0.21734857559204102,
+    0.0,
+    0.16775250434875488,
+    0.21528321504592896,
+    0.0919642448425293,
+    0.04000002145767212,
+    0.011317253112792969,
+    0.00782930850982666,
+    0.012984812259674072,
+    0.005722105503082275,
+    0.002146482467651367,
+    0.007868647575378418,
+    0.0022537708282470703,
+    0.0034744739532470703,
+    0.01487874984741211,
+    0.002480626106262207,
+    0.008908271789550781,
+    0.0169716477394104,
+    0.013370275497436523,
+    0.0010023713111877441,
+    0.0010023117065429688,
+    0.3107432574033737,
+    0.2020456213504076,
+    0.03500000014901161,
+    0.007258409634232521,
+    0.1422286480665207,
+    0.0,
+    0.08051294088363647,
+    0.0,
+    0.0,
+    0.0,
+    0.050000011920928955,
+    0.02799999713897705,
+    0.0,
+    0.0,
+    0.0,
+    0.05699998140335083,
+    0.034999996423721313,
+    0.02000001072883606,
+    0.0,
+    0.0074593424797058105,
+    0.0,
+    0.03254061937332153,
+    0.04000002145767212,
+    0.03315645456314087,
+    0.056843578815460205,
+    0.014789223670959473,
+    0.005210757255554199,
+    0.009999990463256836,
+    0.009999990463256836,
+    0.0,
+    0.020000040531158447,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.06000000238418579,
+    0.009999990463256836,
+    0.009999990463256836,
+    0.029999971389770508,
+    0.0,
+    0.005000054836273193,
+    0.004999995231628418,
+    0.004999995231628418,
+    0.014999985694885254,
+    0.009999990463256836,
+    5.960464477539063e-08,
+    0.0029999613761901855,
+    0.0,
+    0.0,
+    0.0,
+    0.006999969482421875,
+    0.02425771951675415,
+    0.01574230194091797,
+    0.009999990463256836,
+    0.016898155212402344,
+    0.041359543800354004,
+    0.001742243766784668,
+    5.960464477539063e-08,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.009999990463256836,
+    5.960464477539063e-08,
+    0.0,
+    0.01814478635787964,
+    0.0,
+    0.0,
+    0.0,
+    0.010099351406097412,
+    0.006755828857421875,
+    0.0,
+    0.004999995231628418,
+    0.0024574995040893555,
+    0.002897322177886963,
+    0.0,
+    0.0,
+    0.00039958953857421875,
+    0.0,
+    0.0,
+    0.0008745789527893066,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.002321958541870117,
+    0.0,
+    0.0,
+    0.00039958953857421875,
+    0.0,
+    0.0,
+    0.0006494522094726562,
+    0.000948786735534668,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.000335693359375,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.001262664794921875,
+    0.0,
+    0.0,
+    0.00039958953857421875,
+    0.0,
+    0.0,
+    0.0019807815551757812,
+    0.0,
+    0.0,
+    0.001215815544128418,
+    0.0,
+    0.0,
+    0.00039958953857421875,
+    0.0,
+    0.0,
+    0.006080269813537598,
+    0.0002957582473754883,
+    0.0,
+    0.0,
+    8.106231689453125e-05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.006999969482421875,
+    0.0,
+    0.0068176984786987305,
+    0.013182282447814941,
+    0.0,
+    0.005556941032409668,
+    0.004118561744689941,
+    0.0,
+    0.025682926177978516,
+    0.0,
+    0.0,
+    0.0037719011306762695,
+    0.0,
+    0.0,
+    0.0008696317672729492,
+    0.0011878013610839844,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.00464022159576416,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.01237940788269043,
+    0.011792659759521484,
+    0.00041162967681884766,
+    0.00458836555480957,
+    0.0,
+    0.02584099769592285,
+    0.02048635482788086,
+    0.0,
+    0.008672595024108887,
+    0.0,
+    0.0015584230422973633,
+    0.008441686630249023,
+    0.031999945640563965,
+    0.018000006675720215,
+    0.0,
+    0.009999990463256836,
+    0.013000011444091797,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.041934967041015625,
+    0.020424365997314453,
+    0.019160032272338867,
+    0.05548059940338135,
+    0.028311491012573242,
+    0.06871926784515381,
+    0.0004202127456665039,
+    0.0025490522384643555,
+    0.1149071455001831,
+    0.009705901145935059
+  ],
+  "ground_geometry_min_z": -1.9588117599487305,
+  "poses": {
+    "seated": {
+      "hip": [
+        0.0,
+        1.149999976158142,
+        1.5199999809265137
+      ],
+      "standing_dimension_m": 1.85,
+      "segments_m": {
+        "legs": 0.9,
+        "hip_to_crown": 0.95
+      },
+      "canopy": {
+        "surface_triangle_pairs": 158,
+        "vertex_nearest_m": 0.0005808033747598529,
+        "sample_vertices": 330
+      },
+      "colliders": {
+        "surface_triangle_pairs": 72,
+        "vertex_nearest_m": 0.010189213789999485,
+        "sample_vertices": 330
+      },
+      "production_body": false
+    },
+    "boarding_0": {
+      "hip": [
+        -3.0,
+        0.949999988079071,
+        -1.0500000715255737
+      ],
+      "standing_dimension_m": 1.85,
+      "segments_m": {
+        "legs": 0.9,
+        "hip_to_crown": 0.95
+      },
+      "canopy": {
+        "surface_triangle_pairs": 0,
+        "vertex_nearest_m": 2.2736659049987793,
+        "sample_vertices": 330
+      },
+      "colliders": {
+        "surface_triangle_pairs": 62,
+        "vertex_nearest_m": 0.003056497545912862,
+        "sample_vertices": 330
+      },
+      "production_body": false
+    },
+    "boarding_1": {
+      "hip": [
+        -2.4800000190734863,
+        0.949999988079071,
+        -0.19250011444091797
+      ],
+      "standing_dimension_m": 1.85,
+      "segments_m": {
+        "legs": 0.9,
+        "hip_to_crown": 0.95
+      },
+      "canopy": {
+        "surface_triangle_pairs": 0,
+        "vertex_nearest_m": 1.4525728225708008,
+        "sample_vertices": 330
+      },
+      "colliders": {
+        "surface_triangle_pairs": 110,
+        "vertex_nearest_m": 0.00020729385141748935,
+        "sample_vertices": 330
+      },
+      "production_body": false
+    },
+    "boarding_2": {
+      "hip": [
+        -1.9600000381469727,
+        0.949999988079071,
+        0.6649999618530273
+      ],
+      "standing_dimension_m": 1.85,
+      "segments_m": {
+        "legs": 0.9,
+        "hip_to_crown": 0.95
+      },
+      "canopy": {
+        "surface_triangle_pairs": 0,
+        "vertex_nearest_m": 0.6469956636428833,
+        "sample_vertices": 330
+      },
+      "colliders": {
+        "surface_triangle_pairs": 62,
+        "vertex_nearest_m": 0.0017062090337276459,
+        "sample_vertices": 330
+      },
+      "production_body": false
+    },
+    "boarding_3": {
+      "hip": [
+        -1.440000057220459,
+        0.949999988079071,
+        1.5225000381469727
+      ],
+      "standing_dimension_m": 1.85,
+      "segments_m": {
+        "legs": 0.9,
+        "hip_to_crown": 0.95
+      },
+      "canopy": {
+        "surface_triangle_pairs": 0,
+        "vertex_nearest_m": 0.3894107937812805,
+        "sample_vertices": 330
+      },
+      "colliders": {
+        "surface_triangle_pairs": 48,
+        "vertex_nearest_m": 0.0030192730482667685,
+        "sample_vertices": 330
+      },
+      "production_body": false
+    },
+    "boarding_4": {
+      "hip": [
+        -0.9200000166893005,
+        0.949999988079071,
+        2.380000114440918
+      ],
+      "standing_dimension_m": 1.85,
+      "segments_m": {
+        "legs": 0.9,
+        "hip_to_crown": 0.95
+      },
+      "canopy": {
+        "surface_triangle_pairs": 75,
+        "vertex_nearest_m": 0.0003321812255308032,
+        "sample_vertices": 330
+      },
+      "colliders": {
+        "surface_triangle_pairs": 26,
+        "vertex_nearest_m": 0.0006020090077072382,
+        "sample_vertices": 330
+      },
+      "production_body": false
+    }
+  },
+  "liveries": [
+    {
+      "image": "saved default",
+      "materials": [],
+      "translation": [
+        -18,
+        22,
+        0
+      ],
+      "scale": 1
+    },
+    {
+      "image": "lark_livery_compact",
+      "materials": [
+        "Lark_Accent.002",
+        "Lark_Dark.002",
+        "Lark_Hull.002",
+        "Lark_Trim.002"
+      ],
+      "translation": [
+        0,
+        22,
+        0
+      ],
+      "scale": 1
+    },
+    {
+      "image": "lark_livery_working",
+      "materials": [
+        "Lark_Accent.003",
+        "Lark_Dark.003",
+        "Lark_Hull.003",
+        "Lark_Trim.003"
+      ],
+      "translation": [
+        18,
+        22,
+        0
+      ],
+      "scale": 1
+    }
+  ],
+  "modules": [
+    {
+      "socket": "HP_S_1",
+      "samples": [
+        {
+          "degrees": -30,
+          "matrix": [
+            [
+              0.6749131083488464,
+              0.0,
+              -0.28000006079673767,
+              -1.7200000286102295
+            ],
+            [
+              0.0,
+              1.0099999904632568,
+              0.0,
+              2.7799999713897705
+            ],
+            [
+              0.38966140151023865,
+              0.0,
+              0.4849741756916046,
+              -0.6200000047683716
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "query": {
+            "surface_triangle_pairs": 218,
+            "vertex_nearest_m": 0.06407161056995392,
+            "sample_vertices": 8
+          }
+        },
+        {
+          "degrees": 0,
+          "matrix": [
+            [
+              0.779322624206543,
+              0.0,
+              0.0,
+              -1.7200000286102295
+            ],
+            [
+              0.0,
+              1.0099999904632568,
+              0.0,
+              2.7799999713897705
+            ],
+            [
+              0.0,
+              0.0,
+              0.5600000023841858,
+              -0.6200000047683716
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "query": {
+            "surface_triangle_pairs": 210,
+            "vertex_nearest_m": 0.019999980926513672,
+            "sample_vertices": 8
+          }
+        },
+        {
+          "degrees": 30,
+          "matrix": [
+            [
+              0.6749131083488464,
+              0.0,
+              0.28000006079673767,
+              -1.7200000286102295
+            ],
+            [
+              0.0,
+              1.0099999904632568,
+              0.0,
+              2.7799999713897705
+            ],
+            [
+              -0.38966140151023865,
+              0.0,
+              0.4849741756916046,
+              -0.6200000047683716
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "query": {
+            "surface_triangle_pairs": 224,
+            "vertex_nearest_m": 0.10745728015899658,
+            "sample_vertices": 8
+          }
+        }
+      ],
+      "size_source": "Body vertices within 0.65m of socket (diagnostic local envelope)",
+      "dimensions": [
+        0.779322624206543,
+        1.0099999904632568,
+        0.5600000023841858
+      ],
+      "query": {
+        "surface_triangle_pairs": 224,
+        "vertex_nearest_m": 0.10745728015899658,
+        "sample_vertices": 8
+      },
+      "warning": "Mount bounding envelope proxy, not production equipment"
+    },
+    {
+      "socket": "HP_S_2",
+      "samples": [
+        {
+          "degrees": -30,
+          "matrix": [
+            [
+              0.6749131083488464,
+              0.0,
+              -0.28000006079673767,
+              1.7200000286102295
+            ],
+            [
+              0.0,
+              1.0099999904632568,
+              0.0,
+              2.7799999713897705
+            ],
+            [
+              0.38966140151023865,
+              0.0,
+              0.4849741756916046,
+              -0.6200000047683716
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "query": {
+            "surface_triangle_pairs": 225,
+            "vertex_nearest_m": 0.10126341134309769,
+            "sample_vertices": 8
+          }
+        },
+        {
+          "degrees": 0,
+          "matrix": [
+            [
+              0.779322624206543,
+              0.0,
+              0.0,
+              1.7200000286102295
+            ],
+            [
+              0.0,
+              1.0099999904632568,
+              0.0,
+              2.7799999713897705
+            ],
+            [
+              0.0,
+              0.0,
+              0.5600000023841858,
+              -0.6200000047683716
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "query": {
+            "surface_triangle_pairs": 207,
+            "vertex_nearest_m": 0.019999980926513672,
+            "sample_vertices": 8
+          }
+        },
+        {
+          "degrees": 30,
+          "matrix": [
+            [
+              0.6749131083488464,
+              0.0,
+              0.28000006079673767,
+              1.7200000286102295
+            ],
+            [
+              0.0,
+              1.0099999904632568,
+              0.0,
+              2.7799999713897705
+            ],
+            [
+              -0.38966140151023865,
+              0.0,
+              0.4849741756916046,
+              -0.6200000047683716
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "query": {
+            "surface_triangle_pairs": 222,
+            "vertex_nearest_m": 0.06103956699371338,
+            "sample_vertices": 8
+          }
+        }
+      ],
+      "size_source": "Body vertices within 0.65m of socket (diagnostic local envelope)",
+      "dimensions": [
+        0.779322624206543,
+        1.0099999904632568,
+        0.5600000023841858
+      ],
+      "query": {
+        "surface_triangle_pairs": 222,
+        "vertex_nearest_m": 0.06103956699371338,
+        "sample_vertices": 8
+      },
+      "warning": "Mount bounding envelope proxy, not production equipment"
+    }
+  ],
+  "articulation": [
+    {
+      "mechanism": "Canopy",
+      "diagnostic_degrees": 0,
+      "axis": "world X",
+      "pivot": [
+        0.0,
+        -1.120093584060669,
+        1.8043180704116821
+      ],
+      "matrices": {
+        "CanopyGlass.007": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "CanopyFrame.007": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "query": {
+        "surface_triangle_pairs": 1017,
+        "vertex_nearest_m": 0.0002557537518441677,
+        "sample_vertices": 2172
+      },
+      "limits": "Authored range unavailable; diagnostic samples only"
+    },
+    {
+      "mechanism": "Canopy",
+      "diagnostic_degrees": 30,
+      "axis": "world X",
+      "pivot": [
+        0.0,
+        -1.120093584060669,
+        1.8043180704116821
+      ],
+      "matrices": {
+        "CanopyGlass.008": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.8660253286361694,
+            -0.5000001192092896,
+            0.752095103263855
+          ],
+          [
+            0.0,
+            0.5000001192092896,
+            0.8660253286361694,
+            0.8017798662185669
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "CanopyFrame.008": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.8660253286361694,
+            -0.5000001192092896,
+            0.752095103263855
+          ],
+          [
+            0.0,
+            0.5000001192092896,
+            0.8660253286361694,
+            0.8017798662185669
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "query": {
+        "surface_triangle_pairs": 160,
+        "vertex_nearest_m": 0.000561264983844012,
+        "sample_vertices": 2172
+      },
+      "limits": "Authored range unavailable; diagnostic samples only"
+    },
+    {
+      "mechanism": "Canopy",
+      "diagnostic_degrees": 60,
+      "axis": "world X",
+      "pivot": [
+        0.0,
+        -1.120093584060669,
+        1.8043180704116821
+      ],
+      "matrices": {
+        "CanopyGlass.009": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.4999999701976776,
+            -0.866025447845459,
+            1.0025384426116943
+          ],
+          [
+            0.0,
+            0.866025447845459,
+            0.4999999701976776,
+            1.8721885681152344
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "CanopyFrame.009": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.4999999701976776,
+            -0.866025447845459,
+            1.0025384426116943
+          ],
+          [
+            0.0,
+            0.866025447845459,
+            0.4999999701976776,
+            1.8721885681152344
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "query": {
+        "surface_triangle_pairs": 235,
+        "vertex_nearest_m": 0.0011313314316794276,
+        "sample_vertices": 2172
+      },
+      "limits": "Authored range unavailable; diagnostic samples only"
+    },
+    {
+      "mechanism": "GearAssembly",
+      "diagnostic_degrees": 0,
+      "axis": "world X",
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "matrices": {
+        "LandingMechanismMesh.007": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "query": {
+        "surface_triangle_pairs": 480,
+        "vertex_nearest_m": 0.0,
+        "sample_vertices": 6346
+      },
+      "limits": "Authored range unavailable; diagnostic samples only"
+    },
+    {
+      "mechanism": "GearAssembly",
+      "diagnostic_degrees": 30,
+      "axis": "world X",
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "matrices": {
+        "LandingMechanismMesh.008": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.8660253286361694,
+            -0.5000001192092896,
+            0.0
+          ],
+          [
+            0.0,
+            0.5000001192092896,
+            0.8660253286361694,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "query": {
+        "surface_triangle_pairs": 571,
+        "vertex_nearest_m": 3.58545730705373e-05,
+        "sample_vertices": 6346
+      },
+      "limits": "Authored range unavailable; diagnostic samples only"
+    },
+    {
+      "mechanism": "GearAssembly",
+      "diagnostic_degrees": 60,
+      "axis": "world X",
+      "pivot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "matrices": {
+        "LandingMechanismMesh.009": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.4999999701976776,
+            -0.866025447845459,
+            0.0
+          ],
+          [
+            0.0,
+            0.866025447845459,
+            0.4999999701976776,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "query": {
+        "surface_triangle_pairs": 517,
+        "vertex_nearest_m": 2.4695968022570014e-05,
+        "sample_vertices": 6346
+      },
+      "limits": "Authored range unavailable; diagnostic samples only"
+    }
+  ],
+  "open": [
+    "Production actor fit and boarding reach/contact",
+    "Continuous articulation, containment and runtime collision",
+    "Whole-shell denominator; retain only existing 19.64% dorsal claim",
+    "Glyph finish and flicker; no speculative source edit",
+    "Parent capture and final export"
+  ],
+  "capture_instructions": "Enable one REVIEW collection at a time; three_liveries contains all three identical-scale ships. Hide original collections for lineup. Use uniform world lighting. No rendering performed.",
+  "scene": "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96/packages/tools/blender/hulls/lark-round5/scratch/capture-preparation.blend",
+  "scene_bytes": 55027413
+}
