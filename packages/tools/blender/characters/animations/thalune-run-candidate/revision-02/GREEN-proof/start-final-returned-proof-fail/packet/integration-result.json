@@ -1,0 +1,268 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "RuntimeError",
+    "message": "ORIGINAL_START_FAILURE",
+    "details": {}
+  },
+  "runtimeAuthorization": false,
+  "dispatchFailure": {
+    "type": "OSError",
+    "message": "RETURNED_RECEIPTS_WRITE_FAILURE",
+    "details": {}
+  },
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknownKernel": {
+          "raw": 91,
+          "extra": null
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "unknownRecorded": {
+              "id": 99
+            }
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "unknownIdentity": 73
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+      "registrationStderr": "RAW_REGISTRATION_ERROR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    }
+  ],
+  "terminalAuditFailures": [
+    {
+      "type": "AssertionError",
+      "message": "Attempt receipt persistence failed: /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "details": {},
+      "attemptPath": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json"
+    }
+  ],
+  "nativeJobs": 1,
+  "pipelineSeconds": 0.006352874974254519,
+  "outputBytes": 0,
+  "freeBytesAfter": 111169146880,
+  "terminalReleaseProved": false,
+  "receiptFallbacks": [
+    {
+      "attemptPath": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "receipt": {
+        "name": "motion-thalune-run-lod0",
+        "primaryFailure": {
+          "type": "RuntimeError",
+          "message": "ORIGINAL_START_FAILURE",
+          "details": {}
+        },
+        "cleanupFailure": null,
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "FINAL_RECEIPT_WRITE_FAILURE",
+            "details": {}
+          }
+        ],
+        "terminal": {
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true,
+            "unknownKernel": {
+              "raw": 91,
+              "extra": null
+            }
+          },
+          "registrationAbsent": true,
+          "scratchAndTmpAbsent": true,
+          "audit": {
+            "attemptPath": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+            "releaseProved": true,
+            "kernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "raw": 91,
+                "extra": null
+              }
+            },
+            "members": [],
+            "births": [
+              {
+                "pid": 51,
+                "recorded": {
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "unknownRecorded": {
+                    "id": 99
+                  }
+                },
+                "current": {
+                  "birth": [
+                    2,
+                    3
+                  ],
+                  "unknownIdentity": 73
+                }
+              }
+            ],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "inert"
+            ],
+            "registrationExit": 1,
+            "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+            "registrationStderr": "RAW_REGISTRATION_ERROR",
+            "scratchAbsent": true,
+            "privateTmpAbsent": true
+          }
+        },
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+          "--import",
+          "/inert/tsx",
+          "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/isolated/green/candidate/entry.mjs",
+          "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/isolated/green/candidate/readiness.json",
+          "motion-thalune-run-lod0",
+          "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/packet/captures/motion-thalune-run-lod0"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/private",
+          "admission": {
+            "synthetic": true
+          }
+        },
+        "ownedAllocation": {
+          "out": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/owned-job",
+          "scratch": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/owned-job/scratch",
+          "target": "inert",
+          "coalition_id": "123"
+        },
+        "drain": {
+          "drained": true,
+          "clean": true,
+          "unknownDrain": {
+            "id": 77
+          }
+        },
+        "drainMembers": [],
+        "drainKernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknownKernel": {
+            "raw": 91,
+            "extra": null
+          }
+        },
+        "profiles": {
+          "all_absent": true
+        },
+        "cache": {
+          "all_bytes_preserved": true,
+          "namespace_removed": true
+        },
+        "archiveBytesObservedAfterRelease": 1294,
+        "releaseAudits": [
+          {
+            "attemptPath": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+            "releaseProved": true,
+            "kernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "raw": 91,
+                "extra": null
+              }
+            },
+            "members": [],
+            "births": [
+              {
+                "pid": 51,
+                "recorded": {
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "unknownRecorded": {
+                    "id": 99
+                  }
+                },
+                "current": {
+                  "birth": [
+                    2,
+                    3
+                  ],
+                  "unknownIdentity": 73
+                }
+              }
+            ],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "inert"
+            ],
+            "registrationExit": 1,
+            "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+            "registrationStderr": "RAW_REGISTRATION_ERROR",
+            "scratchAbsent": true,
+            "privateTmpAbsent": true
+          }
+        ]
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "path": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "sha256": "fec539559c40c6293aa864dc04aa12d3722dc372db2a379d155db491eb027070"
+    }
+  ],
+  "terminalPersistenceFailures": [
+    {
+      "type": "OSError",
+      "message": "TERMINAL_PROOF_WRITE_FAILURE",
+      "details": {},
+      "sink": "proof"
+    }
+  ],
+  "terminalDelivery": {
+    "proof": {
+      "path": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/proof/result.json",
+      "status": "failed"
+    },
+    "packet": {
+      "path": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-r2-green-of0oqgsu/combined-run-w3s7h3qi/combined-proofs/start-final-returned-proof-fail/packet/integration-result.json",
+      "status": "attempting"
+    },
+    "completeObservationsPersisted": false,
+    "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+  }
+}

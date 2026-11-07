@@ -19,6 +19,36 @@ def admission_key(row):
     pid,birth,uid=identity_key(row)
     return f"{pid}:{birth[0]}:{birth[1]}:{uid}"
 
+def delivery_failure(result,sink,error):
+    failure={**error_receipt(error),'sink':sink}
+    result.setdefault('terminalPersistenceFailures',[]).append(failure)
+    result['terminalDelivery'][sink]['status']='failed'
+    result['status']='HOLD'
+    if result['primaryFailure'] is None:result['primaryFailure']=failure
+
+def encode(value):return (json.dumps(value,indent=2)+'\n').encode()
+
+def bounded_packet_summary(result,proof_reference):
+    encoded=encode(result)
+    if len(encoded)<=budget.RECORD_BYTES:return result,True
+    result['status']='HOLD'
+    result.setdefault('terminalPersistenceFailure',{'type':'ReservedTerminalRecordOverflow','bytes':len(encoded),'limit':budget.RECORD_BYTES})
+    if result['primaryFailure'] is None:
+        result['primaryFailure']={'type':'ReservedTerminalRecordOverflow','message':'Complete evidence exceeds the reserved packet record; see delivery qualification'}
+    encoded=encode(result)
+    summary={'status':'HOLD','nativeJobs':result['nativeJobs'],'terminalReleaseProved':result['terminalReleaseProved'],
+        'observationsIncluded':False,'completeObservationsPersisted':proof_reference is not None,'completeEvidenceAvailableInMemory':True,
+        'inMemoryResultSha256':hashlib.sha256(encoded).hexdigest(),'inMemoryResultBytes':len(encoded),
+        'primaryFailure':result['primaryFailure'],'terminalPersistenceFailures':result['terminalPersistenceFailures'],
+        'terminalPersistenceFailure':result['terminalPersistenceFailure']}
+    if proof_reference is not None:summary['completeTerminalSummary']=proof_reference
+    if len(encode(summary))>budget.RECORD_BYTES:
+        # Oversized error details stay in the complete returned result, never silently truncated.
+        for name in ['primaryFailure','terminalPersistenceFailures']:
+            data=encode(summary.pop(name));summary[name+'Digest']={'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data)}
+    assert len(encode(summary))<=budget.RECORD_BYTES,'Bounded terminal envelope exceeds reserve'
+    return summary,False
+
 def observe_executables(job,allowed,admitted,events,read_identity,read_path,file_sha=sha,on_event=lambda:None):
     """Observe only kernel-owned members; a PID alone never carries admission."""
     for row in job.members():
@@ -77,8 +107,11 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     accounted=bool(jobs) and len(jobs)==len(handles)==len(audits) and len(set(paths))==len(paths)
     accounted=accounted and all(isinstance(x,dict) and x.get('releaseProved') is True and x['kernel']['live']==0 and x['kernel']['coalition_absent'] is True for x in audits) and [x.get('attemptPath') for x in audits]==paths
     if not accounted:errors.append({'type':'TerminalAttemptAccountingFailure','message':'Every allocation attempt requires its own positive terminal audit','attempts':len(jobs),'handles':len(handles),'audits':len(audits)})
-    result.update(terminalAudit=audits,terminalAuditFailures=errors,nativeJobs=len(jobs),pipelineSeconds=time.monotonic()-started,
-        outputBytes=sum(p.stat().st_size for p in packet.rglob('*') if p.is_file()),freeBytesAfter=shutil.disk_usage(HERE).free)
+    result.update(terminalAudit=audits,terminalAuditFailures=errors,nativeJobs=len(jobs),pipelineSeconds=time.monotonic()-started)
+    for name,read in [('outputBytes',lambda:sum(p.stat().st_size for p in packet.rglob('*') if p.is_file())),
+                      ('freeBytesAfter',lambda:shutil.disk_usage(HERE).free)]:
+        try:result[name]=read()
+        except BaseException as error:errors.append({**error_receipt(error),'observation':name})
     result['terminalReleaseProved']=not errors and accounted
     if errors:
         result['status']='HOLD'
@@ -86,14 +119,32 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     # Failed receipt paths may contain stale bytes. Preserve complete in-memory evidence in the proof summary.
     result['receiptFallbacks']=[{'attemptPath':path,'receipt':receipt} for path,receipt in fallbacks.items()]
     result['jobs']=refs
-    encoded=(json.dumps(result,indent=2)+'\n').encode()
-    if len(encoded)>budget.RECORD_BYTES:
-        result['status']='HOLD'
-        result['terminalPersistenceFailure']={'type':'ReservedTerminalRecordOverflow','bytes':len(encoded),'limit':budget.RECORD_BYTES}
-        if result['primaryFailure'] is None:result['primaryFailure']={'type':'ReservedTerminalRecordOverflow','message':'Complete terminal summary retained in the private proof'}
+    result['terminalPersistenceFailures']=[]
+    delivery=result['terminalDelivery']={
+        'proof':{'path':str(proof/'result.json'),'status':'not-attempted'},
+        'packet':{'path':str(packet/'integration-result.json'),'status':'not-attempted'},
+        'completeObservationsPersisted':False,
+        'scope':'Files are snapshots; subsequent delivery errors remain in the returned result'}
+    proof_reference=None
+    try:
+        delivery['proof']['status']='attempting'
+        bounded_packet_summary(result,None) # Record overflow before the full proof snapshot.
+        expected=encode(result)
         save(proof/'result.json',result)
-        packet_summary={'status':'HOLD','nativeJobs':len(jobs),'terminalReleaseProved':result['terminalReleaseProved'],'completeTerminalSummary':{'path':str(proof/'result.json'),'sha256':sha(proof/'result.json'),'bytes':(proof/'result.json').stat().st_size},'primaryFailureReference':'/primaryFailure','terminalPersistenceFailure':result['terminalPersistenceFailure']}
-    else:
-        save(proof/'result.json',result);packet_summary=result
-    budget.write_json(packet,packet/'integration-result.json',packet_summary,reserved=True)
+        actual=(proof/'result.json').read_bytes()
+        assert actual==expected,'Terminal proof write verification failed'
+        proof_reference={'path':str(proof/'result.json'),'sha256':hashlib.sha256(actual).hexdigest(),'bytes':len(actual)}
+        delivery['proof'].update(status='written',**proof_reference)
+        delivery['completeObservationsPersisted']=True
+    except BaseException as error:delivery_failure(result,'proof',error)
+    try:
+        delivery['packet']['status']='attempting'
+        packet_summary,complete=bounded_packet_summary(result,proof_reference)
+        expected=encode(packet_summary)
+        budget.write_json(packet,packet/'integration-result.json',packet_summary,reserved=True)
+        actual=(packet/'integration-result.json').read_bytes()
+        assert actual==expected,'Terminal packet write verification failed'
+        delivery['packet'].update(status='written',completeObservations=complete,sha256=hashlib.sha256(actual).hexdigest(),bytes=len(actual))
+        delivery['completeObservationsPersisted']|=complete
+    except BaseException as error:delivery_failure(result,'packet',error)
     return result

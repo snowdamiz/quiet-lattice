@@ -1,0 +1,28 @@
+{
+  "status": "HOLD",
+  "nativeJobs": 1,
+  "terminalReleaseProved": false,
+  "observationsIncluded": false,
+  "completeObservationsPersisted": false,
+  "completeEvidenceAvailableInMemory": true,
+  "inMemoryResultSha256": "60185c243eaefad3f85d3f39b01de96edd95301b4b888874e30dfc940ca60e96",
+  "inMemoryResultBytes": 428869,
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "Launch registration is still present",
+    "details": {}
+  },
+  "terminalPersistenceFailures": [
+    {
+      "type": "OSError",
+      "message": "TERMINAL_PROOF_WRITE_FAILURE",
+      "details": {},
+      "sink": "proof"
+    }
+  ],
+  "terminalPersistenceFailure": {
+    "type": "ReservedTerminalRecordOverflow",
+    "bytes": 428618,
+    "limit": 131072
+  }
+}

@@ -14,7 +14,7 @@ import time
 import contract
 import packet_budget as budget
 from inspector import sha, write, error_receipt, inspect_capture
-from release_accounting import observe_executables, persist_terminal_summary
+from release_accounting import observe_executables, persist_terminal_summary, delivery_failure
 
 HERE = contract.HERE
 READY = HERE/'readiness.json'
@@ -283,6 +283,24 @@ class StationAdapter:
             allowed.add(base+'validation.json')
         assert set(current['paths']) == allowed, 'Missing or extra aggregate artifacts'
 
+class TerminalDeliveryError(RuntimeError):
+    def __init__(self,result):
+        super().__init__('Terminal output streams failed; complete evidence is attached as result')
+        self.result=result
+
+def emit_result(result):
+    # Each existing stream is tried once. If neither accepts output, the caller still receives the evidence.
+    for name,stream in [('stdout',sys.stdout),('stderr',sys.stderr)]:
+        result['terminalDelivery'][name]={'status':'attempting'}
+        try:
+            text=json.dumps(result,indent=2)+'\n'
+            if stream.write(text)!=len(text):raise OSError('Incomplete terminal output write')
+            stream.flush()
+            result['terminalDelivery'][name]['status']='written'
+            return
+        except BaseException as error:delivery_failure(result,name,error)
+    raise TerminalDeliveryError(result)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--preflight', action='store_true')
@@ -294,7 +312,7 @@ def main():
         record = consume(ready, args.grant)
         adapter = StationAdapter(ready, record)
         result = run_sequence(ready, adapter, ready['packetRoot'], ready['proofRoot'], check=lambda: verify_runtime(ready))
-        print(json.dumps(result, indent=2))
+        emit_result(result)
         return 0 if result['status'] == 'CAPTURED_PENDING_VISUAL_REVIEW' else 1
     print(json.dumps(verify(ready), indent=2))
     return 0

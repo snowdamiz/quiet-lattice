@@ -104,7 +104,10 @@ def scenario(mode, root, ready):
     with patch.object(caller, 'write', write), patch.object(subprocess, 'run', registration):
         result = caller.run_sequence(local, adapter, root/'packet', root/'proof', writer=write)
     retained = json.loads((root/'proof/result.json').read_text())
-    assert retained == result
+    # Proof is the snapshot before sink outcomes; the returned result qualifies those writes separately.
+    assert {k:v for k,v in retained.items() if k!='terminalDelivery'} == {k:v for k,v in result.items() if k!='terminalDelivery'}
+    assert result['terminalDelivery']['proof']['status'] == result['terminalDelivery']['packet']['status'] == 'written'
+    assert result['terminalDelivery']['completeObservationsPersisted'] is True
     text = json.dumps(retained)
     if mode == 'happy':
         assert result['status'] == 'CAPTURED_PENDING_VISUAL_REVIEW' and result['primaryFailure'] is None

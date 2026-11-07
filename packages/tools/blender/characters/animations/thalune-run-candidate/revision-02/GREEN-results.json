@@ -1,0 +1,180 @@
+{
+  "nativeCalls": 0,
+  "results": [
+    {
+      "case": {
+        "name": "start-final-returned-proof-fail",
+        "start": true,
+        "receipt": true,
+        "returned": true,
+        "proof": true
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "durableOriginalStart": true,
+      "durableRawKernel": true,
+      "durableFinalWrite": true,
+      "durableRegistration": true,
+      "packetTerminalExists": true,
+      "proofTerminalExists": false,
+      "status": "HOLD",
+      "terminalReleaseProved": false
+    },
+    {
+      "case": {
+        "name": "start-final-returned-packet-fail",
+        "start": true,
+        "receipt": true,
+        "returned": true,
+        "packet": true
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "durableOriginalStart": true,
+      "durableRawKernel": true,
+      "durableFinalWrite": true,
+      "durableRegistration": true,
+      "packetTerminalExists": false,
+      "proofTerminalExists": true,
+      "status": "HOLD",
+      "terminalReleaseProved": false
+    },
+    {
+      "case": {
+        "name": "start-cleanup-final-returned-proof-fail",
+        "start": true,
+        "cleanup": true,
+        "receipt": true,
+        "returned": true,
+        "proof": true
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "durableOriginalStart": true,
+      "durableRawKernel": true,
+      "durableFinalWrite": true,
+      "durableRegistration": true,
+      "packetTerminalExists": true,
+      "proofTerminalExists": false,
+      "status": "HOLD",
+      "terminalReleaseProved": false
+    },
+    {
+      "case": {
+        "name": "oversized-audit-final-returned-proof-fail",
+        "audit": true,
+        "large": true,
+        "receipt": true,
+        "returned": true,
+        "proof": true
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "durableOriginalStart": false,
+      "durableRawKernel": false,
+      "durableFinalWrite": false,
+      "durableRegistration": false,
+      "packetTerminalExists": true,
+      "proofTerminalExists": false,
+      "status": "HOLD",
+      "terminalReleaseProved": false
+    },
+    {
+      "case": {
+        "name": "small-audit-final-returned-proof-fail",
+        "audit": true,
+        "receipt": true,
+        "returned": true,
+        "proof": true
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "durableOriginalStart": false,
+      "durableRawKernel": true,
+      "durableFinalWrite": true,
+      "durableRegistration": true,
+      "packetTerminalExists": true,
+      "proofTerminalExists": false,
+      "status": "HOLD",
+      "terminalReleaseProved": false
+    },
+    {
+      "case": {
+        "name": "start-final-returned-write-fail-summary-succeeds",
+        "start": true,
+        "receipt": true,
+        "returned": true
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "durableOriginalStart": true,
+      "durableRawKernel": true,
+      "durableFinalWrite": true,
+      "durableRegistration": true,
+      "packetTerminalExists": true,
+      "proofTerminalExists": true,
+      "status": "HOLD",
+      "terminalReleaseProved": false
+    },
+    {
+      "case": {
+        "name": "refused-first-audit-recovers",
+        "audit": true,
+        "recover": true
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "durableOriginalStart": false,
+      "durableRawKernel": true,
+      "durableFinalWrite": false,
+      "durableRegistration": true,
+      "packetTerminalExists": true,
+      "proofTerminalExists": true,
+      "status": "HOLD",
+      "terminalReleaseProved": false
+    },
+    {
+      "case": {
+        "name": "happy-five-jobs"
+      },
+      "returned": true,
+      "raised": null,
+      "starts": [
+        "motion-thalune-run-lod0",
+        "motion-thalune-run-lod2",
+        "stills-thalune-run",
+        "validate-thalune-run-lod0",
+        "validate-thalune-run-lod2"
+      ],
+      "durableOriginalStart": false,
+      "durableRawKernel": true,
+      "durableFinalWrite": false,
+      "durableRegistration": true,
+      "packetTerminalExists": true,
+      "proofTerminalExists": true,
+      "status": "CAPTURED_PENDING_VISUAL_REVIEW",
+      "terminalReleaseProved": true
+    }
+  ]
+}

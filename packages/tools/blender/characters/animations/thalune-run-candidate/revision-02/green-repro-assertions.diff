@@ -1,0 +1,36 @@
+--- review-combined-repro.py
++++ green-combined-repro.py
+@@ -85,11 +85,23 @@
+  if case['name']=='happy-five-jobs':assert len(starts)==5 and result['status']=='CAPTURED_PENDING_VISUAL_REVIEW'
+  else:assert len(starts)==1
+  if case.get('proof'):
+-  assert result is None and raised['message']=='TERMINAL_PROOF_WRITE_FAILURE'
+-  assert not row['durableOriginalStart'] and not row['durableRawKernel']
+-  assert not row['packetTerminalExists']
++  assert result is not None and raised is None and result['status']=='HOLD'
++  assert result['terminalDelivery']['proof']['status']=='failed'
++  assert result['terminalDelivery']['packet']['status']=='written' and row['packetTerminalExists']
++  assert any(e['sink']=='proof' and e['message']=='TERMINAL_PROOF_WRITE_FAILURE' for e in result['terminalPersistenceFailures'])
++  assert result['terminalAudit'][0]['kernel']['unknownKernel']['raw']==91
++  if case.get('start'):
++   assert result['primaryFailure']['message']=='ORIGINAL_START_FAILURE' and row['durableOriginalStart']
++  if case.get('large'):
++   packet_record=json.loads((packet/'integration-result.json').read_text())
++   assert result['terminalDelivery']['completeObservationsPersisted'] is False
++   assert 'completeTerminalSummary' not in packet_record and packet_record['observationsIncluded'] is False
++   assert result['terminalAudit'][0]['kernel']['unknownKernel']['extra']=='x'*140000
++  else:assert row['durableRawKernel']
+  elif case.get('packet'):
+-  assert result is None and raised['message']=='TERMINAL_PACKET_WRITE_FAILURE' and row['durableOriginalStart']
++  assert result is not None and raised is None and row['durableOriginalStart']
++  assert result['terminalDelivery']['packet']['status']=='failed'
++  assert any(e['sink']=='packet' and e['message']=='TERMINAL_PACKET_WRITE_FAILURE' for e in result['terminalPersistenceFailures'])
+  elif case.get('recover'):
+   assert result['status']=='HOLD' and result['terminalReleaseProved'] is False
+   assert result['terminalAudit'][0]['releaseProved'] is True
+@@ -101,4 +113,4 @@
+  results.append({k:v for k,v in row.items() if k!='instrumentedHandleReceipts'})
+ assert not any(m in sys.modules for m in ['round4_job_boundary','round4_capture_children','run_round4_browser_proof','run_round4_remaining8'])
+ (RUN/'combined-results.json').write_text(json.dumps({'nativeCalls':len(native),'results':results},indent=2)+'\n')
+-print(json.dumps({'run':str(RUN),'nativeCalls':len(native),'cases':len(results),'proofFallbackLossCases':sum(x['case'].get('proof',False) for x in results)},indent=2))
++print(json.dumps({'run':str(RUN),'nativeCalls':len(native),'cases':len(results),'proofFailureCasesCorrected':sum(x['case'].get('proof',False) for x in results)},indent=2))
