@@ -180,26 +180,60 @@ class CallerControls(unittest.TestCase):
             ready = {'runtimeEnabled': True, 'root': temp, 'git': '/usr/bin/git'}
             ready_path = Path(temp) / 'ready.json'; ready_path.write_text(json.dumps(ready))
             for changed in ({'grant': str(grant) + '.wrong'}, {'authorizationId': 'wrong'}):
-                with self.subTest(changed=changed), patch.object(caller, 'READY', ready_path), patch.object(caller, 'grant_gate', return_value=caller.GrantAdmission({**spec, **changed}, ())), patch.object(caller.subprocess, 'check_output', return_value='head'), patch.object(caller, 'verify_bindings', side_effect=AssertionError('verification reached')), patch.object(caller, 'persist', side_effect=AssertionError('allocation reached')):
+                with self.subTest(changed=changed), patch.dict(os.environ, {'FAUNA_CAPTURE_GRANT': 'cpu-only'}), patch.object(caller, 'READY', ready_path), patch.object(caller, 'grant_gate', return_value=caller.GrantAdmission({**spec, **changed}, ())), patch.object(caller.subprocess, 'check_output', return_value='head'), patch.object(caller, 'verify_bindings', side_effect=AssertionError('verification reached')), patch.object(caller, 'persist', side_effect=AssertionError('allocation reached')):
                     with self.assertRaisesRegex(caller.Refused, 'Grant attempt identity changed'):
                         caller.consume(ready, 'cpu-only', str(grant))
 
-    def test_actual_disabled_entry_has_no_subprocess_helper_import_or_allocation(self):
-        script = '''import sys, runpy
+    def test_actual_enabled_cli_missing_authority_has_no_subprocess_helper_import_or_allocation(self):
+        script = '''import sys, runpy, os
 def audit(event, args):
     if event in ('subprocess.Popen', 'os.posix_spawn', 'os.fork', 'os.mkdir'):
-        raise AssertionError('disabled entry attempted allocation: ' + event)
+        raise AssertionError('ungranted entry attempted allocation: ' + event)
+    if event == 'open' and args[2] & (os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC):
+        raise AssertionError('ungranted entry attempted file write')
     if event == 'import' and args[0] in ('round4_job_boundary', 'round4_capture_children', 'run_round4_browser_proof', 'run_round4_remaining8'):
-        raise AssertionError('disabled entry imported an ownership helper')
+        raise AssertionError('ungranted entry imported an ownership helper')
 sys.addaudithook(audit)
-sys.argv = [sys.argv[1], '--execute', sys.argv[2], '--grant', '/nonexistent-cpu-control-grant']
+mode = sys.argv[3]
+os.environ.pop('FAUNA_CAPTURE_GRANT', None)
+if mode == 'missing-file': os.environ['FAUNA_CAPTURE_GRANT'] = 'INERT_CPU_NOT_AUTHORITY'
+sys.argv = [sys.argv[1], '--execute', sys.argv[2]] + ([] if mode == 'missing-argument' else ['--grant', '/nonexistent-cpu-control-grant'])
 runpy.run_path(sys.argv[0], run_name='__main__')
 '''
-        python = caller.read_json(HERE / 'readiness.json')['python']
+        ready = caller.read_json(HERE / 'readiness.json')
+        self.assertIs(ready['runtimeEnabled'], True)
+        python = ready['python']
         for unit in ['fauna-hit-turn-' + light + '-' + aspect for light in ('day', 'night') for aspect in ('16x9', '21x9')] + ['fauna-combat', 'fauna-combat-night']:
-            result = subprocess.run([python, '-I', '-B', '-c', script, str(HERE / 'caller.py'), unit], capture_output=True, text=True, timeout=10)
-            self.assertEqual(result.returncode, 2, result.stderr + result.stdout)
-            self.assertIn('Readiness is disabled; no helper import/allocation permitted', result.stderr)
+            for mode, exit_code, message in [('missing-argument', 2, 'Separate one-use root grant required'),
+                                             ('missing-auth', 2, 'Explicit root grant identity missing'),
+                                             ('missing-file', 1, 'No such file or directory')]:
+                with self.subTest(unit=unit, mode=mode):
+                    result = subprocess.run([python, '-I', '-B', '-c', script, str(HERE / 'caller.py'), unit, mode], capture_output=True, text=True, timeout=10)
+                    self.assertEqual(result.returncode, exit_code, result.stderr + result.stdout)
+                    self.assertIn(message, result.stderr)
+                    self.assertNotIn('AssertionError', result.stderr)
+
+    def test_exact_owned_apple_encoder_freeze_closure(self):
+        freeze = module('fauna_cpu_freeze_encoder', 'freeze.py')
+        ready = caller.read_json(HERE / 'readiness.json')
+        freeze.validate_encoder_bindings(ready)
+        encoder = ready['apple_encoder_binding']
+        self.assertEqual(encoder['identifier'], 'com.apple.coremedia.videoencoder')
+        self.assertEqual(encoder['requirement'], 'identifier "com.apple.coremedia.videoencoder" and anchor apple')
+        self.assertEqual(encoder['verify']['exit'], 0)
+        self.assertEqual(encoder['display']['exit'], 0)
+        self.assertEqual(caller.sha(encoder['canonical_path']), encoder['sha256'])
+        for change in ('missing-process', 'wrong-digest', 'missing-file', 'missing-verifier', 'wrong-role'):
+            changed = copy.deepcopy(ready)
+            path = encoder['canonical_path']
+            if change == 'missing-process': del changed['process_binary_sha256'][path]
+            if change == 'wrong-digest': changed['process_binary_sha256'][path] = '0' * 64
+            if change in ('missing-file', 'missing-verifier'):
+                target = path if change == 'missing-file' else '/usr/bin/codesign'
+                changed['bindings'] = [row for row in changed['bindings'] if row['path'] != target]
+            if change == 'wrong-role': changed['ownedAppleEncoder']['role'] = 'any-system-service'
+            with self.subTest(change=change), self.assertRaises(freeze.caller.Refused):
+                freeze.validate_encoder_bindings(changed)
 
     def test_disabled_before_grant_helper_or_allocation(self):
         with patch.object(caller, 'read_json', side_effect=AssertionError('grant read')), patch.object(caller.importlib, 'import_module', side_effect=AssertionError('helper import')), patch.object(caller, 'persist', side_effect=AssertionError('allocation')):

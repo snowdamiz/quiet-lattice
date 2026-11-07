@@ -1,6 +1,46 @@
 {
   "acceptedHelperCommit": "ca7d91e378e9d2f3f0ce8f0651475dcb843875d9",
+  "apple_encoder_binding": {
+    "canonical_path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+    "cdhash": "1a44901103cc99a0b15b19f81156f25748c3a0d9",
+    "codesign_sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e",
+    "display": {
+      "argv": [
+        "/usr/bin/codesign",
+        "-d",
+        "--verbose=4",
+        "-r-",
+        "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+      ],
+      "exit": 0,
+      "stderr": "Executable=/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService\nIdentifier=com.apple.coremedia.videoencoder\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=441 flags=0x0(none) hashes=3+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9\nCandidateCDHashFull sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nHash choices=sha256\nCMSDigest=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=1a44901103cc99a0b15b19f81156f25748c3a0d9\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 8, 2026 at 7:25:11\u202fPM\nInfo.plist entries=22\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n",
+      "stdout": "designated => identifier \"com.apple.coremedia.videoencoder\" and anchor apple\n"
+    },
+    "identifier": "com.apple.coremedia.videoencoder",
+    "platform_identifier": "26",
+    "requirement": "identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+    "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5",
+    "verify": {
+      "argv": [
+        "/usr/bin/codesign",
+        "--verify",
+        "--strict",
+        "-R",
+        "=identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+        "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  },
   "bindings": [
+    {
+      "bytes": 167280,
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "realpath": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5"
+    },
     {
       "bytes": 8962,
       "path": "/Users/andreyyurlov/.codex/reviews/p1-e08-t09-2f36cdb2-source-rereview-sol/REVIEW.md",
@@ -2462,16 +2502,16 @@
       "sha256": "3aac3f7be1fa76bd8fe8138e189b86acf25c2b725f37a1d572fcf2a4f8aba4ff"
     },
     {
-      "bytes": 13829,
+      "bytes": 15104,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/README.md",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/README.md",
-      "sha256": "7c64e5ce2f6f87ba6a01fcccb41559df58ff02e95bf14831804ee2a579240214"
+      "sha256": "83ca5f96b79da35281956daf714814d7dfb4033ce801ad0f2c751e3da27f4b95"
     },
     {
-      "bytes": 42386,
+      "bytes": 42488,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/caller.py",
-      "sha256": "5aef40ddf7dfc8bc207c1fd83fd0c5921fac20df39b3b80ea148e6a997b13683"
+      "sha256": "cb1a60fd349fcdc85140177db96e8014921fc37833257bd2abec7ae78da830ee"
     },
     {
       "bytes": 9600,
@@ -2480,16 +2520,16 @@
       "sha256": "0ed02d2a8edce6d1d92e489ba8744af168eaaf5f3f0ab705634df4c474938e23"
     },
     {
-      "bytes": 12689,
+      "bytes": 12757,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.mjs",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.mjs",
-      "sha256": "f1db5f003d8ee4063c0fa71156b5b49afa3580eb804cccabeb4950f8eabafca1"
+      "sha256": "2fc49f64b1342d447c9c73a7b52ee1fd23c2ff043b12c4690bd3765e445a5e3d"
     },
     {
-      "bytes": 121961,
+      "bytes": 124435,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/controls.py",
-      "sha256": "279bf31e96d17fe1049f2b0fcc46709d1464c5652c58bc2f7dca347c9ff3000c"
+      "sha256": "309f92a5a8ad8bb91d01a774194a9468f33ffa9416944c091e6839a6fc869ab9"
     },
     {
       "bytes": 20256,
@@ -2504,10 +2544,10 @@
       "sha256": "5b465a079bb10e26aef65062a71943cf5c1a921c20ce1d08b86faab24997231a"
     },
     {
-      "bytes": 16590,
+      "bytes": 18508,
       "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/freeze.py",
       "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/freeze.py",
-      "sha256": "1f4245281106f6c952a2385c0fabaf748ac3ff986395c0e1471d155c873da1d4"
+      "sha256": "800a2f7e45068b657bf2682f2c6e1e312b8ccf2f353e4486252166282fb5c29c"
     },
     {
       "bytes": 22439,
@@ -2624,6 +2664,12 @@
       "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
     },
     {
+      "bytes": 973408,
+      "path": "/usr/bin/codesign",
+      "realpath": "/usr/bin/codesign",
+      "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+    },
+    {
       "bytes": 200560,
       "path": "/usr/bin/git",
       "realpath": "/usr/bin/git",
@@ -2702,8 +2748,8 @@
     ]
   },
   "esbuild": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/lib/main.js",
-  "externalSystemXpcOwnership": "UNQUALIFIED; no explicit encoder/recorder route in captureUi",
-  "ffmpegOrHardwareEncoderAllowed": false,
+  "explicitEncoderOrRecorderLaunchAllowed": false,
+  "externalSystemXpcOwnership": "UNQUALIFIED; exact owned Apple encoder binding does not admit external system XPC services",
   "generatedCaches": [
     "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/client/node_modules/.vite",
     "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/client/node_modules/.vite-temp"
@@ -2724,13 +2770,19 @@
     "pinned Node + bound tsx esm API entry (no pnpm/shell route)",
     "tsx esbuild service",
     "Vite rolldown/lightningcss in-process native addons",
-    "ordinary Chromium headless shell with GPU/renderer/utility children"
+    "ordinary Chromium headless shell with GPU/renderer/utility children",
+    "exact signed Apple VTEncoderXPCService only when verified as a current owned cohort member"
   ],
   "noVideoRequested": true,
   "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
   "nodeVersion": "v26.12.1",
+  "ownedAppleEncoder": {
+    "ownership": "current kernel birth/UID/coalition verified by StageReceipts",
+    "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+    "role": "apple-video-encoder-xpc"
+  },
   "path": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/26454_1794032560708/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin",
-  "phase": "CPU_CANDIDATE_PENDING_INDEPENDENT_CALLER_FIXTURE_REVIEW",
+  "phase": "ENABLED_CANDIDATE_PENDING_R9_REVIEW_AND_ONE_UNIT_PARENT_GRANT",
   "playwright": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js",
   "priorProductSourceReview": {
     "head": "2f36cdb2d6bdd1f40428b6b48c2c27fddbdcfcae",
@@ -2740,6 +2792,7 @@
     "verdict": "PASS"
   },
   "process_binary_sha256": {
+    "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5",
     "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node": "06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b",
     "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384",
     "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634",
@@ -2773,18 +2826,18 @@
     "nativeCaptureStarted": false,
     "observation": {
       "identityAfter": {
-        "birth": [1794040380, 556108],
-        "pgid": 7386,
-        "pid": 7428,
-        "ppid": 7414,
+        "birth": [1794041924, 79940],
+        "pgid": 98592,
+        "pid": 98597,
+        "ppid": 98596,
         "status": 2,
         "uid": 501
       },
       "identityBefore": {
-        "birth": [1794040380, 556108],
-        "pgid": 7386,
-        "pid": 7428,
-        "ppid": 7414,
+        "birth": [1794041924, 79940],
+        "pgid": 98592,
+        "pid": 98597,
+        "ppid": 98596,
         "status": 2,
         "uid": 501
       },
@@ -2800,13 +2853,13 @@
         "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
         "sha256": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a"
       },
-      "pid": 7428,
+      "pid": 98597,
       "scope": "CPU_SELF_PROCESS_ONLY_NOT_CAPTURE",
       "uid": 501
     },
     "processExitedAndReaped": true,
     "stderr": "",
-    "stdout": "{\"scope\": \"CPU_SELF_PROCESS_ONLY_NOT_CAPTURE\", \"pid\": 7428, \"uid\": 501, \"identityBefore\": {\"pid\": 7428, \"ppid\": 7414, \"pgid\": 7386, \"birth\": [1794040380, 556108], \"status\": 2, \"uid\": 501}, \"identityAfter\": {\"pid\": 7428, \"ppid\": 7414, \"pgid\": 7386, \"birth\": [1794040380, 556108], \"status\": 2, \"uid\": 501}, \"launcher\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"sha256\": \"e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a\", \"bytes\": 34640}, \"kernelExecutable\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"sha256\": \"b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22\", \"bytes\": 33568}}\n"
+    "stdout": "{\"scope\": \"CPU_SELF_PROCESS_ONLY_NOT_CAPTURE\", \"pid\": 98597, \"uid\": 501, \"identityBefore\": {\"pid\": 98597, \"ppid\": 98596, \"pgid\": 98592, \"birth\": [1794041924, 79940], \"status\": 2, \"uid\": 501}, \"identityAfter\": {\"pid\": 98597, \"ppid\": 98596, \"pgid\": 98592, \"birth\": [1794041924, 79940], \"status\": 2, \"uid\": 501}, \"launcher\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14\", \"sha256\": \"e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a\", \"bytes\": 34640}, \"kernelExecutable\": {\"path\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"realpath\": \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python\", \"sha256\": \"b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22\", \"bytes\": 33568}}\n"
   },
   "pythonVersion": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
   "resolver": {
@@ -2816,7 +2869,7 @@
     }
   },
   "root": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465",
-  "runtimeEnabled": false,
+  "runtimeEnabled": true,
   "scope": {
     "liveServerQualified": false,
     "offlineReplayOnly": true,
@@ -2842,7 +2895,7 @@
       "realpath": "/private/tmp/p1-e14-t15-independent-gzn1kbbe/REPORT.txt",
       "sha256": "944f849660b40540f253612159f49f02c31083a83b178cbabee5171326591af9"
     },
-    "runtimeEnabled": false,
+    "runtimeEnabled": true,
     "stablePatchId": "8e90cd71186b236a00402a6bd9b985256e9b5ec7",
     "tree": "b8ba53c6acdf6eb604b9c046a8165f1985634be8",
     "verdict": "SOURCE_PASS"
@@ -2861,8 +2914,8 @@
   "units": {
     "fauna-combat": {
       "aspect": "16x9",
-      "attemptId": "4e6e6a438f9b4f21b0ec8e23f0422eae",
-      "authorizationId": "fauna-4e6e6a438f9b4f21b0ec8e23f0422eae",
+      "attemptId": "cfdd6c555dbb47ac8c9fb48305c862aa",
+      "authorizationId": "fauna-cfdd6c555dbb47ac8c9fb48305c862aa",
       "budget": {
         "fileCount": 220,
         "futureLfsAdditionalBytes": 3674226688,
@@ -2871,9 +2924,9 @@
         "newOutputCapBytes": 3674226688,
         "oneUnitAdmissionBytes": 15871295488
       },
-      "consumption": "/private/tmp/fhc-4e6e6a438f9b4f21b0ec8e23f0422eae.json",
-      "evidence": "/private/tmp/fhp-4e6e6a438f9b4f21b0ec8e23f0422eae",
-      "grant": "/private/tmp/fhg-4e6e6a438f9b4f21b0ec8e23f0422eae.json",
+      "consumption": "/private/tmp/fhc-cfdd6c555dbb47ac8c9fb48305c862aa.json",
+      "evidence": "/private/tmp/fhp-cfdd6c555dbb47ac8c9fb48305c862aa",
+      "grant": "/private/tmp/fhg-cfdd6c555dbb47ac8c9fb48305c862aa.json",
       "inventory": {
         "frames": 204,
         "readouts": 1,
@@ -2882,13 +2935,13 @@
       },
       "kind": "broad",
       "light": "day",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-4e6e6a438f9b4f21b0ec8e23f0422eae",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-cfdd6c555dbb47ac8c9fb48305c862aa",
       "screen": "fauna-combat"
     },
     "fauna-combat-night": {
       "aspect": "16x9",
-      "attemptId": "fa8dbfdf1cbd4a02a13b177272b9da26",
-      "authorizationId": "fauna-fa8dbfdf1cbd4a02a13b177272b9da26",
+      "attemptId": "b98a01d235494100a38984d44caefbbd",
+      "authorizationId": "fauna-b98a01d235494100a38984d44caefbbd",
       "budget": {
         "fileCount": 220,
         "futureLfsAdditionalBytes": 3674226688,
@@ -2897,9 +2950,9 @@
         "newOutputCapBytes": 3674226688,
         "oneUnitAdmissionBytes": 15871295488
       },
-      "consumption": "/private/tmp/fhc-fa8dbfdf1cbd4a02a13b177272b9da26.json",
-      "evidence": "/private/tmp/fhp-fa8dbfdf1cbd4a02a13b177272b9da26",
-      "grant": "/private/tmp/fhg-fa8dbfdf1cbd4a02a13b177272b9da26.json",
+      "consumption": "/private/tmp/fhc-b98a01d235494100a38984d44caefbbd.json",
+      "evidence": "/private/tmp/fhp-b98a01d235494100a38984d44caefbbd",
+      "grant": "/private/tmp/fhg-b98a01d235494100a38984d44caefbbd.json",
       "inventory": {
         "frames": 204,
         "readouts": 1,
@@ -2908,13 +2961,13 @@
       },
       "kind": "broad",
       "light": "night",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-fa8dbfdf1cbd4a02a13b177272b9da26",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-b98a01d235494100a38984d44caefbbd",
       "screen": "fauna-combat-night"
     },
     "fauna-hit-turn-day-16x9": {
       "aspect": "16x9",
-      "attemptId": "51b0617d00104cc79533206ffcbad03d",
-      "authorizationId": "fauna-51b0617d00104cc79533206ffcbad03d",
+      "attemptId": "b56b6ed1ba8f41f0aca38e15fa26518d",
+      "authorizationId": "fauna-b56b6ed1ba8f41f0aca38e15fa26518d",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -2923,9 +2976,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-51b0617d00104cc79533206ffcbad03d.json",
-      "evidence": "/private/tmp/fhp-51b0617d00104cc79533206ffcbad03d",
-      "grant": "/private/tmp/fhg-51b0617d00104cc79533206ffcbad03d.json",
+      "consumption": "/private/tmp/fhc-b56b6ed1ba8f41f0aca38e15fa26518d.json",
+      "evidence": "/private/tmp/fhp-b56b6ed1ba8f41f0aca38e15fa26518d",
+      "grant": "/private/tmp/fhg-b56b6ed1ba8f41f0aca38e15fa26518d.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -2934,13 +2987,13 @@
       },
       "kind": "correction",
       "light": "day",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-51b0617d00104cc79533206ffcbad03d",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-b56b6ed1ba8f41f0aca38e15fa26518d",
       "screen": "fauna-hit-turn-day-16x9"
     },
     "fauna-hit-turn-day-21x9": {
       "aspect": "21x9",
-      "attemptId": "6db615deda92409aa0bcaf17323f2837",
-      "authorizationId": "fauna-6db615deda92409aa0bcaf17323f2837",
+      "attemptId": "7f0dca675c464a93a6ee0b6c2ff5d8a4",
+      "authorizationId": "fauna-7f0dca675c464a93a6ee0b6c2ff5d8a4",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -2949,9 +3002,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-6db615deda92409aa0bcaf17323f2837.json",
-      "evidence": "/private/tmp/fhp-6db615deda92409aa0bcaf17323f2837",
-      "grant": "/private/tmp/fhg-6db615deda92409aa0bcaf17323f2837.json",
+      "consumption": "/private/tmp/fhc-7f0dca675c464a93a6ee0b6c2ff5d8a4.json",
+      "evidence": "/private/tmp/fhp-7f0dca675c464a93a6ee0b6c2ff5d8a4",
+      "grant": "/private/tmp/fhg-7f0dca675c464a93a6ee0b6c2ff5d8a4.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -2960,13 +3013,13 @@
       },
       "kind": "correction",
       "light": "day",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-6db615deda92409aa0bcaf17323f2837",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-7f0dca675c464a93a6ee0b6c2ff5d8a4",
       "screen": "fauna-hit-turn-day-21x9"
     },
     "fauna-hit-turn-night-16x9": {
       "aspect": "16x9",
-      "attemptId": "f5b1c7f00096451d9de3662c1fb6392b",
-      "authorizationId": "fauna-f5b1c7f00096451d9de3662c1fb6392b",
+      "attemptId": "44d628ab6f774a4eb50177dc1762f96e",
+      "authorizationId": "fauna-44d628ab6f774a4eb50177dc1762f96e",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -2975,9 +3028,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-f5b1c7f00096451d9de3662c1fb6392b.json",
-      "evidence": "/private/tmp/fhp-f5b1c7f00096451d9de3662c1fb6392b",
-      "grant": "/private/tmp/fhg-f5b1c7f00096451d9de3662c1fb6392b.json",
+      "consumption": "/private/tmp/fhc-44d628ab6f774a4eb50177dc1762f96e.json",
+      "evidence": "/private/tmp/fhp-44d628ab6f774a4eb50177dc1762f96e",
+      "grant": "/private/tmp/fhg-44d628ab6f774a4eb50177dc1762f96e.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -2986,13 +3039,13 @@
       },
       "kind": "correction",
       "light": "night",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-f5b1c7f00096451d9de3662c1fb6392b",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-44d628ab6f774a4eb50177dc1762f96e",
       "screen": "fauna-hit-turn-night-16x9"
     },
     "fauna-hit-turn-night-21x9": {
       "aspect": "21x9",
-      "attemptId": "09bad855e3ec455c96cd7a73226c9c11",
-      "authorizationId": "fauna-09bad855e3ec455c96cd7a73226c9c11",
+      "attemptId": "91cf0fedcbaf498998b9acb82b71753f",
+      "authorizationId": "fauna-91cf0fedcbaf498998b9acb82b71753f",
       "budget": {
         "fileCount": 82,
         "futureLfsAdditionalBytes": 1358970880,
@@ -3001,9 +3054,9 @@
         "newOutputCapBytes": 1358970880,
         "oneUnitAdmissionBytes": 8925528064
       },
-      "consumption": "/private/tmp/fhc-09bad855e3ec455c96cd7a73226c9c11.json",
-      "evidence": "/private/tmp/fhp-09bad855e3ec455c96cd7a73226c9c11",
-      "grant": "/private/tmp/fhg-09bad855e3ec455c96cd7a73226c9c11.json",
+      "consumption": "/private/tmp/fhc-91cf0fedcbaf498998b9acb82b71753f.json",
+      "evidence": "/private/tmp/fhp-91cf0fedcbaf498998b9acb82b71753f",
+      "grant": "/private/tmp/fhg-91cf0fedcbaf498998b9acb82b71753f.json",
       "inventory": {
         "frames": 72,
         "readouts": 1,
@@ -3012,7 +3065,7 @@
       },
       "kind": "correction",
       "light": "night",
-      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-09bad855e3ec455c96cd7a73226c9c11",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-91cf0fedcbaf498998b9acb82b71753f",
       "screen": "fauna-hit-turn-night-21x9"
     }
   }

@@ -98,12 +98,37 @@ def validate_python_runtime_bindings(ready):
         caller.require(expected in ready['bindings'], 'Python ' + kind + ' missing/drifted in immutable file bindings')
 
 
+def apple_encoder_binding():
+    """Reuse the pinned helper's read-only Apple signature contract; never run the encoder."""
+    for name, expected in PINS.items():
+        caller.require(caller.sha(HELPERS / name) == expected, 'Accepted helper pin changed: ' + name)
+    before = sys.path[:]
+    try:
+        sys.path.insert(0, str(HELPERS))
+        return importlib.import_module('run_round4_remaining8').encoder_binding()
+    finally:
+        sys.path[:] = before
+
+
+def validate_encoder_bindings(ready):
+    encoder = ready['apple_encoder_binding']
+    path = encoder['canonical_path']
+    caller.require(ready['ownedAppleEncoder'] == {'path': path, 'role': 'apple-video-encoder-xpc',
+                                                'ownership': 'current kernel birth/UID/coalition verified by StageReceipts'},
+                   'Apple encoder role/ownership contract changed')
+    caller.require(ready['process_binary_sha256'].get(path) == encoder['sha256'], 'Apple encoder missing/drifted in native process bindings')
+    for file, digest in ((path, encoder['sha256']), ('/usr/bin/codesign', encoder['codesign_sha256'])):
+        caller.require(any(row['path'] == file and row['realpath'] == file and row['sha256'] == digest
+                           for row in ready['bindings']), 'Apple encoder signature/file binding missing/drifted: ' + file)
+
+
 def make_ready():
     caller.optimization_guard()
     for name, expected in PINS.items():
         caller.require(caller.sha(HELPERS / name) == expected, 'Accepted helper pin changed: ' + name)
     caller.require(caller.sha(PRODUCT_REVIEW) == PRODUCT_REVIEW_SHA, 'Prior product source review drifted')
     python_probe = python_runtime_probe()
+    encoder = apple_encoder_binding()
     node = str(Path(subprocess.check_output(['/usr/bin/which', 'node'], text=True).strip()).resolve())
     script = """import{createRequire}from'node:module';import{dirname}from'node:path';
 const r=createRequire(process.cwd()+'/packages/tools/package.json'),t=r.resolve('@playwright/test'),p=createRequire(t).resolve('playwright'),c=createRequire(p).resolve('playwright-core');
@@ -119,9 +144,9 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
     native = [Path(sys.executable).resolve(), Path(python_probe['observation']['kernelExecutable']['path']), Path(node), Path('/usr/bin/caffeinate'), browser]
     esbuild_binary = ROOT / 'node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild'
     caller.require(esbuild_binary.is_file(), 'Exact tsx esbuild native route missing')
-    native += [esbuild_binary]
+    native += [esbuild_binary, Path(encoder['canonical_path'])]
     browser_libraries = list(browser_root.glob('*.dylib'))
-    files = [Path('/usr/bin/git'), Path('/usr/sbin/lsof'), Path('/bin/ps'), Path('/bin/launchctl'), Path('/usr/bin/pmset')]
+    files = [Path('/usr/bin/git'), Path('/usr/sbin/lsof'), Path('/bin/ps'), Path('/bin/launchctl'), Path('/usr/bin/pmset'), Path('/usr/bin/codesign')]
     files += [HELPERS / name for name in PINS]
     files += native + browser_libraries + [PRODUCT_REVIEW, LEGACY_MANIFEST] + [Path(v) for k, v in routes.items() if k != 'nodeVersion']
     files += [DECODER_PYTHON, core / 'lib/coreBundle.js', core / 'browsers.json']
@@ -174,12 +199,15 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
                        'evidence': '/private/tmp/fhp-' + nonce, 'consumption': '/private/tmp/fhc-' + nonce + '.json',
                        'grant': '/private/tmp/fhg-' + nonce + '.json', 'authorizationId': 'fauna-' + nonce}
     ready = {
-        'runtimeEnabled': False, 'phase': 'CPU_CANDIDATE_PENDING_INDEPENDENT_CALLER_FIXTURE_REVIEW',
+        'runtimeEnabled': True, 'phase': 'ENABLED_CANDIDATE_PENDING_R9_REVIEW_AND_ONE_UNIT_PARENT_GRANT',
         'root': str(ROOT), 'uid': os.getuid(), 'python': str(Path(sys.executable).resolve()), 'pythonVersion': sys.version,
         'node': node, 'path': os.environ['PATH'], 'git': '/usr/bin/git', **routes,
         'stationDirectory': str(HELPERS), 'acceptedHelperCommit': 'ca7d91e378e9d2f3f0ce8f0651475dcb843875d9',
         'browserCache': str(cache), 'resolver': {'selectedExecutable': {'path': str(browser), 'sha256': caller.sha(browser)}},
         'process_binary_sha256': {str(p): caller.sha(p) for p in native},
+        'apple_encoder_binding': encoder,
+        'ownedAppleEncoder': {'path': encoder['canonical_path'], 'role': 'apple-video-encoder-xpc',
+                             'ownership': 'current kernel birth/UID/coalition verified by StageReceipts'},
         'pythonRuntimeProbe': python_probe,
         'bindings': [binding(p) for p in sorted(set(files))],
         'dependencies': caller.tree_binding(ROOT / 'node_modules/.pnpm', workspace_links),
@@ -191,7 +219,7 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
                                      'tree': 'b8ba53c6acdf6eb604b9c046a8165f1985634be8',
                                      'adoptedCommit': 'c360967ab2bdba096bd2949c70fe679e8b7d68b3',
                                      'stablePatchId': '8e90cd71186b236a00402a6bd9b985256e9b5ec7',
-                                     'verdict': 'SOURCE_PASS', 'runtimeEnabled': False,
+                                     'verdict': 'SOURCE_PASS', 'runtimeEnabled': True,
                                      'report': binding(shared_review), 'files': shared_files},
         'priorProductSourceReview': {'verdict': 'PASS', 'historicalOnly': True, 'head': '2f36cdb2d6bdd1f40428b6b48c2c27fddbdcfcae',
                                     'path': str(PRODUCT_REVIEW), 'sha256': PRODUCT_REVIEW_SHA},
@@ -203,11 +231,13 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
                   'offlineReplayOnly': True, 'liveServerQualified': False, 'realTimeQualified': False},
         'nativeRoutes': ['StationJob Python worker via launchctl', 'caffeinate owned by StationJob', 'pinned Node + bound tsx esm API entry (no pnpm/shell route)',
                          'tsx esbuild service', 'Vite rolldown/lightningcss in-process native addons',
-                         'ordinary Chromium headless shell with GPU/renderer/utility children'],
-        'noVideoRequested': True, 'ffmpegOrHardwareEncoderAllowed': False,
-        'externalSystemXpcOwnership': 'UNQUALIFIED; no explicit encoder/recorder route in captureUi',
+                         'ordinary Chromium headless shell with GPU/renderer/utility children',
+                         'exact signed Apple VTEncoderXPCService only when verified as a current owned cohort member'],
+        'noVideoRequested': True, 'explicitEncoderOrRecorderLaunchAllowed': False,
+        'externalSystemXpcOwnership': 'UNQUALIFIED; exact owned Apple encoder binding does not admit external system XPC services',
     }
     validate_python_runtime_bindings(ready)
+    validate_encoder_bindings(ready)
     return ready
 
 
@@ -216,4 +246,4 @@ if __name__ == '__main__':
     with (HERE / 'readiness.json').open('x') as stream:
         json.dump(ready, stream, sort_keys=True, indent=2)
         stream.write('\n')
-    print(json.dumps({'runtimeEnabled': False, 'unitOrder': ready['unitOrder'], 'perUnit': {name: ready['units'][name]['budget'] for name in ready['unitOrder']}}))
+    print(json.dumps({'runtimeEnabled': ready['runtimeEnabled'], 'unitOrder': ready['unitOrder'], 'perUnit': {name: ready['units'][name]['budget'] for name in ready['unitOrder']}}))

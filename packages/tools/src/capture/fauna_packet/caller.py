@@ -1,4 +1,4 @@
-"""Disabled, one-screen caller. StationJob alone owns capture processes and cleanup."""
+"""Grant-gated, one-screen caller. StationJob alone owns capture processes and cleanup."""
 import sys
 import os
 if not __debug__ or sys.flags.optimize != 0 or os.environ.get('PYTHONOPTIMIZE', '') not in ('', '0'):
@@ -333,8 +333,9 @@ def verify_worktree(ready, predecessor_outputs):
 
 def consume(ready, unit, grant_path):
     optimization_guard()
-    # The disabled candidate is rejected before reading a grant or importing any ownership helper.
+    # Refuse missing authority before reading a grant, running Git or importing an ownership helper.
     require(ready['runtimeEnabled'] is True, 'Readiness is disabled; no helper import/allocation permitted')
+    require(bool(os.environ.get('FAUNA_CAPTURE_GRANT')), 'Explicit root grant identity missing')
     frozen, readiness_sha = read_json_snapshot(READY)
     require(frozen == ready, 'Readiness changed before admission')
     grant, grant_sha = read_json_snapshot(grant_path, 16384)
