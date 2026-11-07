@@ -1,0 +1,122 @@
+PATH /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/docs/art-bible.md
+SHA256 8349af52a0318b508a789725c3d9418b0bcfcd26c610a4ea4f4553f230be25f6
+40: Units are metres, +Z up in Blender (the glTF exporter converts to +Y up). Apply all transforms before export; origins sit
+41: where the asset touches the ground (buildings, props, bodies) or at the centre of mass (hulls, flyers, effects).
+42: 
+191: material is full PBR (DESIGN 19.2): base colour, roughness, metallic, normal, ambient occlusion, and emissive where it
+192: glows. Library materials drive their channels from procedural nodes; the export scripts bake them per asset, and bake
+193: ambient occlusion from the asset's own geometry wherever no AO map was painted. Objects that share one material bake into
+194: one image, so their UVs must not overlap. Emissive-only materials (`LIB_EngineGlow`, `LIB_Nav*`, `LIB_GlyphLight`,
+195: `LIB_HollowSeam`) and `LIB_Glass` are exempt from the full map set.
+220: **Texture budgets** (DESIGN 19.2): 4k on heroes (player bodies, hulls, Wardens, the Patient, capital landmarks), 2k on
+221: creatures and buildings, 1k on props; city kits and station kits share one atlas per kit. Texel density: characters
+222: ~2048 px/m, hulls ~512 px/m, buildings 256 px/m with trim sheets, props 512 px/m.
+
+PATH /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/docs/DESIGN.md
+SHA256 e94bce86730d2707336cd616e55b47ac790ba7ad25ce98b73e776405c87d192e
+783: ### 19.2 The quality bar
+784: | Area | Target |
+785: |---|---|
+786: | Geometry | hero assets (player bodies, hulls, Wardens, the Patient, each capital's landmarks) 60–150k triangles at LOD0; creatures 15–40k; props 2–10k. Four LODs per asset, LOD3 under 5% of LOD0. Flora keeps the impostor hand-over beyond 400 m. |
+787: | Materials | full PBR: base colour, roughness, metallic, normal, ambient occlusion, emissive. 4k textures on heroes, 2k on creatures and buildings, 1k on props, atlases per kit. Hand-painted wear and detail; the demo's panel-detail shader survives only as a micro-detail layer under real texturing. |
+788: | Rigging | one shared humanoid skeleton for the three peoples, crews and city NPCs, with facial blendshapes for the dialogue bar. Creatures keep the instanced vertex-shader rig for crowds, with hand-weighted limbs and hand-authored attack poses; hero creatures and bosses are fully skinned. Hulls articulate gear, canopy, hardpoint mounts and thruster nozzles, and carry damage and husked states. |
+789: | Animation | hand-keyed in Blender: locomotion sets, jet and swim, mining, casts per branch, emotes, creature attacks, boss phases. Cutscene camera paths are authored in Blender and exported as curves the engine's camera-glide system follows. |
+790: | Consistency | one art bible: the three peoples' design languages (shell, crystal, lattice), the Cartographer glyph alphabet, the Hollow's husked treatment, Compact and Reaches liveries, a shared material library. A 1 m grid and a 1.85 m biped are the scale references in every file. |
+791: | Review | every asset is checked in-engine under three lighting cases (noon on a lush world, night on an exotic world, open space) before it merges, with a turntable render attached to the pull request. |
+792: 
+
+PATH /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt
+SHA256 e86850a2fb1e86261efb35bc6ed00ef9657b7fd6efb7500a063279820f2b11fb
+20:   final blend: 18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65, 78,976,965 bytes
+21:   final GLB: 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb, 20,931,568 bytes
+22:   Full LFS pointers and local object hashes/sizes were verified before hydration. No network fetch, old branch checkout, bulk recovery, .blend1, rejected GLB, den attachment or cache recovery. Two verified old reference images are retained under reference/ and are not current evidence. Old reports and round2 packets remain immutable on their refs.
+26:   CPU actual compressed GLB five gates: PASS on final export bytes.
+27:   Kestrel-specific source audit: PASS, nine variants × four LODs, packed 4096 maps, exact image sharing with LOD0, common markers/profiles, scale and collider triangle limits.
+28:   Measured source length is 14.94 m; 148 authored collision objects have at most 284 triangles each, below the unchanged 512-triangle collider ceiling.
+29:   Static render primitive count: 12 at each LOD of each variant. This is not measured runtime GPU draw calls.
+30:   Source triangle counts LOD0/1/2/3: base 146409/43913/14629/7226; damaged 146291/43878/14618/7197; husked 146473/43932/14636/7265. Each state's three liveries share these counts.
+31:   Actual compressed GLB triangle counts LOD0/1/2/3: kestrel 146408/43912/14496/6963; kestrel_damaged 146290/43877/14486/6934; kestrel_husked 146472/43931/14506/7002. The shared compressor drops degenerate triangles; these measured export values are separately inventoried.
+32:   The close CPU LOD2 views expose faceting around the nose and dorsal cover. They are retained explicitly for review; the required runtime 100 m/200 m silhouette checks have not run, and no LOD2 visual-quality approval is claimed.
+33:   Actual export has 13 unique KTX2 4096 images, complete mip chains, UASTC normal, correct transfer functions, required Basis/meshopt/quantization extensions and no PNG fallback. The inventory preserves the complete glTF document and binary chunk hash as well as every node/primitive, including materialless collider primitives.
+34:   Existing 512 MiB texture ceiling is unchanged. At the existing 8-bpp mipmapped accounting assumption: 67,108,944 bytes per active variant; 290,805,424 bytes for every unique image loaded together. These are static estimates, not device-memory measurements.
+46:   Preserve the accepted grown-bone silhouette? -> retain the original lattice outside the local cabin aperture -> exact retained-vertex comparison, not a replacement hull.
+47:   4096 hero maps within the unchanged budget? -> one shared atlas layout across material roles, three state ORM atlases, nine baked livery albedos and one shared normal -> all lower LODs reuse LOD0-derived images. No budget increase or shader-only livery substitute.
+48:   How to replace noisy wear? -> author fields in metres at specific hand/foot/leading/root/nozzle sites and bake onto LOD0 -> no uniform crackle or tech stipple. UV occupancy is 28.397%, with zero sampled overlaps and 312 folded triangle charts repaired; 4096 storage is not a claim of full 4K effective density on every surface.
+49:   Damage versus husk? -> separate saved geometry and PBR atlases -> damaged removes 2/62 panels (4.30% area); husk removes 16/62 panels (25.81% count, 19.34% area), with char/rust and restrained seam/glyph remnants.
+58: OUT OF SCOPE FOUND:
+59:   The current gameplay Ship/Cockpit route still loads the legacy ship asset; hull runtime adoption, flight animation, real boarding/collision integration and GPU review belong to the parent flow. No shared gameplay/Review/capture code was changed.
+60:   Lark, Swift, Mule, families.json, artlib, _library.blend and export_hulls.py remain unchanged. No parent plan/PROGRESS/DECISIONS/VISUAL-REVIEW edits. No push, PR, queue action or merge.
+61:   Prior Kestrel grade remains R2 REVISE 3.8 (materials 3, placeholder 3, other criteria 4). This implementation does not overwrite or reinterpret that grade.
+
+PATH /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/atlas.py
+SHA256 d2acd2ec23be583ca84c7c65801184af817ac4788264794fa3d339b962729b28
+85: 
+86: def pack_surface(objects):
+87:     # Triangulate the editable faces before packing, so local chart repairs are unambiguous.
+88:     import bmesh
+89:     for o in objects:
+90:         bm=bmesh.new();bm.from_mesh(o.data);bmesh.ops.triangulate(bm,faces=list(bm.faces));bm.to_mesh(o.data);bm.free()
+91:     select(objects);bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.uv.smart_project(angle_limit=.85,island_margin=.00002,area_weight=0,scale_to_bounds=True);bpy.ops.object.mode_set(mode='OBJECT')
+92:     a,m,report=raster(objects,strict=False);del a,m
+93:     bad={(name,i) for name,ids in report['overlappingFaces'].items() for i in ids}
+94:     if bad:
+95:         # Reserve a strip for the few folded legacy charts. Each offending triangle gets its own island.
+96:         width=.08;columns=8;dx=width/columns;dy=1/64
+97:         for o in objects:
+98:             for uv in o.data.uv_layers.active.data:uv.uv.x*=1-width
+99:         for attempt in range(5):
+100:             assert len(bad)<=512, f'too many folded charts for a local repair: {len(bad)}'
+101:             for i,(name,face) in enumerate(sorted(bad)):
+102:                 o=bpy.data.objects[name];x=1-width+(i%columns)*dx;y=(i//columns)*dy;inset=2/SIZE
+103:                 uv=o.data.uv_layers.active.data
+104:                 for li,xy in zip(o.data.polygons[face].loop_indices,[(x+inset,y+inset),(x+dx-inset,y+inset),(x+inset,y+dy-inset)]):uv[li].uv=xy
+105:             a,m,check=raster(objects,strict=False);del a,m
+106:             if not check['overlapTexels']:break
+107:             bad|={(name,i) for name,ids in check['overlappingFaces'].items() for i in ids}
+108:     for o in objects:
+109:         for p in o.data.polygons:
+110:             if o.data.attributes['paint_region'].data[p.index].value in (4,5):
+111:                 for li in p.loop_indices:o.data.uv_layers.active.data[li].uv=(0,0)
+112:     a,m,final=raster(objects)
+113:     assert final['surfaceFraction']>=.25,final
+114:     final['repairedFoldedTriangles']=len(bad)
+115:     return a,m,final
+
+PATH /tmp/kestrel-r3-source-review-f80a78c0/REPORT.txt
+SHA256 1f6162b683abde1698d933e2d078d6753b28c5f507d1f695acbe43ac7d2bcc58
+1: VERDICT: PASS
+2: SCOPE: independent SOURCE/CPU review of Kestrel R3, P1.E12.T02
+3: VISUAL: UNQUALIFIED. This source PASS is not a visual grade. LOD2 faceting, materials, silhouette, NavWhite, navigation animation, and the 100 m / 200 m reads were not graded. The 39 CPU preview PNGs are not native visual evidence and were not blind-graded.
+4: 
+5: Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118
+6: Branch: task/P1-E12-T02-kestrel-r3
+7: HEAD: f80a78c02ffe0ba158691fedc9a57ced2d56a885
+8: Tree: 8fecccea75d2d682890bb3d0fbd91f8fc7689ae4
+9: Merge-base with parent: e397f3d8db6717aac59b068aa5941af5999b0c06
+10: Content commit: c46e864028b32cea22622f5b1ffc19a95f99120e (HEAD's parent is the handoff-only commit; name-only diff is packages/tools/blender/hulls/kestrel/HANDOFF-C2.txt)
+11: Recovery commit: 9571dce6466063984967189d6363c989255b3b9c
+12: Canonical commit: 75ea700462c17d63a69b570e2ca710c5eb1e055d
+13: Review mode: read-only. No source, docs, asset, commit, push, PR, merge, screenshot cleanup, GPU, render, bake, browser, native capture, service, or bulk LFS.
+14: 
+15: PINNED BYTES (before and after the Blender session, and again after the later in-memory probes)
+81: - Popping the only Hull/EngineGlow primitive fails the material contract. That case does not reach the primitive-count assert.
+82: - Cloning GearRight_Assembly under kestrel_LOD0, dropping its single Trim primitive, and leaving Trim on the other meshes produces primitive counts [11, 12, 12, 12]. asset_contract.inventory accepts it. Required materials are still all present. File sha256 stayed 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb. Evidence: /tmp/kr3r/prim11.json
+83:   The contract is `0 < count <= 12` (asset_contract.py:83). The shipped file is 12 everywhere. The upper bound is tested. An exact-12 floor is not.
+84: - Negative source cases reproduced: moved HP_S_1, missing kestrel_LOD2, Hull normal swapped to a packed 1k image. A real export.main on an empty factory blend returned exit 1, removed the stale kestrel.glb, and kept foreign.glb. Source hash unchanged. finish_source.main was not called.
+85: 
+86: TEXCOORD QUANTIZATION (decoded, then classified)
+87: Direct Node v22.23.3, import of meshoptimizer 1.3.0 meshopt_decoder.mjs by absolute path, cwd /tmp/kr3r. No pnpm. Decode exit 0. /tmp/kr3r/uv-range.json
+88: Component census of render TEXCOORD_0:
+89: - LOD0, every material including Body Accent (124254 vertices, accessor 173, shared by the nine LOD0 variants) and the three gear Trims: componentType 5123, normalized. A decoded Hull sample stays inside [0, 1].
+90: - LOD1–LOD3 also keep a smaller Accent, plus Hull, Dark, Glass, EngineGlow, NavWhite, and the side-gear Trims, as normalized ushort.
+91: - 54 render references are float32 (5126), unnormalized, meshopt mode ATTRIBUTES, filter NONE. They are the large Body Accent primitive and GearFront-sized Trim at LOD1–LOD3 only:
+92:   Accent LOD1 counts 49486 / 49449 / 49658, LOD2 21495 / 21481 / 21560, LOD3 12966 / 12897 / 12962
+93:   Trim LOD1 4343, LOD2 2003, LOD3 275, nine variant references each
+94: Positions on the file are normalized int16 (5122). Normals are normalized int8 (5120).
+95: Every one of the 54 float references has at least one sample outside [0, 1]. None is entirely inside. The excursion is a skirt, not a tiled unwrap. Body Accent LOD1 accessor 48: min (-1.381e-5, 6.08e-6), max (0.99951171875, 1.00000727), 3 of 49486 samples outside. The largest V overshoot in the groups is about 4.39e-5 (Accent LOD2/LOD3). One 14-bit step is 1/16384 ≈ 6.1e-5, so the skirt is smaller than one texel step at the family's computed texcoord width.
+96: gltf-transform functions 4.5.1 getQuantizationSettings skips a TEXCOORD when any component is < 0 or > 1 (installed dist/index.js around the TEXCOORD branch). That is why these lower-LOD attributes stayed float while LOD0 quantized. families.json geometry sets quantize true, level high, positionBits 14, and omits texcoordBits. artlib/meshopt.py settings() fills texcoordBits as min(16, max(12, log2(texture)+2)), which is 14 for the 4096 hero class. The TypeScript MESHOPT_DEFAULTS texcoordBits of 12 is the fallback when the key is absent; this Python path includes the key. Compression was not re-run.
+97: 
+98: ADVISORY (do not block)
+99: 1. Lower-LOD float UVs. Location: kestrel.glb TEXCOORD_0 on the LOD1–LOD3 large Accent and the 4343/2003/275 Trim primitives; mechanism in the shared quantizer. LOD0 hero Accent is quantized. A local clamp of those lower-LOD samples into [0, 1] would let the unchanged quantizer run. Shared exporter/core was out of scope and was not edited. Stock meshopt.inspect and asset_contract do not read accessor component types, so the worker suite does not see this.
+100: 2. Primitive-count floor. asset_contract.py:83 accepts 11 when required materials remain. Shipped counts are 12. The worker test rejects 13 only.
+

@@ -1,0 +1,88 @@
+{
+  "mode": "probe-output",
+  "command": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+    "--single-threaded",
+    "--v8-pool-size=1",
+    "--max-old-space-size=96",
+    "-e",
+    "process.stdout.write('x'.repeat(2048));setInterval(()=>{},1000)"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118",
+  "pins": {
+    "source": {
+      "path": "assets/blend/hulls/kestrel.blend",
+      "sha256": "18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65",
+      "bytes": 78976965
+    },
+    "export": {
+      "path": "packages/client/public/models/hulls/kestrel.glb",
+      "sha256": "2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb",
+      "bytes": 20931568
+    },
+    "roots": [
+      "kestrel_LOD0",
+      "kestrel_compact_LOD0",
+      "kestrel_working_LOD0",
+      "kestrel_damaged_LOD0",
+      "kestrel_damaged_compact_LOD0",
+      "kestrel_damaged_working_LOD0",
+      "kestrel_husked_LOD0",
+      "kestrel_husked_compact_LOD0",
+      "kestrel_husked_working_LOD0"
+    ],
+    "baseHead": "f80a78c02ffe0ba158691fedc9a57ced2d56a885",
+    "baseTree": "8fecccea75d2d682890bb3d0fbd91f8fc7689ae4"
+  },
+  "sourceDensity": "NOT MEASURED",
+  "limits": {
+    "wallSeconds": 10,
+    "sampledGroupRSSBytes": 268435456,
+    "childOutputBytes": 1024
+  },
+  "resourceCaveat": "RSS/output sampled every ~50ms; detection ceilings, not hard OS quotas. Output receipt is outside child cap. Cleanup bounded to 20s after child deadline.",
+  "environment": {
+    "UV_THREADPOOL_SIZE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "BLIS_NUM_THREADS": "1",
+    "ART_KTX_JOBS": "1"
+  },
+  "nodeSha256": "06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b",
+  "toolHashes": {
+    "measure_export.cjs": "be926550d416c2974dbd5e8241e857c15d169c9fed54fcdc3b97b267f779cca1",
+    "run.py": "17a761ce5d2fabf1d8a5bbb2f350c285f3e7320f2c207d6403e2a0d78655dbcd",
+    "fixtures.cjs": "4fafe5af0a84af23db2bc3516aa100f66efd762ab0456f7579efe9819b6c690f",
+    "density_math.cjs": "b349a3e0029c2c4f71ae8f4b74d840eb9f7c53e85cabe6699dcf2dbcecef8ddf"
+  },
+  "cleanupHelperSha256": "3571b5d7cc67b623bdc1e01deffda4c83ffceca0046383ab2374003e4b586928",
+  "before": {
+    "source": "18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65",
+    "export": "2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb"
+  },
+  "canonicalBefore": {
+    "assets/blend/hulls/kestrel.blend": "18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65",
+    "packages/client/public/models/hulls/kestrel.glb": "2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb"
+  },
+  "pgid": 25034,
+  "limitReason": "output",
+  "signal": null,
+  "ownedGroupReapedBeforeUnlock": true,
+  "after": {
+    "source": "18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65",
+    "export": "2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb"
+  },
+  "canonicalAfter": {
+    "assets/blend/hulls/kestrel.blend": "18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65",
+    "packages/client/public/models/hulls/kestrel.glb": "2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb"
+  },
+  "exitCode": 125,
+  "seconds": 0.28431570797692984,
+  "peakSampledGroupRSSBytes": 53084160,
+  "sampledGroupPIDs": [
+    25034
+  ],
+  "childOutputBytes": 2048
+}

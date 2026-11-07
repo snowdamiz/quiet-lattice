@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "scope": "analytic shared-math fixtures only; no current GLB decode or saved blend measurement",
+  "cases": [
+    {
+      "name": "normalized int16 positions / uint16 UV: 512 px/m",
+      "status": "PASS"
+    },
+    {
+      "name": "signed normalization clamps minimum endpoint",
+      "status": "PASS"
+    },
+    {
+      "name": "float attributes remain unnormalized",
+      "status": "PASS"
+    },
+    {
+      "name": "inherited world scale and translation: local-space mutant rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "full affine shear / nonuniform scale / nonsquare map",
+      "status": "PASS"
+    },
+    {
+      "name": "composed parent scale times child rotation: nonorthogonal world columns",
+      "status": "PASS"
+    },
+    {
+      "name": "KHR texture transform determinant and texCoord override",
+      "status": "PASS"
+    },
+    {
+      "name": "reflection preserves absolute area",
+      "status": "PASS"
+    },
+    {
+      "name": "quantized collinear triangle stays exactly zero with noninteger scale",
+      "status": "PASS"
+    },
+    {
+      "name": "zero UV retains positive physical weight, not dropped",
+      "status": "PASS"
+    },
+    {
+      "name": "negative 4096 map with low physical coverage: dimension-only mutant rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "raw integer reinterpretation produces wrong density and is rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "world-area weighting cannot be replaced by triangle counts or RMS",
+      "status": "PASS"
+    },
+    {
+      "name": "different map bindings aggregate per slot without double-counted surface",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid and empty inventories fail closed",
+      "status": "PASS"
+    }
+  ],
+  "modules": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/density-prep/fixtures.cjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118/packages/tools/blender/hulls/kestrel/density-prep/density_math.cjs"
+  ],
+  "resources": {
+    "userCPUTime": 22291,
+    "systemCPUTime": 4432,
+    "maxRSS": 54064,
+    "sharedMemorySize": 0,
+    "unsharedDataSize": 0,
+    "unsharedStackSize": 0,
+    "minorPageFault": 3591,
+    "majorPageFault": 65,
+    "swappedOut": 0,
+    "fsRead": 0,
+    "fsWrite": 0,
+    "ipcSent": 0,
+    "ipcReceived": 0,
+    "signalsCount": 0,
+    "voluntaryContextSwitches": 0,
+    "involuntaryContextSwitches": 25
+  }
+}

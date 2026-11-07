@@ -1,0 +1,287 @@
+P1.E12.T02 / Kestrel round3 — density correction preparation
+
+Authority and present boundary
+
+This is preparation for the parent's CURRENT-EXPORT density REVISE, not a new
+art grade, a completed source correction, or permission to consume heavy CPU.
+The creature lane owns heavy capacity. No Blender, bake, render, image codec,
+mesh codec, export, full suite, GPU, browser capture, service or DB was launched.
+Canonical blend/GLB stay byte-identical to f80a78c02ffe0ba158691fedc9a57ced2d56a885.
+Both complete SHA256s and sizes are in pins.json. All 39 existing previews and
+the sealed packet remain untouched; no archive image was removed or reencoded.
+
+Task (verbatim from IMPLEMENTATION_PLAN):
+- [R] **P1.E12.T02 (art) Lark, Swift, Kestrel, Mule** · deps: E14.T02 · done: four hulls with gear, canopy, cockpit interior, hardpoint mounts, damage state, husked variant, three liveries each; the Lark rebuilds today's ship at the new bar. · verify: validate; review. → `[R]`
+
+Ownership: only new files in packages/tools/blender/hulls/kestrel/density-prep/.
+Later source correction is Kestrel-only and requires explicit parent release.
+Lark/Swift/Mule, families.json, artlib, _library.blend, export_hulls.py, runtime,
+capture callers and parent documents remain outside this preparation's writes.
+Read contracts: plan 0.3/0.4/0.10/Appendix C, DESIGN 10.4/19.1–19.4, art-bible
+Ulgani/grown lattice/materials/liveries/husk/scale, current families/exporter.
+The current task's hold supersedes the plan's generic dev/smoke/full validation.
+
+Pinned evidence and diagnosis
+
+All 46 upstream manifest entries were verified locally. Ten selected original
+records are retained byte-for-byte in evidence/independent; provenance.json
+lists their individual hashes. This is a selected copy, not the whole upstream
+packet. Its MANIFEST still describes the original complete audit directory.
+The original failed/superseded attempts remain there, with their explanations
+and command failures in the copied REPORT. No report has been relabelled PASS.
+
+Authoritative independent attempt3, exact current GLB:
+  Hull base/damaged/husked: 113.252590 / 113.254070 / 113.515282 px/m.
+  Base mapped area: 345.212185845 m²; summed UV triangle area: 0.284270066.
+  Base area-equivalent density: 117.539125 px/m; ~99.86% physical mapped area
+  falls in the descriptive 64–128 px/m band. Only the three primary LOD0 states
+  were measured by that audit, not all nine livery/state combinations.
+  13 embedded images: 4096², 13 mip levels. 30 mapped primitives measured;
+  10 mapped + 2 constant/emissive primitives per selected root. 148 COL meshes
+  excluded. Those counts are static artifact inventory, not runtime GPU draws.
+  Raw decode crosscheck agrees with normalized NodeIO/world matrices. Source
+  density was not measured, and the historical structural SOURCE PASS remains
+  valid only for its originally enumerated structural gates.
+
+Retained source-authoring evidence, not a new saved-blend measurement:
+  atlas.py:85–114 jointly smart-projects mapped LOD0 meshes into one UV tile,
+  reserves 8% width for folded-chart repairs, and gates >=25% raster coverage.
+  It does not enforce physical px/m. The retained intermediate atlas-base.json
+  reports 4,764,204 covered texels (28.3969%), 312 repaired triangles and zero
+  raster overlap. This intermediate has its own source hash; do not mislabel
+  those numbers as a measurement of the final saved blend.
+  states.py clones the base into damage/husk; it bakes state AO on LOD0, shares
+  the base LOD0 normal, saves four LODs, and binds three actual color liveries
+  for each state. Current exported maps are nine color + three ORM + one normal.
+  The saved source also retains an editable relief image. Existing retained
+  source-contracts.json binds structural facts to the final source SHA256.
+
+The converging evidence implicates inadequate UV allocation: 4K storage alone
+did not provide the art-bible's ~512 px/m. This is a source-layout hypothesis
+supported by retained code/reports and exact export measurements. A fresh CPU
+Blender read must confirm the final saved UVs after the hold is released.
+
+Capacity calculation (allocation.json contains unrounded values)
+
+At 512 px/m one 4096² tile covers 64 m² if every texel is uniquely allocated.
+345.212 m² needs 5.39394 tile areas. Perfectly packing one unique tile would
+reach only 220.453 px/m across that area. The current Hull needs 4.52087 times
+the linear UV density, or 20.43825 times its current UV area. Merely packing
+more tightly, enlarging pixels, scaling/repeating the old noise, or changing
+the validator cannot solve this. Absolute triangle area includes layered
+surfaces; no unseen/back faces are silently omitted to improve the number.
+
+Candidate correction: two 4K atlas families, existing material roles
+
+A — Shell / membrane (Hull): 53.170681 m² needs 0.830792 tile area at nominal
+512 px/m. Unwrap with metre-based chart scale and purposefully pack seams,
+retaining the paler repaired membrane and damage/husk panel-loss boundaries.
+Target at least that measured surface allocation plus practical gutters.
+Packing feasibility is not proved: stop if the actual charts cannot fit with
+padding, or if the material assignment is not the retained export's Hull area.
+
+B — Structural / cockpit / gear / canopy outfits (Accent/Trim/Dark/Glass):
+292.041505 m². Keep Trim/Dark/Glass unique: 38.101703 m², or 59.5339% of B.
+Reserve 8% for padding and 6.4% for unique Accent contacts/roots (4.096 m²).
+The remaining 26.0661% represents 16.682297 m² of authored structural cells;
+249.843801 m² of remaining Accent needs about 14.98 average semantic reuse.
+This substantial reuse is an explicit feasibility risk, not a claim of quality.
+
+Build a source face-to-cell registry by object, face/loop ID, physical length,
+width and region: curved rib shaft, fused collar/root, tip/leading edge, and
+sheltered joints. Bake representative actual LOD0 surfaces into authored cells
+with dimensional scale; allocate multiple grain/edge treatments per family and
+deliberate phase/orientation variation. Keep contact abrasion, lichen at roots,
+boarding tread wear, pedals, hand grips, mount access wear and nozzle soot in
+unique islands where their location matters. Never rotate lattice glyphs: an
+orientation change changes their meaning. Do not make uniforms of crackle,
+stipple or procedural noise; do not create geometry or shader substitutes.
+
+Overlaps are allowed only when explicitly listed in that alias registry, with
+compatible tangent-space normal and AO assumptions. Bake one representative
+per approved cell; never rasterize many overlapping faces into it and accept
+the last write. Prove that unique islands do not overlap, and that alias UVs
+remain within their registered cells. If local curvature/occlusion makes reuse
+wrong, assign unique space or stop and replan. The 4.096 m² contact allowance
+and lack of visible repeats both need fresh source inspection and later visual
+review. Scalar density alone cannot approve reuse, anisotropy or authored detail.
+
+Keep all existing geometry/proportions, cockpit construction, gear/canopy and
+hardpoint fit, boarding route, 148 collision meshes, marker matrices and four
+LOD geometries. Do not rerun the original modeling or decimation pipeline.
+Transfer new UVs to existing lower LOD surfaces from LOD0 via explicit surface
+correspondence/barycentric projection with seam disambiguation; verify transfers
+and recompute tangents as needed. Share the exact LOD0-derived images. If lower
+LOD seams need additional vertices, report that necessity before changing this
+geometry-preservation scope; do not silently rebuild LODs.
+
+Keep engine_name roles and mesh/material boundaries: A on Hull, B on the other
+mapped roles. No additional render primitive or material split is planned.
+Preserve the existing 12-static-primitive inventory and report runtime draws as
+unmeasured. Export only consumes the saved source, using unchanged exporter core.
+
+Texture design and budget
+
+Proposed exported image inventory, with all maps 4096²/full mips:
+  A colors: 9 (base/damaged/husked × Ulgani/Compact/working).
+  B colors: 6 (base and damaged share three liveries; husked has three).
+  ORM: 6 (two atlas families × three states), with state-specific LOD0 AO.
+  Normals: 2, shared only on geometrically compatible retained surfaces.
+  Total: 23 unique maps; six bound by an active variant.
+
+The B color sharing is a deliberate proposed authoring choice: damaged-state
+color loss/scorch remains on shell A; unchanged structural members keep their
+placed wear, and changed state AO/roughness remains in B's state ORM. The source
+inspection must establish that this choice is coherent for the actual damage.
+Do not claim deduplication without byte-identical packed images and actual
+export texture references. Husked surface treatment and all three liveries
+must remain substantive. If sharing normal or B color is invalid, STOP/replan.
+
+At existing compressed GPU accounting (8 bpp/full mips), each map is 22,369,648
+bytes. Six active maps = 134,217,888 bytes (~128 MiB), under the unchanged hero
+512 MiB per-variant limit. All 23 unique maps = 514,501,904 bytes (~490.667 MiB),
+leaving 22,369,008 bytes against a deliberately conservative whole-file 512 MiB
+planning ceiling. This whole-file ceiling is our reserve choice, not a new
+global contract. Without B color sharing, 26 maps total 581,610,848 bytes:
+still within the per-variant contract but outside this proposed reserve plan.
+Six fully unique atlas sets would require at least 18 active / 78 total maps
+(402,653,664 / 1,744,832,544 bytes); rejected here for whole-file residency and
+material/draw risks, not falsely described as failing the per-variant cap.
+Final compressed artifact references/bytes, not this estimate, determine usage.
+
+Method and prepared checker
+
+measure_export.cjs is adapted from the pinned authoritative audit. It reads the
+actual compressed GLB after explicit release, with installed NodeIO and the
+registered synchronous MeshoptDecoder. It reads KTX2 headers without image
+transcoding. No fetch/install path is provided. It uses the whole ancestor
+world matrix, declared component types/strides/offsets and normalized accessor
+semantics. Raw buffer-view decode sample checks remain. Sparse attributes,
+animated/skinned/morph poses and external buffers/images fail explicitly.
+
+For each triangle and texture binding:
+  Aw = world-space triangle area in square metres.
+  Auv = absolute UV area after KHR_texture_transform.
+  density = sqrt(width * height * Auv / Aw).
+Use KHR_texture_transform.texCoord over textureInfo.texCoord over 0.
+Signed normalized minima clamp to -1; unsigned normalize by 255/65535. Compute
+integer-lattice edge cross products followed by the world linear cofactor and
+normalization divisors. This preserves exact quantized collinearity without
+an epsilon or translated-float cancellation. Texture scale determinant affects
+area; rotation/offset affect reported bounds but not area.
+
+Exclude exact zero-world-area triangles with an explicit inventory. Retain
+positive-world/zero-UV triangles at zero density with their physical weight.
+Report per primitive/material/binding and per texture slot; unlike a combined
+binding aggregate, different color/normal UV assignments cannot double-count
+physical area or hide a low-density channel. Area-equivalent RMS, area-weighted
+mean, physical-area percentiles and descriptive bins all remain distinct.
+Double-sided materials do not double the physical area. Exclude COL/REF
+hierarchies and untextured constant/emissive surfaces, listing their reasons.
+
+Default pins select all nine LOD0 state/livery roots. Later make a separate
+pin file for LOD1/2/3 comparison; never overwrite the preserved baseline pins.
+After parent release, run via run.py measure --parent-released-export-decode
+--pins <new exact candidate pin file> --label <new unique label>. The flag is a
+guard against accidental execution, not parent authorization by itself.
+Fresh actual-export execution of this adapted checker is STILL HELD. Analytic
+fixtures and a syntax check do not establish library integration, 9-root runtime
+memory, or successful measurement of the saved blend. The upstream audit is
+the current export's measurement evidence, with its own original command pins.
+
+Tool bounds now
+
+Fixture/syntax mode: 10 s child wall, 96 MiB V8 heap, 256 MiB sampled process-
+group RSS, 1 MiB child output, one JS thread/worker pool and math thread = 1.
+Future measurement: 90 s, 512 MiB heap, 768 MiB sampled group RSS, 32 MiB child
+output; source input <=512 MiB, GLB <=128 MiB; no image decode. Every attempt
+has a unique immutable output directory. Signals/deadlines terminate only the
+owned group; retained lane.py cleanup helpers (not main/export cleanup) provide
+bounded TERM -> KILL -> wait/group absence. Failure to prove absence quarantines
+this lane. No stale/canonical export is removed. Failed output is retained and
+is not a valid measurement receipt. RSS/output limits are sampled detection
+ceilings, not OS-enforced instantaneous maxima; cleanup has a separate <=20 s
+bound. Short-process RSS samples may miss the peak; fixture resourceUsage is
+also recorded. The parent must approve this envelope before actual decoding.
+
+Later heavy revision envelope — REQUESTED CEILINGS, NOT EXECUTED/MEASURED ETA
+
+Reserve 8 GiB incremental disk before starting, in addition to the parent's
+global free-space reserve. The observed free space here is not an allocation
+or release. One owned CPU Blender at a time, explicit Cycles CPU, -t 2; math
+thread variables = 2; codec threads = 2 and ART_KTX_JOBS=1. Never touch another
+lane's processes. Stage one at a time; finite deadlines, owned group cleanup
+before unlocking, preserve every failure and stop at any ceiling.
+
+Stage                         Wall cap  Group RSS cap  New output cap
+Saved-source read/UV audit       120 s      2 GiB        4 MiB reports
+Authored UV layout/transfer      600 s      4 GiB        candidate blend 512 MiB
+Streamed LOD0 map bakes         1500 s      6 GiB        2 GiB scratch/maps
+Unchanged exporter + encoding   900 s      3 GiB        2 GiB raw; 128 MiB GLB
+CPU source/export/density gates  300 s      3 GiB        64 MiB reports
+Optional new CPU preview packet1500 s      6 GiB        128 MiB encoded images
+Total active-phase caps: 4920 s (82 min); overall stop cap 5400 s (90 min),
+including bounded cleanup. Individual limits may fail; none auto-expand. Actual
+export density substep retains its own 90 s/768 MiB/32 MiB bounds. If using the
+unchanged validator transcodes maps, it stays in this released phase envelope,
+one codec job, never here during preparation. Prior timings do not prove these
+new bakes/export will fit. Source inspection precedes any large allocation.
+
+Disk envelope includes two <=512 MiB candidate/checkpoint blends, <=2 GiB
+streamed bake scratch, <=2 GiB uncompressed export, <=128 MiB compressed export,
+<=128 MiB new previews and <=64 MiB reports; remaining reserve covers LFS/staging
+and temporary writes. Do not retain all float map arrays at once. Final 23 maps
+plus at most eight work images must be streamed/released within 6 GiB RSS;
+packed relief/authoring data counts toward blend/disk/RSS even if not exported.
+No .blend1, frame dumps, rejected GLB accumulation or historical asset recovery.
+Canonical promotion is a separate explicit action after source/export checks;
+keep canonical bytes unchanged while building a bounded candidate.
+The existing exporter supports --src-root, --out-dir, --report-dir and --only.
+Use the owned density-prep/candidate/source/hulls/kestrel.blend source with
+--src-root pointing to candidate/source, --out-dir candidate/models,
+--report-dir candidate/reports and --only kestrel. No shared exporter edits.
+The prepared checker accepts exactly that owned candidate source/export pair
+or the canonical pair, with explicit full hashes. Its supervisor fingerprints
+canonical bytes before/after even when inspecting a candidate. No candidate
+files/directories or Blender callers are generated by this preparation.
+
+Preview reserve (no images generated now)
+
+Existing 39: 67,408,889 encoded bytes; 250,374,400 decoded RGBA bytes.
+If later released, propose seven new CPU image files, streamed into sheets:
+  eight-angle turntable: 4×2 cells at 960×720 = 3840×1440;
+  material sheet: 3 cells at 1200×900 = 3600×900;
+  nine livery/state sheet: 3×3 cells at 960×720 = 2880×2160;
+  cockpit, boarding and hardpoint scale: three 1200×900 images;
+  LOD2 at 100/200 m: two 1200×900 cells = 2400×900.
+Additional decoded RGBA = 81,561,600 bytes, total 331,936,000; 46 image files
+leave two slots under the 48-image/512 MiB cap. Also cap new encoded files at
+128 MiB. No saved intermediate frames. These are proposed CPU views, not a GPU
+review inventory replacement, a new capture caller, or permission to remove any
+old image. If more views are required, stop and ask the parent to reconcile the
+cap; do not clean screenshots. Existing future GPU review inventory stays
+parent-owned and unchanged.
+
+Release sequence / acceptance gates
+
+1. Parent explicitly releases the relevant CPU capacity. Reconfirm canonical
+   hashes, task branch, held-process absence and incremental reserve. Read the
+   saved blend on CPU, measure actual world/loop UV density, fingerprint all
+   geometry/transforms/markers/colliders/LODs, and confirm semantic face layout.
+2. Prove A packing and B unique/reuse registry feasibility before bakes. If
+   chart gutters, contact allocation, normal/AO compatibility or repeat quality
+   cannot fit, return a scoped replan. Do not silently lower nominal density,
+   increase budgets, delete physical surfaces or manufacture a PASS threshold.
+3. Author/save the UV and placed detail revision; bake from LOD0, share actual
+   map bytes with existing lower LODs and all intended state/livery variants.
+4. Validate five source/export gates plus unchanged geometry fingerprints,
+   canonical marker matrices, collisions/boarding, image/UV contracts and map
+   deduplication. Export source SHA must be unchanged by export. Run actual
+   compressed GLB density for all nine states/liveries and lower LOD bindings.
+   Report zero-UV and anisotropy concerns, not just one flattering RMS number.
+5. Regenerate only the agreed new CPU evidence within reserve. Keep all old
+   evidence immutable. Seal exact new source/export/tool/report bytes and list
+   every failure, command exit and resource limit. No runtime/draw/visual PASS.
+6. Parent owns independent fresh-source review, the next blind visual grade,
+   GPU review/performance and any integration. Preserve component round counts;
+   this preparation is not a visual round, and not four-hull task completion.

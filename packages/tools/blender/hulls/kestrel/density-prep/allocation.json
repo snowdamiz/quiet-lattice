@@ -1,0 +1,60 @@
+{
+  "scope": "Derived from verified independent current-export measurements; not a new export decode or saved-blend measurement",
+  "inputSha256": "2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb",
+  "nominalDensityPxPerM": 512,
+  "atlasDimension": 4096,
+  "uniqueSquareMetersPerTileAtNominalDensity": 64,
+  "surfaceAreasM2": {
+    "Hull": 53.170681271944886,
+    "Accent": 253.9398010909914,
+    "Glass": 6.417936720969128,
+    "Dark": 12.925777276090564,
+    "Trim": 18.757989485161254
+  },
+  "totalMappedAreaM2": 345.21218584515634,
+  "uniqueAtlasTileAreasRequired": 5.393940403830568,
+  "perfectSingleAtlasDensityCeiling": 220.45344460429257,
+  "hullLinearDensityMultiplier": 4.520867919409191,
+  "hullUVAreaMultiplier": 20.438246744743193,
+  "candidate": {
+    "A_shell": {
+      "physicalAreaM2": 53.170681271944886,
+      "minimumUVAreaAt512": 0.8307918948741388
+    },
+    "B_outfit_and_structural": {
+      "physicalAreaM2": 292.04150457321145,
+      "uniqueOutfitsAreaM2": 38.10170348222095,
+      "uniqueOutfitsUVArea": 0.5953391169097023,
+      "paddingReserveFraction": 0.08,
+      "uniqueAccentContactUVArea": 0.064,
+      "uniqueAccentContactM2": 4.096,
+      "remainingAuthoredTrimUVArea": 0.2606608830902977,
+      "representedTrimAreaM2": 16.682296517779054,
+      "remainingAccentAreaM2": 249.8438010909914,
+      "requiredMeanSemanticReuse": 14.976583159562109
+    }
+  },
+  "textureBudget": {
+    "bytesPer4096FullMip8BppMap": 22369648,
+    "maps": {
+      "colorShell": 9,
+      "colorStructural": 6,
+      "ORM": 6,
+      "normal": 2
+    },
+    "allUniqueMaps": 23,
+    "allUniqueBytes": 514501904,
+    "activeMaps": 6,
+    "activeBytes": 134217888,
+    "existingHeroCapBytes": 536870912,
+    "conservativeAllUniqueHeadroomBytes": 22369008,
+    "noSharing26MapBytes": 581610848
+  },
+  "uniqueSixAtlasAlternative": {
+    "minimumTiles": 6,
+    "activeMaps": 18,
+    "activeBytes": 402653664,
+    "allUniqueMapsAt13PerTile": 78,
+    "allUniqueBytes": 1744832544
+  }
+}

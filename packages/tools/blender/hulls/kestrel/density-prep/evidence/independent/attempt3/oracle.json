@@ -1,0 +1,139 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "normalized int16 positions + uint16 UVs unit triangle",
+      "worldArea": 0.5,
+      "uvArea": 0.5,
+      "width": 512,
+      "height": 512,
+      "density": 512,
+      "expectedDensity": 512
+    },
+    {
+      "name": "inherited uniform 2x scale and translation",
+      "worldArea": 2,
+      "uvArea": 0.5,
+      "width": 512,
+      "height": 512,
+      "density": 256,
+      "expectedDensity": 256
+    },
+    {
+      "name": "full affine shear, nonuniform scale, nonsquare map",
+      "worldArea": 3,
+      "uvArea": 0.5,
+      "width": 1024,
+      "height": 512,
+      "density": 295.6033378250884,
+      "expectedDensity": 295.6033378250884
+    },
+    {
+      "name": "NodeIO parent scale times child rotation (nonorthogonal world columns)",
+      "worldArea": 3,
+      "uvArea": 0.5,
+      "width": 512,
+      "height": 512,
+      "density": 209.02312471749786,
+      "expectedDensity": 209.0231247174979
+    },
+    {
+      "name": "KHR texture scale + rotation + offset",
+      "worldArea": 0.5,
+      "uvArea": 0.5,
+      "width": 1024,
+      "height": 512,
+      "density": 724.0773439350247,
+      "expectedDensity": 724.0773439350247
+    },
+    {
+      "name": "KHR scale determinant is applied",
+      "worldArea": 0.5,
+      "uvArea": 0.125,
+      "width": 512,
+      "height": 512,
+      "density": 256,
+      "expectedDensity": 256
+    }
+  ],
+  "normalizationCases": [
+    {
+      "type": "Int8Array",
+      "raw": [
+        -128,
+        -127,
+        0,
+        127
+      ],
+      "actual": [
+        -1,
+        -1,
+        0,
+        1
+      ],
+      "expected": [
+        -1,
+        -1,
+        0,
+        1
+      ]
+    },
+    {
+      "type": "Uint8Array",
+      "raw": [
+        0,
+        255
+      ],
+      "actual": [
+        0,
+        1
+      ],
+      "expected": [
+        0,
+        1
+      ]
+    },
+    {
+      "type": "Int16Array",
+      "raw": [
+        -32768,
+        -32767,
+        0,
+        32767
+      ],
+      "actual": [
+        -1,
+        -1,
+        0,
+        1
+      ],
+      "expected": [
+        -1,
+        -1,
+        0,
+        1
+      ]
+    },
+    {
+      "type": "Uint16Array",
+      "raw": [
+        0,
+        65535
+      ],
+      "actual": [
+        0,
+        1
+      ],
+      "expected": [
+        0,
+        1
+      ]
+    }
+  ],
+  "texCoordOverride": "PASS",
+  "quantizedCollinearTriangle": {
+    "worldArea": 0,
+    "rawUVArea": 0.5,
+    "uvArea": 0.5
+  }
+}

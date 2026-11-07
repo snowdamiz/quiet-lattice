@@ -1,0 +1,80 @@
+[
+  {
+    "command": [
+      "python3",
+      "packages/tools/blender/hulls/kestrel/density-prep/run.py",
+      "fixtures",
+      "--label",
+      "fixtures-final"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdout": "{\"mode\": \"fixtures\", \"exitCode\": 0, \"limitReason\": null, \"ownedGroupReapedBeforeUnlock\": true, \"seconds\": 0.17347241699462757, \"peakSampledGroupRSSBytes\": 655360}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "packages/tools/blender/hulls/kestrel/density-prep/run.py",
+      "syntax",
+      "--label",
+      "syntax-final"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdout": "{\"mode\": \"syntax\", \"exitCode\": 0, \"limitReason\": null, \"ownedGroupReapedBeforeUnlock\": true, \"seconds\": 0.09247295802924782, \"peakSampledGroupRSSBytes\": 720896}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "packages/tools/blender/hulls/kestrel/density-prep/run.py",
+      "probe-timeout",
+      "--label",
+      "timeout-final"
+    ],
+    "exitCode": 124,
+    "expectedExit": 124,
+    "stdout": "{\"mode\": \"probe-timeout\", \"exitCode\": 124, \"limitReason\": \"deadline\", \"ownedGroupReapedBeforeUnlock\": true, \"seconds\": 0.4339068330009468, \"peakSampledGroupRSSBytes\": 51167232}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "packages/tools/blender/hulls/kestrel/density-prep/run.py",
+      "probe-output",
+      "--label",
+      "output-final"
+    ],
+    "exitCode": 125,
+    "expectedExit": 125,
+    "stdout": "{\"mode\": \"probe-output\", \"exitCode\": 125, \"limitReason\": \"output\", \"ownedGroupReapedBeforeUnlock\": true, \"seconds\": 0.28431570797692984, \"peakSampledGroupRSSBytes\": 53084160}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "packages/tools/blender/hulls/kestrel/density-prep/run.py",
+      "probe-signal",
+      "--label",
+      "signal-descendant-final"
+    ],
+    "exitCode": 143,
+    "expectedExit": 143,
+    "stdout": "{\"mode\": \"probe-signal\", \"exitCode\": 143, \"limitReason\": \"signal\", \"ownedGroupReapedBeforeUnlock\": true, \"seconds\": 0.2737717080162838, \"peakSampledGroupRSSBytes\": 105775104}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "python3",
+      "packages/tools/blender/hulls/kestrel/density-prep/run.py",
+      "measure",
+      "--label",
+      "hold-rejection-final"
+    ],
+    "exitCode": 2,
+    "expectedExit": 2,
+    "stdout": "",
+    "stderr": "usage: run.py [-h] --label LABEL [--pins PINS]\n              [--parent-released-export-decode]\n              {fixtures,syntax,measure,probe-timeout,probe-output,probe-signal}\nrun.py: error: HOLD: parent must release actual compressed-export decoding first\n"
+  }
+]

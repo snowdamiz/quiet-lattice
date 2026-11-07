@@ -1,0 +1,30 @@
+{
+  "reason": "Byte-identical independent contract-evidence.txt has original trailing whitespace. Preserve its verified hash; do not rewrite immutable evidence. Authored files and all other copied evidence pass.",
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exitCode": 2,
+      "stdout": "packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:5: trailing whitespace.\n+42: \npackages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:26: trailing whitespace.\n+792: \npackages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:53: trailing whitespace.\n+85: \npackages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:90: trailing whitespace.\n+4: \npackages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:100: trailing whitespace.\n+14: \npackages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:106: trailing whitespace.\n+85: \npackages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:118: trailing whitespace.\n+97: \npackages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt:122: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":!packages/tools/blender/hulls/kestrel/density-prep/evidence/independent/contract-evidence.txt"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}
