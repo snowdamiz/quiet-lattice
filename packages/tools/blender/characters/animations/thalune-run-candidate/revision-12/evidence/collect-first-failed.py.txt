@@ -1,0 +1,55 @@
+"""Read-only preservation audit and exclusive copies of this unit's small proof."""
+import hashlib,importlib.util,json,os,stat,sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+D=Path(__file__).resolve().parent;A=D.parent
+ready=json.loads((A/'readiness.json').read_text());R=Path(ready['root'])
+baseline=json.loads((D/'baseline.json').read_text());S=Path(baseline['scratch'])
+def sha(p):
+    with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def save(p,v):
+    with p.open('x') as f:json.dump(v,f,indent=2);f.write('\n')
+E=D/'evidence';E.mkdir()
+sources=[]
+for path in sorted(S.iterdir()):
+    if path.is_dir() and (path/'results.json').exists():sources.append((path/'results.json',E/(path.name+'.json')))
+for path in [S/'retained-controls/native-results.json',S/'retained-controls/ordering-results.json',S/'retained.stdout',S/'retained.stderr',S/'admission.json',S/'admission-final.json']:
+    sources.append((path,E/path.name))
+for name in ['caller.py','resource_admission.py','native189.py']:sources.append((S/name,E/(name+'.base.txt')))
+for source,target in sources:
+    with target.open('xb') as f:f.write(source.read_bytes())
+save(D/'evidence-provenance.json',[dict(source=str(s),path=str(p.relative_to(R)),bytes=p.stat().st_size,sha256=sha(p)) for s,p in sources])
+mutable={str((A/n).relative_to(R)) for n in ['caller.py','resource_admission.py','native189.py','native189-plan.json','readiness.json','candidate-index.json','source-audit.json']}
+old=json.loads((A/'revision-11/combined-hash-manifest.json').read_text());protected=[]
+for row in old['files']:
+    if row['path'] in mutable:continue
+    p=R/row['path'];assert p.stat().st_size==row['bytes'] and sha(p)==row['sha256'],p
+    protected.append(row)
+for row in baseline['retainedAttempt2']:
+    p=Path(row['path']);s=p.lstat()
+    assert all(a==row[k] for k,a in [('dev',s.st_dev),('ino',s.st_ino),('mode',s.st_mode),('uid',s.st_uid),('bytes',s.st_size),('mtime',s.st_mtime_ns)]),p
+    if 'sha256' in row:assert sha(p)==row['sha256'],p
+save(D/'protected.json',dict(status='PASS',protectedPriorManifestRows=len(protected),files=protected,retainedAttempt2Rows=len(baseline['retainedAttempt2']),retainedAttempt2Unchanged=True,historicalFullSnapshot='FAILED_THREE_PNPM_TASK_STATE_DEVIATIONS_RETAINED_NOT_REPAIRED'))
+spec=importlib.util.spec_from_file_location('identity_readonly',A/'retained-station/round4_capture_children.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+children={}
+for p in E.glob('*.json'):
+    value=json.loads(p.read_text())
+    if isinstance(value,list):
+        for result in value:
+            for child in result.get('details',{}).get('children',[]):children[child['pid']]=child
+for pid,row in children.items():row['freshIdentity']=m.identity(pid);assert row['exit']==0 and row['identity'] is None and row['freshIdentity'] is None
+save(D/'harmless-child-release.json',dict(status='ALL_TERMINAL_ABSENT',count=len(children),children=list(children.values()),nativeCodecProcesses=0,maxConcurrentHarmlessChildren=1))
+scratch=Path('/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-meirkxrg');private=Path('/private/tmp/sbr-1pq3j901')
+destination=Path('/private/tmp/t02-native189-r10-preserved-namespaces-r12-20261107-t3-11167406');assert not os.path.lexists(destination)
+mapping=[]
+for row in baseline['retainedAttempt2']:
+    p=Path(row['path'])
+    for source,name in [(scratch,'scratch'),(private,'private-tmp')]:
+        if p==source or source in p.parents:mapping.append(dict(source=row,prospectiveArchive=str(destination/name/p.relative_to(source))))
+save(D/'leftover-namespace-mapping.json',dict(status='READ_ONLY_INVENTORY_NO_ARCHIVE_OR_REMOVAL',originalReceipt='/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json',target='gui/501/local.stations.round4.bb5469d4509047909c3aa6b7cf676040',coalition=43179,originalTerminalReleaseProved=False,prospectiveDestinationAbsent=True,prospectiveDestination=str(destination),rows=mapping,qualification='No removal scheduled by this unit. Any future recovery requires fresh original-ownership checks and an exclusive verified archive outside the immutable failed packet; this mapping is not permission or proof of cleanup.'))
+provenance=json.loads((A/'revision-11/unit-provenance.json').read_text())
+for key in ['reportedFreeBytes','capacityShortfallBytes']:provenance.pop(key,None)
+provenance.update(base=baseline['base'],baseTree='48da9aed7d28ed5901676496d7cc2ee0db6d7809',revision='12',recoveriesAdded=[],currentSourceReview='PENDING_FRESH_PARENT_OWNED_INDEPENDENT_REVIEW',counts=dict(newControls=50,retainedControls=66,admissionControls=22,total=138,cliRefusals=3,oldBaseRedManifestations=4),newNativeExecutions=0,currentCapacityAdmission=False,reserveBytes=22066626560,rssBytes=8589934592,sourceHashes={n:sha(A/n) for n in ['caller.py','resource_admission.py','native189.py','rgb-primary.py','native189_producer.py']},readinessSha256=sha(A/'readiness.json'),candidateSha256=sha(A/'candidate-index.json'),planSha256=sha(A/'native189-plan.json'))
+provenance['priorReview']=dict(ackLocalEmission='Parent reports independent ACK PASS at ddce673; unchanged encoder bytes',nativeAttempt2='FAILED_SPENT_HOLD_PRESERVED',parent='/private/tmp/space-t02-parent-native189-r2-q0jlxamt')
+save(D/'unit-provenance.json',provenance)
+print(json.dumps(dict(protectedRows=len(protected),retainedAttempt2Rows=len(baseline['retainedAttempt2']),terminalHarmlessChildren=len(children),evidenceCopies=len(sources),leftoverMappingRows=len(mapping))))

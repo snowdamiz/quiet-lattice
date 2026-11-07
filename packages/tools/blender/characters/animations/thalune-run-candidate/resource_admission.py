@@ -3,9 +3,9 @@ import sys
 sys.dont_write_bytecode = True
 from assertion_guard import require_assertions
 require_assertions(__debug__)
-import hashlib, json, os, shutil, stat, subprocess, time
+import hashlib, json, os, shutil, signal, stat, subprocess, time
 from pathlib import Path
-from contextlib import contextmanager, ExitStack
+from contextlib import contextmanager, ExitStack, nullcontext
 from inspector import error_receipt, sha, write
 from release_accounting import identity_key
 
@@ -219,49 +219,93 @@ def archive_json(name, value, parent_fd):
 def rss_read(pids):
     result = subprocess.run(['/bin/ps','-p',','.join(map(str,pids)),'-o','pid=,rss='],
                             capture_output=True, text=True, timeout=2, check=True)
-    rows = [line.split() for line in result.stdout.splitlines()]
-    assert all(len(r)==2 and all(v.isdecimal() for v in r) for r in rows), 'Unreadable RSS'
-    values = {int(pid):int(kib)*1024 for pid,kib in rows}
-    assert len(values)==len(rows) and set(values)==set(pids), 'Missing/duplicate RSS identities'
-    return dict(bytesByPid=values, stdout=result.stdout, stderr=result.stderr)
+    try:
+        rows = [line.split() for line in result.stdout.splitlines()]
+        assert all(len(r)==2 and all(v.isdecimal() for v in r) for r in rows), 'Unreadable RSS'
+        values = {int(pid):int(kib)*1024 for pid,kib in rows}
+        assert len(values)==len(rows) and set(values)==set(pids), 'Missing/duplicate RSS identities'
+        return dict(bytesByPid=values, stdout=result.stdout, stderr=result.stderr)
+    except BaseException as error:
+        error.rssCommandResult = vars(result).copy()
+        raise
 
 
 class CohortRSS:
-    def __init__(self, core, observations, read=rss_read, cancel=lambda:False):
-        self.core, self.observations, self.read, self.cancel = core, observations, read, cancel
+    def __init__(self, core, observations, read=rss_read, cancel=lambda:False, admit=lambda rows:None):
+        self.core, self.observations, self.read, self.cancel, self.admit = core, observations, read, cancel, admit
         self.last = -1
 
     def observe(self, job, force=False):
         if not force and time.monotonic()-self.last < .2: return
         self.last = time.monotonic()
-        item = dict(monotonic=self.last, limitBytes=RSS_LIMIT, quota=False)
-        self.observations.append(item)  # Before every fallible observation.
+        item = dict(monotonic=self.last, limitBytes=RSS_LIMIT, quota=False, samples=[], maxSamples=3,
+                    basis='Complete stable sampled cut; interrupted intervals and inter-sample peaks unqualified')
+        self.observations.append(item)
+        sample = {}
         try:
-            with self.core.deadline(3):
-                assert not self.cancel(), 'Parent cancelled unit'
-                item['kernelBefore'] = self.core.kernel_tasks(job.coalition_id)
-                item['members'] = job.members()
-                keys = [identity_key(r) for r in item['members']]
-                assert keys and len(keys)==len(set(keys)), 'Empty/duplicate owned cohort'
-                assert item['kernelBefore']['live']==len(keys), 'Unclassified kernel task'
-                item['before'] = [self.core.identity(r['pid']) for r in item['members']]
-                assert all(r is not None for r in item['before']) and [identity_key(r) for r in item['before']]==keys, 'RSS birth/UID drift'
-                item['rss'] = self.read([r['pid'] for r in item['members']])
-                item['after'] = [self.core.identity(r['pid']) for r in item['members']]
-                item['membersAfter'] = job.members()
-                item['kernelAfter'] = self.core.kernel_tasks(job.coalition_id)
-                assert all(r is not None for r in item['after']) and [identity_key(r) for r in item['after']]==keys, 'RSS reuse/departure'
-                after_keys=list(map(identity_key,item['membersAfter']))
-                assert len(after_keys)==len(set(after_keys))==len(keys) and set(after_keys)==set(keys), 'RSS cohort birth/departure/duplicate during sample'
-                assert item['kernelAfter']['live']==len(keys), 'RSS kernel drift'
-                values = item['rss']['bytesByPid']
-                assert set(values)=={r['pid'] for r in item['members']}, 'RSS missing identity'
-                assert all(type(v) is int and v>=0 for v in values.values()), 'Unknown RSS'
-                item['aggregateBytes'] = sum(values.values())
-                assert item['aggregateBytes']<=RSS_LIMIT, 'Aggregate owned RSS exceeds 8 GiB'
-                item['accepted'] = True
+            # One deadline for the entire observation, never renewed by membership churn.
+            remaining = signal.getitimer(signal.ITIMER_REAL)[0]
+            # An earlier enclosing alarm already bounds this work. Do not replace it
+            # and cause the frozen helper to re-arm an expired one-shot on unwind.
+            with nullcontext() if 0 < remaining <= 3 else self.core.deadline(3):
+                for attempt in range(3):
+                    sample = dict(attempt=attempt+1, accepted=False)
+                    item['samples'].append(sample)
+                    assert not self.cancel(), 'Parent cancelled unit'
+                    sample['kernelBefore'] = self.core.kernel_tasks(job.coalition_id)
+                    sample['members'] = job.members()
+                    keys = [identity_key(r) for r in sample['members']]
+                    assert keys and len(keys)==len(set(keys)), 'Empty/duplicate owned cohort'
+                    assert sample['kernelBefore']['live']==len(keys), 'Unclassified kernel task'
+                    sample['before'] = []
+                    for row in sample['members']:
+                        sample['before'].append(self.core.identity(row['pid']))
+                    assert all(r is not None for r in sample['before']) and [identity_key(r) for r in sample['before']]==keys, 'RSS birth/UID drift'
+                    # Actual adapter admission covers observed identities even if they depart
+                    # before the later executable observer. No PID inherits prior admission.
+                    self.admit(sample['members'])
+                    sample['rss'] = self.read([r['pid'] for r in sample['members']])
+                    values = sample['rss']['bytesByPid']
+                    assert set(values)=={r['pid'] for r in sample['members']}, 'RSS missing identity'
+                    assert all(type(v) is int and v>=0 for v in values.values()), 'Unknown RSS'
+                    sample['aggregateBytes'] = sum(values.values())
+                    assert sample['aggregateBytes']<=RSS_LIMIT, 'Aggregate owned RSS exceeds 8 GiB'
+                    sample['after'] = []
+                    for row in sample['members']:
+                        sample['after'].append(self.core.identity(row['pid']))
+                    sample['membersAfter'] = job.members()
+                    sample['kernelAfter'] = self.core.kernel_tasks(job.coalition_id)
+                    after_keys = [identity_key(r) for r in sample['membersAfter']]
+                    assert after_keys and len(after_keys)==len(set(after_keys)), 'Empty/duplicate post-read cohort'
+                    assert sample['kernelAfter']['live']==len(after_keys), 'RSS kernel drift'
+                    for key, current in zip(keys, sample['after']):
+                        assert current is None or identity_key(current)==key, 'RSS birth/UID drift after read'
+                        if key not in after_keys:
+                            assert current is None, 'Live identity disappeared from owned membership'
+                        else:
+                            assert current is not None, 'Missing post-read identity'
+                    for kernel in [sample['kernelBefore'],sample['kernelAfter']]:
+                        if 'started' in kernel or 'exited' in kernel:
+                            assert all(type(kernel[k]) is int and kernel[k]>=0 for k in ['started','exited','live']), 'Unknown kernel counters'
+                            assert kernel['started']-kernel['exited']==kernel['live'], 'Invalid kernel accounting'
+                    counters = ['started','exited']
+                    before, after = sample['kernelBefore'], sample['kernelAfter']
+                    assert all((k in before)==(k in after) for k in counters), 'Missing kernel counters'
+                    assert all(after[k]>=before[k] for k in counters if k in before), 'Kernel counters regressed'
+                    self.admit(sample['membersAfter'])
+                    assert not self.cancel(), 'Parent cancelled unit'
+                    stable = set(after_keys)==set(keys) and all(before.get(k)==after.get(k) for k in counters)
+                    if stable:
+                        sample['accepted']=True
+                        item.update(sample)
+                        return
+                    sample['interrupted']='Owned membership/counters changed; this interval is not accepted'
+                raise AssertionError('Owned RSS did not stabilize within three bounded samples')
         except BaseException as error:
-            item['failure'] = error_receipt(error)
+            sample['failure'] = error_receipt(error)
+            item.update(sample)
+            item['accepted'] = False
+            item['failure'] = sample['failure']
             raise
 
 

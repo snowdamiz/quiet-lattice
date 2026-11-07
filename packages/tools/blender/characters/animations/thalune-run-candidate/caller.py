@@ -235,13 +235,27 @@ class StationAdapter:
     def resource_observer(self, job, receipt):
         if not getattr(self, 'resourceControls', False): return None
         from resource_admission import CohortRSS
-        guard = CohortRSS(self.core, receipt.setdefault('rssObservations', []))
+        guard = CohortRSS(self.core, receipt.setdefault('rssObservations', []),
+                          admit=lambda rows:self.admit_resource_members(receipt, rows))
         def observe():
             before = len(guard.observations)
             guard.observe(job)
             if len(guard.observations) != before and self.cacheLease is not None and self.cacheLease.active:
                 self.cacheLease.check(job.members())
         return observe
+
+    def admit_resource_members(self, receipt, rows):
+        from types import SimpleNamespace
+        failures=[]
+        try:
+            observe_executables(SimpleNamespace(members=lambda:rows), self.ready['process_binary_sha256'],
+                receipt['actualExecutables'], receipt['observerEvents'], self.core.identity,
+                self.temp.executable_path, on_failure=failures.append)
+        except BaseException as error:
+            if failures and error is not failures[0]:
+                receipt.setdefault('secondaryFailures', []).extend(error_receipt(e) for e in [*failures[1:],error])
+                raise failures[0]
+            raise
 
     def after_release(self, definition, receipt):
         if getattr(self, 'cacheLease', None) is not None and self.cacheLease.active:
@@ -361,12 +375,25 @@ class StationAdapter:
             try:
                 with self.core.deadline(ready['cleanupSeconds']):
                     assert job is not None and getattr(job, 'coalition_id', None), 'Retain allocation: no durable owned boundary'
+                    receipt['errorsBeforeDrain'] = list(job.state['errors'])
                     drained = job.drain(ready['cleanupSeconds']); receipt['drain'] = drained
                     receipt['drainMembers'] = self.core.coalition_members(job.coalition_id)
                     receipt['drainKernel'] = self.core.kernel_tasks(job.coalition_id)
-                    assert drained['drained'] and drained['clean'], 'Owned drain did not prove clean release'
+                    assert drained['drained'], 'Owned drain did not prove clean release'
+                    if not drained['clean']:
+                        # The immutable helper includes historical workload errors in clean.
+                        # Only those already-retained errors may coexist with positive drain.
+                        assert receipt['primaryFailure'] is not None and receipt['errorsBeforeDrain'], 'Unexplained unclean drain'
+                        assert drained['errors']==receipt['errorsBeforeDrain'], 'New drain errors prevent archive'
+                        assert not drained['remaining'] and drained['kernel_terminal']['coalition_absent'] is True and drained['kernel_terminal']['live']==0, 'Unproved drain terminal state'
                     assert not receipt['drainMembers'], 'Coalition members remain after drain'
-                    assert receipt['drainKernel']['live'] == 0, 'Kernel tasks remain after drain'
+                    assert receipt['drainKernel']['live'] == 0 and receipt['drainKernel']['coalition_absent'] is True, 'Kernel tasks remain after drain'
+                    receipt['drainBirths'] = []
+                    for pid,old in job.known.items():
+                        birth = dict(pid=int(pid), recorded=old)
+                        receipt['drainBirths'].append(birth)
+                        birth['current'] = self.core.identity(int(pid))
+                    assert all(b['current'] is None or b['current']['birth']!=b['recorded']['birth'] for b in receipt['drainBirths']), 'Recorded process birth remains before archive'
                     inventory_observations=receipt.setdefault('inventoryObservations',[])
                     guarded_call(job.archive,inventory_observations,profile_namespace=private, profile_prefixes=('playwright_chromiumdev_profile-',))
                     profiles = read(job.out/'profile_release.json'); receipt['profiles'] = profiles

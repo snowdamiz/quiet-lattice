@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Parent-authored native189 diagnostic grant",
+  "description": "Documentation schema, not runtime authority. The unchanged consume/check_current code additionally checks the same capped snapshots, clean HEAD, expiry, absence, live capacity and cancellation. Unknown fields are retained.",
+  "type": "object",
+  "required": [
+    "purpose",
+    "nativeFixtureGo",
+    "captureGo",
+    "authorizationId",
+    "jobIds",
+    "frames",
+    "head",
+    "readinessSha256",
+    "planSha256",
+    "candidateSha256",
+    "runRoot",
+    "expiresUnix"
+  ],
+  "properties": {
+    "purpose": {
+      "const": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY"
+    },
+    "nativeFixtureGo": {
+      "const": true
+    },
+    "captureGo": {
+      "const": false
+    },
+    "authorizationId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Fresh identifier chosen by the parent for exactly this one-use attempt."
+    },
+    "jobIds": {
+      "const": ["native-189-encode", "native-189-validate"]
+    },
+    "frames": {
+      "const": 189
+    },
+    "head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Exact clean final activation HEAD from delivery; never the prior review head."
+    },
+    "readinessSha256": {
+      "const": "53d312273f618f040ddc4829fa6e1820895bcbab3a38b1b192dc350f8f3ac001"
+    },
+    "planSha256": {
+      "const": "3586236af42894a4a36c88361db4049abb0990f86ce2327ead482552ebf8ad70"
+    },
+    "candidateSha256": {
+      "const": "be393382a2461152ae76058baa313e56e1a9713d246ff3c948b551d9776c6c1e"
+    },
+    "runRoot": {
+      "const": "/private/tmp/t02-native189-r12-20261107-t3-11167406"
+    },
+    "expiresUnix": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Generate at grant creation: current Unix time + 1800 seconds. Existing admission requires now < expiresUnix <= now + 3600."
+    }
+  },
+  "additionalProperties": true
+}

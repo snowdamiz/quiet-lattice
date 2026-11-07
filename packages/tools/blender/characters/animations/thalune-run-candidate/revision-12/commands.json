@@ -1,0 +1,405 @@
+{
+  "commands": [
+    {
+      "name": "RED",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/RED"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/RED.json",
+      "qualification": "Intermediate source/fixture revision; immutable result retained"
+    },
+    {
+      "name": "RED-exact",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/RED-exact"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": null,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/RED-exact.json",
+      "qualification": "Pre-edit reproduction returned 4 FAIL / 1 PASS; shell then printed findings, so its overall exit0 is not a test PASS. RED-sealed separately captures explicit child exit1.",
+      "shellExitCode": 0
+    },
+    {
+      "name": "GREEN-initial",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/GREEN-initial"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/GREEN-initial.json",
+      "qualification": "Intermediate source/fixture revision; immutable result retained"
+    },
+    {
+      "name": "GREEN-extended",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/GREEN-extended",
+        "--extended"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/GREEN-extended.json",
+      "qualification": "Intermediate source/fixture revision; immutable result retained"
+    },
+    {
+      "name": "GREEN-extended-2",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/GREEN-extended-2",
+        "--extended"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/GREEN-extended-2.json",
+      "qualification": "Intermediate source/fixture revision; immutable result retained"
+    },
+    {
+      "name": "GREEN-extended-3",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/GREEN-extended-3",
+        "--extended"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/GREEN-extended-3.json",
+      "qualification": "Intermediate source/fixture revision; immutable result retained"
+    },
+    {
+      "name": "GREEN-final",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/GREEN-final",
+        "--extended"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/GREEN-final.json",
+      "qualification": "Intermediate source/fixture revision; immutable result retained"
+    },
+    {
+      "name": "GREEN-sealed",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/GREEN-sealed",
+        "--extended"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/GREEN-sealed.json",
+      "qualification": "Final 50 controls on corrected source"
+    },
+    {
+      "name": "red-sealed",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/red-source.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/RED-sealed"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.14269616699311882,
+      "stdout": "{\"passed\": 1, \"failed\": 4, \"results\": \"/private/tmp/t02-rss-startup-ftkhnhew/RED-sealed/results.json\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "admission",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/admission-controls.py",
+        "--report",
+        "/private/tmp/t02-rss-startup-ftkhnhew/admission.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "seconds": 7.577764667046722,
+      "stdout": "actual-source-and-plan-admission PASS\nexact-reserve PASS\none-byte-short PASS\npurpose PASS\ncapture-go PASS\nnative-go PASS\norder PASS\nframes PASS\nexpired PASS\ntoo-long PASS\nhead PASS\nreadiness-hash PASS\nplan-hash PASS\ncandidate-hash PASS\nwrong-grant-path PASS\ncancel PASS\nrun-exists PASS\nconsumed-exists PASS\nnative-flag-off PASS\ncapture-flag-on PASS\ncached-ready-drift PASS\nactual-main-absent-grant-zero-launch PASS\n{\"status\": \"PASS\", \"controls\": 22, \"runtimeJobs\": 0, \"realGrantOrOutputAllocations\": 0}\n",
+      "stderr": ""
+    },
+    {
+      "name": "native-absent-grant",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.3585564160021022,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 263, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 257, in main\n    record=consume(ready,plan,args.grant)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 92, in consume\n    grant_snapshot=snapshot(grant_path);grant=grant_snapshot['value']\n                   ^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/admission_json.py\", line 14, in snapshot\n    before=path.lstat();facts['before']=dict(mode=before.st_mode,bytes=before.st_size,dev=before.st_dev,ino=before.st_ino)\n           ^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 847, in lstat\n    return self.stat(follow_symlinks=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 840, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json'\n"
+    },
+    {
+      "name": "capture-disabled",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+        "--execute",
+        "--grant",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.037442542030476034,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 501, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 492, in main\n    record = consume(ready, args.grant)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 84, in consume\n    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 51, in verify_runtime\n    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SOURCE_ONLY_RUNTIME_DISABLED\n"
+    },
+    {
+      "name": "optimized-refused",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "-O",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.014526540995575488,
+      "stdout": "",
+      "stderr": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused\n"
+    },
+    {
+      "name": "admission-final",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/admission-controls.py",
+        "--report",
+        "/private/tmp/t02-rss-startup-ftkhnhew/admission-final.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "seconds": 7.808991917001549,
+      "stdout": "actual-source-and-plan-admission PASS\nexact-reserve PASS\none-byte-short PASS\npurpose PASS\ncapture-go PASS\nnative-go PASS\norder PASS\nframes PASS\nexpired PASS\ntoo-long PASS\nhead PASS\nreadiness-hash PASS\nplan-hash PASS\ncandidate-hash PASS\nwrong-grant-path PASS\ncancel PASS\nrun-exists PASS\nconsumed-exists PASS\nnative-flag-off PASS\ncapture-flag-on PASS\ncached-ready-drift PASS\nactual-main-absent-grant-zero-launch PASS\n{\"status\": \"PASS\", \"controls\": 22, \"runtimeJobs\": 0, \"realGrantOrOutputAllocations\": 0}\n",
+      "stderr": ""
+    },
+    {
+      "name": "native-absent-grant-final",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.37089908396592364,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 263, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 257, in main\n    record=consume(ready,plan,args.grant)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 92, in consume\n    grant_snapshot=snapshot(grant_path);grant=grant_snapshot['value']\n                   ^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/admission_json.py\", line 14, in snapshot\n    before=path.lstat();facts['before']=dict(mode=before.st_mode,bytes=before.st_size,dev=before.st_dev,ino=before.st_ino)\n           ^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 847, in lstat\n    return self.stat(follow_symlinks=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 840, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json'\n"
+    },
+    {
+      "name": "capture-disabled-final",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+        "--execute",
+        "--grant",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.03549504099646583,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 505, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 496, in main\n    record = consume(ready, args.grant)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 84, in consume\n    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 51, in verify_runtime\n    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SOURCE_ONLY_RUNTIME_DISABLED\n"
+    },
+    {
+      "name": "optimized-refused-final",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "-O",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.013984874996822327,
+      "stdout": "",
+      "stderr": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused\n"
+    },
+    {
+      "name": "retained-first",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/retained-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/retained-controls"
+      ],
+      "exitCode": 0,
+      "stdout": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/retained.stdout",
+      "stderr": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/retained.stderr",
+      "count": 66
+    },
+    {
+      "name": "collector-first",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/collect.py"
+      ],
+      "exitCode": 1,
+      "failure": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/collect-first-failure.txt"
+    },
+    {
+      "name": "collector-corrected",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/collect.py"
+      ],
+      "exitCode": 0,
+      "protectedRows": 1368,
+      "originalAttemptRows": 50,
+      "terminalChildren": 25
+    },
+    {
+      "name": "retained-final",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/retained-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/retained-final"
+      ],
+      "exitCode": 0,
+      "stdout": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/retained-final.stdout",
+      "stderr": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/retained-final.stderr",
+      "count": 66,
+      "qualification": "Final source; counts earlier identical 66 only once"
+    },
+    {
+      "name": "GREEN-final54",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/rss-controls.py",
+        "/private/tmp/t02-rss-startup-ftkhnhew/GREEN-final54",
+        "--extended"
+      ],
+      "exitCode": 0,
+      "results": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/evidence/GREEN-final54.json",
+      "count": 54
+    },
+    {
+      "name": "admission-sealed",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/admission-controls.py",
+        "--report",
+        "/private/tmp/t02-rss-startup-ftkhnhew/admission-sealed.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "seconds": 7.684158042015042,
+      "stdout": "actual-source-and-plan-admission PASS\nexact-reserve PASS\none-byte-short PASS\npurpose PASS\ncapture-go PASS\nnative-go PASS\norder PASS\nframes PASS\nexpired PASS\ntoo-long PASS\nhead PASS\nreadiness-hash PASS\nplan-hash PASS\ncandidate-hash PASS\nwrong-grant-path PASS\ncancel PASS\nrun-exists PASS\nconsumed-exists PASS\nnative-flag-off PASS\ncapture-flag-on PASS\ncached-ready-drift PASS\nactual-main-absent-grant-zero-launch PASS\n{\"status\": \"PASS\", \"controls\": 22, \"runtimeJobs\": 0, \"realGrantOrOutputAllocations\": 0}\n",
+      "stderr": ""
+    },
+    {
+      "name": "native-absent-grant-sealed",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.3798635410494171,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 263, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 257, in main\n    record=consume(ready,plan,args.grant)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 92, in consume\n    grant_snapshot=snapshot(grant_path);grant=grant_snapshot['value']\n                   ^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/admission_json.py\", line 14, in snapshot\n    before=path.lstat();facts['before']=dict(mode=before.st_mode,bytes=before.st_size,dev=before.st_dev,ino=before.st_ino)\n           ^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 847, in lstat\n    return self.stat(follow_symlinks=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 840, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json'\n"
+    },
+    {
+      "name": "capture-disabled-sealed",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+        "--execute",
+        "--grant",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.03693216695683077,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 505, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 496, in main\n    record = consume(ready, args.grant)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 84, in consume\n    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 51, in verify_runtime\n    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SOURCE_ONLY_RUNTIME_DISABLED\n"
+    },
+    {
+      "name": "optimized-refused-sealed",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "-O",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "seconds": 0.014293083979282528,
+      "stdout": "",
+      "stderr": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused\n"
+    }
+  ],
+  "passingUniqueCPUControls": 142,
+  "breakdown": {
+    "new": 54,
+    "retained": 66,
+    "admission": 22
+  },
+  "finalCLIRefusals": 3,
+  "nativeJobs": 0,
+  "grantsCreated": 0,
+  "intermediatePassCountsNotAddedTwice": true
+}

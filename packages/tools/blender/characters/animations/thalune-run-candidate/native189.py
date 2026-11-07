@@ -191,7 +191,8 @@ class NativeAdapter(caller.StationAdapter):
     def stage_observer(self,*args):return None
 
     def resource_observer(self,job,receipt):
-        guard=CohortRSS(self.core,receipt.setdefault('rssObservations',[]),cancel=lambda:Path(self.plan['cancelPath']).exists())
+        guard=CohortRSS(self.core,receipt.setdefault('rssObservations',[]),cancel=lambda:Path(self.plan['cancelPath']).exists(),
+                        admit=lambda rows:self.admit_resource_members(receipt,rows))
         return lambda:guard.observe(job)
 
     def inspect_native(self):
