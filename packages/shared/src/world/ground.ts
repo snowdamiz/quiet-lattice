@@ -6,10 +6,9 @@ import { cityPads, type City } from './cities.ts';
 import { TerrainSampler, type PlanetParams } from './planetgen.ts';
 import { FOOTPRINT, planSurface, sitePads, type Den, type Site, type SurfacePlan } from './sites.ts';
 
-/** Whether the client draws dens yet. Until their art lands (P1.E14.T10) it plans every world without them, so the ground
- * leaves them and their levelled pads out; P1.E14.T10 turns this on, and with it the dens of the system's tier, as
- * planSurface plans them (each housing one of the world's species), the very dens the server's fauna spawns at. */
-export const DENS_DRAWN = false;
+/** P1.E14.T10 supplies all seven validated den models. Draw the system tier's dens and their pads at the same anchors
+ * the server's fauna uses. The client asset contract checks the complete export set before this can ship enabled. */
+export const DENS_DRAWN = true;
 
 /** How far past a site's footprint no resource node grows (m): the client used to clear its plants this far round a site. */
 export const SITE_NODE_CLEARANCE = 6;
@@ -22,7 +21,7 @@ export interface DrawnGround {
   sampler: TerrainSampler;
   cities: City[];
   sites: Site[];
-  /** planned only while dens are drawn (DENS_DRAWN); none until then */
+  /** the system tier's dens, housing the same species as the server's spawn anchors */
   dens: Den[];
   /** the levelled pads: the cities', then the sites', then the dens' (as params.pads and the sampler hold them) */
   pads: number[];
@@ -52,8 +51,7 @@ export function drawnGround(params: PlanetParams, tier: number): DrawnGround {
 /**
  * A world's whole surface at a tier from one plan: its drawn ground (exactly drawnGround's: its pads, its sites'
  * clearance) and every den of the tier, drawn or not, each housing one of the world's species. What the server's fauna
- * spawns at and its resource nodes scatter over (P1.E08.T03, P1.E13.T01). Planning the dens costs 50–600 ms on a large
- * world at Tier 3 on top of the ground's 5–100 ms; drawnGround alone skips them until they are drawn.
+ * spawns at and its resource nodes scatter over (P1.E08.T03, P1.E13.T01).
  */
 export function worldSurface(params: PlanetParams, tier: number): { ground: DrawnGround; dens: Den[] } {
   const sampler = naturalSampler(params, tier);

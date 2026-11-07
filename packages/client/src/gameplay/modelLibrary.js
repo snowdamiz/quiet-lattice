@@ -8,7 +8,28 @@ import { gltfLoader } from '../core/Engine.js';
 const libs = new Map();
 const roots = new Map();
 
+export const DEN_MODELS = {
+  burrow: ['den_burrow_0', 'den_burrow_1'],
+  nest: ['den_nest_0', 'den_nest_1'],
+  roost: ['den_roost_0', 'den_roost_1'],
+  apex: ['den_apex_lair_0'],
+};
+
 export async function loadLibrary(name, url) {
+  // Game's existing structures startup slot owns the complete den library.
+  // A missing den rejects startup, before publishing any of its siblings.
+  if (name === 'structures') {
+    const scenes = await Promise.all(Object.values(DEN_MODELS).flat().map(async (id) => {
+      const scene = (await gltfLoader().loadAsync(`/models/sites/${id}.glb`)).scene;
+      const root = scene.getObjectByName(id);
+      if (!root || !root.getObjectByName('Interact_Spawn') || !root.getObjectByName('Spawn') ||
+          [0, 1, 2, 3].some((lod) => !root.getObjectByName(`${id}_LOD${lod}`))) {
+        throw new Error(`Den model ${id} is missing its LODs or spawn markers`);
+      }
+      return root;
+    }));
+    addLibrary('dens', new THREE.Group().add(...scenes));
+  }
   let scene = null;
   try {
     scene = (await gltfLoader().loadAsync(url)).scene;

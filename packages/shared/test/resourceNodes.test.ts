@@ -14,7 +14,6 @@ import {
   SITE_NODE_CLEARANCE,
   TIER_RARITY,
   TerrainSampler,
-  cityPads,
   cubeToSphere,
   drawnGround,
   fissureAt,
@@ -31,7 +30,6 @@ import {
   planetNodeLayers,
   scatterNodes,
   siteNodeClearance,
-  sitePads,
   tierWeight,
   type DrawnGround,
   type NodeCell,
@@ -186,8 +184,8 @@ describe('the cells round a point', () => {
 
 describe('the drawn ground', () => {
   const worlds = nodeWorlds();
-  it('is planSurface’s cities and sites on the natural ground, levelled, with no dens while dens are not drawn', () => {
-    expect(DENS_DRAWN).toBe(false);
+  it('is planSurface’s cities, sites and drawn dens at the system tier, with all their pads', () => {
+    expect(DENS_DRAWN).toBe(true);
     for (const type of ['lush', 'desert', 'storm', 'frozen']) {
       const w = worlds.find((x) => x.type === type)!;
       for (const tier of [0, 3]) {
@@ -196,8 +194,8 @@ describe('the drawn ground', () => {
         const plan = planSurface(natural, new TerrainSampler(natural), { tier });
         expect(asJson(ground.cities), type).toEqual(asJson(plan.cities));
         expect(asJson(ground.sites), type).toEqual(asJson(plan.sites));
-        expect(ground.dens).toEqual([]);
-        expect(ground.pads).toEqual([...cityPads(plan.cities), ...sitePads(plan.sites)]);
+        expect(ground.dens).toEqual(plan.dens);
+        expect(ground.pads).toEqual(plan.pads);
         expect(params.pads).toBe(ground.pads);
         expect(ground.sampler.pads).toBe(ground.pads);
         expect(ground.tier).toBe(tier);

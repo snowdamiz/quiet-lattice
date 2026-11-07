@@ -1,7 +1,7 @@
-// Points of interest on planets: outposts, monoliths, crash sites and beacons.
+// Points of interest on planets: outposts, monoliths, crash sites, beacons and fauna dens.
 // Sites are deterministic per planet; geometry is built only near the camera.
 import * as THREE from 'three';
-import { libraryRoot, libraryRootVariants } from './modelLibrary.js';
+import { DEN_MODELS, libraryRoot, libraryRootVariants } from './modelLibrary.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Random } from '@astra/shared/world';
 import { applyPanelDetail } from '../render/panelMaterial.js';
@@ -12,6 +12,7 @@ const Y = new THREE.Vector3(0, 1, 0);
 
 const LABELS = { outpost: 'Abandoned Outpost', monolith: 'Ancient Monolith', crash: 'Crashed Starship', beacon: 'Signal Beacon' };
 const PROMPTS = { outpost: 'Access terminal', monolith: 'Touch the monolith', crash: 'Salvage cargo pod', beacon: 'Activate beacon' };
+const DEN_LABELS = { burrow: 'Burrow', nest: 'Predator Nest', roost: 'Roost', apex: 'Apex Lair' };
 const LORE = [
   'The stone hums. A memory that is not yours: a sky with two suns, and a voice counting backwards.',
   'Glyphs rearrange as you watch. They spell a name you almost remember.',
@@ -111,12 +112,16 @@ class Builder {
 // A modelled site from public/models/structures.glb. Its children carry markers: COL_* box
 // meshes become colliders, `Interact` is where the player presses E, Light_* get point
 // lights, `Blink` blinks and `Spin` turns. Painted parts use the shared structure materials.
-function libraryStructure(type, rng) {
-  const names = libraryRootVariants('structures', type);
+function libraryStructure(type, rng, den = false) {
+  const lib = den ? 'dens' : 'structures';
+  const names = den ? DEN_MODELS[type] : libraryRootVariants(lib, type);
   if (!names.length) return null;
-  const M = materials();
-  const remap = { Hull: M.hull, Accent: M.accent, Warm: M.warm, Glow: M.glow, Lamp: M.red };
-  const group = libraryRoot('structures', rng.pick(names)).clone(true);
+  const M = den ? null : materials();
+  const remap = den ? {} : { Hull: M.hull, Accent: M.accent, Warm: M.warm, Glow: M.glow, Lamp: M.red };
+  const name = rng.pick(names);
+  const root = libraryRoot(lib, name);
+  if (!root) throw new Error(`Missing required ${lib} model ${name}`);
+  const group = root.clone(true);
   group.position.set(0, 0, 0);
   group.quaternion.identity();
   group.scale.set(1, 1, 1);
@@ -125,6 +130,7 @@ function libraryStructure(type, rng) {
   const extras = [];
   const drop = [];
   let interact = new THREE.Vector3(0, 0.5, 5);
+  let spawn = null;
   group.traverse((o) => {
     if (o.name.startsWith('COL_')) {
       if (o.isMesh) {
@@ -136,6 +142,8 @@ function libraryStructure(type, rng) {
     } else if (o.name.startsWith('Interact')) {
       // (the loader makes repeated node names unique with a numeric suffix, so match prefixes)
       interact = o.getWorldPosition(new THREE.Vector3());
+    } else if (o.name === 'Spawn') {
+      spawn = o.getWorldPosition(new THREE.Vector3());
     } else if (o.name.startsWith('Light_')) {
       // colour / intensity / distance may come from the model's glTF extras
       const u = o.userData;
@@ -147,32 +155,45 @@ function libraryStructure(type, rng) {
     } else if (!o.isMesh && o.name.startsWith('Spin')) {
       o.userData.spin = true;
     } else if (o.isMesh) {
-      if (o.material.name === 'Dark') {
-        markBase(o);
-        o.material = M.darkBase;
-      } else if (o.material.name === 'Glass') {
-        // a mirror-smooth dome throws the sun straight into the bloom; keep a soft sheen
-        if (!o.material.userData.tamed) {
-          o.material.roughness = Math.max(o.material.roughness, 0.32);
-          o.material.envMapIntensity = 0.7;
+      if (!den) {
+        if (o.material.name === 'Dark') {
+          markBase(o);
+          o.material = M.darkBase;
+        } else if (o.material.name === 'Glass') {
+          // a mirror-smooth dome throws the sun straight into the bloom; keep a soft sheen
+          if (!o.material.userData.tamed) {
+            o.material.roughness = Math.max(o.material.roughness, 0.32);
+            o.material.envMapIntensity = 0.7;
+            o.material.userData.tamed = true;
+          }
+        } else if ((o.material.name === 'Solar' || o.material.name === 'Metal') && !o.material.userData.tamed) {
+          // likewise solar cells and bare metal trim: near-mirrors that turned white and bloomed
+          o.material.roughness = Math.max(o.material.roughness, o.material.name === 'Solar' ? 0.42 : 0.5);
+          o.material.metalness = Math.min(o.material.metalness, 0.55);
+          o.material.envMapIntensity = 0.5;
+          if (o.material.name === 'Solar') o.material.color.multiplyScalar(0.7);
           o.material.userData.tamed = true;
-        }
-      } else if ((o.material.name === 'Solar' || o.material.name === 'Metal') && !o.material.userData.tamed) {
-        // likewise solar cells and bare metal trim: near-mirrors that turned white and bloomed
-        o.material.roughness = Math.max(o.material.roughness, o.material.name === 'Solar' ? 0.42 : 0.5);
-        o.material.metalness = Math.min(o.material.metalness, 0.55);
-        o.material.envMapIntensity = 0.5;
-        if (o.material.name === 'Solar') o.material.color.multiplyScalar(0.7);
-        o.material.userData.tamed = true;
-      } else o.material = remap[o.material.name] || o.material;
+        } else o.material = remap[o.material.name] || o.material;
+      }
       o.castShadow = true;
       o.receiveShadow = true;
     }
   });
   for (const o of drop) o.parent.remove(o);
   for (const e of extras) group.add(e);
+  if (den) {
+    const lod = new THREE.LOD();
+    lod.name = `${name}_DistanceLOD`;
+    for (const [i, distance] of [0, 80, 220, 650].entries()) {
+      const level = group.getObjectByName(`${name}_LOD${i}`);
+      if (!level) throw new Error(`Missing ${name}_LOD${i}`);
+      lod.addLevel(level, distance);
+      level.visible = i === 0;
+    }
+    group.add(lod);
+  }
   group.userData.library = true;
-  return { group, colliders, interact };
+  return { group, colliders, interact, spawn };
 }
 
 function buildOutpost(rng) {
@@ -409,11 +430,24 @@ export class Structures {
         known: this.knownIds.has(`${planet.name}#${i}`), built: null, seed: x.seed,
       });
     });
+    for (const [i, den] of (planet.dens ?? []).entries()) {
+      const dir = new THREE.Vector3(...den.dir);
+      const quat = new THREE.Quaternion().setFromUnitVectors(Y, dir)
+        .multiply(new THREE.Quaternion().setFromAxisAngle(Y, den.yaw));
+      const type = den.role === 'apex' ? 'apex' : den.kind;
+      const id = `${planet.name}#den${i}`;
+      this.sites.push({
+        id, type, den, dir, label: DEN_LABELS[type],
+        pos: dir.clone().multiplyScalar(planet.radius + den.base),
+        quat, quatInv: quat.clone().invert(),
+        known: this.knownIds.has(id), built: null, seed: den.seed,
+      });
+    }
   }
 
   build(s) {
     const rng = new Random(s.seed);
-    const res =
+    const res = s.den ? libraryStructure(s.type, rng, true) :
       (s.type !== 'crash' && libraryStructure(s.type, rng)) ||
       (s.type === 'outpost' ? buildOutpost(rng) : s.type === 'monolith' ? buildMonolith(rng) : s.type === 'crash' ? buildCrash(rng, this.game.ship.model) : buildBeacon(rng));
     res.group.position.copy(s.pos);
@@ -503,7 +537,7 @@ export class Structures {
   nearestInteract(pos) {
     if (!this.planet) return null;
     for (const s of this.sites) {
-      if (!s.built || this.visited.has(s.id)) continue;
+      if (s.den || !s.built || this.visited.has(s.id)) continue;
       const ip = s.built.interact.clone().applyQuaternion(s.quat).add(s.pos);
       if (ip.distanceTo(pos) < 4.5) return s;
     }
@@ -515,6 +549,8 @@ export class Structures {
   }
 
   interact(s) {
+    // Dens are server fauna anchors, not the demo's client-paid loot terminals.
+    if (s.den) return;
     const g = this.game;
     this.visited.add(s.id);
     g.audio.play('discovery');
@@ -573,6 +609,11 @@ export class Structures {
     let n = 0;
     for (let i = 0; i < planet.sites.length; i++) {
       const id = `${planet.name}#${i}`;
+      if (!this.knownIds.has(id)) n++;
+      this.knownIds.add(id);
+    }
+    for (let i = 0; i < (planet.dens?.length ?? 0); i++) {
+      const id = `${planet.name}#den${i}`;
       if (!this.knownIds.has(id)) n++;
       this.knownIds.add(id);
     }

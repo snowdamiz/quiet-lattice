@@ -100,15 +100,16 @@ describe('who lives in each den', () => {
       }
     });
 
-    it('is the drawn ground’s plan: its pads are the cities’ and sites’, then (once dens are drawn) these dens’; one plan with the nodes’ clearance', () => {
+    it('draws the same dens and pads as the server’s full surface plan, with the nodes’ clearance', () => {
+      expect(DENS_DRAWN).toBe(true);
       for (const tier of [1, 3]) {
         const drawn = drawnGround({ ...params, pads: null }, tier);
         const planned = byTier[tier]!;
         const head = planned.pads.slice(0, planned.pads.length - denPads(planned.dens).length);
         expect(drawn.cities).toEqual(planned.cities);
         expect(drawn.sites).toEqual(planned.sites);
-        expect(drawn.dens).toEqual(DENS_DRAWN ? planned.dens : []);
-        expect(drawn.pads).toEqual(DENS_DRAWN ? planned.pads : head);
+        expect(drawn.dens).toEqual(planned.dens);
+        expect(drawn.pads).toEqual(planned.pads);
         expect([...head, ...denPads(planned.dens)]).toEqual(planned.pads);
         // the whole surface from one plan: the drawn ground's pads and node clearance to the bit, and these dens
         const whole = worldSurface({ ...params, pads: null }, tier);

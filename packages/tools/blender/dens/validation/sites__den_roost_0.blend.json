@@ -1,0 +1,125 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/sites/den_roost_0.blend",
+  "family": "sites",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T04:34:45Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "den_roost_0",
+      "variants": [
+        {
+          "id": "den_roost_0",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0
+          ],
+          "lodTris": {
+            "0": 24440
+          },
+          "implicitLods": false,
+          "dims": [
+            6.436,
+            5.548,
+            7.906
+          ],
+          "materials": [
+            "Den_den_roost_0_Organic"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "info",
+          "subject": "_PaintSource",
+          "message": "collection starts with '_': ignored and never exported"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "den_roost_0.blend",
+          "message": "1 variant(s) in 1 asset(s) follow the sites rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "den_roost_0",
+          "message": "LOD0 24,440 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "info",
+          "subject": "den_roost_0",
+          "message": "no hand-made LODs: the export generates LOD1-LOD3 by decimation"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "den_roost_0",
+          "message": "LOD1-LOD3 generated at export"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Den_den_roost_0_Organic",
+          "message": "pbr: base colour, roughness, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "den_roost_0",
+          "message": "longest side 7.91 m within 1-250 m"
+        }
+      ]
+    }
+  ]
+}

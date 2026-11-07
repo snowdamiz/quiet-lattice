@@ -1,0 +1,128 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/sites/den_nest_1.glb",
+  "family": "sites",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T04:34:45Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "den_nest_1",
+      "variants": [
+        {
+          "id": "den_nest_1",
+          "class": "building",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 28822,
+            "1": 8609,
+            "2": 2866,
+            "3": 517
+          },
+          "implicitLods": false,
+          "dims": [
+            8.058,
+            6.708,
+            5.674
+          ],
+          "materials": [
+            "Den_den_nest_1_Organic"
+          ],
+          "gpuTextureMB": 16.0
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "den_nest_1.glb",
+          "message": "1 variant(s) in 1 asset(s) follow the sites rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "den_nest_1",
+          "message": "LOD0 28,822 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 0.4 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "den_nest_1",
+          "message": "28,822 > 8,609 > 2,866 > 517 triangles; LOD3 1.8% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Den_den_nest_1_Organic",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "textures",
+          "message": "3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 1.1 MB"
+        },
+        {
+          "subject": "den_nest_1",
+          "message": "textures take 16 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/sites/den_nest_1.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "den_nest_1",
+          "message": "longest side 8.06 m within 1-250 m"
+        }
+      ]
+    }
+  ]
+}

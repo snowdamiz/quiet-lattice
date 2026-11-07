@@ -49,6 +49,7 @@ export class Planet extends Body {
       this.sampler = this.ground.sampler;
       this.cities = this.ground.cities;
       this.sites = this.ground.sites;
+      this.dens = this.ground.dens;
       pool.registerPlanet(this.id, p);
       this.material = createTerrainMaterial(p, { detailStrength: p.type === 'frozen' ? 0.35 : 0.55 });
       // (no terrain drawn under a city's paving: a little inside its edge)
