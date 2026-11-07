@@ -1,0 +1,4626 @@
+{
+  "status": "PASS",
+  "count": 37,
+  "scratch": "/private/tmp/t02-native189-controls-yaaozfyh",
+  "controls": [
+    {
+      "name": "small diagnostic exact pixels/alpha",
+      "status": "PASS",
+      "details": [
+        {
+          "sourcePngSha256": "3bc4a707b43c1a7607e11c896bf7dafe117058980fffff5b3803dbe2c0a826ce",
+          "rgbSha256": "428027eff19869a4a59be3e4d43d0022f1daa95f58e3ebda740effd7cabae244",
+          "rgbaSha256": "669081504c9d751ec4596115ce964149ed9f30f554dac4f843684c3e47830ac1"
+        },
+        {
+          "sourcePngSha256": "0d9815d6b2924fcd4f0d24f34bea71b314a6b3e5c46938094b435f6c1ee93d1a",
+          "rgbSha256": "8370a800284d280d005027d79175bed4f5277cac3b754a4ca7519a9351cf97a8",
+          "rgbaSha256": "12c9a7960e584063da5842f7a228e5f62639eecc160018082faa5d13ce153d5c"
+        },
+        {
+          "sourcePngSha256": "9909e7851e7a3bf2721edb892827346e025cdbc36c53bb93575ec1e2b0098aa8",
+          "rgbSha256": "3579dc8cdb2b4b71cd2cec864ba4005cd341c4b8d4795fa59eb28cc1e96c3902",
+          "rgbaSha256": "fe12b0ef959d9c1757ec4d4ee77a3a2f16ac2b7632e970dfb8b48c05b8f91a8c"
+        }
+      ]
+    },
+    {
+      "name": "producer happy",
+      "status": "PASS",
+      "details": {
+        "frames": 189,
+        "inFlight": 1,
+        "last": {
+          "schema": "t02-lossless-rgb-primary/v1",
+          "workId": "native-189/diagnostic/0188",
+          "mediaFrameOrdinal": 188,
+          "sourcePngSha256": "d6c07980697c1b3d613aa526a0e5c11d757b7f930e4dc1ebadbec059b3bc877a",
+          "rgbSha256": "58ff636e7c649e89cd38d63a1009516988ccf6e6180118882073bf278998e0d0",
+          "rgbaSha256": "bd2adff2b80ae35eefffbf1a367b6a670479de89636f1889d9551293fd95d852",
+          "width": 1920,
+          "height": 1080,
+          "alphaPolicy": "verified-opaque255",
+          "sourcePngRetained": false,
+          "mediaPts": 188000,
+          "mediaTimeBase": "1/60000"
+        }
+      }
+    },
+    {
+      "name": "producer backpressure",
+      "status": "PASS",
+      "details": {
+        "type": "AssertionError",
+        "message": "A frame is still awaiting ACK",
+        "details": {}
+      }
+    },
+    {
+      "name": "producer bad-ack",
+      "status": "PASS",
+      "details": {
+        "type": "AssertionError",
+        "message": "ACK mismatch: rgbSha256",
+        "details": {}
+      }
+    },
+    {
+      "name": "cohort RSS happy",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.87757025,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967296,
+              "101": 4294967296
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "aggregateBytes": 8589934592,
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS birth",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.877631458,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                99,
+                0
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS birth/UID drift",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS reuse",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.877661125,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967296,
+              "101": 4294967296
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                99,
+                0
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 100,
+              "birth": [
+                99,
+                0
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS reuse/departure",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS cohort-drift",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.877684458,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967296,
+              "101": 4294967296
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS cohort birth/departure during sample",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS kernel",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.87770475,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 3,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "AssertionError",
+            "message": "Unclassified kernel task",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS excess",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.877719083,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967297,
+              "101": 4294967297
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "aggregateBytes": 8589934594,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Aggregate owned RSS exceeds 8 GiB",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS unreadable",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.877739083,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-ps']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "inert-ps"
+              ],
+              "timeout": 2,
+              "output": "b'partial\\xff'",
+              "stderr": null,
+              "unknown": {
+                "kept": 7
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS empty-error",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.877774875,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "RuntimeError",
+            "message": "",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS cancel",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.877793041,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Parent cancelled unit",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS timeout",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262310.87780575,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cache happy",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908600,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707295634645
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908601,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707295691479,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707295634645
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707295634645
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707295634645
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707295634645
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029707299161153
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479908609,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029707299214569,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029707299161153
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479908609,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029707299214569,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029707299161153
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479908609,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029707299214569,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908600,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029707299161153
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479908609,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029707299214569,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908601,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707295691479,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908600,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794029707299161153
+          },
+          {
+            "path": "generated",
+            "dev": 16777232,
+            "ino": 479908609,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 3,
+            "mtime": 1794029707299214569,
+            "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908601,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707295691479,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache unknown",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908616,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707312626305
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908617,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707312668347,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908616,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707312626305
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908617,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707312668347,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [
+                {
+                  "before": {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "after": {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "path": "/private/tmp/t02-native189-controls-yaaozfyh/cache-unknown/cache/preexisting",
+                  "unknown": 9
+                }
+              ]
+            },
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unknown Vite cache owner",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908616,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707312626305
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908617,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707312668347,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache owner-reuse",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908619,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707313247889
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908620,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707313284556,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908619,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707313247889
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908620,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707313284556,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [
+                {
+                  "before": {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "after": {
+                    "pid": 100,
+                    "birth": [
+                      2,
+                      3
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "path": "/private/tmp/t02-native189-controls-yaaozfyh/cache-owner-reuse/cache"
+                }
+              ]
+            },
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unknown Vite cache owner",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908619,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707313247889
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908620,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707313284556,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache race",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908623,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707313802641
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908625,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707313851141,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908623,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707313802641
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908625,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707313851141,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908623,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029707314476059
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908625,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707313851141,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                },
+                {
+                  "path": "race",
+                  "dev": 16777232,
+                  "ino": 479908627,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 7,
+                  "mtime": 1794029707314546225,
+                  "sha256": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc"
+                }
+              ]
+            ],
+            "failure": {
+              "type": "AssertionError",
+              "message": "Cache admission race",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908623,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794029707314476059
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908625,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707313851141,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          },
+          {
+            "path": "race",
+            "dev": 16777232,
+            "ino": 479908627,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 7,
+            "mtime": 1794029707314546225,
+            "sha256": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache symlink",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908629,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707315121727
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908630,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707315167060,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unowned cache path",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": {
+          "type": "AssertionError",
+          "message": "Unowned cache path",
+          "details": {}
+        }
+      }
+    },
+    {
+      "name": "cache existing-lock",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908633,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707315701936
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908634,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707315747978,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908633,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707315701936
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908634,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707315747978,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908633,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707315701936
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908634,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707315747978,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908633,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707315701936
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908634,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707315747978,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache lock-reuse",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908637,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707316970480
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908638,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707317021314,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908637,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707316970480
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908638,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707317021314,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908637,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707316970480
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908638,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707317021314,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908637,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707316970480
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908638,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707317021314,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908637,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707316970480
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908638,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707317021314,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908637,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707316970480
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908638,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707317021314,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908637,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707316970480
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908638,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707317021314,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "failure": {
+              "type": "AssertionError",
+              "message": "Cache lease replaced",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908637,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707316970480
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908638,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707317021314,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache timeout",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908648,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707320400904
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908649,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707320461696,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479908648,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029707320400904
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479908649,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029707320461696,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "failure": {
+              "type": "DeadlineExpired",
+              "message": "station phase deadline expired",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479908648,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029707320400904
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479908649,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029707320461696,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "fresh TEMP GIT red-in-repo",
+      "status": "PASS",
+      "details": {
+        "consumedHead": "2d489a32667eb69a118ede9edd307cc9ec07bd0e",
+        "refusal": {
+          "type": "AssertionError",
+          "message": "Checkout must be clean, including unknown files",
+          "details": {}
+        },
+        "outputRetained": true
+      }
+    },
+    {
+      "name": "fresh TEMP GIT external",
+      "status": "PASS",
+      "details": {
+        "consumedHead": "2d489a32667eb69a118ede9edd307cc9ec07bd0e",
+        "consumerHead": "2d489a32667eb69a118ede9edd307cc9ec07bd0e",
+        "outputRetained": true
+      }
+    },
+    {
+      "name": "fresh TEMP GIT unknown",
+      "status": "PASS",
+      "details": {
+        "consumedHead": "2d489a32667eb69a118ede9edd307cc9ec07bd0e",
+        "refusal": {
+          "type": "AssertionError",
+          "message": "Checkout must be clean, including unknown files",
+          "details": {}
+        },
+        "outputRetained": true
+      }
+    },
+    {
+      "name": "fresh TEMP GIT committed-output",
+      "status": "PASS",
+      "details": {
+        "consumedHead": "8f86ccecacc2046d56a05e986c20d02eb8910e66",
+        "consumerHead": "5ed333ff47af50c97e5f08fc3d5725848497d52d",
+        "outputRetained": true
+      }
+    },
+    {
+      "name": "actual dispatcher adapter happy",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "NATIVE189_QUALIFIED_CAPTURE_DISABLED",
+          "primaryFailure": null,
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            },
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [],
+          "nativeJobs": 2,
+          "pipelineSeconds": 0.019929417001549155,
+          "outputBytes": 0,
+          "freeBytesAfter": 67967381504,
+          "terminalReleaseProved": true,
+          "receiptFallbacks": [],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "ba7ddf23dac09ef2c36acf6d134880431df69aa6a1c4dfd7149c3ba5edeb272c"
+            },
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/receipt.json",
+              "sha256": "ea52b8690b4227cbc9b4c998e286422a5f193d3a8b6c6f277144dadd92f6d0d0"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/result.json",
+              "status": "written",
+              "sha256": "d6f7780a75f55cf352548c47b350f513d21475e46b849b59d73fc7f8e3adc09b",
+              "bytes": 2588
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "9f38a318ee9fb8449a2853cd688ac67454094878ffd99adedbdcc39ec09528b6",
+              "bytes": 2686
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode",
+          "native-189-validate"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release",
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": null,
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "outcome": "completed",
+            "exits": {
+              "capture": 0
+            },
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2870,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          },
+          {
+            "name": "native-189-validate",
+            "primaryFailure": null,
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "validate",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/private",
+                "rawUnknown": 8
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "outcome": "completed",
+            "exits": {
+              "capture": 0
+            },
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2890,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-happy/proof/jobs/native-189-validate/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter primary",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "RuntimeError",
+            "message": "ORIGINAL_START_FAILURE",
+            "details": {
+              "unknown": {
+                "keep": 77
+              }
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.018670332967303693,
+          "outputBytes": 0,
+          "freeBytesAfter": 67967356928,
+          "terminalReleaseProved": true,
+          "receiptFallbacks": [],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "1a54307795135abbed5203566893ff449dc494a036320692cda8c95b4e17fe25"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/result.json",
+              "status": "written",
+              "sha256": "6099d2d4c7070bc34d4c12cb083b29a74e91c9ec8f309c01152fe3af97436e09",
+              "bytes": 1963
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "3811ed75d795de92e8ad93e7beb7fcddb27879423fc6cb6076e69dfd8c66bb46",
+              "bytes": 2061
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "RuntimeError",
+              "message": "ORIGINAL_START_FAILURE",
+              "details": {
+                "unknown": {
+                  "keep": 77
+                }
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2780,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-primary/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter empty-error",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "RuntimeError",
+            "message": "",
+            "details": {
+              "unknown": {
+                "keep": 77
+              }
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.0076336669735610485,
+          "outputBytes": 0,
+          "freeBytesAfter": 67965882368,
+          "terminalReleaseProved": true,
+          "receiptFallbacks": [],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "54fae3ae9c658b53ab499baf55c5a29939547b8a22c87fe3c7f15868e2c50570"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/result.json",
+              "status": "written",
+              "sha256": "32ddb2fc573e632897a674d4121a3bc5a736fb1e721502d51b29b03df67d346c",
+              "bytes": 1958
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "7d21df0349ab39c905afa8e606b2058953fc4f72c8df05c3b42ded4c1085131c",
+              "bytes": 2056
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "RuntimeError",
+              "message": "",
+              "details": {
+                "unknown": {
+                  "keep": 77
+                }
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2824,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-empty-error/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter all-sinks",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "RuntimeError",
+            "message": "ORIGINAL_START_FAILURE",
+            "details": {
+              "unknown": {
+                "keep": 77
+              }
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [
+            {
+              "type": "AssertionError",
+              "message": "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "details": {},
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json"
+            }
+          ],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.0182756669819355,
+          "outputBytes": 0,
+          "freeBytesAfter": 67960963072,
+          "terminalReleaseProved": false,
+          "receiptFallbacks": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "receipt": {
+                "name": "native-189-encode",
+                "primaryFailure": {
+                  "type": "RuntimeError",
+                  "message": "ORIGINAL_START_FAILURE",
+                  "details": {
+                    "unknown": {
+                      "keep": 77
+                    }
+                  }
+                },
+                "cleanupFailure": null,
+                "persistenceFailures": [
+                  {
+                    "type": "OSError",
+                    "message": "FINAL_RECEIPT_FAILURE",
+                    "details": {}
+                  }
+                ],
+                "terminal": {
+                  "kernel": {
+                    "live": 0,
+                    "coalition_absent": true,
+                    "unknownKernel": {
+                      "retained": 42
+                    }
+                  },
+                  "registrationAbsent": true,
+                  "scratchAndTmpAbsent": true,
+                  "audit": {
+                    "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                },
+                "argv": [
+                  "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                  "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                  "encode",
+                  "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json"
+                ],
+                "phase": "start",
+                "privateTmp": {
+                  "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/private",
+                  "admission": {
+                    "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/private",
+                    "rawUnknown": 8
+                  }
+                },
+                "ownedAllocation": {
+                  "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+                  "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/scratch",
+                  "target": "inert",
+                  "coalition_id": "123"
+                },
+                "drain": {
+                  "drained": true,
+                  "clean": true,
+                  "rawUnknown": {
+                    "drain": 87
+                  }
+                },
+                "drainMembers": [],
+                "drainKernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "profiles": {
+                  "all_absent": true,
+                  "unknown": 91
+                },
+                "cache": {
+                  "all_bytes_preserved": true,
+                  "namespace_removed": true,
+                  "unknown": 71
+                },
+                "taskRelease": null,
+                "archiveBytesObservedAfterRelease": 2802,
+                "releaseAudits": [
+                  {
+                    "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                ]
+              }
+            }
+          ],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "c723a3805f07e95fe9f28653cf215dcf85e1f66b51578bd736427e39ee1cb938"
+            }
+          ],
+          "terminalPersistenceFailures": [
+            {
+              "type": "OSError",
+              "message": "PROOF_FAILURE",
+              "details": {},
+              "sink": "proof"
+            }
+          ],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/result.json",
+              "status": "failed"
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "25f8c34a95d341d7c28f484e5bc01d21f1d94182722531911c7eab7d545a71ca",
+              "bytes": 6711
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "RuntimeError",
+              "message": "ORIGINAL_START_FAILURE",
+              "details": {
+                "unknown": {
+                  "keep": 77
+                }
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "FINAL_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2802,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-all-sinks/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter after-bytes",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "RuntimeError",
+            "message": "ORIGINAL_START_FAILURE",
+            "details": {
+              "unknown": {
+                "keep": 77
+              }
+            }
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [
+            {
+              "type": "AssertionError",
+              "message": "Attempt receipt persistence failed: /private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+              "details": {},
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json"
+            }
+          ],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.013362083991523832,
+          "outputBytes": 0,
+          "freeBytesAfter": 67960262656,
+          "terminalReleaseProved": false,
+          "receiptFallbacks": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+              "receipt": {
+                "name": "native-189-encode",
+                "primaryFailure": {
+                  "type": "RuntimeError",
+                  "message": "ORIGINAL_START_FAILURE",
+                  "details": {
+                    "unknown": {
+                      "keep": 77
+                    }
+                  }
+                },
+                "cleanupFailure": null,
+                "persistenceFailures": [
+                  {
+                    "type": "OSError",
+                    "message": "FINAL_RECEIPT_FAILURE",
+                    "details": {}
+                  }
+                ],
+                "terminal": {
+                  "kernel": {
+                    "live": 0,
+                    "coalition_absent": true,
+                    "unknownKernel": {
+                      "retained": 42
+                    }
+                  },
+                  "registrationAbsent": true,
+                  "scratchAndTmpAbsent": true,
+                  "audit": {
+                    "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                },
+                "argv": [
+                  "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                  "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                  "encode",
+                  "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/worker-config.json"
+                ],
+                "phase": "start",
+                "privateTmp": {
+                  "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/private",
+                  "admission": {
+                    "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/private",
+                    "rawUnknown": 8
+                  }
+                },
+                "ownedAllocation": {
+                  "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/owned-job",
+                  "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/owned-job/scratch",
+                  "target": "inert",
+                  "coalition_id": "123"
+                },
+                "drain": {
+                  "drained": true,
+                  "clean": true,
+                  "rawUnknown": {
+                    "drain": 87
+                  }
+                },
+                "drainMembers": [],
+                "drainKernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "profiles": {
+                  "all_absent": true,
+                  "unknown": 91
+                },
+                "cache": {
+                  "all_bytes_preserved": true,
+                  "namespace_removed": true,
+                  "unknown": 71
+                },
+                "taskRelease": null,
+                "archiveBytesObservedAfterRelease": 2824,
+                "releaseAudits": [
+                  {
+                    "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+                    "releaseProved": true,
+                    "kernel": {
+                      "live": 0,
+                      "coalition_absent": true,
+                      "unknownKernel": {
+                        "retained": 42
+                      }
+                    },
+                    "members": [],
+                    "births": [],
+                    "registrationArgv": [
+                      "/bin/launchctl",
+                      "print",
+                      "inert"
+                    ],
+                    "registrationExit": 1,
+                    "registrationStdout": "raw-registration",
+                    "registrationStderr": "",
+                    "scratchAbsent": true,
+                    "privateTmpAbsent": true
+                  }
+                ]
+              }
+            }
+          ],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "a5168b455acaf03b1832cdafe3aabde6960b5e5a6ca4d9c06cc80819cc852be2"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/result.json",
+              "status": "written",
+              "sha256": "83cbc582a2813fc6870e117773f0211b8529023537bca9f348ba4e68c3009fb8",
+              "bytes": 6631
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "5d67ec39c4caffd4d4365d5059c63d6eac3de48f81291afc9554c3def3eeaa9a",
+              "bytes": 6729
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "RuntimeError",
+              "message": "ORIGINAL_START_FAILURE",
+              "details": {
+                "unknown": {
+                  "keep": 77
+                }
+              }
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [
+              {
+                "type": "OSError",
+                "message": "FINAL_RECEIPT_FAILURE",
+                "details": {}
+              }
+            ],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2824,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-after-bytes/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter rss-timed",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [],
+          "nativeJobs": 1,
+          "pipelineSeconds": 1.0143937499960884,
+          "outputBytes": 0,
+          "freeBytesAfter": 67879256064,
+          "terminalReleaseProved": true,
+          "receiptFallbacks": [],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "8f06facbb24cfc1f8a936eac2c6d713afddc80b98718f25e4c035ca31ddf2d3c"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/result.json",
+              "status": "written",
+              "sha256": "173c1a547272a61715975c4396672950a3901243fac664f007ecb4adf9928bb3",
+              "bytes": 1929
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "7f37c59819f7784af459c66000fa37f665a267dbc0c9c998d83e9b7d851d3a26",
+              "bytes": 2027
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "DeadlineExpired",
+              "message": "station phase deadline expired",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 262314.799705333,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 8589934593
+                  },
+                  "rawUnknown": 86
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 8589934593
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "DeadlineExpired",
+                "message": "station phase deadline expired",
+                "details": {}
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2802,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-timed/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter rss-excess",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "AssertionError",
+            "message": "Aggregate owned RSS exceeds 8 GiB",
+            "details": {}
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.005944125005044043,
+          "outputBytes": 0,
+          "freeBytesAfter": 67879194624,
+          "terminalReleaseProved": true,
+          "receiptFallbacks": [],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "e1000adfd965fc90cd7b12e0cf23e5437c4aba90a4e7e6171d2056ccd4624e3e"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/result.json",
+              "status": "written",
+              "sha256": "bc318346f0e1f11200596b9b451151963d9ab5daded7e8f173e75009d4358117",
+              "bytes": 1937
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "0c48ef91d663643a56ebf66d07ab53a0e3935c03a58df0eb9122ea0983ddc6b6",
+              "bytes": 2035
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "Aggregate owned RSS exceeds 8 GiB",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 262315.812542875,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1
+                },
+                "members": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "100": 8589934593
+                  },
+                  "rawUnknown": 86
+                },
+                "after": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1
+                },
+                "aggregateBytes": 8589934593,
+                "failure": {
+                  "type": "AssertionError",
+                  "message": "Aggregate owned RSS exceeds 8 GiB",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "AssertionError",
+                "message": "Aggregate owned RSS exceeds 8 GiB",
+                "details": {}
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2813,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-rss-excess/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter cancel",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "AssertionError",
+            "message": "Parent cancelled unit",
+            "details": {}
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": true,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": true,
+              "privateTmpAbsent": true
+            }
+          ],
+          "terminalAuditFailures": [],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.004771958047058433,
+          "outputBytes": 0,
+          "freeBytesAfter": 67879149568,
+          "terminalReleaseProved": true,
+          "receiptFallbacks": [],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "98469b07f603e21fdc9daab88da0539e4d058af86636417cc0ebd10aeeda3fcd"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/result.json",
+              "status": "written",
+              "sha256": "b857dcd5b4f93fb1e106a4c106dd7443ea0a69b011a0b5b0214de105335b0a0d",
+              "bytes": 1909
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "b08446f6dbec71397a53fbdc56bdb598e70fe117a0d29d81e83dd0e8dc9c0ad5",
+              "bytes": 2007
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain",
+          "archive",
+          "tmp-release"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "Parent cancelled unit",
+              "details": {}
+            },
+            "cleanupFailure": null,
+            "persistenceFailures": [],
+            "terminal": {
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "registrationAbsent": true,
+              "scratchAndTmpAbsent": true,
+              "audit": {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            },
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 262315.819386125,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "failure": {
+                  "type": "AssertionError",
+                  "message": "Parent cancelled unit",
+                  "details": {}
+                }
+              }
+            ],
+            "resourceFailures": [
+              {
+                "type": "AssertionError",
+                "message": "Parent cancelled unit",
+                "details": {}
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "drain": {
+              "drained": true,
+              "clean": true,
+              "rawUnknown": {
+                "drain": 87
+              }
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "retained": 42
+              }
+            },
+            "profiles": {
+              "all_absent": true,
+              "unknown": 91
+            },
+            "cache": {
+              "all_bytes_preserved": true,
+              "namespace_removed": true,
+              "unknown": 71
+            },
+            "taskRelease": null,
+            "archiveBytesObservedAfterRelease": 2769,
+            "releaseAudits": [
+              {
+                "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cancel/proof/jobs/native-189-encode/receipt.json",
+                "releaseProved": true,
+                "kernel": {
+                  "live": 0,
+                  "coalition_absent": true,
+                  "unknownKernel": {
+                    "retained": 42
+                  }
+                },
+                "members": [],
+                "births": [],
+                "registrationArgv": [
+                  "/bin/launchctl",
+                  "print",
+                  "inert"
+                ],
+                "registrationExit": 1,
+                "registrationStdout": "raw-registration",
+                "registrationStderr": "",
+                "scratchAbsent": true,
+                "privateTmpAbsent": true
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual dispatcher adapter cleanup-timeout",
+      "status": "PASS",
+      "details": {
+        "result": {
+          "status": "HOLD",
+          "primaryFailure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          },
+          "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "runtimeAuthorization": false,
+          "dispatchFailure": {
+            "type": "AssertionError",
+            "message": "",
+            "details": {}
+          },
+          "terminalAudit": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/receipt.json",
+              "releaseProved": false,
+              "kernel": {
+                "live": 0,
+                "coalition_absent": true,
+                "unknownKernel": {
+                  "retained": 42
+                }
+              },
+              "members": [],
+              "births": [],
+              "registrationArgv": [
+                "/bin/launchctl",
+                "print",
+                "inert"
+              ],
+              "registrationExit": 1,
+              "registrationStdout": "raw-registration",
+              "registrationStderr": "",
+              "scratchAbsent": false,
+              "privateTmpAbsent": false,
+              "failure": {
+                "type": "AssertionError",
+                "message": "Owned scratch namespace remains",
+                "details": {}
+              }
+            }
+          ],
+          "terminalAuditFailures": [
+            {
+              "type": "AssertionError",
+              "message": "Owned scratch namespace remains",
+              "details": {},
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/receipt.json"
+            },
+            {
+              "type": "AssertionError",
+              "message": "Attempt cleanup remains unproved: /private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/receipt.json",
+              "details": {},
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/receipt.json"
+            },
+            {
+              "type": "TerminalAttemptAccountingFailure",
+              "message": "Every allocation attempt requires its own positive terminal audit",
+              "attempts": 1,
+              "handles": 1,
+              "audits": 1
+            }
+          ],
+          "nativeJobs": 1,
+          "pipelineSeconds": 0.15762479201657698,
+          "outputBytes": 0,
+          "freeBytesAfter": 67855806464,
+          "terminalReleaseProved": false,
+          "receiptFallbacks": [
+            {
+              "attemptPath": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/receipt.json",
+              "receipt": {
+                "name": "native-189-encode",
+                "primaryFailure": null,
+                "cleanupFailure": {
+                  "type": "DeadlineExpired",
+                  "message": "station phase deadline expired",
+                  "details": {}
+                },
+                "persistenceFailures": [],
+                "terminal": null,
+                "argv": [
+                  "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                  "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                  "encode",
+                  "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/worker-config.json"
+                ],
+                "phase": "start",
+                "privateTmp": {
+                  "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/private",
+                  "admission": {
+                    "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/private",
+                    "rawUnknown": 8
+                  }
+                },
+                "actualExecutables": {},
+                "observerEvents": [],
+                "outcome": "completed",
+                "exits": {
+                  "capture": 0
+                },
+                "ownedAllocation": {
+                  "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/owned-job",
+                  "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/owned-job/scratch",
+                  "target": "inert",
+                  "coalition_id": "123"
+                },
+                "releaseAudits": []
+              }
+            }
+          ],
+          "jobs": [
+            {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/receipt.json",
+              "sha256": "e167f621ebb560afa010bfbaa8027e0627079657dd823e894b4ba0c4952c596f"
+            }
+          ],
+          "terminalPersistenceFailures": [],
+          "terminalDelivery": {
+            "proof": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/result.json",
+              "status": "written",
+              "sha256": "dff4bdc319f40b46c996d63c0214783ae46278dec88b9862822c9ac3381587a5",
+              "bytes": 4765
+            },
+            "packet": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/packet/integration-result.json",
+              "status": "written",
+              "completeObservations": true,
+              "sha256": "d9ce28c2ae20c61cc815ce46b0b2839f44a0268f027e0eb05503ea03776052c7",
+              "bytes": 4863
+            },
+            "completeObservationsPersisted": true,
+            "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+          }
+        },
+        "starts": [
+          "native-189-encode"
+        ],
+        "events": [
+          "drain"
+        ],
+        "receipts": [
+          {
+            "name": "native-189-encode",
+            "primaryFailure": null,
+            "cleanupFailure": {
+              "type": "DeadlineExpired",
+              "message": "station phase deadline expired",
+              "details": {}
+            },
+            "persistenceFailures": [],
+            "terminal": null,
+            "argv": [
+              "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+              "encode",
+              "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/worker-config.json"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/private",
+              "admission": {
+                "path": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/private",
+                "rawUnknown": 8
+              }
+            },
+            "actualExecutables": {},
+            "observerEvents": [],
+            "outcome": "completed",
+            "exits": {
+              "capture": 0
+            },
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-native189-controls-yaaozfyh/sequence-cleanup-timeout/proof/jobs/native-189-encode/owned-job/scratch",
+              "target": "inert",
+              "coalition_id": "123"
+            },
+            "releaseAudits": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "disabled actual CLI runner",
+      "status": "PASS",
+      "details": {
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "-B",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+          "--execute",
+          "--grant",
+          "/does-not-exist"
+        ],
+        "exitCode": 1,
+        "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 175, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 169, in main\n    record=consume(ready,plan,args.grant)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 64, in consume\n    verify_sources(ready);check_plan(plan)  # Zero grant reads / allocations while disabled.\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 25, in verify_sources\n    assert ready['nativeFixtureAuthorization'] is True and ready['runtimeAuthorization'] is False,'NATIVE189_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: NATIVE189_DISABLED\n"
+      }
+    },
+    {
+      "name": "disabled actual CLI producer",
+      "status": "PASS",
+      "details": {
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "-B",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+          "encode",
+          "/does-not-exist"
+        ],
+        "exitCode": 1,
+        "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py\", line 117, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py\", line 111, in main\n    assert ready['nativeFixtureAuthorization'] is True and ready['runtimeAuthorization'] is False,'NATIVE189_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: NATIVE189_DISABLED\n"
+      }
+    }
+  ]
+}

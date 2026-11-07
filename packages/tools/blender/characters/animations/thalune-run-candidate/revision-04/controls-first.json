@@ -1,0 +1,1651 @@
+{
+  "status": "FAIL",
+  "count": 19,
+  "scratch": "/private/tmp/t02-native189-controls-cszhe26m",
+  "controls": [
+    {
+      "name": "small diagnostic exact pixels/alpha",
+      "status": "PASS",
+      "details": [
+        {
+          "sourcePngSha256": "3bc4a707b43c1a7607e11c896bf7dafe117058980fffff5b3803dbe2c0a826ce",
+          "rgbSha256": "428027eff19869a4a59be3e4d43d0022f1daa95f58e3ebda740effd7cabae244",
+          "rgbaSha256": "669081504c9d751ec4596115ce964149ed9f30f554dac4f843684c3e47830ac1"
+        },
+        {
+          "sourcePngSha256": "0d9815d6b2924fcd4f0d24f34bea71b314a6b3e5c46938094b435f6c1ee93d1a",
+          "rgbSha256": "8370a800284d280d005027d79175bed4f5277cac3b754a4ca7519a9351cf97a8",
+          "rgbaSha256": "12c9a7960e584063da5842f7a228e5f62639eecc160018082faa5d13ce153d5c"
+        },
+        {
+          "sourcePngSha256": "9909e7851e7a3bf2721edb892827346e025cdbc36c53bb93575ec1e2b0098aa8",
+          "rgbSha256": "3579dc8cdb2b4b71cd2cec864ba4005cd341c4b8d4795fa59eb28cc1e96c3902",
+          "rgbaSha256": "fe12b0ef959d9c1757ec4d4ee77a3a2f16ac2b7632e970dfb8b48c05b8f91a8c"
+        }
+      ]
+    },
+    {
+      "name": "producer happy",
+      "status": "PASS",
+      "details": {
+        "frames": 189,
+        "inFlight": 1,
+        "last": {
+          "schema": "t02-lossless-rgb-primary/v1",
+          "workId": "native-189/diagnostic/0188",
+          "mediaFrameOrdinal": 188,
+          "sourcePngSha256": "d6c07980697c1b3d613aa526a0e5c11d757b7f930e4dc1ebadbec059b3bc877a",
+          "rgbSha256": "58ff636e7c649e89cd38d63a1009516988ccf6e6180118882073bf278998e0d0",
+          "rgbaSha256": "bd2adff2b80ae35eefffbf1a367b6a670479de89636f1889d9551293fd95d852",
+          "width": 1920,
+          "height": 1080,
+          "alphaPolicy": "verified-opaque255",
+          "sourcePngRetained": false,
+          "mediaPts": 188000,
+          "mediaTimeBase": "1/60000"
+        }
+      }
+    },
+    {
+      "name": "producer backpressure",
+      "status": "PASS",
+      "details": {
+        "type": "AssertionError",
+        "message": "A frame is still awaiting ACK",
+        "details": {}
+      }
+    },
+    {
+      "name": "producer bad-ack",
+      "status": "PASS",
+      "details": {
+        "type": "AssertionError",
+        "message": "ACK mismatch: rgbSha256",
+        "details": {}
+      }
+    },
+    {
+      "name": "cohort RSS happy",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879042583,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967296,
+              "101": 4294967296
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "aggregateBytes": 8589934592,
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS birth",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879101333,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                99,
+                0
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS birth/UID drift",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS reuse",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.8791315,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967296,
+              "101": 4294967296
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                99,
+                0
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 100,
+              "birth": [
+                99,
+                0
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS reuse/departure",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS cohort-drift",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879155166,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967296,
+              "101": 4294967296
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS cohort birth/departure during sample",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS kernel",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879175083,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 3,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "AssertionError",
+            "message": "Unclassified kernel task",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS excess",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879189208,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "100": 4294967297,
+              "101": 4294967297
+            },
+            "unknownRSS": [
+              null,
+              false,
+              9
+            ]
+          },
+          "after": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "kernelAfter": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "aggregateBytes": 8589934594,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Aggregate owned RSS exceeds 8 GiB",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS unreadable",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.87920975,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "TimeoutExpired",
+            "message": "Command '['inert-ps']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "inert-ps"
+              ],
+              "timeout": 2,
+              "output": "b'partial\\xff'",
+              "stderr": null,
+              "unknown": {
+                "kept": 7
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS empty-error",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879238791,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "RuntimeError",
+            "message": "",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS cancel",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879255375,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Parent cancelled unit",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cohort RSS timeout",
+      "status": "PASS",
+      "details": [
+        {
+          "monotonic": 262255.879268125,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 2,
+            "unknownKernel": 7
+          },
+          "members": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "before": [
+            {
+              "pid": 100,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            },
+            {
+              "pid": 101,
+              "birth": [
+                11,
+                22
+              ],
+              "uid": 501,
+              "status": 1,
+              "unknown": {
+                "kept": true
+              }
+            }
+          ],
+          "failure": {
+            "type": "DeadlineExpired",
+            "message": "station phase deadline expired",
+            "details": {}
+          }
+        }
+      ]
+    },
+    {
+      "name": "cache happy",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853686,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029652298924491
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853687,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652299005033,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029652298924491
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029652298924491
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029652298924491
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029652298924491
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029652301282413
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479853695,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029652301314746,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029652301282413
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479853695,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029652301314746,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          },
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029652301282413
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479853695,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029652301314746,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853686,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029652301282413
+                },
+                {
+                  "path": "generated",
+                  "dev": 16777232,
+                  "ino": 479853695,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 3,
+                  "mtime": 1794029652301314746,
+                  "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853687,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652299005033,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "accepted": true
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853686,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794029652301282413
+          },
+          {
+            "path": "generated",
+            "dev": 16777232,
+            "ino": 479853695,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 3,
+            "mtime": 1794029652301314746,
+            "sha256": "a253ff09c5a8678e1fd1962b2c329245e139e45f9cc6ced4e5d7ad42c4108fc0"
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853687,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652299005033,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache unknown",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853702,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029652303299375
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853703,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652303363084,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853702,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029652303299375
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853703,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652303363084,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [
+                {
+                  "before": {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "after": {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "path": "/private/tmp/t02-native189-controls-cszhe26m/cache-unknown/cache/preexisting",
+                  "unknown": 9
+                }
+              ]
+            },
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unknown Vite cache owner",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853702,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029652303299375
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853703,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652303363084,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache owner-reuse",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853705,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029652303947585
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853706,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652304006668,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853705,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029652303947585
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853706,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652304006668,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [
+                {
+                  "before": {
+                    "pid": 100,
+                    "birth": [
+                      11,
+                      22
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "after": {
+                    "pid": 100,
+                    "birth": [
+                      2,
+                      3
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "unknown": {
+                      "kept": true
+                    }
+                  },
+                  "path": "/private/tmp/t02-native189-controls-cszhe26m/cache-owner-reuse/cache"
+                }
+              ]
+            },
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unknown Vite cache owner",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853705,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029652303947585
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853706,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652304006668,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache race",
+      "status": "PASS",
+      "details": {
+        "initial": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853708,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794029652304567086
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853709,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652304597628,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          }
+        ],
+        "observations": [
+          {
+            "treesBefore": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853708,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 96,
+                  "mtime": 1794029652304567086
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853709,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652304597628,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                }
+              ]
+            ],
+            "openFiles": {
+              "owners": [],
+              "rawUnknown": {
+                "retained": true
+              }
+            },
+            "treesAfter": [
+              [
+                {
+                  "path": ".",
+                  "dev": 16777232,
+                  "ino": 479853708,
+                  "uid": 501,
+                  "mode": 16877,
+                  "bytes": 128,
+                  "mtime": 1794029652304819336
+                },
+                {
+                  "path": "preexisting",
+                  "dev": 16777232,
+                  "ino": 479853709,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 6,
+                  "mtime": 1794029652304597628,
+                  "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+                },
+                {
+                  "path": "race",
+                  "dev": 16777232,
+                  "ino": 479853710,
+                  "uid": 501,
+                  "mode": 33188,
+                  "bytes": 7,
+                  "mtime": 1794029652304855878,
+                  "sha256": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc"
+                }
+              ]
+            ],
+            "failure": {
+              "type": "AssertionError",
+              "message": "Cache admission race",
+              "details": {}
+            }
+          }
+        ],
+        "remaining": [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 479853708,
+            "uid": 501,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794029652304819336
+          },
+          {
+            "path": "preexisting",
+            "dev": 16777232,
+            "ino": 479853709,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 6,
+            "mtime": 1794029652304597628,
+            "sha256": "2312ec24931b7ce7bcf84bc655505362f6abb2e7bee19e71488bfad18abeb8c6"
+          },
+          {
+            "path": "race",
+            "dev": 16777232,
+            "ino": 479853710,
+            "uid": 501,
+            "mode": 33188,
+            "bytes": 7,
+            "mtime": 1794029652304855878,
+            "sha256": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cache symlink",
+      "status": "FAIL",
+      "error": {
+        "type": "AssertionError",
+        "message": "Unowned cache path",
+        "details": {}
+      }
+    }
+  ]
+}

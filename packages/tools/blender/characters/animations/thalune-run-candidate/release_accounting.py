@@ -7,6 +7,7 @@ import hashlib,importlib.util,json,os,shutil,subprocess,sys,time
 from pathlib import Path
 import packet_budget as budget
 from inspector import error_receipt
+from admission_json import snapshot
 HERE=Path(__file__).resolve().parent
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -97,7 +98,7 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     refs=[];paths=[j['path'] for j in jobs]
     for path in paths:
         try:
-            saved=load(path);refs.append({'path':path,'sha256':sha(path)})
+            retained=snapshot(path);saved=retained['value'];refs.append({'path':path,'sha256':retained['sha256']})
             receipt=receipts.get(path,saved)
             assert receipt.get('cleanupFailure') is None,'Attempt cleanup remains unproved: '+path
             assert not receipt.get('persistenceFailures'),'Attempt receipt persistence failed: '+path

@@ -1,0 +1,27 @@
+{
+  "status": "PASS_RED_REPRODUCED_GREEN_BOUND_TO_PARSED_BYTES",
+  "controls": [
+    {
+      "case": "RED c61699d",
+      "recordedSha256": "a1f79951c420a836996375a1bc28d84a4fba66a27f9b2e12fa5199863646f6a8",
+      "recordBindsFailedGrant": true,
+      "grantedSemanticParentGpuGo": true,
+      "events": [
+        "actual grant replacement"
+      ],
+      "root": "/private/tmp/t02-admission-race-blxtavzu/RED-c61699d",
+      "nativeJobs": 0
+    },
+    {
+      "case": "GREEN current",
+      "recordedSha256": "395c7a2d3d2cbbf4906f1b3343d2f622f9d7a314e599793189f2d87f58e1803e",
+      "recordBindsFailedGrant": false,
+      "grantedSemanticParentGpuGo": true,
+      "events": [
+        "actual grant replacement"
+      ],
+      "root": "/private/tmp/t02-admission-race-blxtavzu/GREEN-current",
+      "nativeJobs": 0
+    }
+  ]
+}

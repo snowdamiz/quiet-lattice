@@ -58,12 +58,12 @@ def main():
     paths.update(files(pillow.parent/'pillow.libs') if (pillow.parent/'pillow.libs').is_dir() else [])
     kernel_python = subprocess.run(['/bin/ps', '-p', str(os.getpid()), '-o', 'comm='],
                                    capture_output=True, text=True, timeout=3, check=True).stdout.strip()
-    executables = dict(node=node, pythonLauncher=str(Path(sys.executable).resolve(strict=True)),
+    executables = dict(git=str(Path(shutil.which('git')).resolve(strict=True)), node=node, pythonLauncher=str(Path(sys.executable).resolve(strict=True)),
         pythonKernel=str(Path(kernel_python).resolve(strict=True)), esbuild=routes['esbuildBinary'],
         browser=browser['selectedExecutable']['path'], ffmpeg=str(Path(shutil.which('ffmpeg')).resolve(strict=True)),
         ffprobe=str(Path(shutil.which('ffprobe')).resolve(strict=True)), caffeinate='/usr/bin/caffeinate')
     assert all(Path(p).is_file() and os.access(p, os.X_OK) for p in executables.values())
-    software = {Path(p) for p in executables.values()} | {Path('/bin/launchctl'), Path('/bin/ps'), Path('/System/Library/Kernels/kernel')}
+    software = {Path(p) for p in executables.values()} | {Path('/bin/launchctl'), Path('/bin/ps'), Path('/usr/sbin/lsof'), Path('/System/Library/Kernels/kernel')}
     source_rows = [binding(p) for p in sorted(paths)]
     software_rows = [binding(p) for p in sorted(software)]
     process_map = {row['path']: row['sha256'] for row in software_rows if row['path'] in executables.values()}

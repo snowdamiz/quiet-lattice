@@ -1,6 +1,6 @@
 {
   "schema": "thalune-installed-bindings/v1",
-  "observedUtc": "2026-11-07T04:39:34.907940+00:00",
+  "observedUtc": "2026-11-07T05:56:23.350980+00:00",
   "runtimeAuthorization": false,
   "nativeFixtureAuthorization": false,
   "root": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
@@ -741,6 +741,7 @@
   },
   "tsxImport": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs",
   "executables": {
+    "git": "/opt/homebrew/Cellar/git/2.56.0/bin/git",
     "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
     "pythonLauncher": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
     "pythonKernel": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
@@ -757,6 +758,7 @@
     "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634",
     "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffmpeg": "1ede5c7fd4e97d832ec69c97c78231875de7d69c55423158f5f4a4d923227dd5",
     "/opt/homebrew/Cellar/ffmpeg/9.0.2/bin/ffprobe": "258fa480850eec6cf7b6831b2d3edd164cdd2f9ddb7a14965dc9fdaf9d175ff7",
+    "/opt/homebrew/Cellar/git/2.56.0/bin/git": "92229f2456a49561ac5d614bbed775224e2fc32a8eca22ac41aeb3ce47d7899c",
     "/usr/bin/caffeinate": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
   },
   "bindings": [
@@ -12348,15 +12350,29 @@
       "sha256": "258fa480850eec6cf7b6831b2d3edd164cdd2f9ddb7a14965dc9fdaf9d175ff7"
     },
     {
+      "path": "/opt/homebrew/Cellar/git/2.56.0/bin/git",
+      "bytes": 3758960,
+      "sha256": "92229f2456a49561ac5d614bbed775224e2fc32a8eca22ac41aeb3ce47d7899c"
+    },
+    {
       "path": "/usr/bin/caffeinate",
       "bytes": 217632,
       "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+    },
+    {
+      "path": "/usr/sbin/lsof",
+      "bytes": 470608,
+      "sha256": "deff85c7b4750a948a69fcd48eae3b394a37575e5048e5eb4a35b7a0482c3dc8"
     }
   ],
   "packageRoots": {
-    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite": {
-      "name": "vite",
-      "version": "8.3.5"
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright": {
+      "name": "playwright",
+      "version": "1.64.1"
+    },
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core": {
+      "name": "playwright-core",
+      "version": "1.64.1"
     },
     "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx": {
       "name": "tsx",
@@ -12373,6 +12389,10 @@
     "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64": {
       "name": "@esbuild/darwin-arm64",
       "version": "0.28.2"
+    },
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/vite@8.3.5_@types+node@22.20.5_esbuild@0.28.2_tsx@4.23.15/node_modules/vite": {
+      "name": "vite",
+      "version": "8.3.5"
     },
     "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/tinyglobby@0.2.17/node_modules/tinyglobby": {
       "name": "tinyglobby",
@@ -12438,60 +12458,16 @@
       "name": "undici-types",
       "version": "6.21.0"
     },
-    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test": {
-      "name": "@playwright/test",
-      "version": "1.64.1"
-    },
-    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/playwright@1.64.1/node_modules/playwright": {
-      "name": "playwright",
-      "version": "1.64.1"
-    },
-    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core": {
-      "name": "playwright-core",
-      "version": "1.64.1"
-    },
     "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/three@0.186.1/node_modules/three": {
       "name": "three",
       "version": "0.186.1"
+    },
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test": {
+      "name": "@playwright/test",
+      "version": "1.64.1"
     }
   },
   "absentOptionalOrPeerDependencies": [
-    {
-      "package": "vite",
-      "optionalOrPeer": "@vitejs/devtools"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "jiti"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "less"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "sass"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "sass-embedded"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "stylus"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "sugarss"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "terser"
-    },
-    {
-      "package": "vite",
-      "optionalOrPeer": "yaml"
-    },
     {
       "package": "esbuild",
       "optionalOrPeer": "@esbuild/aix-ppc64"
@@ -12591,6 +12567,42 @@
     {
       "package": "esbuild",
       "optionalOrPeer": "@esbuild/win32-x64"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "@vitejs/devtools"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "jiti"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "less"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "sass"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "sass-embedded"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "stylus"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "sugarss"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "terser"
+    },
+    {
+      "package": "vite",
+      "optionalOrPeer": "yaml"
     },
     {
       "package": "rolldown",

@@ -6,6 +6,7 @@ require_assertions(__debug__)
 import argparse,hashlib,io,json,os,resource,struct,subprocess,sys
 from pathlib import Path
 import packet_budget as budget
+from inspector import error_receipt
 SCHEMA='t02-lossless-rgb-primary/v1'
 PIXELS=1920*1080
 PNG_LIMIT=12*1024**2
@@ -54,6 +55,20 @@ def check_validation_config(config):
             value=row[kind+'Sha256'];assert isinstance(value,str) and len(value)==64 and all(c in '0123456789abcdef' for c in value)
     return rows
 
+def retain_failure(error, path, evidence):
+    evidence['primaryFailure']=error_receipt(error)
+    evidence['persistenceFailures']=[]
+    error.mediaFailure=evidence
+    try:save(path,evidence)
+    except BaseException as secondary:evidence['persistenceFailures'].append(error_receipt(secondary))
+    try:
+        text=json.dumps(evidence)+'\n'
+        assert sys.stderr.write(text)==len(text),'Incomplete media failure stream'
+        sys.stderr.flush()
+    except BaseException as secondary:evidence['persistenceFailures'].append(error_receipt(secondary))
+    # Caller rethrows the original exception; no subsequent native operation is dispatched.
+
+
 def encode(config,source=sys.stdin.buffer,ack=sys.stdout):
     check_encode_config(config)
     out=Path(config['video']);raw=Path(config['rawLog']);assert not out.exists() and not raw.exists()
@@ -81,8 +96,7 @@ def encode(config,source=sys.stdin.buffer,ack=sys.stdout):
         save(config['result'],{'schema':SCHEMA,'accepted':True,'frames':len(seen),'videoBytes':out.stat().st_size,
             'videoSha256':digest(out.read_bytes()),'rawLogSha256':digest(raw.read_bytes())})
     except BaseException as e:
-        failure={'type':type(e).__name__,'message':str(e)}
-        save(config['result'],{'schema':SCHEMA,'accepted':False,'frames':len(seen),'primaryFailure':failure})
+        retain_failure(e,config['result'],{'schema':SCHEMA,'accepted':False,'frames':len(seen)})
         # Do not kill/retry/wait under a fresh timeout. StationJob drains any surviving child.
         raise
 
@@ -138,9 +152,10 @@ def validate(config):
             'rawRgbSpoolBytes':0,'videoSha256':digest(Path(config['video']).read_bytes()),'frameMapSha256':digest(Path(config['frameMap']).read_bytes()),
             'commands':commands})
     except BaseException as e:
-        problem={'schema':SCHEMA,'accepted':False,'primaryFailure':{'type':type(e).__name__,'message':str(e)},'commands':commands}
-        save(raw_out/'validation-failure.json',problem)
-        budget.first_failure(config['packetRoot'],{'schema':SCHEMA,'phase':'validator','primaryFailure':problem['primaryFailure'],'completeNativeEvidence':str(raw_out)})
+        problem={'schema':SCHEMA,'accepted':False,'commands':commands}
+        retain_failure(e,raw_out/'validation-failure.json',problem)
+        try:budget.first_failure(config['packetRoot'],{'schema':SCHEMA,'phase':'validator','primaryFailure':problem['primaryFailure'],'completeNativeEvidence':str(raw_out)})
+        except BaseException as secondary:problem['persistenceFailures'].append(error_receipt(secondary))
         raise
 
 def main():

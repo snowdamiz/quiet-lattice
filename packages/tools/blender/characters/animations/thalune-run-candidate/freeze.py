@@ -20,7 +20,7 @@ def main():
     for row in provenance['files']:
         if row['mode'].startswith('exact'):assert sha(root/row['destination']) in [row['sha256'],row.get('lfsOid')]
     source_paths=sorted([*here.glob('*.py'),*here.glob('*.mjs'),*here.glob('*.cjs'),
-                         *(here/'retained-station').glob('*.py'),*(here/'retained-station').glob('*.mjs')])
+                         *(here/'retained-station').glob('*.py'),*(here/'retained-station').glob('*.mjs'),here/'native189-plan.json'])
     asset_paths=[root/'assets/blend/characters/animations/shared_motion.blend',*sorted(assets.iterdir())]
     for species in ['thalune','ixari','ulgani']:
         asset_paths.append(root/f'packages/client/public/models/characters/{species}.glb')

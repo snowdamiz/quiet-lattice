@@ -12,6 +12,7 @@ import subprocess
 import shutil
 import time
 import contract
+from admission_json import snapshot, read
 import packet_budget as budget
 from inspector import sha, write, error_receipt, inspect_capture
 from release_accounting import observe_executables, persist_terminal_summary, delivery_failure
@@ -35,7 +36,8 @@ def verify(ready):
     assert ready['helperDirectory'] == str(HERE/'retained-station')
     for row in [*ready['bindings'], *ready['softwareBindings']]:
         assert Path(row['path']).is_file() and sha(row['path']) == row['sha256'], 'Source drift: '+row['path']
-    index = json.loads((HERE/'candidate-index.json').read_text())
+    index_snapshot = snapshot(HERE/'candidate-index.json')
+    index = index_snapshot['value']
     assert index['runtimeAuthorization'] is False
     for row in index['files']:
         assert sha(HERE/row['path']) == row['sha256'], 'Candidate drift: '+row['path']
@@ -43,6 +45,8 @@ def verify(ready):
                 plannedJobs=5, runtimeJobs=0, runtimeAuthorization=False)
 
 def verify_runtime(ready):
+    ready_snapshot=snapshot(READY)
+    assert ready_snapshot['value']==ready,'Cached readiness differs from admitted snapshot'
     assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'
     contract.verify_structure(ready)
     assert ready['root'] == str(contract.ROOT) and ready['preparationRoot'] == str(HERE)
@@ -50,9 +54,11 @@ def verify_runtime(ready):
     assert ready['packetRoot'] == str(HERE/'future-attempt/packet') and ready['proofRoot'] == str(HERE/'future-attempt/proof')
     assert os.environ['PATH'] == ready['pathEnvironment']
     assert str(Path(sys.executable).resolve()) == ready['rgbPrimary']['python']
-    index = json.loads((HERE/'candidate-index.json').read_text())
+    index_snapshot = snapshot(HERE/'candidate-index.json')
+    index = index_snapshot['value']
     for row in index['files']:
-        assert sha(HERE/row['path']) == row['sha256'], 'Candidate drift: '+row['path']
+        digest=ready_snapshot['sha256'] if HERE/row['path']==READY else sha(HERE/row['path'])
+        assert digest == row['sha256'], 'Candidate drift: '+row['path']
     for row in [*ready['bindings'], *ready['softwareBindings']]:
         assert sha(row['path']) == row['sha256'], 'Source drift: '+row['path']
     for name, expected in ready['process_binary_sha256'].items():
@@ -63,19 +69,26 @@ def verify_runtime(ready):
     assert ready['browser']['selectedExecutable']['path'] in ready['process_binary_sha256']
     for name in [ready['node'], ready['rgbPrimary']['python'], ready['rgbPrimary']['ffmpeg'], ready['rgbPrimary']['ffprobe'], '/usr/bin/caffeinate']:
         assert name in ready['process_binary_sha256']
+    from native189 import retained_inventory
+    from resource_admission import reserve
+    plan_path=HERE/'native189-plan.json'
+    expected=next(r['sha256'] for r in ready['bindings'] if r['path']==str(plan_path))
+    plan=read(plan_path,expected)
+    reserve(plan,retained_inventory(plan))
     # This is a fresh observation on each dispatch, never the retained ledger's old free-space snapshot.
     assert shutil.disk_usage(HERE).free >= ready['storage']['totalIncrementalCeiling'], 'Current full retained-copy disk admission refused'
+    return dict(ready=ready_snapshot,index=index_snapshot)
 
 def consume(ready, grant_path):
-    verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.
+    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.
     assert Path(grant_path).resolve() == HERE/'grant.json'
-    grant = json.loads(Path(grant_path).read_text())
+    grant_snapshot=snapshot(grant_path);grant=grant_snapshot['value']
     assert grant['parentGpuGo'] is True and grant['authorizationId']
     assert grant['purpose'] == ready['purpose'] and grant['attemptId'] == ready['attemptId']
-    assert grant['readinessSha256'] == sha(READY) and grant['combinedCandidateSha256'] == sha(HERE/'candidate-index.json')
+    assert grant['readinessSha256']==admitted['ready']['sha256'] and grant['combinedCandidateSha256']==admitted['index']['sha256']
     assert grant['jobIds'] == [j['id'] for j in ready['jobs']] and grant['motionFrames'] == 378 and grant['stills'] == 8
     record = dict(authorizationId=grant['authorizationId'], attemptId=ready['attemptId'],
-                  readinessSha256=sha(READY), combinedCandidateSha256=sha(HERE/'candidate-index.json'), grantSha256=sha(grant_path))
+                  readinessSha256=admitted['ready']['sha256'],combinedCandidateSha256=admitted['index']['sha256'],grantSha256=grant_snapshot['sha256'],grantObservation=grant)
     # Exclusive consumption survives interruption; never retry into this namespace.
     with (HERE/'consumed-attempt.json').open('x') as stream: json.dump(record, stream)
     attempt = HERE/'future-attempt'
@@ -141,10 +154,76 @@ class StationAdapter:
         self.core = importlib.import_module('round4_job_boundary')
         self.temp = importlib.import_module('run_round4_browser_proof')
         self.support = importlib.import_module('run_round4_remaining8')
+        self.resourceControls = True
+        self.cacheLease = None
+
+
+    def job_paths(self, definition):
+        return contract.paths(self.ready['packetRoot'], self.ready['proofRoot'], definition)
+
+    def prepare(self, definition, out, paths, receipt):
+        ready = self.ready
+        if getattr(self, 'resourceControls', False) and definition['kind'] != 'validator':
+            from resource_admission import CacheLease, open_owners
+            plan_path=HERE/'native189-plan.json'
+            plan=read(plan_path,next(r['sha256'] for r in ready['bindings'] if r['path']==str(plan_path)))
+            observations = receipt.setdefault('cacheObservations', [])
+            controller = self.core.identity(os.getpid())
+            def owners(paths, checkout):
+                facts = open_owners(paths, checkout, self.core.identity)
+                facts['controllerIdentity'] = controller
+                from release_accounting import identity_key
+                facts['observedOwners'] = facts['owners']
+                facts['owners'] = [r for r in facts['owners'] if identity_key(r['after']) != identity_key(controller)]
+                return facts
+            if self.cacheLease is None:
+                self.cacheLease = CacheLease(plan['viteCachePaths'], ready['root'], plan['cacheLeasePath'],
+                                             out/'vite-cache-retention', observations, owners)
+            else:
+                self.cacheLease.archive = out/'vite-cache-retention'
+                self.cacheLease.observations = observations
+            self.cacheLease.acquire()
+        if definition['kind'] != 'validator': Path(paths['raw']).mkdir()
+        if definition['kind'] == 'validator':
+            config = dict(**ready['rgbPrimary'], schema=contract.SCHEMA, frameCount=contract.FRAMES,
+                          video=paths['capture']+'/primary.mp4', frameMap=paths['capture']+'/frame-map.json',
+                          helperDirectory=ready['helperDirectory'], output=paths['inspection'],
+                          packetRoot=ready['packetRoot'], nativeRawDirectory=paths['raw'])
+            write(out/'validate-config.json', config)
+            argv = [ready['rgbPrimary']['python'], str(HERE/'rgb-primary.py'), 'validate-primary', str(out/'validate-config.json')]
+        else:
+            claim = out/'launch-claim'
+            claim.mkdir()
+            write(claim/'admission.json', dict(stage=definition['id'], attemptId=ready['attemptId'],
+                                             authorizationId=self.grant['authorizationId'], readinessSha256=sha(READY)))
+            argv = [ready['node'], '--import', ready['tsxImport'], str(HERE/'entry.mjs'), str(READY), definition['id'], paths['capture']]
+        return argv
+
+    def record_worker_result(self, definition, paths, receipt):
+        pass
+
+    def stage_observer(self, definition, job, private):
+        return None if definition['kind']=='validator' else self.support.StageReceipts(job, self.ready, private)
+
+    def resource_observer(self, job, receipt):
+        if not getattr(self, 'resourceControls', False): return None
+        from resource_admission import CohortRSS
+        guard = CohortRSS(self.core, receipt.setdefault('rssObservations', []))
+        def observe():
+            before = len(guard.observations)
+            guard.observe(job)
+            if len(guard.observations) != before and self.cacheLease is not None and self.cacheLease.active:
+                self.cacheLease.check(job.members())
+        return observe
+
+    def after_release(self, definition, receipt):
+        if getattr(self, 'cacheLease', None) is not None and self.cacheLease.active:
+            return self.cacheLease.finish()
+        return None
 
     def run(self, definition, handle):
         ready = self.ready
-        paths = contract.paths(ready['packetRoot'], ready['proofRoot'], definition)
+        paths = self.job_paths(definition)
         out = Path(paths['receipt']).parent
         receipt = dict(name=definition['id'], primaryFailure=None, cleanupFailure=None,
                        persistenceFailures=[], terminal=None)
@@ -157,24 +236,11 @@ class StationAdapter:
                 raise
         try:
             out.mkdir(parents=True, exist_ok=False)
-            if definition['kind'] != 'validator': Path(paths['raw']).mkdir()
             persist()
-            if definition['kind'] == 'validator':
-                config = dict(**ready['rgbPrimary'], schema=contract.SCHEMA, frameCount=contract.FRAMES,
-                              video=paths['capture']+'/primary.mp4', frameMap=paths['capture']+'/frame-map.json',
-                              helperDirectory=ready['helperDirectory'], output=paths['inspection'],
-                              packetRoot=ready['packetRoot'], nativeRawDirectory=paths['raw'])
-                write(out/'validate-config.json', config)
-                argv = [ready['rgbPrimary']['python'], str(HERE/'rgb-primary.py'), 'validate-primary', str(out/'validate-config.json')]
-            else:
-                claim = out/'launch-claim'
-                claim.mkdir()
-                write(claim/'admission.json', dict(stage=definition['id'], attemptId=ready['attemptId'],
-                                                 authorizationId=self.grant['authorizationId'], readinessSha256=sha(READY)))
-                argv = [ready['node'], '--import', ready['tsxImport'], str(HERE/'entry.mjs'), str(READY), definition['id'], paths['capture']]
-            receipt['argv'] = argv
             started = time.monotonic()
             with self.core.deadline(ready['captureSeconds']):
+                argv = self.prepare(definition, out, paths, receipt)
+                receipt['argv'] = argv
                 receipt['phase'] = 'allocation'; persist()
                 private, admission = self.temp.create_private_tmp(out/'private-tmp-admission.json')
                 handle['private'] = private
@@ -190,17 +256,27 @@ class StationAdapter:
                 receipt['phase'] = 'start'; persist(); job.start()
                 admitted, events = {}, []
                 receipt.update(actualExecutables=admitted, observerEvents=events)
-                observer = None if definition['kind'] == 'validator' else self.support.StageReceipts(job, ready, private)
+                observer = self.stage_observer(definition, job, private)
+                resource_observer = self.resource_observer(job, receipt)
                 def observe():
+                    try:
+                        if resource_observer: resource_observer()
+                    except BaseException as error:
+                        receipt.setdefault('resourceFailures', []).append(error_receipt(error))
+                        raise
                     observe_executables(job, ready['process_binary_sha256'], admitted, events,
                                         self.core.identity, self.temp.executable_path, on_event=persist)
                     if observer: observer.observe()
+                if resource_observer: observe()
                 receipt['outcome'] = job.wait(max(.001, ready['captureSeconds']-(time.monotonic()-started)), observe)
                 receipt['exits'] = dict(job.state['exits']); persist()
+                self.record_worker_result(definition, paths, receipt)
+                if receipt.get('resourceFailures'):
+                    receipt['primaryFailure'] = receipt['resourceFailures'][0]
                 assert receipt['outcome'] == 'completed' and receipt['exits'].get('capture') == 0
                 if observer: observer.require_browser()
         except BaseException as error:
-            receipt['primaryFailure'] = error_receipt(error)
+            if receipt['primaryFailure'] is None: receipt['primaryFailure'] = error_receipt(error)
         finally:
             receipt['ownedAllocation'] = {key: str(value) for key in ['out', 'scratch', 'target', 'coalition_id', 'registered']
                                          if (value := getattr(job, key, None)) is not None}
@@ -214,11 +290,12 @@ class StationAdapter:
                     assert not receipt['drainMembers'], 'Coalition members remain after drain'
                     assert receipt['drainKernel']['live'] == 0, 'Kernel tasks remain after drain'
                     job.archive(profile_namespace=private, profile_prefixes=('playwright_chromiumdev_profile-',))
-                    profiles = json.loads((job.out/'profile_release.json').read_text()); receipt['profiles'] = profiles
+                    profiles = read(job.out/'profile_release.json'); receipt['profiles'] = profiles
                     assert profiles['all_absent']
                     cache = self.temp.preserve_private_tmp(private, admission, job.out/'preserved-private-tmp', job=job)
                     receipt['cache'] = cache
                     assert cache['all_bytes_preserved'] and cache['namespace_removed']
+                    receipt['taskRelease'] = self.after_release(definition, receipt)
                     audit = self.audit(handle)
                     receipt['terminal'] = dict(kernel=audit['kernel'], registrationAbsent=True, scratchAndTmpAbsent=True, audit=audit)
                     size = sum(p.stat().st_size for p in out.rglob('*') if p.is_file())
@@ -307,7 +384,7 @@ def main():
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--grant')
     args = parser.parse_args()
-    ready = json.loads(READY.read_text())
+    ready = read(READY)
     if args.execute:
         record = consume(ready, args.grant)
         adapter = StationAdapter(ready, record)
