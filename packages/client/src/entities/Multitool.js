@@ -12,7 +12,7 @@
 import * as THREE from 'three';
 import { canFireBeam, meterRates, stepMeters } from '@astra/shared/meters';
 import { gltfLoader } from '../core/Engine.js';
-import { applyPanelDetail } from '../render/panelMaterial.js';
+import { disposeTree } from '../core/dispose.js';
 import { characterMeterEnvironment } from './Ship.js';
 
 const _v = new THREE.Vector3();
@@ -20,6 +20,22 @@ const _v2 = new THREE.Vector3();
 /** Inputs go at 20 Hz and the server answers as they land: a view this long past a round trip from our overheat has seen
  * the inputs we sent then. */
 const STALE_SLACK_S = 0.1;
+const VIEWMODELS = Object.freeze({
+  thalune: '/models/characters/viewmodels/fp_thalune.glb',
+  ixari: '/models/characters/viewmodels/fp_ixari.glb',
+  ulgani: '/models/characters/viewmodels/fp_ulgani.glb',
+});
+
+function disposeViewModel(root) {
+  if (!root) return;
+  const skeletons = new Set();
+  root.traverse((object) => {
+    if (object.isSkinnedMesh) skeletons.add(object.skeleton);
+  });
+  for (const skeleton of skeletons) skeleton.dispose();
+  root.removeFromParent();
+  disposeTree(root);
+}
 
 export class Multitool {
   constructor(game) {
@@ -99,34 +115,84 @@ export class Multitool {
   }
 
   buildViewModel() {
-    const g = new THREE.Group();
-    this.glowMat = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x6fe3ff, emissiveIntensity: 2 });
-    g.position.set(0.15, -0.12, -0.42);
-    g.rotation.set(0.03, 0.06, 0);
-    g.scale.setScalar(0.64);
-    this.view = g;
-    this.basePos = g.position.clone();
+    this.view = new THREE.Group();
+    this.basePos = new THREE.Vector3();
     this.swayX = 0;
     this.swayY = 0;
     this.stride = 0;
-    this.game.engine.viewScene.add(g);
-    g.visible = false;
-    gltfLoader().load('/models/multitool.glb', (gltf) => {
-      gltf.scene.traverse((o) => {
-        if (!o.isMesh) return;
-        if (o.material.name === 'ToolGlow') o.material = this.glowMat;
-        else if (o.material.name === 'ToolBody' || o.material.name === 'ToolAccent') {
-          // the model carries its own panelling; just a hint of wear, and keep the white shell off clipping
-          if (o.material.name === 'ToolBody') o.material.color.multiplyScalar(0.82);
-          applyPanelDetail(o.material, { scale: 9, strength: 0.15 });
-        }
-      });
-      g.add(gltf.scene);
-    });
-    // muzzle flash light in the view scene
+    this.viewModelRequest = 0;
+    this.viewModelGlow = [];
+    this.game.engine.viewScene.add(this.view);
+    this.view.visible = false;
     this.vmLight = new THREE.PointLight(0xff9a50, 0, 2, 2);
-    this.vmLight.position.set(0.17, -0.12, -0.75);
     this.game.engine.viewScene.add(this.vmLight);
+    this.syncViewModel();
+  }
+
+  syncViewModel() {
+    // build.people is the existing selected-character contract (also updated at sign-in).
+    const people = this.game.build?.people ?? 'thalune';
+    if (people === this.viewModelPeople) return;
+    this.viewModelPeople = people;
+    const request = ++this.viewModelRequest;
+    disposeViewModel(this.viewModel);
+    this.viewModel = null;
+    this.muzzle = null;
+    this.viewModelGlow = [];
+    this.view.visible = false;
+    this.viewModelError = null;
+    const fail = (cause) => {
+      if (request !== this.viewModelRequest) return;
+      this.viewModelError = new Error(`Cannot load ${people} first-person arms and tool`, { cause });
+      console.error(this.viewModelError);
+      this.game.hud?.toast('First-person model failed to load', 'warn');
+    };
+    if (!Object.hasOwn(VIEWMODELS, people)) {
+      fail(new Error(`Unknown people: ${people}`));
+      return;
+    }
+    gltfLoader().load(
+      VIEWMODELS[people],
+      ({ scene }) => {
+        if (request !== this.viewModelRequest) {
+          disposeViewModel(scene);
+          return;
+        }
+        const muzzle = scene.getObjectByName('Muzzle');
+        if (!muzzle || !scene.getObjectByName('vm_hand_R') || !scene.getObjectByName('vm_hand_L')) {
+          disposeViewModel(scene);
+          fail(new Error('Viewmodel is missing its hand rig or muzzle'));
+          return;
+        }
+        const glow = new Set();
+        scene.traverse((object) => {
+          if (!object.isMesh) return;
+          const materials = Array.isArray(object.material) ? object.material : [object.material];
+          for (const material of materials) {
+            if (material.name === `VM_${people}_Tool`) glow.add(material);
+          }
+        });
+        this.viewModelGlow = [...glow].map((material) => ({ material, intensity: material.emissiveIntensity }));
+        this.viewModel = scene;
+        this.muzzle = muzzle;
+        this.view.add(scene);
+      },
+      undefined,
+      fail,
+    );
+  }
+
+  muzzlePosition(out) {
+    return this.muzzle ? this.muzzle.getWorldPosition(out) : null;
+  }
+
+  worldMuzzlePosition(out) {
+    this.muzzlePosition(out);
+    // The view pass has its own FOV. Preserve the socket's screen position in the world pass.
+    const { camera, viewCamera } = this.game.engine;
+    out.x *= viewCamera.projectionMatrix.elements[0] / camera.projectionMatrix.elements[0];
+    out.y *= viewCamera.projectionMatrix.elements[5] / camera.projectionMatrix.elements[5];
+    return out.applyQuaternion(this.game.camWorldQuat);
   }
 
   buildBeam() {
@@ -200,8 +266,9 @@ export class Multitool {
   update(dt, input, active) {
     const g = this.game;
     this.watchServer();
+    this.syncViewModel();
     // hidden while the camera is still easing in from the ship
-    this.view.visible = g.mode === 'foot' && !g.player.headUnderwater && !g.director.blend && !g.director.pose;
+    this.view.visible = !!this.viewModel && g.mode === 'foot' && !g.player.headUnderwater && !g.director.blend && !g.director.pose;
     // and raised into view once it has arrived
     this.raise = this.view.visible ? Math.min(1, (this.raise ?? 1) + dt * 2.6) : 0;
     this.beamMat.uniforms.uTime.value += dt;
@@ -234,10 +301,28 @@ export class Multitool {
     } else g.net?.mining.idle();
     this.firing = wantFire && g.mode === 'foot';
 
+    // viewmodel sway / bob: the tool trails the look direction and rocks with the stride
+    const p = g.player;
+    const bob = p.grounded ? p.bob : 0;
+    const k = 1 - Math.exp(-dt * 9);
+    this.swayX += (THREE.MathUtils.clamp(-(input.mouseDX || 0) * 0.0007, -0.035, 0.035) - this.swayX) * k;
+    this.swayY += (THREE.MathUtils.clamp((input.mouseDY || 0) * 0.0007, -0.03, 0.03) - this.swayY) * k;
+    const stride = THREE.MathUtils.damp(this.stride, p.grounded ? Math.min(1, p.hSpeed / 4.5) : 0, 6, dt);
+    this.stride = stride;
+    this.view.position.copy(this.basePos);
+    this.view.position.x += Math.sin(bob) * 0.016 * stride + this.swayX;
+    this.view.position.y += -Math.abs(Math.cos(bob)) * 0.014 * stride - p.landShake * 0.04 + this.swayY;
+    this.view.position.z += this.kick * 0.015 + (Math.random() - 0.5) * this.kick * 0.004;
+    this.view.rotation.set(this.swayY * 2.5, this.swayX * 3, this.swayX * 4 + Math.sin(bob) * 0.02 * stride);
+    const low = 1 - this.raise * this.raise * (3 - 2 * this.raise);
+    this.view.position.y -= low * 0.32;
+    this.view.rotation.x -= low * 0.7;
+    if (this.muzzle) this.muzzlePosition(this.vmLight.position);
+
     // beam visual (world space relative to camera)
-    if (this.firing) {
+    if (this.firing && this.muzzle) {
       const frame = g.cam.frame;
-      const start = _v.set(0.16, -0.14, -0.66).applyQuaternion(g.camWorldQuat);
+      const start = this.worldMuzzlePosition(_v);
       let end;
       if (hitPoint && frame) end = frame.localToWorld(hitPoint, new THREE.Vector3()).sub(g.camWorld);
       else end = new THREE.Vector3(0, 0, -30).applyQuaternion(g.camWorldQuat);
@@ -271,24 +356,9 @@ export class Multitool {
       this.kick = Math.max(0, this.kick - dt * 6);
     }
 
-    // viewmodel sway / bob: the tool trails the look direction and rocks with the stride
-    const p = g.player;
-    const bob = p.grounded ? p.bob : 0;
-    const k = 1 - Math.exp(-dt * 9);
-    this.swayX += (THREE.MathUtils.clamp(-(input.mouseDX || 0) * 0.0007, -0.035, 0.035) - this.swayX) * k;
-    this.swayY += (THREE.MathUtils.clamp((input.mouseDY || 0) * 0.0007, -0.03, 0.03) - this.swayY) * k;
-    const stride = THREE.MathUtils.damp(this.stride, p.grounded ? Math.min(1, p.hSpeed / 4.5) : 0, 6, dt);
-    this.stride = stride;
-    this.view.position.copy(this.basePos);
-    this.view.position.x += Math.sin(bob) * 0.016 * stride + this.swayX;
-    this.view.position.y += -Math.abs(Math.cos(bob)) * 0.014 * stride - p.landShake * 0.04 + this.swayY;
-    this.view.position.z += this.kick * 0.015 + (Math.random() - 0.5) * this.kick * 0.004;
-    this.view.rotation.set(0.03 + this.swayY * 2.5, 0.06 + this.swayX * 3, this.swayX * 4 + Math.sin(bob) * 0.02 * stride);
-    const low = 1 - this.raise * this.raise * (3 - 2 * this.raise);
-    this.view.position.y -= low * 0.32;
-    this.view.rotation.x -= low * 0.7;
-    this.glowMat.emissive.setRGB(0.4 + this.heat * 0.6, 0.9 - this.heat * 0.6, 1.0 - this.heat * 0.8);
-    this.glowMat.emissiveIntensity = 1.5 + (this.firing ? 2 : 0);
+    for (const { material, intensity } of this.viewModelGlow) {
+      material.emissiveIntensity = intensity * (1 + this.heat * 0.5 + (this.firing ? 1.5 : 0));
+    }
   }
 }
 
