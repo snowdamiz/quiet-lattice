@@ -1,0 +1,178 @@
+[
+  {
+    "name": "freeze",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/freeze.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 1.3136611669906415
+  },
+  {
+    "name": "prior393",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/private/tmp/t02-r8-correction-0907hb14/final/prior/run-all.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 69.46307291695848
+  },
+  {
+    "name": "prior47",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision06-controls.py",
+      "--report",
+      "/private/tmp/t02-r8-correction-0907hb14/final/prior47.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 2.8840147919836454
+  },
+  {
+    "name": "new39",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision07-controls.py",
+      "--report",
+      "/private/tmp/t02-r8-correction-0907hb14/final/new39.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 6.271623125008773
+  },
+  {
+    "name": "new28",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision08-controls.py",
+      "--report",
+      "/private/tmp/t02-r8-correction-0907hb14/final/new28.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.8399720420129597
+  },
+  {
+    "name": "independent",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/private/tmp/t02-r8-correction-0907hb14/final/independent11/independent.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.2886031669913791
+  },
+  {
+    "name": "observer-native",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-native.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.1931782080209814
+  },
+  {
+    "name": "close-failures",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/private/tmp/t02-r8-correction-0907hb14/final/independent11/close-failures.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.191434082982596
+  },
+  {
+    "name": "additional7",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/private/tmp/t02-r8-correction-0907hb14/final/independent7/additional.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.3070491670514457
+  },
+  {
+    "name": "typecheck",
+    "argv": [
+      "pnpm",
+      "typecheck"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 6.968665290973149
+  },
+  {
+    "name": "lint",
+    "argv": [
+      "pnpm",
+      "exec",
+      "eslint",
+      "--no-ignore",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/resolve-bindings.mjs",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-03/publication-controls.mjs",
+      "packages/client/src/characters/animationLibrary.test.js",
+      "packages/tools/blender/characters/animations/capture_bind.mjs"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.47324533300707117
+  },
+  {
+    "name": "format",
+    "argv": [
+      "pnpm",
+      "exec",
+      "prettier",
+      "--check",
+      "--ignore-path",
+      "/dev/null",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189-plan.json",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/resolve-bindings.mjs",
+      "packages/tools/blender/characters/animations/CURRENT_USAGE.md",
+      "packages/client/src/characters/animationLibrary.test.js",
+      "packages/client/src/characters/fixtures/animation-clips.json",
+      "packages/tools/blender/characters/animations/capture_bind.mjs"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.19616649998351932
+  },
+  {
+    "name": "syntax",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "-c",
+      "import ast,pathlib; ps=list(pathlib.Path('/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate').glob('*.py')); [ast.parse(p.read_text(),filename=str(p)) for p in ps]; print('PASS',len(ps),'root Python AST files')"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+    "exitCode": 0,
+    "expected": 0,
+    "seconds": 0.08745004096999764
+  }
+]

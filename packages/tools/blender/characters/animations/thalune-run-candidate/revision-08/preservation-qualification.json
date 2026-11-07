@@ -1,0 +1,99 @@
+{
+  "status": "FULL_SNAPSHOT_MISMATCH_WITH_SOURCE_ASSET_HELPER_PRESERVATION_PASS",
+  "observedUtc": "2026-11-07T08:57:16.095359+00:00",
+  "matchedProtectedEntries": 29495,
+  "changedEntries": [
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1",
+      "before": {
+        "mode": 16877,
+        "bytes": 128,
+        "dev": 16777232,
+        "ino": 477605751,
+        "mtime": 1794039528785627211
+      },
+      "after": {
+        "mode": 16877,
+        "bytes": 128,
+        "dev": 16777232,
+        "ino": 477605751,
+        "mtime": 1794041565439653483
+      }
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b516a662-14929-1.finished",
+      "before": {
+        "mode": 33152,
+        "bytes": 0,
+        "dev": 16777232,
+        "ino": 485878575,
+        "mtime": 1794039528779584614,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "error": "FileNotFoundError",
+        "errno": 2,
+        "message": "[Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b516a662-14929-1.finished'"
+      }
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/latest.json",
+      "before": {
+        "mode": 33152,
+        "bytes": 122,
+        "dev": 16777232,
+        "ino": 485873202,
+        "mtime": 1794039522918625207,
+        "sha256": "ba965578829433599e905a2607f1ac0c6e8b91bebed0f6a495e4bcedf66276ff"
+      },
+      "after": {
+        "mode": 33152,
+        "bytes": 122,
+        "dev": 16777232,
+        "ino": 487115172,
+        "mtime": 1794041558697985383,
+        "sha256": "ebcb797d6e49af8b3c02de75889e3fc448bd4bc324d677b99b9030ea4acbcb95"
+      }
+    }
+  ],
+  "currentTaskState": [
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b535b6a1-72340-1.finished",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mtimeNs": 1794041565435818183,
+      "text": ""
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/latest.json",
+      "bytes": 122,
+      "sha256": "ebcb797d6e49af8b3c02de75889e3fc448bd4bc324d677b99b9030ea4acbcb95",
+      "mtimeNs": 1794041558697985383,
+      "text": "{\"version\":1,\"invocation\":\"44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac\",\"run\":\"01a1b535b6a1-72340-1\"}"
+    }
+  ],
+  "restoredOrRemoved": false,
+  "qualification": "Changes were observed after the pnpm static checks. The full 29,502-entry snapshot is not claimed unchanged. All 29,495 other protected rows match exactly; four source/metadata rows were explicitly authorized to change. No reconstruction or removal was performed.",
+  "failedChecks": [
+    {
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-r8-correction-0907hb14/protect.py",
+        "after"
+      ],
+      "qualification": "Tool session 86811 ran protect.py after; exit 1 at the missing completion marker before writing an aggregate.",
+      "exitCode": 1
+    },
+    {
+      "argv": [
+        "python3.12",
+        "-B",
+        "/private/tmp/t02-r8-correction-0907hb14/protect-v2.py",
+        "after-facts"
+      ],
+      "exitCode": 1,
+      "report": "protected-after-facts.json"
+    }
+  ]
+}

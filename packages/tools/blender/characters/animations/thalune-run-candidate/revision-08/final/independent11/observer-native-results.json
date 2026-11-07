@@ -1,0 +1,1829 @@
+[
+  {
+    "mode": "permission",
+    "status": "PASS",
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'",
+        "details": {
+          "args": [
+            13,
+            "Permission denied"
+          ],
+          "errno": 13,
+          "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+          "filename2": null
+        }
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": false,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          },
+          "members": [],
+          "births": [
+            {
+              "pid": 214000001,
+              "recorded": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 72320,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "current": null
+            }
+          ],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "gui/501/local.stations.round4.93965c772819488cb30a6de043d2276c"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "REGISTRATION_ABSENT",
+          "registrationStderr": "",
+          "scratchAbsent": false,
+          "privateTmpAbsent": false,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Owned scratch namespace remains",
+            "details": {
+              "args": [
+                "Owned scratch namespace remains"
+              ]
+            }
+          }
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Owned scratch namespace remains",
+          "details": {
+            "args": [
+              "Owned scratch namespace remains"
+            ]
+          },
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "AssertionError",
+          "message": "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "details": {
+            "args": [
+              "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/receipt.json"
+            ]
+          },
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "TerminalAttemptAccountingFailure",
+          "message": "Every allocation attempt requires its own positive terminal audit",
+          "attempts": 1,
+          "handles": 1,
+          "audits": 1
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.007503583969082683,
+      "outputInventory": {
+        "normalBytes": 0,
+        "reservedBytes": 0,
+        "files": 0,
+        "reservedFiles": 0,
+        "paths": [],
+        "totalBytes": 0,
+        "complete": true,
+        "enumeration": {
+          "root": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/packet",
+          "complete": true,
+          "directories": [
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/packet",
+              "directories": [],
+              "files": [],
+              "entries": [],
+              "enumerated": true
+            }
+          ]
+        }
+      },
+      "outputBytes": 0,
+      "freeBytesAfter": 29883006976,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "PermissionError",
+              "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'",
+              "details": {
+                "args": [
+                  13,
+                  "Permission denied"
+                ],
+                "errno": 13,
+                "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+                "filename2": null
+              }
+            },
+            "cleanupFailure": {
+              "type": "AssertionError",
+              "message": "Owned drain did not prove clean release",
+              "details": {
+                "args": [
+                  "Owned drain did not prove clean release"
+                ]
+              }
+            },
+            "persistenceFailures": [],
+            "terminal": null,
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/private",
+              "admission": {
+                "ownedFixture": true
+              }
+            },
+            "bootstrapObservations": [
+              {
+                "argv": [
+                  "/bin/launchctl",
+                  "bootstrap",
+                  "gui/501",
+                  "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/stations-round4-owned-_hh1toe7/job.plist"
+                ],
+                "registrationUncertain": true,
+                "result": {
+                  "args": [
+                    "/bin/launchctl",
+                    "bootstrap",
+                    "gui/501",
+                    "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/stations-round4-owned-_hh1toe7/job.plist"
+                  ],
+                  "returncode": 0,
+                  "stdout": "BOOT_OK",
+                  "stderr": ""
+                }
+              }
+            ],
+            "bootstrapPortRestored": true,
+            "actualExecutables": {
+              "214000001:1:2:501": {
+                "identity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+                "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+              }
+            },
+            "observerEvents": [
+              {
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "status": "admitted",
+                "pid": 214000001,
+                "priorActualAdmission": null,
+                "beforeIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+                "postReadIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+              },
+              {
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "status": "observing",
+                "pid": 214000001,
+                "priorActualAdmission": {
+                  "identity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+                  "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                },
+                "beforeIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+                "postReadIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                }
+              }
+            ],
+            "rssObservations": [
+              {
+                "monotonic": 274164.491481916,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "members": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "214000001": 4096
+                  },
+                  "stdout": "214000001 4\n",
+                  "stderr": ""
+                },
+                "after": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "aggregateBytes": 4096,
+                "accepted": true
+              }
+            ],
+            "observationFailures": [
+              {
+                "phase": "executable",
+                "failure": {
+                  "type": "PermissionError",
+                  "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'",
+                  "details": {
+                    "args": [
+                      13,
+                      "Permission denied"
+                    ],
+                    "errno": 13,
+                    "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+                    "filename2": null
+                  }
+                }
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "secondaryFailures": [
+              {
+                "type": "AssertionError",
+                "message": "",
+                "details": {
+                  "args": []
+                }
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/stations-round4-owned-_hh1toe7",
+              "target": "gui/501/local.stations.round4.93965c772819488cb30a6de043d2276c",
+              "coalition_id": "123",
+              "registered": "True"
+            },
+            "drain": {
+              "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+              "exits": {
+                "capture": 0,
+                "caffeinate": 0
+              },
+              "errors": [
+                "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'"
+              ],
+              "signals": [],
+              "drained": true,
+              "clean": false,
+              "stage": "native-189-encode",
+              "readiness_sha256": "19a833ce6ac973e0e619082f59d33d14f8ea2ffe25bce248777071c94ba19c16",
+              "kernel_before_launch": {
+                "live": 1,
+                "coalition_absent": false
+              },
+              "kernel_before_root_release": {
+                "live": 1,
+                "coalition_absent": false
+              },
+              "kernel_terminal": {
+                "live": 0,
+                "coalition_absent": true
+              },
+              "remaining": [],
+              "elapsed_cleanup_seconds": 0.0012362500419840217
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true
+            },
+            "releaseAudits": []
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "e7f580eaa1df682443a030dae9f9d72aee44d562808c7603fdd857b71333e125"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/result.json",
+          "status": "written",
+          "sha256": "4c5f45dab393ed7e46f3841c8e7490e251da699eb2cdfec5856daac7b11cd7cc",
+          "bytes": 15597
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "c52a5572fb7428d5b4da7a20ef73d60eb7c39e24cd16fb6b2ae5d68ff9798e5c",
+          "bytes": 15696
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'",
+        "details": {
+          "args": [
+            13,
+            "Permission denied"
+          ],
+          "errno": 13,
+          "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+          "filename2": null
+        }
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "Owned drain did not prove clean release",
+        "details": {
+          "args": [
+            "Owned drain did not prove clean release"
+          ]
+        }
+      },
+      "persistenceFailures": [],
+      "terminal": null,
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/private",
+        "admission": {
+          "ownedFixture": true
+        }
+      },
+      "bootstrapObservations": [
+        {
+          "argv": [
+            "/bin/launchctl",
+            "bootstrap",
+            "gui/501",
+            "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/stations-round4-owned-_hh1toe7/job.plist"
+          ],
+          "registrationUncertain": true,
+          "result": {
+            "args": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/stations-round4-owned-_hh1toe7/job.plist"
+            ],
+            "returncode": 0,
+            "stdout": "BOOT_OK",
+            "stderr": ""
+          }
+        }
+      ],
+      "bootstrapPortRestored": true,
+      "actualExecutables": {
+        "214000001:1:2:501": {
+          "identity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+          "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+        }
+      },
+      "observerEvents": [
+        {
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "status": "admitted",
+          "pid": 214000001,
+          "priorActualAdmission": null,
+          "beforeIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+          "postReadIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+        },
+        {
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "status": "observing",
+          "pid": 214000001,
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+            "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          },
+          "beforeIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+          "postReadIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          }
+        }
+      ],
+      "rssObservations": [
+        {
+          "monotonic": 274164.491481916,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "members": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "before": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "214000001": 4096
+            },
+            "stdout": "214000001 4\n",
+            "stderr": ""
+          },
+          "after": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "kernelAfter": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "aggregateBytes": 4096,
+          "accepted": true
+        }
+      ],
+      "observationFailures": [
+        {
+          "phase": "executable",
+          "failure": {
+            "type": "PermissionError",
+            "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'",
+            "details": {
+              "args": [
+                13,
+                "Permission denied"
+              ],
+              "errno": 13,
+              "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+              "filename2": null
+            }
+          }
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "secondaryFailures": [
+        {
+          "type": "AssertionError",
+          "message": "",
+          "details": {
+            "args": []
+          }
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/stations-round4-owned-_hh1toe7",
+        "target": "gui/501/local.stations.round4.93965c772819488cb30a6de043d2276c",
+        "coalition_id": "123",
+        "registered": "True"
+      },
+      "drain": {
+        "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+        "exits": {
+          "capture": 0,
+          "caffeinate": 0
+        },
+        "errors": [
+          "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'"
+        ],
+        "signals": [],
+        "drained": true,
+        "clean": false,
+        "stage": "native-189-encode",
+        "readiness_sha256": "19a833ce6ac973e0e619082f59d33d14f8ea2ffe25bce248777071c94ba19c16",
+        "kernel_before_launch": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "kernel_before_root_release": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "kernel_terminal": {
+          "live": 0,
+          "coalition_absent": true
+        },
+        "remaining": [],
+        "elapsed_cleanup_seconds": 0.0012362500419840217
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true
+      },
+      "releaseAudits": []
+    },
+    "oracle": [
+      {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'",
+        "errno": 13,
+        "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary",
+        "args": [
+          13,
+          "Permission denied"
+        ]
+      }
+    ],
+    "helperState": {
+      "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+      "exits": {
+        "capture": 0,
+        "caffeinate": 0
+      },
+      "errors": [
+        "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/binary'"
+      ],
+      "signals": [],
+      "drained": true,
+      "clean": false,
+      "stage": "native-189-encode",
+      "readiness_sha256": "19a833ce6ac973e0e619082f59d33d14f8ea2ffe25bce248777071c94ba19c16",
+      "kernel_before_launch": {
+        "live": 1,
+        "coalition_absent": false
+      },
+      "kernel_before_root_release": {
+        "live": 1,
+        "coalition_absent": false
+      },
+      "kernel_terminal": {
+        "live": 0,
+        "coalition_absent": true
+      },
+      "remaining": [],
+      "elapsed_cleanup_seconds": 0.0012362500419840217
+    },
+    "events": [
+      [
+        "/bin/launchctl",
+        "bootstrap",
+        "gui/501",
+        "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission/stations-round4-owned-_hh1toe7/job.plist"
+      ],
+      [
+        "/bin/ps",
+        "-p",
+        "214000001",
+        "-o",
+        "pid=,rss="
+      ],
+      "binary-denied-after-initial-observation",
+      [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.93965c772819488cb30a6de043d2276c"
+      ]
+    ],
+    "nativeProcesses": 0
+  },
+  {
+    "mode": "permission-save",
+    "status": "PASS",
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary'",
+        "details": {
+          "args": [
+            13,
+            "Permission denied"
+          ],
+          "errno": 13,
+          "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+          "filename2": null
+        }
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": false,
+          "kernel": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "members": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "births": [
+            {
+              "pid": 214000001,
+              "recorded": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 72320,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "current": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 72320,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            }
+          ],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "gui/501/local.stations.round4.bde7ab89854d48f5bc7ee4b40f0a0149"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "REGISTRATION_ABSENT",
+          "registrationStderr": "",
+          "scratchAbsent": false,
+          "privateTmpAbsent": false,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Kernel coalition has live tasks",
+            "details": {
+              "args": [
+                "Kernel coalition has live tasks"
+              ]
+            }
+          }
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Kernel coalition has live tasks",
+          "details": {
+            "args": [
+              "Kernel coalition has live tasks"
+            ]
+          },
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "AssertionError",
+          "message": "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "details": {
+            "args": [
+              "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/receipt.json"
+            ]
+          },
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "TerminalAttemptAccountingFailure",
+          "message": "Every allocation attempt requires its own positive terminal audit",
+          "attempts": 1,
+          "handles": 1,
+          "audits": 1
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.005272165988571942,
+      "outputInventory": {
+        "normalBytes": 0,
+        "reservedBytes": 0,
+        "files": 0,
+        "reservedFiles": 0,
+        "paths": [],
+        "totalBytes": 0,
+        "complete": true,
+        "enumeration": {
+          "root": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/packet",
+          "complete": true,
+          "directories": [
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/packet",
+              "directories": [],
+              "files": [],
+              "entries": [],
+              "enumerated": true
+            }
+          ]
+        }
+      },
+      "outputBytes": 0,
+      "freeBytesAfter": 29882851328,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "PermissionError",
+              "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary'",
+              "details": {
+                "args": [
+                  13,
+                  "Permission denied"
+                ],
+                "errno": 13,
+                "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+                "filename2": null
+              }
+            },
+            "cleanupFailure": {
+              "type": "OSError",
+              "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+              "details": {
+                "args": [
+                  "SECONDARY_WAIT_RECEIPT_WRITE"
+                ],
+                "errno": null,
+                "filename": null,
+                "filename2": null
+              }
+            },
+            "persistenceFailures": [],
+            "terminal": null,
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/private",
+              "admission": {
+                "ownedFixture": true
+              }
+            },
+            "bootstrapObservations": [
+              {
+                "argv": [
+                  "/bin/launchctl",
+                  "bootstrap",
+                  "gui/501",
+                  "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/stations-round4-owned-9xgj8rag/job.plist"
+                ],
+                "registrationUncertain": true,
+                "result": {
+                  "args": [
+                    "/bin/launchctl",
+                    "bootstrap",
+                    "gui/501",
+                    "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/stations-round4-owned-9xgj8rag/job.plist"
+                  ],
+                  "returncode": 0,
+                  "stdout": "BOOT_OK",
+                  "stderr": ""
+                }
+              }
+            ],
+            "bootstrapPortRestored": true,
+            "actualExecutables": {
+              "214000001:1:2:501": {
+                "identity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+                "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+              }
+            },
+            "observerEvents": [
+              {
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "status": "admitted",
+                "pid": 214000001,
+                "priorActualAdmission": null,
+                "beforeIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+                "postReadIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+              },
+              {
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "status": "observing",
+                "pid": 214000001,
+                "priorActualAdmission": {
+                  "identity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+                  "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                },
+                "beforeIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+                "postReadIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 72320,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                }
+              }
+            ],
+            "rssObservations": [
+              {
+                "monotonic": 274164.501720875,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "members": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "214000001": 4096
+                  },
+                  "stdout": "214000001 4\n",
+                  "stderr": ""
+                },
+                "after": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 72320,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "aggregateBytes": 4096,
+                "accepted": true
+              }
+            ],
+            "observationFailures": [
+              {
+                "phase": "executable",
+                "failure": {
+                  "type": "PermissionError",
+                  "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary'",
+                  "details": {
+                    "args": [
+                      13,
+                      "Permission denied"
+                    ],
+                    "errno": 13,
+                    "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+                    "filename2": null
+                  }
+                }
+              }
+            ],
+            "secondaryFailures": [
+              {
+                "type": "OSError",
+                "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+                "details": {
+                  "args": [
+                    "SECONDARY_WAIT_RECEIPT_WRITE"
+                  ],
+                  "errno": null,
+                  "filename": null,
+                  "filename2": null
+                }
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/stations-round4-owned-9xgj8rag",
+              "target": "gui/501/local.stations.round4.bde7ab89854d48f5bc7ee4b40f0a0149",
+              "coalition_id": "123",
+              "registered": "True"
+            },
+            "releaseAudits": []
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "fc323e1294cfeffd9314cf8def7e999a1e387f9f91d63973ea68d05c12843dc6"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/result.json",
+          "status": "written",
+          "sha256": "fd58b84ae487e85a6bdbf282eef09a679e0172b37a1f1074969b330cf3b96659",
+          "bytes": 15274
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "132ed2246bf3c03b0e33ace5d00338058019b62dc862ce0455f9c3998516b6ad",
+          "bytes": 15373
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary'",
+        "details": {
+          "args": [
+            13,
+            "Permission denied"
+          ],
+          "errno": 13,
+          "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+          "filename2": null
+        }
+      },
+      "cleanupFailure": {
+        "type": "OSError",
+        "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+        "details": {
+          "args": [
+            "SECONDARY_WAIT_RECEIPT_WRITE"
+          ],
+          "errno": null,
+          "filename": null,
+          "filename2": null
+        }
+      },
+      "persistenceFailures": [],
+      "terminal": null,
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/private",
+        "admission": {
+          "ownedFixture": true
+        }
+      },
+      "bootstrapObservations": [
+        {
+          "argv": [
+            "/bin/launchctl",
+            "bootstrap",
+            "gui/501",
+            "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/stations-round4-owned-9xgj8rag/job.plist"
+          ],
+          "registrationUncertain": true,
+          "result": {
+            "args": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/stations-round4-owned-9xgj8rag/job.plist"
+            ],
+            "returncode": 0,
+            "stdout": "BOOT_OK",
+            "stderr": ""
+          }
+        }
+      ],
+      "bootstrapPortRestored": true,
+      "actualExecutables": {
+        "214000001:1:2:501": {
+          "identity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+          "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+        }
+      },
+      "observerEvents": [
+        {
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "status": "admitted",
+          "pid": 214000001,
+          "priorActualAdmission": null,
+          "beforeIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+          "postReadIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+        },
+        {
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "status": "observing",
+          "pid": 214000001,
+          "priorActualAdmission": {
+            "identity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "executable": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+            "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          },
+          "beforeIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+          "postReadIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 72320,
+            "pgid": 214000001,
+            "sid": 214000001
+          }
+        }
+      ],
+      "rssObservations": [
+        {
+          "monotonic": 274164.501720875,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "members": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "before": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "214000001": 4096
+            },
+            "stdout": "214000001 4\n",
+            "stderr": ""
+          },
+          "after": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 72320,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "kernelAfter": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "aggregateBytes": 4096,
+          "accepted": true
+        }
+      ],
+      "observationFailures": [
+        {
+          "phase": "executable",
+          "failure": {
+            "type": "PermissionError",
+            "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary'",
+            "details": {
+              "args": [
+                13,
+                "Permission denied"
+              ],
+              "errno": 13,
+              "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+              "filename2": null
+            }
+          }
+        }
+      ],
+      "secondaryFailures": [
+        {
+          "type": "OSError",
+          "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+          "details": {
+            "args": [
+              "SECONDARY_WAIT_RECEIPT_WRITE"
+            ],
+            "errno": null,
+            "filename": null,
+            "filename2": null
+          }
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/stations-round4-owned-9xgj8rag",
+        "target": "gui/501/local.stations.round4.bde7ab89854d48f5bc7ee4b40f0a0149",
+        "coalition_id": "123",
+        "registered": "True"
+      },
+      "releaseAudits": []
+    },
+    "oracle": [
+      {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary'",
+        "errno": 13,
+        "filename": "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary",
+        "args": [
+          13,
+          "Permission denied"
+        ]
+      }
+    ],
+    "helperState": {
+      "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+      "exits": {},
+      "errors": [
+        "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/binary'",
+        "OSError: SECONDARY_WAIT_RECEIPT_WRITE"
+      ],
+      "signals": [],
+      "drained": false,
+      "clean": false,
+      "stage": "native-189-encode",
+      "readiness_sha256": "19a833ce6ac973e0e619082f59d33d14f8ea2ffe25bce248777071c94ba19c16",
+      "kernel_before_launch": {
+        "live": 1,
+        "coalition_absent": false
+      },
+      "elapsed_cleanup_seconds": 6.841699359938502e-05
+    },
+    "events": [
+      [
+        "/bin/launchctl",
+        "bootstrap",
+        "gui/501",
+        "/private/tmp/t02-r8-correction-0907hb14/final/independent11/observer-permission-save/stations-round4-owned-9xgj8rag/job.plist"
+      ],
+      [
+        "/bin/ps",
+        "-p",
+        "214000001",
+        "-o",
+        "pid=,rss="
+      ],
+      "binary-denied-after-initial-observation",
+      [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.bde7ab89854d48f5bc7ee4b40f0a0149"
+      ]
+    ],
+    "nativeProcesses": 0
+  }
+]

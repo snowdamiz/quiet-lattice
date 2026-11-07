@@ -1,0 +1,767 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-4wstlbmj/aggregate-bytes/first",
+        "/private/tmp/t02-r5-controls-4wstlbmj/aggregate-bytes/second"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 487107234,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794041539265597071,
+            "ctime": 1794041539265597071,
+            "links": 3
+          },
+          {
+            "path": "large",
+            "dev": 16777232,
+            "ino": 487107236,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 402653184,
+            "mtime": 1794041539265650696,
+            "ctime": 1794041539265650696,
+            "links": 1
+          }
+        ],
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 487107235,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794041539265711405,
+            "ctime": 1794041539265711405,
+            "links": 3
+          },
+          {
+            "path": "extra",
+            "dev": 16777232,
+            "ino": 487107237,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 1,
+            "mtime": 1794041539265795571,
+            "ctime": 1794041539265795571,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 4,
+      "statBytes": 402653185,
+      "descriptors": [
+        {
+          "path": "/",
+          "parentFd": null,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "/",
+            "dev": 16777232,
+            "ino": 2,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 736,
+            "mtime": 1790233837000000000,
+            "ctime": 1790233837000000000,
+            "links": 23
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "private",
+          "parentFd": 3,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "private",
+            "dev": 16777232,
+            "ino": 22907066,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 192,
+            "mtime": 1793752979086280124,
+            "ctime": 1793752979086280124,
+            "links": 6
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "tmp",
+          "parentFd": 4,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "tmp",
+            "dev": 16777232,
+            "ino": 315902304,
+            "uid": 0,
+            "gid": 0,
+            "mode": 17407,
+            "bytes": 259936,
+            "mtime": 1794041536075223375,
+            "ctime": 1794041536075223375,
+            "links": 8123
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "t02-r5-controls-4wstlbmj",
+          "parentFd": 5,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "t02-r5-controls-4wstlbmj",
+            "dev": 16777232,
+            "ino": 487095289,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16832,
+            "bytes": 2048,
+            "mtime": 1794041539265391487,
+            "ctime": 1794041539265391487,
+            "links": 64
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "aggregate-bytes",
+          "parentFd": 6,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "aggregate-bytes",
+            "dev": 16777232,
+            "ino": 487107233,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794041539265517779,
+            "ctime": 1794041539265517779,
+            "links": 4
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "first",
+          "parentFd": 7,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "first",
+            "dev": 16777232,
+            "ino": 487107234,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794041539265597071,
+            "ctime": 1794041539265597071,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "/",
+          "parentFd": null,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "/",
+            "dev": 16777232,
+            "ino": 2,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 736,
+            "mtime": 1790233837000000000,
+            "ctime": 1790233837000000000,
+            "links": 23
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "private",
+          "parentFd": 9,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "private",
+            "dev": 16777232,
+            "ino": 22907066,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 192,
+            "mtime": 1793752979086280124,
+            "ctime": 1793752979086280124,
+            "links": 6
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "tmp",
+          "parentFd": 10,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "tmp",
+            "dev": 16777232,
+            "ino": 315902304,
+            "uid": 0,
+            "gid": 0,
+            "mode": 17407,
+            "bytes": 259936,
+            "mtime": 1794041536075223375,
+            "ctime": 1794041536075223375,
+            "links": 8123
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "t02-r5-controls-4wstlbmj",
+          "parentFd": 11,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "t02-r5-controls-4wstlbmj",
+            "dev": 16777232,
+            "ino": 487095289,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16832,
+            "bytes": 2048,
+            "mtime": 1794041539265391487,
+            "ctime": 1794041539265391487,
+            "links": 64
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "aggregate-bytes",
+          "parentFd": 12,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "aggregate-bytes",
+            "dev": 16777232,
+            "ino": 487107233,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 128,
+            "mtime": 1794041539265517779,
+            "ctime": 1794041539265517779,
+            "links": 4
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        },
+        {
+          "path": "second",
+          "parentFd": 13,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "second",
+            "dev": 16777232,
+            "ino": 487107235,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794041539265711405,
+            "ctime": 1794041539265711405,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Vite snapshot exceeds archive reserve",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheInventory"
+            ]
+          }
+        }
+      ],
+      "lastEntry": "/private/tmp/t02-r5-controls-4wstlbmj/aggregate-bytes/second/extra"
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Vite snapshot exceeds archive reserve",
+      "details": {
+        "cacheInventory": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-4wstlbmj/aggregate-bytes/first",
+            "/private/tmp/t02-r5-controls-4wstlbmj/aggregate-bytes/second"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 487107234,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794041539265597071,
+                "ctime": 1794041539265597071,
+                "links": 3
+              },
+              {
+                "path": "large",
+                "dev": 16777232,
+                "ino": 487107236,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 402653184,
+                "mtime": 1794041539265650696,
+                "ctime": 1794041539265650696,
+                "links": 1
+              }
+            ],
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 487107235,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794041539265711405,
+                "ctime": 1794041539265711405,
+                "links": 3
+              },
+              {
+                "path": "extra",
+                "dev": 16777232,
+                "ino": 487107237,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 1,
+                "mtime": 1794041539265795571,
+                "ctime": 1794041539265795571,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 4,
+          "statBytes": 402653185,
+          "descriptors": [
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 3,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 4,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 259936,
+                "mtime": 1794041536075223375,
+                "ctime": 1794041536075223375,
+                "links": 8123
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "t02-r5-controls-4wstlbmj",
+              "parentFd": 5,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r5-controls-4wstlbmj",
+                "dev": 16777232,
+                "ino": 487095289,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 2048,
+                "mtime": 1794041539265391487,
+                "ctime": 1794041539265391487,
+                "links": 64
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "aggregate-bytes",
+              "parentFd": 6,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "aggregate-bytes",
+                "dev": 16777232,
+                "ino": 487107233,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 128,
+                "mtime": 1794041539265517779,
+                "ctime": 1794041539265517779,
+                "links": 4
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "first",
+              "parentFd": 7,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "first",
+                "dev": 16777232,
+                "ino": 487107234,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794041539265597071,
+                "ctime": 1794041539265597071,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 9,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 10,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 259936,
+                "mtime": 1794041536075223375,
+                "ctime": 1794041536075223375,
+                "links": 8123
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "t02-r5-controls-4wstlbmj",
+              "parentFd": 11,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r5-controls-4wstlbmj",
+                "dev": 16777232,
+                "ino": 487095289,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 2048,
+                "mtime": 1794041539265391487,
+                "ctime": 1794041539265391487,
+                "links": 64
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "aggregate-bytes",
+              "parentFd": 12,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "aggregate-bytes",
+                "dev": 16777232,
+                "ino": 487107233,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 128,
+                "mtime": 1794041539265517779,
+                "ctime": 1794041539265517779,
+                "links": 4
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            },
+            {
+              "path": "second",
+              "parentFd": 13,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "second",
+                "dev": 16777232,
+                "ino": 487107235,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794041539265711405,
+                "ctime": 1794041539265711405,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Vite snapshot exceeds archive reserve",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheInventory"
+                ]
+              }
+            }
+          ],
+          "lastEntry": "/private/tmp/t02-r5-controls-4wstlbmj/aggregate-bytes/second/extra"
+        },
+        "args": [
+          "Vite snapshot exceeds archive reserve"
+        ]
+      }
+    }
+  }
+]

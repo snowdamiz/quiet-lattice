@@ -1,0 +1,479 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-4wstlbmj/cache-replace-regular/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 487107196,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794041539220726764,
+            "ctime": 1794041539220726764,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 487107197,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794041539220776848,
+            "ctime": 1794041539220776848,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 8,
+      "descriptors": [
+        {
+          "path": "/",
+          "parentFd": null,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "/",
+            "dev": 16777232,
+            "ino": 2,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 736,
+            "mtime": 1790233837000000000,
+            "ctime": 1790233837000000000,
+            "links": 23
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "private",
+          "parentFd": 3,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "private",
+            "dev": 16777232,
+            "ino": 22907066,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 192,
+            "mtime": 1793752979086280124,
+            "ctime": 1793752979086280124,
+            "links": 6
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "tmp",
+          "parentFd": 4,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "tmp",
+            "dev": 16777232,
+            "ino": 315902304,
+            "uid": 0,
+            "gid": 0,
+            "mode": 17407,
+            "bytes": 259936,
+            "mtime": 1794041536075223375,
+            "ctime": 1794041536075223375,
+            "links": 8123
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "t02-r5-controls-4wstlbmj",
+          "parentFd": 5,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "t02-r5-controls-4wstlbmj",
+            "dev": 16777232,
+            "ino": 487095289,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16832,
+            "bytes": 1760,
+            "mtime": 1794041539220628764,
+            "ctime": 1794041539220628764,
+            "links": 55
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "cache-replace-regular",
+          "parentFd": 6,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "cache-replace-regular",
+            "dev": 16777232,
+            "ino": 487107195,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794041539220681139,
+            "ctime": 1794041539220681139,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "cache",
+          "parentFd": 7,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "cache",
+            "dev": 16777232,
+            "ino": 487107196,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794041539220726764,
+            "ctime": 1794041539220726764,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "data",
+          "parentFd": 8,
+          "operation": "content",
+          "closed": true,
+          "opened": {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 487107198,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794041539221164390,
+            "ctime": 1794041539221164390,
+            "links": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {},
+            "retainedObservationFields": []
+          }
+        }
+      ],
+      "lastEntry": "/private/tmp/t02-r5-controls-4wstlbmj/cache-replace-regular/cache/data",
+      "files": [
+        {
+          "path": "/private/tmp/t02-r5-controls-4wstlbmj/cache-replace-regular/cache/data",
+          "readBytes": 0,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache descriptor identity/size changed",
+            "details": {
+              "args": [
+                "Cache descriptor identity/size changed"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Cache descriptor identity/size changed",
+      "details": {
+        "cacheRead": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-4wstlbmj/cache-replace-regular/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 487107196,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794041539220726764,
+                "ctime": 1794041539220726764,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 487107197,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794041539220776848,
+                "ctime": 1794041539220776848,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "descriptors": [
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 3,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 4,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 259936,
+                "mtime": 1794041536075223375,
+                "ctime": 1794041536075223375,
+                "links": 8123
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "t02-r5-controls-4wstlbmj",
+              "parentFd": 5,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r5-controls-4wstlbmj",
+                "dev": 16777232,
+                "ino": 487095289,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 1760,
+                "mtime": 1794041539220628764,
+                "ctime": 1794041539220628764,
+                "links": 55
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "cache-replace-regular",
+              "parentFd": 6,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "cache-replace-regular",
+                "dev": 16777232,
+                "ino": 487107195,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794041539220681139,
+                "ctime": 1794041539220681139,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "cache",
+              "parentFd": 7,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "cache",
+                "dev": 16777232,
+                "ino": 487107196,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794041539220726764,
+                "ctime": 1794041539220726764,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "data",
+              "parentFd": 8,
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 487107198,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794041539221164390,
+                "ctime": 1794041539221164390,
+                "links": 1
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {},
+                "retainedObservationFields": []
+              }
+            }
+          ],
+          "lastEntry": "/private/tmp/t02-r5-controls-4wstlbmj/cache-replace-regular/cache/data",
+          "files": [
+            {
+              "path": "/private/tmp/t02-r5-controls-4wstlbmj/cache-replace-regular/cache/data",
+              "readBytes": 0,
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache descriptor identity/size changed",
+                "details": {
+                  "args": [
+                    "Cache descriptor identity/size changed"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "args": [
+          "Cache descriptor identity/size changed"
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "phase": "after-facts",
+  "observedUtc": "2026-11-07T08:54:41.721940+00:00",
+  "reference": "/private/tmp/t02-native189-r4-independent-ti5i2s4u/after.json",
+  "referenceSha256": "37b617aa8ac83e93e18d0dd093ac3687f843a785527bff5718d7883a3cb961c3",
+  "referenceEntries": 29502,
+  "protectedEntries": 29498,
+  "hashedUniqueContents": 26922,
+  "authorizedMutable": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/candidate-index.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/inventory_boundary.py",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/source-audit.json"
+  ],
+  "differences": [
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1",
+      "before": {
+        "mode": 16877,
+        "bytes": 128,
+        "dev": 16777232,
+        "ino": 477605751,
+        "mtime": 1794039528785627211
+      },
+      "after": {
+        "mode": 16877,
+        "bytes": 128,
+        "dev": 16777232,
+        "ino": 477605751,
+        "mtime": 1794041565439653483
+      }
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b516a662-14929-1.finished",
+      "before": {
+        "mode": 33152,
+        "bytes": 0,
+        "dev": 16777232,
+        "ino": 485878575,
+        "mtime": 1794039528779584614,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "after": {
+        "error": "FileNotFoundError",
+        "errno": 2,
+        "message": "[Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b516a662-14929-1.finished'"
+      }
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/latest.json",
+      "before": {
+        "mode": 33152,
+        "bytes": 122,
+        "dev": 16777232,
+        "ino": 485873202,
+        "mtime": 1794039522918625207,
+        "sha256": "ba965578829433599e905a2607f1ac0c6e8b91bebed0f6a495e4bcedf66276ff"
+      },
+      "after": {
+        "mode": 33152,
+        "bytes": 122,
+        "dev": 16777232,
+        "ino": 487115172,
+        "mtime": 1794041558697985383,
+        "sha256": "ebcb797d6e49af8b3c02de75889e3fc448bd4bc324d677b99b9030ea4acbcb95"
+      }
+    }
+  ],
+  "status": "MISMATCH"
+}

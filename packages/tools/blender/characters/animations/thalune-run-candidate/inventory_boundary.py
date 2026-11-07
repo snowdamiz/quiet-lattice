@@ -9,14 +9,39 @@ from pathlib import Path
 
 def walk(root, facts, *, topdown=True, onerror=None, followlinks=False):
     facts.update(root=str(root),complete=False,directories=[])
-    def failed(error):raise error
     try:
         info=Path(root).lstat()
         assert stat.S_ISDIR(info.st_mode),'Inventory root must be a directory'
         assert followlinks is False,'Inventory cannot follow directory links'
-        for directory,dirs,files in os.walk(root,topdown=topdown,onerror=failed,followlinks=False):
-            facts['directories'].append(dict(path=str(directory),directories=list(dirs),files=list(files)))
-            yield directory,dirs,files
+        stack=[(Path(root),(info.st_dev,info.st_ino),None)]
+        while stack:
+            directory,stamp,finished=stack.pop()
+            if finished is not None:
+                yield str(directory),finished['directories'],finished['files']
+                continue
+            facts['pendingPath']=str(directory)
+            current=directory.lstat()
+            assert stat.S_ISDIR(current.st_mode) and (current.st_dev,current.st_ino)==stamp,'Inventory directory changed'
+            row=dict(path=str(directory),directories=[],files=[],entries=[],enumerated=False)
+            facts['directories'].append(row);children=[]
+            with os.scandir(directory) as entries:
+                for entry in entries:
+                    child=directory/entry.name;facts['pendingPath']=str(child)
+                    item=dict(path=str(child));row['entries'].append(item)
+                    info=entry.stat(follow_symlinks=False)
+                    item.update(mode=info.st_mode,dev=info.st_dev,ino=info.st_ino,bytes=info.st_size,uid=info.st_uid)
+                    if stat.S_ISDIR(info.st_mode):
+                        row['directories'].append(entry.name)
+                        children.append((child,(info.st_dev,info.st_ino),None))
+                    else:row['files'].append(entry.name)
+            row['enumerated']=True
+            if topdown:
+                dirs=list(row['directories']);files=list(row['files'])
+                yield str(directory),dirs,files
+                assert dirs==row['directories'] and files==row['files'],'Inventory consumer cannot omit entries'
+            else:stack.append((directory,stamp,row))
+            stack.extend(reversed(children))
+        facts.pop('pendingPath',None)
         facts['complete']=True
     except GeneratorExit:
         raise  # An abandoned partial iterator is never marked complete.

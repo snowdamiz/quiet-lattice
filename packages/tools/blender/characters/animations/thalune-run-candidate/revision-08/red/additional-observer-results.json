@@ -1,0 +1,2708 @@
+{
+  "cases": [
+    {
+      "name": "observer-path-unbound-normal",
+      "status": "PASS",
+      "result": {
+        "status": "HOLD",
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+          "details": {
+            "args": [
+              "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+            ]
+          }
+        },
+        "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+        "runtimeAuthorization": false,
+        "dispatchFailure": {
+          "type": "AssertionError",
+          "message": "",
+          "details": {
+            "args": []
+          }
+        },
+        "terminalAudit": [
+          {
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/receipt.json",
+            "releaseProved": false,
+            "kernel": {
+              "live": 0,
+              "coalition_absent": true
+            },
+            "members": [],
+            "births": [
+              {
+                "pid": 214000001,
+                "recorded": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 19386,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "current": null
+              }
+            ],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "gui/501/local.stations.round4.96b35ea74c564828a78285d9931e1230"
+            ],
+            "registrationExit": 1,
+            "registrationStdout": "REGISTRATION_ABSENT",
+            "registrationStderr": "",
+            "scratchAbsent": false,
+            "privateTmpAbsent": false,
+            "failure": {
+              "type": "AssertionError",
+              "message": "Owned scratch namespace remains",
+              "details": {
+                "args": [
+                  "Owned scratch namespace remains"
+                ]
+              }
+            }
+          }
+        ],
+        "terminalAuditFailures": [
+          {
+            "type": "AssertionError",
+            "message": "Owned scratch namespace remains",
+            "details": {
+              "args": [
+                "Owned scratch namespace remains"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "AssertionError",
+            "message": "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/receipt.json",
+            "details": {
+              "args": [
+                "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/receipt.json"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "TerminalAttemptAccountingFailure",
+            "message": "Every allocation attempt requires its own positive terminal audit",
+            "attempts": 1,
+            "handles": 1,
+            "audits": 1
+          }
+        ],
+        "nativeJobs": 1,
+        "pipelineSeconds": 0.008986125001683831,
+        "outputInventory": {
+          "normalBytes": 0,
+          "reservedBytes": 0,
+          "files": 0,
+          "reservedFiles": 0,
+          "paths": [],
+          "totalBytes": 0,
+          "complete": true,
+          "enumeration": {
+            "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/packet",
+            "complete": true,
+            "directories": [
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/packet",
+                "directories": [],
+                "files": []
+              }
+            ]
+          }
+        },
+        "outputBytes": 0,
+        "freeBytesAfter": 31028383744,
+        "terminalReleaseProved": false,
+        "receiptFallbacks": [
+          {
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/receipt.json",
+            "receipt": {
+              "name": "native-189-encode",
+              "primaryFailure": {
+                "type": "AssertionError",
+                "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+                "details": {
+                  "args": [
+                    "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+                  ]
+                }
+              },
+              "cleanupFailure": {
+                "type": "AssertionError",
+                "message": "Owned drain did not prove clean release",
+                "details": {
+                  "args": [
+                    "Owned drain did not prove clean release"
+                  ]
+                }
+              },
+              "persistenceFailures": [],
+              "terminal": null,
+              "argv": [
+                "/INERT"
+              ],
+              "phase": "start",
+              "privateTmp": {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/private",
+                "admission": {
+                  "ownedFixture": true
+                }
+              },
+              "bootstrapObservations": [
+                {
+                  "argv": [
+                    "/bin/launchctl",
+                    "bootstrap",
+                    "gui/501",
+                    "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/stations-round4-owned-l2w4_f6k/job.plist"
+                  ],
+                  "registrationUncertain": true,
+                  "result": {
+                    "args": [
+                      "/bin/launchctl",
+                      "bootstrap",
+                      "gui/501",
+                      "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/stations-round4-owned-l2w4_f6k/job.plist"
+                    ],
+                    "returncode": 0,
+                    "stdout": "BOOT_OK",
+                    "stderr": ""
+                  }
+                }
+              ],
+              "bootstrapPortRestored": true,
+              "actualExecutables": {
+                "214000001:1:2:501": {
+                  "identity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/binary",
+                  "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                }
+              },
+              "observerEvents": [
+                {
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "status": "admitted",
+                  "pid": 214000001,
+                  "priorActualAdmission": null,
+                  "beforeIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/binary",
+                  "postReadIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                },
+                {
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "status": "observing",
+                  "pid": 214000001,
+                  "priorActualAdmission": {
+                    "identity": {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    },
+                    "memberIdentity": {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    },
+                    "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/binary",
+                    "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                  },
+                  "beforeIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+                  "postReadIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                }
+              ],
+              "rssObservations": [
+                {
+                  "monotonic": 273774.826600083,
+                  "limitBytes": 8589934592,
+                  "quota": false,
+                  "kernelBefore": {
+                    "live": 1,
+                    "coalition_absent": false
+                  },
+                  "members": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "before": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "rss": {
+                    "bytesByPid": {
+                      "214000001": 4096
+                    },
+                    "stdout": "214000001 4\n",
+                    "stderr": ""
+                  },
+                  "after": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "membersAfter": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "kernelAfter": {
+                    "live": 1,
+                    "coalition_absent": false
+                  },
+                  "aggregateBytes": 4096,
+                  "accepted": true
+                }
+              ],
+              "observationFailures": [
+                {
+                  "phase": "executable",
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+                    "details": {
+                      "args": [
+                        "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "outcome": "observer_failed",
+              "exits": {},
+              "secondaryFailures": [
+                {
+                  "type": "AssertionError",
+                  "message": "",
+                  "details": {
+                    "args": []
+                  }
+                }
+              ],
+              "ownedAllocation": {
+                "out": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/owned-job",
+                "scratch": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/stations-round4-owned-l2w4_f6k",
+                "target": "gui/501/local.stations.round4.96b35ea74c564828a78285d9931e1230",
+                "coalition_id": "123",
+                "registered": "True"
+              },
+              "drain": {
+                "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+                "exits": {
+                  "capture": 0,
+                  "caffeinate": 0
+                },
+                "errors": [
+                  "AssertionError: Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+                ],
+                "signals": [],
+                "drained": true,
+                "clean": false,
+                "stage": "native-189-encode",
+                "readiness_sha256": "1df822cb9635c2aaf40e12295d96933b43cd565b35cc0612eef93a15d653d06f",
+                "kernel_before_launch": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "kernel_before_root_release": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "kernel_terminal": {
+                  "live": 0,
+                  "coalition_absent": true
+                },
+                "remaining": [],
+                "elapsed_cleanup_seconds": 0.001608541002497077
+              },
+              "drainMembers": [],
+              "drainKernel": {
+                "live": 0,
+                "coalition_absent": true
+              },
+              "releaseAudits": []
+            }
+          }
+        ],
+        "jobs": [
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/receipt.json",
+            "sha256": "43cefbbccc89b19bad9f25d01dedbbae7df4f5454c872e3dbcb49ac37ad335f7"
+          }
+        ],
+        "terminalPersistenceFailures": [],
+        "terminalDelivery": {
+          "proof": {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/result.json",
+            "status": "written",
+            "sha256": "cba1155a46e0101d0739b15f448e18a03208da00acb9e29e01170d28f40a2a25",
+            "bytes": 15603
+          },
+          "packet": {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/packet/integration-result.json",
+            "status": "written",
+            "completeObservations": true,
+            "sha256": "a9ed325a84982338b501e729a7e9d614510f2cc6ff1dbb060d31225e6c07a562",
+            "bytes": 15702
+          },
+          "completeObservationsPersisted": true,
+          "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+        }
+      },
+      "receipt": {
+        "name": "native-189-encode",
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+          "details": {
+            "args": [
+              "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+            ]
+          }
+        },
+        "cleanupFailure": {
+          "type": "AssertionError",
+          "message": "Owned drain did not prove clean release",
+          "details": {
+            "args": [
+              "Owned drain did not prove clean release"
+            ]
+          }
+        },
+        "persistenceFailures": [],
+        "terminal": null,
+        "argv": [
+          "/INERT"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/private",
+          "admission": {
+            "ownedFixture": true
+          }
+        },
+        "bootstrapObservations": [
+          {
+            "argv": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/stations-round4-owned-l2w4_f6k/job.plist"
+            ],
+            "registrationUncertain": true,
+            "result": {
+              "args": [
+                "/bin/launchctl",
+                "bootstrap",
+                "gui/501",
+                "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/stations-round4-owned-l2w4_f6k/job.plist"
+              ],
+              "returncode": 0,
+              "stdout": "BOOT_OK",
+              "stderr": ""
+            }
+          }
+        ],
+        "bootstrapPortRestored": true,
+        "actualExecutables": {
+          "214000001:1:2:501": {
+            "identity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/binary",
+            "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          }
+        },
+        "observerEvents": [
+          {
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "status": "admitted",
+            "pid": 214000001,
+            "priorActualAdmission": null,
+            "beforeIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/binary",
+            "postReadIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          },
+          {
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "status": "observing",
+            "pid": 214000001,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "memberIdentity": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/binary",
+              "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+            },
+            "beforeIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+            "postReadIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          }
+        ],
+        "rssObservations": [
+          {
+            "monotonic": 273774.826600083,
+            "limitBytes": 8589934592,
+            "quota": false,
+            "kernelBefore": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "members": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "before": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "rss": {
+              "bytesByPid": {
+                "214000001": 4096
+              },
+              "stdout": "214000001 4\n",
+              "stderr": ""
+            },
+            "after": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "membersAfter": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "kernelAfter": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "aggregateBytes": 4096,
+            "accepted": true
+          }
+        ],
+        "observationFailures": [
+          {
+            "phase": "executable",
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+              "details": {
+                "args": [
+                  "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+                ]
+              }
+            }
+          }
+        ],
+        "outcome": "observer_failed",
+        "exits": {},
+        "secondaryFailures": [
+          {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          }
+        ],
+        "ownedAllocation": {
+          "out": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/jobs/native-189-encode/owned-job",
+          "scratch": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/stations-round4-owned-l2w4_f6k",
+          "target": "gui/501/local.stations.round4.96b35ea74c564828a78285d9931e1230",
+          "coalition_id": "123",
+          "registered": "True"
+        },
+        "drain": {
+          "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+          "exits": {
+            "capture": 0,
+            "caffeinate": 0
+          },
+          "errors": [
+            "AssertionError: Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+          ],
+          "signals": [],
+          "drained": true,
+          "clean": false,
+          "stage": "native-189-encode",
+          "readiness_sha256": "1df822cb9635c2aaf40e12295d96933b43cd565b35cc0612eef93a15d653d06f",
+          "kernel_before_launch": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "kernel_before_root_release": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "kernel_terminal": {
+            "live": 0,
+            "coalition_absent": true
+          },
+          "remaining": [],
+          "elapsed_cleanup_seconds": 0.001608541002497077
+        },
+        "drainMembers": [],
+        "drainKernel": {
+          "live": 0,
+          "coalition_absent": true
+        },
+        "releaseAudits": []
+      },
+      "helperState": {
+        "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+        "exits": {
+          "capture": 0,
+          "caffeinate": 0
+        },
+        "errors": [
+          "AssertionError: Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+        ],
+        "signals": [],
+        "drained": true,
+        "clean": false,
+        "stage": "native-189-encode",
+        "readiness_sha256": "1df822cb9635c2aaf40e12295d96933b43cd565b35cc0612eef93a15d653d06f",
+        "kernel_before_launch": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "kernel_before_root_release": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "kernel_terminal": {
+          "live": 0,
+          "coalition_absent": true
+        },
+        "remaining": [],
+        "elapsed_cleanup_seconds": 0.001608541002497077
+      },
+      "events": [
+        [
+          "/bin/launchctl",
+          "bootstrap",
+          "gui/501",
+          "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/stations-round4-owned-l2w4_f6k/job.plist"
+        ],
+        [
+          "/bin/ps",
+          "-p",
+          "214000001",
+          "-o",
+          "pid=,rss="
+        ],
+        "fault-armed-after-initial-observation",
+        [
+          "/bin/launchctl",
+          "print",
+          "gui/501/local.stations.round4.96b35ea74c564828a78285d9931e1230"
+        ]
+      ],
+      "nativeProcesses": 0
+    },
+    {
+      "name": "observer-path-unbound-helper-write",
+      "status": "PASS",
+      "result": {
+        "status": "HOLD",
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+          "details": {
+            "args": [
+              "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound"
+            ]
+          }
+        },
+        "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+        "runtimeAuthorization": false,
+        "dispatchFailure": {
+          "type": "AssertionError",
+          "message": "",
+          "details": {
+            "args": []
+          }
+        },
+        "terminalAudit": [
+          {
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/receipt.json",
+            "releaseProved": false,
+            "kernel": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "members": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "births": [
+              {
+                "pid": 214000001,
+                "recorded": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 19386,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "current": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 19386,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                }
+              }
+            ],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "gui/501/local.stations.round4.158d470a56fa46db9cc9a250cab8ef6b"
+            ],
+            "registrationExit": 1,
+            "registrationStdout": "REGISTRATION_ABSENT",
+            "registrationStderr": "",
+            "scratchAbsent": false,
+            "privateTmpAbsent": false,
+            "failure": {
+              "type": "AssertionError",
+              "message": "Kernel coalition has live tasks",
+              "details": {
+                "args": [
+                  "Kernel coalition has live tasks"
+                ]
+              }
+            }
+          }
+        ],
+        "terminalAuditFailures": [
+          {
+            "type": "AssertionError",
+            "message": "Kernel coalition has live tasks",
+            "details": {
+              "args": [
+                "Kernel coalition has live tasks"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "AssertionError",
+            "message": "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/receipt.json",
+            "details": {
+              "args": [
+                "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/receipt.json"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "TerminalAttemptAccountingFailure",
+            "message": "Every allocation attempt requires its own positive terminal audit",
+            "attempts": 1,
+            "handles": 1,
+            "audits": 1
+          }
+        ],
+        "nativeJobs": 1,
+        "pipelineSeconds": 0.00593637500423938,
+        "outputInventory": {
+          "normalBytes": 0,
+          "reservedBytes": 0,
+          "files": 0,
+          "reservedFiles": 0,
+          "paths": [],
+          "totalBytes": 0,
+          "complete": true,
+          "enumeration": {
+            "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/packet",
+            "complete": true,
+            "directories": [
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/packet",
+                "directories": [],
+                "files": []
+              }
+            ]
+          }
+        },
+        "outputBytes": 0,
+        "freeBytesAfter": 31028064256,
+        "terminalReleaseProved": false,
+        "receiptFallbacks": [
+          {
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/receipt.json",
+            "receipt": {
+              "name": "native-189-encode",
+              "primaryFailure": {
+                "type": "AssertionError",
+                "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+                "details": {
+                  "args": [
+                    "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound"
+                  ]
+                }
+              },
+              "cleanupFailure": {
+                "type": "OSError",
+                "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+                "details": {
+                  "args": [
+                    "SECONDARY_WAIT_RECEIPT_WRITE"
+                  ],
+                  "errno": null,
+                  "filename": null,
+                  "filename2": null
+                }
+              },
+              "persistenceFailures": [],
+              "terminal": null,
+              "argv": [
+                "/INERT"
+              ],
+              "phase": "start",
+              "privateTmp": {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/private",
+                "admission": {
+                  "ownedFixture": true
+                }
+              },
+              "bootstrapObservations": [
+                {
+                  "argv": [
+                    "/bin/launchctl",
+                    "bootstrap",
+                    "gui/501",
+                    "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/stations-round4-owned-tnno7tgv/job.plist"
+                  ],
+                  "registrationUncertain": true,
+                  "result": {
+                    "args": [
+                      "/bin/launchctl",
+                      "bootstrap",
+                      "gui/501",
+                      "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/stations-round4-owned-tnno7tgv/job.plist"
+                    ],
+                    "returncode": 0,
+                    "stdout": "BOOT_OK",
+                    "stderr": ""
+                  }
+                }
+              ],
+              "bootstrapPortRestored": true,
+              "actualExecutables": {
+                "214000001:1:2:501": {
+                  "identity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/binary",
+                  "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                }
+              },
+              "observerEvents": [
+                {
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "status": "admitted",
+                  "pid": 214000001,
+                  "priorActualAdmission": null,
+                  "beforeIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/binary",
+                  "postReadIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                },
+                {
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "status": "observing",
+                  "pid": 214000001,
+                  "priorActualAdmission": {
+                    "identity": {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    },
+                    "memberIdentity": {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    },
+                    "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/binary",
+                    "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                  },
+                  "beforeIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+                  "postReadIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                }
+              ],
+              "rssObservations": [
+                {
+                  "monotonic": 273774.840863041,
+                  "limitBytes": 8589934592,
+                  "quota": false,
+                  "kernelBefore": {
+                    "live": 1,
+                    "coalition_absent": false
+                  },
+                  "members": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "before": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "rss": {
+                    "bytesByPid": {
+                      "214000001": 4096
+                    },
+                    "stdout": "214000001 4\n",
+                    "stderr": ""
+                  },
+                  "after": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "membersAfter": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "kernelAfter": {
+                    "live": 1,
+                    "coalition_absent": false
+                  },
+                  "aggregateBytes": 4096,
+                  "accepted": true
+                }
+              ],
+              "observationFailures": [
+                {
+                  "phase": "executable",
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+                    "details": {
+                      "args": [
+                        "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "secondaryFailures": [
+                {
+                  "type": "OSError",
+                  "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+                  "details": {
+                    "args": [
+                      "SECONDARY_WAIT_RECEIPT_WRITE"
+                    ],
+                    "errno": null,
+                    "filename": null,
+                    "filename2": null
+                  }
+                }
+              ],
+              "ownedAllocation": {
+                "out": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/owned-job",
+                "scratch": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/stations-round4-owned-tnno7tgv",
+                "target": "gui/501/local.stations.round4.158d470a56fa46db9cc9a250cab8ef6b",
+                "coalition_id": "123",
+                "registered": "True"
+              },
+              "releaseAudits": []
+            }
+          }
+        ],
+        "jobs": [
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/receipt.json",
+            "sha256": "7c9db8a83fb31d8bfe35b60e11c96a41ba9217da83dee4056704306c2e320178"
+          }
+        ],
+        "terminalPersistenceFailures": [],
+        "terminalDelivery": {
+          "proof": {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/result.json",
+            "status": "written",
+            "sha256": "9633ac408e37ea92d1095fb2cc5c27d275c0bb9609ff1cc94b8d56517187d4a4",
+            "bytes": 15299
+          },
+          "packet": {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/packet/integration-result.json",
+            "status": "written",
+            "completeObservations": true,
+            "sha256": "d65408114911d72f068994ed3ce231e1aca6980bb0bfac32c9ec064ca019dcf9",
+            "bytes": 15398
+          },
+          "completeObservationsPersisted": true,
+          "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+        }
+      },
+      "receipt": {
+        "name": "native-189-encode",
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+          "details": {
+            "args": [
+              "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound"
+            ]
+          }
+        },
+        "cleanupFailure": {
+          "type": "OSError",
+          "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+          "details": {
+            "args": [
+              "SECONDARY_WAIT_RECEIPT_WRITE"
+            ],
+            "errno": null,
+            "filename": null,
+            "filename2": null
+          }
+        },
+        "persistenceFailures": [],
+        "terminal": null,
+        "argv": [
+          "/INERT"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/private",
+          "admission": {
+            "ownedFixture": true
+          }
+        },
+        "bootstrapObservations": [
+          {
+            "argv": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/stations-round4-owned-tnno7tgv/job.plist"
+            ],
+            "registrationUncertain": true,
+            "result": {
+              "args": [
+                "/bin/launchctl",
+                "bootstrap",
+                "gui/501",
+                "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/stations-round4-owned-tnno7tgv/job.plist"
+              ],
+              "returncode": 0,
+              "stdout": "BOOT_OK",
+              "stderr": ""
+            }
+          }
+        ],
+        "bootstrapPortRestored": true,
+        "actualExecutables": {
+          "214000001:1:2:501": {
+            "identity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/binary",
+            "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          }
+        },
+        "observerEvents": [
+          {
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "status": "admitted",
+            "pid": 214000001,
+            "priorActualAdmission": null,
+            "beforeIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/binary",
+            "postReadIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          },
+          {
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "status": "observing",
+            "pid": 214000001,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "memberIdentity": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/binary",
+              "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+            },
+            "beforeIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+            "postReadIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          }
+        ],
+        "rssObservations": [
+          {
+            "monotonic": 273774.840863041,
+            "limitBytes": 8589934592,
+            "quota": false,
+            "kernelBefore": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "members": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "before": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "rss": {
+              "bytesByPid": {
+                "214000001": 4096
+              },
+              "stdout": "214000001 4\n",
+              "stderr": ""
+            },
+            "after": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "membersAfter": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "kernelAfter": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "aggregateBytes": 4096,
+            "accepted": true
+          }
+        ],
+        "observationFailures": [
+          {
+            "phase": "executable",
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+              "details": {
+                "args": [
+                  "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound"
+                ]
+              }
+            }
+          }
+        ],
+        "secondaryFailures": [
+          {
+            "type": "OSError",
+            "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+            "details": {
+              "args": [
+                "SECONDARY_WAIT_RECEIPT_WRITE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ],
+        "ownedAllocation": {
+          "out": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/jobs/native-189-encode/owned-job",
+          "scratch": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/stations-round4-owned-tnno7tgv",
+          "target": "gui/501/local.stations.round4.158d470a56fa46db9cc9a250cab8ef6b",
+          "coalition_id": "123",
+          "registered": "True"
+        },
+        "releaseAudits": []
+      },
+      "helperState": {
+        "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+        "exits": {},
+        "errors": [
+          "AssertionError: Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+          "OSError: SECONDARY_WAIT_RECEIPT_WRITE"
+        ],
+        "signals": [],
+        "drained": false,
+        "clean": false,
+        "stage": "native-189-encode",
+        "readiness_sha256": "1df822cb9635c2aaf40e12295d96933b43cd565b35cc0612eef93a15d653d06f",
+        "kernel_before_launch": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "elapsed_cleanup_seconds": 5.408294964581728e-05
+      },
+      "events": [
+        [
+          "/bin/launchctl",
+          "bootstrap",
+          "gui/501",
+          "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/stations-round4-owned-tnno7tgv/job.plist"
+        ],
+        [
+          "/bin/ps",
+          "-p",
+          "214000001",
+          "-o",
+          "pid=,rss="
+        ],
+        "fault-armed-after-initial-observation",
+        [
+          "/bin/launchctl",
+          "print",
+          "gui/501/local.stations.round4.158d470a56fa46db9cc9a250cab8ef6b"
+        ]
+      ],
+      "nativeProcesses": 0
+    },
+    {
+      "name": "observer-path-unbound-all-sinks",
+      "status": "PASS",
+      "result": {
+        "status": "HOLD",
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+          "details": {
+            "args": [
+              "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound"
+            ]
+          }
+        },
+        "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+        "runtimeAuthorization": false,
+        "dispatchFailure": {
+          "type": "OSError",
+          "message": "ADDITIONAL_RECEIPT_FAILURE",
+          "details": {
+            "args": [
+              "ADDITIONAL_RECEIPT_FAILURE"
+            ],
+            "errno": null,
+            "filename": null,
+            "filename2": null
+          }
+        },
+        "terminalAudit": [
+          {
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/receipt.json",
+            "releaseProved": false,
+            "kernel": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "members": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "births": [
+              {
+                "pid": 214000001,
+                "recorded": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 19386,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "current": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 19386,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                }
+              }
+            ],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "gui/501/local.stations.round4.fa0ee90f6683469f8e2293de67ab7690"
+            ],
+            "registrationExit": 1,
+            "registrationStdout": "REGISTRATION_ABSENT",
+            "registrationStderr": "",
+            "scratchAbsent": false,
+            "privateTmpAbsent": false,
+            "failure": {
+              "type": "AssertionError",
+              "message": "Kernel coalition has live tasks",
+              "details": {
+                "args": [
+                  "Kernel coalition has live tasks"
+                ]
+              }
+            }
+          }
+        ],
+        "terminalAuditFailures": [
+          {
+            "type": "AssertionError",
+            "message": "Kernel coalition has live tasks",
+            "details": {
+              "args": [
+                "Kernel coalition has live tasks"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "AssertionError",
+            "message": "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/receipt.json",
+            "details": {
+              "args": [
+                "Attempt cleanup remains unproved: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/receipt.json"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "TerminalAttemptAccountingFailure",
+            "message": "Every allocation attempt requires its own positive terminal audit",
+            "attempts": 1,
+            "handles": 1,
+            "audits": 1
+          }
+        ],
+        "nativeJobs": 1,
+        "pipelineSeconds": 0.005844749975949526,
+        "outputInventory": {
+          "normalBytes": 0,
+          "reservedBytes": 0,
+          "files": 0,
+          "reservedFiles": 0,
+          "paths": [],
+          "totalBytes": 0,
+          "complete": true,
+          "enumeration": {
+            "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/packet",
+            "complete": true,
+            "directories": [
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/packet",
+                "directories": [],
+                "files": []
+              }
+            ]
+          }
+        },
+        "outputBytes": 0,
+        "freeBytesAfter": 31028056064,
+        "terminalReleaseProved": false,
+        "receiptFallbacks": [
+          {
+            "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/receipt.json",
+            "receipt": {
+              "name": "native-189-encode",
+              "primaryFailure": {
+                "type": "AssertionError",
+                "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+                "details": {
+                  "args": [
+                    "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound"
+                  ]
+                }
+              },
+              "cleanupFailure": {
+                "type": "OSError",
+                "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+                "details": {
+                  "args": [
+                    "SECONDARY_WAIT_RECEIPT_WRITE"
+                  ],
+                  "errno": null,
+                  "filename": null,
+                  "filename2": null
+                }
+              },
+              "persistenceFailures": [
+                {
+                  "type": "OSError",
+                  "message": "ADDITIONAL_RECEIPT_FAILURE",
+                  "details": {
+                    "args": [
+                      "ADDITIONAL_RECEIPT_FAILURE"
+                    ],
+                    "errno": null,
+                    "filename": null,
+                    "filename2": null
+                  }
+                }
+              ],
+              "terminal": null,
+              "argv": [
+                "/INERT"
+              ],
+              "phase": "start",
+              "privateTmp": {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/private",
+                "admission": {
+                  "ownedFixture": true
+                }
+              },
+              "bootstrapObservations": [
+                {
+                  "argv": [
+                    "/bin/launchctl",
+                    "bootstrap",
+                    "gui/501",
+                    "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/stations-round4-owned-8iqvsbyr/job.plist"
+                  ],
+                  "registrationUncertain": true,
+                  "result": {
+                    "args": [
+                      "/bin/launchctl",
+                      "bootstrap",
+                      "gui/501",
+                      "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/stations-round4-owned-8iqvsbyr/job.plist"
+                    ],
+                    "returncode": 0,
+                    "stdout": "BOOT_OK",
+                    "stderr": ""
+                  }
+                }
+              ],
+              "bootstrapPortRestored": true,
+              "actualExecutables": {
+                "214000001:1:2:501": {
+                  "identity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/binary",
+                  "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                }
+              },
+              "observerEvents": [
+                {
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "status": "admitted",
+                  "pid": 214000001,
+                  "priorActualAdmission": null,
+                  "beforeIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/binary",
+                  "postReadIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                },
+                {
+                  "memberIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "status": "observing",
+                  "pid": 214000001,
+                  "priorActualAdmission": {
+                    "identity": {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    },
+                    "memberIdentity": {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    },
+                    "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/binary",
+                    "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+                  },
+                  "beforeIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  },
+                  "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+                  "postReadIdentity": {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 19386,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                }
+              ],
+              "rssObservations": [
+                {
+                  "monotonic": 273774.8528155,
+                  "limitBytes": 8589934592,
+                  "quota": false,
+                  "kernelBefore": {
+                    "live": 1,
+                    "coalition_absent": false
+                  },
+                  "members": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "before": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "rss": {
+                    "bytesByPid": {
+                      "214000001": 4096
+                    },
+                    "stdout": "214000001 4\n",
+                    "stderr": ""
+                  },
+                  "after": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "membersAfter": [
+                    {
+                      "pid": 214000001,
+                      "birth": [
+                        1,
+                        2
+                      ],
+                      "uid": 501,
+                      "status": 1,
+                      "ppid": 19386,
+                      "pgid": 214000001,
+                      "sid": 214000001
+                    }
+                  ],
+                  "kernelAfter": {
+                    "live": 1,
+                    "coalition_absent": false
+                  },
+                  "aggregateBytes": 4096,
+                  "accepted": true
+                }
+              ],
+              "observationFailures": [
+                {
+                  "phase": "executable",
+                  "failure": {
+                    "type": "AssertionError",
+                    "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+                    "details": {
+                      "args": [
+                        "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "secondaryFailures": [
+                {
+                  "type": "OSError",
+                  "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+                  "details": {
+                    "args": [
+                      "SECONDARY_WAIT_RECEIPT_WRITE"
+                    ],
+                    "errno": null,
+                    "filename": null,
+                    "filename2": null
+                  }
+                }
+              ],
+              "ownedAllocation": {
+                "out": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/owned-job",
+                "scratch": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/stations-round4-owned-8iqvsbyr",
+                "target": "gui/501/local.stations.round4.fa0ee90f6683469f8e2293de67ab7690",
+                "coalition_id": "123",
+                "registered": "True"
+              },
+              "releaseAudits": []
+            }
+          }
+        ],
+        "jobs": [
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/receipt.json",
+            "sha256": "1e589335b8ffd2cc16759977fc6daa54c93a2858872dd04b05bf02665493e3c2"
+          }
+        ],
+        "terminalPersistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "PROOF_WRITE_FAILURE",
+            "details": {
+              "args": [
+                "PROOF_WRITE_FAILURE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            },
+            "sink": "proof"
+          },
+          {
+            "type": "OSError",
+            "message": "PACKET_WRITE_FAILURE",
+            "details": {
+              "args": [
+                "PACKET_WRITE_FAILURE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            },
+            "sink": "packet"
+          },
+          {
+            "type": "OSError",
+            "message": "TERMINAL_STREAM_FAILURE",
+            "details": {
+              "args": [
+                "TERMINAL_STREAM_FAILURE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            },
+            "sink": "stdout"
+          },
+          {
+            "type": "OSError",
+            "message": "TERMINAL_STREAM_FAILURE",
+            "details": {
+              "args": [
+                "TERMINAL_STREAM_FAILURE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            },
+            "sink": "stderr"
+          }
+        ],
+        "terminalDelivery": {
+          "proof": {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/result.json",
+            "status": "failed"
+          },
+          "packet": {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/packet/integration-result.json",
+            "status": "failed"
+          },
+          "completeObservationsPersisted": false,
+          "scope": "Files are snapshots; subsequent delivery errors remain in the returned result",
+          "stdout": {
+            "status": "failed"
+          },
+          "stderr": {
+            "status": "failed"
+          }
+        }
+      },
+      "receipt": {
+        "name": "native-189-encode",
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+          "details": {
+            "args": [
+              "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound"
+            ]
+          }
+        },
+        "cleanupFailure": {
+          "type": "OSError",
+          "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+          "details": {
+            "args": [
+              "SECONDARY_WAIT_RECEIPT_WRITE"
+            ],
+            "errno": null,
+            "filename": null,
+            "filename2": null
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "ADDITIONAL_RECEIPT_FAILURE",
+            "details": {
+              "args": [
+                "ADDITIONAL_RECEIPT_FAILURE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ],
+        "terminal": null,
+        "argv": [
+          "/INERT"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/private",
+          "admission": {
+            "ownedFixture": true
+          }
+        },
+        "bootstrapObservations": [
+          {
+            "argv": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/stations-round4-owned-8iqvsbyr/job.plist"
+            ],
+            "registrationUncertain": true,
+            "result": {
+              "args": [
+                "/bin/launchctl",
+                "bootstrap",
+                "gui/501",
+                "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/stations-round4-owned-8iqvsbyr/job.plist"
+              ],
+              "returncode": 0,
+              "stdout": "BOOT_OK",
+              "stderr": ""
+            }
+          }
+        ],
+        "bootstrapPortRestored": true,
+        "actualExecutables": {
+          "214000001:1:2:501": {
+            "identity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/binary",
+            "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          }
+        },
+        "observerEvents": [
+          {
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "status": "admitted",
+            "pid": 214000001,
+            "priorActualAdmission": null,
+            "beforeIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/binary",
+            "postReadIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "observedSha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+          },
+          {
+            "memberIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "status": "observing",
+            "pid": 214000001,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "memberIdentity": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "executable": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/binary",
+              "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+            },
+            "beforeIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            },
+            "returnedPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+            "postReadIdentity": {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 19386,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          }
+        ],
+        "rssObservations": [
+          {
+            "monotonic": 273774.8528155,
+            "limitBytes": 8589934592,
+            "quota": false,
+            "kernelBefore": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "members": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "before": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "rss": {
+              "bytesByPid": {
+                "214000001": 4096
+              },
+              "stdout": "214000001 4\n",
+              "stderr": ""
+            },
+            "after": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "membersAfter": [
+              {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 19386,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            ],
+            "kernelAfter": {
+              "live": 1,
+              "coalition_absent": false
+            },
+            "aggregateBytes": 4096,
+            "accepted": true
+          }
+        ],
+        "observationFailures": [
+          {
+            "phase": "executable",
+            "failure": {
+              "type": "AssertionError",
+              "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+              "details": {
+                "args": [
+                  "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound"
+                ]
+              }
+            }
+          }
+        ],
+        "secondaryFailures": [
+          {
+            "type": "OSError",
+            "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+            "details": {
+              "args": [
+                "SECONDARY_WAIT_RECEIPT_WRITE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ],
+        "ownedAllocation": {
+          "out": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/jobs/native-189-encode/owned-job",
+          "scratch": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/stations-round4-owned-8iqvsbyr",
+          "target": "gui/501/local.stations.round4.fa0ee90f6683469f8e2293de67ab7690",
+          "coalition_id": "123",
+          "registered": "True"
+        },
+        "releaseAudits": []
+      },
+      "helperState": {
+        "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+        "exits": {},
+        "errors": [
+          "AssertionError: Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+          "OSError: SECONDARY_WAIT_RECEIPT_WRITE"
+        ],
+        "signals": [],
+        "drained": false,
+        "clean": false,
+        "stage": "native-189-encode",
+        "readiness_sha256": "1df822cb9635c2aaf40e12295d96933b43cd565b35cc0612eef93a15d653d06f",
+        "kernel_before_launch": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "elapsed_cleanup_seconds": 0.00018575001740828156
+      },
+      "events": [
+        [
+          "/bin/launchctl",
+          "bootstrap",
+          "gui/501",
+          "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/stations-round4-owned-8iqvsbyr/job.plist"
+        ],
+        [
+          "/bin/ps",
+          "-p",
+          "214000001",
+          "-o",
+          "pid=,rss="
+        ],
+        "fault-armed-after-initial-observation",
+        [
+          "/bin/launchctl",
+          "print",
+          "gui/501/local.stations.round4.fa0ee90f6683469f8e2293de67ab7690"
+        ]
+      ],
+      "nativeProcesses": 0
+    }
+  ],
+  "count": 3,
+  "scratch": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer"
+}

@@ -1,0 +1,2467 @@
+[
+  {
+    "name": "packet-readable",
+    "status": "PASS",
+    "injection": [],
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "inspectionObservations": {
+        "deadlineSeconds": 30,
+        "positive": {
+          "accepted": true,
+          "frames": 189,
+          "everyRgbAndRgbaHash": true,
+          "videoSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "frameMapSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        "surplus": {
+          "accepted": false,
+          "frames": 190,
+          "expectedRefusal": true
+        },
+        "descriptors": [
+          {
+            "path": "/",
+            "parentFd": null,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "/",
+              "dev": 16777232,
+              "ino": 2,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 736,
+              "mtime": 1790233837000000000,
+              "ctime": 1790233837000000000,
+              "links": 23
+            },
+            "after": {
+              "path": "/",
+              "dev": 16777232,
+              "ino": 2,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 736,
+              "mtime": 1790233837000000000,
+              "ctime": 1790233837000000000,
+              "links": 23
+            }
+          },
+          {
+            "path": "private",
+            "parentFd": 3,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "private",
+              "dev": 16777232,
+              "ino": 22907066,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1793752979086280124,
+              "ctime": 1793752979086280124,
+              "links": 6
+            },
+            "after": {
+              "path": "private",
+              "dev": 16777232,
+              "ino": 22907066,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1793752979086280124,
+              "ctime": 1793752979086280124,
+              "links": 6
+            }
+          },
+          {
+            "path": "tmp",
+            "parentFd": 4,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "tmp",
+              "dev": 16777232,
+              "ino": 315902304,
+              "uid": 0,
+              "gid": 0,
+              "mode": 17407,
+              "bytes": 256192,
+              "mtime": 1794041168076456259,
+              "ctime": 1794041168076456259,
+              "links": 8006
+            },
+            "after": {
+              "path": "tmp",
+              "dev": 16777232,
+              "ino": 315902304,
+              "uid": 0,
+              "gid": 0,
+              "mode": 17407,
+              "bytes": 256192,
+              "mtime": 1794041168076456259,
+              "ctime": 1794041168076456259,
+              "links": 8006
+            }
+          },
+          {
+            "path": "t02-r8-correction-0907hb14",
+            "parentFd": 5,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "t02-r8-correction-0907hb14",
+              "dev": 16777232,
+              "ino": 486783782,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16832,
+              "bytes": 128,
+              "mtime": 1794041168063747605,
+              "ctime": 1794041168063747605,
+              "links": 4
+            },
+            "after": {
+              "path": "t02-r8-correction-0907hb14",
+              "dev": 16777232,
+              "ino": 486783782,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16832,
+              "bytes": 128,
+              "mtime": 1794041168063747605,
+              "ctime": 1794041168063747605,
+              "links": 4
+            }
+          },
+          {
+            "path": "red",
+            "parentFd": 6,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "red",
+              "dev": 16777232,
+              "ino": 486783783,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1794041168209692738,
+              "ctime": 1794041168209692738,
+              "links": 6
+            },
+            "after": {
+              "path": "red",
+              "dev": 16777232,
+              "ino": 486783783,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1794041168209692738,
+              "ctime": 1794041168209692738,
+              "links": 6
+            }
+          },
+          {
+            "path": "additional-packet-readable",
+            "parentFd": 7,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "additional-packet-readable",
+              "dev": 16777232,
+              "ino": 486783885,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168209880905,
+              "ctime": 1794041168209880905,
+              "links": 4
+            },
+            "after": {
+              "path": "additional-packet-readable",
+              "dev": 16777232,
+              "ino": 486783885,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168209880905,
+              "ctime": 1794041168209880905,
+              "links": 4
+            }
+          },
+          {
+            "path": "packet",
+            "parentFd": 8,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "packet",
+              "dev": 16777232,
+              "ino": 486783886,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 160,
+              "mtime": 1794041168211930410,
+              "ctime": 1794041168211930410,
+              "links": 5
+            },
+            "after": {
+              "path": "packet",
+              "dev": 16777232,
+              "ino": 486783886,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 160,
+              "mtime": 1794041168211930410,
+              "ctime": 1794041168211930410,
+              "links": 5
+            }
+          },
+          {
+            "path": "captures",
+            "parentFd": 9,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "captures",
+              "dev": 16777232,
+              "ino": 486783888,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794041168210011156,
+              "ctime": 1794041168210011156,
+              "links": 3
+            },
+            "after": {
+              "path": "captures",
+              "dev": 16777232,
+              "ino": 486783888,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794041168210011156,
+              "ctime": 1794041168210011156,
+              "links": 3
+            }
+          },
+          {
+            "path": "motion-thalune-run-lod0",
+            "parentFd": 10,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "motion-thalune-run-lod0",
+              "dev": 16777232,
+              "ino": 486783889,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168210231948,
+              "ctime": 1794041168210231948,
+              "links": 4
+            },
+            "after": {
+              "path": "motion-thalune-run-lod0",
+              "dev": 16777232,
+              "ino": 486783889,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168210231948,
+              "ctime": 1794041168210231948,
+              "links": 4
+            }
+          },
+          {
+            "path": "primary.mp4",
+            "parentFd": 11,
+            "operation": "content",
+            "closed": true,
+            "opened": {
+              "path": "primary.mp4",
+              "dev": 16777232,
+              "ino": 486783890,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168210133614,
+              "ctime": 1794041168210133614,
+              "links": 1
+            },
+            "after": {
+              "path": "primary.mp4",
+              "dev": 16777232,
+              "ino": 486783890,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168210133614,
+              "ctime": 1794041168210133614,
+              "links": 1
+            }
+          },
+          {
+            "path": "frame-map.json",
+            "parentFd": 11,
+            "operation": "content",
+            "closed": true,
+            "opened": {
+              "path": "frame-map.json",
+              "dev": 16777232,
+              "ino": 486783891,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168210271448,
+              "ctime": 1794041168210271448,
+              "links": 1
+            },
+            "after": {
+              "path": "frame-map.json",
+              "dev": 16777232,
+              "ino": 486783891,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168210271448,
+              "ctime": 1794041168210271448,
+              "links": 1
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "primary.mp4",
+            "dev": 16777232,
+            "ino": 486783890,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 2,
+            "mtime": 1794041168210133614,
+            "ctime": 1794041168210133614,
+            "links": 1,
+            "limitBytes": 39354368
+          },
+          {
+            "path": "frame-map.json",
+            "dev": 16777232,
+            "ino": 486783891,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 2,
+            "mtime": 1794041168210271448,
+            "ctime": 1794041168210271448,
+            "links": 1,
+            "limitBytes": 67108864
+          }
+        ],
+        "files": [
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/captures/motion-thalune-run-lod0/primary.mp4",
+            "readBytes": 2,
+            "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          },
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/captures/motion-thalune-run-lod0/frame-map.json",
+            "readBytes": 2,
+            "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "contentBytesRead": 4
+      },
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          }
+        },
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/proof/jobs/native-189-validate/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          }
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 2,
+      "pipelineSeconds": 0.0036372909671626985,
+      "outputInventory": {
+        "normalBytes": 67109175,
+        "reservedBytes": 0,
+        "files": 14,
+        "reservedFiles": 0,
+        "paths": [
+          "captures/motion-thalune-run-lod0/frame-map.json",
+          "captures/motion-thalune-run-lod0/primary.mp4",
+          "inspections/native-189-validate/rgb-command.json",
+          "inspections/native-189-validate/surplus-refusal.json",
+          "inspections/native-189-validate/rgba.stderr",
+          "inspections/native-189-validate/rgba.stdout",
+          "inspections/native-189-validate/rgb.stderr",
+          "inspections/native-189-validate/probe-command.json",
+          "inspections/native-189-validate/validation.json",
+          "inspections/native-189-validate/rgba-command.json",
+          "inspections/native-189-validate/probe.stdout",
+          "inspections/native-189-validate/probe.stderr",
+          "inspections/native-189-validate/rgb.stdout",
+          "extra-directory/overbudget.bin"
+        ],
+        "totalBytes": 67109177,
+        "complete": true,
+        "enumeration": {
+          "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet",
+          "complete": true,
+          "directories": [
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet",
+              "directories": [
+                "captures",
+                "inspections",
+                "extra-directory"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/captures",
+              "directories": [
+                "motion-thalune-run-lod0"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/captures/motion-thalune-run-lod0",
+              "directories": [],
+              "files": [
+                "frame-map.json",
+                "primary.mp4"
+              ]
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/inspections",
+              "directories": [
+                "native-189-validate"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/inspections/native-189-validate",
+              "directories": [],
+              "files": [
+                "rgb-command.json",
+                "surplus-refusal.json",
+                "rgba.stderr",
+                "rgba.stdout",
+                "rgb.stderr",
+                "probe-command.json",
+                "validation.json",
+                "rgba-command.json",
+                "probe.stdout",
+                "probe.stderr",
+                "rgb.stdout"
+              ]
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/extra-directory",
+              "directories": [],
+              "files": [
+                "overbudget.bin"
+              ]
+            }
+          ]
+        }
+      },
+      "outputBytes": 67109177,
+      "freeBytesAfter": 31028879360,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "83027828e373343cfd0e28c53af42653cbe9b416734449e28ff2d94ba3bf368f"
+        },
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/proof/jobs/native-189-validate/receipt.json",
+          "sha256": "544772c50d20e332f3f025081c8b268698f30b8896a2fb3abf30bce0bed2e706"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/proof/result.json",
+          "status": "written",
+          "sha256": "499979a3ef1ec16b555a1011374eb92b72319a80adc9e7778f462c891350c9df",
+          "bytes": 14928
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-readable/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "61d3c544cb5d0186e150e0eef0854e0eaa6050877bb038853a11568f11b91f6d",
+          "bytes": 15027
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "hiddenBytes": 67108865,
+    "nativeProcesses": 0
+  },
+  {
+    "name": "packet-scan-open",
+    "status": "PASS",
+    "injection": [
+      {
+        "boundary": "scandir",
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+        "errno": 5
+      },
+      {
+        "boundary": "scandir",
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+        "errno": 5
+      },
+      {
+        "boundary": "scandir",
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+        "errno": 5
+      }
+    ],
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+        "details": {
+          "inventoryObservation": {
+            "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+            "complete": false,
+            "directories": [
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                "directories": [
+                  "captures",
+                  "inspections",
+                  "extra-directory"
+                ],
+                "files": []
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                "directories": [
+                  "motion-thalune-run-lod0"
+                ],
+                "files": []
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                "directories": [],
+                "files": [
+                  "frame-map.json",
+                  "primary.mp4"
+                ]
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                "directories": [
+                  "native-189-validate"
+                ],
+                "files": []
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                "directories": [],
+                "files": [
+                  "rgb-command.json",
+                  "surplus-refusal.json",
+                  "rgba.stderr",
+                  "rgba.stdout",
+                  "rgb.stderr",
+                  "probe-command.json",
+                  "validation.json",
+                  "rgba-command.json",
+                  "probe.stdout",
+                  "probe.stderr",
+                  "rgb.stdout"
+                ]
+              }
+            ],
+            "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+            "failure": {
+              "type": "OSError",
+              "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+              "details": {
+                "args": [
+                  5,
+                  "INJECTED_SCANDIR_OPEN_ERROR"
+                ],
+                "errno": 5,
+                "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                "filename2": null
+              }
+            }
+          },
+          "packetInventory": {
+            "normalBytes": 310,
+            "reservedBytes": 0,
+            "files": 13,
+            "reservedFiles": 0,
+            "paths": [
+              "captures/motion-thalune-run-lod0/frame-map.json",
+              "captures/motion-thalune-run-lod0/primary.mp4",
+              "inspections/native-189-validate/rgb-command.json",
+              "inspections/native-189-validate/surplus-refusal.json",
+              "inspections/native-189-validate/rgba.stderr",
+              "inspections/native-189-validate/rgba.stdout",
+              "inspections/native-189-validate/rgb.stderr",
+              "inspections/native-189-validate/probe-command.json",
+              "inspections/native-189-validate/validation.json",
+              "inspections/native-189-validate/rgba-command.json",
+              "inspections/native-189-validate/probe.stdout",
+              "inspections/native-189-validate/probe.stderr",
+              "inspections/native-189-validate/rgb.stdout"
+            ],
+            "totalBytes": 312,
+            "complete": false,
+            "enumeration": {
+              "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+              "complete": false,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                  "directories": [
+                    "captures",
+                    "inspections",
+                    "extra-directory"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                  "directories": [
+                    "motion-thalune-run-lod0"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                  "directories": [],
+                  "files": [
+                    "frame-map.json",
+                    "primary.mp4"
+                  ]
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                  "directories": [
+                    "native-189-validate"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                  "directories": [],
+                  "files": [
+                    "rgb-command.json",
+                    "surplus-refusal.json",
+                    "rgba.stderr",
+                    "rgba.stdout",
+                    "rgb.stderr",
+                    "probe-command.json",
+                    "validation.json",
+                    "rgba-command.json",
+                    "probe.stdout",
+                    "probe.stderr",
+                    "rgb.stdout"
+                  ]
+                }
+              ],
+              "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+              "failure": {
+                "type": "OSError",
+                "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+                "details": {
+                  "args": [
+                    5,
+                    "INJECTED_SCANDIR_OPEN_ERROR"
+                  ],
+                  "errno": 5,
+                  "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                  "filename2": null
+                }
+              }
+            },
+            "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout"
+          },
+          "args": [
+            5,
+            "INJECTED_SCANDIR_OPEN_ERROR"
+          ],
+          "errno": 5,
+          "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+          "filename2": null
+        }
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "inspectionObservations": {
+        "deadlineSeconds": 30,
+        "positive": {
+          "accepted": true,
+          "frames": 189,
+          "everyRgbAndRgbaHash": true,
+          "videoSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "frameMapSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        "surplus": {
+          "accepted": false,
+          "frames": 190,
+          "expectedRefusal": true
+        },
+        "descriptors": [
+          {
+            "path": "/",
+            "parentFd": null,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "/",
+              "dev": 16777232,
+              "ino": 2,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 736,
+              "mtime": 1790233837000000000,
+              "ctime": 1790233837000000000,
+              "links": 23
+            },
+            "after": {
+              "path": "/",
+              "dev": 16777232,
+              "ino": 2,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 736,
+              "mtime": 1790233837000000000,
+              "ctime": 1790233837000000000,
+              "links": 23
+            }
+          },
+          {
+            "path": "private",
+            "parentFd": 3,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "private",
+              "dev": 16777232,
+              "ino": 22907066,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1793752979086280124,
+              "ctime": 1793752979086280124,
+              "links": 6
+            },
+            "after": {
+              "path": "private",
+              "dev": 16777232,
+              "ino": 22907066,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1793752979086280124,
+              "ctime": 1793752979086280124,
+              "links": 6
+            }
+          },
+          {
+            "path": "tmp",
+            "parentFd": 4,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "tmp",
+              "dev": 16777232,
+              "ino": 315902304,
+              "uid": 0,
+              "gid": 0,
+              "mode": 17407,
+              "bytes": 256192,
+              "mtime": 1794041168076456259,
+              "ctime": 1794041168076456259,
+              "links": 8006
+            },
+            "after": {
+              "path": "tmp",
+              "dev": 16777232,
+              "ino": 315902304,
+              "uid": 0,
+              "gid": 0,
+              "mode": 17407,
+              "bytes": 256192,
+              "mtime": 1794041168076456259,
+              "ctime": 1794041168076456259,
+              "links": 8006
+            }
+          },
+          {
+            "path": "t02-r8-correction-0907hb14",
+            "parentFd": 5,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "t02-r8-correction-0907hb14",
+              "dev": 16777232,
+              "ino": 486783782,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16832,
+              "bytes": 128,
+              "mtime": 1794041168063747605,
+              "ctime": 1794041168063747605,
+              "links": 4
+            },
+            "after": {
+              "path": "t02-r8-correction-0907hb14",
+              "dev": 16777232,
+              "ino": 486783782,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16832,
+              "bytes": 128,
+              "mtime": 1794041168063747605,
+              "ctime": 1794041168063747605,
+              "links": 4
+            }
+          },
+          {
+            "path": "red",
+            "parentFd": 6,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "red",
+              "dev": 16777232,
+              "ino": 486783783,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 256,
+              "mtime": 1794041168219758137,
+              "ctime": 1794041168219758137,
+              "links": 8
+            },
+            "after": {
+              "path": "red",
+              "dev": 16777232,
+              "ino": 486783783,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 256,
+              "mtime": 1794041168219758137,
+              "ctime": 1794041168219758137,
+              "links": 8
+            }
+          },
+          {
+            "path": "additional-packet-scan-open",
+            "parentFd": 7,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "additional-packet-scan-open",
+              "dev": 16777232,
+              "ino": 486783921,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168219868346,
+              "ctime": 1794041168219868346,
+              "links": 4
+            },
+            "after": {
+              "path": "additional-packet-scan-open",
+              "dev": 16777232,
+              "ino": 486783921,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168219868346,
+              "ctime": 1794041168219868346,
+              "links": 4
+            }
+          },
+          {
+            "path": "packet",
+            "parentFd": 8,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "packet",
+              "dev": 16777232,
+              "ino": 486783922,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 160,
+              "mtime": 1794041168221690391,
+              "ctime": 1794041168221690391,
+              "links": 5
+            },
+            "after": {
+              "path": "packet",
+              "dev": 16777232,
+              "ino": 486783922,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 160,
+              "mtime": 1794041168221690391,
+              "ctime": 1794041168221690391,
+              "links": 5
+            }
+          },
+          {
+            "path": "captures",
+            "parentFd": 9,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "captures",
+              "dev": 16777232,
+              "ino": 486783924,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794041168220004429,
+              "ctime": 1794041168220004429,
+              "links": 3
+            },
+            "after": {
+              "path": "captures",
+              "dev": 16777232,
+              "ino": 486783924,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794041168220004429,
+              "ctime": 1794041168220004429,
+              "links": 3
+            }
+          },
+          {
+            "path": "motion-thalune-run-lod0",
+            "parentFd": 10,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "motion-thalune-run-lod0",
+              "dev": 16777232,
+              "ino": 486783925,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168220192930,
+              "ctime": 1794041168220192930,
+              "links": 4
+            },
+            "after": {
+              "path": "motion-thalune-run-lod0",
+              "dev": 16777232,
+              "ino": 486783925,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168220192930,
+              "ctime": 1794041168220192930,
+              "links": 4
+            }
+          },
+          {
+            "path": "primary.mp4",
+            "parentFd": 11,
+            "operation": "content",
+            "closed": true,
+            "opened": {
+              "path": "primary.mp4",
+              "dev": 16777232,
+              "ino": 486783926,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168220118429,
+              "ctime": 1794041168220118429,
+              "links": 1
+            },
+            "after": {
+              "path": "primary.mp4",
+              "dev": 16777232,
+              "ino": 486783926,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168220118429,
+              "ctime": 1794041168220118429,
+              "links": 1
+            }
+          },
+          {
+            "path": "frame-map.json",
+            "parentFd": 11,
+            "operation": "content",
+            "closed": true,
+            "opened": {
+              "path": "frame-map.json",
+              "dev": 16777232,
+              "ino": 486783927,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168220232680,
+              "ctime": 1794041168220232680,
+              "links": 1
+            },
+            "after": {
+              "path": "frame-map.json",
+              "dev": 16777232,
+              "ino": 486783927,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168220232680,
+              "ctime": 1794041168220232680,
+              "links": 1
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "primary.mp4",
+            "dev": 16777232,
+            "ino": 486783926,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 2,
+            "mtime": 1794041168220118429,
+            "ctime": 1794041168220118429,
+            "links": 1,
+            "limitBytes": 39354368
+          },
+          {
+            "path": "frame-map.json",
+            "dev": 16777232,
+            "ino": 486783927,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 2,
+            "mtime": 1794041168220232680,
+            "ctime": 1794041168220232680,
+            "links": 1,
+            "limitBytes": 67108864
+          }
+        ],
+        "files": [
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0/primary.mp4",
+            "readBytes": 2,
+            "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          },
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0/frame-map.json",
+            "readBytes": 2,
+            "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "contentBytesRead": 4
+      },
+      "dispatchFailure": {
+        "type": "OSError",
+        "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+        "details": {
+          "inventoryObservation": {
+            "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+            "complete": false,
+            "directories": [
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                "directories": [
+                  "captures",
+                  "inspections",
+                  "extra-directory"
+                ],
+                "files": []
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                "directories": [
+                  "motion-thalune-run-lod0"
+                ],
+                "files": []
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                "directories": [],
+                "files": [
+                  "frame-map.json",
+                  "primary.mp4"
+                ]
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                "directories": [
+                  "native-189-validate"
+                ],
+                "files": []
+              },
+              {
+                "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                "directories": [],
+                "files": [
+                  "rgb-command.json",
+                  "surplus-refusal.json",
+                  "rgba.stderr",
+                  "rgba.stdout",
+                  "rgb.stderr",
+                  "probe-command.json",
+                  "validation.json",
+                  "rgba-command.json",
+                  "probe.stdout",
+                  "probe.stderr",
+                  "rgb.stdout"
+                ]
+              }
+            ],
+            "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+            "failure": {
+              "type": "OSError",
+              "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+              "details": {
+                "args": [
+                  5,
+                  "INJECTED_SCANDIR_OPEN_ERROR"
+                ],
+                "errno": 5,
+                "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                "filename2": null
+              }
+            }
+          },
+          "packetInventory": {
+            "normalBytes": 310,
+            "reservedBytes": 0,
+            "files": 13,
+            "reservedFiles": 0,
+            "paths": [
+              "captures/motion-thalune-run-lod0/frame-map.json",
+              "captures/motion-thalune-run-lod0/primary.mp4",
+              "inspections/native-189-validate/rgb-command.json",
+              "inspections/native-189-validate/surplus-refusal.json",
+              "inspections/native-189-validate/rgba.stderr",
+              "inspections/native-189-validate/rgba.stdout",
+              "inspections/native-189-validate/rgb.stderr",
+              "inspections/native-189-validate/probe-command.json",
+              "inspections/native-189-validate/validation.json",
+              "inspections/native-189-validate/rgba-command.json",
+              "inspections/native-189-validate/probe.stdout",
+              "inspections/native-189-validate/probe.stderr",
+              "inspections/native-189-validate/rgb.stdout"
+            ],
+            "totalBytes": 312,
+            "complete": false,
+            "enumeration": {
+              "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+              "complete": false,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                  "directories": [
+                    "captures",
+                    "inspections",
+                    "extra-directory"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                  "directories": [
+                    "motion-thalune-run-lod0"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                  "directories": [],
+                  "files": [
+                    "frame-map.json",
+                    "primary.mp4"
+                  ]
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                  "directories": [
+                    "native-189-validate"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                  "directories": [],
+                  "files": [
+                    "rgb-command.json",
+                    "surplus-refusal.json",
+                    "rgba.stderr",
+                    "rgba.stdout",
+                    "rgb.stderr",
+                    "probe-command.json",
+                    "validation.json",
+                    "rgba-command.json",
+                    "probe.stdout",
+                    "probe.stderr",
+                    "rgb.stdout"
+                  ]
+                }
+              ],
+              "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+              "failure": {
+                "type": "OSError",
+                "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+                "details": {
+                  "args": [
+                    5,
+                    "INJECTED_SCANDIR_OPEN_ERROR"
+                  ],
+                  "errno": 5,
+                  "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                  "filename2": null
+                }
+              }
+            },
+            "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout"
+          },
+          "args": [
+            5,
+            "INJECTED_SCANDIR_OPEN_ERROR"
+          ],
+          "errno": 5,
+          "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+          "filename2": null
+        }
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          }
+        },
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/proof/jobs/native-189-validate/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          }
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "OSError",
+          "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+          "details": {
+            "inventoryObservation": {
+              "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+              "complete": false,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                  "directories": [
+                    "captures",
+                    "inspections",
+                    "extra-directory"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                  "directories": [
+                    "motion-thalune-run-lod0"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                  "directories": [],
+                  "files": [
+                    "frame-map.json",
+                    "primary.mp4"
+                  ]
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                  "directories": [
+                    "native-189-validate"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                  "directories": [],
+                  "files": [
+                    "rgb-command.json",
+                    "surplus-refusal.json",
+                    "rgba.stderr",
+                    "rgba.stdout",
+                    "rgb.stderr",
+                    "probe-command.json",
+                    "validation.json",
+                    "rgba-command.json",
+                    "probe.stdout",
+                    "probe.stderr",
+                    "rgb.stdout"
+                  ]
+                }
+              ],
+              "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+              "failure": {
+                "type": "OSError",
+                "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+                "details": {
+                  "args": [
+                    5,
+                    "INJECTED_SCANDIR_OPEN_ERROR"
+                  ],
+                  "errno": 5,
+                  "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                  "filename2": null
+                }
+              }
+            },
+            "packetInventory": {
+              "normalBytes": 310,
+              "reservedBytes": 0,
+              "files": 13,
+              "reservedFiles": 0,
+              "paths": [
+                "captures/motion-thalune-run-lod0/frame-map.json",
+                "captures/motion-thalune-run-lod0/primary.mp4",
+                "inspections/native-189-validate/rgb-command.json",
+                "inspections/native-189-validate/surplus-refusal.json",
+                "inspections/native-189-validate/rgba.stderr",
+                "inspections/native-189-validate/rgba.stdout",
+                "inspections/native-189-validate/rgb.stderr",
+                "inspections/native-189-validate/probe-command.json",
+                "inspections/native-189-validate/validation.json",
+                "inspections/native-189-validate/rgba-command.json",
+                "inspections/native-189-validate/probe.stdout",
+                "inspections/native-189-validate/probe.stderr",
+                "inspections/native-189-validate/rgb.stdout"
+              ],
+              "totalBytes": 312,
+              "complete": false,
+              "enumeration": {
+                "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                "complete": false,
+                "directories": [
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                    "directories": [
+                      "captures",
+                      "inspections",
+                      "extra-directory"
+                    ],
+                    "files": []
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                    "directories": [
+                      "motion-thalune-run-lod0"
+                    ],
+                    "files": []
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                    "directories": [],
+                    "files": [
+                      "frame-map.json",
+                      "primary.mp4"
+                    ]
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                    "directories": [
+                      "native-189-validate"
+                    ],
+                    "files": []
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                    "directories": [],
+                    "files": [
+                      "rgb-command.json",
+                      "surplus-refusal.json",
+                      "rgba.stderr",
+                      "rgba.stdout",
+                      "rgb.stderr",
+                      "probe-command.json",
+                      "validation.json",
+                      "rgba-command.json",
+                      "probe.stdout",
+                      "probe.stderr",
+                      "rgb.stdout"
+                    ]
+                  }
+                ],
+                "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+                "failure": {
+                  "type": "OSError",
+                  "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+                  "details": {
+                    "args": [
+                      5,
+                      "INJECTED_SCANDIR_OPEN_ERROR"
+                    ],
+                    "errno": 5,
+                    "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                    "filename2": null
+                  }
+                }
+              },
+              "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout"
+            },
+            "args": [
+              5,
+              "INJECTED_SCANDIR_OPEN_ERROR"
+            ],
+            "errno": 5,
+            "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+            "filename2": null
+          },
+          "observation": "outputBytes"
+        }
+      ],
+      "nativeJobs": 2,
+      "pipelineSeconds": 0.0029798749601468444,
+      "outputInventory": {
+        "normalBytes": 310,
+        "reservedBytes": 0,
+        "files": 13,
+        "reservedFiles": 0,
+        "paths": [
+          "captures/motion-thalune-run-lod0/frame-map.json",
+          "captures/motion-thalune-run-lod0/primary.mp4",
+          "inspections/native-189-validate/rgb-command.json",
+          "inspections/native-189-validate/surplus-refusal.json",
+          "inspections/native-189-validate/rgba.stderr",
+          "inspections/native-189-validate/rgba.stdout",
+          "inspections/native-189-validate/rgb.stderr",
+          "inspections/native-189-validate/probe-command.json",
+          "inspections/native-189-validate/validation.json",
+          "inspections/native-189-validate/rgba-command.json",
+          "inspections/native-189-validate/probe.stdout",
+          "inspections/native-189-validate/probe.stderr",
+          "inspections/native-189-validate/rgb.stdout"
+        ],
+        "totalBytes": 312,
+        "complete": false,
+        "enumeration": {
+          "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+          "complete": false,
+          "directories": [
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+              "directories": [
+                "captures",
+                "inspections",
+                "extra-directory"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+              "directories": [
+                "motion-thalune-run-lod0"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+              "directories": [],
+              "files": [
+                "frame-map.json",
+                "primary.mp4"
+              ]
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+              "directories": [
+                "native-189-validate"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+              "directories": [],
+              "files": [
+                "rgb-command.json",
+                "surplus-refusal.json",
+                "rgba.stderr",
+                "rgba.stdout",
+                "rgb.stderr",
+                "probe-command.json",
+                "validation.json",
+                "rgba-command.json",
+                "probe.stdout",
+                "probe.stderr",
+                "rgb.stdout"
+              ]
+            }
+          ],
+          "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+          "failure": {
+            "type": "OSError",
+            "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+            "details": {
+              "args": [
+                5,
+                "INJECTED_SCANDIR_OPEN_ERROR"
+              ],
+              "errno": 5,
+              "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+              "filename2": null
+            }
+          }
+        },
+        "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout"
+      },
+      "freeBytesAfter": 31028736000,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "83027828e373343cfd0e28c53af42653cbe9b416734449e28ff2d94ba3bf368f"
+        },
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/proof/jobs/native-189-validate/receipt.json",
+          "sha256": "544772c50d20e332f3f025081c8b268698f30b8896a2fb3abf30bce0bed2e706"
+        }
+      ],
+      "terminalPersistenceFailures": [
+        {
+          "type": "OSError",
+          "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+          "details": {
+            "inventoryObservation": {
+              "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+              "complete": false,
+              "directories": [
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                  "directories": [
+                    "captures",
+                    "inspections",
+                    "extra-directory"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                  "directories": [
+                    "motion-thalune-run-lod0"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                  "directories": [],
+                  "files": [
+                    "frame-map.json",
+                    "primary.mp4"
+                  ]
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                  "directories": [
+                    "native-189-validate"
+                  ],
+                  "files": []
+                },
+                {
+                  "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                  "directories": [],
+                  "files": [
+                    "rgb-command.json",
+                    "surplus-refusal.json",
+                    "rgba.stderr",
+                    "rgba.stdout",
+                    "rgb.stderr",
+                    "probe-command.json",
+                    "validation.json",
+                    "rgba-command.json",
+                    "probe.stdout",
+                    "probe.stderr",
+                    "rgb.stdout"
+                  ]
+                }
+              ],
+              "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+              "failure": {
+                "type": "OSError",
+                "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+                "details": {
+                  "args": [
+                    5,
+                    "INJECTED_SCANDIR_OPEN_ERROR"
+                  ],
+                  "errno": 5,
+                  "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                  "filename2": null
+                }
+              }
+            },
+            "packetInventory": {
+              "normalBytes": 310,
+              "reservedBytes": 0,
+              "files": 13,
+              "reservedFiles": 0,
+              "paths": [
+                "captures/motion-thalune-run-lod0/frame-map.json",
+                "captures/motion-thalune-run-lod0/primary.mp4",
+                "inspections/native-189-validate/rgb-command.json",
+                "inspections/native-189-validate/surplus-refusal.json",
+                "inspections/native-189-validate/rgba.stderr",
+                "inspections/native-189-validate/rgba.stdout",
+                "inspections/native-189-validate/rgb.stderr",
+                "inspections/native-189-validate/probe-command.json",
+                "inspections/native-189-validate/validation.json",
+                "inspections/native-189-validate/rgba-command.json",
+                "inspections/native-189-validate/probe.stdout",
+                "inspections/native-189-validate/probe.stderr",
+                "inspections/native-189-validate/rgb.stdout"
+              ],
+              "totalBytes": 312,
+              "complete": false,
+              "enumeration": {
+                "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                "complete": false,
+                "directories": [
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet",
+                    "directories": [
+                      "captures",
+                      "inspections",
+                      "extra-directory"
+                    ],
+                    "files": []
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures",
+                    "directories": [
+                      "motion-thalune-run-lod0"
+                    ],
+                    "files": []
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/captures/motion-thalune-run-lod0",
+                    "directories": [],
+                    "files": [
+                      "frame-map.json",
+                      "primary.mp4"
+                    ]
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections",
+                    "directories": [
+                      "native-189-validate"
+                    ],
+                    "files": []
+                  },
+                  {
+                    "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate",
+                    "directories": [],
+                    "files": [
+                      "rgb-command.json",
+                      "surplus-refusal.json",
+                      "rgba.stderr",
+                      "rgba.stdout",
+                      "rgb.stderr",
+                      "probe-command.json",
+                      "validation.json",
+                      "rgba-command.json",
+                      "probe.stdout",
+                      "probe.stderr",
+                      "rgb.stdout"
+                    ]
+                  }
+                ],
+                "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout",
+                "failure": {
+                  "type": "OSError",
+                  "message": "[Errno 5] INJECTED_SCANDIR_OPEN_ERROR: '/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory'",
+                  "details": {
+                    "args": [
+                      5,
+                      "INJECTED_SCANDIR_OPEN_ERROR"
+                    ],
+                    "errno": 5,
+                    "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+                    "filename2": null
+                  }
+                }
+              },
+              "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/inspections/native-189-validate/rgb.stdout"
+            },
+            "args": [
+              5,
+              "INJECTED_SCANDIR_OPEN_ERROR"
+            ],
+            "errno": 5,
+            "filename": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/extra-directory",
+            "filename2": null
+          },
+          "sink": "packet"
+        }
+      ],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/proof/result.json",
+          "status": "written",
+          "sha256": "8ad2af92b84e8125e73d3e2e22c096eff2db141c16aa328ed4716a942f26dcf5",
+          "bytes": 35840
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-scan-open/packet/integration-result.json",
+          "status": "failed"
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "hiddenBytes": 67108865,
+    "nativeProcesses": 0
+  },
+  {
+    "name": "packet-entry-type",
+    "status": "DEFECT_REPRODUCED",
+    "injection": [
+      {
+        "boundary": "DirEntry.is_dir",
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/extra-directory",
+        "errno": 5
+      },
+      {
+        "boundary": "DirEntry.is_dir",
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/extra-directory",
+        "errno": 5
+      },
+      {
+        "boundary": "DirEntry.is_dir",
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/extra-directory",
+        "errno": 5
+      }
+    ],
+    "result": {
+      "status": "NATIVE189_CHECKS_PASSED_AWAITING_PARENT_EXIT",
+      "primaryFailure": null,
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "inspectionObservations": {
+        "deadlineSeconds": 30,
+        "positive": {
+          "accepted": true,
+          "frames": 189,
+          "everyRgbAndRgbaHash": true,
+          "videoSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "frameMapSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        "surplus": {
+          "accepted": false,
+          "frames": 190,
+          "expectedRefusal": true
+        },
+        "descriptors": [
+          {
+            "path": "/",
+            "parentFd": null,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "/",
+              "dev": 16777232,
+              "ino": 2,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 736,
+              "mtime": 1790233837000000000,
+              "ctime": 1790233837000000000,
+              "links": 23
+            },
+            "after": {
+              "path": "/",
+              "dev": 16777232,
+              "ino": 2,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 736,
+              "mtime": 1790233837000000000,
+              "ctime": 1790233837000000000,
+              "links": 23
+            }
+          },
+          {
+            "path": "private",
+            "parentFd": 3,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "private",
+              "dev": 16777232,
+              "ino": 22907066,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1793752979086280124,
+              "ctime": 1793752979086280124,
+              "links": 6
+            },
+            "after": {
+              "path": "private",
+              "dev": 16777232,
+              "ino": 22907066,
+              "uid": 0,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 192,
+              "mtime": 1793752979086280124,
+              "ctime": 1793752979086280124,
+              "links": 6
+            }
+          },
+          {
+            "path": "tmp",
+            "parentFd": 4,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "tmp",
+              "dev": 16777232,
+              "ino": 315902304,
+              "uid": 0,
+              "gid": 0,
+              "mode": 17407,
+              "bytes": 256192,
+              "mtime": 1794041168076456259,
+              "ctime": 1794041168076456259,
+              "links": 8006
+            },
+            "after": {
+              "path": "tmp",
+              "dev": 16777232,
+              "ino": 315902304,
+              "uid": 0,
+              "gid": 0,
+              "mode": 17407,
+              "bytes": 256192,
+              "mtime": 1794041168076456259,
+              "ctime": 1794041168076456259,
+              "links": 8006
+            }
+          },
+          {
+            "path": "t02-r8-correction-0907hb14",
+            "parentFd": 5,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "t02-r8-correction-0907hb14",
+              "dev": 16777232,
+              "ino": 486783782,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16832,
+              "bytes": 128,
+              "mtime": 1794041168063747605,
+              "ctime": 1794041168063747605,
+              "links": 4
+            },
+            "after": {
+              "path": "t02-r8-correction-0907hb14",
+              "dev": 16777232,
+              "ino": 486783782,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16832,
+              "bytes": 128,
+              "mtime": 1794041168063747605,
+              "ctime": 1794041168063747605,
+              "links": 4
+            }
+          },
+          {
+            "path": "red",
+            "parentFd": 6,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "red",
+              "dev": 16777232,
+              "ino": 486783783,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 288,
+              "mtime": 1794041168230325745,
+              "ctime": 1794041168230325745,
+              "links": 9
+            },
+            "after": {
+              "path": "red",
+              "dev": 16777232,
+              "ino": 486783783,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 288,
+              "mtime": 1794041168230325745,
+              "ctime": 1794041168230325745,
+              "links": 9
+            }
+          },
+          {
+            "path": "additional-packet-entry-type",
+            "parentFd": 7,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "additional-packet-entry-type",
+              "dev": 16777232,
+              "ino": 486783955,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168230484037,
+              "ctime": 1794041168230484037,
+              "links": 4
+            },
+            "after": {
+              "path": "additional-packet-entry-type",
+              "dev": 16777232,
+              "ino": 486783955,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168230484037,
+              "ctime": 1794041168230484037,
+              "links": 4
+            }
+          },
+          {
+            "path": "packet",
+            "parentFd": 8,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "packet",
+              "dev": 16777232,
+              "ino": 486783956,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 160,
+              "mtime": 1794041168232527542,
+              "ctime": 1794041168232527542,
+              "links": 5
+            },
+            "after": {
+              "path": "packet",
+              "dev": 16777232,
+              "ino": 486783956,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 160,
+              "mtime": 1794041168232527542,
+              "ctime": 1794041168232527542,
+              "links": 5
+            }
+          },
+          {
+            "path": "captures",
+            "parentFd": 9,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "captures",
+              "dev": 16777232,
+              "ino": 486783958,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794041168230641621,
+              "ctime": 1794041168230641621,
+              "links": 3
+            },
+            "after": {
+              "path": "captures",
+              "dev": 16777232,
+              "ino": 486783958,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 96,
+              "mtime": 1794041168230641621,
+              "ctime": 1794041168230641621,
+              "links": 3
+            }
+          },
+          {
+            "path": "motion-thalune-run-lod0",
+            "parentFd": 10,
+            "operation": "directory",
+            "closed": true,
+            "opened": {
+              "path": "motion-thalune-run-lod0",
+              "dev": 16777232,
+              "ino": 486783959,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168230881163,
+              "ctime": 1794041168230881163,
+              "links": 4
+            },
+            "after": {
+              "path": "motion-thalune-run-lod0",
+              "dev": 16777232,
+              "ino": 486783959,
+              "uid": 501,
+              "gid": 0,
+              "mode": 16877,
+              "bytes": 128,
+              "mtime": 1794041168230881163,
+              "ctime": 1794041168230881163,
+              "links": 4
+            }
+          },
+          {
+            "path": "primary.mp4",
+            "parentFd": 11,
+            "operation": "content",
+            "closed": true,
+            "opened": {
+              "path": "primary.mp4",
+              "dev": 16777232,
+              "ino": 486783960,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168230772621,
+              "ctime": 1794041168230772621,
+              "links": 1
+            },
+            "after": {
+              "path": "primary.mp4",
+              "dev": 16777232,
+              "ino": 486783960,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168230772621,
+              "ctime": 1794041168230772621,
+              "links": 1
+            }
+          },
+          {
+            "path": "frame-map.json",
+            "parentFd": 11,
+            "operation": "content",
+            "closed": true,
+            "opened": {
+              "path": "frame-map.json",
+              "dev": 16777232,
+              "ino": 486783961,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168230927955,
+              "ctime": 1794041168230927955,
+              "links": 1
+            },
+            "after": {
+              "path": "frame-map.json",
+              "dev": 16777232,
+              "ino": 486783961,
+              "uid": 501,
+              "gid": 0,
+              "mode": 33188,
+              "bytes": 2,
+              "mtime": 1794041168230927955,
+              "ctime": 1794041168230927955,
+              "links": 1
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "primary.mp4",
+            "dev": 16777232,
+            "ino": 486783960,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 2,
+            "mtime": 1794041168230772621,
+            "ctime": 1794041168230772621,
+            "links": 1,
+            "limitBytes": 39354368
+          },
+          {
+            "path": "frame-map.json",
+            "dev": 16777232,
+            "ino": 486783961,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 2,
+            "mtime": 1794041168230927955,
+            "ctime": 1794041168230927955,
+            "links": 1,
+            "limitBytes": 67108864
+          }
+        ],
+        "files": [
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/captures/motion-thalune-run-lod0/primary.mp4",
+            "readBytes": 2,
+            "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          },
+          {
+            "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/captures/motion-thalune-run-lod0/frame-map.json",
+            "readBytes": 2,
+            "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "contentBytesRead": 4
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          }
+        },
+        {
+          "attemptPath": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/proof/jobs/native-189-validate/receipt.json",
+          "releaseProved": true,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          }
+        }
+      ],
+      "terminalAuditFailures": [],
+      "nativeJobs": 2,
+      "pipelineSeconds": 0.003203290980309248,
+      "outputInventory": {
+        "normalBytes": 310,
+        "reservedBytes": 0,
+        "files": 13,
+        "reservedFiles": 0,
+        "paths": [
+          "captures/motion-thalune-run-lod0/frame-map.json",
+          "captures/motion-thalune-run-lod0/primary.mp4",
+          "inspections/native-189-validate/rgb-command.json",
+          "inspections/native-189-validate/surplus-refusal.json",
+          "inspections/native-189-validate/rgba.stderr",
+          "inspections/native-189-validate/rgba.stdout",
+          "inspections/native-189-validate/rgb.stderr",
+          "inspections/native-189-validate/probe-command.json",
+          "inspections/native-189-validate/validation.json",
+          "inspections/native-189-validate/rgba-command.json",
+          "inspections/native-189-validate/probe.stdout",
+          "inspections/native-189-validate/probe.stderr",
+          "inspections/native-189-validate/rgb.stdout"
+        ],
+        "totalBytes": 312,
+        "complete": true,
+        "enumeration": {
+          "root": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet",
+          "complete": true,
+          "directories": [
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet",
+              "directories": [
+                "captures",
+                "inspections"
+              ],
+              "files": [
+                "extra-directory"
+              ]
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/captures",
+              "directories": [
+                "motion-thalune-run-lod0"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/captures/motion-thalune-run-lod0",
+              "directories": [],
+              "files": [
+                "frame-map.json",
+                "primary.mp4"
+              ]
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/inspections",
+              "directories": [
+                "native-189-validate"
+              ],
+              "files": []
+            },
+            {
+              "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/inspections/native-189-validate",
+              "directories": [],
+              "files": [
+                "rgb-command.json",
+                "surplus-refusal.json",
+                "rgba.stderr",
+                "rgba.stdout",
+                "rgb.stderr",
+                "probe-command.json",
+                "validation.json",
+                "rgba-command.json",
+                "probe.stdout",
+                "probe.stderr",
+                "rgb.stdout"
+              ]
+            }
+          ]
+        }
+      },
+      "outputBytes": 312,
+      "freeBytesAfter": 31028563968,
+      "terminalReleaseProved": true,
+      "receiptFallbacks": [],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "83027828e373343cfd0e28c53af42653cbe9b416734449e28ff2d94ba3bf368f"
+        },
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/proof/jobs/native-189-validate/receipt.json",
+          "sha256": "544772c50d20e332f3f025081c8b268698f30b8896a2fb3abf30bce0bed2e706"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/proof/result.json",
+          "status": "written",
+          "sha256": "fb8676bd09279e118e5d6e39986c93ca95cd1a7778d5b4449cb777471384109f",
+          "bytes": 14522
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-packet-entry-type/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "782f12488e7416f7c5bfe520745ce12c56507287bb07fcf050fc0b0b5c134380",
+          "bytes": 14621
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "hiddenBytes": 67108865,
+    "nativeProcesses": 0
+  },
+  {
+    "name": "abandoned-enumeration",
+    "status": "PASS",
+    "facts": {
+      "root": "/private/tmp/t02-r8-correction-0907hb14/red/abandoned-enumeration",
+      "complete": false,
+      "directories": [
+        {
+          "path": "/private/tmp/t02-r8-correction-0907hb14/red/abandoned-enumeration",
+          "directories": [],
+          "files": [
+            "known"
+          ]
+        }
+      ],
+      "pendingPath": "/private/tmp/t02-r8-correction-0907hb14/red/abandoned-enumeration/known"
+    }
+  },
+  {
+    "name": "unbound-normal",
+    "status": "PASS",
+    "primary": {
+      "type": "AssertionError",
+      "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound",
+      "details": {
+        "args": [
+          "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/not-bound"
+        ]
+      }
+    },
+    "terminalDelivery": {
+      "proof": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/proof/result.json",
+        "status": "written",
+        "sha256": "cba1155a46e0101d0739b15f448e18a03208da00acb9e29e01170d28f40a2a25",
+        "bytes": 15603
+      },
+      "packet": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-normal/packet/integration-result.json",
+        "status": "written",
+        "completeObservations": true,
+        "sha256": "a9ed325a84982338b501e729a7e9d614510f2cc6ff1dbb060d31225e6c07a562",
+        "bytes": 15702
+      },
+      "completeObservationsPersisted": true,
+      "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+    },
+    "nativeProcesses": 0
+  },
+  {
+    "name": "unbound-helper-write",
+    "status": "PASS",
+    "primary": {
+      "type": "AssertionError",
+      "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound",
+      "details": {
+        "args": [
+          "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/not-bound"
+        ]
+      }
+    },
+    "terminalDelivery": {
+      "proof": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/proof/result.json",
+        "status": "written",
+        "sha256": "9633ac408e37ea92d1095fb2cc5c27d275c0bb9609ff1cc94b8d56517187d4a4",
+        "bytes": 15299
+      },
+      "packet": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-helper-write/packet/integration-result.json",
+        "status": "written",
+        "completeObservations": true,
+        "sha256": "d65408114911d72f068994ed3ce231e1aca6980bb0bfac32c9ec064ca019dcf9",
+        "bytes": 15398
+      },
+      "completeObservationsPersisted": true,
+      "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+    },
+    "nativeProcesses": 0
+  },
+  {
+    "name": "unbound-all-sinks",
+    "status": "PASS",
+    "primary": {
+      "type": "AssertionError",
+      "message": "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound",
+      "details": {
+        "args": [
+          "Unbound CPU executable: /private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/not-bound"
+        ]
+      }
+    },
+    "terminalDelivery": {
+      "proof": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/proof/result.json",
+        "status": "failed"
+      },
+      "packet": {
+        "path": "/private/tmp/t02-r8-correction-0907hb14/red/additional-observer/observer-path-unbound-all-sinks/packet/integration-result.json",
+        "status": "failed"
+      },
+      "completeObservationsPersisted": false,
+      "scope": "Files are snapshots; subsequent delivery errors remain in the returned result",
+      "stdout": {
+        "status": "failed"
+      },
+      "stderr": {
+        "status": "failed"
+      }
+    },
+    "nativeProcesses": 0
+  }
+]

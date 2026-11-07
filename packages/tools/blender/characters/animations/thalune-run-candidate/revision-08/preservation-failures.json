@@ -1,0 +1,14 @@
+{
+  "first": {
+    "source": "Tool session 86811 observed stderr",
+    "exitCode": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/t02-r8-correction-0907hb14/protect.py\", line 7, in <module>\n    p=Path(name);s=p.lstat();now=dict(mode=s.st_mode,bytes=s.st_size,dev=s.st_dev,ino=s.st_ino,mtime=s.st_mtime_ns)\n                   ^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 847, in lstat\n    return self.stat(follow_symlinks=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 840, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/.pnpm-task-run-state-v1/44f3e59d9af66daa13e7fcb01c79a7285025ae7bf43c5566cb06bce55cc11aac.01a1b516a662-14929-1.finished'\n"
+  },
+  "second": {
+    "source": "Tool session 36172 observed result and stderr",
+    "exitCode": 1,
+    "result": "protected-after-facts.json",
+    "ending": "AssertionError",
+    "qualification": "The full comparison completed and deliberately asserted the recorded nonempty differences."
+  }
+}
