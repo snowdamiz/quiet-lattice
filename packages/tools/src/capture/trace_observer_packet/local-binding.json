@@ -61,6 +61,68 @@
       }
     }
   },
+  "appleMetalCompilerBinding": {
+    "atEpochSeconds": 1794047303.558851,
+    "commands": [
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "-d",
+          "--verbose=4",
+          "-r-",
+          "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+        ],
+        "exit": 0,
+        "stderr": "Executable=/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\nIdentifier=com.apple.MTLCompilerService\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=565 flags=0x0(none) hashes=7+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=0564f4ea2063dbc3a9de0ac47ded14661384d230\nCandidateCDHashFull sha256=0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9\nHash choices=sha256\nCMSDigest=0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=32768\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=0564f4ea2063dbc3a9de0ac47ded14661384d230\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 10, 2026 at 2:13:14\u202fAM\nInfo.plist entries=21\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n",
+        "stdout": "designated => identifier \"com.apple.MTLCompilerService\" and anchor apple\n"
+      },
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "--verify",
+          "--strict",
+          "-R",
+          "=identifier \"com.apple.MTLCompilerService\" and anchor apple",
+          "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+        ],
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    ],
+    "identities": {
+      "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService": {
+        "binding": {
+          "bytes": 389760,
+          "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+          "sha256": "65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b"
+        },
+        "currentUserWritable": false,
+        "groupOrOtherWritable": false,
+        "stamp": [16777232, 1152921500312166635, 33261, 0, 389760, 1790233837000000000, 1790233837000000000]
+      },
+      "/usr/bin/codesign": {
+        "binding": {
+          "bytes": 973408,
+          "path": "/usr/bin/codesign",
+          "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+        },
+        "currentUserWritable": false,
+        "groupOrOtherWritable": false,
+        "stamp": [16777232, 1152921500312607711, 33261, 0, 973408, 1790233837000000000, 1790233837000000000]
+      }
+    },
+    "kind": "T13_EXACT_SIGNED_APPLE_EXECUTABLE_OBSERVATION_V1",
+    "runtimeAuthorized": false,
+    "scope": "Read-only signed executable prerequisite; actual current UID/birth/coalition membership remains required. External XPC ownership UNQUALIFIED.",
+    "signature": {
+      "canonicalPath": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "cdhash": "0564f4ea2063dbc3a9de0ac47ded14661384d230",
+      "identifier": "com.apple.MTLCompilerService",
+      "platform": "26",
+      "requirement": "identifier \"com.apple.MTLCompilerService\" and anchor apple"
+    }
+  },
   "appleSetStoreBinding": {
     "atEpochSeconds": 1794044458.6566331,
     "commands": [
@@ -2852,6 +2914,11 @@
       "bytes": 220272,
       "path": "/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService",
       "sha256": "6ed9e684540cdeeece3efb21da956596371dc2f823413c9964f20a105fef32d9"
+    },
+    {
+      "bytes": 389760,
+      "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "sha256": "65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b"
     }
   ],
   "browser": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
