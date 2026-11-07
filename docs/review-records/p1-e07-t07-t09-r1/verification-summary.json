@@ -1,0 +1,70 @@
+{
+  "sourceHead": "d8f3f41caba90e5d5250dca033af907d28bef605",
+  "sourceTree": "3192e439a08b853a4345cfae88724ba16a841fd6",
+  "originalReviewRed": {
+    "total": 9,
+    "failed": 4,
+    "passed": 5,
+    "base": "c115e93786890160fcc0592aeb3bc15934343fd3"
+  },
+  "permanentRed": {
+    "total": 38,
+    "failed": 19,
+    "passed": 19,
+    "onlineAndSpecBase": "c115e93786890160fcc0592aeb3bc15934343fd3"
+  },
+  "reviewControlsGreen": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "focusedFinal": {
+    "baselineCount": 348,
+    "finalCount": 378,
+    "retainedBaselineCount": 348,
+    "newCount": 30,
+    "addedTests": [
+      "R1 live lifecycle predicates accepts a living target with actual source-attributed health loss",
+      "R1 live lifecycle predicates accepts only the fresh identified live observer/enemy control",
+      "R1 live lifecycle predicates rejects a corpse after a credited killing hit",
+      "R1 live lifecycle predicates rejects attack phase without health loss",
+      "R1 live lifecycle predicates rejects companion instance retained",
+      "R1 live lifecycle predicates rejects companion remote retained",
+      "R1 live lifecycle predicates rejects companion snapshot retained",
+      "R1 live lifecycle predicates rejects corpse plus missing observer",
+      "R1 live lifecycle predicates rejects dead enemy",
+      "R1 live lifecycle predicates rejects dead observer",
+      "R1 live lifecycle predicates rejects different enemy frame",
+      "R1 live lifecycle predicates rejects different enemy kind",
+      "R1 live lifecycle predicates rejects different enemy species",
+      "R1 live lifecycle predicates rejects different observer frame",
+      "R1 live lifecycle predicates rejects different observer identity",
+      "R1 live lifecycle predicates rejects different observer kind",
+      "R1 live lifecycle predicates rejects disconnected observer",
+      "R1 live lifecycle predicates rejects enemy corpse mode",
+      "R1 live lifecycle predicates rejects health loss with no companion hit",
+      "R1 live lifecycle predicates rejects missing observer",
+      "R1 live lifecycle predicates rejects owner retained",
+      "R1 live lifecycle predicates rejects stale snapshot",
+      "R1 online lifecycle attempts all owned cleanup after Vite close fails (synchronous=false)",
+      "R1 online lifecycle attempts all owned cleanup after Vite close fails (synchronous=true)",
+      "R1 online lifecycle cleans only its own scratch database after migration fails",
+      "R1 online lifecycle closes the created handle after listen fails and preserves listen error identity",
+      "R1 online lifecycle passes borrowed routes to migration and never creates/drops them",
+      "R1 online lifecycle preserves the primary setup failure when server termination fails",
+      "R1 online lifecycle retains both bounded close failures and attempts KILL after TERM timeout",
+      "R1 online lifecycle retains listen failure plus both owned stop errors"
+    ],
+    "failed": 0,
+    "pending": 0,
+    "files": 17
+  },
+  "runtimeExecuted": false,
+  "fixtureInventory": {
+    "tests": 1,
+    "files": 1,
+    "skipOrFixmeInDedicatedSources": false,
+    "discoveryOnly": true
+  },
+  "allFinalChecksPassed": true
+}

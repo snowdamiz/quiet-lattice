@@ -1,0 +1,16 @@
+--- original-controls
++++ controls-with-required-witness-context
+@@ -95,10 +95,10 @@
+   const substituted = new Function(...Object.keys(args), 'return `'+source+'`;')(...Object.values(args));
+   return new Function('window','return ('+substituted+');');
+ }
+-const retirement = oracle('window.game.net.joined &&', {enemy:33,owner:11,companion:22});
++const retirement = oracle('window.game.net.joined &&', {enemy:33,owner:11,companion:22,observer:44,arena:{frame:'123:4',enemy:{index:7}},release:{tick:30}});
+ const combat = oracle("window.symbioticQa.messages.some(m => m.t === 'event'", {companion:22, enemy:33, beforeHp:[1,1], i:0});
+-function world(enemy, observer={id:44,kind:'player',mode:'foot',hp:1}) {
+-  return { game:{net:{joined:true,store:{entities:new Map([[33,enemy],...(observer?[[44,observer]]:[])])}},remotes:{get:()=>undefined},fauna:{shown:[]}}, symbioticQa:{messages:[]} };
++function world(enemy, observer={id:44,kind:'player',frame:'123:4',mode:'foot',hp:1}) {
++  return { game:{net:{joined:true,entityId:44,store:{tick:31,entities:new Map([[33,{frame:'123:4',species:7,...enemy}],...(observer?[[44,observer]]:[])])}},remotes:{get:()=>undefined},fauna:{shown:[]}}, symbioticQa:{messages:[]} };
+ }
+ describe('negative controls against exact source predicates; no live snapshot claim',()=>{
+   it('rejects HP loss without a source-attributed combat event',()=>{

@@ -1,0 +1,11 @@
+import net from 'node:net';
+import tls from 'node:tls';
+import dgram from 'node:dgram';
+import { syncBuiltinESMExports } from 'node:module';
+const denied = function () { throw new Error('REVIEW_BOUNDARY: network/service access is prohibited'); };
+net.Socket.prototype.connect = denied;
+net.Server.prototype.listen = denied;
+tls.connect = denied;
+dgram.Socket.prototype.bind = denied;
+globalThis.fetch = denied;
+syncBuiltinESMExports();

@@ -1,0 +1,113 @@
+import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+const state = vi.hoisted(() => ({ calls: [], migrations: [], sql: [], createError: null, listenError: null, viteCloseError: null, killError: null, nextPort: 31000 }));
+vi.mock('node:net', () => ({ createServer: () => ({ once() {}, listen(_port, _host, ready) { ready(); }, address() { return {port: state.nextPort++}; }, close(done) { done(); } }) }));
+vi.mock('node:child_process', async () => {
+  const { EventEmitter } = await import('node:events');
+  return {
+    spawnSync(_exe, args, options) {
+      state.calls.push(['spawnSync', args]);
+      if (options.env.STATEMENT) state.sql.push(options.env.STATEMENT);
+      else state.migrations.push(options.env);
+      return {status:0, stdout:'', stderr:''};
+    },
+    spawn(_exe, _args, options) {
+      state.calls.push(['spawn', options.env]);
+      const child = new EventEmitter();
+      child.stdout = new EventEmitter(); child.stderr = new EventEmitter();
+      child.exitCode = null; child.signalCode = null;
+      child.kill = (signal) => {
+        state.calls.push(['kill', signal]);
+        if (state.killError) throw state.killError;
+        queueMicrotask(() => { child.signalCode = signal; child.emit('exit', null, signal); });
+        return true;
+      };
+      return child;
+    },
+  };
+});
+vi.mock('vite', () => ({
+  createLogger: () => ({error() {}}),
+  createServer: async () => {
+    state.calls.push(['createVite']);
+    if (state.createError) throw state.createError;
+    return {
+      listen: async () => { state.calls.push(['listenVite']); if (state.listenError) throw state.listenError; },
+      close: async () => { state.calls.push(['closeVite']); if (state.viteCloseError) throw state.viteCloseError; },
+    };
+  },
+}));
+const privateRoutes = {claimedDatabaseUrl:'postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_review00', redisUrl:'redis://127.0.0.1:53058/8'};
+function errors(error) { return error ? [error, ...(error.errors ?? []).flatMap(errors), ...errors(error.cause)] : []; }
+async function start(options=privateRoutes) { return (await import('/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/online.ts')).startOnline(options); }
+beforeEach(() => {
+  vi.resetModules();
+  Object.assign(state, {calls:[], migrations:[], sql:[], createError:null, listenError:null, viteCloseError:null, killError:null});
+  vi.stubEnv('DATABASE_URL', undefined); vi.stubEnv('REDIS_URL', undefined);
+  vi.stubGlobal('fetch', vi.fn(async () => ({ok:true})));
+});
+afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
+describe('actual online.ts with in-memory OS/service adapters only', () => {
+  it('keeps borrowed routes before migration and never creates or drops the borrowed database', async () => {
+    const online = await start(); await online.stop();
+    expect(state.sql).toEqual([]);
+    expect(state.migrations[0]).toMatchObject({DATABASE_URL:privateRoutes.claimedDatabaseUrl, REDIS_URL:privateRoutes.redisUrl});
+    expect(state.calls.filter(c => c[0]==='closeVite')).toHaveLength(1);
+    expect(state.calls.filter(c => c[0]==='kill')).toEqual([['kill','SIGTERM']]);
+  });
+  it('retains ordinary callers scratch database create/drop and Redis7', async () => {
+    const online = await start({}); await online.stop();
+    expect(state.sql).toHaveLength(2);
+    expect(state.sql[0]).toMatch(/^CREATE DATABASE "astra_smoke_/);
+    expect(state.sql[1]).toMatch(/^DROP DATABASE IF EXISTS "astra_smoke_/);
+    expect(state.migrations[0].REDIS_URL).toBe('redis://127.0.0.1:56379/7');
+  });
+  it('attempts server stop after an asynchronous Vite close rejection', async () => {
+    const online = await start(); state.viteCloseError = Error('Vite close failed');
+    await expect(online.stop()).rejects.toBe(state.viteCloseError);
+    expect(state.calls).toContainEqual(['kill','SIGTERM']);
+  });
+  it('REQUIRED: preserves the primary setup failure alongside a server-stop failure', async () => {
+    state.createError = Error('primary Vite startup failure'); state.killError = Error('server TERM failure');
+    const outcome = await start().catch(e => e);
+    expect(errors(outcome)).toContain(state.createError);
+    expect(errors(outcome)).toContain(state.killError);
+  });
+  it('REQUIRED: closes the created Vite handle when listen fails', async () => {
+    state.listenError = Error('listen EADDRINUSE');
+    await expect(start()).rejects.toBe(state.listenError);
+    expect(state.calls).toContainEqual(['kill','SIGTERM']);
+    expect(state.calls).toContainEqual(['closeVite']);
+  });
+  it('REQUIRED: retains both errors when both owned stops fail', async () => {
+    const online = await start(); state.viteCloseError = Error('Vite close failed'); state.killError = Error('server TERM failed');
+    const outcome = await online.stop().catch(e => e);
+    expect(state.calls).toContainEqual(['closeVite']); expect(state.calls).toContainEqual(['kill','SIGTERM']);
+    expect(errors(outcome)).toContain(state.viteCloseError);
+    expect(errors(outcome)).toContain(state.killError);
+  });
+});
+const spec = readFileSync('/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts','utf8');
+function oracle(marker, args) {
+  const literals = [...spec.matchAll(/`([^`]+)`/gs)].map(m=>m[1]);
+  const source = literals.find(s=>s.startsWith(marker));
+  if (!source) throw Error('Production predicate not found');
+  const substituted = new Function(...Object.keys(args), 'return `'+source+'`;')(...Object.values(args));
+  return new Function('window','return ('+substituted+');');
+}
+const retirement = oracle('window.game.net.joined &&', {enemy:33,owner:11,companion:22});
+const combat = oracle("window.symbioticQa.messages.some(m => m.t === 'event'", {companion:22, enemy:33, beforeHp:[1,1], i:0});
+function world(enemy, observer={id:44,kind:'player',mode:'foot',hp:1}) {
+  return { game:{net:{joined:true,store:{entities:new Map([[33,enemy],...(observer?[[44,observer]]:[])])}},remotes:{get:()=>undefined},fauna:{shown:[]}}, symbioticQa:{messages:[]} };
+}
+describe('negative controls against exact source predicates; no live snapshot claim',()=>{
+  it('rejects HP loss without a source-attributed combat event',()=>{
+    expect(combat(world({id:33,hp:0.8}))).toBe(false);
+  });
+  it('accepts live enemy and observer after owner/companion retirement',()=>{
+    expect(retirement(world({id:33,kind:'mob',hp:0.8,mode:'idle'}))).toBe(true);
+  });
+  it('REQUIRED: rejects a dead retained enemy and a missing observer',()=>{
+    expect(retirement(world({id:33,kind:'mob',hp:0,mode:'dead'},null))).toBe(false);
+  });
+});

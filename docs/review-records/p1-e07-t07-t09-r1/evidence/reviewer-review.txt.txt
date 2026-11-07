@@ -1,0 +1,86 @@
+TASK: Independent read-only review of the NEW combined P1.E07.T07 / P1.E08.T09 QA fixture
+VERDICT: REVISE — three P2 findings. Source/CPU review only; no live or pixel PASS.
+
+PIN AND SCOPE
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Branch: t3/P1-E07-T07-T09-live-qa
+HEAD: c115e93786890160fcc0592aeb3bc15934343fd3
+Tree: 9bd3faef187925791573d86c4673922df099c5f6
+Reviewed combined product: 74360adf8cfb8e0d5ee7c7e0dbee07de02808904
+Product tree: 1412b00e663b1d7f996a8073cdede83ca53cbce0
+New fixture source: 55f357cf01da755b07ed0e9a3b074cd6d0dfb7f4
+Source tree: 589c20a836ed318c563d714f2f8905fa049769a0
+Integration parent: bd44b70d9c6712f4216a0027f4c56ca7079b7e9e
+The enclosing final commit adds only docs/review-records/p1-e07-t07-t09-preparation/ evidence.
+Reviewed all six named files, the preparation Appendix C.2/provenance/future-QA instructions, plan 0.3/0.9.5/T07/T09/T02, and the referenced final source/QA reports. Traced real gateway, analysis, cast, fauna/combat, snapshot, client input, RemoteEntities, rendering and teardown consumers. Applied read-only review and TypeScript/type-system skills. No Potato mode or nested agents.
+
+FINDINGS
+
+F1 — P2 — Retirement can pass without live enemy/observer positive controls.
+Location: packages/tools/src/smoke/symbiotic-online.spec.ts:443-456, particularly :445; combat acceptance at :412 also permits hp=0.
+The retirement predicate requires net.joined and entities.has(enemy), but never inspects the enemy's hp/mode, nor requires the observer's own entity to remain present/alive. Net.joined is connection state, not character survival. The production combat owner intentionally leaves a killed creature as hp=0/mode=dead for DEATH_BEAT_S=3 (packages/server/src/combat/zone.ts:48,730-735). Therefore enemy membership is not an alive control. A kill after the combat screenshot freeze is thawed, before owner close reaches the server, can leave the corpse present when the removal predicate passes. The camera-ray and targetGone checks concern only the companion and do not repair this.
+Reproduction: controls.test.mjs:110 extracts and evaluates the exact source template predicate. With joined=true, owner/companion absent, no remote/drawn companion, enemy={hp:0,mode:'dead'}, and no observer entity, it returns true; the required rejection fails. The living enemy/observer positive control passes. This is a CPU falsification of the assertion, not a fabricated live snapshot or a claim that this sequence occurred in a browser.
+Correction: after a fresh post-disconnect snapshot require the exact observer entity to remain the expected live player in the arena and the enemy to be a live mob with hp>0/mode!='dead'. Record these states and snapshot tick in evidence; keep the real source-attributed hit + reduced HP check and ensure 0<hp<baseline before releasing the owner. Never satisfy survival by healing, respawning or rewriting snapshots.
+Classification: new fixture oracle gap. Required survivor proof is missing, even if the authorized live test happens to pass.
+
+F2 — P2 — Teardown loses primary and secondary failures.
+Locations: packages/tools/src/smoke/online.ts:154-158 and :216-218.
+When startup fails, catch awaits stop() before throwing err. If server termination or Vite cleanup rejects, stop's rejection replaces the startup error. Additionally, Promise.allSettled attempts both existing owned stops, but the following loop throws only the first rejected reason, discarding any second failure. The existing worker route/import tests do not exercise these cases.
+Reproductions against the actual imported startOnline, with only external OS/service APIs replaced by inert in-memory adapters:
+- createVite rejects with 'primary Vite startup failure'; server SIGTERM throws 'server TERM failure'. The caller receives only the latter, without cause/errors retaining the primary.
+- Once started, Vite.close and server SIGTERM both reject. Both stop calls are attempted, but the caller receives only the Vite error.
+Both required error-preservation assertions fail. A control verifies an asynchronous Vite close rejection does not prevent attempted server termination.
+Correction: collect all stop failures, and preserve the startup error plus cleanup errors using an AggregateError/cause structure. Do not catch-and-ignore failures or let cleanup replace the body/setup error. Preserve borrowed namespace ownership.
+Classification: setup catch masking is inherited from the shared harness; discarding additional allSettled failures is in the new stop implementation. Both remain reachable from this new fixture and violate the brief's failure-preservation requirement.
+
+F3 — P2 — A created Vite handle is not owned until after listen succeeds.
+Location: packages/tools/src/smoke/online.ts:185-192, especially :191-192.
+createVite returns v, then await v.listen() precedes vite=v. If listen rejects (including the free-port/strict-port race), catch calls stop while vite is still null. The created server's close method is never attempted; the fixture's online variable is also never assigned, so its afterAll cannot recover the handle. The server subprocess does get a stop attempt.
+Reproduction: actual startOnline with createVite returning a handle whose listen rejects 'listen EADDRINUSE'. The primary listen error is propagated and SIGTERM is attempted, but closeVite is absent. The required close assertion fails.
+Reachability verified in installed Vite 8.3.5 source: listen awaits startServer without failure cleanup; strict-port httpServerStart rejects when binding returns EADDRINUSE. These are external-boundary controls, not an actual port/server run.
+Correction: assign the returned Vite handle to the owned variable immediately after createVite resolves, before awaiting listen. Close it on every subsequent failure and retain all resulting errors per F2.
+Classification: retained pre-existing harness defect, not claimed to be introduced by 55f357cf. It directly violates the new fixture's promised all-owned-stops failure boundary. An outer process supervisor is containment, not evidence that this owned stop was attempted.
+
+INDEPENDENT PROVENANCE VERIFICATION
+- All five original/integrated stable patch IDs independently recomputed and equal.
+- Cumulative T07 original/combined patch ID: 086880307379fb409d59983981d5fc9b50ff5568.
+- T09 patch ID: b1fd1004af535769c57ece4b9bd4ce4095358a28.
+- All 55 distinct reviewed paths accounted for; no missing/extra integrated paths. All product/test final blobs equal their reviewed versions. ARCHITECTURE.md is the sole combined-document difference.
+- Stronger reconstruction: a fresh bare Git repository and index under this /tmp directory borrowed existing objects read-only, loaded the exact integration parent, and applied each original patch with git apply --cached --3way. All five applications exit 0 and each written temporary tree equals its corresponding integrated commit tree. No manual resolution occurred in this reconstruction. This independently demonstrates clean reproducibility; it does not infer hidden historical operator actions.
+- Exactly six fixture paths change between product and new source. All final source bytes remain identical under the documentation commit.
+- All 20 protected object comparisons match the parent, including plan/progress/decisions, exosuit/shared skills, server persistence/gatewayPersistence/helpers/skills/reputation/live-eligibility tests, Engine/modelLibrary/render, art tools, assets/Blender/public, manifest and lockfile.
+- Final Git status is clean; branch/HEAD/tree unchanged; all 61 reviewed/product/fixture file hashes match the initial audit and HEAD blobs; no special index flags. Final git diff --check exit 0.
+
+ASSERTION AND AUTHORITY TRACE
+- Staging: the only SQL update inserts the fresh skill state with one earned Symbiotic fragment before first join. No purchased Bond, codex entry, companion owner, damage or removal is seeded. Actual gateway skills unlock/buy/slot responses are checked. Admin teleports arrange the arena before movement measurement; admin spawn uses AdminService -> FaunaSim.spawnHerd. It does not grant the asserted Bond/combat outcome.
+- Eligibility/casting: fixture first demands a real target refusal before analysis, invokes Game.analyze, waits for result=new, and calls production castIntent -> Abilities.cast. The outgoing picked ID must be the companion. Gateway routes analyze to AnalysisService; alive/frame/range/LOS/phase checks precede codex.record; CastService.canBond consumes codex eligibility and normal skill/cost/cooldown checks. FaunaSim.bond changes ownership synchronously only after validation.
+- Shared visibility: BOTH pages require the same mob ID/species/owner and exact wire frame, correct client body and species name. inspect reads actual RemoteEntities and Fauna, locates the seed-indexed instance slot, checks camera-relative translation and species size, observes the actual mesh onAfterRender for the main camera, checks an on-screen anchor and requires production camera-ray picking at companion stages. No feed/replay path or snapshot write appears in this fixture; it rejects non-null remotes.offline/replay.
+- Frame/scale: RemoteEntities maps wire frame through networkFrameOf and localToWorld; Fauna composes r.world-camWorld with world orientation and species.size. The fixture's translation and column-length checks match those conventions. Per-creature 0.85-1.15 quantized scale remains E08.T02 and is not added as a review requirement. Render callbacks plus matrices are source-level render assertions; they do not prove pixel visibility/occlusion without the separate images.
+- Follow: real KeyS down/up drives production Input/Player motion and normal net input. The server store must show owner movement >14m; BOTH stores require owned companion distance <8m. Each client must then show >6m authoritative and rendered displacement, increased tick, visible instance and the picked companion. The measured movement is not an admin teleport.
+- Combat: the freshly spawned enemy is observed at hp=1 on both clients while the real server clock is frozen. One 50ms advance publishes through the normal 20Hz zone tick. After thaw, BOTH clients require positive combat event amount with source=companion and target=enemy AND lower authoritative enemy HP. Fauna companionStep invokes FaunaSim.strike -> CombatZone.applyDamage; zone.step sends snapshots then combat.flush. No attack-phase substitute and no fixture-authored event/snapshot. F1 concerns survivor proof, not the existence of this real damage oracle.
+- Disconnect: actual Net.close reaches gateway close -> ZoneManager.leave -> Zone.leave/despawn -> FaunaSim.dismissOwner; client SnapshotStore/RemoteEntities/Fauna removal and pick/targets absence are checked. Missing survivor assertions are F1.
+- Admission: top-level imports do not instantiate server DB/Redis clients. beforeAll validates exact private SQL host/port/user/name and Redis8 URL, then verifies SQL identity/empty public schema and Redis CLIENT INFO plus atomic sole-marker ownership, before startOnline migration/application startup. Routes are explicit in child env before imports; loadDotEnv does not override existing routing. Borrowed DB is neither CREATEd nor DROPped and Redis is not flushed. A passing in-memory boundary control confirms routing at the migration call. External claim acquisition, no-other-client checks, socket guard and cleanup belong to the QA parent; no current DB8/SQL claim or service state was verified here.
+- Bounds/inventory: one dedicated test has no skip/fixme path; dedicated config clears only the inherited ignore, disables redundant webServer, uses one worker/retries0, 420s global and 300s test timeout, finite 120s setup and finite network/child/screenshot waits. Unresponsive evaluate/close paths rely on the existing test/global timeout + hang guard and the mandated outer supervisor. Ordinary config differs only by ignoring this one new private test; original spec blobs and discovery patterns are unchanged. The retained 42-test/20-file listing is worker evidence, not a new listing execution. No original smoke assertion or conditional skip was weakened. Default startOnline scratch create/drop + Redis7 happy-path behavior passed an independent in-memory control; shared failure-path qualifications remain F2/F3.
+
+EXECUTION AND COVERAGE
+Absolute Node: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node
+Verified versions: Node v22.23.3, pnpm 12.15.0, installed Vitest 5.0.5.
+Both check groups used the direct local node_modules/vitest/vitest.mjs launcher under pinned Node, no install/dlx/npx or edits to shared node_modules. --maxWorkers=2 and --no-file-parallelism; jobs sequential. Caches/output/TMPDIR under this report root; --configLoader=runner and --no-cache. A pre-import guard rejects network connect/listen, TLS, UDP bind and fetch. External APIs in scratch controls are inert mocks, never application servers or database connections.
+
+Check 1: exact worker focused 17-file inventory, independent rerun.
+PASS: 348 passed / 0 failed / 0 pending / 0 todo; 17 files; Vitest exit 0. Outer deadline 120s. The 8 route parser cases and 22 harness import/inventory checks are INCLUDED in 348 and are not added again. Other files cover Game/Fauna/RemoteEntities/abilities/HUD/Universe, Symbiotic/retirement/Thermal/live eligibility/wake/regen/suit/events and removal rules. This CPU suite does not execute the Playwright fixture, external claim probe, migrations, real Vite/server shutdown or GPU callbacks.
+
+Check 2: nine fresh finite controls, one file.
+FAIL as expected for the four substantiated assertions: 5 passed / 4 failed / 0 pending / 0 todo; Vitest exit 1; 0.375s supervised elapsed, 138ms Vitest duration; outer deadline 60s. Four failing assertions substantiate three findings (two belong to F2). Test source and exact local launcher/config/log/JSON retained.
+There was one earlier check-2 launcher attempt, exit 1 before collection (0 tests), because Vitest rejects vi imported by an absolute module specifier. Corrected only the scratch import to 'vitest' with an absolute local resolver alias. Original attempt files/logs/JSON remain under attempt1-*. No dependency install, source change, requirement adjustment or hidden test retry occurred. Totals are not conflated with that precollection error.
+No broad/full suite, typecheck/lint rebuild, browser/GPU/Playwright execution, server, DB/Redis/service inspection or start was performed.
+
+HISTORICAL RESULTS ARE DISTINCT
+- Original T07 bf09bc72543ed74b7dc7386415471d26a36a4b6d / b5456a8f82c498ee5bb7e35836bd35fd4c425c41: saved R3 source PASS and full serial integration 226/38 PASS. Prior R1/R2 findings are recorded fixed there. Those live integration tests were not rerun here and do not qualify this combined fixture.
+- Original T09 d688579adf31c2a8ee9836495ba6b32708b99ccd: saved source PASS and separate focused live fauna-online 1 PASS. That older test did not provide this two-client owned companion/combat/retirement/pixel scope.
+- Current combined fixture verdict: REVISE on the source pin above, with 348 independent CPU passes and the explicit negative controls. Concurrent separately authorized QA, if any, is not inspected or adopted as this review's evidence.
+- Plan 0.9.5: no new client authority, remaining local fauna AI, unsupported scale change or unlogged gameplay interpretation found. Source parity and focused CPU results do not mark either whole task complete. Fresh fixed-source review and authorized real two-client QA/pixel inspection remain required, plus any parent full-smoke/merged gates.
+
+PROTECTED WORK AND ARTIFACTS
+No checkout source/docs/assets changed, no screenshots cleaned, no service run/reset/stop, no commits/PR/push/merge/queue operations. All new review files are under this fresh /tmp root (an initial audit-only temporary file is also retained in the system TMPDIR). The isolated reconstruction Git repository writes only here; its alternates reference source objects read-only.
+Evidence: initial-audit.json, final-audit.json, reconstructed-parity.json, versions.json, focused.json/log, check1-command.json/check1-exit.txt, controls.test.mjs/config.mjs/json/log, check2-command.json/check2-exit.txt, attempt1-* files, boundary.mjs and SHA256SUMS.

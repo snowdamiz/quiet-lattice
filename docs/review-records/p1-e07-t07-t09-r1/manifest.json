@@ -1,0 +1,520 @@
+{
+  "r1Base": "c115e93786890160fcc0592aeb3bc15934343fd3",
+  "r1BaseTree": "9bd3faef187925791573d86c4673922df099c5f6",
+  "branch": "t3/P1-E07-T07-T09-live-qa",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+  "allowedSourceFiles": [
+    "packages/tools/playwright.config.ts",
+    "packages/tools/src/smoke/online.ts",
+    "packages/tools/src/smoke/symbiotic-online.spec.ts",
+    "packages/tools/src/smoke/symbiotic-private.test.ts",
+    "packages/tools/src/smoke/symbiotic-private.ts",
+    "packages/tools/src/smoke/symbiotic.config.ts"
+  ],
+  "changedSourceFiles": [
+    "packages/tools/src/smoke/online.ts",
+    "packages/tools/src/smoke/symbiotic-online.spec.ts",
+    "packages/tools/src/smoke/symbiotic-private.test.ts"
+  ],
+  "integrationPatches": [
+    {
+      "reviewed": "be2d4704b8d5ba837a2da28ac106cdfaf81b38c9",
+      "integrated": "99b8bd9e8067c4c6f0d619a5afebf2d45e6ec7af",
+      "reviewedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151",
+      "integratedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151",
+      "reverifiedReviewedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151",
+      "reverifiedIntegratedPatchId": "84c0d407d1c7361376096923d91d1bf2ee559151"
+    },
+    {
+      "reviewed": "c0b9c9ba966302b3e7b960129e1c8307e35b7667",
+      "integrated": "20984163e9af0e2586a5be2add6e41e28727c1b0",
+      "reviewedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b",
+      "integratedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b",
+      "reverifiedReviewedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b",
+      "reverifiedIntegratedPatchId": "a0279407a28857321ca8ee915d0d483398fee03b"
+    },
+    {
+      "reviewed": "52da4eff0d2f354cb18198232a7c8a37c9529a41",
+      "integrated": "1189e1c5d33a1bbf3f4ecf741158ba396835ab1d",
+      "reviewedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a",
+      "integratedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a",
+      "reverifiedReviewedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a",
+      "reverifiedIntegratedPatchId": "666b348ec5a3f5b3edc109c4f63a083af222ae7a"
+    },
+    {
+      "reviewed": "bf09bc72543ed74b7dc7386415471d26a36a4b6d",
+      "integrated": "079ee3795e213a308b1e43244500fa4bdf4cc81f",
+      "reviewedPatchId": "9900bb683d95590d018b572060e6f99728521657",
+      "integratedPatchId": "9900bb683d95590d018b572060e6f99728521657",
+      "reverifiedReviewedPatchId": "9900bb683d95590d018b572060e6f99728521657",
+      "reverifiedIntegratedPatchId": "9900bb683d95590d018b572060e6f99728521657"
+    },
+    {
+      "reviewed": "d688579adf31c2a8ee9836495ba6b32708b99ccd",
+      "integrated": "74360adf8cfb8e0d5ee7c7e0dbee07de02808904",
+      "reviewedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28",
+      "integratedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28",
+      "reverifiedReviewedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28",
+      "reverifiedIntegratedPatchId": "b1fd1004af535769c57ece4b9bd4ce4095358a28"
+    }
+  ],
+  "reviewedProductFiles": {
+    "docs/ARCHITECTURE.md": {
+      "integration": "db72a4273c3859a7063a1622871e16e197ecbf65",
+      "r1Base": "db72a4273c3859a7063a1622871e16e197ecbf65",
+      "r1Source": "db72a4273c3859a7063a1622871e16e197ecbf65"
+    },
+    "docs/DESIGN.md": {
+      "integration": "fa1a4fb6c67f1efd72e1b711948d4382f9fa6e77",
+      "r1Base": "fa1a4fb6c67f1efd72e1b711948d4382f9fa6e77",
+      "r1Source": "fa1a4fb6c67f1efd72e1b711948d4382f9fa6e77"
+    },
+    "packages/client/src/Game.js": {
+      "integration": "f0dacdfb6745be09bbfa2eb8ce092430b997b5a2",
+      "r1Base": "f0dacdfb6745be09bbfa2eb8ce092430b997b5a2",
+      "r1Source": "f0dacdfb6745be09bbfa2eb8ce092430b997b5a2"
+    },
+    "packages/client/src/Game.test.js": {
+      "integration": "51c947fc63800fbb0b04206c9c03eba73b888556",
+      "r1Base": "51c947fc63800fbb0b04206c9c03eba73b888556",
+      "r1Source": "51c947fc63800fbb0b04206c9c03eba73b888556"
+    },
+    "packages/client/src/dev/playthrough.js": {
+      "integration": "964479aa7ddaa599a6c9b3ccf7af6612ae1da396",
+      "r1Base": "964479aa7ddaa599a6c9b3ccf7af6612ae1da396",
+      "r1Source": "964479aa7ddaa599a6c9b3ccf7af6612ae1da396"
+    },
+    "packages/client/src/dev/review.js": {
+      "integration": "8b5ccb2b1b02adcc25c3ca5e5f4fb71bb8567f9d",
+      "r1Base": "8b5ccb2b1b02adcc25c3ca5e5f4fb71bb8567f9d",
+      "r1Source": "8b5ccb2b1b02adcc25c3ca5e5f4fb71bb8567f9d"
+    },
+    "packages/client/src/dev/take.js": {
+      "integration": "eb2b5a5f1558137df57a19794d57f897fc1acad4",
+      "r1Base": "eb2b5a5f1558137df57a19794d57f897fc1acad4",
+      "r1Source": "eb2b5a5f1558137df57a19794d57f897fc1acad4"
+    },
+    "packages/client/src/gameplay/Fauna.js": {
+      "integration": "e08a6274038c5afab73bbb1b9fef460e4c5a82e5",
+      "r1Base": "e08a6274038c5afab73bbb1b9fef460e4c5a82e5",
+      "r1Source": "e08a6274038c5afab73bbb1b9fef460e4c5a82e5"
+    },
+    "packages/client/src/gameplay/Fauna.test.js": {
+      "integration": "05e13ce623896a5f2ea10ad07c0d06c028694eaa",
+      "r1Base": "05e13ce623896a5f2ea10ad07c0d06c028694eaa",
+      "r1Source": "05e13ce623896a5f2ea10ad07c0d06c028694eaa"
+    },
+    "packages/client/src/net/abilities.js": {
+      "integration": "90f6ed17f2885d193331ff3ef8ee728ff5681bb5",
+      "r1Base": "90f6ed17f2885d193331ff3ef8ee728ff5681bb5",
+      "r1Source": "90f6ed17f2885d193331ff3ef8ee728ff5681bb5"
+    },
+    "packages/client/src/net/abilities.test.js": {
+      "integration": "c49d687d2f37e2400df41b71ddc36161579e94d6",
+      "r1Base": "c49d687d2f37e2400df41b71ddc36161579e94d6",
+      "r1Source": "c49d687d2f37e2400df41b71ddc36161579e94d6"
+    },
+    "packages/client/src/remote/RemoteEntities.js": {
+      "integration": "f88e41069540022d1e8fdfa4aead0606557d8de0",
+      "r1Base": "f88e41069540022d1e8fdfa4aead0606557d8de0",
+      "r1Source": "f88e41069540022d1e8fdfa4aead0606557d8de0"
+    },
+    "packages/client/src/remote/RemoteEntities.test.js": {
+      "integration": "34f78d0e612a1a352482dbff31184d551c276c37",
+      "r1Base": "34f78d0e612a1a352482dbff31184d551c276c37",
+      "r1Source": "34f78d0e612a1a352482dbff31184d551c276c37"
+    },
+    "packages/client/src/remote/RemoteShips.js": {
+      "integration": "f3ce9cb36cf45421fb5993eefb352e7f1aba6421",
+      "r1Base": "f3ce9cb36cf45421fb5993eefb352e7f1aba6421",
+      "r1Source": "f3ce9cb36cf45421fb5993eefb352e7f1aba6421"
+    },
+    "packages/client/src/remote/RemoteShips.test.js": {
+      "integration": "4dcae71ab25fefba1a495147554722da6ace7f63",
+      "r1Base": "4dcae71ab25fefba1a495147554722da6ace7f63",
+      "r1Source": "4dcae71ab25fefba1a495147554722da6ace7f63"
+    },
+    "packages/client/src/remote/replay.js": {
+      "integration": "36bf465ad93b284926ea2281fc9d3b38db2eec75",
+      "r1Base": "36bf465ad93b284926ea2281fc9d3b38db2eec75",
+      "r1Source": "36bf465ad93b284926ea2281fc9d3b38db2eec75"
+    },
+    "packages/client/src/ui/HUD.js": {
+      "integration": "1d8a20c26a98420fec0de18901e558a535d96607",
+      "r1Base": "1d8a20c26a98420fec0de18901e558a535d96607",
+      "r1Source": "1d8a20c26a98420fec0de18901e558a535d96607"
+    },
+    "packages/client/src/ui/HUD.test.js": {
+      "integration": "3347f941d21f17f7e68a8d4976d5337b4f8bb0e4",
+      "r1Base": "3347f941d21f17f7e68a8d4976d5337b4f8bb0e4",
+      "r1Source": "3347f941d21f17f7e68a8d4976d5337b4f8bb0e4"
+    },
+    "packages/client/src/ui/style.css": {
+      "integration": "fb7c106c674278af133c9a91681b00d13b7387b6",
+      "r1Base": "fb7c106c674278af133c9a91681b00d13b7387b6",
+      "r1Source": "fb7c106c674278af133c9a91681b00d13b7387b6"
+    },
+    "packages/client/src/universe/Universe.test.js": {
+      "integration": "2d818f390ef087f0563220058d3b2fcc700462d1",
+      "r1Base": "2d818f390ef087f0563220058d3b2fcc700462d1",
+      "r1Source": "2d818f390ef087f0563220058d3b2fcc700462d1"
+    },
+    "packages/server/src/abilities/book.ts": {
+      "integration": "2cbe1ad9d882da6d5023a3837a58a468eb7badfa",
+      "r1Base": "2cbe1ad9d882da6d5023a3837a58a468eb7badfa",
+      "r1Source": "2cbe1ad9d882da6d5023a3837a58a468eb7badfa"
+    },
+    "packages/server/src/abilities/resonance.test.ts": {
+      "integration": "d0a5bd6bde6eaf0ad5b7c468828fc4a4aed935ef",
+      "r1Base": "d0a5bd6bde6eaf0ad5b7c468828fc4a4aed935ef",
+      "r1Source": "d0a5bd6bde6eaf0ad5b7c468828fc4a4aed935ef"
+    },
+    "packages/server/src/abilities/retirement.test.ts": {
+      "integration": "fbd1a6bfd62c6cf4aa7675b76d86ae616e2d57b4",
+      "r1Base": "fbd1a6bfd62c6cf4aa7675b76d86ae616e2d57b4",
+      "r1Source": "fbd1a6bfd62c6cf4aa7675b76d86ae616e2d57b4"
+    },
+    "packages/server/src/abilities/service.test.ts": {
+      "integration": "7f723a2ae3c5b5fb315499f23cd026dfe8c90926",
+      "r1Base": "7f723a2ae3c5b5fb315499f23cd026dfe8c90926",
+      "r1Source": "7f723a2ae3c5b5fb315499f23cd026dfe8c90926"
+    },
+    "packages/server/src/abilities/service.ts": {
+      "integration": "c5ab5b0e7120105fb0a4ed48586ff9c8054a7082",
+      "r1Base": "c5ab5b0e7120105fb0a4ed48586ff9c8054a7082",
+      "r1Source": "c5ab5b0e7120105fb0a4ed48586ff9c8054a7082"
+    },
+    "packages/server/src/abilities/statuses.ts": {
+      "integration": "6fd2c50e06f64e19cdc4116f717c006c39c7f568",
+      "r1Base": "6fd2c50e06f64e19cdc4116f717c006c39c7f568",
+      "r1Source": "6fd2c50e06f64e19cdc4116f717c006c39c7f568"
+    },
+    "packages/server/src/abilities/symbiotic.test.ts": {
+      "integration": "a1db9ca3bcf7122d61d83f7e0c973785a6ccd024",
+      "r1Base": "a1db9ca3bcf7122d61d83f7e0c973785a6ccd024",
+      "r1Source": "a1db9ca3bcf7122d61d83f7e0c973785a6ccd024"
+    },
+    "packages/server/src/abilities/symbiotic.ts": {
+      "integration": "f9f6b361105a93be96629f58b195b68ef33c3fe0",
+      "r1Base": "f9f6b361105a93be96629f58b195b68ef33c3fe0",
+      "r1Source": "f9f6b361105a93be96629f58b195b68ef33c3fe0"
+    },
+    "packages/server/src/abilities/thermal.test.ts": {
+      "integration": "afddacad1f6753b467d039590716f4cc449abe21",
+      "r1Base": "afddacad1f6753b467d039590716f4cc449abe21",
+      "r1Source": "afddacad1f6753b467d039590716f4cc449abe21"
+    },
+    "packages/server/src/abilities/thermal.ts": {
+      "integration": "276f6b1b5bd07b974a97633a905d638b0607ed9a",
+      "r1Base": "276f6b1b5bd07b974a97633a905d638b0607ed9a",
+      "r1Source": "276f6b1b5bd07b974a97633a905d638b0607ed9a"
+    },
+    "packages/server/src/combat/zone.ts": {
+      "integration": "2912d5d947e42f2a4a6a8ea04b006d1c86613051",
+      "r1Base": "2912d5d947e42f2a4a6a8ea04b006d1c86613051",
+      "r1Source": "2912d5d947e42f2a4a6a8ea04b006d1c86613051"
+    },
+    "packages/server/src/events/service.test.ts": {
+      "integration": "09dd5b86e1c4a3432c2adb1ea0faaf37e368f922",
+      "r1Base": "09dd5b86e1c4a3432c2adb1ea0faaf37e368f922",
+      "r1Source": "09dd5b86e1c4a3432c2adb1ea0faaf37e368f922"
+    },
+    "packages/server/src/events/service.ts": {
+      "integration": "65f1f545b44dbf604d1ad3b217965821a66b424c",
+      "r1Base": "65f1f545b44dbf604d1ad3b217965821a66b424c",
+      "r1Source": "65f1f545b44dbf604d1ad3b217965821a66b424c"
+    },
+    "packages/server/src/fauna/ai.ts": {
+      "integration": "688ee63a8b8e1e28f88018cb64ce2afc5f45933b",
+      "r1Base": "688ee63a8b8e1e28f88018cb64ce2afc5f45933b",
+      "r1Source": "688ee63a8b8e1e28f88018cb64ce2afc5f45933b"
+    },
+    "packages/server/src/fauna/sim.ts": {
+      "integration": "f86ca789e3ac16532c8afb78547a951a523664ad",
+      "r1Base": "f86ca789e3ac16532c8afb78547a951a523664ad",
+      "r1Source": "f86ca789e3ac16532c8afb78547a951a523664ad"
+    },
+    "packages/server/src/fauna/symbiotic.ts": {
+      "integration": "2f75653add237c20609178d8716504572d4b9339",
+      "r1Base": "2f75653add237c20609178d8716504572d4b9339",
+      "r1Source": "2f75653add237c20609178d8716504572d4b9339"
+    },
+    "packages/server/src/gateway/ws.ts": {
+      "integration": "75b5f605d6885baf2f567a489a609329edf0772f",
+      "r1Base": "75b5f605d6885baf2f567a489a609329edf0772f",
+      "r1Source": "75b5f605d6885baf2f567a489a609329edf0772f"
+    },
+    "packages/server/src/meters/suit.test.ts": {
+      "integration": "5bf252d62f8c20fbe03782b6637ea96e2f0f707e",
+      "r1Base": "5bf252d62f8c20fbe03782b6637ea96e2f0f707e",
+      "r1Source": "5bf252d62f8c20fbe03782b6637ea96e2f0f707e"
+    },
+    "packages/server/src/phases/manager.ts": {
+      "integration": "2d386d8645c90dd9fb6ed1364fdf0e9d7a9067c0",
+      "r1Base": "2d386d8645c90dd9fb6ed1364fdf0e9d7a9067c0",
+      "r1Source": "2d386d8645c90dd9fb6ed1364fdf0e9d7a9067c0"
+    },
+    "packages/server/src/zones/manager.test.ts": {
+      "integration": "c07ac1a28f00de13de833671c1647229cde4a5f3",
+      "r1Base": "c07ac1a28f00de13de833671c1647229cde4a5f3",
+      "r1Source": "c07ac1a28f00de13de833671c1647229cde4a5f3"
+    },
+    "packages/server/src/zones/manager.ts": {
+      "integration": "a26db1b4044ae052496e583e824b8ae982337aed",
+      "r1Base": "a26db1b4044ae052496e583e824b8ae982337aed",
+      "r1Source": "a26db1b4044ae052496e583e824b8ae982337aed"
+    },
+    "packages/server/src/zones/regen.test.ts": {
+      "integration": "b6037c54f704b3b7a2241acbc6509839a40dd61a",
+      "r1Base": "b6037c54f704b3b7a2241acbc6509839a40dd61a",
+      "r1Source": "b6037c54f704b3b7a2241acbc6509839a40dd61a"
+    },
+    "packages/server/src/zones/wake.test.ts": {
+      "integration": "10f03923c5c0c3d205cdf74c60ac40394073a37c",
+      "r1Base": "10f03923c5c0c3d205cdf74c60ac40394073a37c",
+      "r1Source": "10f03923c5c0c3d205cdf74c60ac40394073a37c"
+    },
+    "packages/server/src/zones/zone.ts": {
+      "integration": "ed00736267f2e1803849989902b21178d3c48487",
+      "r1Base": "ed00736267f2e1803849989902b21178d3c48487",
+      "r1Source": "ed00736267f2e1803849989902b21178d3c48487"
+    },
+    "packages/server/test/pilot.ts": {
+      "integration": "a00853be53b6eabdd945d88f588293b1628c1d4d",
+      "r1Base": "a00853be53b6eabdd945d88f588293b1628c1d4d",
+      "r1Source": "a00853be53b6eabdd945d88f588293b1628c1d4d"
+    },
+    "packages/server/test/symbiotic.int.test.ts": {
+      "integration": "d2a170d5d259bc52fa9637a08fc42768410067c6",
+      "r1Base": "d2a170d5d259bc52fa9637a08fc42768410067c6",
+      "r1Source": "d2a170d5d259bc52fa9637a08fc42768410067c6"
+    },
+    "packages/shared/src/abilities/index.ts": {
+      "integration": "984e9708be93898c9907bde86dc4e851730bf2e3",
+      "r1Base": "984e9708be93898c9907bde86dc4e851730bf2e3",
+      "r1Source": "984e9708be93898c9907bde86dc4e851730bf2e3"
+    },
+    "packages/shared/src/abilities/symbiotic.ts": {
+      "integration": "940d1e6e88b28a1a3da48cce6b79e28355b6423c",
+      "r1Base": "940d1e6e88b28a1a3da48cce6b79e28355b6423c",
+      "r1Source": "940d1e6e88b28a1a3da48cce6b79e28355b6423c"
+    },
+    "packages/shared/src/data/skills/symbiotic.ts": {
+      "integration": "dee8a4167944d535c569482382d6076f8a9f3193",
+      "r1Base": "dee8a4167944d535c569482382d6076f8a9f3193",
+      "r1Source": "dee8a4167944d535c569482382d6076f8a9f3193"
+    },
+    "packages/shared/src/ships/stats.ts": {
+      "integration": "d573cf00241d22ebe120c417109ea9b16cc8c4e3",
+      "r1Base": "d573cf00241d22ebe120c417109ea9b16cc8c4e3",
+      "r1Source": "d573cf00241d22ebe120c417109ea9b16cc8c4e3"
+    },
+    "packages/tools/src/capture/screens.test.ts": {
+      "integration": "c28ea23974ed1be43ecbcba2da3fe76120c4ab37",
+      "r1Base": "c28ea23974ed1be43ecbcba2da3fe76120c4ab37",
+      "r1Source": "c28ea23974ed1be43ecbcba2da3fe76120c4ab37"
+    },
+    "packages/tools/src/capture/screens.ts": {
+      "integration": "42cb996338dc630e320ae7e8975f175fea6fa618",
+      "r1Base": "42cb996338dc630e320ae7e8975f175fea6fa618",
+      "r1Source": "42cb996338dc630e320ae7e8975f175fea6fa618"
+    },
+    "packages/tools/src/gates/removed.test.ts": {
+      "integration": "045f9f106da8b3f118243fed6978286e650eec85",
+      "r1Base": "045f9f106da8b3f118243fed6978286e650eec85",
+      "r1Source": "045f9f106da8b3f118243fed6978286e650eec85"
+    },
+    "packages/tools/src/gates/removed.ts": {
+      "integration": "9639556690a847385ac6273d63b4d8b3dae80088",
+      "r1Base": "9639556690a847385ac6273d63b4d8b3dae80088",
+      "r1Source": "9639556690a847385ac6273d63b4d8b3dae80088"
+    },
+    "packages/tools/src/smoke/fauna-online.spec.ts": {
+      "integration": "d13e819e84f11ab547b47b5a7426fc6feb845636",
+      "r1Base": "d13e819e84f11ab547b47b5a7426fc6feb845636",
+      "r1Source": "d13e819e84f11ab547b47b5a7426fc6feb845636"
+    }
+  },
+  "protectedObjects": {
+    "docs/IMPLEMENTATION_PLAN.md": {
+      "parent": "1ca913f0df6ef614a984b5de8781efc88ac1e3a1",
+      "r1Base": "1ca913f0df6ef614a984b5de8781efc88ac1e3a1",
+      "r1Source": "1ca913f0df6ef614a984b5de8781efc88ac1e3a1"
+    },
+    "docs/PROGRESS.md": {
+      "parent": "c7e6b14b17ac8a9203eb58347d4f0075cdbd48f7",
+      "r1Base": "c7e6b14b17ac8a9203eb58347d4f0075cdbd48f7",
+      "r1Source": "c7e6b14b17ac8a9203eb58347d4f0075cdbd48f7"
+    },
+    "docs/DECISIONS.md": {
+      "parent": "83e40a48971117f2432fb2abe41ad7f6f8171670",
+      "r1Base": "83e40a48971117f2432fb2abe41ad7f6f8171670",
+      "r1Source": "83e40a48971117f2432fb2abe41ad7f6f8171670"
+    },
+    "packages/shared/src/exosuit": {
+      "parent": "79a0be9c0369da5271703ad1105eb8f2e9506662",
+      "r1Base": "79a0be9c0369da5271703ad1105eb8f2e9506662",
+      "r1Source": "79a0be9c0369da5271703ad1105eb8f2e9506662"
+    },
+    "packages/shared/src/skills": {
+      "parent": "af5017b78aeabd5368daa3907f188d38491a8bce",
+      "r1Base": "af5017b78aeabd5368daa3907f188d38491a8bce",
+      "r1Source": "af5017b78aeabd5368daa3907f188d38491a8bce"
+    },
+    "packages/server/test/gatewayPersistence.test.ts": {
+      "parent": "248c4fffc4f426834fca3e83a7d69bc2379c0995",
+      "r1Base": "248c4fffc4f426834fca3e83a7d69bc2379c0995",
+      "r1Source": "248c4fffc4f426834fca3e83a7d69bc2379c0995"
+    },
+    "packages/server/test/helpers.ts": {
+      "parent": "aac3bb9825ed2123770c2e14cc7e880e072018e6",
+      "r1Base": "aac3bb9825ed2123770c2e14cc7e880e072018e6",
+      "r1Source": "aac3bb9825ed2123770c2e14cc7e880e072018e6"
+    },
+    "packages/server/src/persistence": {
+      "parent": "43222c5370f3ae1b0ca359b9104dba190fba7747",
+      "r1Base": "43222c5370f3ae1b0ca359b9104dba190fba7747",
+      "r1Source": "43222c5370f3ae1b0ca359b9104dba190fba7747"
+    },
+    "packages/server/src/skills": {
+      "parent": "8f624842495713517e4b95152670e1e4768271b7",
+      "r1Base": "8f624842495713517e4b95152670e1e4768271b7",
+      "r1Source": "8f624842495713517e4b95152670e1e4768271b7"
+    },
+    "packages/server/src/reputation": {
+      "parent": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2",
+      "r1Base": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2",
+      "r1Source": "21f37fab754065d2ea1d9cae8096c5fde2f36bb2"
+    },
+    "packages/server/src/abilities/eligibility.test.ts": {
+      "parent": "6f36f19d1429cb8c40ee0c4a2b35c66e0d585b39",
+      "r1Base": "6f36f19d1429cb8c40ee0c4a2b35c66e0d585b39",
+      "r1Source": "6f36f19d1429cb8c40ee0c4a2b35c66e0d585b39"
+    },
+    "packages/client/src/core/Engine.js": {
+      "parent": "60a5f814df184642b88d3a1366618aa57d6b4ba9",
+      "r1Base": "60a5f814df184642b88d3a1366618aa57d6b4ba9",
+      "r1Source": "60a5f814df184642b88d3a1366618aa57d6b4ba9"
+    },
+    "packages/client/src/gameplay/modelLibrary.js": {
+      "parent": "385a7f97014afe0072baefe0234d592d7b70b5b9",
+      "r1Base": "385a7f97014afe0072baefe0234d592d7b70b5b9",
+      "r1Source": "385a7f97014afe0072baefe0234d592d7b70b5b9"
+    },
+    "packages/client/src/render": {
+      "parent": "006eba39102137053d1e14f2a4df412f200391d0",
+      "r1Base": "006eba39102137053d1e14f2a4df412f200391d0",
+      "r1Source": "006eba39102137053d1e14f2a4df412f200391d0"
+    },
+    "packages/tools/src/art": {
+      "parent": "3450d02662eb45c9f48be5de33eb3a0bf00b7742",
+      "r1Base": "3450d02662eb45c9f48be5de33eb3a0bf00b7742",
+      "r1Source": "3450d02662eb45c9f48be5de33eb3a0bf00b7742"
+    },
+    "assets": {
+      "parent": "b9780f893547190dd896e2735e406f73e9c4ed6b",
+      "r1Base": "b9780f893547190dd896e2735e406f73e9c4ed6b",
+      "r1Source": "b9780f893547190dd896e2735e406f73e9c4ed6b"
+    },
+    "blender": {
+      "parent": "af124f3e13df0e47bb44a77df96adf2c74e6bc15",
+      "r1Base": "af124f3e13df0e47bb44a77df96adf2c74e6bc15",
+      "r1Source": "af124f3e13df0e47bb44a77df96adf2c74e6bc15"
+    },
+    "packages/client/public": {
+      "parent": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1",
+      "r1Base": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1",
+      "r1Source": "bf714d7f09b78144b8280a23b1ac0e4bb7ef1df1"
+    },
+    "package.json": {
+      "parent": "c865f10af15c363e52a00d52ec9bf895c4ff1ea9",
+      "r1Base": "c865f10af15c363e52a00d52ec9bf895c4ff1ea9",
+      "r1Source": "c865f10af15c363e52a00d52ec9bf895c4ff1ea9"
+    },
+    "pnpm-lock.yaml": {
+      "parent": "fa850c2e93a386a217a116f9c1d7f5d2bafffcd6",
+      "r1Base": "fa850c2e93a386a217a116f9c1d7f5d2bafffcd6",
+      "r1Source": "fa850c2e93a386a217a116f9c1d7f5d2bafffcd6"
+    }
+  },
+  "oldReportTree": "f5706920693155ad0d254a497e8fedff73c31c14",
+  "oldReportSha256": {
+    "docs/review-records/p1-e07-t07-t09-preparation/Appendix-C.2.txt": "10c21c692efe20fb27ce8b60947252efa90317bd02e1583d16d3f6db70918d52",
+    "docs/review-records/p1-e07-t07-t09-preparation/SHA256SUMS": "7f47b3b14c6e10845206de00fe952aefe17f95f74c68f046b54747b32c9a439e",
+    "docs/review-records/p1-e07-t07-t09-preparation/browser-payload-inventory.txt": "1ab2dd3eff98fccae9529e7cc5df63a22d9cb88ceb1815532e819ab846ace9c8",
+    "docs/review-records/p1-e07-t07-t09-preparation/commands.json": "8131dd25c01b74646d46055fe05d06e8e7db5b2ba3ea3e8e630a561905d5f4f2",
+    "docs/review-records/p1-e07-t07-t09-preparation/default-smoke-inventory.txt": "9f1b91190c789071b6dd9ead9a2ae9582036dc74f5e3b156e98bb60bd7b874d2",
+    "docs/review-records/p1-e07-t07-t09-preparation/eslint.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/review-records/p1-e07-t07-t09-preparation/final-eslint.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/review-records/p1-e07-t07-t09-preparation/final-fixture-cpu.raw.txt.gz": "210b9f672ebfec900883b8c2d1edf228c096c73092bd9f74835819d6810b51a6",
+    "docs/review-records/p1-e07-t07-t09-preparation/final-fixture-cpu.txt": "1faecc09a58a091b8f6d5115ff62801d5616f2ddfe039f99d4670c41effbf054",
+    "docs/review-records/p1-e07-t07-t09-preparation/final-format.txt": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+    "docs/review-records/p1-e07-t07-t09-preparation/final-typecheck.txt": "859f05647a92fcb79f6a57008bd6478a9bea618f6933c12cb2bb76a0a7f2bb7f",
+    "docs/review-records/p1-e07-t07-t09-preparation/focused-cpu.json": "9493e18beb22271257bd103adfd205622f404278207e25611a41773bf7c6b848",
+    "docs/review-records/p1-e07-t07-t09-preparation/focused-cpu.txt": "30e2d4f6fcc0e9fcf4bfb28de599b5e083d32895b54c1e492def6ee4725ae62d",
+    "docs/review-records/p1-e07-t07-t09-preparation/focused-inventory-final.txt": "b4875d50c338b7cdfaa6e61a8afb8c5514220cffc8338aed55e69319d5c3aa44",
+    "docs/review-records/p1-e07-t07-t09-preparation/format.txt": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+    "docs/review-records/p1-e07-t07-t09-preparation/future-qa.txt": "4243164f1ef9d38661b67f01b8e2458a7b77a65d473ea074dadd3761559f2561",
+    "docs/review-records/p1-e07-t07-t09-preparation/inventory.txt": "6c0bc3880c15b91f4565ed64fc7ea692781a4f93f8e390fb45fc3af2cb534071",
+    "docs/review-records/p1-e07-t07-t09-preparation/provenance.json": "baffe822fcfac777973379c7a667ae632107a429e85ff5fe8b78f26bff6d3bd3",
+    "docs/review-records/p1-e07-t07-t09-preparation/removed-gate.txt": "a0879636d8a3e4b5af38cd11bafc521ab251a59308bdad4e9ed35df237cf1739",
+    "docs/review-records/p1-e07-t07-t09-preparation/source-sha256.json": "778f88cda5aa6efe19060505a531eb6c477acff0c4fff5cf4d70f8b573b75cc9",
+    "docs/review-records/p1-e07-t07-t09-preparation/typecheck.txt": "f2e378f6396ee25f428451b2992f34c602eab70cbdc9574298370ebf77d8711b",
+    "docs/review-records/p1-e07-t07-t09-preparation/verification-summary.json": "22b9b4cbcc96b1180d3ce9d769690595ccc4b270386fe4ab10a7380c25971543",
+    "docs/review-records/p1-e07-t07-t09-preparation/whitespace.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "manualConflictResolutions": [],
+  "sourceHead": "d8f3f41caba90e5d5250dca033af907d28bef605",
+  "sourceTree": "3192e439a08b853a4345cfae88724ba16a841fd6",
+  "acidBinding": {
+    "attached": true,
+    "worktreePath": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "branch": "t3/p1-e07-t07-t09-live-qa",
+    "projectWorkspaceRoot": "/Users/andreyyurlov/Documents/dev/space",
+    "defaultStartFromOrigin": true
+  },
+  "runtimeStatus": "PENDING; no live execution in R1",
+  "independentReviewStatus": "PENDING; parent owns review",
+  "sourcePatchId": "c08da85e52228364fa964dcab390a46fcf2df114",
+  "sourceFiles": {
+    "packages/tools/playwright.config.ts": {
+      "sha256": "e8d1f7670df93620727ae50613dd3e173f4242ead13eb73ad53f5fcb148480d8",
+      "blob": "2cce3fdd196e8d88d0581757b19ca436994954f3",
+      "baseBlob": "2cce3fdd196e8d88d0581757b19ca436994954f3"
+    },
+    "packages/tools/src/smoke/online.ts": {
+      "sha256": "031d6ce2000c65553152cad22c8b177720af9a0457775674501e5297818badbd",
+      "blob": "93c55312c82a63438947d139a7fd546703838d88",
+      "baseBlob": "1df4ba1b3a13441e071976ac3866945721e94d58"
+    },
+    "packages/tools/src/smoke/symbiotic-online.spec.ts": {
+      "sha256": "3cb74412b3b404a887e19c5f90031251fdf79e62bb0e211cf2646fea0fdf7ac1",
+      "blob": "090a35c377f4a2ecb4230d7acf64fb8d95632239",
+      "baseBlob": "9b425700c9ac9c02afd4874824d9c569683e92e9"
+    },
+    "packages/tools/src/smoke/symbiotic-private.test.ts": {
+      "sha256": "7987465475ba03e8ac948b0ff01c6283e794279fcdd1198f60fb38d9ba190e4c",
+      "blob": "78f4b9d066475d665e8aa0246f301fcf112ae363",
+      "baseBlob": "abfc40968992761a3b885b3315e782bce8994bed"
+    },
+    "packages/tools/src/smoke/symbiotic-private.ts": {
+      "sha256": "9054dc5f77a637faa4764be9990b2beac8b291a7f57607323e2a2a2802392f80",
+      "blob": "4cfc9f67f974937a64981b9d9c0e556ff90c4635",
+      "baseBlob": "4cfc9f67f974937a64981b9d9c0e556ff90c4635"
+    },
+    "packages/tools/src/smoke/symbiotic.config.ts": {
+      "sha256": "2b909488e6bceb80b860907cbeb358da99e42658218be2cfbcb3509eed990180",
+      "blob": "ab3a5729e4855f09384bc2dcb8c9cc696edfc4b7",
+      "baseBlob": "ab3a5729e4855f09384bc2dcb8c9cc696edfc4b7"
+    }
+  },
+  "baselineLiveAttempt": {
+    "path": "/private/tmp/space-symbiotic-live-20261107_070646_2f0be248/REPORT.txt",
+    "sha256": "1bd0465326cb62f59f96ebbe199aae62125c16fcd22dafcc57e460d5fc6e3147",
+    "status": "COULD NOT RUN before Playwright discovery; not an R1 runtime result"
+  },
+  "reviewInput": {
+    "path": "/tmp/symbiotic-review-c115e93-4dwbhver/review.txt",
+    "sha256": "0d151af8dbceda01c9d448c9d834488a5989db138fa1f353d26f1108b8d2423d"
+  }
+}

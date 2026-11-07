@@ -1,0 +1,165 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ |@astra/tools| src/smoke/symbiotic-private.test.ts (38 tests | 19 failed) 24ms
+   ✓ Symbiotic smoke private routes (no connections) (8)
+     ✓ keeps the exact preclaimed namespace and Redis8 1ms
+     ✓ refuses missing, default or differently owned routes: {} 0ms
+     ✓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"} 0ms
+     ✓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:55432/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"} 0ms
+     ✓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra","REDIS_URL":"redis://127.0.0.1:53058/8"} 0ms
+     ✓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521?host=elsewhere","REDIS_URL":"redis://127.0.0.1:53058/8"} 0ms
+     ✓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/7"} 0ms
+     ✓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:56379/8"} 0ms
+   ❯ R1 online lifecycle (8)
+     ✓ passes borrowed routes to migration and never creates/drops them 9ms
+     × preserves the primary setup failure when server termination fails 3ms
+     × closes the created handle after listen fails and preserves listen error identity 1ms
+     × retains listen failure plus both owned stop errors 1ms
+     × attempts all owned cleanup after Vite close fails (synchronous=false) 1ms
+     × attempts all owned cleanup after Vite close fails (synchronous=true) 1ms
+     ✓ cleans only its own scratch database after migration fails 1ms
+     × retains both bounded close failures and attempts KILL after TERM timeout 2ms
+   ❯ R1 live lifecycle predicates (22)
+     ✓ accepts only the fresh identified live observer/enemy control 0ms
+     × rejects corpse plus missing observer 1ms
+     × rejects missing observer 0ms
+     × rejects dead observer 0ms
+     × rejects different observer identity 0ms
+     × rejects different observer frame 0ms
+     × rejects different observer kind 0ms
+     × rejects dead enemy 0ms
+     × rejects enemy corpse mode 0ms
+     × rejects different enemy species 0ms
+     × rejects different enemy frame 0ms
+     × rejects different enemy kind 0ms
+     × rejects stale snapshot 0ms
+     ✓ rejects disconnected observer 0ms
+     ✓ rejects owner retained 0ms
+     ✓ rejects companion snapshot retained 0ms
+     ✓ rejects companion remote retained 0ms
+     ✓ rejects companion instance retained 0ms
+     ✓ accepts a living target with actual source-attributed health loss 0ms
+     ✓ rejects health loss with no companion hit 0ms
+     ✓ rejects attack phase without health loss 0ms
+     × rejects a corpse after a credited killing hit 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 19 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 online lifecycle > preserves the primary setup failure when server termination fails
+AssertionError: expected [ Error: TERM failed ] to include Error: create Vite failed
+ ❯ src/smoke/symbiotic-private.test.ts:130:30
+    128|     lifecycle.createError = Error('create Vite failed'); lifecycle.kil…
+    129|     const error = await start().catch((e: unknown) => e);
+    130|     expect(errorTree(error)).toContain(lifecycle.createError);
+       |                              ^
+    131|     expect(errorTree(error)).toContain(lifecycle.killError);
+    132|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/19]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 online lifecycle > closes the created handle after listen fails and preserves listen error identity
+AssertionError: expected [ 'createVite', 'listenVite', …(1) ] to include 'closeVite'
+ ❯ src/smoke/symbiotic-private.test.ts:136:29
+    134|     lifecycle.listenError = Error('listen EADDRINUSE');
+    135|     await expect(start()).rejects.toBe(lifecycle.listenError);
+    136|     expect(lifecycle.calls).toContain('closeVite'); expect(lifecycle.c…
+       |                             ^
+    137|   });
+    138|   it('retains listen failure plus both owned stop errors', async () =>…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/19]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 online lifecycle > retains listen failure plus both owned stop errors
+AssertionError: expected [ Error: TERM failed ] to include Error: listen EADDRINUSE
+ ❯ src/smoke/symbiotic-private.test.ts:141:121
+    139|     lifecycle.listenError = Error('listen EADDRINUSE'); lifecycle.clos…
+    140|     const error = await start().catch((e: unknown) => e);
+    141|     for (const expected of [lifecycle.listenError, lifecycle.closeErro…
+       |                                                                                                                         ^
+    142|     expect(lifecycle.calls).toContain('closeVite'); expect(lifecycle.c…
+    143|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/19]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 online lifecycle > attempts all owned cleanup after Vite close fails (synchronous=false)
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 online lifecycle > attempts all owned cleanup after Vite close fails (synchronous=true)
+AssertionError: expected [ Error: close failed ] to include Error: TERM failed
+ ❯ src/smoke/symbiotic-private.test.ts:148:119
+    146|     lifecycle.closeError = Error('close failed'); lifecycle.killError …
+    147|     const error = await fixture.stop().catch((e: unknown) => e);
+    148|     for (const expected of [lifecycle.closeError, lifecycle.killError,…
+       |                                                                                                                       ^
+    149|     expect(lifecycle.calls).toContain('SIGTERM');
+    150|     expect(lifecycle.sql.some((s) => s.startsWith('DROP DATABASE IF EX…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/19]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 online lifecycle > retains both bounded close failures and attempts KILL after TERM timeout
+AssertionError: expected [ 'Vite close timed out' ] to include 'server SIGTERM timed out'
+ ❯ src/smoke/symbiotic-private.test.ts:168:22
+    166|     const messages = errorTree(await outcome).filter((e): e is Error =…
+    167|     expect(messages).toContain('Vite close timed out');
+    168|     expect(messages).toContain('server SIGTERM timed out');
+       |                      ^
+    169|     expect(messages).toContain('server SIGKILL timed out');
+    170|     expect(lifecycle.calls).toContain('SIGKILL');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/19]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects corpse plus missing observer
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects missing observer
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects dead observer
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects different observer identity
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects different observer frame
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects different observer kind
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects dead enemy
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects enemy corpse mode
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects different enemy species
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects different enemy frame
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects different enemy kind
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects stale snapshot
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/smoke/symbiotic-private.test.ts:219:93
+    217|     { name: 'companion remote retained', mutate: (w: ReturnType<typeof…
+    218|     { name: 'companion instance retained', mutate: (w: ReturnType<type…
+    219|   ])('rejects $name', ({ mutate }) => { const w = world(); mutate(w); …
+       |                                                                                             ^
+    220|   it('accepts a living target with actual source-attributed health los…
+    221|   it('rejects health loss with no companion hit', () => { const w = wo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/19]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > R1 live lifecycle predicates > rejects a corpse after a credited killing hit
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/smoke/symbiotic-private.test.ts:223:143
+    221|   it('rejects health loss with no companion hit', () => { const w = wo…
+    222|   it('rejects attack phase without health loss', () => { const w = wor…
+    223|   it('rejects a corpse after a credited killing hit', () => { const w …
+       |                                                                                                                                               ^
+    224| });
+    225|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/19]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  19 failed | 19 passed (38)
+   Start at  02:21:59
+   Duration  183ms (transform 44%, tests 35%, import 17%, worker 4%)
+
+JSON report written to /private/tmp/symbiotic-r1-fix-c115e93-u4pywwri/permanent-red.json
