@@ -1,0 +1,416 @@
+{
+  "seal": {
+    "task": "P1.E04.T06",
+    "lane": "focused-unit-verification",
+    "verdict": "PASS",
+    "sealed": "2026-11-07T19:51:14Z",
+    "candidate": "f1766f0db294bbd325cfa43e4b1494adc2dd0baf",
+    "tree": "aa5bbb8a415a64e6641b3198f0c76c25cde3448b",
+    "checkout": "/Users/andreyyurlov/.t3/worktrees/space/t3-af46806b",
+    "headState": "detached",
+    "preservedBranch": {
+      "ref": "refs/heads/t3/af46806b",
+      "sha": "a7304884b2c7e81a052dc472d1c020051c0fdbdd"
+    },
+    "focused": {
+      "exit": 0,
+      "files": 6,
+      "filesPassed": 6,
+      "suites": 17,
+      "tests": 57,
+      "passed": 57,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "chaiAssertCalls": 2364,
+      "duration": "1.43s",
+      "started": "2026-11-07T19:51:12Z",
+      "ended": "2026-11-07T19:51:14Z",
+      "serialFileSpans": true,
+      "maxWorkers": 1,
+      "fileParallelism": false,
+      "pool": "forks",
+      "perFile": [
+        {
+          "file": "RemoteShips.test.js",
+          "tests": 23,
+          "asserts": 334
+        },
+        {
+          "file": "markers.test.js",
+          "tests": 16,
+          "asserts": 470
+        },
+        {
+          "file": "replay.test.js",
+          "tests": 4,
+          "asserts": 804
+        },
+        {
+          "file": "pilotMarkers.test.js",
+          "tests": 6,
+          "asserts": 62
+        },
+        {
+          "file": "poolDisplays.test.js",
+          "tests": 4,
+          "asserts": 46
+        },
+        {
+          "file": "poolCaptures.test.js",
+          "tests": 4,
+          "asserts": 648
+        }
+      ]
+    },
+    "protectedBlobsUnchanged": {
+      "HUD.js": "ca278071c42673e52fd128278d80b12997bfa424",
+      "Cockpit.js": "b4e041e98203f0f4d9dc0925008cc76650552796",
+      "style.css": "296c221594c06cacd6ea10ec1a6da301a7c2edce",
+      "screens.ts": "dbb5650e9192bb03eebfa502e42a0ac78a46b7cc"
+    },
+    "lockfileBlob": "fa850c2e93a386a217a116f9c1d7f5d2bafffcd6",
+    "worktreeStatusPorcelain": 0,
+    "larkUntouched": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-7d211d96",
+      "head": "6445c7ec0",
+      "branch": "t3/7d211d96"
+    },
+    "mergeAuthorized": false,
+    "pushed": false,
+    "visualGrade": false,
+    "smokeExecuted": false,
+    "browserExecuted": false,
+    "blenderExecuted": false,
+    "gpuExecuted": false
+  },
+  "cases": [
+    {
+      "file": "RemoteShips.test.js",
+      "tests": 23,
+      "asserts": 334,
+      "cases": [
+        {
+          "suite": "remote hulls",
+          "name": "draw with their own model, or one of their tier, or not at all",
+          "asserts": 4
+        },
+        {
+          "suite": "remote hulls",
+          "name": "draw the model above 240 px long, simpler below 240 and coarsest below 60, without flickering between",
+          "asserts": 8
+        },
+        {
+          "suite": "remote hulls",
+          "name": "move up past every threshold they are well beyond, across two levels at once",
+          "asserts": 4
+        },
+        {
+          "suite": "remote hulls",
+          "name": "carry each surface\u2019s material on its vertices: colour, roughness, metalness, plating, glow; the throats dark",
+          "asserts": 15
+        },
+        {
+          "suite": "remote hulls",
+          "name": "wear one material per level that reads them, the plating only on plated vertices, read after it sets roughness",
+          "asserts": 16
+        },
+        {
+          "suite": "remote ships\u2019 lights and plating",
+          "name": "flash each strobe up and back down over a few frames, as the local ship\u2019s does, each ship on its own beat",
+          "asserts": 8
+        },
+        {
+          "suite": "remote ships\u2019 lights and plating",
+          "name": "dim with distance, past 150 m under the bloom\u2019s threshold (1.2) even at the strobe\u2019s flash",
+          "asserts": 6
+        },
+        {
+          "suite": "remote ships\u2019 lights and plating",
+          "name": "fade the plating from 240 px down to none by 60 px",
+          "asserts": 3
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "restricts occlusion to camera depth and target range with camera pitch 0",
+          "asserts": 8
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "restricts occlusion to camera depth and target range with camera pitch -1.5707963267948966",
+          "asserts": 8
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "matches the rendered material through a hull: back-facing fine LODs stay clear, the double-sided coarsest occludes",
+          "asserts": 8
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "occludes only a farther pilot at the diamond ray, through the real remote-layer query",
+          "asserts": 3
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "tests a mark ray against the drawn hull triangles, not empty corners of its bounds, and only before the far pilot",
+          "asserts": 4
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "makes one kit per hull from that hull's own model, not the player's ship: the hull's surfaces merged, each leg apart",
+          "asserts": 6
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "makes the simplification on the model\u2019s own vertices, and the coarsest under 4.5% of the model, and says so",
+          "asserts": 9
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "makes the coarsest one solid shell: its own vertices, smooth, two-sided, the livery averaged, no lights, no plating",
+          "asserts": 187
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "draws a model's own LOD chain where it has one: its LOD1, and its last for the coarsest",
+          "asserts": 3
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "draws each ship at the level its size on screen calls for, picked afresh when it comes back into view",
+          "asserts": 5
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "casts shadows from the two finer levels only",
+          "asserts": 1
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "places each ship in view where it is, culls the ones out of view, and draws no hull without a model",
+          "asserts": 4
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "folds each ship\u2019s gear on its own: down when set down, up in flight; far off, only legs that are down",
+          "asserts": 7
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "lights each ship\u2019s engines from its own motion: by its speed in flight, out when set down, full on the pulse drive",
+          "asserts": 12
+        },
+        {
+          "suite": "RemoteShips",
+          "name": "makes room as more ships come, and draws none before the model has loaded",
+          "asserts": 5
+        }
+      ]
+    },
+    {
+      "file": "markers.test.js",
+      "tests": 16,
+      "asserts": 470,
+      "cases": [
+        {
+          "suite": "pilot markers",
+          "name": "keeps even its 70% distance ink above 4.5:1 against the opaque halo",
+          "asserts": 1
+        },
+        {
+          "suite": "pilot markers",
+          "name": "finishes a fade at exactly 150 ms and reverses it continuously from the opacity already drawn",
+          "asserts": 8
+        },
+        {
+          "suite": "pilot markers",
+          "name": "project the ship's box onto the screen: centred straight ahead, larger nearer, none behind the camera",
+          "asserts": 5
+        },
+        {
+          "suite": "pilot markers",
+          "name": "sit 6 px over the middle of the top of the ship's bounds, drawn in to its middle as it fills the screen",
+          "asserts": 4
+        },
+        {
+          "suite": "pilot markers",
+          "name": "are nudged off the keep-out, never dropped: straight out from its middle, so they slide round it",
+          "asserts": 287
+        },
+        {
+          "suite": "pilot markers",
+          "name": "slide round the keep-out no faster than they are let, however fast straight out from its middle runs",
+          "asserts": 78
+        },
+        {
+          "suite": "pilot markers",
+          "name": "are nudged the least way out where straight out leaves the screen, the way they went last first",
+          "asserts": 4
+        },
+        {
+          "suite": "pilot markers",
+          "name": "put the label 8 px right of the mark, its bottom over the ship's bounds, whatever the ship's size",
+          "asserts": 4
+        },
+        {
+          "suite": "pilot markers",
+          "name": "keep the side the label had while it has room, else take the next with room, else none",
+          "asserts": 11
+        },
+        {
+          "suite": "pilot markers",
+          "name": "keep a new label off other ships when they can, and over one when that is the only room",
+          "asserts": 4
+        },
+        {
+          "suite": "pilot markers",
+          "name": "want 6 px to spare round a label to take a side, here and where its mark is headed",
+          "asserts": 9
+        },
+        {
+          "suite": "pilot markers",
+          "name": "keep off the social panels' boxes where the HUD has them: the mark nudged off, the name on another side",
+          "asserts": 9
+        },
+        {
+          "suite": "pilot markers",
+          "name": "nudge off the boxes the real SocialUI.covers() gives with no arguments (the party frame, an invite card, the chat panel)",
+          "asserts": 12
+        },
+        {
+          "suite": "pilot markers",
+          "name": "outline the local ship by its convex hull's corners only, in its own space",
+          "asserts": 20
+        },
+        {
+          "suite": "pilot markers",
+          "name": "keep off the local ship's outline, slice by slice, not its box",
+          "asserts": 11
+        },
+        {
+          "suite": "pilot markers",
+          "name": "tell overlapping boxes from touching ones",
+          "asserts": 3
+        }
+      ]
+    },
+    {
+      "file": "replay.test.js",
+      "tests": 4,
+      "asserts": 804,
+      "cases": [
+        {
+          "suite": "encodeStream",
+          "name": "sends a full snapshot, then deltas on the tick before, each arriving late by the trip and its jitter, in order",
+          "asserts": 93
+        },
+        {
+          "suite": "SnapshotReplay",
+          "name": "plays a stream into the remote layer as the clock passes each arrival, through the same store and buffers",
+          "asserts": 4
+        },
+        {
+          "suite": "flypastTicks",
+          "name": "flies other pilots' Larks round in front of the local ship, in its frame, banked, their velocities their motion",
+          "asserts": 39
+        },
+        {
+          "suite": "crowdSensorsTicks",
+          "name": "plays a real withheld pilot and an edge-boosting pilot through wire decoding, interpolation and sensor authority",
+          "asserts": 668
+        }
+      ]
+    },
+    {
+      "file": "pilotMarkers.test.js",
+      "tests": 6,
+      "asserts": 62,
+      "cases": [
+        {
+          "suite": "pilot marker polish through HUD.updatePilots",
+          "name": "counts a still in-view pilot's nonzero fading name before admitting its crosshair replacement",
+          "asserts": 11
+        },
+        {
+          "suite": "pilot marker polish through HUD.updatePilots",
+          "name": "counts a departing pilot's nonzero fading name before admitting its crosshair replacement",
+          "asserts": 10
+        },
+        {
+          "suite": "pilot marker polish through HUD.updatePilots",
+          "name": "names the nearest eight and one crosshair pilot, deduplicating a crosshair pilot already among the eight",
+          "asserts": 4
+        },
+        {
+          "suite": "pilot marker polish through HUD.updatePilots",
+          "name": "grades label ink by sensor distance over the opaque halo, from full inside 500 m to 70% at 1 km",
+          "asserts": 3
+        },
+        {
+          "suite": "pilot marker polish through HUD.updatePilots",
+          "name": "fades a blocked label to zero in 150 ms on the HUD clock while its box moves with the diamond",
+          "asserts": 30
+        },
+        {
+          "suite": "pilot marker polish through HUD.updatePilots",
+          "name": "drops only the name when a nearer drawn hull covers the diamond, keeping its range and mark",
+          "asserts": 4
+        }
+      ]
+    },
+    {
+      "file": "poolDisplays.test.js",
+      "tests": 4,
+      "asserts": 46,
+      "cases": [
+        {
+          "suite": "ship pool displays use the real ship capacities",
+          "name": "draws full, partial and empty pools for 100-point base pools",
+          "asserts": 12
+        },
+        {
+          "suite": "ship pool displays use the real ship capacities",
+          "name": "draws full, partial and empty pools for 125-point plated pools",
+          "asserts": 12
+        },
+        {
+          "suite": "ship pool displays use the real ship capacities",
+          "name": "shows hostile-sky hull percentages and the 35% alarm boundary for 100-point base pools",
+          "asserts": 11
+        },
+        {
+          "suite": "ship pool displays use the real ship capacities",
+          "name": "shows hostile-sky hull percentages and the 35% alarm boundary for 125-point plated pools",
+          "asserts": 11
+        }
+      ]
+    },
+    {
+      "file": "poolCaptures.test.js",
+      "tests": 4,
+      "asserts": 648,
+      "cases": [
+        {
+          "suite": "the actual remote-ships pool capture callbacks",
+          "name": "preserves every advertised still value through real Pirate regeneration at 16x9",
+          "asserts": 22
+        },
+        {
+          "suite": "the actual remote-ships pool capture callbacks",
+          "name": "preserves every advertised still value through real Pirate regeneration at 21x9",
+          "asserts": 22
+        },
+        {
+          "suite": "the actual remote-ships pool capture callbacks",
+          "name": "holds 80% values through normal settling and every recorded game frame",
+          "asserts": 302
+        },
+        {
+          "suite": "the actual remote-ships pool capture callbacks",
+          "name": "holds 80% values through captureClip parking and every recorded game frame",
+          "asserts": 302
+        }
+      ]
+    }
+  ]
+}

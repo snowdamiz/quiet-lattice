@@ -1,0 +1,51 @@
+[e04-t06-focused] src/entities/poolCaptures.test.js > the actual remote-ships pool capture callbacks > preserves every advertised still value through real Pirate regeneration at ${aspect}
+[e04-t06-focused] src/entities/poolCaptures.test.js > the actual remote-ships pool capture callbacks > holds 80% values through ${parked ? 'captureClip parking' : 'normal settling'} and every recorded game frame
+[e04-t06-focused] src/entities/poolDisplays.test.js > ship pool displays use the real ship capacities > draws full, partial and empty pools for ${skills.length ? '125-point plated' : '100-point base'} pools
+[e04-t06-focused] src/entities/poolDisplays.test.js > ship pool displays use the real ship capacities > shows hostile-sky hull percentages and the 35% alarm boundary for ${skills.length ? '125-point plated' : '100-point base'} pools
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote hulls > draw with their own model, or one of their tier, or not at all
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote hulls > draw the model above ${LOD_PX[0]} px long, simpler below ${LOD_PX[0]} and coarsest below ${LOD_PX[1]}, without flickering between
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote hulls > move up past every threshold they are well beyond, across two levels at once
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote hulls > carry each surface’s material on its vertices: colour, roughness, metalness, plating, glow; the throats dark
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote hulls > wear one material per level that reads them, the plating only on plated vertices, read after it sets roughness
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote ships’ lights and plating > flash each strobe up and back down over a few frames, as the local ship’s does, each ship on its own beat
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote ships’ lights and plating > dim with distance, past ${LIGHTS_FAR} m under the bloom’s threshold (1.2) even at the strobe’s flash
+[e04-t06-focused] src/remote/RemoteShips.test.js > remote ships’ lights and plating > fade the plating from ${LOD_PX[0]} px down to none by ${LOD_PX[1]} px
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > restricts occlusion to camera depth and target range with camera pitch ${pitch}
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > matches the rendered material through a hull: back-facing fine LODs stay clear, the double-sided coarsest occludes
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > occludes only a farther pilot at the diamond ray, through the real remote-layer query
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > tests a mark ray against the drawn hull triangles, not empty corners of its bounds, and only before the far pilot
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > makes one kit per hull from that hull's own model, not the player's ship: the hull's surfaces merged, each leg apart
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > makes the simplification on the model’s own vertices, and the coarsest under ${COARSE_RATIO * 100 + 1}% of the model, and says so
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > makes the coarsest one solid shell: its own vertices, smooth, two-sided, the livery averaged, no lights, no plating
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > draws a model's own LOD chain where it has one: its LOD1, and its last for the coarsest
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > draws each ship at the level its size on screen calls for, picked afresh when it comes back into view
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > casts shadows from the two finer levels only
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > places each ship in view where it is, culls the ones out of view, and draws no hull without a model
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > folds each ship’s gear on its own: down when set down, up in flight; far off, only legs that are down
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > lights each ship’s engines from its own motion: by its speed in flight, out when set down, full on the pulse drive
+[e04-t06-focused] src/remote/RemoteShips.test.js > RemoteShips > makes room as more ships come, and draws none before the model has loaded
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > keeps even its 70% distance ink above 4.5:1 against the opaque halo
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > finishes a fade at exactly 150 ms and reverses it continuously from the opacity already drawn
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > project the ship's box onto the screen: centred straight ahead, larger nearer, none behind the camera
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > sit ${MARK_GAP} px over the middle of the top of the ship's bounds, drawn in to its middle as it fills the screen
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > are nudged off the keep-out, never dropped: straight out from its middle, so they slide round it
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > slide round the keep-out no faster than they are let, however fast straight out from its middle runs
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > are nudged the least way out where straight out leaves the screen, the way they went last first
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > put the label ${LABEL_GAP} px right of the mark, its bottom over the ship's bounds, whatever the ship's size
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > keep the side the label had while it has room, else take the next with room, else none
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > keep a new label off other ships when they can, and over one when that is the only room
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > want ${ROOM_MARGIN} px to spare round a label to take a side, here and where its mark is headed
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > keep off the social panels' boxes where the HUD has them: the mark nudged off, the name on another side
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > nudge off the boxes the real SocialUI.covers() gives with no arguments (the party frame, an invite card, the chat panel)
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > outline the local ship by its convex hull's corners only, in its own space
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > keep off the local ship's outline, slice by slice, not its box
+[e04-t06-focused] src/remote/markers.test.js > pilot markers > tell overlapping boxes from touching ones
+[e04-t06-focused] src/remote/replay.test.js > encodeStream > sends a full snapshot, then deltas on the tick before, each arriving late by the trip and its jitter, in order
+[e04-t06-focused] src/remote/replay.test.js > SnapshotReplay > plays a stream into the remote layer as the clock passes each arrival, through the same store and buffers
+[e04-t06-focused] src/remote/replay.test.js > flypastTicks > flies other pilots' Larks round in front of the local ship, in its frame, banked, their velocities their motion
+[e04-t06-focused] src/remote/replay.test.js > crowdSensorsTicks > plays a real withheld pilot and an edge-boosting pilot through wire decoding, interpolation and sensor authority
+[e04-t06-focused] src/ui/pilotMarkers.test.js > pilot marker polish through HUD.updatePilots > counts a ${departed ? 'departing' : 'still in-view'} pilot's nonzero fading name before admitting its crosshair replacement
+[e04-t06-focused] src/ui/pilotMarkers.test.js > pilot marker polish through HUD.updatePilots > names the nearest eight and one crosshair pilot, deduplicating a crosshair pilot already among the eight
+[e04-t06-focused] src/ui/pilotMarkers.test.js > pilot marker polish through HUD.updatePilots > grades label ink by sensor distance over the opaque halo, from full inside 500 m to 70% at 1 km
+[e04-t06-focused] src/ui/pilotMarkers.test.js > pilot marker polish through HUD.updatePilots > fades a blocked label to zero in 150 ms on the HUD clock while its box moves with the diamond
+[e04-t06-focused] src/ui/pilotMarkers.test.js > pilot marker polish through HUD.updatePilots > drops only the name when a nearer drawn hull covers the diamond, keeping its range and mark

@@ -1,0 +1,318 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-af46806b
+
+ ✓ |@astra/client| src/remote/buffer.test.js (25 tests) 18ms
+ ✓ |@astra/client| src/dev/review.test.js (21 tests) 12ms
+ ✓ |@astra/client| src/remote/markers.test.js (16 tests) 11ms
+ ✓ |@astra/client| src/ui/Account.test.js (29 tests) 33ms
+ ✓ |@astra/client| src/net/prediction.test.js (26 tests) 20ms
+ ✓ |@astra/client| src/remote/RemoteEntities.test.js (16 tests) 48ms
+ ✓ |@astra/client| src/net/mining.test.js (21 tests) 26ms
+ ✓ |@astra/client| src/ui/social/model.test.js (14 tests) 21ms
+ ✓ |@astra/client| src/remote/RemoteShips.test.js (23 tests) 114ms
+ ✓ |@astra/client| src/net/Net.test.js (29 tests) 36ms
+ ✓ |@astra/client| src/characters/sharedRig.test.js (21 tests) 626ms
+ ✓ |@astra/client| src/entities/meters.test.js (11 tests) 40ms
+ ✓ |@astra/client| src/cutscene/link.test.js (9 tests) 9ms
+ ✓ |@astra/client| src/cutscene/timeline.test.js (10 tests) 7ms
+ ✓ |@astra/client| src/gameplay/Inventory.test.js (12 tests) 34ms
+ ✓ |@astra/client| src/gameplay/modelLibrary.test.js (6 tests) 18ms
+ ✓ |@astra/client| src/ui/social/SocialUI.test.js (5 tests) 5ms
+ ✓ |@astra/client| src/ui/banners.test.js (11 tests) 5ms
+ ✓ |@astra/client| src/cutscene/space.test.js (5 tests) 3ms
+ ✓ |@astra/client| src/ui/HUD.test.js (9 tests) 4ms
+ ✓ |@astra/client| src/gameplay/Flora.test.js (15 tests) 34ms
+ ✓ |@astra/client| src/net/abilities.test.js (5 tests) 6ms
+ ✓ |@astra/client| src/remote/replay.test.js (4 tests) 65ms
+ ✓ |@astra/client| src/ui/social/motion.test.js (8 tests) 7ms
+ ✓ |@astra/client| src/gameplay/resonanceFx.test.js (11 tests) 8ms
+ ✓ |@astra/client| src/Game.test.js (48 tests) 43ms
+ ✓ |@astra/client| src/exosuit.test.js (16 tests) 48ms
+ ✓ |@astra/client| src/cutscene/CameraDirector.test.js (4 tests) 9ms
+ ✓ |@astra/client| src/ui/map/EdgeOfSpace.test.js (14 tests) 62ms
+ ✓ |@astra/client| src/cutscene/curve.test.js (7 tests) 7ms
+ ✓ |@astra/client| src/net/api.test.js (8 tests) 37ms
+ ✓ |@astra/client| src/net/beacons.test.js (5 tests) 9ms
+ ✓ |@astra/client| src/net/worldEvents.test.js (12 tests) 9ms
+ ✓ |@astra/client| src/ui/pilotMarkers.test.js (6 tests) 7ms
+ ✓ |@astra/client| test/pirateContact.test.js (9 tests) 5ms
+ ✓ |@astra/client| src/net/crafting.test.js (4 tests) 6ms
+ ✓ |@astra/client| src/ui/social/commands.test.js (5 tests) 4ms
+ ✓ |@astra/client| src/net/discoveries.test.js (3 tests) 6ms
+ ✓ |@astra/client| src/ui/social/words.test.js (5 tests) 4ms
+ ✓ |@astra/client| src/net/link.test.js (5 tests) 107ms
+ ✓ |@astra/client| src/universe/Universe.test.js (5 tests) 68ms
+ ✓ |@astra/client| src/remote/clock.test.js (4 tests) 7ms
+ ✓ |@astra/client| src/entities/poolDisplays.test.js (4 tests) 11ms
+ ✓ |@astra/client| src/net/pose.test.js (6 tests) 2ms
+ ✓ |@astra/client| src/net/session.test.js (2 tests) 2ms
+ ✓ |@astra/client| src/render/UniverseSky.test.js (3 tests) 190ms
+ ✓ |@astra/client| src/entities/hazards.test.js (4 tests) 5ms
+ ✓ |@astra/client| src/entities/poolCaptures.test.js (4 tests) 12ms
+ ✓ |@astra/client| src/ui/Cinematic.test.js (3 tests) 2ms
+ ✓ |@astra/client| src/net/reputation.test.js (3 tests) 3ms
+ ✓ |@astra/client| src/net/combat.test.js (2 tests) 2ms
+ ✓ |@astra/client| src/net/predictionFlight.test.js (2 tests) 98ms
+ ✓ |@astra/client| src/entities/pulseExit.test.js (1 test) 3ms
+ ✓ |@astra/server| src/crafting/service.test.ts (24 tests) 11ms
+ ✓ |@astra/server| src/phases/manager.test.ts (32 tests) 40ms
+ ✓ |@astra/server| test/social/beacons.test.ts (28 tests) 55ms
+ ✓ |@astra/server| src/meters/suit.test.ts (58 tests) 187ms
+ ✓ |@astra/server| src/abilities/service.test.ts (39 tests) 81ms
+ ✓ |@astra/server| src/resources/service.test.ts (32 tests) 181ms
+ ✓ |@astra/server| src/quests/runtime.test.ts (17 tests) 49ms
+ ✓ |@astra/server| src/persistence/service.test.ts (25 tests) 615ms
+   ✓ character persistence (15)
+     ✓ retries a failed batch one character a statement, so one bad row does not hold back the rest 302ms
+ ✓ |@astra/server| test/social/parties.test.ts (19 tests) 57ms
+ ✓ |@astra/server| src/abilities/resonance.test.ts (43 tests) 191ms
+ ✓ |@astra/server| src/abilities/thermal.test.ts (32 tests) 114ms
+ ✓ |@astra/server| src/cutscenes/service.test.ts (17 tests) 33ms
+ ✓ |@astra/server| src/persistence/components.test.ts (15 tests) 66ms
+ ✓ |@astra/server| src/combat/zone.test.ts (18 tests) 164ms
+ ✓ |@astra/server| src/meters/service.test.ts (16 tests) 78ms
+ ✓ |@astra/server| src/skills/component.test.ts (9 tests) 26ms
+ ✓ |@astra/server| src/fauna/ai.test.ts (18 tests) 597ms
+ ✓ |@astra/server| src/count/meter.test.ts (16 tests) 296ms
+ ✓ |@astra/server| src/skills/service.test.ts (14 tests) 15ms
+ ✓ |@astra/server| src/reputation/component.test.ts (9 tests) 37ms
+ ✓ |@astra/server| src/fauna/sim.test.ts (24 tests) 1192ms
+   ✓ bounds (6)
+     ✓ let a teleporting player wake only WAKE_PER_S new cells a second, and keep the zone within its caps 338ms
+ ✓ |@astra/server| src/zones/manager.test.ts (17 tests) 415ms
+   ✓ ZoneManager (15)
+     ✓ runs its own timer at the tick rate 315ms
+ ✓ |@astra/server| src/combat/service.test.ts (14 tests) 56ms
+ ✓ |@astra/server| src/codex/analysis.test.ts (8 tests) 24ms
+ ✓ |@astra/server| src/world/edge.test.ts (9 tests) 24ms
+ ✓ |@astra/server| src/sim/movement/review2.test.ts (34 tests) 1567ms
+   ✓ getting out, falling, walking back and boarding (1)
+     ✓ on any dry ground, the ship levelled as the client lands it, is never corrected 749ms
+ ✓ |@astra/server| src/skills/pilot.test.ts (21 tests) 30ms
+ ✓ |@astra/server| src/world/countMeter.test.ts (11 tests) 103ms
+ ✓ |@astra/server| src/sim/movement/review3.test.ts (10 tests) 362ms
+ ✓ |@astra/server| src/world/seasons.test.ts (7 tests) 124ms
+ ✓ |@astra/server| src/reputation/service.test.ts (10 tests) 6ms
+ ✓ |@astra/server| src/discovery/service.test.ts (13 tests) 716ms
+ ✓ |@astra/server| src/quests/cutscenes.test.ts (7 tests) 33ms
+ ✓ |@astra/server| src/admin/service.test.ts (7 tests) 242ms
+ ✓ |@astra/server| src/crafting/component.test.ts (9 tests) 15ms
+ ✓ |@astra/client| src/entities/livelock.test.js (2 tests) 2979ms
+   ✓ the overheat lockout under latency (2)
+     ✓ overheats on the server whenever the client does, and no stale view lifts a lockout 1285ms
+     ✓ (the test sees the old way fail: the prediction as the request, and no guard) 1693ms
+ ✓ |@astra/server| src/world/service.test.ts (9 tests) 51ms
+ ✓ |@astra/server| src/inventory/service.test.ts (13 tests) 12ms
+ ✓ |@astra/server| src/phases/visibility.test.ts (6 tests) 51ms
+ ✓ |@astra/server| test/social/chat.test.ts (10 tests) 49ms
+ ✓ |@astra/server| src/sim/movement/authority.test.ts (29 tests) 2216ms
+   ✓ honest flight is never corrected (7)
+     ✓ releases boost and turns (any angle, at once or at 1.6 rad/s, throttle up or cut) on every hull 625ms
+     ✓ flies the pulse drive at the star and away from it, with and without Supercruise, on the Lark and the Dart 1476ms
+ ✓ |@astra/server| src/zones/interest.test.ts (8 tests) 33ms
+ ✓ |@astra/server| src/persistence/registry.test.ts (8 tests) 6ms
+ ✓ |@astra/server| src/zones/frames.test.ts (4 tests) 40ms
+ ✓ |@astra/server| src/meters/burn.test.ts (5 tests) 399ms
+ ✓ |@astra/server| src/resources/nodes.test.ts (8 tests) 8ms
+ ✓ |@astra/server| src/codex/component.test.ts (6 tests) 24ms
+ ✓ |@astra/server| src/combat/hazards.test.ts (14 tests) 48ms
+ ✓ |@astra/server| src/zones/delta.test.ts (5 tests) 659ms
+   ✓ delta snapshots over 200 random ticks (1)
+     ✓ let every client reconstruct exactly the state the zone sent, through clears, removals and lost acks 618ms
+ ✓ |@astra/server| src/zones/zone.test.ts (4 tests) 21ms
+ ✓ |@astra/server| src/session/session.test.ts (11 tests) 8ms
+ ✓ |@astra/server| src/admin/commands.test.ts (3 tests) 9ms
+ ✓ |@astra/server| src/seasons/rules.test.ts (7 tests) 9ms
+ ✓ |@astra/server| src/codex/service.test.ts (6 tests) 6ms
+ ✓ |@astra/server| src/seasons/component.test.ts (4 tests) 34ms
+ ✓ |@astra/server| src/seasons/awards.test.ts (4 tests) 5ms
+ ✓ |@astra/server| src/admin/place.test.ts (5 tests) 43ms
+ ✓ |@astra/server| src/admin/config.test.ts (6 tests) 6ms
+ ✓ |@astra/server| src/abilities/statuses.test.ts (6 tests) 3ms
+ ✓ |@astra/server| src/combat/docking.test.ts (7 tests) 41ms
+ ✓ |@astra/server| src/fauna/control.test.ts (8 tests) 177ms
+ ✓ |@astra/server| src/gateway/rateLimit.test.ts (10 tests) 14ms
+ ✓ |@astra/server| src/zones/spatialHash.test.ts (5 tests) 30ms
+ ✓ |@astra/server| src/fauna/cells.test.ts (5 tests) 27ms
+ ✓ |@astra/server| src/fauna/herds.test.ts (6 tests) 204ms
+ ✓ |@astra/server| src/sim/movement/review.test.ts (10 tests) 2240ms
+   ✓ a walker (2)
+     ✓ sprints, jumps and jetpacks over rough ground, downhill off crests and up cliffs 1093ms
+   ✓ cheats the review found are refused (5)
+     ✓ cycling landed and flying, or getting out and boarding, to move faster than the caps 543ms
+ ✓ |@astra/server| src/sim/movement/world.test.ts (8 tests) 657ms
+   ✓ the ground (3)
+     ✓ never reaches its ceiling, volcanoes and landforms included (above it the sampler is not asked) 592ms
+ ✓ |@astra/server| test/gatewayPersistence.test.ts (1 test) 50ms
+ ✓ |@astra/server| src/sim/movement/motion.test.ts (3 tests) 74ms
+ ✓ |@astra/server| src/fauna/sky.test.ts (2 tests) 46ms
+ ✓ |@astra/server| src/accounts/tokens.test.ts (6 tests) 33ms
+ ✓ |@astra/server| src/config.test.ts (8 tests) 5ms
+ ✓ |@astra/server| src/zones/poseTime.test.ts (1 test) 14ms
+ ✓ |@astra/server| src/resources/los.test.ts (4 tests) 36ms
+ ✓ |@astra/server| src/seasons/actives.test.ts (3 tests) 4ms
+ ✓ |@astra/server| src/world/clock.test.ts (4 tests) 7ms
+ ✓ |@astra/server| src/resources/ground.test.ts (2 tests) 276ms
+ ✓ |@astra/server| src/sim/movement/firstInput.test.ts (7 tests) 7ms
+ ✓ |@astra/server| src/quests/skills.test.ts (1 test) 15ms
+ ✓ |@astra/server| src/characters/names.test.ts (18 tests) 18ms
+ ✓ |@astra/server| src/quests/catalog.test.ts (1 test) 2ms
+ ✓ |@astra/server| src/combat/gun.test.ts (7 tests) 3ms
+ ✓ |@astra/server| src/accounts/password.test.ts (3 tests) 87ms
+ ✓ |@astra/server| src/world/home.test.ts (3 tests) 7ms
+ ✓ |@astra/server| src/gateway/ws.test.ts (3 tests) 13ms
+ ✓ |@astra/server| src/cli/run.test.ts (7 tests) 14ms
+ ✓ |@astra/shared| test/skillsReconcile.test.ts (11 tests) 13ms
+ ✓ |@astra/shared| test/skills.test.ts (30 tests) 16ms
+ ✓ |@astra/shared| test/data.test.ts (73 tests) 71ms
+ ✓ |@astra/shared| test/det.test.ts (14 tests) 135ms
+ ✓ |@astra/shared| test/crafting.test.ts (24 tests) 15ms
+ ✓ |@astra/shared| test/inventory.test.ts (34 tests) 42ms
+ ✓ |@astra/shared| test/reputation.test.ts (11 tests) 10ms
+ ✓ |@astra/shared| test/ships.test.ts (34 tests) 212ms
+ ✓ |@astra/shared| test/protocol.test.ts (103 tests) 45ms
+ ✓ |@astra/shared| test/meters.test.ts (37 tests) 16ms
+ ✓ |@astra/shared| test/frames.test.ts (8 tests) 47ms
+ ✓ |@astra/shared| test/suit.test.ts (33 tests) 67ms
+stdout | test/homes.test.ts > home systems, seed 424242 (golden) > are system 0 and the two neighbours closest together with it: Thalune lush, Ixari exotic, Ulgani mild toxic
+home systems of galaxy 424242:
+  thalune system  0 Orxa       seed 2981198913 body 1 Orxa II        lush · Sarelun (radial) · 0.00 ly
+  ixari   system 59 Kaial      seed 2853974035 body 3 Kaial III      alien · Quavel (spiral) · 9.55 ly
+  ulgani  system  1 Ostrhekai  seed 4277949890 body 1 Ostrhekai II   toxic (mild) · Belost (grid) · 9.91 ly
+  apart: 0–59 9.55 ly, 0–1 9.91 ly, 59–1 12.18 ly
+
+ ✓ |@astra/shared| test/combat/hits.test.ts (23 tests) 12ms
+ ✓ |@astra/shared| test/quests.test.ts (50 tests) 54ms
+ ✓ |@astra/shared| test/combat/damage.test.ts (19 tests) 8ms
+ ✓ |@astra/shared| test/signature.test.ts (18 tests) 20ms
+ ✓ |@astra/shared| test/discovery.test.ts (19 tests) 42ms
+ ✓ |@astra/shared| test/edge.test.ts (15 tests) 28ms
+ ✓ |@astra/shared| test/combat/mobs.test.ts (13 tests) 7ms
+ ✓ |@astra/shared| test/tiers.test.ts (18 tests) 17ms
+ ✓ |@astra/shared| test/movement.test.ts (9 tests) 8ms
+ ✓ |@astra/shared| test/exosuit.test.ts (24 tests) 6ms
+ ✓ |@astra/shared| test/events.test.ts (11 tests) 7ms
+ ✓ |@astra/shared| test/combat/aggro.test.ts (17 tests) 5ms
+ ✓ |@astra/shared| test/cover.test.ts (11 tests) 5ms
+ ✓ |@astra/shared| test/homes.test.ts (18 tests) 442ms
+ ✓ |@astra/shared| test/seasons.test.ts (9 tests) 14ms
+ ✓ |@astra/shared| test/kinematics.test.ts (17 tests) 562ms
+ ✓ |@astra/shared| src/protocol/beacon.test.ts (6 tests) 15ms
+ ✓ |@astra/shared| src/protocol/mine.test.ts (7 tests) 11ms
+ ✓ |@astra/shared| src/protocol/craft.test.ts (5 tests) 6ms
+ ✓ |@astra/shared| test/resourceNodeRefs.test.ts (5 tests) 4ms
+ ✓ |@astra/shared| test/discovery.sweep.test.ts (4 tests) 128ms
+ ✓ |@astra/shared| test/system.test.ts (11 tests) 325ms
+ ✓ |@astra/shared| src/protocol/combat.test.ts (6 tests) 7ms
+ ✓ |@astra/shared| test/thermal.test.ts (6 tests) 5ms
+ ✓ |@astra/shared| src/protocol/analyze.test.ts (4 tests) 19ms
+ ✓ |@astra/shared| src/protocol/discovery.test.ts (3 tests) 4ms
+ ✓ |@astra/shared| test/fauna.test.ts (7 tests) 333ms
+ ✓ |@astra/shared| test/combat/level.test.ts (7 tests) 4ms
+ ✓ |@astra/shared| src/protocol/cutscene.test.ts (4 tests) 4ms
+ ✓ |@astra/shared| test/shipHazards.test.ts (8 tests) 4ms
+ ✓ |@astra/shared| src/protocol/worldEvent.test.ts (3 tests) 13ms
+ ✓ |@astra/shared| test/glyphs.test.ts (5 tests) 4ms
+ ✓ |@astra/shared| src/protocol/prediction.test.ts (1 test) 10ms
+ ✓ |@astra/shared| test/combat/loot.test.ts (4 tests) 2ms
+ ✓ |@astra/shared| src/world/planetgen.test.ts (4 tests) 24ms
+ ✓ |@astra/shared| test/fauna.golden.test.ts (26 tests) 56ms
+ ✓ |@astra/shared| src/world/rng.test.ts (4 tests) 18ms
+ ✓ |@astra/tools| src/art/targets.test.ts (16 tests) 8ms
+ ✓ |@astra/shared| test/abilities.test.ts (1 test) 4ms
+ ✓ |@astra/tools| src/art/meshopt.test.ts (4 tests) 25ms
+ ✓ |@astra/tools| src/art/ktx.test.ts (8 tests) 193ms
+ ✓ |@astra/shared| test/dens.species.test.ts (13 tests) 534ms
+ ✓ |@astra/shared| src/world/sites.test.ts (20 tests) 1356ms
+   ✓ den planning (14)
+     ✓ plans no dens at Tier 0 on any world, so the planet comes out exactly as the client plans it today 547ms
+ ✓ |@astra/tools| src/capture/classes.test.ts (3 tests) 3ms
+ ✓ |@astra/tools| src/gates/removed.test.ts (7 tests) 11ms
+ ✓ |@astra/server| src/fauna/dens.test.ts (14 tests) 6054ms
+   ✓ night (5)
+     ✓ doubles the predators the herd spawner places, and nothing else 712ms
+     ✓ sends a cell’s night herd out as night falls on it, once a night, never within 70 m of a player 2458ms
+     ✓ sends no night herd out at nightfall while the zone is full, and sends it once there is room 2347ms
+ ✓ |@astra/shared| test/codex.test.ts (11 tests) 1881ms
+   ✓ a codex (4)
+     ✓ records nothing past its bounds 1750ms
+ ✓ |@astra/tools| src/smoke/targets.test.ts (4 tests) 2ms
+ ✓ |@astra/tools| src/smoke/harness-imports.test.ts (20 tests) 11ms
+ ✓ |@astra/tools| src/smoke/gl.test.ts (2 tests) 2ms
+ ✓ |@astra/tools| src/fixtures/describe-systems.test.ts (1 test) 219ms
+ ✓ |@astra/tools| src/fixtures/tiers-golden.test.ts (2 tests) 45ms
+ ✓ |@astra/tools| src/bots/bots.test.ts (6 tests) 13ms
+ ✓ |@astra/shared| test/world.golden.test.ts (82 tests) 1710ms
+ ✓ |@astra/shared| test/resourceNodes.test.ts (26 tests) 2470ms
+   ✓ the drawn ground (3)
+     ✓ is planSurface’s cities and sites on the natural ground, levelled, with no dens while dens are not drawn 1024ms
+   ✓ scattered nodes (14)
+     ✓ on the lush world nothing grows on the pads or round a site, which the cells reach 335ms
+     ✓ on the storm world nothing grows on the pads or round a site, which the cells reach 498ms
+ ✓ |@astra/server| src/events/service.test.ts (15 tests) 6988ms
+   ✓ contribution and rewards (6)
+     ✓ credits objective points to a member, and pays for the waves cleared when time runs out 563ms
+   ✓ one occurrence, one instance, one payout (4)
+     ✓ puts a player who left its instance back in that one, never in another, and has only that one pay it 6299ms
+ ✓ |@astra/tools| src/fixtures/client-poses.test.ts (10 tests) 1590ms
+   ✓ the client’s bodies move as systemPoses says (9)
+     ✓ system 0 Orxa: star, planets, moons and Waystation at 1,000 times 364ms
+   ✓ the client’s FrameState changes frame as setFrame says (1)
+     ✓ bit for bit, between planets, moons, the Waystation and the inertial frame 418ms
+ ✓ |@astra/tools| src/fixtures/world-golden.test.ts (11 tests) 2237ms
+   ✓ world golden fixture (1)
+     ✓ is regenerated exactly by its generator 1152ms
+ ✓ |@astra/shared| test/resourceNodes.golden.test.ts (17 tests) 4061ms
+   ✓ resource nodes golden fixture, seed 424242 (17)
+     ✓ lush world Orxa II (1)
+       ✓ layers, node counts and the nodes themselves at every tier 762ms
+     ✓ alien world Orxa III (1)
+       ✓ layers, node counts and the nodes themselves at every tier 530ms
+     ✓ desert world Ostrhekai I (1)
+       ✓ layers, node counts and the nodes themselves at every tier 419ms
+     ✓ toxic world Orxa IV (1)
+       ✓ layers, node counts and the nodes themselves at every tier 462ms
+     ✓ volcanic world Orxa II-a (1)
+       ✓ layers, node counts and the nodes themselves at every tier 387ms
+     ✓ storm world Zuul IV (1)
+       ✓ layers, node counts and the nodes themselves at every tier 435ms
+ ✓ |@astra/shared| test/dens.golden.test.ts (12 tests) 4605ms
+   ✓ dens golden fixture, seed 424242 (12)
+     ✓ home planet Orxa II (1)
+       ✓ land, dens at every tier and the apex lair 656ms
+     ✓ home planet Ostrhekai II (1)
+       ✓ land, dens at every tier and the apex lair 584ms
+     ✓ home planet Belvel II (1)
+       ✓ land, dens at every tier and the apex lair 355ms
+     ✓ home planet Corcor II (1)
+       ✓ land, dens at every tier and the apex lair 396ms
+     ✓ home planet Ostkai II (1)
+       ✓ land, dens at every tier and the apex lair 570ms
+     ✓ home planet Rolis II (1)
+       ✓ land, dens at every tier and the apex lair 491ms
+     ✓ home planet Phasolmir III (1)
+       ✓ land, dens at every tier and the apex lair 490ms
+     ✓ home planet Dunera II (1)
+       ✓ land, dens at every tier and the apex lair 324ms
+     ✓ home planet Solka II (1)
+       ✓ land, dens at every tier and the apex lair 453ms
+ ✓ |@astra/tools| src/fixtures/dens-golden.test.ts (1 test) 4299ms
+   ✓ dens golden fixture (generator) (1)
+     ✓ regenerates exactly the committed file 4298ms
+ ✓ |@astra/server| src/fauna/terrain.test.ts (11 tests) 11932ms
+   ✓ one plan (1)
+     ✓ the dens the server spawns at are the drawn ground’s, and its ground the drawn ground, on several worlds 1459ms
+   ✓ a world’s dens (1)
+     ✓ are planned in the worker at a tier, as on this thread, each naming who lives there, and kept per tier 368ms
+   ✓ the ground planner, when things go wrong (5)
+     ✓ restarts a worker stuck on a plan past the timeout, and sends the plan again 6110ms
+     ✓ gives up a plan that hangs twice, waits out a backoff, and never moves to the main thread for it 3007ms
+
+ Test Files  213 passed (213)
+      Tests  2714 passed (2714)
+   Start at  14:48:24
+   Duration  15.42s (tests 60%, import 23%, transform 17%)
+
+    Isolate  213 workers spawned · ~68ms startup each (spawn + environment, per file)
+             at least ~973ms faster with isolate: false — reuses workers across files instead of one per file
+
