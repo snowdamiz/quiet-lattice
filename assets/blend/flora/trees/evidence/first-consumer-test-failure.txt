@@ -1,0 +1,36 @@
+Historical run, 2026-11-07 01:28:20 local.
+Command: pnpm exec vitest run packages/client/src/gameplay/floraTreesT04.test.js --maxWorkers=1
+Exit: 1. 17 passed; 6 failed. This is NOT a current pass receipt.
+The terminal output identified unused vertices left by Blender decimation in four
+source bundles (rendered/exported vertices were correct), a test/audit sequencing
+race for cactus, and a test applying the giant-only scatter multiplier to cactus.
+Fix: remove face-unreferenced vertices in saved sources, seal exact float carriers,
+export and audit every bundle to completion before tests, and use the actual giant
+kind list. Raised the paddle cactus root pad to the ground plane separately.
+
+Last failure and terminal tail (captured from the original terminal result):
+ FAIL  |@astra/client| src/gameplay/floraTreesT04.test.js > T04 current compressed tree inventory > cactus: the real builder selects every authored sibling and its far mesh
+AssertionError: expected -1.077092170715332 to be greater than -1
+ ❯ src/gameplay/floraTreesT04.test.js:120:46
+    118|         result.geo.scale(4.6, 4.6, 4.6);
+    119|         result.geo.computeBoundingBox();
+    120|         expect(result.geo.boundingBox.min.y).toBeGreaterThan(-1);
+       |                                              ^
+    121|         result.geo.dispose();
+    122|       }
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 17 passed (23)
+   Start at  01:28:20
+   Duration  860ms (tests 45%, transform 43%, import 12%, worker 1%)
+
+Other failure identities:
+tree_round_0_lod2 unique position/mask rows: source3066 vs exported2911
+tree_conifer_0_lod1: source7702 vs exported7688
+tree_palm_0_lod1: source5732 vs exported5731
+tree_mushroom_0_lod2: source891 vs exported890
+cactus audit undefined while its sequential audit job was still pending.
+
+An optional local Pillow availability probe before this command exited1 with
+ModuleNotFoundError: No module named 'PIL'. No package was installed; Blender's
+image API remains the CPU preview path.

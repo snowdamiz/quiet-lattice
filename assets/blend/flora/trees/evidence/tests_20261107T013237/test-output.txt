@@ -1,0 +1,27 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975
+
+ ❯ |@astra/client| src/gameplay/floraTreesT04.test.js (23 tests | 1 failed) 351ms
+   ❯ T04 current compressed tree inventory (23)
+     × round: exact names, 4 LODs, source positions and FLOAT mask bits survive compression 73ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/client| src/gameplay/floraTreesT04.test.js > T04 current compressed tree inventory > round: exact names, 4 LODs, source positions and FLOAT mask bits survive compression
+AssertionError: expected -0.22552642226219177 to be greater than -0.2
+ ❯ src/gameplay/floraTreesT04.test.js:97:41
+     95|           const geo = recolor(mesh, palette);
+     96|           expect(geo.boundingBox.max.y).toBeGreaterThan(1);
+     97|           expect(geo.boundingBox.min.y).toBeGreaterThan(-.2);
+       |                                         ^
+     98|           geo.dispose();
+     99|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 28 passed (29)
+   Start at  01:32:37
+   Duration  653ms (tests 70%, import 19%, transform 10%, worker 1%)
+

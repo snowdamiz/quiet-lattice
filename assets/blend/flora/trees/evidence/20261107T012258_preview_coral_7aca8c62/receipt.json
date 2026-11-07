@@ -1,0 +1,72 @@
+{
+  "action": "preview",
+  "kind": "coral",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      9.3310546875,
+      18.58642578125,
+      25.0927734375
+    ],
+    "free_disk": 47477325824,
+    "memory": "System-wide memory free percentage: 66%",
+    "processes": [
+      " 2877  43.0 200560 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  407  29.3  77920 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "75123  27.5 880096 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "28550  10.3  24080 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "75104   9.4 662896 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      " 2874   9.1 469056 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "74993   6.3 112144 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper.app/Contents/MacOS/Acid (Beta) Helper",
+      "  540   4.3  25280 /usr/sbin/coreaudiod",
+      "74979   3.7 283344 /Users/andreyyurlov/Applications/Acid.app/Contents/MacOS/Acid (Beta)",
+      "  908   3.1  94192 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  494   2.6  34256 /usr/libexec/syspolicyd",
+      "81989   2.6 151088 /Applications/Claude.app/Contents/MacOS/Claude",
+      "  654   1.8  15296 /usr/sbin/cfprefsd",
+      "  706   1.7 127936 /Applications/WhatsApp.app/Contents/MacOS/WhatsApp",
+      "81753   1.6 871680 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine"
+    ]
+  },
+  "source": "assets/blend/flora/tree_coral_t04.blend",
+  "output": "packages/client/public/models/flora/tree_coral_t04.glb",
+  "source_before": "e83cef8c40e57a1ec2ece44fe49dca9dac4b98cf0a97577219b77b20e057f150",
+  "deadline_s": 420,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/preview.py",
+    "--",
+    "coral",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/trees/evidence/20261107T012258_preview_coral_7aca8c62"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 28556,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 8.234,
+  "peak_group_rss_kib": 340448,
+  "remaining_owned_children": [],
+  "source_after": "e83cef8c40e57a1ec2ece44fe49dca9dac4b98cf0a97577219b77b20e057f150",
+  "export_sha256": null,
+  "source_unchanged": true
+}

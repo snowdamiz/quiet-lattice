@@ -1,0 +1,71 @@
+{
+  "action": "author",
+  "kind": "conifer",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      16.75048828125,
+      26.3037109375,
+      28.9375
+    ],
+    "free_disk": 48056754176,
+    "memory": "System-wide memory free percentage: 47%",
+    "processes": [
+      " 3668 210.6 5897024 /Applications/Blender.app/Contents/MacOS/Blender",
+      "71701 197.7 1562256 /Applications/Blender.app/Contents/MacOS/Blender",
+      "73328 195.6 676224 /Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      " 2877  34.2 178688 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  407  29.6  57808 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "93991  20.4 1469744 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "93931  19.6 1984992 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      "73424  11.9  31968 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "73668   9.6  24032 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      " 2874   8.4 272896 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "93850   7.6  56192 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper.app/Contents/MacOS/Acid (Beta) Helper",
+      "73671   7.0  23392 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "76711   7.0 464880 codex",
+      "73660   6.8  16064 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "26013   5.1  92272 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+    ]
+  },
+  "source": "assets/blend/flora/tree_conifer_t04.blend",
+  "output": "packages/client/public/models/flora/tree_conifer_t04.glb",
+  "source_before": null,
+  "deadline_s": 300,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/author.py",
+    "--",
+    "conifer"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 73683,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 2.156,
+  "peak_group_rss_kib": 622784,
+  "remaining_owned_children": [],
+  "source_after": "dfbaf15b31b993b0a474dd9847c8d1184a410ddb6fca8216587cf13c8e347cf4",
+  "export_sha256": null,
+  "source_unchanged": false
+}

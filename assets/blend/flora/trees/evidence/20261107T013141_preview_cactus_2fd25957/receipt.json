@@ -1,0 +1,81 @@
+{
+  "action": "preview",
+  "kind": "cactus",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      15.43505859375,
+      13.36669921875,
+      18.791015625
+    ],
+    "free_disk": 46282727424,
+    "memory": "System-wide memory free percentage: 58%",
+    "processes": [
+      "32737 185.2 5832336 /Applications/Blender.app/Contents/MacOS/Blender",
+      "75123 112.8 635984 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "75655  95.4 154544 /Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      "75701  60.4 246416 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "13901  17.8 483632 codex",
+      "75613  16.2 493888 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "  407  14.9  73648 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "75879  13.2  23888 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "32667   6.7 196912 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "75727   6.1 196672 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "75883   6.0  19392 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "  540   4.3  34992 /usr/sbin/coreaudiod",
+      "32628   3.1 490320 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "  341   3.0  13968 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted",
+      "75104   2.7 475920 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)"
+    ]
+  },
+  "source": "assets/blend/flora/tree_cactus_t04.blend",
+  "output": "packages/client/public/models/flora/tree_cactus_t04.glb",
+  "source_before": "79a6283447a23c35062865a5779a8469665dbb15183cf1e2107c69c9e63aa062",
+  "deadline_s": 600,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/preview.py",
+    "--",
+    "cactus",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/trees/evidence/20261107T013141_preview_cactus_2fd25957"
+  ],
+  "tool_hashes": {
+    "packages/tools/blender/flora_trees/preview.py": "58c48e94dd0b7d334b95dc4d02cec8c5ed2e4d546bfb8b1a778ee9d9eff99203",
+    "packages/tools/blender/flora_trees/run.py": "de9e064207be7525d89040e6d4f9c93496173910a83a053ca90140917e7ec753",
+    "packages/tools/blender/flora_trees/promote_masks.mjs": "8b207976fa4fb1566e7ae76a953a962dcfaadb408527c9d6361a543c36d2a5d7",
+    "packages/tools/blender/flora_trees/audit.py": "2bd4eddba147a491e34b7150391cb45feb92f961a4f0281c415542ef4deb61b0",
+    "packages/tools/blender/flora_trees/seal.py": "6c66f7565816ac45e3560d9c7d735a8a5710f8939c34494fdd4bacc844ad0ee2",
+    "packages/tools/blender/flora_trees/export_saved.py": "491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5",
+    "packages/tools/blender/flora_trees/author.py": "bc405242894e3106f2267cc9cba65fd7c8f882cc0b0480724de879d50508860e"
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 75888,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 9.163,
+  "peak_group_rss_kib": 335584,
+  "remaining_owned_children": [],
+  "source_after": "79a6283447a23c35062865a5779a8469665dbb15183cf1e2107c69c9e63aa062",
+  "export_sha256": "eefbc253074525dcbf5bf4b6f40608a762cf449c462c14efd0afc510e4e22417",
+  "source_unchanged": true
+}

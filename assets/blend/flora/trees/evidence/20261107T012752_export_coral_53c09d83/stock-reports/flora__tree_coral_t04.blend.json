@@ -1,0 +1,163 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/flora/tree_coral_t04.blend",
+  "family": "flora",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T06:27:53Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 1
+  },
+  "assets": [
+    {
+      "asset": "tree_coral",
+      "variants": [
+        {
+          "id": "tree_coral_form_0",
+          "class": "flora_tree",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 13356,
+            "1": 6410,
+            "2": 2269,
+            "3": 506
+          },
+          "implicitLods": false,
+          "dims": [
+            5.96,
+            3.225,
+            8.55
+          ],
+          "materials": [
+            "LIB_T04_coral"
+          ]
+        },
+        {
+          "id": "tree_coral_form_1",
+          "class": "flora_tree",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 13999,
+            "1": 6719,
+            "2": 2378,
+            "3": 530
+          },
+          "implicitLods": false,
+          "dims": [
+            4.215,
+            3.881,
+            8.279
+          ],
+          "materials": [
+            "LIB_T04_coral"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_coral_t04.blend",
+          "message": "2 variant(s) in 1 asset(s) follow the flora rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_coral/tree_coral_form_0",
+          "message": "LOD0 13,356 triangles within the flora_tree budget 3,000-15,000 (families.json)"
+        },
+        {
+          "subject": "tree_coral/tree_coral_form_1",
+          "message": "LOD0 13,999 triangles within the flora_tree budget 3,000-15,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_coral/tree_coral_form_0",
+          "message": "13,356 > 6,410 > 2,269 > 506 triangles; LOD3 3.8% of LOD0"
+        },
+        {
+          "subject": "tree_coral/tree_coral_form_1",
+          "message": "13,999 > 6,719 > 2,378 > 530 triangles; LOD3 3.8% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "warn",
+          "subject": "LIB_T04_coral",
+          "message": "emissive map T04_coral_emission is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "LIB_T04_coral",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "tree_coral/tree_coral_form_0",
+          "message": "longest side 8.55 m within 1-60 m"
+        },
+        {
+          "subject": "tree_coral/tree_coral_form_1",
+          "message": "longest side 8.28 m within 1-60 m"
+        }
+      ]
+    }
+  ]
+}

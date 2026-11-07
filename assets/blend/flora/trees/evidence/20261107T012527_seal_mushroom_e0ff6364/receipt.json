@@ -1,0 +1,79 @@
+{
+  "action": "seal",
+  "kind": "mushroom",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      8.9912109375,
+      14.4248046875,
+      22.3154296875
+    ],
+    "free_disk": 47153418240,
+    "memory": "System-wide memory free percentage: 68%",
+    "processes": [
+      "32737 157.9 4763392 /Applications/Blender.app/Contents/MacOS/Blender",
+      "32628 101.2 547344 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "32698  68.3 509872 /Applications/Blender.app/Contents/MacOS/Blender",
+      " 2877  34.8 200640 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  407  20.2  78192 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "75123  18.9 899600 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "81753  15.8 967888 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+      "33470  11.4  23808 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      " 2874   9.0 456432 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "  540   8.3  26032 /usr/sbin/coreaudiod",
+      "75104   3.8 599600 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      "  341   2.9  25248 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted",
+      "  908   2.8 104288 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "74993   2.1 110432 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper.app/Contents/MacOS/Acid (Beta) Helper",
+      "  688   2.0  41696 /System/Library/DriverExtensions/AppleCentauriAlpha.dext/AppleCentauriAlpha"
+    ]
+  },
+  "source": "assets/blend/flora/tree_mushroom_t04.blend",
+  "output": "packages/client/public/models/flora/tree_mushroom_t04.glb",
+  "source_before": "0bf1fbcff07a00e34a36704ffe2d1a745c0fdb12731928654220cbf9e262aec8",
+  "deadline_s": 300,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/seal.py",
+    "--",
+    "mushroom"
+  ],
+  "tool_hashes": {
+    "packages/tools/blender/flora_trees/preview.py": "58c48e94dd0b7d334b95dc4d02cec8c5ed2e4d546bfb8b1a778ee9d9eff99203",
+    "packages/tools/blender/flora_trees/run.py": "23a802dc6c7a03a0f2d67dec670fbdfe13ebc1c1a149a9d3d8e22e48bf935ff7",
+    "packages/tools/blender/flora_trees/promote_masks.mjs": "3a7c99a9102ce25d3a541e1569ac14b9b2ea10035b2621e8d92a66453d46f0e8",
+    "packages/tools/blender/flora_trees/seal.py": "49a1804fe1d3e5b1a91685bb615ddd66dfd70615c108eeb7a5df8a4c32209963",
+    "packages/tools/blender/flora_trees/export_saved.py": "491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5",
+    "packages/tools/blender/flora_trees/author.py": "a96553074f76560f4aec1ad86a71f152ad4e66d80e1fa296f659bef42d19dfea"
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 33474,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 1.086,
+  "peak_group_rss_kib": 224,
+  "remaining_owned_children": [],
+  "source_after": "42e209fee47132b638145e4cedfd55bb38bbb049e585c80ce19076a8507c28e4",
+  "export_sha256": null,
+  "source_unchanged": false
+}

@@ -1,0 +1,157 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/flora/tree_blob_t04.blend",
+  "family": "flora",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T06:35:44Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "tree_blob",
+      "variants": [
+        {
+          "id": "tree_blob_form_0",
+          "class": "flora_tree",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5252,
+            "1": 2520,
+            "2": 891,
+            "3": 198
+          },
+          "implicitLods": false,
+          "dims": [
+            3.563,
+            3.48,
+            7.848
+          ],
+          "materials": [
+            "LIB_T04_blob"
+          ]
+        },
+        {
+          "id": "tree_blob_form_1",
+          "class": "flora_tree",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 8772,
+            "1": 4210,
+            "2": 1490,
+            "3": 333
+          },
+          "implicitLods": false,
+          "dims": [
+            5.361,
+            3.48,
+            8.26
+          ],
+          "materials": [
+            "LIB_T04_blob"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_blob_t04.blend",
+          "message": "2 variant(s) in 1 asset(s) follow the flora rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_blob/tree_blob_form_0",
+          "message": "LOD0 5,252 triangles within the flora_tree budget 3,000-15,000 (families.json)"
+        },
+        {
+          "subject": "tree_blob/tree_blob_form_1",
+          "message": "LOD0 8,772 triangles within the flora_tree budget 3,000-15,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_blob/tree_blob_form_0",
+          "message": "5,252 > 2,520 > 891 > 198 triangles; LOD3 3.8% of LOD0"
+        },
+        {
+          "subject": "tree_blob/tree_blob_form_1",
+          "message": "8,772 > 4,210 > 1,490 > 333 triangles; LOD3 3.8% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_T04_blob",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "tree_blob/tree_blob_form_0",
+          "message": "longest side 7.85 m within 1-60 m"
+        },
+        {
+          "subject": "tree_blob/tree_blob_form_1",
+          "message": "longest side 8.26 m within 1-60 m"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "action": "preview",
+  "kind": "mushroom",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      11.3193359375,
+      19.56591796875,
+      25.583984375
+    ],
+    "free_disk": 47481778176,
+    "memory": "System-wide memory free percentage: 65%",
+    "processes": [
+      " 2877  97.9 200368 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  341  33.1  13456 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted",
+      "  407  32.7  77104 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "  540  14.9  25312 /usr/sbin/coreaudiod",
+      " 2874  10.0 460656 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "81753   8.9 840992 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+      "75123   8.6 924592 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "  908   3.9  94864 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "25999   2.8  30272 /Applications/Docker.app/Contents/Resources/bin/docker",
+      "  746   2.7  35904 /System/Library/CoreServices/ControlCenter.app/Contents/MacOS/ControlCenter",
+      "26000   2.5  29696 /Applications/Docker.app/Contents/Resources/bin/docker",
+      "  688   2.3  40992 /System/Library/DriverExtensions/AppleCentauriAlpha.dext/AppleCentauriAlpha",
+      "54639   1.9 138016 /Applications/Docker.app/Contents/MacOS/com.docker.backend",
+      "74993   1.9 111984 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper.app/Contents/MacOS/Acid (Beta) Helper",
+      "  706   1.5 127952 /Applications/WhatsApp.app/Contents/MacOS/WhatsApp"
+    ]
+  },
+  "source": "assets/blend/flora/tree_mushroom_t04.blend",
+  "output": "packages/client/public/models/flora/tree_mushroom_t04.glb",
+  "source_before": "ed60e97b88baca1f9d52289057f06bf0ad4a4509780e30746acd14130eece19e",
+  "deadline_s": 420,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/preview.py",
+    "--",
+    "mushroom",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/trees/evidence/20261107T012238_preview_mushroom_17043bb0"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 26007,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 12.341,
+  "peak_group_rss_kib": 365472,
+  "remaining_owned_children": [],
+  "source_after": "ed60e97b88baca1f9d52289057f06bf0ad4a4509780e30746acd14130eece19e",
+  "export_sha256": null,
+  "source_unchanged": true
+}

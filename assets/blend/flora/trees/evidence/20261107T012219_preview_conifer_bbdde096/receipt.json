@@ -1,0 +1,72 @@
+{
+  "action": "preview",
+  "kind": "conifer",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      9.947265625,
+      19.8720703125,
+      25.8310546875
+    ],
+    "free_disk": 47524159488,
+    "memory": "System-wide memory free percentage: 65%",
+    "processes": [
+      "75104 118.2 608688 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      " 2877  51.7 188288 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  365  37.4  44896 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds",
+      "75123  34.9 859456 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "  407  29.5  76336 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "25031  23.6   8496 /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.VApS8l/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/Frameworks/ManagedAppDistribution.framework/Support/managedappdistributiond",
+      "81753  15.8 788784 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+      "25039  11.4  23952 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      " 2874   8.5 432560 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "74993   7.8 110448 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper.app/Contents/MacOS/Acid (Beta) Helper",
+      "13901   5.2 876128 codex",
+      " 6090   4.7  17712 /System/Library/PrivateFrameworks/TextInputUIMacHelper.framework/Versions/A/XPCServices/CursorUIViewService.xpc/Contents/MacOS/CursorUIViewService",
+      "  688   3.7  40976 /System/Library/DriverExtensions/AppleCentauriAlpha.dext/AppleCentauriAlpha",
+      "  494   3.3  34064 /usr/libexec/syspolicyd",
+      "74979   3.1 280208 /Users/andreyyurlov/Applications/Acid.app/Contents/MacOS/Acid (Beta)"
+    ]
+  },
+  "source": "assets/blend/flora/tree_conifer_t04.blend",
+  "output": "packages/client/public/models/flora/tree_conifer_t04.glb",
+  "source_before": "dfbaf15b31b993b0a474dd9847c8d1184a410ddb6fca8216587cf13c8e347cf4",
+  "deadline_s": 420,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/preview.py",
+    "--",
+    "conifer",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/trees/evidence/20261107T012219_preview_conifer_bbdde096"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 25054,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 12.395,
+  "peak_group_rss_kib": 366848,
+  "remaining_owned_children": [],
+  "source_after": "dfbaf15b31b993b0a474dd9847c8d1184a410ddb6fca8216587cf13c8e347cf4",
+  "export_sha256": null,
+  "source_unchanged": true
+}

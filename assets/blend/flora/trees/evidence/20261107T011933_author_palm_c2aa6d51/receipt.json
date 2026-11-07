@@ -1,0 +1,71 @@
+{
+  "action": "author",
+  "kind": "palm",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      16.52978515625,
+      26.09912109375,
+      28.849609375
+    ],
+    "free_disk": 48021450752,
+    "memory": "System-wide memory free percentage: 50%",
+    "processes": [
+      " 3668 237.3 6149168 /Applications/Blender.app/Contents/MacOS/Blender",
+      "71701 196.3 1564160 /Applications/Blender.app/Contents/MacOS/Blender",
+      "73328 188.3 692720 /Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      " 2877  39.9 179456 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  407  14.3  58096 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      " 2874   7.3 282144 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "  340   6.2   9424 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+      "73424   6.0  31968 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "93991   3.7 1486272 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "  540   3.0  23984 /usr/sbin/coreaudiod",
+      "  908   2.3  72688 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "26013   1.8 108064 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "76711   1.8 481040 codex",
+      "93931   1.8 1996800 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      "  706   1.4 101488 /Applications/WhatsApp.app/Contents/MacOS/WhatsApp"
+    ]
+  },
+  "source": "assets/blend/flora/tree_palm_t04.blend",
+  "output": "packages/client/public/models/flora/tree_palm_t04.glb",
+  "source_before": null,
+  "deadline_s": 300,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/author.py",
+    "--",
+    "palm"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 73945,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 2.138,
+  "peak_group_rss_kib": 632560,
+  "remaining_owned_children": [],
+  "source_after": "22ab05088efa7a0cb4d6687648fb49b1f7e2effd55432db13ad38092944e320e",
+  "export_sha256": null,
+  "source_unchanged": false
+}

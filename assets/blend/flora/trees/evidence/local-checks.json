@@ -1,0 +1,31 @@
+{
+  "checks": [
+    {
+      "command": "python3: compile every packages/tools/blender/flora_trees/*.py with compile(source, path, exec)",
+      "exit": 0
+    },
+    {
+      "command": "pnpm exec eslint packages/client/src/gameplay/floraTreesT04.test.js packages/tools/blender/flora_trees/promote_masks.mjs",
+      "exit": 0
+    },
+    {
+      "command": "pnpm -r --workspace-concurrency=1 typecheck",
+      "exit": 0,
+      "output": "$ tsc -p . (four workspace packages)"
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    },
+    {
+      "command": "git diff 515ba1f00810a50b499970b5468ef7bf0af84c32 -- packages/tools/blender/artlib/checks.py packages/tools/blender/artlib/materials.py packages/tools/blender/material_mask_selftest.py",
+      "exit": 0,
+      "output": "empty; reviewed pin bytes unchanged"
+    }
+  ],
+  "not_run": [
+    "native smoke/capture",
+    "services/database",
+    "blind grading"
+  ]
+}

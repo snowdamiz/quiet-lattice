@@ -1,0 +1,71 @@
+{
+  "action": "author",
+  "kind": "round",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      16.2265625,
+      29.34521484375,
+      30.18310546875
+    ],
+    "free_disk": 48465379328,
+    "memory": "System-wide memory free percentage: 47%",
+    "processes": [
+      "66292 148.6 661360 /Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      " 3668 108.1 5403280 /Applications/Blender.app/Contents/MacOS/Blender",
+      " 2877 104.0 197568 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "67086  74.1 1561744 /Applications/Blender.app/Contents/MacOS/Blender",
+      "93991  69.3 1082112 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "66974  49.9 191296 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "  407  43.0  59344 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "76711  35.4 574304 codex",
+      "93931  29.2 1716896 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      "  529  24.8 167632 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds_stores",
+      "  341  23.8  12368 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted",
+      "26220  19.2   8960 /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.VApS8l/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/usr/libexec/diagnosticd",
+      "  365  19.1  17504 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds",
+      "93850  15.8  57296 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper.app/Contents/MacOS/Acid (Beta) Helper",
+      "28091  13.5  11888 log"
+    ]
+  },
+  "source": "assets/blend/flora/tree_round_t04.blend",
+  "output": "packages/client/public/models/flora/tree_round_t04.glb",
+  "source_before": null,
+  "deadline_s": 300,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/author.py",
+    "--",
+    "round"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 67157,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 2.471,
+  "peak_group_rss_kib": 560368,
+  "remaining_owned_children": [],
+  "source_after": "f5fe29468e4dbcecd086738efe1c23169eb387c3b5c53ac0db3c47efcea340c6",
+  "export_sha256": null,
+  "source_unchanged": false
+}

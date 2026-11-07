@@ -1,0 +1,150 @@
+00:00.409  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/tree_conifer_t04.blend"
+
+export assets/blend/flora/tree_conifer_t04.blend -> packages/client/public/models/flora/tree_conifer_t04.glb
+
+validate assets/blend/flora/tree_conifer_t04.blend  (family flora, source .blend)
+  tree_conifer / tree_conifer_form_0 [flora_tree]  tris LOD0 14,000, LOD1 6,720, LOD2 2,380, LOD3 330  size 6.42 x 5.85 x 11.31 m
+  tree_conifer / tree_conifer_form_1 [flora_tree]  tris LOD0 14,000, LOD1 6,720, LOD2 2,380, LOD3 252  size 7.91 x 7.06 x 9.22 m
+  tree_conifer / tree_conifer_form_2 [flora_tree]  tris LOD0 13,999, LOD1 6,719, LOD2 2,379, LOD3 304  size 6.07 x 5.55 x 12.57 m
+  PASS  naming
+        ok    tree_conifer_t04.blend: 3 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_conifer/tree_conifer_form_0: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_conifer/tree_conifer_form_1: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_conifer/tree_conifer_form_2: LOD0 13,999 triangles within the flora_tree budget 3,000-15,000 (families.json)
+  PASS  LODs
+        ok    tree_conifer/tree_conifer_form_0: 14,000 > 6,720 > 2,380 > 330 triangles; LOD3 2.4% of LOD0
+        ok    tree_conifer/tree_conifer_form_1: 14,000 > 6,720 > 2,380 > 252 triangles; LOD3 1.8% of LOD0
+        ok    tree_conifer/tree_conifer_form_2: 13,999 > 6,719 > 2,379 > 304 triangles; LOD3 2.2% of LOD0
+  PASS  materials
+        ok    LIB_T04_conifer: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    tree_conifer/tree_conifer_form_0: longest side 11.31 m within 1-60 m
+        ok    ... 2 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T013049_export_conifer_fb52e69d/stock-reports/flora__tree_conifer_t04.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+01:30:50 | INFO: Starting glTF 2.0 export
+01:30:50 | INFO: Extracting primitive: tree_conifer_0_editable
+01:30:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_0_editable.001
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_0_editable.002
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_0_lod3_editable
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_1_editable
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_1_editable.001
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_1_editable.002
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_1_lod3_editable
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_2_editable
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_2_editable.001
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_2_editable.002
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Extracting primitive: tree_conifer_2_lod3_editable
+01:30:50 | INFO: Primitives created: 1
+01:30:50 | INFO: Finished glTF 2.0 export in 0.26563310623168945 s
+
+  5.3 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 5.2 -> 4.8 MB of buffers
+  meshopt (high, float attributes): geometry 4.4 -> 2.3 MB; file 4.9 -> 2.7 MB
+01:30:54 | INFO: Data are loaded, start creating Blender stuff
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_lod3_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_1_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_1_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_1_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_1_lod3_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_2_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_2_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_2_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_2_lod3_editable
+01:30:54 | INFO: glTF import finished in 0.16s
+prune: Removed types... Accessor (60)
+
+validate packages/client/public/models/flora/tree_conifer_t04.glb  (family flora, export .glb)
+  tree_conifer / tree_conifer_form_0 [flora_tree]  tris LOD0 14,000, LOD1 6,720, LOD2 2,380, LOD3 330  size 6.42 x 5.85 x 11.31 m
+  tree_conifer / tree_conifer_form_1 [flora_tree]  tris LOD0 14,000, LOD1 6,720, LOD2 2,380, LOD3 252  size 7.91 x 7.06 x 9.22 m
+  tree_conifer / tree_conifer_form_2 [flora_tree]  tris LOD0 13,999, LOD1 6,719, LOD2 2,379, LOD3 304  size 6.07 x 5.55 x 12.57 m
+  PASS  naming
+        ok    tree_conifer_t04.glb: 3 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_conifer/tree_conifer_form_0: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_conifer/tree_conifer_form_1: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_conifer/tree_conifer_form_2: LOD0 13,999 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    ... 1 more
+  PASS  LODs
+        ok    tree_conifer/tree_conifer_form_0: 14,000 > 6,720 > 2,380 > 330 triangles; LOD3 2.4% of LOD0
+        ok    tree_conifer/tree_conifer_form_1: 14,000 > 6,720 > 2,380 > 252 triangles; LOD3 1.8% of LOD0
+        ok    tree_conifer/tree_conifer_form_2: 13,999 > 6,719 > 2,379 > 304 triangles; LOD3 2.2% of LOD0
+  PASS  materials
+        ok    LIB_T04_conifer: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.4 MB
+        ok    tree_conifer/tree_conifer_form_0: textures take 4 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the flora_tree budget of 32 MB
+        ok    ... 2 more
+  PASS  scale references
+        ok    source: assets/blend/flora/tree_conifer_t04.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    tree_conifer/tree_conifer_form_0: longest side 11.31 m within 1-60 m
+        ok    tree_conifer/tree_conifer_form_1: longest side 9.22 m within 1-60 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T013049_export_conifer_fb52e69d/stock-reports/flora__tree_conifer_t04.glb.json
+  wrote packages/client/public/models/flora/tree_conifer_t04.glb (2,690,876 bytes)
+
+export flora: 1 of 1 source(s) exported
+01:30:54 | INFO: Data are loaded, start creating Blender stuff
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_0_lod3_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_1_editable
+01:30:54 | INFO: Blender create Mesh node tree_conifer_1_editable
+01:30:55 | INFO: Blender create Mesh node tree_conifer_1_editable
+01:30:55 | INFO: Blender create Mesh node tree_conifer_1_lod3_editable
+01:30:55 | INFO: Blender create Mesh node tree_conifer_2_editable
+01:30:55 | INFO: Blender create Mesh node tree_conifer_2_editable
+01:30:55 | INFO: Blender create Mesh node tree_conifer_2_editable
+01:30:55 | INFO: Blender create Mesh node tree_conifer_2_lod3_editable
+01:30:55 | INFO: glTF import finished in 0.11s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate assets/blend/flora/trees/evidence/20261107T013049_export_conifer_fb52e69d/tree_conifer_t04.glb  (family flora, export .glb)
+  tree_conifer / tree_conifer_form_0 [flora_tree]  tris LOD0 14,000, LOD1 6,720, LOD2 2,380, LOD3 330  size 6.42 x 5.85 x 11.31 m
+  tree_conifer / tree_conifer_form_1 [flora_tree]  tris LOD0 14,000, LOD1 6,720, LOD2 2,380, LOD3 252  size 7.91 x 7.06 x 9.22 m
+  tree_conifer / tree_conifer_form_2 [flora_tree]  tris LOD0 13,999, LOD1 6,719, LOD2 2,379, LOD3 304  size 6.07 x 5.55 x 12.57 m
+  PASS  naming
+        ok    tree_conifer_t04.glb: 3 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_conifer/tree_conifer_form_0: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_conifer/tree_conifer_form_1: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_conifer/tree_conifer_form_2: LOD0 13,999 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    ... 1 more
+  PASS  LODs
+        ok    tree_conifer/tree_conifer_form_0: 14,000 > 6,720 > 2,380 > 330 triangles; LOD3 2.4% of LOD0
+        ok    tree_conifer/tree_conifer_form_1: 14,000 > 6,720 > 2,380 > 252 triangles; LOD3 1.8% of LOD0
+        ok    tree_conifer/tree_conifer_form_2: 13,999 > 6,719 > 2,379 > 304 triangles; LOD3 2.2% of LOD0
+  PASS  materials
+        ok    LIB_T04_conifer: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.4 MB
+        ok    tree_conifer/tree_conifer_form_0: textures take 4 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the flora_tree budget of 32 MB
+        ok    ... 2 more
+  PASS  scale references
+        ok    source: assets/blend/flora/tree_conifer_t04.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    tree_conifer/tree_conifer_form_0: longest side 11.31 m within 1-60 m
+        ok    tree_conifer/tree_conifer_form_1: longest side 9.22 m within 1-60 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T013049_export_conifer_fb52e69d/final-stock-validation.json
+T04_FINAL /Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/client/public/models/flora/tree_conifer_t04.glb db1286ee23b6e6e8e18327a709cfc6c0c34aad2583b4635aeb9029ad25a5f4b4

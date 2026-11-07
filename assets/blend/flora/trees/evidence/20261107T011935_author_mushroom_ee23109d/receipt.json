@@ -1,0 +1,71 @@
+{
+  "action": "author",
+  "kind": "mushroom",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      16.52978515625,
+      26.09912109375,
+      28.849609375
+    ],
+    "free_disk": 48034582528,
+    "memory": "System-wide memory free percentage: 50%",
+    "processes": [
+      " 3668 231.5 5974640 /Applications/Blender.app/Contents/MacOS/Blender",
+      "71701 198.9 1565360 /Applications/Blender.app/Contents/MacOS/Blender",
+      "73328 170.8 696832 /Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      " 2877  36.4 179664 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  407  13.8  58224 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      " 2874   8.2 292464 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "66029   4.6 368800 /Applications/Xcode_26.6.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/MacOS/SWBBuildService",
+      "  340   4.3   9440 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+      "65695   3.9 121744 /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild",
+      "  540   3.6  24528 /usr/sbin/coreaudiod",
+      "26013   3.2 128208 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "  908   2.3  72768 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "93991   1.8 1487040 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "  706   1.3 102448 /Applications/WhatsApp.app/Contents/MacOS/WhatsApp",
+      "  688   1.2  37120 /System/Library/DriverExtensions/AppleCentauriAlpha.dext/AppleCentauriAlpha"
+    ]
+  },
+  "source": "assets/blend/flora/tree_mushroom_t04.blend",
+  "output": "packages/client/public/models/flora/tree_mushroom_t04.glb",
+  "source_before": null,
+  "deadline_s": 300,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/author.py",
+    "--",
+    "mushroom"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 74120,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 2.147,
+  "peak_group_rss_kib": 636480,
+  "remaining_owned_children": [],
+  "source_after": "ed60e97b88baca1f9d52289057f06bf0ad4a4509780e30746acd14130eece19e",
+  "export_sha256": null,
+  "source_unchanged": false
+}

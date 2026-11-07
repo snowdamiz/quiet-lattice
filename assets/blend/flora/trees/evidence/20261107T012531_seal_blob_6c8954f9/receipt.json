@@ -1,0 +1,79 @@
+{
+  "action": "seal",
+  "kind": "blob",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      8.9912109375,
+      14.4248046875,
+      22.3154296875
+    ],
+    "free_disk": 47123640320,
+    "memory": "System-wide memory free percentage: 68%",
+    "processes": [
+      "32737 185.4 4875248 /Applications/Blender.app/Contents/MacOS/Blender",
+      "33422 104.8 195488 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "32698  99.7 514288 /Applications/Blender.app/Contents/MacOS/Blender",
+      " 2877  43.2 200640 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  407  19.6  78080 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "75123  18.2 883456 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "  540   9.8  26032 /usr/sbin/coreaudiod",
+      " 2874   8.4 456944 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "81753   4.4 968528 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+      "75104   3.8 617424 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      "  341   3.4  25152 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted",
+      "13901   3.3 948688 codex",
+      "  908   3.0 104240 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "74993   2.5 110112 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper.app/Contents/MacOS/Acid (Beta) Helper",
+      "  688   2.4  41696 /System/Library/DriverExtensions/AppleCentauriAlpha.dext/AppleCentauriAlpha"
+    ]
+  },
+  "source": "assets/blend/flora/tree_blob_t04.blend",
+  "output": "packages/client/public/models/flora/tree_blob_t04.glb",
+  "source_before": "9d0dd38e85658c057e088926cc0001d0d86463da7352fb8061253413c6572484",
+  "deadline_s": 300,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/seal.py",
+    "--",
+    "blob"
+  ],
+  "tool_hashes": {
+    "packages/tools/blender/flora_trees/preview.py": "58c48e94dd0b7d334b95dc4d02cec8c5ed2e4d546bfb8b1a778ee9d9eff99203",
+    "packages/tools/blender/flora_trees/run.py": "23a802dc6c7a03a0f2d67dec670fbdfe13ebc1c1a149a9d3d8e22e48bf935ff7",
+    "packages/tools/blender/flora_trees/promote_masks.mjs": "3a7c99a9102ce25d3a541e1569ac14b9b2ea10035b2621e8d92a66453d46f0e8",
+    "packages/tools/blender/flora_trees/seal.py": "49a1804fe1d3e5b1a91685bb615ddd66dfd70615c108eeb7a5df8a4c32209963",
+    "packages/tools/blender/flora_trees/export_saved.py": "491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5",
+    "packages/tools/blender/flora_trees/author.py": "a96553074f76560f4aec1ad86a71f152ad4e66d80e1fa296f659bef42d19dfea"
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 33563,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 1.082,
+  "peak_group_rss_kib": 240,
+  "remaining_owned_children": [],
+  "source_after": "39722129fa3303208b10be3831bc9f0da6acb73ee7d937552693822c1c33f106",
+  "export_sha256": null,
+  "source_unchanged": false
+}

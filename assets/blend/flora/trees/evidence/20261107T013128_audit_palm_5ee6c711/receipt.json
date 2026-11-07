@@ -1,0 +1,81 @@
+{
+  "action": "audit",
+  "kind": "palm",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      16.53271484375,
+      13.49951171875,
+      18.9013671875
+    ],
+    "free_disk": 46397861888,
+    "memory": "System-wide memory free percentage: 61%",
+    "processes": [
+      "32737 405.3 5481040 /Applications/Blender.app/Contents/MacOS/Blender",
+      "75345  53.8 1277504 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "75483  45.2  98800 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "75485  40.7  53488 /Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      "  407  40.1  79744 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "  540  35.7  43696 /usr/sbin/coreaudiod",
+      "81753  25.3 1072848 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+      "75486  20.7  18336 (mlhostd)",
+      "75123  20.6 691424 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      "75492  14.7  24096 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "  704  13.8 301424 /Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+      "  908  12.8 102704 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "74095  11.7 631168 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "  341   8.8  15040 /System/Library/PrivateFrameworks/MediaRemote.framework/Support/mediaremoted",
+      "25646   8.6  16064 /usr/libexec/uarpd"
+    ]
+  },
+  "source": "assets/blend/flora/tree_palm_t04.blend",
+  "output": "packages/client/public/models/flora/tree_palm_t04.glb",
+  "source_before": "0de3633cd22ca4208d64eda410a8eb87a83ad44d3798aeebaa10b4473b68f898",
+  "deadline_s": 600,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/audit.py",
+    "--",
+    "palm",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/trees/evidence/20261107T013128_audit_palm_5ee6c711"
+  ],
+  "tool_hashes": {
+    "packages/tools/blender/flora_trees/preview.py": "58c48e94dd0b7d334b95dc4d02cec8c5ed2e4d546bfb8b1a778ee9d9eff99203",
+    "packages/tools/blender/flora_trees/run.py": "de9e064207be7525d89040e6d4f9c93496173910a83a053ca90140917e7ec753",
+    "packages/tools/blender/flora_trees/promote_masks.mjs": "8b207976fa4fb1566e7ae76a953a962dcfaadb408527c9d6361a543c36d2a5d7",
+    "packages/tools/blender/flora_trees/audit.py": "2bd4eddba147a491e34b7150391cb45feb92f961a4f0281c415542ef4deb61b0",
+    "packages/tools/blender/flora_trees/seal.py": "6c66f7565816ac45e3560d9c7d735a8a5710f8939c34494fdd4bacc844ad0ee2",
+    "packages/tools/blender/flora_trees/export_saved.py": "491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5",
+    "packages/tools/blender/flora_trees/author.py": "bc405242894e3106f2267cc9cba65fd7c8f882cc0b0480724de879d50508860e"
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 75497,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 1.688,
+  "peak_group_rss_kib": 360320,
+  "remaining_owned_children": [],
+  "source_after": "0de3633cd22ca4208d64eda410a8eb87a83ad44d3798aeebaa10b4473b68f898",
+  "export_sha256": "5515f8189db6f559e5c2dd1eb922a5e47b9246308d73f7c03630b70f830a4a0c",
+  "source_unchanged": true
+}

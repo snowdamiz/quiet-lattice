@@ -1,0 +1,195 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/flora/tree_round_t04.blend",
+  "family": "flora",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T06:21:35Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "tree_round",
+      "variants": [
+        {
+          "id": "tree_round_form_0",
+          "class": "flora_tree",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 13370,
+            "1": 6416,
+            "2": 2272,
+            "3": 326
+          },
+          "implicitLods": false,
+          "dims": [
+            8.996,
+            7.592,
+            7.633
+          ],
+          "materials": [
+            "LIB_T04_round"
+          ]
+        },
+        {
+          "id": "tree_round_form_1",
+          "class": "flora_tree",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 11214,
+            "1": 5382,
+            "2": 1906,
+            "3": 286
+          },
+          "implicitLods": false,
+          "dims": [
+            5.931,
+            5.075,
+            10.45
+          ],
+          "materials": [
+            "LIB_T04_round"
+          ]
+        },
+        {
+          "id": "tree_round_form_2",
+          "class": "flora_tree",
+          "classFrom": "family classRules",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 13722,
+            "1": 6585,
+            "2": 2332,
+            "3": 356
+          },
+          "implicitLods": false,
+          "dims": [
+            9.166,
+            7.722,
+            6.584
+          ],
+          "materials": [
+            "LIB_T04_round"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_round_t04.blend",
+          "message": "3 variant(s) in 1 asset(s) follow the flora rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_round/tree_round_form_0",
+          "message": "LOD0 13,370 triangles within the flora_tree budget 3,000-15,000 (families.json)"
+        },
+        {
+          "subject": "tree_round/tree_round_form_1",
+          "message": "LOD0 11,214 triangles within the flora_tree budget 3,000-15,000 (families.json)"
+        },
+        {
+          "subject": "tree_round/tree_round_form_2",
+          "message": "LOD0 13,722 triangles within the flora_tree budget 3,000-15,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "tree_round/tree_round_form_0",
+          "message": "13,370 > 6,416 > 2,272 > 326 triangles; LOD3 2.4% of LOD0"
+        },
+        {
+          "subject": "tree_round/tree_round_form_1",
+          "message": "11,214 > 5,382 > 1,906 > 286 triangles; LOD3 2.6% of LOD0"
+        },
+        {
+          "subject": "tree_round/tree_round_form_2",
+          "message": "13,722 > 6,585 > 2,332 > 356 triangles; LOD3 2.6% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "LIB_T04_round",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "tree_round/tree_round_form_0",
+          "message": "longest side 9.00 m within 1-60 m"
+        },
+        {
+          "subject": "tree_round/tree_round_form_1",
+          "message": "longest side 10.45 m within 1-60 m"
+        },
+        {
+          "subject": "tree_round/tree_round_form_2",
+          "message": "longest side 9.17 m within 1-60 m"
+        }
+      ]
+    }
+  ]
+}

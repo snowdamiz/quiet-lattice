@@ -1,0 +1,72 @@
+{
+  "action": "preview",
+  "kind": "palm",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      11.892578125,
+      19.958984375,
+      25.7919921875
+    ],
+    "free_disk": 47478104064,
+    "memory": "System-wide memory free percentage: 65%",
+    "processes": [
+      "25582  47.2  29408 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      " 2877  42.5 188496 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  407  26.4  76656 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "81753  16.9 838880 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+      "75123   9.3 854208 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      " 2874   8.3 436896 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "  672   7.1  10864 /System/Library/PrivateFrameworks/BiomeStreams.framework/Support/BiomeAgent",
+      "75104   5.4 696208 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+      "  908   4.5  94128 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  693   3.3  20928 /System/Library/CoreServices/MenuBarAgent.app/Contents/MacOS/MenuBarAgent",
+      "88860   3.3  14960 /usr/libexec/PerfPowerServices",
+      "84286   3.1  10032 /System/Library/PrivateFrameworks/IntelligencePlatformCompute.framework/Versions/A/XPCServices/IntelligencePlatformComputeService.xpc/Contents/MacOS/IntelligencePlatformComputeService",
+      "  388   2.9  16224 /usr/libexec/dasd",
+      "  679   2.6  16608 /System/Library/PrivateFrameworks/CoreDuetContext.framework/Resources/ContextStoreAgent",
+      "  410   2.5   5168 /usr/sbin/cfprefsd"
+    ]
+  },
+  "source": "assets/blend/flora/tree_palm_t04.blend",
+  "output": "packages/client/public/models/flora/tree_palm_t04.glb",
+  "source_before": "22ab05088efa7a0cb4d6687648fb49b1f7e2effd55432db13ad38092944e320e",
+  "deadline_s": 420,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/preview.py",
+    "--",
+    "palm",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/trees/evidence/20261107T012231_preview_palm_3f5acba9"
+  ],
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 25617,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 7.214,
+  "peak_group_rss_kib": 335920,
+  "remaining_owned_children": [],
+  "source_after": "22ab05088efa7a0cb4d6687648fb49b1f7e2effd55432db13ad38092944e320e",
+  "export_sha256": null,
+  "source_unchanged": true
+}

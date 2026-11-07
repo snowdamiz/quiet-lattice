@@ -1,0 +1,79 @@
+{
+  "action": "author",
+  "kind": "palm",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "head": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "resources": {
+    "load": [
+      6.5517578125,
+      14.3701171875,
+      22.484375
+    ],
+    "free_disk": 47166091264,
+    "memory": "System-wide memory free percentage: 66%",
+    "processes": [
+      "32669 117.0 355632 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "32441 100.2 742896 /Applications/Blender.app/Contents/MacOS/Blender",
+      "  494  82.7  34784 /usr/libexec/syspolicyd",
+      " 2877  32.2 200640 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "32667  24.1 134928 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "32628  23.0 304832 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "  407  21.7  78832 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer",
+      "75123  10.1 889856 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+      " 2874   9.2 455328 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper (Renderer).app/Contents/MacOS/Brave Browser Helper (Renderer)",
+      "13901   5.2 945296 codex",
+      "32666   5.2  88240 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "32668   5.0  96128 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "  908   3.3 106768 /Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/Brave Browser Helper.app/Contents/MacOS/Brave Browser Helper",
+      "  540   3.1  25440 /usr/sbin/coreaudiod",
+      "  688   2.7  41664 /System/Library/DriverExtensions/AppleCentauriAlpha.dext/AppleCentauriAlpha"
+    ]
+  },
+  "source": "assets/blend/flora/tree_palm_t04.blend",
+  "output": "packages/client/public/models/flora/tree_palm_t04.glb",
+  "source_before": "22ab05088efa7a0cb4d6687648fb49b1f7e2effd55432db13ad38092944e320e",
+  "deadline_s": 300,
+  "rss_limit_mib": 6144,
+  "log_limit_mib": 32,
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/tools/blender/flora_trees/author.py",
+    "--",
+    "palm"
+  ],
+  "tool_hashes": {
+    "packages/tools/blender/flora_trees/preview.py": "58c48e94dd0b7d334b95dc4d02cec8c5ed2e4d546bfb8b1a778ee9d9eff99203",
+    "packages/tools/blender/flora_trees/run.py": "23a802dc6c7a03a0f2d67dec670fbdfe13ebc1c1a149a9d3d8e22e48bf935ff7",
+    "packages/tools/blender/flora_trees/promote_masks.mjs": "3a7c99a9102ce25d3a541e1569ac14b9b2ea10035b2621e8d92a66453d46f0e8",
+    "packages/tools/blender/flora_trees/seal.py": "49a1804fe1d3e5b1a91685bb615ddd66dfd70615c108eeb7a5df8a4c32209963",
+    "packages/tools/blender/flora_trees/export_saved.py": "491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5",
+    "packages/tools/blender/flora_trees/author.py": "a96553074f76560f4aec1ad86a71f152ad4e66d80e1fa296f659bef42d19dfea"
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CUDA_VISIBLE_DEVICES": "",
+    "KTX": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+  },
+  "pid": 32692,
+  "reason": "exit",
+  "exit": 0,
+  "elapsed_s": 2.099,
+  "peak_group_rss_kib": 635008,
+  "remaining_owned_children": [],
+  "source_after": "435539cc9f8f332871ed9e0a9fab253fc908fb1643b31e2790baedb0de3a44f9",
+  "export_sha256": null,
+  "source_unchanged": false
+}
