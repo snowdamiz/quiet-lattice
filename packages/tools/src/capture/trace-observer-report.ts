@@ -164,11 +164,23 @@ function fences(value: unknown, labels: string[]) {
       const p = record(v, 'poll'),
         ms = numeric(p.elapsedMs, 'poll clock');
       date(p.at);
+      // WebGL2 clientWaitSync enums, matching gpu-completion.js's raw status mapping.
+      const status =
+        p.value === 37146
+          ? 'already-signaled'
+          : p.value === 37147
+            ? 'timeout-expired'
+            : p.value === 37148
+              ? 'condition-satisfied'
+              : p.value === 37149
+                ? 'wait-failed'
+                : 'unexpected';
       if (
         ms < previous ||
         ms > elapsed ||
         p.yieldedBeforePoll !== i > 0 ||
         !Number.isInteger(p.value) ||
+        p.status !== status ||
         (i === polls.length - 1 ? !['already-signaled', 'condition-satisfied'].includes(String(p.status)) : p.status !== 'timeout-expired')
       )
         throw new Error('Malformed or missing poll');
@@ -176,6 +188,31 @@ function fences(value: unknown, labels: string[]) {
     });
     return elapsed;
   });
+}
+function temporal(value: unknown) {
+  const t = record(value, 'temporal observations');
+  const frameIdx = integer(t.frameIdx, 'frame index');
+  if (t.histIdx !== 0 && t.histIdx !== 1) throw new Error('Invalid history index');
+  if (
+    typeof t.histValid !== 'boolean' ||
+    typeof t.prevKey !== 'string' ||
+    typeof t.marchPlanet !== 'number' ||
+    !Number.isSafeInteger(t.marchPlanet) ||
+    t.marchPlanet < -1 ||
+    (t.historyValidUniform !== 0 && t.historyValidUniform !== 1) ||
+    typeof t.blend !== 'number' ||
+    !Number.isFinite(t.blend) ||
+    t.blend < 0 ||
+    t.blend > 1 ||
+    !Array.isArray(t.jitter) ||
+    t.jitter.length !== 2 ||
+    !t.jitter.every((v) => typeof v === 'number' && Number.isFinite(v) && v >= -1 && v <= 1) ||
+    !Array.isArray(t.historySizes) ||
+    t.historySizes.length !== 2 ||
+    !t.historySizes.every((size) => Array.isArray(size) && size.length === 2 && size[0] === observerScene.width / 2 && size[1] === observerScene.height / 2)
+  )
+    throw new Error('Malformed temporal observations');
+  return { frameIdx, histIdx: t.histIdx };
 }
 export function validateObserverPreparation(value: unknown, work: ObserverWork, pins: ObserverPins) {
   const counts = validatePreparation(value, work),
@@ -238,24 +275,12 @@ export function validateObserverControl(value: unknown, prepared: unknown, work:
     end = stamp(s.controlFinished);
   if (stamp(s.started) > start || stamp(s.finished) < end || end < start) throw new Error('Sample/control phase order mismatch');
   const elapsed = fences(s.completions, ['before-native-work-class', 'after-native-work-class']);
-  const before = record(s.temporalBefore, 'temporal before'),
-    after = record(s.temporalAfter, 'temporal after');
-  const b = integer(before.frameIdx, 'frame index'),
-    a = integer(after.frameIdx, 'frame index');
+  const before = temporal(s.temporalBefore),
+    after = temporal(s.temporalAfter);
+  const b = before.frameIdx,
+    a = after.frameIdx;
   const frames = work === 'frame-only' ? 1 : 0;
-  if (a !== b + frames || ![0, 1].includes(Number(before.histIdx)) || after.histIdx !== (frames ? 1 - Number(before.histIdx) : before.histIdx))
-    throw new Error('Unexpected natural history progression');
-  for (const t of [before, after]) {
-    if (
-      typeof t.histValid !== 'boolean' ||
-      !Array.isArray(t.jitter) ||
-      t.jitter.length !== 2 ||
-      !t.jitter.every((v) => typeof v === 'number' && Number.isFinite(v))
-    )
-      throw new Error('Missing temporal observations');
-    for (const key of ['prevKey', 'marchPlanet', 'historyValidUniform', 'blend', 'historySizes'])
-      if (!(key in t) || t[key] === undefined || t[key] === null) throw new Error(`Missing temporal ${key}`);
-  }
+  if (a !== b + frames || after.histIdx !== (frames ? 1 - before.histIdx : before.histIdx)) throw new Error('Unexpected natural history progression');
   const clockBefore = record(s.clocksBefore, 'clock'),
     clockAfter = record(s.clocksAfter, 'clock');
   for (const c of [clockBefore, clockAfter]) {
@@ -271,7 +296,14 @@ export function validateObserverControl(value: unknown, prepared: unknown, work:
   }
   if (frames && canonical(s.rendered) !== canonical(s.countersAfter)) throw new Error('Rendered work does not match final counters');
   const frameMs = frames ? stamp(s.frameFinished) - stamp(s.frameStarted) : 0;
-  if (!frames && (s.frameStarted !== null || s.frameFinished !== null || s.rendered !== null || canonical(before) !== canonical(after)))
+  if (
+    !frames &&
+    (s.frameStarted !== null ||
+      s.frameFinished !== null ||
+      s.rendered !== null ||
+      canonical(s.temporalBefore) !== canonical(s.temporalAfter) ||
+      canonical(s.countersBefore) !== canonical(s.countersAfter))
+  )
     throw new Error('Fence-only control issued frame work');
   if (elapsed[0] + elapsed[1] + frameMs > end - start + 0.001) throw new Error('Fence/frame intervals exceed control envelope');
   return {
@@ -282,6 +314,8 @@ export function validateObserverControl(value: unknown, prepared: unknown, work:
     temporalFrames: a - b,
     temporalBefore: b,
     temporalAfter: a,
+    historyIndexBefore: before.histIdx,
+    historyIndexAfter: after.histIdx,
     controlStartedMs: start,
     controlFinishedMs: end,
   };
@@ -315,7 +349,9 @@ export function summarizeObserver(controls: { arm: ObserverArm; pair: number | n
     emptyFenceLimitMs = 20;
   const unstable = on.range > Math.max(toleranceMs, on.median * 0.15) || off.range > Math.max(toleranceMs, off.median * 0.15);
   const longEmptyFence = fences.some((f) => f.envelopeMs > emptyFenceLimitMs);
-  const reproducibleGap = differences.min > Math.max(within, toleranceMs) || differences.max < -Math.max(within, toleranceMs);
+  // Every same-sign paired gap must exceed both within-arm ranges PLUS the 5ms tolerance.
+  const gapThresholdMs = within + toleranceMs;
+  const reproducibleGap = differences.min > gapThresholdMs || differences.max < -gapThresholdMs;
   const similar = pairs.every((p) => Math.abs(p.onMinusOffMs) <= Math.max(within, toleranceMs));
   const decision = unstable || longEmptyFence ? 'inconclusive' : reproducibleGap ? 'observer-cost-issue' : similar ? 'targeted-workload-next' : 'inconclusive';
   return {
@@ -325,7 +361,17 @@ export function summarizeObserver(controls: { arm: ObserverArm; pair: number | n
     differences,
     fences,
     decision,
-    criteria: { toleranceMs, emptyFenceLimitMs, stableRelativeRange: 0.15, withinArmRangeMs: within, unstable, longEmptyFence, reproducibleGap, similar },
+    criteria: {
+      toleranceMs,
+      gapThresholdMs,
+      emptyFenceLimitMs,
+      stableRelativeRange: 0.15,
+      withinArmRangeMs: within,
+      unstable,
+      longEmptyFence,
+      reproducibleGap,
+      similar,
+    },
     budgetQualified: false,
     limits: 'Observed completion envelopes; no exclusive GPU attribution, complete CPU coverage, output equality or 16.67 ms budget verdict.',
   };

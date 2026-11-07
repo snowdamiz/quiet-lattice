@@ -626,12 +626,12 @@ export async function dispatchBrowserDiagnostic(
   if (options.protocol !== observerProtocol) return runBrowserWorkTrace(options);
   try {
     const packet = await runTraceObserver(options);
-    options.retainReport(packet);
+    options.retainReport(structuredClone(packet));
     return packet;
   } catch (error) {
     if (error instanceof ObserverError) {
       try {
-        options.retainReport(error.evidence);
+        options.retainReport(structuredClone(error.evidence));
       } catch (persistence) {
         error.evidence.cleanupErrors.push(`Report persistence: ${String(persistence)}`);
       }

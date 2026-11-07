@@ -754,6 +754,8 @@ export interface ObserverPacket {
   pins: ObserverPins;
   startedMs: number;
   finishedMs: number | null;
+  snapshotAtMs: number | null;
+  portSettlement: { kind: 'pending' } | { kind: 'ports-settled' } | { kind: 'ports-unsettled'; pendingCallbacks: number; requiresController: true };
   steps: ObserverStep[];
   totals: {
     preparations: number;
@@ -789,6 +791,67 @@ export interface ObserverOptions {
   clock?: ObserverClock;
   signal?: AbortSignal;
 }
+function requireCompleteObserver(packet: ObserverPacket) {
+  if (
+    packet.portSettlement.kind !== 'ports-settled' ||
+    packet.cleanupErrors.length ||
+    packet.failure !== null ||
+    packet.steps.length !== observerPlan.length ||
+    packet.applicability.missingControls !== 0 ||
+    packet.summary === null ||
+    packet.summary.pairs.length !== 5
+  )
+    throw new Error('Incomplete observer packet');
+  for (const key of ['preparations', 'warmUpFrames', 'frames', 'dependentPasses', 'preflightFences', 'controlFences', 'png', 'queries', 'segments'] as const) {
+    const expected = observerBounds[key],
+      count = packet.totals[key];
+    if (key === 'warmUpFrames' ? count < 12 || count > expected : count !== expected) throw new Error(`Observer work bound mismatch: ${key}`);
+  }
+  const traceTotals = { bytes: 0, reads: 0, events: 0 };
+  for (const [index, step] of packet.steps.entries()) {
+    const plan = observerPlan[index];
+    if (
+      step.index !== index ||
+      step.arm !== plan.arm ||
+      step.pair !== plan.pair ||
+      step.workClass !== plan.workClass ||
+      step.before == null ||
+      step.after == null ||
+      step.prepare == null ||
+      step.run == null ||
+      step.counts === null ||
+      step.phases.some((phase) => phase.outcome !== 'returned')
+    )
+      throw new Error('Incomplete observer step');
+    const receipt = step.receipt;
+    if (step.arm === 'off') {
+      if (receipt.kind !== 'trace-off' || receipt.sessions !== 0 || receipt.tracingCalls !== 0 || receipt.tracingActive || receipt.pageMarks !== 0)
+        throw new Error('Incomplete trace-off receipt');
+      continue;
+    }
+    if (
+      receipt.kind !== 'trace-on' ||
+      !receipt.startRequested ||
+      !receipt.endRequested ||
+      !receipt.eof ||
+      receipt.markers.length !== 4 ||
+      receipt.markerCoverage?.status !== 'observed' ||
+      receipt.terminals.length !== 1 ||
+      !receipt.sha256 ||
+      receipt.bytes < 1 ||
+      receipt.reads < 1 ||
+      receipt.events < 4
+    )
+      throw new Error('Incomplete trace-on receipt');
+    const closed = terminal(receipt.terminals[0]);
+    if (closed.dataLossOccurred || closed.stream === null || receipt.closedStreams.length !== 1 || receipt.closedStreams[0] !== closed.stream)
+      throw new Error('Unclosed/lost observer trace');
+    for (const key of ['bytes', 'reads', 'events'] as const) traceTotals[key] += receipt[key];
+  }
+  for (const key of ['bytes', 'reads', 'events'] as const) if (packet.totals[key] !== traceTotals[key]) throw new Error('Incomplete aggregate trace receipt');
+  if (traceTotals.bytes > traceLimits.streamBytes || traceTotals.reads > traceLimits.reads || traceTotals.events > traceLimits.events)
+    throw new Error('Aggregate trace limits exceeded');
+}
 /** Fixed reference experiment only. Ports own cancellation/drain; no process, browser or resource is constructed here. */
 export async function runTraceObserver(options: ObserverOptions): Promise<ObserverPacket> {
   if (
@@ -810,6 +873,8 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
     pins,
     startedMs: clock.now(),
     finishedMs: null,
+    snapshotAtMs: null,
+    portSettlement: { kind: 'pending' },
     steps: [],
     totals: {
       preparations: 0,
@@ -830,7 +895,10 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
   };
   const cancellation = new AbortController(),
     signal = options.signal ? AbortSignal.any([options.signal, cancellation.signal]) : cancellation.signal;
+  let hasFailed = false,
+    acceptingEvidence = true;
   const fail = (error: unknown) => {
+    hasFailed = true;
     packet.failure ??= String(error);
     cancellation.abort(error);
   };
@@ -847,6 +915,7 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
     const phase: ObserverStep['phases'][number] = { name, startMs, endMs: startMs, outcome: 'failed' };
     step.phases.push(phase);
     const task = Promise.resolve().then(() => {
+      if (!acceptingEvidence) throw new Error('Observer evidence cutoff reached');
       if (!cleanup) signal.throwIfAborted();
       return op();
     });
@@ -872,6 +941,18 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
       fail(error);
     }
   };
+  const observeHost = (step: ObserverStep, position: 'before' | 'after') =>
+    owned(
+      async () => {
+        const raw = structuredClone(await options.observe());
+        // Keep a returned or draining host reply before owned() checks cancellation.
+        if (acceptingEvidence) step[position] = raw;
+        return raw;
+      },
+      5000,
+      `host-${position}`,
+      step,
+    );
   try {
     for (const [index, plan] of observerPlan.entries()) {
       signal.throwIfAborted();
@@ -938,7 +1019,7 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
       const lost = () => fail(new Error('Observer trace transport lost'));
       let listening = false;
       try {
-        step.before = await owned(options.observe, 5000, 'host-before', step);
+        await observeHost(step, 'before');
         validateObserverHost(step.before, pins);
         if (receipt.kind === 'trace-on') {
           options.trace.on('Tracing.tracingComplete', complete);
@@ -984,10 +1065,12 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
           const id = `${options.prefix}-s${String(index).padStart(2, '0')}-${action}`;
           const raw = await owned(
             async () => {
-              const value = await options.probe.call(action, plan.workClass, id, plan.arm);
+              const value = structuredClone(await options.probe.call(action, plan.workClass, id, plan.arm));
               // Preserve late/cancelled replies before schema checks, as in the retained protocol.
-              step[action] = value;
-              options.sink.retainStep(index, action, value);
+              if (acceptingEvidence) {
+                step[action] = value;
+                options.sink.retainStep(index, action, structuredClone(value));
+              }
               return value;
             },
             action === 'prepare' ? 90000 : 10000,
@@ -998,7 +1081,7 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
           if (result.markers[0].monotonicMs < 0 || result.markers[0].monotonicMs < lastPageMarkMs) throw new Error('Reversed page phase clock');
           lastPageMarkMs = result.markers[1].monotonicMs;
           if (receipt.kind === 'trace-on') receipt.markers.push(...result.markers);
-          if (result.failure) throw new Error(result.failure);
+          if (result.failure !== null) throw new Error(result.failure);
           if (!isRecord(raw) || !Array.isArray(raw.pageErrors) || raw.pageErrors.length) throw new Error('Page errors missing or present');
           if (action === 'prepare') {
             if (
@@ -1024,7 +1107,11 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
             if (step.counts.controlStartedMs < result.markers[0].monotonicMs || step.counts.controlFinishedMs > result.markers[1].monotonicMs)
               throw new Error('Control outside page markers');
             const previousControl = packet.steps[index - 1]?.counts;
-            if (previousControl && step.counts.temporalBefore !== previousControl.temporalAfter + step.counts.preparation.warmUpFrames)
+            if (
+              previousControl &&
+              (step.counts.temporalBefore !== previousControl.temporalAfter + step.counts.preparation.warmUpFrames ||
+                step.counts.historyIndexBefore !== (previousControl.historyIndexAfter + step.counts.preparation.warmUpFrames) % 2)
+            )
               throw new Error('History progression between preparations changed');
             const reference = packet.steps.find((previous) => previous.index < index && previous.workClass === 'frame-only' && previous.counts)?.counts;
             if (plan.workClass === 'frame-only' && reference && (step.counts.calls !== reference.calls || step.counts.triangles !== reference.triangles))
@@ -1107,7 +1194,7 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
               );
           }
         }
-        if (packet.failure || pending.size) {
+        if (hasFailed || pending.size) {
           if (receipt.kind === 'trace-on') await cleanup(() => options.trace.disconnect(), 'transport-drain', step);
           await cleanup(() => options.probe.cancel(), 'probe-drain', step);
           const tasks = [...pending];
@@ -1132,28 +1219,13 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
           options.trace.off('close', lost);
         }
       }
-      if (packet.failure) break;
-      step.after = await owned(options.observe, 5000, 'host-after', step);
+      if (hasFailed) break;
+      await observeHost(step, 'after');
       validateObserverHost(step.after, pins);
       signal.throwIfAborted();
     }
     signal.throwIfAborted();
-    if (!packet.failure) {
-      for (const key of [
-        'preparations',
-        'warmUpFrames',
-        'frames',
-        'dependentPasses',
-        'preflightFences',
-        'controlFences',
-        'png',
-        'queries',
-        'segments',
-      ] as const) {
-        const expected = observerBounds[key],
-          count = packet.totals[key];
-        if (key === 'warmUpFrames' ? count > expected : count !== expected) throw new Error(`Observer work bound mismatch: ${key}`);
-      }
+    if (!hasFailed) {
       packet.summary = summarizeObserver(
         packet.steps.map((step) => {
           if (!step.counts) throw new Error('Missing control');
@@ -1171,9 +1243,28 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
       const tasks = [...pending];
       await cleanup(() => Promise.allSettled(tasks), 'final-callbacks-drain', last);
     }
-    packet.finishedMs = clock.now();
-    packet.status = packet.failure || packet.cleanupErrors.length ? 'failed' : 'observed';
+    packet.snapshotAtMs = clock.now();
+    if (pending.size) {
+      packet.portSettlement = { kind: 'ports-unsettled', pendingCallbacks: pending.size, requiresController: true };
+      fail(new Error('Observer ports did not settle within drain envelope'));
+    } else {
+      packet.portSettlement = { kind: 'ports-settled' };
+      packet.finishedMs = packet.snapshotAtMs;
+    }
+    if (!hasFailed) {
+      try {
+        requireCompleteObserver(packet);
+      } catch (error) {
+        fail(error);
+      }
+    }
+    packet.status = hasFailed ? 'failed' : 'observed';
+    acceptingEvidence = false;
   }
-  if (packet.status !== 'observed') throw new ObserverError(packet);
-  return packet;
+  // This is a detached cutoff snapshot. Unsettled ports can still act externally; their
+  // later replies cannot update this packet or its sinks. Only the future owned process
+  // controller can establish physical settlement; no controller is created here.
+  const snapshot = structuredClone(packet);
+  if (snapshot.status !== 'observed') throw new ObserverError(snapshot);
+  return snapshot;
 }

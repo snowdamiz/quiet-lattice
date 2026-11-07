@@ -16,6 +16,10 @@ export function traceObserverProposal() {
     plan: observerPlan,
     bounds: observerBounds,
     traceLimits,
+    decisionRule:
+      'Observer cost requires every same-sign paired gap to satisfy abs(gap) > max(onRange, offRange) + 5ms, with stable arms and short empty fences. Neither outcome qualifies the frame budget.',
+    sourcePortLimits:
+      'Returned evidence is a detached snapshot. Unsettled ports remain failed with no finished time; replies after the cutoff are excluded. Settled port promises do not prove physical process settlement.',
     deadlines: {
       captureMs: nativeWorkClassOuterDeadlineMs,
       cancellationDrainMs: nativeWorkClassCancellationDrainMs,
@@ -27,6 +31,7 @@ export function traceObserverProposal() {
       'fresh one-use grant',
       'capacity and reserved GPU slot',
       'native/runtime authorization',
+      'owned process controller proving physical settlement',
     ],
     historical: { cloud03: 'FAILED', accepted: false, offlineReclassification: 'not fresh performance evidence' },
   };

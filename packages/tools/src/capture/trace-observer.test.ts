@@ -90,8 +90,8 @@ function control(index: number, prepare: ReturnType<typeof preparation>, duratio
   r.finishedAt = at;
   const clocks = { pinned: 120, game: 120, base: 120, render: 120, flora: 120, weather: 120, grade: 120, atmosphere: 120 };
   const temporal = {
-    frameIdx: 90 * (index + 1) + Math.max(0, index - 2),
-    histIdx: 0,
+    frameIdx: prepare.warm.frames * (index + 1) + Math.max(0, index - 2),
+    histIdx: (prepare.warm.frames * (index + 1) + Math.max(0, index - 2)) % 2,
     histValid: true,
     prevKey: 'noon',
     marchPlanet: 1,
@@ -119,7 +119,7 @@ function control(index: number, prepare: ReturnType<typeof preparation>, duratio
       clocksBefore: clocks,
       clocksAfter: { ...clocks },
       temporalBefore: temporal,
-      temporalAfter: { ...temporal, frameIdx: temporal.frameIdx + frames, histIdx: frames },
+      temporalAfter: { ...temporal, frameIdx: temporal.frameIdx + frames, histIdx: (temporal.histIdx + frames) % 2 },
       countersBefore: { calls: 650, triangles: 3792981 },
       countersAfter: { calls: 650, triangles: 3792981 },
       completions: [fence('before-native-work-class'), fence('after-native-work-class', duration - 3)],
@@ -134,6 +134,7 @@ function fixture(
     traceData?(data: { traceEvents: unknown[] }, index: number): unknown;
     onCommand?(command: TraceCommand, emitter: EventEmitter, index: number): void;
     duration?(index: number): number;
+    warmFrames?: number;
   } = {},
 ) {
   const emitter = new EventEmitter(),
@@ -200,7 +201,10 @@ function fixture(
       call: async (action, work, id, arm) => {
         calls.push({ index, action, work, arm, active });
         if (active !== (arm === 'on')) throw new Error('Trace crossed arm boundary');
-        if (action === 'prepare') prepared = preparation(index);
+        if (action === 'prepare') {
+          prepared = preparation(index);
+          prepared.warm.frames = config.warmFrames ?? 90;
+        }
         const value =
           action === 'prepare' ? structuredClone(prepared) : control(index, prepared, config.duration?.(index) ?? (index < 2 ? 8 : arm === 'on' ? 50 : 30));
         const start = index * 1000 + (action === 'prepare' ? 1 : 200),
@@ -679,4 +683,305 @@ it('treats malformed trace buffer event counts as failure and closes the segment
   expect(result.failure).toContain('trace event count');
   expect(f.calls).toEqual([]);
   expect(methods(f)).toContain('IO.close');
+});
+
+describe('independent review regressions at the actual dispatcher/report boundary', () => {
+  it.each(['pre-abort', 'prepare-reject', 'off-abort', 'deadline-reject', 'reply-failure'])(
+    'empty %s never resolves an incomplete observed packet',
+    async (fault) => {
+      const f = fixture();
+      if (fault === 'pre-abort') f.abort.abort('');
+      if (fault === 'prepare-reject')
+        f.options.probe.call = async () => {
+          throw '';
+        };
+      if (fault === 'off-abort' || fault === 'reply-failure') {
+        const call = f.options.probe.call;
+        f.options.probe.call = async (...args) => {
+          const raw = await call(...args);
+          if (fault === 'off-abort' && args[3] === 'off') f.abort.abort('');
+          return fault === 'reply-failure' ? { ...Object(raw), failure: '' } : raw;
+        };
+      }
+      if (fault === 'deadline-reject')
+        f.options.clock = {
+          now: () => 1,
+          bound: async (task, ms, label, signal) => {
+            if (label === 'host-before') {
+              await task;
+              throw '';
+            }
+            return bounded(task, ms, label, signal);
+          },
+        };
+      const r = await failed(f);
+      expect(r.status).toBe('failed');
+      expect(r.summary).toBeNull();
+      expect(r.steps.length).toBeLessThan(12);
+      expect(f.reports[0].status).toBe('failed');
+      if (fault !== 'reply-failure') expect(r.failure).toBe('');
+      if (fault === 'pre-abort' || fault === 'deadline-reject') {
+        expect(f.calls).toEqual([]);
+        expect(f.commands).toEqual([]);
+      }
+      expect(f.commands.filter((c) => c.command.method === 'Tracing.start')).toHaveLength(fault === 'pre-abort' || fault === 'deadline-reject' ? 0 : 1);
+    },
+  );
+  it.each(['calls', 'triangles'])('rejects fence-only %s increments before the next control', async (key) => {
+    const f = fixture({
+      mutate(r, i, action) {
+        if (i === 0 && action === 'run') {
+          const s = r.value.samples[0] as { countersAfter: Record<string, number> };
+          s.countersAfter[key]++;
+        }
+      },
+    });
+    const r = await failed(f);
+    expect(r.failure).toContain('Fence-only');
+    expect(r.steps).toHaveLength(1);
+    expect(f.calls).toHaveLength(2);
+  });
+  it.each(['prepare', 'run'] as const)('reconciles raw fence enums with labels in %s, not just signaled metadata', async (action) => {
+    const f = fixture({
+      mutate(r, i, actual) {
+        if (i !== 0 || actual !== action) return;
+        const records = action === 'prepare' ? r.value.preflight.completions : (r.value.samples[0] as { completions: ReturnType<typeof fence>[] }).completions;
+        records[0].polls[1].value = 37149;
+      },
+    });
+    const r = await failed(f);
+    expect(r.failure).toContain('poll');
+    expect(r.steps).toHaveLength(1);
+    expect(f.calls).toHaveLength(action === 'prepare' ? 1 : 2);
+  });
+  it('accepts matching ALREADY_SIGNALED while rejecting mismatched successful labels', async () => {
+    for (const status of ['already-signaled', 'condition-satisfied']) {
+      const f = fixture({
+        mutate(r, i, action) {
+          if (i !== 0 || action !== 'run') return;
+          const c = (r.value.samples[0] as { completions: ReturnType<typeof fence>[] }).completions[0];
+          c.polls[1].value = 37146;
+          c.polls[1].status = status;
+        },
+      });
+      if (status === 'already-signaled') expect((await dispatchBrowserDiagnostic(f.options)).status).toBe('observed');
+      else expect((await failed(f)).steps).toHaveLength(1);
+    }
+  });
+  it.each([
+    ['historySizes', {}],
+    ['historySizes', [[960, 540]]],
+    [
+      'historySizes',
+      [
+        [960, 540],
+        [960.5, 540],
+      ],
+    ],
+    ['histIdx', '0'],
+    ['historyValidUniform', true],
+    ['historyValidUniform', 2],
+    ['blend', {}],
+    ['blend', NaN],
+    ['blend', Infinity],
+    ['blend', 1.1],
+    ['prevKey', false],
+    ['marchPlanet', {}],
+    ['marchPlanet', 0.5],
+    ['jitter', [0, Infinity]],
+    ['jitter', [0, 0, 0]],
+  ])('rejects malformed temporal %s: %j before the next preparation', async (key, value) => {
+    const f = fixture({
+      mutate(r, i, action) {
+        if (i === 2 && action === 'run') {
+          const s = r.value.samples[0] as { temporalBefore: Record<string, unknown> };
+          s.temporalBefore[String(key)] = value;
+        }
+      },
+    });
+    const r = await failed(f);
+    expect(r.failure).toMatch(/temporal|history index/i);
+    expect(r.steps).toHaveLength(3);
+    expect(f.calls).toHaveLength(6);
+  });
+  it.each([90, 91, 600])('accepts parity-correct history through %s warm-up frames per preparation', async (warmFrames) => {
+    const result = await dispatchBrowserDiagnostic(fixture({ warmFrames }).options);
+    expect(result.status).toBe('observed');
+    expect(result.portSettlement.kind).toBe('ports-settled');
+    expect(result.totals.warmUpFrames).toBe(warmFrames * 12);
+    for (const step of result.steps.slice(1)) {
+      const previous = result.steps[step.index - 1];
+      expect(step.counts?.historyIndexBefore).toBe((Number(previous.counts?.historyIndexAfter) + warmFrames) % 2);
+    }
+  });
+  it.each([90, 91])('rejects a history-index reset despite correct frameIdx and %s intervening warm-ups', async (warmFrames) => {
+    const f = fixture({
+      warmFrames,
+      mutate(r, i, action) {
+        if (i === 3 && action === 'run') {
+          const s = r.value.samples[0] as { temporalBefore: { histIdx: number }; temporalAfter: { histIdx: number } };
+          s.temporalBefore.histIdx = 1 - s.temporalBefore.histIdx;
+          s.temporalAfter.histIdx = 1 - s.temporalAfter.histIdx;
+        }
+      },
+    });
+    const r = await failed(f);
+    expect(r.failure).toContain('History progression');
+    expect(r.steps).toHaveLength(4);
+  });
+  it.each([5, 6, 8.999, 9, 9.001, 10, -5, -6, -8.999, -9, -9.001, -10])('compares every signed %sms gap against max(range)+5', async (gap) => {
+    const result = await dispatchBrowserDiagnostic(
+      fixture({
+        duration(i) {
+          const step = observerPlan[i];
+          return step.pair === null ? 8 : 30 + step.pair + (step.arm === 'on' ? gap : 0);
+        },
+      }).options,
+    );
+    expect(result.summary?.criteria.gapThresholdMs).toBeCloseTo(9, 8);
+    expect(result.summary?.decision).toBe(Math.abs(gap) > 9 ? 'observer-cost-issue' : Math.abs(gap) <= 5 ? 'targeted-workload-next' : 'inconclusive');
+    expect(result.summary?.budgetQualified).toBe(false);
+  });
+  it.each(['before', 'after'] as const)('retains a returned host-%s fact before concurrent cancellation', async (position) => {
+    const f = fixture(),
+      observe = f.options.observe;
+    let count = 0,
+      returned: unknown;
+    f.options.observe = async () => {
+      const value = await observe();
+      if (++count === (position === 'before' ? 1 : 2)) {
+        returned = value;
+        f.abort.abort(new Error('cancel with returned host'));
+      }
+      return value;
+    };
+    const r = await failed(f);
+    expect(r.failure).toContain('cancel with returned host');
+    expect(r.steps[0][position]).toEqual(returned);
+    expect(f.reports[0].steps[0][position]).toEqual(returned);
+    expect(f.calls).toHaveLength(position === 'before' ? 0 : 2);
+  });
+  it.each(['before', 'after'] as const)('retains a draining host-%s reply after its deadline but before publication', async (position) => {
+    const f = fixture(),
+      observe = f.options.observe;
+    let count = 0,
+      returned: unknown,
+      release = () => {},
+      started = () => {};
+    const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      }),
+      entered = new Promise<void>((resolve) => {
+        started = resolve;
+      });
+    f.options.observe = async () => {
+      const value = await observe();
+      if (++count === (position === 'before' ? 1 : 2)) {
+        returned = value;
+        started();
+        await gate;
+      }
+      return value;
+    };
+    f.options.probe.cancel = async () => {
+      release();
+    };
+    f.options.clock = {
+      now: () => 1,
+      bound: async (task, ms, label, signal) => {
+        if (label === `host-${position}`) {
+          await entered;
+          throw new Error('host deadline');
+        }
+        return bounded(task, ms, label, signal);
+      },
+    };
+    const r = await failed(f);
+    expect(r.steps[0][position]).toEqual(returned);
+    expect(r.portSettlement.kind).toBe('ports-settled');
+  });
+  it.each(['prepare', 'host-after'] as const)('publishes an explicit detached unsettled snapshot when %s ignores cancellation', async (label) => {
+    const f = fixture();
+    let release = () => {},
+      started = () => {},
+      lateTask: Promise<unknown> = Promise.resolve();
+    const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      }),
+      entered = new Promise<void>((resolve) => {
+        started = resolve;
+      });
+    if (label === 'prepare') {
+      const call = f.options.probe.call;
+      f.options.probe.call = (...args) => {
+        lateTask = (async () => {
+          const raw = await call(...args);
+          started();
+          await gate;
+          return raw;
+        })();
+        return lateTask;
+      };
+    } else {
+      const observe = f.options.observe;
+      let count = 0;
+      f.options.observe = () => {
+        lateTask = (async () => {
+          const raw = await observe();
+          if (++count === 2) {
+            started();
+            await gate;
+          }
+          return raw;
+        })();
+        return lateTask;
+      };
+    }
+    f.options.probe.cancel = async () => {};
+    f.options.clock = {
+      now: () => 1,
+      bound: async (task, ms, phase, signal) => {
+        if (phase === label) {
+          await entered;
+          throw new Error('port deadline');
+        }
+        if (phase.includes('callbacks-drain')) throw new Error('port still pending');
+        return bounded(task, ms, phase, signal);
+      },
+    };
+    const r = await failed(f),
+      saved = JSON.stringify(r),
+      report = JSON.stringify(f.reports[0]),
+      retained = f.retained.length;
+    expect(r.portSettlement).toMatchObject({ kind: 'ports-unsettled', requiresController: true });
+    expect(r.finishedMs).toBeNull();
+    expect(r.snapshotAtMs).toBe(1);
+    release();
+    await lateTask;
+    await Promise.resolve();
+    expect(JSON.stringify(r)).toBe(saved);
+    expect(JSON.stringify(f.reports[0])).toBe(report);
+    expect(f.retained).toHaveLength(retained);
+    expect(f.emitter.eventNames()).toEqual([]);
+  });
+  it('separates a retained report from the returned packet and from port-owned raw objects', async () => {
+    const raw: Reply[] = [],
+      f = fixture({
+        mutate(reply) {
+          raw.push(reply);
+        },
+      });
+    let saved: ObserverPacket | undefined;
+    f.options.retainReport = (packet) => {
+      saved = packet;
+    };
+    const result = await dispatchBrowserDiagnostic(f.options),
+      original = JSON.stringify(result);
+    raw[0].value.warm.frames = 999;
+    expect(JSON.stringify(result)).toBe(original);
+    expect(JSON.stringify(saved)).toBe(original);
+    if (!saved) throw new Error('Missing saved report');
+    saved.steps.length = 0;
+    expect(result.steps).toHaveLength(12);
+  });
 });
