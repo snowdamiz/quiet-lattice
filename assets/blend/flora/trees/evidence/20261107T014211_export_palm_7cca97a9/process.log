@@ -1,0 +1,123 @@
+00:00.296  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/tree_palm_t04.blend"
+
+export assets/blend/flora/tree_palm_t04.blend -> packages/client/public/models/flora/tree_palm_t04.glb
+
+validate assets/blend/flora/tree_palm_t04.blend  (family flora, source .blend)
+  tree_palm / tree_palm_form_0 [flora_tree]  tris LOD0 14,000, LOD1 6,719, LOD2 2,380, LOD3 532  size 6.74 x 6.54 x 9.28 m
+  tree_palm / tree_palm_form_1 [flora_tree]  tris LOD0 10,480, LOD1 5,030, LOD2 1,781, LOD3 397  size 4.94 x 5.01 x 7.64 m
+  PASS  naming
+        ok    tree_palm_t04.blend: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_palm/tree_palm_form_0: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_palm/tree_palm_form_1: LOD0 10,480 triangles within the flora_tree budget 3,000-15,000 (families.json)
+  PASS  LODs
+        ok    tree_palm/tree_palm_form_0: 14,000 > 6,719 > 2,380 > 532 triangles; LOD3 3.8% of LOD0
+        ok    tree_palm/tree_palm_form_1: 10,480 > 5,030 > 1,781 > 397 triangles; LOD3 3.8% of LOD0
+  PASS  materials
+        ok    LIB_T04_palm: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    tree_palm/tree_palm_form_0: longest side 9.28 m within 1-60 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014211_export_palm_7cca97a9/stock-reports/flora__tree_palm_t04.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+01:42:11 | INFO: Starting glTF 2.0 export
+01:42:11 | INFO: Extracting primitive: tree_palm_0_editable
+01:42:11 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Extracting primitive: tree_palm_0_editable.001
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Extracting primitive: tree_palm_0_editable.002
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Extracting primitive: tree_palm_0_lod3_editable
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Extracting primitive: tree_palm_1_editable
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Extracting primitive: tree_palm_1_editable.001
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Extracting primitive: tree_palm_1_editable.002
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Extracting primitive: tree_palm_1_lod3_editable
+01:42:11 | INFO: Primitives created: 1
+01:42:11 | INFO: Finished glTF 2.0 export in 0.06903505325317383 s
+
+  2.9 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 2.8 -> 2.4 MB of buffers
+  meshopt (high, float attributes): geometry 2.0 -> 1.0 MB; file 2.4 -> 1.4 MB
+01:42:17 | INFO: Data are loaded, start creating Blender stuff
+01:42:17 | INFO: Blender create Mesh node tree_palm_0_editable
+01:42:17 | INFO: Blender create Mesh node tree_palm_0_editable
+01:42:17 | INFO: Blender create Mesh node tree_palm_0_editable
+01:42:17 | INFO: Blender create Mesh node tree_palm_0_lod3_editable
+01:42:17 | INFO: Blender create Mesh node tree_palm_1_editable
+01:42:17 | INFO: Blender create Mesh node tree_palm_1_editable
+01:42:17 | INFO: Blender create Mesh node tree_palm_1_editable
+01:42:17 | INFO: Blender create Mesh node tree_palm_1_lod3_editable
+01:42:17 | INFO: glTF import finished in 0.05s
+prune: Removed types... Accessor (40)
+
+validate packages/client/public/models/flora/tree_palm_t04.glb  (family flora, export .glb)
+  tree_palm / tree_palm_form_0 [flora_tree]  tris LOD0 14,000, LOD1 6,719, LOD2 2,380, LOD3 532  size 6.74 x 6.54 x 9.28 m
+  tree_palm / tree_palm_form_1 [flora_tree]  tris LOD0 10,480, LOD1 5,030, LOD2 1,781, LOD3 397  size 4.94 x 5.01 x 7.64 m
+  PASS  naming
+        ok    tree_palm_t04.glb: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_palm/tree_palm_form_0: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_palm/tree_palm_form_1: LOD0 10,480 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    geometry: meshopt-compressed: 1.0 MB of streams
+  PASS  LODs
+        ok    tree_palm/tree_palm_form_0: 14,000 > 6,719 > 2,380 > 532 triangles; LOD3 3.8% of LOD0
+        ok    tree_palm/tree_palm_form_1: 10,480 > 5,030 > 1,781 > 397 triangles; LOD3 3.8% of LOD0
+  PASS  materials
+        ok    LIB_T04_palm: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.4 MB
+        ok    tree_palm/tree_palm_form_0: textures take 4 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the flora_tree budget of 32 MB
+        ok    ... 1 more
+  PASS  scale references
+        ok    source: assets/blend/flora/tree_palm_t04.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    tree_palm/tree_palm_form_0: longest side 9.28 m within 1-60 m
+        ok    tree_palm/tree_palm_form_1: longest side 7.64 m within 1-60 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014211_export_palm_7cca97a9/stock-reports/flora__tree_palm_t04.glb.json
+  wrote packages/client/public/models/flora/tree_palm_t04.glb (1,383,404 bytes)
+
+export flora: 1 of 1 source(s) exported
+01:42:18 | INFO: Data are loaded, start creating Blender stuff
+01:42:18 | INFO: Blender create Mesh node tree_palm_0_editable
+01:42:18 | INFO: Blender create Mesh node tree_palm_0_editable
+01:42:18 | INFO: Blender create Mesh node tree_palm_0_editable
+01:42:18 | INFO: Blender create Mesh node tree_palm_0_lod3_editable
+01:42:18 | INFO: Blender create Mesh node tree_palm_1_editable
+01:42:18 | INFO: Blender create Mesh node tree_palm_1_editable
+01:42:18 | INFO: Blender create Mesh node tree_palm_1_editable
+01:42:18 | INFO: Blender create Mesh node tree_palm_1_lod3_editable
+01:42:18 | INFO: glTF import finished in 0.05s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate assets/blend/flora/trees/evidence/20261107T014211_export_palm_7cca97a9/tree_palm_t04.glb  (family flora, export .glb)
+  tree_palm / tree_palm_form_0 [flora_tree]  tris LOD0 14,000, LOD1 6,719, LOD2 2,380, LOD3 532  size 6.74 x 6.54 x 9.28 m
+  tree_palm / tree_palm_form_1 [flora_tree]  tris LOD0 10,480, LOD1 5,030, LOD2 1,781, LOD3 397  size 4.94 x 5.01 x 7.64 m
+  PASS  naming
+        ok    tree_palm_t04.glb: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_palm/tree_palm_form_0: LOD0 14,000 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_palm/tree_palm_form_1: LOD0 10,480 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    geometry: meshopt-compressed: 0.9 MB of streams
+  PASS  LODs
+        ok    tree_palm/tree_palm_form_0: 14,000 > 6,719 > 2,380 > 532 triangles; LOD3 3.8% of LOD0
+        ok    tree_palm/tree_palm_form_1: 10,480 > 5,030 > 1,781 > 397 triangles; LOD3 3.8% of LOD0
+  PASS  materials
+        ok    LIB_T04_palm: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.4 MB
+        ok    tree_palm/tree_palm_form_0: textures take 4 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the flora_tree budget of 32 MB
+        ok    ... 1 more
+  PASS  scale references
+        ok    source: assets/blend/flora/tree_palm_t04.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    tree_palm/tree_palm_form_0: longest side 9.28 m within 1-60 m
+        ok    tree_palm/tree_palm_form_1: longest side 7.64 m within 1-60 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014211_export_palm_7cca97a9/final-stock-validation.json
+T04_FINAL /Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/client/public/models/flora/tree_palm_t04.glb b7fbcdc72b7f1581c0db7d1ae1d53632fb3e5992ff1b81c5542a2ce07d164b28

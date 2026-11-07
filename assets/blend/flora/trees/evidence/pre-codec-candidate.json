@@ -1,0 +1,1424 @@
+{
+  "task": "P1.E14.T04",
+  "status": "CPU_CANDIDATE_ONLY_NATIVE_GATES_PENDING",
+  "base": "55a8d58c27db35782b89142fc8a4f8d25f52f379",
+  "reviewed_shared_pin": "515ba1f00810a50b499970b5468ef7bf0af84c32",
+  "integrated_pin_commit": "60aa8bfb5a771e14944b6a130c96cd9a2cb83228",
+  "workspace": "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975",
+  "branch": "task/P1-E14-T04-trees",
+  "bundles": [
+    {
+      "kind": "round",
+      "source": "assets/blend/flora/tree_round_t04.blend",
+      "source_sha256": "0289add6071aac144763fd8a3c67efaa3cfe03192b4ba4f44405043129aeb087",
+      "source_bytes": 3082848,
+      "export": "packages/client/public/models/flora/tree_round_t04.glb",
+      "export_sha256": "029015a3b89a91796934cf8a16db8537fc133af6863f917e71dc5896172985f6",
+      "export_bytes": 2032320,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013536_validate_round_381ba93c/reports/flora__tree_round_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013536_validate_round_381ba93c/reports/flora__tree_round_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013044_export_round_52907919/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013123_audit_round_8bffc708/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    },
+    {
+      "kind": "conifer",
+      "source": "assets/blend/flora/tree_conifer_t04.blend",
+      "source_sha256": "6abb31b8763acc0a6bc44c7d1f63892b3929f9420f283058e409d4aee7ee5c82",
+      "source_bytes": 3371313,
+      "export": "packages/client/public/models/flora/tree_conifer_t04.glb",
+      "export_sha256": "db1286ee23b6e6e8e18327a709cfc6c0c34aad2583b4635aeb9029ad25a5f4b4",
+      "export_bytes": 2598224,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013537_validate_conifer_a9d8857a/reports/flora__tree_conifer_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013537_validate_conifer_a9d8857a/reports/flora__tree_conifer_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013049_export_conifer_fb52e69d/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013126_audit_conifer_297cd972/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    },
+    {
+      "kind": "palm",
+      "source": "assets/blend/flora/tree_palm_t04.blend",
+      "source_sha256": "0de3633cd22ca4208d64eda410a8eb87a83ad44d3798aeebaa10b4473b68f898",
+      "source_bytes": 2103475,
+      "export": "packages/client/public/models/flora/tree_palm_t04.glb",
+      "export_sha256": "5515f8189db6f559e5c2dd1eb922a5e47b9246308d73f7c03630b70f830a4a0c",
+      "export_bytes": 1351260,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013538_validate_palm_0d04de9b/reports/flora__tree_palm_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013538_validate_palm_0d04de9b/reports/flora__tree_palm_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013055_export_palm_2a9f4456/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013128_audit_palm_5ee6c711/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    },
+    {
+      "kind": "mushroom",
+      "source": "assets/blend/flora/tree_mushroom_t04.blend",
+      "source_sha256": "ae59e3ea97159464fabb08cf467ae1751f1767248c23e2290312ae1799e22f85",
+      "source_bytes": 2500631,
+      "export": "packages/client/public/models/flora/tree_mushroom_t04.glb",
+      "export_sha256": "e6094c33133309ae576b1c43d62d257dc6bfc54b5676d207487520b3fef34285",
+      "export_bytes": 1356828,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013540_validate_mushroom_786a56b5/reports/flora__tree_mushroom_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013540_validate_mushroom_786a56b5/reports/flora__tree_mushroom_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013100_export_mushroom_d386f02c/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013130_audit_mushroom_1dbca795/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    },
+    {
+      "kind": "spiral",
+      "source": "assets/blend/flora/tree_spiral_t04.blend",
+      "source_sha256": "79049b427c1166ff53aab3b7a7389cf730d0403f4c7785f833b1986c8b52a3b0",
+      "source_bytes": 1840309,
+      "export": "packages/client/public/models/flora/tree_spiral_t04.glb",
+      "export_sha256": "7545b1d557f2b355764645ad387419691dc6cef7ec39b6cd3eb4a41c0b51cf9e",
+      "export_bytes": 942340,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013541_validate_spiral_ecef96de/reports/flora__tree_spiral_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013541_validate_spiral_ecef96de/reports/flora__tree_spiral_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013105_export_spiral_e09d03b0/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013132_audit_spiral_5353b8dc/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    },
+    {
+      "kind": "coral",
+      "source": "assets/blend/flora/tree_coral_t04.blend",
+      "source_sha256": "12ad278e604c6c17cad26b2f6b8f5f10c957847a9fa4e7c1db4d36425c885a8a",
+      "source_bytes": 2316485,
+      "export": "packages/client/public/models/flora/tree_coral_t04.glb",
+      "export_sha256": "509819ec6dc1fd9dbd95b61042abda64b76e5e8738571b3ebdd7408ce0323ef9",
+      "export_bytes": 1205320,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013542_validate_coral_b4bd72b4/reports/flora__tree_coral_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013542_validate_coral_b4bd72b4/reports/flora__tree_coral_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013110_export_coral_778d9893/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013134_audit_coral_1cfbaa9a/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    },
+    {
+      "kind": "blob",
+      "source": "assets/blend/flora/tree_blob_t04.blend",
+      "source_sha256": "2f7697de399e4ae1d1689d2be7e5817bc35fd985154682f2e2a85971a1e877b2",
+      "source_bytes": 1634261,
+      "export": "packages/client/public/models/flora/tree_blob_t04.glb",
+      "export_sha256": "3bfbc109e7090e471757bcfafd18af0a45bc5fb1f65dbd72c961370d1341dfc1",
+      "export_bytes": 842712,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013544_validate_blob_b54f1bfe/reports/flora__tree_blob_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013544_validate_blob_b54f1bfe/reports/flora__tree_blob_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013115_export_blob_9833d583/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013136_audit_blob_8c83b43f/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    },
+    {
+      "kind": "cactus",
+      "source": "assets/blend/flora/tree_cactus_t04.blend",
+      "source_sha256": "79a6283447a23c35062865a5779a8469665dbb15183cf1e2107c69c9e63aa062",
+      "source_bytes": 1399737,
+      "export": "packages/client/public/models/flora/tree_cactus_t04.glb",
+      "export_sha256": "eefbc253074525dcbf5bf4b6f40608a762cf449c462c14efd0afc510e4e22417",
+      "export_bytes": 700964,
+      "stock_source_report": "assets/blend/flora/trees/evidence/20261107T013545_validate_cactus_9e64ecf2/reports/flora__tree_cactus_t04.blend.json",
+      "stock_export_report": "assets/blend/flora/trees/evidence/20261107T013545_validate_cactus_9e64ecf2/reports/flora__tree_cactus_t04.glb.json",
+      "export_receipt": "assets/blend/flora/trees/evidence/20261107T013119_export_cactus_0ee6923f/receipt.json",
+      "audit": "assets/blend/flora/trees/evidence/20261107T013139_audit_cactus_36901371/audit.json",
+      "source_unchanged_across_export": true,
+      "stock_status": "PASS",
+      "payload_status": "FLOAT position, normals, UV and RGBA masks; Meshopt; KTX2 full mips; exact source position/mask cloud verified by consumer tests"
+    }
+  ],
+  "inventory": [
+    {
+      "consumer": "tree_round_0",
+      "asset": "tree_round",
+      "variant": "tree_round_form_0",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_round_0",
+        "tree_round_0_lod1",
+        "tree_round_0_lod2",
+        "tree_round_0_lod3"
+      ],
+      "lod_triangles": [
+        14000,
+        6719,
+        2379,
+        326
+      ],
+      "lod3_fraction": 0.023285714285714285,
+      "bounds_yup": [
+        [
+          -5.198941707611084,
+          -0.1345982849597931,
+          -4.652166366577148
+        ],
+        [
+          5.366081237792969,
+          8.56827163696289,
+          4.311075210571289
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_round_1",
+      "asset": "tree_round",
+      "variant": "tree_round_form_1",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_round_1",
+        "tree_round_1_lod1",
+        "tree_round_1_lod2",
+        "tree_round_1_lod3"
+      ],
+      "lod_triangles": [
+        12174,
+        5842,
+        2069,
+        286
+      ],
+      "lod3_fraction": 0.0234926893379333,
+      "bounds_yup": [
+        [
+          -4.306441307067871,
+          -0.0636986717581749,
+          -3.504699468612671
+        ],
+        [
+          3.1935815811157227,
+          11.455771446228027,
+          2.9792823791503906
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_round_2",
+      "asset": "tree_round",
+      "variant": "tree_round_form_2",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_round_2",
+        "tree_round_2_lod1",
+        "tree_round_2_lod2",
+        "tree_round_2_lod3"
+      ],
+      "lod_triangles": [
+        13999,
+        6718,
+        2378,
+        356
+      ],
+      "lod3_fraction": 0.02543038788484892,
+      "bounds_yup": [
+        [
+          -3.138941526412964,
+          -0.18108224868774414,
+          -4.722166538238525
+        ],
+        [
+          7.596081256866455,
+          7.473272800445557,
+          4.3710737228393555
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_conifer_0",
+      "asset": "tree_conifer",
+      "variant": "tree_conifer_form_0",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_conifer_0",
+        "tree_conifer_0_lod1",
+        "tree_conifer_0_lod2",
+        "tree_conifer_0_lod3"
+      ],
+      "lod_triangles": [
+        14000,
+        6720,
+        2380,
+        330
+      ],
+      "lod3_fraction": 0.023571428571428573,
+      "bounds_yup": [
+        [
+          -3.1894922256469727,
+          -0.01171990018337965,
+          -2.926219940185547
+        ],
+        [
+          3.233492374420166,
+          11.302351951599121,
+          2.926219940185547
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_conifer_1",
+      "asset": "tree_conifer",
+      "variant": "tree_conifer_form_1",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_conifer_1",
+        "tree_conifer_1_lod1",
+        "tree_conifer_1_lod2",
+        "tree_conifer_1_lod3"
+      ],
+      "lod_triangles": [
+        14000,
+        6720,
+        2380,
+        252
+      ],
+      "lod3_fraction": 0.018,
+      "bounds_yup": [
+        [
+          -3.7451186180114746,
+          -0.015829717740416527,
+          -3.5289738178253174
+        ],
+        [
+          4.160154342651367,
+          9.202847480773926,
+          3.5289738178253174
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_conifer_2",
+      "asset": "tree_conifer",
+      "variant": "tree_conifer_form_2",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_conifer_2",
+        "tree_conifer_2_lod1",
+        "tree_conifer_2_lod2",
+        "tree_conifer_2_lod3"
+      ],
+      "lod_triangles": [
+        13999,
+        6719,
+        2379,
+        304
+      ],
+      "lod3_fraction": 0.021715836845488962,
+      "bounds_yup": [
+        [
+          -3.1246001720428467,
+          -0.06476688385009766,
+          -2.7745521068573
+        ],
+        [
+          2.9485995769500732,
+          12.500812530517578,
+          2.7745521068573
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_palm_0",
+      "asset": "tree_palm",
+      "variant": "tree_palm_form_0",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_palm_0",
+        "tree_palm_0_lod1",
+        "tree_palm_0_lod2",
+        "tree_palm_0_lod3"
+      ],
+      "lod_triangles": [
+        14000,
+        6719,
+        2380,
+        532
+      ],
+      "lod3_fraction": 0.038,
+      "bounds_yup": [
+        [
+          -1.4215582609176636,
+          -0.026850920170545578,
+          -3.272566318511963
+        ],
+        [
+          5.321558952331543,
+          9.253893852233887,
+          3.272566318511963
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_palm_1",
+      "asset": "tree_palm",
+      "variant": "tree_palm_form_1",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_palm_1",
+        "tree_palm_1_lod1",
+        "tree_palm_1_lod2",
+        "tree_palm_1_lod3"
+      ],
+      "lod_triangles": [
+        10480,
+        5030,
+        1781,
+        397
+      ],
+      "lod3_fraction": 0.03788167938931298,
+      "bounds_yup": [
+        [
+          -2.1793887615203857,
+          -0.0391908660531044,
+          -2.503295660018921
+        ],
+        [
+          2.7580790519714355,
+          7.604169845581055,
+          2.503295660018921
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_mushroom_0",
+      "asset": "tree_mushroom",
+      "variant": "tree_mushroom_form_0",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_mushroom_0",
+        "tree_mushroom_0_lod1",
+        "tree_mushroom_0_lod2",
+        "tree_mushroom_0_lod3"
+      ],
+      "lod_triangles": [
+        7992,
+        3836,
+        1358,
+        302
+      ],
+      "lod3_fraction": 0.03778778778778779,
+      "bounds_yup": [
+        [
+          -3.2513561248779297,
+          -0.10019738227128983,
+          -3.5343432426452637
+        ],
+        [
+          3.8443503379821777,
+          7.275400161743164,
+          3.5842764377593994
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_mushroom_1",
+      "asset": "tree_mushroom",
+      "variant": "tree_mushroom_form_1",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_mushroom_1",
+        "tree_mushroom_1_lod1",
+        "tree_mushroom_1_lod2",
+        "tree_mushroom_1_lod3"
+      ],
+      "lod_triangles": [
+        7992,
+        3835,
+        1358,
+        303
+      ],
+      "lod3_fraction": 0.03791291291291291,
+      "bounds_yup": [
+        [
+          -1.9173051118850708,
+          -0.08038914948701859,
+          -2.1877236366271973
+        ],
+        [
+          2.474867343902588,
+          9.188375473022461,
+          2.2186317443847656
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_mushroom_2",
+      "asset": "tree_mushroom",
+      "variant": "tree_mushroom_form_2",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_mushroom_2",
+        "tree_mushroom_2_lod1",
+        "tree_mushroom_2_lod2",
+        "tree_mushroom_2_lod3"
+      ],
+      "lod_triangles": [
+        14000,
+        6719,
+        2379,
+        532
+      ],
+      "lod3_fraction": 0.038,
+      "bounds_yup": [
+        [
+          -3.970054864883423,
+          -0.12954412400722504,
+          -2.534952163696289
+        ],
+        [
+          3.772897720336914,
+          8.18863296508789,
+          2.6273672580718994
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_spiral_0",
+      "asset": "tree_spiral",
+      "variant": "tree_spiral_form_0",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_spiral_0",
+        "tree_spiral_0_lod1",
+        "tree_spiral_0_lod2",
+        "tree_spiral_0_lod3"
+      ],
+      "lod_triangles": [
+        6888,
+        3305,
+        1170,
+        261
+      ],
+      "lod3_fraction": 0.03789198606271777,
+      "bounds_yup": [
+        [
+          -1.5446035861968994,
+          -0.18028084933757782,
+          -1.8021634817123413
+        ],
+        [
+          1.603929042816162,
+          9.421042442321777,
+          1.6012436151504517
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_spiral_1",
+      "asset": "tree_spiral",
+      "variant": "tree_spiral_form_1",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_spiral_1",
+        "tree_spiral_1_lod1",
+        "tree_spiral_1_lod2",
+        "tree_spiral_1_lod3"
+      ],
+      "lod_triangles": [
+        10724,
+        5147,
+        1823,
+        406
+      ],
+      "lod3_fraction": 0.037859007832898174,
+      "bounds_yup": [
+        [
+          -3.682656764984131,
+          -0.06421449035406113,
+          -1.292078971862793
+        ],
+        [
+          3.682656764984131,
+          9.239785194396973,
+          1.2928725481033325
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_coral_0",
+      "asset": "tree_coral",
+      "variant": "tree_coral_form_0",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_coral_0",
+        "tree_coral_0_lod1",
+        "tree_coral_0_lod2",
+        "tree_coral_0_lod3"
+      ],
+      "lod_triangles": [
+        13356,
+        6410,
+        2269,
+        506
+      ],
+      "lod3_fraction": 0.037885594489368075,
+      "bounds_yup": [
+        [
+          -3.257272958755493,
+          -0.0715235024690628,
+          -1.6119824647903442
+        ],
+        [
+          2.8987579345703125,
+          8.538741111755371,
+          1.6127153635025024
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_coral_1",
+      "asset": "tree_coral",
+      "variant": "tree_coral_form_1",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_coral_1",
+        "tree_coral_1_lod1",
+        "tree_coral_1_lod2",
+        "tree_coral_1_lod3"
+      ],
+      "lod_triangles": [
+        13999,
+        6719,
+        2378,
+        530
+      ],
+      "lod3_fraction": 0.037859847131938,
+      "bounds_yup": [
+        [
+          -2.4001271724700928,
+          -0.0715235024690628,
+          -2.1262173652648926
+        ],
+        [
+          1.8764374256134033,
+          8.242189407348633,
+          1.8214811086654663
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_blob_0",
+      "asset": "tree_blob",
+      "variant": "tree_blob_form_0",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_blob_0",
+        "tree_blob_0_lod1",
+        "tree_blob_0_lod2",
+        "tree_blob_0_lod3"
+      ],
+      "lod_triangles": [
+        5252,
+        2520,
+        891,
+        198
+      ],
+      "lod3_fraction": 0.0376999238385377,
+      "bounds_yup": [
+        [
+          -1.7800174951553345,
+          -0.017500000074505806,
+          -1.6545015573501587
+        ],
+        [
+          1.782775640487671,
+          7.83050012588501,
+          1.8253170251846313
+        ]
+      ]
+    },
+    {
+      "consumer": "tree_blob_1",
+      "asset": "tree_blob",
+      "variant": "tree_blob_form_1",
+      "class": "flora_tree",
+      "mesh_names": [
+        "tree_blob_1",
+        "tree_blob_1_lod1",
+        "tree_blob_1_lod2",
+        "tree_blob_1_lod3"
+      ],
+      "lod_triangles": [
+        8772,
+        4210,
+        1490,
+        333
+      ],
+      "lod3_fraction": 0.03796169630642955,
+      "bounds_yup": [
+        [
+          -2.6531083583831787,
+          -0.10412494093179703,
+          -1.6545015573501587
+        ],
+        [
+          2.7074594497680664,
+          8.155844688415527,
+          1.8253170251846313
+        ]
+      ]
+    },
+    {
+      "consumer": "cactus_0",
+      "asset": "cactus",
+      "variant": "cactus_form_0",
+      "class": "flora",
+      "mesh_names": [
+        "cactus_0",
+        "cactus_0_lod1",
+        "cactus_0_lod2",
+        "cactus_0_lod3"
+      ],
+      "lod_triangles": [
+        5599,
+        2686,
+        951,
+        211
+      ],
+      "lod3_fraction": 0.037685300946597604,
+      "bounds_yup": [
+        [
+          -1.5828087329864502,
+          -0.02135898359119892,
+          -0.5910781025886536
+        ],
+        [
+          1.2999999523162842,
+          5.100412368774414,
+          0.5913257598876953
+        ]
+      ]
+    },
+    {
+      "consumer": "cactus_1",
+      "asset": "cactus",
+      "variant": "cactus_form_1",
+      "class": "flora",
+      "mesh_names": [
+        "cactus_1",
+        "cactus_1_lod1",
+        "cactus_1_lod2",
+        "cactus_1_lod3"
+      ],
+      "lod_triangles": [
+        3004,
+        1441,
+        510,
+        114
+      ],
+      "lod3_fraction": 0.03794940079893475,
+      "bounds_yup": [
+        [
+          -1.711639165878296,
+          -0.0006948709487915039,
+          -0.39292341470718384
+        ],
+        [
+          1.5610896348953247,
+          4.2504119873046875,
+          0.2929234206676483
+        ]
+      ]
+    }
+  ],
+  "preview_manifest": "assets/blend/flora/trees/evidence/20261107T013236_packet_round_787bc5a6/preview-manifest.json",
+  "preview_manifest_sha256": "9eafff6415520a2def0da7261d60110922097faab747849c9b14fa06c99b0d1e",
+  "native_capture_inventory": [
+    {
+      "consumer": "tree_round_0",
+      "file": "flora/tree_round_t04",
+      "asset": "tree_round",
+      "variant": "tree_round_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_round_t04",
+        "--asset",
+        "tree_round",
+        "--variant",
+        "tree_round_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_round_1",
+      "file": "flora/tree_round_t04",
+      "asset": "tree_round",
+      "variant": "tree_round_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_round_t04",
+        "--asset",
+        "tree_round",
+        "--variant",
+        "tree_round_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_round_2",
+      "file": "flora/tree_round_t04",
+      "asset": "tree_round",
+      "variant": "tree_round_form_2",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_round_t04",
+        "--asset",
+        "tree_round",
+        "--variant",
+        "tree_round_form_2"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_conifer_0",
+      "file": "flora/tree_conifer_t04",
+      "asset": "tree_conifer",
+      "variant": "tree_conifer_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_conifer_t04",
+        "--asset",
+        "tree_conifer",
+        "--variant",
+        "tree_conifer_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_conifer_1",
+      "file": "flora/tree_conifer_t04",
+      "asset": "tree_conifer",
+      "variant": "tree_conifer_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_conifer_t04",
+        "--asset",
+        "tree_conifer",
+        "--variant",
+        "tree_conifer_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_conifer_2",
+      "file": "flora/tree_conifer_t04",
+      "asset": "tree_conifer",
+      "variant": "tree_conifer_form_2",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_conifer_t04",
+        "--asset",
+        "tree_conifer",
+        "--variant",
+        "tree_conifer_form_2"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_palm_0",
+      "file": "flora/tree_palm_t04",
+      "asset": "tree_palm",
+      "variant": "tree_palm_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_palm_t04",
+        "--asset",
+        "tree_palm",
+        "--variant",
+        "tree_palm_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_palm_1",
+      "file": "flora/tree_palm_t04",
+      "asset": "tree_palm",
+      "variant": "tree_palm_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_palm_t04",
+        "--asset",
+        "tree_palm",
+        "--variant",
+        "tree_palm_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_mushroom_0",
+      "file": "flora/tree_mushroom_t04",
+      "asset": "tree_mushroom",
+      "variant": "tree_mushroom_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_mushroom_t04",
+        "--asset",
+        "tree_mushroom",
+        "--variant",
+        "tree_mushroom_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_mushroom_1",
+      "file": "flora/tree_mushroom_t04",
+      "asset": "tree_mushroom",
+      "variant": "tree_mushroom_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_mushroom_t04",
+        "--asset",
+        "tree_mushroom",
+        "--variant",
+        "tree_mushroom_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_mushroom_2",
+      "file": "flora/tree_mushroom_t04",
+      "asset": "tree_mushroom",
+      "variant": "tree_mushroom_form_2",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_mushroom_t04",
+        "--asset",
+        "tree_mushroom",
+        "--variant",
+        "tree_mushroom_form_2"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_spiral_0",
+      "file": "flora/tree_spiral_t04",
+      "asset": "tree_spiral",
+      "variant": "tree_spiral_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_spiral_t04",
+        "--asset",
+        "tree_spiral",
+        "--variant",
+        "tree_spiral_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_spiral_1",
+      "file": "flora/tree_spiral_t04",
+      "asset": "tree_spiral",
+      "variant": "tree_spiral_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_spiral_t04",
+        "--asset",
+        "tree_spiral",
+        "--variant",
+        "tree_spiral_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_coral_0",
+      "file": "flora/tree_coral_t04",
+      "asset": "tree_coral",
+      "variant": "tree_coral_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_coral_t04",
+        "--asset",
+        "tree_coral",
+        "--variant",
+        "tree_coral_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_coral_1",
+      "file": "flora/tree_coral_t04",
+      "asset": "tree_coral",
+      "variant": "tree_coral_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_coral_t04",
+        "--asset",
+        "tree_coral",
+        "--variant",
+        "tree_coral_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_blob_0",
+      "file": "flora/tree_blob_t04",
+      "asset": "tree_blob",
+      "variant": "tree_blob_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_blob_t04",
+        "--asset",
+        "tree_blob",
+        "--variant",
+        "tree_blob_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "tree_blob_1",
+      "file": "flora/tree_blob_t04",
+      "asset": "tree_blob",
+      "variant": "tree_blob_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_blob_t04",
+        "--asset",
+        "tree_blob",
+        "--variant",
+        "tree_blob_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "cactus_0",
+      "file": "flora/tree_cactus_t04",
+      "asset": "cactus",
+      "variant": "cactus_form_0",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_cactus_t04",
+        "--asset",
+        "cactus",
+        "--variant",
+        "cactus_form_0"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    },
+    {
+      "consumer": "cactus_1",
+      "file": "flora/tree_cactus_t04",
+      "asset": "cactus",
+      "variant": "cactus_form_1",
+      "command": [
+        "pnpm",
+        "capture",
+        "--",
+        "--review",
+        "flora/tree_cactus_t04",
+        "--asset",
+        "cactus",
+        "--variant",
+        "cactus_form_1"
+      ],
+      "required_images": [
+        "noon-lush_lod0.png",
+        "noon-lush_lod2.png",
+        "night-exotic_lod0.png",
+        "night-exotic_lod2.png",
+        "open-space_lod0.png",
+        "open-space_lod2.png",
+        "wireframe_lod0.png",
+        "wireframe_lod2.png",
+        "overlay.png",
+        "far_lod2.png",
+        "sheet.png"
+      ],
+      "required_data": [
+        "perf.json"
+      ],
+      "perf_pairs_per_light": 120,
+      "native_status": "NOT RUN"
+    }
+  ],
+  "parent_capture_budget": {
+    "native_pngs": 209,
+    "standard_turntable_pngs": 38,
+    "standard_sibling_pngs": 8,
+    "total_new_pngs": 255,
+    "perf_jsons": 19,
+    "perf_pairs": 6840,
+    "minimum_paired_frames": 13680,
+    "native_viewport": [
+      1920,
+      1080
+    ],
+    "suggested_max_output_bytes": 1073741824,
+    "suggested_variant_deadline_s": 300,
+    "gpu_lanes": 1,
+    "notes": "Proposed parent admission ceiling, not permission or measured GPU timing. Keep at least12GiB free. No video/raw-frame directory. Parent must authorize native GPU/browser lane. Standard turntable.py forces Metal on this host; it was not run."
+  },
+  "unrun_gates": [
+    "standard native review captures",
+    "standard eight-angle and material sheets",
+    "blind independent visual grading",
+    "independent code/source review of this candidate",
+    "native smoke/performance",
+    "live T07 adoption"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "command": [
+    "python3",
+    "packages/tools/blender/flora_trees/test_codec.py"
+  ],
+  "exit": 0,
+  "events": [
+    [
+      {
+        "start": 266514.315267333,
+        "pid": 46872,
+        "args": [
+          "create",
+          "--threads",
+          "1"
+        ]
+      },
+      {
+        "end": 266514.517562166,
+        "pid": 46872
+      }
+    ],
+    [
+      {
+        "start": 266514.554180875,
+        "pid": 46874,
+        "args": [
+          "create",
+          "--threads",
+          "1"
+        ]
+      },
+      {
+        "end": 266514.7566875,
+        "pid": 46874
+      }
+    ]
+  ],
+  "assertions": [
+    "threads99 becomes1 at actual exec",
+    "two concurrent callers execute serially under inherited lock"
+  ],
+  "remaining_owned_children": []
+}

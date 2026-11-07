@@ -1,0 +1,123 @@
+00:00.348  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/tree_cactus_t04.blend"
+
+export assets/blend/flora/tree_cactus_t04.blend -> packages/client/public/models/flora/tree_cactus_t04.glb
+
+validate assets/blend/flora/tree_cactus_t04.blend  (family flora, source .blend)
+  cactus / cactus_form_0 [flora]  tris LOD0 5,599, LOD1 2,686, LOD2 951, LOD3 211  size 2.88 x 1.18 x 5.12 m
+  cactus / cactus_form_1 [flora]  tris LOD0 3,004, LOD1 1,441, LOD2 510, LOD3 114  size 3.27 x 0.69 x 4.25 m
+  PASS  naming
+        ok    tree_cactus_t04.blend: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    cactus/cactus_form_0: LOD0 5,599 triangles within the flora budget 150-6,000 (families.json)
+        ok    cactus/cactus_form_1: LOD0 3,004 triangles within the flora budget 150-6,000 (families.json)
+  PASS  LODs
+        ok    cactus/cactus_form_0: 5,599 > 2,686 > 951 > 211 triangles; LOD3 3.8% of LOD0
+        ok    cactus/cactus_form_1: 3,004 > 1,441 > 510 > 114 triangles; LOD3 3.8% of LOD0
+  PASS  materials
+        ok    LIB_T04_cactus: pbr: base colour, roughness, metallic, normal, AO
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    cactus/cactus_form_0: longest side 5.12 m within 0.05-15 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014250_export_cactus_b46f6b78/stock-reports/flora__tree_cactus_t04.blend.json
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+01:42:50 | INFO: Starting glTF 2.0 export
+01:42:50 | INFO: Extracting primitive: cactus_0_editable
+01:42:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Extracting primitive: cactus_0_editable.001
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Extracting primitive: cactus_0_editable.002
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Extracting primitive: cactus_0_lod3_editable
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Extracting primitive: cactus_1_editable
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Extracting primitive: cactus_1_editable.001
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Extracting primitive: cactus_1_editable.002
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Extracting primitive: cactus_1_lod3_editable
+01:42:50 | INFO: Primitives created: 1
+01:42:50 | INFO: Finished glTF 2.0 export in 0.028081178665161133 s
+
+  1.5 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 3 texture(s) to KTX2 (1 UASTC, 2 ETC1S): 1.5 -> 1.0 MB of buffers
+  meshopt (high, float attributes): geometry 0.6 -> 0.3 MB; file 1.0 -> 0.7 MB
+01:42:56 | INFO: Data are loaded, start creating Blender stuff
+01:42:56 | INFO: Blender create Mesh node cactus_0_editable
+01:42:56 | INFO: Blender create Mesh node cactus_0_editable
+01:42:56 | INFO: Blender create Mesh node cactus_0_editable
+01:42:56 | INFO: Blender create Mesh node cactus_0_lod3_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_lod3_editable
+01:42:56 | INFO: glTF import finished in 0.02s
+prune: Removed types... Accessor (40)
+
+validate packages/client/public/models/flora/tree_cactus_t04.glb  (family flora, export .glb)
+  cactus / cactus_form_0 [flora]  tris LOD0 5,599, LOD1 2,686, LOD2 951, LOD3 211  size 2.88 x 1.18 x 5.12 m
+  cactus / cactus_form_1 [flora]  tris LOD0 3,004, LOD1 1,441, LOD2 510, LOD3 114  size 3.27 x 0.69 x 4.25 m
+  PASS  naming
+        ok    tree_cactus_t04.glb: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    cactus/cactus_form_0: LOD0 5,599 triangles within the flora budget 150-6,000 (families.json)
+        ok    cactus/cactus_form_1: LOD0 3,004 triangles within the flora budget 150-6,000 (families.json)
+        ok    geometry: meshopt-compressed: 0.3 MB of streams
+  PASS  LODs
+        ok    cactus/cactus_form_0: 5,599 > 2,686 > 951 > 211 triangles; LOD3 3.8% of LOD0
+        ok    cactus/cactus_form_1: 3,004 > 1,441 > 510 > 114 triangles; LOD3 3.8% of LOD0
+  PASS  materials
+        ok    LIB_T04_cactus: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.4 MB
+        ok    cactus/cactus_form_0: textures take 4 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the flora budget of 32 MB
+        ok    ... 1 more
+  PASS  scale references
+        ok    source: assets/blend/flora/tree_cactus_t04.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    cactus/cactus_form_0: longest side 5.12 m within 0.05-15 m
+        ok    cactus/cactus_form_1: longest side 4.25 m within 0.05-15 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014250_export_cactus_b46f6b78/stock-reports/flora__tree_cactus_t04.glb.json
+  wrote packages/client/public/models/flora/tree_cactus_t04.glb (715,340 bytes)
+
+export flora: 1 of 1 source(s) exported
+01:42:56 | INFO: Data are loaded, start creating Blender stuff
+01:42:56 | INFO: Blender create Mesh node cactus_0_editable
+01:42:56 | INFO: Blender create Mesh node cactus_0_editable
+01:42:56 | INFO: Blender create Mesh node cactus_0_editable
+01:42:56 | INFO: Blender create Mesh node cactus_0_lod3_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_editable
+01:42:56 | INFO: Blender create Mesh node cactus_1_lod3_editable
+01:42:56 | INFO: glTF import finished in 0.02s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate assets/blend/flora/trees/evidence/20261107T014250_export_cactus_b46f6b78/tree_cactus_t04.glb  (family flora, export .glb)
+  cactus / cactus_form_0 [flora]  tris LOD0 5,599, LOD1 2,686, LOD2 951, LOD3 211  size 2.88 x 1.18 x 5.12 m
+  cactus / cactus_form_1 [flora]  tris LOD0 3,004, LOD1 1,441, LOD2 510, LOD3 114  size 3.27 x 0.69 x 4.25 m
+  PASS  naming
+        ok    tree_cactus_t04.glb: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    cactus/cactus_form_0: LOD0 5,599 triangles within the flora budget 150-6,000 (families.json)
+        ok    cactus/cactus_form_1: LOD0 3,004 triangles within the flora budget 150-6,000 (families.json)
+        ok    geometry: meshopt-compressed: 0.3 MB of streams
+  PASS  LODs
+        ok    cactus/cactus_form_0: 5,599 > 2,686 > 951 > 211 triangles; LOD3 3.8% of LOD0
+        ok    cactus/cactus_form_1: 3,004 > 1,441 > 510 > 114 triangles; LOD3 3.8% of LOD0
+  PASS  materials
+        ok    LIB_T04_cactus: pbr: base colour, roughness, metallic, normal, AO
+        ok    textures: 3 KTX2 map(s) (1 UASTC, 2 ETC1S) with full mip chains, 0.4 MB
+        ok    cactus/cactus_form_0: textures take 4 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the flora budget of 32 MB
+        ok    ... 1 more
+  PASS  scale references
+        ok    source: assets/blend/flora/tree_cactus_t04.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    cactus/cactus_form_0: longest side 5.12 m within 0.05-15 m
+        ok    cactus/cactus_form_1: longest side 4.25 m within 0.05-15 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014250_export_cactus_b46f6b78/final-stock-validation.json
+T04_FINAL /Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/packages/client/public/models/flora/tree_cactus_t04.glb 3b55320d464a6494efcfcd62966624a62b2e7aa66279acf2201edc35e01917f6

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "packages/client/src/gameplay/floraTreesT04.test.js",
+    "packages/client/src/gameplay/modelLibrary.test.js",
+    "--maxWorkers=1"
+  ],
+  "exit": 0
+}

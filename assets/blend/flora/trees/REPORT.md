@@ -17,7 +17,7 @@ Identity:
 FILES CHANGED:
 
 - Eight new `assets/blend/flora/tree_<kind>_t04.blend` bundles and eight corresponding `packages/client/public/models/flora/tree_<kind>_t04.glb` files. The exact pairs and SHA-256 values follow.
-- `packages/tools/blender/flora_trees/`: `author.py`, `seal.py`, `export_saved.py`, `promote_masks.mjs`, `audit.py`, `preview.py`, `packet.py`, `manifest.py`, `run.py`.
+- `packages/tools/blender/flora_trees/`: `author.py`, `seal.py`, `export_saved.py`, `promote_masks.mjs`, `audit.py`, `preview.py`, `packet.py`, `manifest.py`, `run.py`, `ktx_one.py`, `test_codec.py`.
 - `packages/client/src/gameplay/floraTreesT04.test.js`: focused tests against current bytes and production consumers.
 - `assets/blend/flora/trees/`: candidate identity, current/historical preview selection, exact receipts, run ledger, paired historical bytes, and this report. `historical-bytes.json` explicitly excludes archived bytes from current identity.
 - `assets/renders/flora/t04/`: 46 compact PNGs including revisions and the sibling overview, 54,805,448 bytes (52.27 MiB).
@@ -28,50 +28,50 @@ Current source/export pairs (SHA-256):
 `round`
 - Source: `assets/blend/flora/tree_round_t04.blend` — 3,082,848 bytes
   SHA-256: `0289add6071aac144763fd8a3c67efaa3cfe03192b4ba4f44405043129aeb087`
-- Export: `packages/client/public/models/flora/tree_round_t04.glb` — 2,032,320 bytes
-  SHA-256: `029015a3b89a91796934cf8a16db8537fc133af6863f917e71dc5896172985f6`
+- Export: `packages/client/public/models/flora/tree_round_t04.glb` — 2,028,080 bytes
+  SHA-256: `8257c5423566e6f9a62bc1cadf3ec1bd940ef20184a54d73f886afd903dabb45`
 
 `conifer`
 - Source: `assets/blend/flora/tree_conifer_t04.blend` — 3,371,313 bytes
   SHA-256: `6abb31b8763acc0a6bc44c7d1f63892b3929f9420f283058e409d4aee7ee5c82`
-- Export: `packages/client/public/models/flora/tree_conifer_t04.glb` — 2,598,224 bytes
-  SHA-256: `db1286ee23b6e6e8e18327a709cfc6c0c34aad2583b4635aeb9029ad25a5f4b4`
+- Export: `packages/client/public/models/flora/tree_conifer_t04.glb` — 2,593,984 bytes
+  SHA-256: `ea9c889438779fd3af192d2476967fd7fb67cd655d1111bb5901ec3fdd48fbd2`
 
 `palm`
 - Source: `assets/blend/flora/tree_palm_t04.blend` — 2,103,475 bytes
   SHA-256: `0de3633cd22ca4208d64eda410a8eb87a83ad44d3798aeebaa10b4473b68f898`
-- Export: `packages/client/public/models/flora/tree_palm_t04.glb` — 1,351,260 bytes
-  SHA-256: `5515f8189db6f559e5c2dd1eb922a5e47b9246308d73f7c03630b70f830a4a0c`
+- Export: `packages/client/public/models/flora/tree_palm_t04.glb` — 1,347,020 bytes
+  SHA-256: `b7fbcdc72b7f1581c0db7d1ae1d53632fb3e5992ff1b81c5542a2ce07d164b28`
 
 `mushroom`
 - Source: `assets/blend/flora/tree_mushroom_t04.blend` — 2,500,631 bytes
   SHA-256: `ae59e3ea97159464fabb08cf467ae1751f1767248c23e2290312ae1799e22f85`
-- Export: `packages/client/public/models/flora/tree_mushroom_t04.glb` — 1,356,828 bytes
-  SHA-256: `e6094c33133309ae576b1c43d62d257dc6bfc54b5676d207487520b3fef34285`
+- Export: `packages/client/public/models/flora/tree_mushroom_t04.glb` — 1,352,588 bytes
+  SHA-256: `becd7124703a6ded9349635d2be8ada54f0ae937b3e996508d79081c5c84be21`
 
 `spiral`
 - Source: `assets/blend/flora/tree_spiral_t04.blend` — 1,840,309 bytes
   SHA-256: `79049b427c1166ff53aab3b7a7389cf730d0403f4c7785f833b1986c8b52a3b0`
-- Export: `packages/client/public/models/flora/tree_spiral_t04.glb` — 942,340 bytes
-  SHA-256: `7545b1d557f2b355764645ad387419691dc6cef7ec39b6cd3eb4a41c0b51cf9e`
+- Export: `packages/client/public/models/flora/tree_spiral_t04.glb` — 938,100 bytes
+  SHA-256: `24662149bd3330bd004145f8d86550c129c9841045d6145c191decf2a48796af`
 
 `coral`
 - Source: `assets/blend/flora/tree_coral_t04.blend` — 2,316,485 bytes
   SHA-256: `12ad278e604c6c17cad26b2f6b8f5f10c957847a9fa4e7c1db4d36425c885a8a`
-- Export: `packages/client/public/models/flora/tree_coral_t04.glb` — 1,205,320 bytes
-  SHA-256: `509819ec6dc1fd9dbd95b61042abda64b76e5e8738571b3ebdd7408ce0323ef9`
+- Export: `packages/client/public/models/flora/tree_coral_t04.glb` — 1,201,080 bytes
+  SHA-256: `2a0b52856aa05e2e293ad452bb5ea50ed0ea7832cce80055ee8f77d04ec51c3b`
 
 `blob`
 - Source: `assets/blend/flora/tree_blob_t04.blend` — 1,634,261 bytes
   SHA-256: `2f7697de399e4ae1d1689d2be7e5817bc35fd985154682f2e2a85971a1e877b2`
-- Export: `packages/client/public/models/flora/tree_blob_t04.glb` — 842,712 bytes
-  SHA-256: `3bfbc109e7090e471757bcfafd18af0a45bc5fb1f65dbd72c961370d1341dfc1`
+- Export: `packages/client/public/models/flora/tree_blob_t04.glb` — 838,472 bytes
+  SHA-256: `5c490c1931e440ac58d78420c95b7198babf650fe88f93f16bf017b935401b93`
 
 `cactus`
 - Source: `assets/blend/flora/tree_cactus_t04.blend` — 1,399,737 bytes
   SHA-256: `79a6283447a23c35062865a5779a8469665dbb15183cf1e2107c69c9e63aa062`
-- Export: `packages/client/public/models/flora/tree_cactus_t04.glb` — 700,964 bytes
-  SHA-256: `eefbc253074525dcbf5bf4b6f40608a762cf449c462c14efd0afc510e4e22417`
+- Export: `packages/client/public/models/flora/tree_cactus_t04.glb` — 696,724 bytes
+  SHA-256: `3b55320d464a6494efcfcd62966624a62b2e7aa66279acf2201edc35e01917f6`
 
 Exact current 19 × 4 LOD inventory. LOD0 mesh uses the consumer name; LOD1–3 append lowercase `_lod1`, `_lod2`, `_lod3`. The structural nodes use uppercase `_LOD0`–`_LOD3` under the distinct internal `<prefix>_form_<index>` variant. This avoids a name collision with exporter-created empties while keeping the consumer lookup unchanged.
 
@@ -118,16 +118,18 @@ VERIFY:
 - `python3 packages/tools/blender/flora_trees/run.py author <kind> --deadline 300` (initial whole inventory), followed by recorded revisions — all completed author receipts exit 0. Sources are written only by explicit authorship/sealing commands.
 - `python3 packages/tools/blender/flora_trees/run.py seal <kind> --deadline 600` — eight final source cleanup/carrier saves, all exit 0. Removes face-unreferenced decimation remnants and preserves exact per-vertex masks in custom FLOAT carriers.
 - `python3 packages/tools/blender/flora_trees/run.py export <kind> --deadline 600` — eight final exports, all exit 0. `export_saved.py` calls unchanged stock `artlib.export.main("flora", ["--only", source.stem, "--report-dir", fresh_reports])`, then promotes exact float carriers and reruns unchanged stock validation on final bytes before publication. It never imports or invokes the author. All eight source hashes stayed unchanged.
-- `python3 packages/tools/blender/flora_trees/run.py audit <kind> --deadline 600` — eight final audits, all exit 0. Reads actual source meshes, actual Meshopt accessors, actual KTX2 headers/full mips, and 28 actual decoded maps (8 normal UASTC maps, 20 ETC1S base/ORM/emissive maps). No PNG fallbacks, no KHR_mesh_quantization, no helper mask carriers remain in final GLBs. Packed-map pixels, decoded-pixel hashes/ranges/std, names, counts, bounds, full unique position/mask-cloud hashes and source identity are recorded.
+- `python3 packages/tools/blender/flora_trees/run.py audit <kind> --deadline 300` — eight final audits, all exit 0. Reads actual source meshes, actual Meshopt accessors, actual KTX2 headers/full mips, and 28 actual decoded maps (8 normal UASTC maps, 20 ETC1S base/ORM/emissive maps). No PNG fallbacks, no KHR_mesh_quantization, no helper mask carriers remain in final GLBs. Packed-map pixels, decoded-pixel hashes/ranges/std, names, counts, bounds, full unique position/mask-cloud hashes and source identity are recorded.
 - `python3 packages/tools/blender/flora_trees/run.py validate <kind> --deadline 300` — eight final canonical-path runs, all exit 0, 16/16 actual source/export files PASS. Each invokes `/Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -t 2 --python-exit-code 1 --python packages/tools/blender/validate.py -- --family flora --report-dir <fresh>/reports <absolute-source> <absolute-canonical-glb>`; exact absolute argument vectors are in the ledger. Naming, triangle budget, LODs, materials/compression and scale all pass.
 - `python3 packages/tools/blender/flora_trees/run.py preview <kind> --deadline 600` — final selected CPU sheets; all selected attempts exit 0. Cycles CPU, 12 samples, 320 px cells, 960×640 sheets; four LOD0 directions, one LOD2 comparison, one detail view. No raw frames remain.
 - `python3 packages/tools/blender/flora_trees/run.py packet round --deadline 300` — exit 0. Binds selection, proves six pre-cleanup preview sources have identical rendered polygon topology/winding/coordinates/UVs/masks/smooth flags and packed image pixels, and emits one 1600×1280 sibling overview. The two final revised bundles have exact preview/source byte matches.
-- `pnpm exec vitest run packages/client/src/gameplay/floraTreesT04.test.js packages/client/src/gameplay/modelLibrary.test.js --maxWorkers=1` — exit 0, 2 files / 29 tests passed; final logged run `evidence/tests_20261107T013334/`.
+- `pnpm exec vitest run packages/client/src/gameplay/floraTreesT04.test.js packages/client/src/gameplay/modelLibrary.test.js --maxWorkers=1` — exit 0, 2 files / 29 tests passed; final logged run `evidence/tests_20261107T014339/`.
 - `pnpm -r --workspace-concurrency=1 typecheck` — exit 0, all four workspace packages.
 - `pnpm exec eslint packages/client/src/gameplay/floraTreesT04.test.js packages/tools/blender/flora_trees/promote_masks.mjs` — exit 0.
 - Python `compile()` over task-local `.py` sources — exit 0.
 - `git diff --cached --check` — exit 0. Captured stdout keeps terminal blank lines via a task-local `.gitattributes` whitespace rule; code whitespace rules are unchanged.
 - `git diff 515ba1f00810a50b499970b5468ef7bf0af84c32 -- packages/tools/blender/artlib/checks.py packages/tools/blender/artlib/materials.py packages/tools/blender/material_mask_selftest.py` — exit 0, empty diff.
+
+- `python3 packages/tools/blender/flora_trees/test_codec.py` — exit0: actual exec arguments changed from99 to1 threads, and two concurrent callers executed serially through the inherited process lock. Receipt: `evidence/codec-test_20261107T014507/receipt.json`.
 
 Failure history retained:
 
@@ -184,6 +186,8 @@ AssertionError: expected -0.22552642226219177 to be greater than -0.2
 
 ```
 
+5. Final resource audit found stock `ktx.py` uses host CPU count for an encoder when ART_KTX_JOBS=1 and always starts at least two decoder workers. Historical runs therefore did not satisfy the intended codec thread/process cap. An owned executable boundary now forces `ktx create --threads 1` and holds a file lock across exec to serialize actual codec processes. Re-encoded all eight current GLBs at one thread, reran all audits and canonical source/export validation with decoder serialization, and reran 29 consumer tests. Earlier bytes/receipts remain historical with exact paired sources; none is selected as current validation. No shared codec code or validation thresholds changed.
+
 An optional Pillow import probe exited 1 (`ModuleNotFoundError: No module named PIL`). Nothing was installed; the compositor uses Blender image pixels.
 
 DECISIONS:
@@ -194,7 +198,7 @@ DECISIONS:
 - Material authorship → Append/derive `LIB_ShellRib`, `LIB_Chitin` and `LIB_CapFlesh`; keep packed 1K organ trim maps with bark growth/scars, veins and margins, gill ridges, roughness/occlusion separation, normal relief and warranted low spore emission → neutral botanical palette documented in source; actual planetary colors remain R/G/B masks. Repeated organ trims intentionally share UV regions; no geometry AO bake depends on overlapping UV islands. Geometry-specific soil occlusion is authored in mask alpha.
 - Source editability → Saved mesh control topology, named organ vertex groups, explicit four LOD collections, editable image maps and shared REF grid/biped are the deliverable → author scripts are not imported by export.
 - Preserve demo mixed library? → Yes, per explicit T07 ownership → this task adds CPU candidates, not live adoption.
-- Resource admission → Deferred Blender while observed load was ~34, then used a fresh resource read for every job. One owned Blender process, two math/render threads, codec concurrency1, 300–600s final-job deadlines, 6GiB sampled group RSS ceiling and 32MiB log ceiling. Every completed Blender receipt has zero remaining owned child processes. CPU jobs use no Metal/CUDA render device.
+- Resource admission → Deferred Blender while observed load was ~34, then used a fresh resource read for every job. One owned Blender process, two math/render threads, codec concurrency1 with one encoder thread and a process lock serializing stock decoder calls, 300–600s final-job deadlines, 6GiB sampled group RSS ceiling and 32MiB log ceiling. Every completed Blender receipt has zero remaining owned child processes. CPU jobs use no Metal/CUDA render device.
 
 OUT OF SCOPE FOUND:
 

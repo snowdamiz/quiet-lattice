@@ -85,15 +85,21 @@ def main():
         for key in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','VECLIB_MAXIMUM_THREADS'):
             env[key]='2'
         env.update(ART_KTX_JOBS='1',PYTHONDONTWRITEBYTECODE='1',CUDA_VISIBLE_DEVICES='',
-                   KTX='/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx')
+                   KTX=str(HERE/'ktx_one.py'),
+                   T04_CODEC_LOCK=str(EVIDENCE/'.codec.lock'),
+                   T04_KTX_REAL='/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx')
         receipt['command']=cmd
         receipt['tool_hashes']={str(p.relative_to(ROOT)):sha(p) for p in HERE.iterdir() if p.suffix in ('.py','.mjs')}
-        receipt['environment']={k:env[k] for k in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','VECLIB_MAXIMUM_THREADS','ART_KTX_JOBS','PYTHONDONTWRITEBYTECODE','CUDA_VISIBLE_DEVICES','KTX')}
+        receipt['environment']={k:env[k] for k in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','VECLIB_MAXIMUM_THREADS','ART_KTX_JOBS','PYTHONDONTWRITEBYTECODE','CUDA_VISIBLE_DEVICES','KTX','T04_KTX_REAL','T04_CODEC_LOCK')}
+        receipt['codec_threads']=1
         rc=75; reason='admission'; peak=0; survivors=[]; start=time.monotonic()
         if resources['load'][0]>20 or resources['free_disk']<12*1024**3:
             receipt['reason']='contention; no Blender launched'
         else:
-            if args.action in ('author','seal') and source.exists():
+            candidate=EVIDENCE.parent/'candidate.json'
+            if args.action in ('author','seal','export') and candidate.exists():
+                shutil.move(str(candidate),str(run/'previous-candidate.json'))
+            if (args.action in ('author','seal') or (args.action=='export' and export.exists())) and source.exists():
                 shutil.copyfile(source,run/'previous-source.blend')
             if args.action in ('author','seal','export') and export.exists():
                 # A new attempt invalidates the old authoritative export before starting.

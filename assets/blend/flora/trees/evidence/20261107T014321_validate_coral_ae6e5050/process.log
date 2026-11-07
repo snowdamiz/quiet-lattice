@@ -1,0 +1,56 @@
+00:00.351  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975/assets/blend/flora/tree_coral_t04.blend"
+
+validate assets/blend/flora/tree_coral_t04.blend  (family flora, source .blend)
+  tree_coral / tree_coral_form_0 [flora_tree]  tris LOD0 13,356, LOD1 6,410, LOD2 2,269, LOD3 506  size 6.16 x 3.23 x 8.61 m
+  tree_coral / tree_coral_form_1 [flora_tree]  tris LOD0 13,999, LOD1 6,719, LOD2 2,378, LOD3 530  size 4.28 x 3.95 x 8.31 m
+  PASS  naming
+        ok    tree_coral_t04.blend: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_coral/tree_coral_form_0: LOD0 13,356 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_coral/tree_coral_form_1: LOD0 13,999 triangles within the flora_tree budget 3,000-15,000 (families.json)
+  PASS  LODs
+        ok    tree_coral/tree_coral_form_0: 13,356 > 6,410 > 2,269 > 506 triangles; LOD3 3.8% of LOD0
+        ok    tree_coral/tree_coral_form_1: 13,999 > 6,719 > 2,378 > 530 triangles; LOD3 3.8% of LOD0
+  PASS  materials  (0 failed, 1 warnings)
+        warn  LIB_T04_coral: emissive map T04_coral_emission is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail
+  PASS  scale references
+        ok    REF_Grid: grid spacing 1.000 m
+        ok    REF_Biped: biped 1.850 m tall, feet on the grid plane
+        ok    tree_coral/tree_coral_form_0: longest side 8.61 m within 1-60 m
+        ok    ... 1 more
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014321_validate_coral_ae6e5050/reports/flora__tree_coral_t04.blend.json
+01:43:22 | INFO: Data are loaded, start creating Blender stuff
+01:43:22 | INFO: Blender create Mesh node tree_coral_0_editable
+01:43:22 | INFO: Blender create Mesh node tree_coral_0_editable
+01:43:22 | INFO: Blender create Mesh node tree_coral_0_editable
+01:43:22 | INFO: Blender create Mesh node tree_coral_0_lod3_editable
+01:43:22 | INFO: Blender create Mesh node tree_coral_1_editable
+01:43:22 | INFO: Blender create Mesh node tree_coral_1_editable
+01:43:22 | INFO: Blender create Mesh node tree_coral_1_editable
+01:43:22 | INFO: Blender create Mesh node tree_coral_1_lod3_editable
+01:43:22 | INFO: glTF import finished in 0.06s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+validate packages/client/public/models/flora/tree_coral_t04.glb  (family flora, export .glb)
+  tree_coral / tree_coral_form_0 [flora_tree]  tris LOD0 13,356, LOD1 6,410, LOD2 2,269, LOD3 506  size 6.16 x 3.23 x 8.61 m
+  tree_coral / tree_coral_form_1 [flora_tree]  tris LOD0 13,999, LOD1 6,719, LOD2 2,378, LOD3 530  size 4.28 x 3.95 x 8.31 m
+  PASS  naming
+        ok    tree_coral_t04.glb: 2 variant(s) in 1 asset(s) follow the flora rules
+  PASS  triangle budget
+        ok    tree_coral/tree_coral_form_0: LOD0 13,356 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    tree_coral/tree_coral_form_1: LOD0 13,999 triangles within the flora_tree budget 3,000-15,000 (families.json)
+        ok    geometry: meshopt-compressed: 0.8 MB of streams
+  PASS  LODs
+        ok    tree_coral/tree_coral_form_0: 13,356 > 6,410 > 2,269 > 506 triangles; LOD3 3.8% of LOD0
+        ok    tree_coral/tree_coral_form_1: 13,999 > 6,719 > 2,378 > 530 triangles; LOD3 3.8% of LOD0
+  PASS  materials  (0 failed, 1 warnings)
+        warn  LIB_T04_coral: emissive map T04_coral_emission is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail
+  PASS  scale references
+        ok    source: assets/blend/flora/tree_coral_t04.blend holds the 1 m grid and 1.85 m biped (validated with the source)
+        ok    tree_coral/tree_coral_form_0: longest side 8.61 m within 1-60 m
+        ok    tree_coral/tree_coral_form_1: longest side 8.31 m within 1-60 m
+RESULT: PASS (5 of 5 checks passed)
+  report: assets/blend/flora/trees/evidence/20261107T014321_validate_coral_ae6e5050/reports/flora__tree_coral_t04.glb.json
+
+2 of 2 file(s) passed validation
