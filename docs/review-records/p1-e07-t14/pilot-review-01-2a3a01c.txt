@@ -1,0 +1,112 @@
+# P1.E07.T14 single effects pilot — independent SOURCE/CPU review
+
+**VERDICT: REVISE. Three P2 source findings.** No native, visual, runtime-integration, whole-task, or merge acceptance is supplied. This is the first independent caller review of the disabled source unit; the existing 64-file asset-source PASS is unchanged and is not regraded.
+
+Reviewed checkout: `/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects`, branch `task/P1-E07-T14-effects`.
+
+- HEAD: `2a3a01c7638b167d47901c57509c5d2bc07f8096`
+- Tree: `835d46e35ef996980323d9a5d8697ae823ced12c`
+- Asset base: `2643aca9d8b85a45498d85eb637d20260ebf06d1`, tree `6038b7d94b0208f3173d2449df5d7578fb4c2aa0`
+- Separate helper recovery: `22506166571d4045eeb4902b1f278bdcafa2ad19`; all four helper bytes match `ca7d91e378e9d2f3f0ce8f0651475dcb843875d9` and recovery.json blob/size/SHA256 records.
+- Source patch SHA256: `40f73a8a9a737feb027f1fd90b65e622b2df21c4ce96df5c7509d84808f93a93`
+- Readiness SHA256: `4fb945a05853fce9069da437cdee48155905cbbaf51c04fde75088198b870821`
+- Initial/final Git status, including all untracked files: clean. All 82 initially fingerprinted paths remain byte-identical: 64 protected asset files and 18 changed/new files. See `pins-before.json`, `provenance-final.json` and `source.patch`.
+
+Read plan 0.3/0.4/0.9.5, visual-artifact rules, task P1.E07.T14, Appendix C, artifact/archive preservation norms, the complete effects_packet implementation and controls, readiness/recovery data, the worker's final Appendix-C2 commands/hashes, and relevant unchanged capture/Review/StationJob/StageReceipts paths. The supplied cross-lane reports were used as adversarial case descriptions, not as evidence of defects in this caller. No worker transcript was used and no other caller/framework was copied.
+
+## Findings
+
+### R1 — P2: terminal evidence omits a partially constructed job's scratch ownership
+
+Location: `packages/tools/src/capture/effects_packet/caller.py:64`, **86**, **102**; constructor delegation at `native_ports.py:173`.
+
+Registering the attempt before construction is correct, but the finalizer snapshots only `job.state`. The unchanged StationJob constructor allocates `self.scratch`, assigns `target`, `root`, `coalition_id`, `known`, and `registered`, then performs helper-copy/request/plist writes before its first durable `save()`. These ownership attributes live outside `state`.
+
+The independent probe executes the actual extracted StationJob constructor and save bodies through actual `NativePorts.initialize` and `caller.execute`. Only native ports and temporary allocation routing are inert. An ENOSPC-like request-write error without a filename, as a buffered write/close error can have, occurs after scratch allocation. The scratch directory and copied helpers remain. Caller cleanup correctly refuses an unproved cohort, but both its returned result and durable result.json omit the exact scratch path and other job identity attributes. The retained state contains only the generic state flags. There is no constructor boundary.json to recover that ownership from.
+
+This blocks reliable targeted recovery/accounting of the preserved partial and violates the explicit complete-partial-allocation evidence contract. It is not a request to delete the scratch or infer release.
+
+Evidence: `independent-run-oiis93oo/independent-results.json`, case `constructor-partial-ownership`; scratch `/private/tmp/p1-e07-t14-independent-e60r9lcb/independent-run-oiis93oo/constructor-partial-ownership/stations-round4-owned-ln8xp145`; result `/private/tmp/egp-control-f396d31657574931a621f7aaf3a46089/result.json`.
+
+Correction: retain the attempted job's available ownership attributes, including scratch/output/target/root/cohort/known/registered facts, on constructor failure and before/after cleanup. Register observations before fallible I/O and keep unknown/missing facts explicit. Do this in the task-local adapter; retain the frozen helpers unchanged. Add this actual-constructor failure control.
+
+### R2 — P2: bootstrap receipt failure discards the completed command's raw outcome
+
+Location: `packages/tools/src/capture/effects_packet/caller.py:71`; contrast with the observation-wrapped cleanup calls in `native_ports.py:211-224`.
+
+`job.start()` runs directly, outside `observe_call`. The retained helper's start body obtains the bootstrap CompletedProcess, writes bootstrap.json, and only afterward checks the exit and sets registration state. If the receipt write fails, the command's return code/stdout/stderr are local variables that do not reach caller evidence.
+
+The independent probe executes the exact start body through caller.execute. Its launchctl boundary is inert and returns exit 17, `BOOTSTRAP_STDOUT_UNKNOWN\0`, and `BOOTSTRAP_STDERR_UNKNOWN`. The next bootstrap.json write raises an ENOSPC-like error. The terminal result retains the write error and secondary cleanup refusal, but loses all three producer facts. No real launchctl command or native job runs. The same ordering is relevant to a successful bootstrap followed by receipt failure, where registration must remain explicitly uncertain.
+
+Evidence: `independent-run-oiis93oo/independent-results.json`, case `bootstrap-producer-receipt-failure`; result `/private/tmp/egp-control-c74fcbb2b89e41b79d955201bba85b2e/result.json`.
+
+Correction: observe the start boundary's actual subprocess/ownership reads before the helper can fail while persisting them. Retain original command outcomes separately from receipt and cleanup failures, restore ports without I/O during deadline unwind, and never retry the launch. Add a combined failed-bootstrap/failed-receipt control and a successful-bootstrap/failed-receipt uncertainty control.
+
+### R3 — P2: admission never checks competing owners of the generated cache paths
+
+Location: `packages/tools/src/capture/effects_packet/bindings.py:53-65`; call order at `caller.py:35-57` and **67-71**.
+
+The two source verifications check file/tree hashes, environment, and clean Git state. Neither checks process users of the designated generated caches. The cache snapshot validates filesystem ownership/type/size/content but also does not check live users. StageReceipts observes the newly launched owned cohort later; it cannot establish that an older task-local cache writer was absent before capture.
+
+A real harmless Python child holds the designated scratch cache file open with O_RDWR. While it remains alive, actual `bindings.verify` runs twice, the actual bounded cache snapshot copies the file, and actual caller.execute proceeds through its inert capture and returns accepted=true. Only the Git identity function and capture/runtime ports are synthetic; actual byte verifiers, cache filesystem reads, grant/consume flow, publication and full PNG inspection execute. Both verification calls record the owner alive, and it is still alive after caller completion. The child is then released and observed exiting 0. No real cache, Vite server or native capture is started or modified.
+
+Evidence: `process-run-oyujffba/cache-owner/cache-owner-result.json`; child PID 48738 in that recorded run, exact inode 481480315. These are historical fixture observations, not current ownership claims.
+
+Correction: add a bounded read-only owner check scoped to the exact generated cache paths and task-local Vite route, before snapshot/consumption and again immediately before launch. Preserve its observations and refuse a live conflicting owner or ambiguous ownership. Exercise that guard with a real harmless owner process. Current capacity/byte hashes alone do not satisfy the requested prelaunch cache-owner gate.
+
+## Fresh CPU verification
+
+All test work ran locally on macOS, serially, with at most two active control processes (controller plus harmless child). No native helper modules were imported by disabled CLIs; actual helper function/class bodies were extracted unchanged by AST into namespaces with inert OS ports for lifecycle probes. No actual bootstrap, bootout, signal-to-native-job, native archive, browser, GPU, Blender, codec process, service or DB operation occurred.
+
+| Check | Observed result |
+|---|---|
+| Supplied Python controls | 26/26, exit 0 |
+| Supplied Node controls | 9/9, exit 0 |
+| Exact-head read-only check_ready.py | exit 0, PASS_SOURCE_ONLY_DISABLED; 404 file bindings and six dependency trees |
+| Scoped eslint / prettier | exit 0 / 0 |
+| Actual disabled Python / Node CLIs | exit 78 / 78 |
+| Python import trace | actual CLI exit 78; no native_ports, Station helper, or inspector import |
+| Python source compile | nine sources, no bytecode output |
+| Independent Python boundary matrix | 42 cases, exit 0: 40 expected-safe outcomes and two successfully reproduced defects R1/R2 |
+| Independent Node boundary matrix | 10 cases, exit 0 |
+| Actual inert child-process publication matrix | exits 0,1,1,1,1; only exit-0 success accepted |
+| Real harmless cache owner | R3 reproduced; child released and exit 0 observed |
+| Additional exact metadata/racing-consume controls | exit 0 |
+| Actual GLB CPU meshopt decode | 19 compressed buffer views, 347,664 decoded bytes; exit 0 |
+| Final provenance and diff check | exit 0; exact pins and protected bytes retained |
+
+The independent controls cover actual regular-to-FIFO replacements at grant/result/consumption admission with no armed timer: O_NONBLOCK|O_NOFOLLOW permits immediate regular-type refusal, no native allocation. Oversized grant/review and Node grant/consumption/review files are refused before payload reads. Completed snapshots keep hash/parse/semantics coherent under actual file replacement, including failed review bytes swapped to successful bytes. The existing failed-result and consumption swap controls also pass. Exclusive consumption refuses a competing creation after admission, preserves that spent identity, and calls no ports.
+
+Real SIGALRM at retained archive and terminal helper boundaries unwinds immediately, restores timers/ports, retains observations, and runs no later cleanup step. Existing caller controls cover actual capture/cleanup signals and the retained StationJob drain DeadlineExpired handler. Unknown terminal kernel facts and raw failed registration output survive observation-wrapped cleanup failures. They do not qualify native ownership; R1/R2 identify the unwrapped constructor/start gaps.
+
+Controlled Python writes at admission/prelaunch/inspection/terminal/result are each failed after bytes land; no adverse result is accepted. Combined capture/terminal/final/fallback/stderr failure preserves the original partial bytes and unknown facts before secondary errors, with each sink attempted once. Node primary-plus-final/all-sinks failures likewise retain the primary and unknown Buffer data. Actual output close failure remains charged/incomplete and cannot retry the same filename. Thirty-two failed 1 MiB Python receipt attempts consume exactly 32 MiB; the next attempt refuses before the writer. The process matrix demonstrates successful provisional disk JSON alone cannot overcome an observed exit 1, including an exception after caller return.
+
+PNG probes reject wrong dimensions, CRC, invalid scanline filter, decompression excess, truncated/trailing/missing data, bad ordering, noncontiguous IDAT, and concatenated zlib streams. Full packet inspection rejects count/order/byte/hash/completion changes and correctly hashed perf files with wrong material, selected/available LOD, texture presence, or triangle count. The successful fixture runs the real full PNG decoder after positive inert release; it is synthetic CPU evidence, not imagery or a visual grade. Exact archive headroom succeeds at 2,751,463,424 bytes and refuses one byte below; each observed profile/TMP/log/cache threshold refuses at +1 byte.
+
+Evidence includes scripts, raw results, stdout/stderr and `commands.json`. Exit 0 for a reproduced-defect test means the assertions reproduced the defect, not candidate PASS. No failed harness invocation was omitted: the initial ownership probe accidentally included the missing scratch path in its injected exception filename; the next signal probe caught its signal inside the guard and correctly triggered the guard's swallowed-deadline refusal. Both harness issues were corrected, with prior logs/fixtures retained. The initial independent GLB reader assumed float/raw buffers; retained failures exposed normalized int16 positions and EXT_meshopt_compression. The final reader uses the installed in-process CPU WASM decoder, decodes actual indices/positions, and performs no hydration or image/native codec transcode. These were review-harness corrections, not candidate edits or native retries.
+
+Reproduction commands, from the reviewed checkout:
+
+```sh
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-independent-e60r9lcb/independent.py
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-independent-e60r9lcb/process-boundaries.py
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /private/tmp/p1-e07-t14-independent-e60r9lcb/independent-node.mjs
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-independent-e60r9lcb/additional.py
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/p1-e07-t14-independent-e60r9lcb/provenance.py
+```
+
+The mutation scripts always create fresh fixtures; none retries a spent attempt. The supplied controls self-clean their own fixtures by design. Independent failed/spent fixtures are preserved; their paths are recorded in the per-run identity/result files, including the fresh `/private/tmp/eg*-control-*` synthetic identities required by the caller's exact parent-directory contract. No real readiness identity was created, consumed or removed.
+
+## Inventory, budget, preservation and remaining gates
+
+The unchanged ordinary `captureReview('effects/gravitic', {asset:'gravitic_pull', outDir})` / openReview path produces one named root because the GLB contains six roots. It requests standard 1920×1080 noon-lush, night-exotic and open-space at LOD0/LOD2; wireframe 0/2, overlay, one 100m far view, perf.json and the labelled 1920×2876 sheet. This is exactly **11 PNG + 1 perf file**, in the frozen plan order under `gravitic_pull/`. Actual authored/selected LOD is 0 and available LODs are [0]. No second browser stack, common capture/Review/Engine edit, broad root batch, motion generator, atlas stepping, overlap, 21:9 or runtime VFX was added.
+
+The actual current 264,032-byte GLB has six scene roots, 1,728 decoded gravitic_pull indices / 576 triangles, 1,152 decoded normalized-int16 position records, one primitive and `LIB_FX_Gravitic`. Its base-color texture reference resolves through KHR_texture_basisu to `gravitic_filament`: actual embedded KTX2, 49,512 bytes, 1024×1024, 11 mip levels, Basis supercompression. CPU container/reference checks establish its presence; no KTX transcode, GPU upload or visual quality claim is made. Review stats/perf validation uses the actual stats fields, including shown=0, lods=[0], material and nonzero compressed texture observations. Static captures do not establish playback caps or FPS.
+
+Ledger rechecked: three copies of 184,565,760 output bytes; 64 MiB controlled metadata; 64 MiB cache snapshot / 30s; 2 GiB profile source+archive; 1 GiB nonprofile TMP source+archive; 128 MiB helper logs source+archive; 256 MiB generated cache growth; 16 MiB filesystem metadata; 1 GiB safety. **Output cap 184,565,760; admission 5,402,312,704 bytes.** Profile and TMP archive copy precedes source removal; actual headroom is checked before archive. Image staging/archive copies are zero. Observed native thresholds can overshoot between samples and are not OS quotas. Capture/cleanup/decode remain 600/60/45 seconds, with drain 45 inside cleanup 60. External native XPC ownership remains unqualified. Initial free bytes were 47,957,118,976; the final provenance sample was 46,713,643,008. These observations are not a reservation or permission to launch.
+
+All four recovery files, all 64 original asset files and their retained manifest hashes are unchanged. Scope is exactly four recovered helpers plus fourteen effects_packet files; common client/server/shared/capture/screens and dependency manifests are unchanged from the asset base. Both runtime flags/readiness stay false. The real output/evidence/grant/consumption identities remain absent. No repo edits, commits, branch changes, hydration, real grants, cleanup of existing artifacts, PR actions or merge actions occurred.
+
+For the five mandatory 0.9.5 conditions: no client authority change; the new capture unit has source/CPU tests; no replacement leaves demo code alive; no demonstrated perf-tagged runtime budget regression; no new unlogged product/spec interpretation. The REVISE findings are concrete failures of this unit's explicit evidence and prelaunch-owner contracts, not style objections. There are no advisory blockers.
+
+Native capture may proceed only after these source corrections pass a fresh exact-head caller review and the parent supplies current capacity, scheduling, refreshed enabling bindings and the exact one-use grant. Actual observed native process completion/ownership, fresh captures, parent terminal/consumption hashes, independent visual grading, playback/performance qualification, whole T14 runtime integration, merged verification and merge authority remain separate gates. No retrospective grade was assigned and no human approval question is required by this review.

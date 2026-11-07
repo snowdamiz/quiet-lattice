@@ -1,0 +1,85 @@
+TASK: P1.E08.T09 — R5 FIFO-open revision, Appendix C.2
+STATUS: DONE for the authorized source/CPU revision. Whole T09 remains pending independent R6, native capture and independent visual gates.
+SUMMARY: Metadata admission now acquires O_RDONLY|O_NONBLOCK|O_NOFOLLOW descriptors and validates actual regular type, inode/device and size before an unbuffered bounded read. Result, consumption and grant retain the same authenticated parsed-byte snapshot, caps and semantic gates. Descriptor ownership is explicit even when validation or stream wrapping fails; a primary error survives combined stream/descriptor close failures with raw secondary facts attached. Three new control methods exercise real filesystem races, cleanup/error combinations and cap/size boundaries. The six-unit readiness is freshly frozen and remains DISABLED. No product, helper, entry, inspector or asset changes.
+
+Candidate:
+- HEAD: `372bd7367f8d817e7b78043bfbc1be459c00ded7`
+- TREE: `54069a676f327dc48e73d2a077b98395eb53d6c8`
+- Parent: `eb8563a58dc1014f0c4d85fc6ddc5b0878d5a54c`
+- Branch: `task/P1-E08-T09-current-base`
+- Worktree: `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`
+- Commit: `P1.E08.T09: refuse raced metadata opens without blocking`
+- Binary diff: `/private/tmp/p1-e08-t09-r6-vbzop615/eb856-to-candidate.patch`
+- Binary diff SHA256: `b81703a6c74f6b19bf533dc0bf657813ae6c854155e0e58f8b5baf284763abb7`
+- Git status including untracked files: clean after commit.
+- Resumed task/thread and ordinal-8 active run: `/private/tmp/p1-e08-t09-r6-vbzop615/task-handle.json`. The existing delegated task was resumed; no new branch or separate delegated task was created.
+
+FILES CHANGED:
+- `packages/tools/src/capture/fauna_packet/caller.py`: only read_json_snapshot; nonblocking descriptor acquisition, actual-descriptor validation, unbuffered maximum+1 payload, size-completeness check, explicit descriptor close and preservation of primary/secondary close facts.
+- `packages/tools/src/capture/fauna_packet/controls.py`: migrate the two existing metadata test instruments to the actual fdopen/read boundary; preserve their assertions; add 15 actual consume race cases, 12 descriptor/error cases and 5 bounded-read cases in three test methods.
+- `packages/tools/src/capture/fauna_packet/readiness.json`: fresh unused identities and current source/Python/dependency/cache binding; runtimeEnabled:false, counts/order/budgets unchanged.
+
+VERIFY:
+Exact commands, arguments, cwd, logs and exits are in `/private/tmp/p1-e08-t09-r6-vbzop615/COMMANDS.md` and `commands.json`. No failed verification invocation was discarded. The original RED's exit 0 means its bad-behavior assertions succeeded, not candidate acceptance.
+
+- RED on exact eb856: unchanged independent reviewer fresh-boundaries.py, isolated scratch copies of all eight packet files and four unchanged helpers. Actual first caller subprocess exit 0 precedes each actual second main/consume. All three result/consumption/grant FIFO replacements block before fstat; reviewer-only 250ms SIGALRM cuts them off. Zero payload reads, no active caller timer, zero allocation or native dispatch. Exit 0. Evidence: `fifo-red.log`, `red/fresh-boundaries-results.json`; full traces and preserved filesystem fixtures remain. The unchanged primitive control also reproduces preexisting-FIFO refusal and proves nonblocking FIFO acquisition is possible (`fifo-primitive-red.log`).
+- GREEN: `green/fresh-boundaries-green.py`, adapted only to inject at real os.open / fdopen read and assert prompt refusal, with the harness alarm removed. All three FIFO and three symlink races refuse without any timer. Three different regular-inode replacements refuse, two authenticated failure/success replacement schedules refuse, and three completed-snapshot replacements retain the original snapshot/digest. All 14 schedules follow a real first caller OS exit 0. No successor output/evidence/consumption allocation or helper/decoder dispatch on refusal. Exit 0; `fifo-green.log`, `green/fresh-boundaries-results.json`.
+- Python stock controls: 33/33 PASS (all prior 30 plus 3 new methods), using the pinned Python3.10/Pillow route; `stock-python.log`. Five focused metadata/descriptor controls also PASS on pinned caller Python3.14; `focused-green.log`.
+- Node stock controls: 7/7 PASS; `stock-node.log`.
+- Actual six-process Git sequence: OS exits 0,0,0,0,0,0; one unchanged scratch HEAD `0cf9ac8ce2a01ba5db0539d704aef5cf97a5f45b`; exact 82+82+82+82+220+220=768 files; earlier receipt hashes unchanged. `sequence.log`, `green/six-sequence-results.json`. These are explicitly labeled synthetic text fixtures, not pictures or visual evidence.
+- All 26 worktree/output mutation cases refuse before allocation/dispatch following actual first OS exit 0. `mutations.log`, `green/admission-mutations-results.json`.
+- All 29 existing metadata cases PASS with 242 retained snapshots, exact caps/max+1 reads, malformed UTF8/JSON, wrong hashes, unknown fields, symlinks/directories, authenticated swaps and post-snapshot growth. `metadata-retained.log`, `green/metadata-control-read-results-final.json`.
+- Prior publication/signal controls: eight actual process outcomes, 38 real helper SIGALRM/KeyboardInterrupt boundaries and seven predecessor-reference mutations PASS. Genuine success alone admits successor; every failed/indeterminate publication refuses. No release/decode dispatch follows interruption. `prior-boundaries.log`, `green/independent-process-results.json`, `green/independent-abort-results.json`, `green/independent-gate-mutations.json`.
+- Six raw producer/all-sink cases and exact metadata cap after actual close failure PASS. `prior-facts.log`, `green/retained-facts-results.json`.
+- Original R1 actual entry catch/final-write and broad full-inspector cases PASS. `r1-node-catch.log`, `r1-node-final.log`, `r1-python.log`; adverse journals retained under green/.
+- Actual checkout disabled-entry tests PASS for all six proposed units with no helper import, subprocess or allocation: `disabled-entry.log`. All actual grant/output/evidence/consumption paths remain absent.
+- Compile caller/controls without emitting bytecode; lint two unchanged .mjs files; format/readiness checks; `pnpm gate:removed` (10 enforced, 15 waiting baseline); `git diff --check eb8563a58dc1014f0c4d85fc6ddc5b0878d5a54c HEAD`: all exit 0.
+- Committed-head caller --check: exit 0, CPU_BINDINGS_ONLY, runtimeEnabled:false, allSixQualified:false, no task-local cache owner. Free bytes observed 46,283,993,088; time-local CPU observation only. `check-committed.log` and full invocation in COMMANDS.md. Fresh per-unit admission is still required after GPU release.
+- Preservation and provenance checks: exit 0; `preservation-committed.log`, `source-provenance.log`, `verified.json`, `source-provenance.json`, `script-provenance.json`.
+
+DECISIONS:
+- Premise: a regular pathname lstat plus a capped payload read makes admission bounded → actual reviewer schedules disprove this at the blocking open before any descriptor check → acquire a nonblocking/no-follow descriptor first. No timer, new supervisor or repeated late semantic validator is added.
+- Descriptor ownership after validation/wrapping failure → the caller owns the fd, the unbuffered stream borrows it (`closefd=False`), and finally attempts its close once. Stream-close failure cannot skip descriptor close. Combined read/cancellation + stream-close + descriptor-close errors retain the exact primary exception and separate raw close facts. No ambiguous close is retried. Successful return is cancelled by any close failure.
+- Unbuffered short/truncated/grown snapshot → require read length to match the descriptor's pre-read size, in addition to the existing maximum+1 cap and hash. Exact-cap and empty-object JSON pass; empty bytes remain invalid JSON. Changes after a completed snapshot do not replace its facts.
+- R5 caller review history → unchanged. The animation c44d7a8 admission_json.py was read as a flag/descriptor reference only; saved exact bytes and hash provenance, no animation lane changes.
+
+Preservation:
+- 12,575 protected current files unchanged, including product/smoke/capture definitions/assets; four helper hashes match their retained recovery pins. Product scopes remain identical to accepted d688579ad except those already recovered helpers.
+- 17,951 regular R5 review/evidence files still match the pre-work inventory. Original REPORT.md, COMMANDS.md, scripts and results are untouched; review-hashes.json retains the inventory.
+- All 440 historical artifact identities are unchanged; images were neither hydrated nor regraded. Historical failed/spent grants and retained branch `bb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9` are untouched.
+- Exact red scratch source matches eb856 Git blobs; exact green scratch source matches candidate checkout for all 12 packet/helper files. No copied implementation substitution.
+- Old disabled readiness saved verbatim at `readiness-eb856.json`. All 48 unique old/new actual proposed identities remain absent. Current runtime is false; no actual grant was issued.
+
+Disabled readiness:
+- SHA256 `31be8f2a2a29a4c8c5f11760e8dfa7c1f4a02de73d58dc002689821595675b0e`.
+- Actual launcher `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14`, SHA256 `e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a`.
+- Self-observed app-bundle executable `/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python`, SHA256 `b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22`. The short CPU identity child exited and was reaped; no capture job ran.
+- Decoder `/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10`, site `/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages`, immutable dependency tree bound.
+- Current checkout cache inventory 8,099,840 bytes; cap 64 MiB, copy deadline 30s. Controlled metadata cap 64 MiB (Node32 + Python32). Capture/cleanup/decoder phase limits remain 600/60/45s.
+
+Frozen runtime order and exact per-screen budgets (bytes):
+
+| Order | Unit | Files/images | Output cap | Per-unit admission |
+|---|---|---:|---:|---:|
+| 1 | fauna-hit-turn-day-16x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 2 | fauna-hit-turn-day-21x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 3 | fauna-hit-turn-night-16x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 4 | fauna-hit-turn-night-21x9 | 82/81 | 1,358,970,880 | 8,925,528,064 |
+| 5 | fauna-combat | 220/219 | 3,674,226,688 | 15,871,295,488 |
+| 6 | fauna-combat-night | 220/219 | 3,674,226,688 | 15,871,295,488 |
+
+Totals remain six units / 768 files / 762 images: 60 stills, 696 frames, six sheets, six readouts. Each correction is 8 stills +72 frames +1 sheet +1 readout. Each broad is14 +204 +1 +1. Image cap 16MiB; readout 16KiB. Per-unit admission is three output-sized allocations (output, future LFS, future main hydration), controlled metadata, bounded cache copy, unchanged native working/archive/cache/filesystem/safety reserves. No all-six-fit claim; one unit at a time remains required. The native writers are reserved/observed rather than claimed hard-quota-bound.
+
+Fresh proposed output paths (not created):
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-16x9-35d0257287b24834b17b058f6f13f3d2`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-day-21x9-8c44a3ac1e81426387d492674f4355e2`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-16x9-659b850dc3a24fc386907bf50f09024c`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-hit-turn-night-21x9-9324347afc9043a398c685c3d5acda1c`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-bebf261b7e634397b7d2901b90c6d321`
+- `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/assets/renders/ui/fauna-packet-fauna-combat-night-6c57d95d88c04aeba3a0ec61db643cb6`
+
+Full future output/grant/consumption/evidence identities and budgets are in the committed readiness and `/private/tmp/p1-e08-t09-r6-vbzop615/verified.json`. No enable or execute command was run. The only synthetic enabled grants were under fresh temporary CPU test repositories; they cannot authorize this checkout.
+
+OUT OF SCOPE FOUND: None. The independent R6 verdict, actual native ownership/capture outcomes, animation/visual grading and whole-task acceptance remain pending. The parent's accepted product source and focused fauna live QA are not recertified by this CPU revision. No changes to T10/T16, plan/progress/decisions/visual-review docs, main or old task branches. No GPU/browser/native capture, real grant, DB/service work, screenshot cleanup, push, PR or merge.
+
+ARTIFACTS: `/private/tmp/p1-e08-t09-r6-vbzop615/REPORT.md`, `COMMANDS.md`, `commands.json`, `eb856-to-candidate.patch`, `task-handle.json`, `verified.json`, `source-provenance.json`, `script-provenance.json`, retained RED/GREEN scripts/logs/results/fixtures. These are CPU/source evidence only. No fresh visual artifacts are claimed.

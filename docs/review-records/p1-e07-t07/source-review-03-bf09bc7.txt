@@ -1,0 +1,421 @@
+VERDICT: PASS — independent R3 SOURCE review, P1.E07.T07 Symbiotic I–II.
+
+No confirmed remaining P1/P2 product finding. All four R1 findings and all four R2 findings are fixed under the recorded contract. This verdict accepts the reviewed server-source scope only. Parent final-pin integration QA and T09 drawn-companion/picking verification remain separate gates.
+
+PROVENANCE AND SCOPE
+
+- Read-only checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d`; branch `task/P1-E07-T07`.
+- HEAD: `bf09bc72543ed74b7dc7386415471d26a36a4b6d`; tree: `b5456a8f82c498ee5bb7e35836bd35fd4c425c41`.
+- Exact parent/R2 base: `52da4eff0d2f354cb18198232a7c8a37c9529a41`; tree: `5ede3c7b0db032c7345c20133d5cba10d0ec3e6b`.
+- Original task base: `634c51d2378748c6a514af2a792ee4500b912643`; tree: `079eec371fa8605596700a7c80142ac9cbb95fa0`.
+- Parent decisions read at `0e70b1103` (full object ID in `initial-pins.json`), tree `854302ecb98c897a53b96c2008ccf4fdf7676027`; exact document saved as `parent-DECISIONS.md`. Numeric decisions at lines 1319–1329, retirement decisions at 1368–1371, phase/conversion/burn decisions at 1373–1377 were applied. Earlier adopted-herd phase policy at line 900 also matters to the nonblocking probe below.
+- Full task: 32 changed files; R2 correction: 15 files, including nine runtime TypeScript modules. Both complete patches are retained. Reviewed production consumers, tests, lifecycle/caller interactions and the cumulative authority boundary, not merely correction style.
+- Read plan 0.3, 0.9.5, T07 dispatch and Appendix C; DESIGN skills, combat, instancing, events and population-scaling sections; prior R1/R2 reports and worker Appendix-C.2. Applied read-only review and TypeScript/type-system guidance. No Potato mode.
+- Initial and final branch/HEAD/tree match; tracked and untracked porcelain status are empty. Both base ancestry and cumulative/revision diff whitespace checks pass. Final bytes for all 32 task files match `git show HEAD:<file>`. All 166 existing files inventoried in the three supplied prior artifact directories remain byte-identical. See `final-audit-node22.json`, source/input hashes and `SHA256SUMS`.
+
+R1 DISPOSITION — ALL FIXED AND RETAINED
+
+1. R1-F1, stale sleeping-destination clock and shield catch-up: FIXED. Original real ZoneManager.follow handoff grants 0.25 rather than 5.25 shield in 0.05 seconds; the original fresh-hit-before-first-tick case stays at 60. Wake refresh, monotonic transfer cursor and hit/step clocks preserve the six-second delay (`zones/manager.ts:226`, `combat/zone.ts:291,435,477,510`). The separate overdue-scheduler case is independently covered under R2-2 below.
+2. R1-F2, Sear orphan after phase retirement suppressing a fresh paid cast: FIXED. The unchanged actual Sear/PhaseManager reproduction creates fresh health loss after cooldown. Retirement revokes producer ownership, and generation checks prevent an old queued clock from affecting a new generation (`abilities/service.ts:364,514`; `statuses.ts`).
+3. R1-F3, retired Lance falsely active and next activation ending it: FIXED. The unchanged reproduction removes the toggle and permits a fresh activation. Permanent tests and the ten lifecycle controls verify toggle/callback retirement and draining without retaining active work.
+4. R1-F4, refund/rebuy between ticks reviving old Bond/Regrow: FIXED. Both original real SkillService assertions pass: the old companion is absent; Regrow leaves suit HP at 40. Synchronous notification settlement remains wired in `gateway/ws.ts:411` and `abilities/service.ts:320`. Required Big Game loss, unrelated edits, old-versus-new companion replacement and fresh Regrow while an old callback drains remain covered.
+
+The original three authoritative R1 test files contain six tests. Their assertion text is unchanged; copies alter only scratch-output path prefixes. All six pass under the final Node 22 runtime. The ten original R2 lifecycle controls also pass unchanged. Original prior bytes were preserved, not edited in place.
+
+R2 DISPOSITION — ALL FIXED
+
+1. R2-1, selective Sear retirement deleting valid Flare in one shared generation: FIXED. Producer-keyed contributions preserve valid power/expiry; one shared clock selects live authority after revocation (`abilities/statuses.ts:46–58,80–93`; `abilities/service.ts:514–538`). Original expected 3 HP per half-second now occurs after refunding Sear. Permanent tests cover both orders, both selective refunds, unrelated edits and natural merged expiry. Fresh independent probes add refund offsets 0.05/0.25/0.45/0.50 seconds, refund of the naturally expired stronger producer, and refund/rebuy plus recast while an older timer remains queued. All eight new burn cases pass. Ordinary multi-reignition in both orders was also run against exact R2 runtime modules: 41 HP samples per order, maximum difference exactly zero. This preserves the parent’s greater-power/later-end behavior and does not infer correctness from a helper-only status assertion.
+2. R2-2, old pending 20 Hz ticks rewinding a newly woken zone and backdating hits: FIXED. Manager wake establishes the scheduler floor; Zone and combat reject older time, including older explicit hits (`zones/manager.ts:228`; `zones/zone.ts:541`; `combat/zone.ts:436,477,500`). Default 30-second sleep and three-tick catch-up are exercised through actual `advance()`. The original clock case no longer rewinds. Permanent real post-wake hazard/older-hit test passes with unchanged no-early-regeneration assertion, frame checks and scheduled-tick assertion. The exact old nine runtime modules reproduce three failures and one control in the same permanent four-test suite; the current runtime passes all four. A new two-zone control proves waking one zone advances an already-awake zone once, yields the elapsed 20 shield rather than duplicating it, prevents frame rewind and then yields only 0.25 on its next 50 ms tick.
+3. R2-3, visible shared Call herd missing a visible event target: FIXED. Contact enumerates same-world creatures and filters through caster visibility and harm authority (`fauna/sim.ts:1242–1248`). The original geometric reproduction now removes exactly 12 HP for the split shared-herd/event-target case, as for all-shared and same-event controls; hidden-event control remains zero. Permanent tests retain herd phase identity and exclude players/owned companions. No ordinary herd AI adoption or partition broadening occurs.
+4. R2-4, Bond stranding a protected final event enemy: FIXED. Successful conversion synchronously notifies EventService; the objective owner verifies live instance/member/phase/actual ownership and consumes membership once before objective credit (`fauna/sim.ts:1164–1172`; `events/service.ts:686–702`). Original real EventService + PhaseManager + SkillService + CodexService + CastService Bond repro and kill control pass. Permanent coverage checks unchanged HP, no kill callback, no kill XP/loot/quest event, one objective point, no duplicate payout, two-wave replacement/dismissal and expiry. New two-instance/13-player probes show exactly one credit despite multiple live subscriptions, no credit in the other instance, and no duplicate after explicit companion despawn. Existing sharing remains intact: presence-only participants get zero; a sole converter gets share 1 and 300 units; with a real one-point damage contributor, shares are 0.325/0.675 and the pool is 600 units. These are the existing contribution rules, not new tuning.
+
+WAKE ORACLE ADJUSTMENT — ACCEPTED WITH INDEPENDENT NEGATIVE PROOF
+
+The unmodified R2 suite is deliberately retained and replayed: 11 pass, one fails at its setup `expect(damaged).toBeLessThan(initial)` with 60 versus 60. That assertion presumed historical hazard exposure between old scheduled times for a newly joined ship. After wake aligns zone time, `shipHazards` establishes its clock at the placement time; no pre-join exposure interval exists. Equality is therefore the valid setup invariant.
+
+The separate copied `wake-corrected.test.ts` changes only that assertion to `expect(damaged).toBe(initial)`. The final `expect(r.health().shield).toBe(damaged)` is unchanged and reached; all 12 corrected R2 cases pass. This alone is not the proof: the permanent fourth case first creates a real post-wake hazard loss, injects an explicitly older hit, crosses the hazard ceiling through accepted movement, verifies the next scheduled tick actually ran, and retains the exact final HP assertion. The old runtime gives 58.88→59.13, whereas current runtime retains the fresh-hit delay. Independent old-runtime execution reproduces all five original R2 failures with seven passing controls and the permanent wake suite’s three failures/one control. Nine transformed runtime modules were verified against `git show 52da4eff:<path>`; no target file was swapped. Baseline failures are expected negative evidence, not current-product failures.
+
+FULL TASK AUTHORITY AND COVERAGE
+
+All nine nodes have consumers: Bond follows and deals real combat HP damage with native creature level, owner credit and taunt; Big Game gates heavy/flyer eligibility; Second Lung/Thick Hide use existing multiplicative suit-drain consumers; Repair Drones repairs the actual flight hull at 1/s for 20 seconds with 15 Charge and its cooldown, independently of 20/s dock repair; Regrow heals actual self/party suit HP with initial range/sight and continuing party/life/presence checks; stationary Spore damages eligible fauna and heals allies for its bounded duration; Call produces swept contact HP damage; Symbiont Hull consumes 1.25 capacity and 1.5 regeneration over the 5/s, six-second baseline. Snapshot attack phase was not used as a substitute for damage.
+
+Admission remains server-owned: skill ownership/requirements/slots, costs/cooldowns, entity/range/sight/frame, current phase, target life and no-PvP policy. Cancellation follows presence, session epoch, life and required eligibility; replacement validates before dismissing old companions. Current T16 live Reaches eligibility tests pass in the focused run, including real SkillService/ReputationService/CastService requirements. This preserves hooks, not acceptance of T08/Void effects. No Gravitic or Tier III scope is claimed.
+
+MANDATORY PLAN 0.9.5 CONDITIONS
+
+1. Client-side authority: NOT FOUND. New effect/health/cost/cooldown/ownership/objective decisions remain on server paths; shared additions are deterministic data/stats.
+2. New system without tests: NOT FOUND. Permanent per-node and lifecycle unit/service tests plus real-gateway integration tests exist. Independent CPU tests pass; this reviewer did not execute DB integration.
+3. Replaced demo code left alive: NOT FOUND in this scope. No T07 renderer replacement is claimed; T09 drawn-fauna adoption/picking remains separately required.
+4. Budget regression in a perf-tagged task: NOT TRIGGERED. T07 is not perf-tagged. CPU suite duration is not a server p95 or GPU performance qualification; no new performance acceptance claim is made.
+5. Unlogged spec interpretation: NOT FOUND. Parent decisions record numeric tuning, ownership retirement, burn merge semantics, Call caster-visible contact and EventService-owned one-point conversion. Minimal EventService scope extension is explicitly authorized in the brief/parent record. Worker branch lacking the later parent decision copy is not an unlogged choice.
+
+NONBLOCKING OBSERVATION AND SCRATCH-ORACLE ACCOUNTING
+
+A companion in an event phase autonomously selects from that phase’s creature partition. A new probe demanded it also attack an owner-visible shared-world hostile and failed: target HP 198.4 stayed 198.4 over five seconds, whereas all-shared and same-event controls reached 109.12. Source cause is `fauna/sim.ts:1220` reading the partition supplied at `:333–371` after Bond adoption at `:1154`.
+
+This is NOT promoted to a confirmed product finding. The parent’s earlier decision explicitly keeps adopted herds thinking in their phase; the later decision specifically extends Call contact visibility and Bond event-objective conversion. Visibility alone does not establish a requirement for autonomous cross-phase targeting. A bounded independent source challenge reached the same conclusion; its full response and task identity are retained. Extending companion defense would require an explicit engagement/retaliation policy, not merely broadening the scan. The probe’s failed expectation is retained as a policy-oracle mismatch; no source fix or new gameplay choice was made.
+
+Two other scratch-development mistakes are preserved separately: the initial repeated-burn fixture recast at a floating-point time just below its exact cooldown boundary (two refusals); advancing the fixture by one microsecond before those recasts resolved it without changing HP expectations. The initial multi-instance payout fixture incorrectly expected presence-only spectators to grow the pool to 3,600; existing active-contribution rules instead pay 300. Corrected cases assert the documented 300/600 pools and numeric shares. Original scratch text/logs remain available; none of these is hidden as a product repair.
+
+RUNTIME AND EXECUTION BOUNDARY
+
+The first shell reported Node 22.23.3, but a late independent shell audit reported Node 26.12.1. Earlier top-level logs therefore have uncertain per-run runtime provenance and are not used for Node-22 acceptance. They are preserved, including that audit. Every acceptance command was repeated under `node22/` with the absolute Node 22.23.3 installation first in PATH and a `NODE_OPTIONS --import` guard that asserts the version before application imports and records each process. Typechecking is serial. Vitest concurrency is at most two; test jobs run sequentially, without cache. The final command ledger and runtime-process records substantiate this independently of the shell default.
+
+The authoritative evidence is `node22/commands.jsonl`, `node22/runtime-processes.jsonl`, the configs/probes and per-command logs. An exact expanded command/count/exit appendix follows. Positive results cover 661 repository tests/42 files, original R1 6/3, corrected R2 12/4, lifecycle 10/1, fresh burns 8/1, awake-zone 1/1 and event-instance 2/1, plus the separately explicit permanent wake 4/1. These overlap semantically and are not claimed as distinct unique coverage.
+
+LIMITS
+
+No source/docs/assets/test edits in either checkout; no commits, pushes, PR operations, merge/queue activity or mutation of prior reports. No DB, Redis, server/service, browser, GPU, smoke, hydration, native capture, cloud or CI work was started. CPU fixtures use real service implementations with controlled time, generated terrain/system descriptions and the established trainer authority seam; they do not prove live trainer UI or a deployed randomly scheduled event.
+
+Worker-reported 2,774 units/216 files and 54 real integrations/6 files are historical worker evidence, not this review’s independent totals. Parent final-pin full integration QA remains separate. T09 integrated drawn-companion/picking, full smoke, visual qualification, whole-task acceptance and merge authorization are not supplied by this SOURCE PASS.
+
+ARTIFACTS
+
+`full-task.patch`, `revision.patch`, `initial-pins.json`, `final-audit-node22.json`, `final-source-hashes.json`, `prior-input-hashes.json`, `parent-DECISIONS.md`, `companion-policy-challenge.md`, `node22/commands.jsonl`, `node22/runtime-processes.jsonl`, `node22/ordinary-comparison.json`, baseline module JSON/configs, all probe text/logs, and `SHA256SUMS`.
+
+AUTHORITATIVE NODE 22 COMMAND/EXIT APPENDIX
+
+All commands ran from the pinned checkout through `node22/run.py`, which sets the pinned PATH, installs the version guard, clears inherited DB/Redis routes and records the actual child exit. Runtime guard assertions passed for every recorded process.
+
+1. `r1.log` — exit 0; Test Files  3 passed (3); Tests  6 passed (6); Duration  1.01s (transform 49%, import 40%, tests 11%, worker 1%); wall 1.299 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/r1.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+2. `r2-original.log` — exit 1; Test Files  1 failed | 3 passed (4); Tests  1 failed | 11 passed (12); Duration  1.33s (import 41%, transform 38%, tests 21%, worker 1%); wall 1.554 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/r2.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+3. `r2-corrected.log` — exit 0; Test Files  4 passed (4); Tests  12 passed (12); Duration  1.40s (import 40%, transform 39%, tests 20%, worker 1%); wall 1.637 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/r2-corrected.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+4. `lifecycle.log` — exit 0; Test Files  1 passed (1); Tests  10 passed (10); Duration  686ms (transform 61%, import 20%, tests 19%); wall 0.908 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/lifecycle.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+5. `r2-baseline.log` — exit 1; Test Files  4 failed (4); Tests  5 failed | 7 passed (12); Duration  1.61s (transform 42%, import 38%, tests 19%, worker 1%); wall 1.848 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/r2-baseline.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+6. `wake-baseline.log` — exit 1; Test Files  1 failed (1); Tests  3 failed | 1 passed (4); Duration  634ms (transform 65%, import 21%, tests 14%); wall 0.867 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/wake-baseline.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+7. `wake-current.log` — exit 0; Test Files  1 passed (1); Tests  4 passed (4); Duration  655ms (transform 65%, import 22%, tests 13%); wall 0.878 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/wake.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+8. `burn-current.log` — exit 0; Test Files  1 passed (1); Tests  8 passed (8); Duration  782ms (transform 67%, import 20%, tests 13%); wall 1.012 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/burn.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+9. `awake.log` — exit 0; Test Files  1 passed (1); Tests  1 passed (1); Duration  625ms (transform 74%, import 23%, tests 3%); wall 0.867 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/awake.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+10. `event-boundary.log` — exit 0; Test Files  1 passed (1); Tests  2 passed (2); Duration  791ms (transform 65%, import 20%, tests 15%); wall 1.046 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/event-boundary-corrected.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+11. `companion-policy.log` — exit 1; Test Files  1 failed (1); Tests  1 failed | 2 passed (3); Duration  831ms (transform 71%, import 19%, tests 9%); wall 1.093 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/boundary.config.mts --maxWorkers=2 --no-file-parallelism --no-cache
+```
+
+12. `ordinary-baseline.log` — exit 0; Test Files  1 passed (1); Tests  2 passed | 6 skipped (8); Duration  740ms (transform 68%, import 21%, tests 11%); wall 0.962 s.
+
+```sh
+pnpm exec vitest run --config /tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22/burn-baseline.config.mts --maxWorkers=2 --no-file-parallelism --no-cache -t 'ordinary multiple'
+```
+
+13. `focused.log` — exit 0; Test Files  42 passed (42); Tests  661 passed (661); Duration  18.01s (tests 80%, import 19%, transform 1%); wall 18.298 s.
+
+```sh
+pnpm exec vitest run packages/server/src/abilities packages/server/src/fauna packages/server/src/combat packages/server/src/zones packages/server/src/phases packages/server/src/meters packages/server/src/skills packages/server/src/events packages/server/src/codex packages/shared/src/ships packages/shared/src/skills packages/shared/test/data.test.ts --maxWorkers=2 --no-cache
+```
+
+14. `typecheck.log` — exit 0; static check completed; wall 10.445 s.
+
+```sh
+pnpm -r --workspace-concurrency=1 typecheck
+```
+
+15. `eslint.log` — exit 0; static check completed; wall 1.176 s.
+
+```sh
+pnpm exec eslint packages/server/src/abilities/book.ts packages/server/src/abilities/resonance.test.ts packages/server/src/abilities/retirement.test.ts packages/server/src/abilities/service.test.ts packages/server/src/abilities/service.ts packages/server/src/abilities/statuses.ts packages/server/src/abilities/symbiotic.test.ts packages/server/src/abilities/symbiotic.ts packages/server/src/abilities/thermal.test.ts packages/server/src/abilities/thermal.ts packages/server/src/combat/zone.ts packages/server/src/events/service.test.ts packages/server/src/events/service.ts packages/server/src/fauna/ai.ts packages/server/src/fauna/sim.ts packages/server/src/fauna/symbiotic.ts packages/server/src/gateway/ws.ts packages/server/src/meters/suit.test.ts packages/server/src/phases/manager.ts packages/server/src/zones/manager.test.ts packages/server/src/zones/manager.ts packages/server/src/zones/regen.test.ts packages/server/src/zones/wake.test.ts packages/server/src/zones/zone.ts packages/server/test/pilot.ts packages/server/test/symbiotic.int.test.ts packages/shared/src/abilities/index.ts packages/shared/src/abilities/symbiotic.ts packages/shared/src/data/skills/symbiotic.ts packages/shared/src/ships/stats.ts
+```
+
+FAILED-RUN TAILS (including expected negatives and retained scratch-oracle failures)
+
+r2-original.log — exit 1
+
+```text
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  wake-probe.test.ts > R2 wake before overdue scheduled advance > fresh catch-up hazard damage retains the six-second regen delay after a valid ascent
+AssertionError: expected 60 to be less than 60
+ ❯ wake-probe.test.ts:52:21
+     50|     r.zones.advance(r.now()*1000);
+     51|     const damaged=r.health().shield;
+     52|     expect(damaged).toBeLessThan(initial);
+       |                     ^
+     53|     r.setTime(1041.05);
+     54|     const pose={...r.joined.pose,pos:[0,r.gas.radius+1001,0],quat:[Mat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 11 passed (12)
+   Start at  01:26:00
+   Duration  1.94s (import 40%, transform 39%, tests 20%, worker 1%)
+
+```
+
+r2-baseline.log — exit 1
+
+```text
+ FAIL  wake-probe.test.ts > R2 wake before overdue scheduled advance > fresh catch-up hazard damage retains the six-second regen delay after a valid ascent
+AssertionError: expected 60.24879999999977 to be 59.998799999999996 // Object.is equality
+
+- Expected
++ Received
+
+- 59.998799999999996
++ 60.24879999999977
+
+ ❯ wake-probe.test.ts:58:31
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  5 failed | 7 passed (12)
+   Start at  01:27:46
+   Duration  1.76s (transform 49%, import 36%, tests 15%, worker 1%)
+
+```
+
+wake-baseline.log — exit 1
+
+```text
+
+- 58.879999999999995
++ 59.12999999999977
+
+ ❯ packages/server/src/zones/wake.test.ts:100:29
+     98|   r.zones.advance(r.now() * 1000);
+     99|   expect(r.joined.zone.time).toBeGreaterThanOrEqual(1041.1 - 1e-8);
+    100|   expect(r.health().shield).toBe(damaged);
+       |                             ^
+    101|   const world = r.joined.zone.toWorld(r.joined.pose.frame, r.joined.po…
+    102|   const time = r.joined.zone.time;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  01:27:48
+   Duration  707ms (transform 65%, import 21%, tests 13%)
+
+```
+
+boundary.log — exit 1
+
+```text
+ ✓ boundary.test.ts > Bond combat with shared phase membership 55ms
+ ✓ boundary.test.ts > Bond combat with event phase membership 8ms
+ × boundary.test.ts > Bond combat with split phase membership 10ms
+   → expected 198.4 to be less than 198.4
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  boundary.test.ts > Bond combat with split phase membership
+AssertionError: expected 198.4 to be less than 198.4
+ ❯ boundary.test.ts:20:17
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  01:28:39
+   Duration  1.24s (transform 74%, import 19%, tests 6%)
+
+```
+
+burn.log — exit 1
+
+```text
+
+Expected: "cast"
+Received: "refused"
+
+ ❯ burn.test.ts:49:60
+     47|   for(let i=1;i<=400;i++){
+     48|     r.pass(0.05);
+     49|     if(i===160 || i===320) expect(r.ignite('sear').result).toBe('cast'…
+       |                                                            ^
+     50|     if(i===240) expect(r.ignite('flare').result).toBe('cast');
+     51|     if(i%10===0) values.push(r.hp());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  01:28:41
+   Duration  945ms (transform 67%, import 20%, tests 13%)
+
+```
+
+event-boundary.log — exit 1
+
+```text
+
+- 3600
++ 300
+
+ ❯ event-boundary.test.ts:38:52
+     36|   const bigPayout=s.payouts.find(ps=>ps.length===12)!;
+     37|   expect(bigPayout).toBeDefined();
+     38|   expect(bigPayout.reduce((sum,p)=>sum+p.units,0)).toBe(3600);
+       |                                                    ^
+     39|   for(const paid of bigPayout) expect(paid.share).toBeCloseTo(shares.g…
+     40|   s.run(3);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  01:30:55
+   Duration  1.11s (transform 70%, import 20%, tests 9%)
+
+```
+
+node22/r2-original.log — exit 1
+
+```text
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  wake-probe.test.ts > R2 wake before overdue scheduled advance > fresh catch-up hazard damage retains the six-second regen delay after a valid ascent
+AssertionError: expected 60 to be less than 60
+ ❯ wake-probe.test.ts:52:21
+     50|     r.zones.advance(r.now()*1000);
+     51|     const damaged=r.health().shield;
+     52|     expect(damaged).toBeLessThan(initial);
+       |                     ^
+     53|     r.setTime(1041.05);
+     54|     const pose={...r.joined.pose,pos:[0,r.gas.radius+1001,0],quat:[Mat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 11 passed (12)
+   Start at  01:35:09
+   Duration  1.33s (import 41%, transform 38%, tests 21%, worker 1%)
+
+```
+
+node22/r2-baseline.log — exit 1
+
+```text
+ FAIL  wake-probe.test.ts > R2 wake before overdue scheduled advance > fresh catch-up hazard damage retains the six-second regen delay after a valid ascent
+AssertionError: expected 60.24879999999977 to be 59.998799999999996 // Object.is equality
+
+- Expected
++ Received
+
+- 59.998799999999996
++ 60.24879999999977
+
+ ❯ wake-probe.test.ts:58:31
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  5 failed | 7 passed (12)
+   Start at  01:35:33
+   Duration  1.61s (transform 42%, import 38%, tests 19%, worker 1%)
+
+```
+
+node22/wake-baseline.log — exit 1
+
+```text
+
+- 58.879999999999995
++ 59.12999999999977
+
+ ❯ packages/server/src/zones/wake.test.ts:100:29
+     98|   r.zones.advance(r.now() * 1000);
+     99|   expect(r.joined.zone.time).toBeGreaterThanOrEqual(1041.1 - 1e-8);
+    100|   expect(r.health().shield).toBe(damaged);
+       |                             ^
+    101|   const world = r.joined.zone.toWorld(r.joined.pose.frame, r.joined.po…
+    102|   const time = r.joined.zone.time;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  01:35:35
+   Duration  634ms (transform 65%, import 21%, tests 14%)
+
+```
+
+node22/companion-policy.log — exit 1
+
+```text
+ RUN  v5.0.5 /private/tmp/space-symbiotic-t07-source-review-r3-bf09bc72-20261107-012548/node22
+
+ ❯ boundary.test.ts (3 tests | 1 failed) 68ms
+   × Bond combat with split phase membership 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  boundary.test.ts > Bond combat with split phase membership
+AssertionError: expected 198.4 to be less than 198.4
+ ❯ boundary.test.ts:20:17
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  01:35:40
+   Duration  831ms (transform 71%, import 19%, tests 9%)
+
+```
+

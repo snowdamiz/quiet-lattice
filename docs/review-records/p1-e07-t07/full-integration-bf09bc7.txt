@@ -1,0 +1,75 @@
+P1.E07.T07 — Appendix C.2: independent R3 final-pin FULL serial integration QA
+
+VERDICT: PASS. 38/38 required integration files completed; 226 passed / 0 failed / 0 pending or skipped / 0 todo, 226 total tests. Full-suite exit 0; timeout: False. Supervised wall time 351.502 seconds. Vitest reported duration: 350.94s (tests 95%, import 5%).
+
+This is a fresh full local integration result at the exact final pin. The historical 222-test PASS at 52da4eff is not reused as final-pin integration proof. R3 source review runs separately. No GPU, smoke, rendered companion, picking, Blender, capture, merged, release or production claim.
+
+PROVENANCE
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d
+Branch: task/P1-E07-T07
+Actual tested HEAD: bf09bc72543ed74b7dc7386415471d26a36a4b6d
+Actual tested tree: b5456a8f82c498ee5bb7e35836bd35fd4c425c41
+Before/after checkout: CLEAN, including untracked files. Both snapshots, all 15 worker source hashes, and all 38 integration source hashes match after cleanup. Current config/dependency hash count: 590; all are unchanged, as is the resolved dependency inventory. Those 590 hashes/dependencies also match the prior full-QA snapshot. No source/doc/asset edit, commit, branch change, installation, push, PR, merge, shared-cache cleanup or screenshot cleanup occurred. All new harness/evidence/report files are confined to this exclusive directory, initially created mode0700:
+/tmp/space-symbiotic_qa_r3_20261107_062537_fac40950
+
+TOOLCHAIN AND COVERAGE
+macOS-27.0.1-arm64-arm-64bit-Mach-O; Node v22.23.3 at /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node; pnpm 12.15.0; installed Vitest 5.0.5. No runtime fallback.
+The unchanged vitest.int.config.ts includes packages/*/src/**/*.int.test.ts and packages/*/test/**/*.int.test.ts. expected-files.json was derived from those current globs, then compared to every reporter file; missing=[], extra=[]. No path/name selector, bail or subset was used. fileParallelism:false is reinforced by --no-file-parallelism; maxWorkers=2; passWithNoTests=false. Reporter file intervals overlap in 0 cases. Existing per-test/hook timeouts remain unchanged; finite outer timeout=900 seconds, descendant watchdog deadline=905 seconds. The script is equivalent to pnpm test:int with reporting/concurrency overrides; it uses the repository integration config directly. The server cutscenes integration file is included; no graphics renderer or full smoke was invoked.
+
+FRESH EXECUTION
+Working directory: /Users/andreyyurlov/.t3/worktrees/space/t3-f65e085d
+Started UTC: 2026-11-07T06:26:52.190786+00:00
+Finished UTC: 2026-11-07T06:32:43.691523+00:00
+```sh
+pnpm exec vitest run --config vitest.int.config.ts --maxWorkers=2 --no-file-parallelism --passWithNoTests=false --reporter=default --reporter=json --outputFile=/tmp/space-symbiotic_qa_r3_20261107_062537_fac40950/integration.json
+```
+Exit=0; wall=351.502s; actual result in integration.json/integration.log. Per-file counts, status and timing are in per-file-results.json. Vitest's numTotalTestSuites includes nested describe suites; the actual file count is len(testResults)=38.
+
+The pre-import application-config probe exited 0 in 0.236s; exact node command and inline probe are retained in preflight-command.json and preflight.log. It imports the real parseConfig only after the guard's live SQL/Redis identity checks, and checks the effective URLs. Every later migration uses the inherited process route: startTestServer calls runMigrations(parseConfig(process.env).DATABASE_URL) before server option overrides.
+
+Infrastructure/control commands and output: claim.json and cleanup-commands.json retain every argument array, exit, duration, stdout and stderr, including identity/health/port checks, live prior-fixture absence, atomic Redis claim, CREATE DATABASE, key ownership checks, explicit-key DEL, DROP of this fresh database only, and final health. claim.py/run.py/process-watch.py/cleanup.py contain the complete finite supervisor sequence. Finalization commands/exits/durations:
+- /opt/homebrew/opt/python@3.14/bin/python3.14 /tmp/space-symbiotic_qa_r3_20261107_062537_fac40950/verify-result.py — exit0, 0.076s (verification.log).
+- /opt/homebrew/opt/python@3.14/bin/python3.14 /tmp/space-symbiotic_qa_r3_20261107_062537_fac40950/cleanup.py — exit0, 0.861s (cleanup.log).
+- /opt/homebrew/opt/python@3.14/bin/python3.14 /tmp/space-symbiotic_qa_r3_20261107_062537_fac40950/snapshot.py after — exit0, 0.403s (after-snapshot.log).
+
+Initial setup command grouped the harness preparation, before snapshot and claim; it exited0 in0.947s tool-observed wall time. All individual claim command timings are in claim.json. Retained-test command arrays, exit codes and wall times are in retained/verification.json, with subset integration details in retained/db/result.json and the retained worker report. No unchanged unit/type/static suite was rerun.
+
+ROUTING AND OWNERSHIP
+DATABASE_URL=postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_qa_r3_20261107_062537_fac40950
+REDIS_URL=redis://127.0.0.1:53058/8
+NODE_OPTIONS=--import /tmp/space-symbiotic_qa_r3_20261107_062537_fac40950/route-guard.mjs
+PGAPPNAME=symbiotic_qa_r3_20261107_062537_fac40950 (the guard appends PID:threadId)
+NODE_ENV=test; LOG_LEVEL=silent; HOST=127.0.0.1; PORT=0.
+PATH starts with /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin. execution-env.json records the full PATH and inherited application/database environment names cleared before the run; inherited NODE_OPTIONS was replaced. No historical fixture environment was sourced.
+
+Existing Postgres: space-t16-pg-20261106, ID66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb. Existing Redis: space-t16-redis-20261106, IDd06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4. Fresh docker inspect verified their exact IDs, healthy state, and published mappings 127.0.0.1:53055→5432 and 127.0.0.1:53058→6379 before claiming. Neither container was created, restarted or stopped.
+
+Before claim, live checks found the worker's astra_symbiotic_fix_r2_20261107_060434_f65e085d and prior QA astra_symbiotic_qa_r2_20261107_053324_2edbaae0 databases absent, with zero sessions to each. Redis DB8 had DBSIZE0 and no application clients. A single Lua operation required an empty DB8 and SET NX installed the unique marker qa:owner:symbiotic_qa_r3_20261107_062537_fac40950. Only the fresh database astra_symbiotic_qa_r3_20261107_062537_fac40950 was created, after checking it did not exist. Host TCP psql returned actual current_database=astra_symbiotic_qa_r3_20261107_062537_fac40950, current_user=astra and inet_server_port=5432. Host Redis CLIENT INFO returned db8. These checks preceded any application import/reset/migration.
+
+The inherited guard subsequently performs those live SQL identity and Redis CLIENT INFO/marker probes in every Node startup, before application modules. It checks exact Node22.23.3, exact URLs and private socket host/ports, and rejects default55432/56379 and direct5432/6379 routes. This R3 artifact adds validation of actual PostgreSQL StartupMessage database/user at Socket.write, so a wrong database on allowed53055 is rejected before its startup is sent. Ioredis clients must be at127.0.0.1:53058/db8; SELECT0/7 and FLUSHDB/FLUSHALL (also cross-DB MOVE/MIGRATE/SWAPDB) are blocked before sending. Each process runs no-network negative controls for default ports, astra/postgres startup database, Redis0/7 and FLUSH commands. Expected self-test denials are distinguished from runtime violations. Actual runtime denials: 0.
+
+Fresh runtime evidence: 57 pre-import receipts across 43 PIDs; 38 actual Vitest fork startups; 13 actual fauna/planner.worker.ts startups. Every observed Node descendant has a matching guard receipt. Planner source opens no application database client; its SQL/Redis pre-import connections are instrumentation probes, explicitly separate from actual application traffic. Runtime socket counts by port: {'53055': 370, '53058': 100}; actual PostgreSQL startup packets by phase: {'preimport-probe': 58, 'runtime': 370}. All actual SQL StartupMessages targeted only the fresh database/astra. Live observer retained 198 SQL session samples and 89 DB8 client samples, with this task's unique application/client names. process-routes.jsonl and live-routes.jsonl preserve the records. DB7 owned by T14 was never selected for application/control commands, mutated, cleaned or flushed; CLIENT LIST metadata can show other clients because Redis lists the whole server.
+
+Startup completeness: there were58 guard-start attempts and57 completed pre-import receipts. One additional worker thread (PID77976/thread1) began guarded startup inside the final handoff fork, opened only private SQL/Redis probe connections, and disappeared during normal teardown before its awaited CLIENT INFO/marker proof completed. It emitted no runtime connection or completed application-entry receipt and is not counted among the13 verified planner entries. The guard's top-level await prevents application entry until this proof completes. Its SQL StartupMessage was for the fresh DB/astra and Redis client options were db8. The final handoff fork ended normally immediately afterward; terrain.ts starts an unref worker. Process teardown is the inferred cause of this interruption, but no exact worker exit event or explicit planner-close call was recorded. startup-completeness.json retains all15 records for this identity. Cleanup proved no residual process/session/key.
+
+HARNESS PROVENANCE
+The seven helpers initially copied from /tmp/space-symbiotic_qa_r2_20261107_053324_2edbaae0 were verified against that run's SHA256SUMS; originals are listed in harness-original-hashes.json. prepare-harness.py records the R3 changes: stronger SQL startup/Redis guard and negative controls, explicit host/port/old-fixture claim proof, exact Node pin, command timings, automatic owned-process watchdog, immediately-before-launch pin checks, and result file-count verification from current config. No test source or test assertions were rewritten. Helpers remain local instrumentation, not a claimed production security boundary.
+
+RETAINED WORKER PROOF — VERIFIED FOR REUSE, NOT FRESHLY RERUN
+Worker source: /tmp/space-symbiotic-t07-r2-fixes-52da4eff/Appendix-C.2-report.md.
+The worker's final HEAD/tree match this pin; tested-tree.txt equals the current committed tree. All15 tested-source-hashes.json and final-source-hashes.json values match the live checkout before and after this QA. 19 retained report/result artifacts individually match the worker's SHA256SUMS. Retained full units: 216 files / 2774 passed,0 failed,0 pending/todo, exit0. Workspace shared/client/server/tools typechecks, scoped ESLint/Prettier and whitespace checks exit0. Retained relevant integrations: 6 files / 54 passed, exit0.
+The worker's integration-to-final-source-proof identifies only packages/server/src/zones/wake.test.ts as changed after that subset run; production/gateway bytes match, and the strengthened unit wake test is included in the final2,774-unit pass. final-identity-proof.json independently checks that distinction. This fresh full integration execution covers the committed final pin itself. Separate source review owns source acceptance.
+
+FAILURE/SKIP EVIDENCE
+No failed file, failed assertion, skipped/pending assertion, todo or unhandled error was reported.
+failures.json preserves failed file/assertion records and other statuses; integration-tail.txt preserves the final100 lines. Complete stderr/stdout and JSON results are retained. No failure was excused as baseline. No focused rerun replaced the full-suite verdict.
+
+CLEANUP — LIVE PROOF
+The watcher tracked 45 owned processes in process groups [51015, 51021, 51028]; terminated residual PIDs=[]; remaining=[]. Process identity matching uses recorded start time and command, not PID existence alone. Final process scan found zero matching owned processes; every observed Node descendant has startup route proof. No unrelated process/group was signalled.
+Owned SQL sessions before drop: 0. Database dropped: astra_symbiotic_qa_r3_20261107_062537_fac40950; afterward confirmed absent. No forced database session termination and no existing database drop.
+The live Redis8 marker matched this run. The complete keyset was matched against the fresh SQL shard IDs and observed test writes; 36 owned keys (including the marker) were atomically rechecked and deleted by explicit-key DEL. No FLUSH operation. Final DB8 DBSIZE=0; marker removed=True; no owned/application DB8 clients remained. Unknown keys/changed ownership would have refused cleanup. Both exact supplied containers remain running and healthy. owned-shards.json, owned-redis-keys.json, cleanup.json and cleanup-commands.json retain the proof. T14/other workers were left untouched.
+
+LIMITS
+This PASS applies only to the complete local integration suite on HEADbf09bc72543ed74b7dc7386415471d26a36a4b6d / treeb5456a8f82c498ee5bb7e35836bd35fd4c425c41. It does not replace the separate independent R3 source review, parent-owned full smoke, rendered companion/picking work, T14 GPU QA, CI, merge or release acceptance. No Trunk submission or PR operation was performed.
+
+Evidence index: before/after-snapshot.json; final-identity-proof.json; final-source-after.json; integration-file-provenance.json / integration-source-after.json; expected-files.json / per-file-results.json / verification.json; execution.json / execution-env.json / preflight-command.json / result.json; claim.json; process-routes.jsonl / live-routes.jsonl / final-process-and-routes.json; owned-process-identities.json / process-watch-result.json; cleanup.json / cleanup-commands.json; failures.json / integration-tail.txt; retained/; all harness scripts; SHA256SUMS.

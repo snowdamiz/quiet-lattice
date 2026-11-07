@@ -1,0 +1,883 @@
+POST-COMMIT PROVENANCE
+{
+  "task": "P1.E14.T05",
+  "base": "f9c2cef85002b8b859dfd393647a77c15f565e78",
+  "shared_pin": "515ba1f00810a50b499970b5468ef7bf0af84c32",
+  "shared_cherry_pick": "f0456b0bf71fd5ea070e89845f252d4b2d8230f8",
+  "head": "653e76823efbbe7ef69032f58ec6b3660ab63443",
+  "tree": "43fbc3b58e6e7787d7e37089d6e98b960788310d",
+  "branch": "task/P1-E14-T05",
+  "clean": true,
+  "manifest_sha256": "b5d99cac4267ad25d67072dc46700160608a6222e8d04473b67336ade89f19f9",
+  "committed_manifest_entries": 632,
+  "owned_changed_paths": 146,
+  "assets": {
+    "assets/blend/flora/non_tree_stone.blend": "436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15",
+    "assets/blend/flora/non_tree_foliage.blend": "5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456",
+    "assets/blend/flora/non_tree_resources.blend": "03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9",
+    "packages/client/public/models/flora/non_tree_stone.glb": "a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9",
+    "packages/client/public/models/flora/non_tree_foliage.glb": "925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d",
+    "packages/client/public/models/flora/non_tree_resources.glb": "7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725"
+  },
+  "historical_files_unchanged": 455,
+  "source_cpu_receipt": "PASS",
+  "current_receipt_run_id": "20261107T062445Z-e28a6776c7ac4f2f9d8019a4fe20146d",
+  "shared_ruff": "7 findings unchanged from exact reviewed pin, exit 1",
+  "retained_bytes": 398819384,
+  "retained_pngs": 46,
+  "independent_T05_R2": "pending"
+}
+
+TASK: P1.E14.T05, reviewed T14 integration and full R1-R6 SOURCE/CPU verification for fresh T05 R2 review.
+STATUS: Implementation complete; local functional SOURCE/CPU gates PASS, independent T05 R2 review pending. Local static checks PASS. Shared Ruff remains exit 1 with seven findings identical to the exact reviewed pin; no shared-source changes made to alter them. No native/GPU/visual/performance acceptance.
+SUMMARY: Continued the same flora branch, preserved and finished the six interrupted local edits, integrated the exact reviewed T14 three-file change, deleted the active material_trace.py and every active legacy import/route (including the diagnostic inspector). Current source/export qualification uses only the stock validator and the real GLB consumers. Fresh current receipt is PASS and has been consumed successfully. Prior stock/local-tracer failures remain immutable historical evidence, not relabelled. All six actual art assets and all 455 pre-existing evidence files are unchanged.
+
+PROVENANCE:
+Cwd: /Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f
+Branch: task/P1-E14-T05
+Original task base: f7f1347d1ba36b702000471d462dd7e9475dbb8d; tree 5cca39d788ed51aca8ebed574dc3c3756e9e7517.
+Integration base: f9c2cef85002b8b859dfd393647a77c15f565e78; tree 88d911dc73c15a5dee28b9fc73b4e7d690560d5c.
+Reviewed upstream pin: 515ba1f00810a50b499970b5468ef7bf0af84c32; tree 6e0fb967b897ecde0777567adac37ab9b59cb68f.
+Exact three-file cherry-pick: f0456b0bf71fd5ea070e89845f252d4b2d8230f8; tree 5837892e7af42424da7c73da061e89cf318c3d69.
+Final local commit head/tree and clean-state proof are in the post-commit handoff, avoiding a self-referential commit hash.
+Parent review: /tmp/t14-e14-t14-review/REPORT.md, copied to reviewed-shared-REPORT.md. Scope, upstream tree and three source SHA256 values verified before integration and after all checks.
+
+FILES:
+  packages/tools/blender/flora/inspect_export.py
+  packages/tools/blender/flora/material_controls.py
+  packages/tools/blender/flora/material_trace.py (deleted)
+  packages/tools/blender/flora/receipts.py
+  packages/tools/blender/flora/test_revision_cpu.py
+  packages/tools/blender/flora/validate_exports.py
+  assets/renders/flora/t05/revision7/ (fresh exclusive evidence only)
+Reviewed shared files imported byte-identically, with no follow-on edits:
+  packages/tools/blender/artlib/checks.py  c5801c626e1a13d413b0c77d1600395bdb3a2878744e31fa0358413b2ebd4056
+  packages/tools/blender/artlib/materials.py  893ffc7721507defa275061284ed817140e0dc2fb74eef6e5d8b8883ebe90ed2
+  packages/tools/blender/material_mask_selftest.py  c9d639c5dd993fa66597178cea9e532e4d2440e158c96dc3f462c9fcc48b6f63
+
+VERIFY:
+R1/R2: full process ownership/signal/timeout/descendant/log-contention regression suite passes. Real Blender contention additionally observed one task-owned child PID 32056: the second runner exits 73, incumbent 359-byte log prefix remains exactly intact, and the same sole incumbent child remains. CPU lane is available after all jobs; no owned workloads remain. All Blender jobs used run_cpu.py, -b -t 2 --factory-startup, finite deadlines and group cleanup; math/codec thread limits 2, ART_KTX_JOBS=1, GPU devices disabled for these CPU jobs. Parent's GPU QA was not touched.
+R3/R4/R5: eight unittest methods (table-driven cases) pass, retaining malformed receipts, source/export/snapshot mutation races, current-FAIL versus old-PASS, failed export/retry history and log reuse controls. Nine actual-asset cases pass: the valid 3 pairs, each of the 3 real collection swaps, real source/GLB replacement races, and missing/pointer/corrupt source copies covering all 3 source identities. Bad source attempts leave zero runtime outputs and retain all 3 prior GLBs. Full fixture histories are retained in verified archives; no prior reports overwritten.
+Stock actual assets: 3 sources + 3 compressed GLBs PASS through core.validate_path in the shared 34-case suite. The fresh qualification independently audits all saved source geometry and masks, validates all stock exports, and passes all 130 existing production-loader/consumer tests including per-file named-root/variant associations, exact FLOAT masks, vertex/triangle associations, metadata and recolouring. current receipt consumer verifies and accepts the new closed evidence chain. Raw source and export hashes match before/after.
+Source controls: 124 actual LOD meshes audited; five malformed source checks plus missing lossless carriers rejected. Raw Blender UNORM16 behaviour and exact FLOAT transport adapter remain covered without saving a source.
+R6: task-local stock route has 1 valid baseline PASS + 6 malformed graph rejections, including disabled VALUE and inactive black named Color. No monkeypatch is installed. Shared selftest: 34/34; nearby validator/context-free regressions: 53/53; CPU KTX2/Meshopt/target suites: 28/28, one worker and no file parallelism. The real boundary suite now requires stock PASS; the old pending-stock allowance was removed.
+Static: Python compilation of local and imported files, scoped local Ruff/format, client ESLint/Prettier/typecheck and diff check all exit 0. Shared Ruff exit 1 is retained: SIM118; BLE001 twice in checks.py; F541; unused bpy import and BLE001 in materials.py; unused E402 noqa in material_mask_selftest.py. Re-running Ruff on the exact 515ba1f bytes through stdin produces identical seven diagnostics, recorded in reviewed-shared-lint-baseline.json. Exact reviewed files remain unmodified; no claim of full shared lint PASS.
+All exact commands, exit codes, PIDs, elapsed times, dispatch/Blender logs and test receipts are in commands.json, static-commands.json and logs/. Commands are reproduced below. Intentional malformed-case FAIL reports remain in their exclusive attempt directories/archives.
+
+DECISIONS:
+- Delete the active tracer completely and remove --legacy from the active material-control runner. Frozen RED code/evidence remains only in the historical evidence tree. The inspector uses the stock full validator too.
+- Move default evidence to revision7 so ordinary new commands cannot rewrite revision6's historical current selector. UUID attempt allocation and exclusive logs remain in place.
+- Add the reviewed material selftest and existing nearby selftest to recorded tool hashes. Actual matching-pair regressions must now pass stock validation and consume the resulting receipt.
+- Preserve all art geometry, topology, materials, masks, scales, variants and mappings. This revision changes no art decision: still 31 variants, 124 LOD meshes, 13 kinds and all 21 legacy non-tree base names, as checked by the real consumers.
+- Preserve exact shared-pin bytes despite its existing Ruff diagnostics. Any shared lint follow-up belongs to the shared owner and a separately reviewed pin.
+- Retain complete new scratch fixtures with duplicate byte payloads represented as archive hard links. Every member was read back and SHA256-verified; archive-inventory.json binds all 754 paths. These are read-only historical fixtures. Fresh review must allocate fresh fixtures/report/log paths rather than mutating extracted hard-linked history. Expanded scratch evidence was not deleted; no screenshot cleanup occurred.
+
+OUTOFSCOPE:
+Fresh independent T05 R2 review is next. Native/GPU grading, runtime adoption/T07, orchestration/main/plan updates, push/PR/merge stay with parent. No GPU rendering, browser, capture, DB/service, screenshot cleanup, network asset/LFS fetch, actual art edit, other-worktree write, or follow-on shared-source edit. The initial authoring/source task's existing T07 runtime/PBR/fallback limitations remain; this is SOURCE/CPU qualification, not whole intended-look or 60-FPS acceptance.
+
+ARTIFACTS:
+Current qualification: revision7/validation/latest.json -> run 20261107T062445Z-e28a6776c7ac4f2f9d8019a4fe20146d
+Full stock and source/consumer evidence: assets/renders/flora/t05/revision7/validation/attempts/20261107T062445Z-e28a6776c7ac4f2f9d8019a4fe20146d
+R1-R5: real-boundaries-results.json, real-boundaries.tar.gz, unit-boundaries.tar.gz.
+R6/shared: material-controls/, shared-suite/, reviewed-shared-REPORT.md.
+Preservation/cleanup proof: final-invariants.json; reviewed bytes and all historical digests: baseline.json.
+Task source/export/evidence hash closure: sha256_manifest.json (self digest supplied post-commit).
+No new PNGs; all 46 prior compact images preserved. Retained task evidence remains below 512 MiB (about 381 MiB); no per-frame sequences.
+Exact unchanged next-GPU inventory: assets/renders/flora/t05/next_gpu_inventory.json, SHA256 e074b0dbf6212f3bd900964b1788f11d35b541009a49926a8c52659a766fc836
+31 exact review specs and source/export/root/variant/LOD mappings. Parent only after fresh review: noon-lush, night-exotic, open-space; LOD0/2 beauty, wireframe and overlays; 100m far view; eight angles (0..315 by45); material closeups; native GPU timings and empty/asset costs, draw calls and memory. Not launched here.
+
+SOURCE / EXPORT SHA256 (unchanged):
+436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15  assets/blend/flora/non_tree_stone.blend
+5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456  assets/blend/flora/non_tree_foliage.blend
+03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9  assets/blend/flora/non_tree_resources.blend
+a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9  packages/client/public/models/flora/non_tree_stone.glb
+925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d  packages/client/public/models/flora/non_tree_foliage.glb
+7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725  packages/client/public/models/flora/non_tree_resources.glb
+
+REJECTED REAL BOUNDARY CASES:
+{
+  "cases": [
+    {
+      "case": "matching_pairs",
+      "content": "PASS",
+      "exit": 0,
+      "stock": "PASS"
+    },
+    {
+      "case": "wrong_pair",
+      "rejected_by": "actual loader file/name/geometry associations",
+      "source": "non_tree_foliage",
+      "wrong_export": "non_tree_resources"
+    },
+    {
+      "case": "wrong_pair",
+      "rejected_by": "actual loader file/name/geometry associations",
+      "source": "non_tree_resources",
+      "wrong_export": "non_tree_stone"
+    },
+    {
+      "case": "wrong_pair",
+      "rejected_by": "actual loader file/name/geometry associations",
+      "source": "non_tree_stone",
+      "wrong_export": "non_tree_foliage"
+    },
+    {
+      "case": "source_read_race",
+      "rejected": true
+    },
+    {
+      "case": "export_read_race",
+      "rejected": true
+    },
+    {
+      "case": "export_missing",
+      "prior_assets_preserved": 3,
+      "reason": "[Errno 2] No such file or directory: '/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t05-r2-integration-n2xw7ma3/real-regressions/export-missing/sources/flora/non_tree_foliage.blend'",
+      "runtime_outputs": 0,
+      "source": "non_tree_foliage.blend"
+    },
+    {
+      "case": "export_pointer",
+      "prior_assets_preserved": 3,
+      "reason": "LFS pointer source: /private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t05-r2-integration-n2xw7ma3/real-regressions/export-pointer/sources/flora/non_tree_resources.blend",
+      "runtime_outputs": 0,
+      "source": "non_tree_resources.blend"
+    },
+    {
+      "case": "export_corrupt",
+      "prior_assets_preserved": 3,
+      "reason": "source preflight failed: non_tree_stone.blend",
+      "runtime_outputs": 0,
+      "source": "non_tree_stone.blend"
+    }
+  ],
+  "regressions": "PASS",
+  "stock": "PASS"
+}
+
+R6 STOCK CONTROLS:
+[
+  {
+    "case": "baseline",
+    "status": "PASS",
+    "target_material_rejected": false
+  },
+  {
+    "case": "disabled_value_output",
+    "status": "FAIL",
+    "target_material_rejected": true
+  },
+  {
+    "case": "inactive_named_black_mask",
+    "status": "FAIL",
+    "target_material_rejected": true
+  },
+  {
+    "case": "partial_factor",
+    "status": "FAIL",
+    "target_material_rejected": true
+  },
+  {
+    "case": "linked_factor",
+    "status": "FAIL",
+    "target_material_rejected": true
+  },
+  {
+    "case": "missing_image",
+    "status": "FAIL",
+    "target_material_rejected": true
+  },
+  {
+    "case": "wrong_mask",
+    "status": "FAIL",
+    "target_material_rejected": true
+  }
+]
+
+SHARED CONTROL VERDICTS:
+[
+  {
+    "case": "non_tree_foliage_source",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "non_tree_foliage_export",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "non_tree_resources_source",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "non_tree_resources_export",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "non_tree_stone_source",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "non_tree_stone_export",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "active_mask",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "named_mask",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "renamed_mask",
+    "status": "PASS",
+    "expected": "PASS",
+    "ok": true
+  },
+  {
+    "case": "partial_factor",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "near_full_factor",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "linked_factor",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "disabled_value_output",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "disabled_vector_output",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "muted_mix",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "clamped_mix",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "wrong_blend",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "absent_named_mask",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "inactive_black_named_mask",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "inactive_valid_named_mask",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "last_user_wrong_name",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "last_user_invalid_mask",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "last_user_absent_mask",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "last_user_other_active_mask",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "last_user_other_render_mask",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "absent_image",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "constant_image",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "constant_instead_of_image",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "mask_alpha_output",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "procedural_image_coordinates",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "last_user_missing_uv",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "missing_roughness",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "short_mips",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  },
+  {
+    "case": "optional_compression",
+    "status": "FAIL",
+    "expected": "FAIL",
+    "ok": true
+  }
+]
+
+EXACT COMMANDS / EXITS:
+[
+  {
+    "label": "r1-r5-unit",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/test_revision.py"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "wrapper_pid": 31422,
+    "owned_blender_pids": [],
+    "reaped": true,
+    "seconds": 11.74,
+    "dispatch_log": "assets/renders/flora/t05/revision7/logs/r1-r5-unit-dispatch.log",
+    "dispatch_log_sha256": "c1d391cde1d14e23585b7fa6ef17d3ef7713dfbb34428cfded91f0af56d33de7"
+  },
+  {
+    "label": "stock-current",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+      "--timeout",
+      "600",
+      "--log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/logs/stock-current.log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/validate_exports.py",
+      "--report-dir",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/validation"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "wrapper_pid": 32054,
+    "owned_blender_pids": [
+      32056
+    ],
+    "reaped": true,
+    "seconds": 5.75,
+    "dispatch_log": "assets/renders/flora/t05/revision7/logs/stock-current-dispatch.log",
+    "dispatch_log_sha256": "fe9cfbb0f252f1b2ca1b127aaf1f3dc20a388fd0e77a01cc28031f8c88cc533b"
+  },
+  {
+    "label": "source-controls",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+      "--timeout",
+      "600",
+      "--log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/logs/source-controls.log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/audit_saved.py",
+      "--report-dir",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/source-audit"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "wrapper_pid": 32157,
+    "owned_blender_pids": [],
+    "reaped": true,
+    "seconds": 3.45,
+    "dispatch_log": "assets/renders/flora/t05/revision7/logs/source-controls-dispatch.log",
+    "dispatch_log_sha256": "77e7fe1d0e487f57c451779c740e7ef382bca31ea5a1d7cd4e4512d57221d924"
+  },
+  {
+    "label": "r6-controls",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+      "--timeout",
+      "600",
+      "--log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/logs/r6-controls.log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/material_controls.py",
+      "--report-dir",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/material-controls"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "wrapper_pid": 32226,
+    "owned_blender_pids": [],
+    "reaped": true,
+    "seconds": 4.05,
+    "dispatch_log": "assets/renders/flora/t05/revision7/logs/r6-controls-dispatch.log",
+    "dispatch_log_sha256": "ccd4c8b89c06e263e3f4b43b29e4229f98545bf02afb6e5b86004b4f7606f865"
+  },
+  {
+    "label": "shared-34-and-53",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+      "--timeout",
+      "600",
+      "--log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/logs/shared-34-and-53.log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/scripts/shared_suite.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/shared-suite"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "wrapper_pid": 32440,
+    "owned_blender_pids": [],
+    "reaped": true,
+    "seconds": 13.22,
+    "dispatch_log": "assets/renders/flora/t05/revision7/logs/shared-34-and-53-dispatch.log",
+    "dispatch_log_sha256": "3d48fce508fdb90716356061ae88c05e054eb2809c3e456c1ef2f2ab6dd1046d"
+  },
+  {
+    "label": "r1-r5-real",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/run_cpu.py",
+      "--timeout",
+      "900",
+      "--log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/logs/r1-r5-real.log",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/flora/test_revision_cpu.py",
+      "--report-dir",
+      "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t05-r2-integration-n2xw7ma3/real-regressions"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "wrapper_pid": 32697,
+    "owned_blender_pids": [],
+    "reaped": true,
+    "seconds": 37.85,
+    "dispatch_log": "assets/renders/flora/t05/revision7/logs/r1-r5-real-dispatch.log",
+    "dispatch_log_sha256": "0ceb4ba650e05d1a1ce2e0f9f66df0bc59f1237885a5052e5a6d5c931da0ca49"
+  },
+  {
+    "label": "pipeline-28",
+    "command": [
+      "pnpm",
+      "exec",
+      "vitest",
+      "run",
+      "packages/tools/src/art/ktx.test.ts",
+      "packages/tools/src/art/meshopt.test.ts",
+      "packages/tools/src/art/targets.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "--reporter=json",
+      "--outputFile=/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/assets/renders/flora/t05/revision7/pipeline-tests.json"
+    ],
+    "exit": 0,
+    "expected_exit": 0,
+    "wrapper_pid": 47373,
+    "owned_blender_pids": [],
+    "reaped": true,
+    "seconds": 0.67,
+    "dispatch_log": "assets/renders/flora/t05/revision7/logs/pipeline-28-dispatch.log",
+    "dispatch_log_sha256": "fe8de64280f0138c93f5ff76aa80ea59d6e340a157d8cdeffca8670dc0aadd94"
+  },
+  {
+    "label": "compile",
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-m",
+      "py_compile",
+      "packages/tools/blender/flora/inspect_export.py",
+      "packages/tools/blender/flora/material_controls.py",
+      "packages/tools/blender/flora/receipts.py",
+      "packages/tools/blender/flora/test_revision_cpu.py",
+      "packages/tools/blender/flora/validate_exports.py",
+      "packages/tools/blender/artlib/checks.py",
+      "packages/tools/blender/artlib/materials.py",
+      "packages/tools/blender/material_mask_selftest.py"
+    ],
+    "exit": 0,
+    "log": "assets/renders/flora/t05/revision7/logs/compile.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "local-ruff",
+    "command": [
+      "uvx",
+      "--offline",
+      "ruff",
+      "check",
+      "packages/tools/blender/flora/inspect_export.py",
+      "packages/tools/blender/flora/material_controls.py",
+      "packages/tools/blender/flora/receipts.py",
+      "packages/tools/blender/flora/test_revision_cpu.py",
+      "packages/tools/blender/flora/validate_exports.py"
+    ],
+    "exit": 0,
+    "log": "assets/renders/flora/t05/revision7/logs/local-ruff.log",
+    "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  {
+    "label": "local-format",
+    "command": [
+      "uvx",
+      "--offline",
+      "ruff",
+      "format",
+      "--check",
+      "packages/tools/blender/flora/inspect_export.py",
+      "packages/tools/blender/flora/material_controls.py",
+      "packages/tools/blender/flora/receipts.py",
+      "packages/tools/blender/flora/test_revision_cpu.py",
+      "packages/tools/blender/flora/validate_exports.py"
+    ],
+    "exit": 0,
+    "log": "assets/renders/flora/t05/revision7/logs/local-format.log",
+    "log_sha256": "f114d83b30c5c657ee43a847a45bafccaea255d82673feb87c26d252c61e29c1"
+  },
+  {
+    "label": "client-eslint",
+    "command": [
+      "pnpm",
+      "exec",
+      "eslint",
+      "packages/client/test/floraAssets.test.js"
+    ],
+    "exit": 0,
+    "log": "assets/renders/flora/t05/revision7/logs/client-eslint.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "client-format",
+    "command": [
+      "pnpm",
+      "exec",
+      "prettier",
+      "--check",
+      "packages/client/test/floraAssets.test.js"
+    ],
+    "exit": 0,
+    "log": "assets/renders/flora/t05/revision7/logs/client-format.log",
+    "log_sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20"
+  },
+  {
+    "label": "client-typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@astra/client",
+      "typecheck"
+    ],
+    "exit": 0,
+    "log": "assets/renders/flora/t05/revision7/logs/client-typecheck.log",
+    "log_sha256": "859f05647a92fcb79f6a57008bd6478a9bea618f6933c12cb2bb76a0a7f2bb7f"
+  },
+  {
+    "label": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "log": "assets/renders/flora/t05/revision7/logs/diff-check.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "reviewed-shared-ruff",
+    "command": [
+      "uvx",
+      "--offline",
+      "ruff",
+      "check",
+      "--output-format=json",
+      "packages/tools/blender/artlib/checks.py",
+      "packages/tools/blender/artlib/materials.py",
+      "packages/tools/blender/material_mask_selftest.py"
+    ],
+    "exit": 1,
+    "findings": 7,
+    "same_as_exact_reviewed_pin": true,
+    "log": "assets/renders/flora/t05/revision7/logs/shared-ruff.json"
+  }
+]
+
+NONZERO STATIC RESULT (unchanged reviewed-pin findings):
+[
+  {
+    "cell": null,
+    "code": "SIM118",
+    "end_location": {
+      "column": 70,
+      "row": 117
+    },
+    "filename": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/artlib/checks.py",
+    "fix": {
+      "applicability": "unsafe",
+      "edits": [
+        {
+          "content": "",
+          "end_location": {
+            "column": 70,
+            "row": 117
+          },
+          "location": {
+            "column": 63,
+            "row": 117
+          }
+        }
+      ],
+      "message": "Remove `.keys()`"
+    },
+    "location": {
+      "column": 53,
+      "row": 117
+    },
+    "message": "Use `key not in dict` instead of `key not in dict.keys()`",
+    "name": "in-dict-keys",
+    "noqa_row": 117,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/in-dict-keys"
+  },
+  {
+    "cell": null,
+    "code": "BLE001",
+    "end_location": {
+      "column": 21,
+      "row": 444
+    },
+    "filename": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/artlib/checks.py",
+    "fix": null,
+    "location": {
+      "column": 12,
+      "row": 444
+    },
+    "message": "Do not catch blind exception: `Exception`",
+    "name": "blind-except",
+    "noqa_row": 444,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/blind-except"
+  },
+  {
+    "cell": null,
+    "code": "BLE001",
+    "end_location": {
+      "column": 21,
+      "row": 524
+    },
+    "filename": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/artlib/checks.py",
+    "fix": null,
+    "location": {
+      "column": 12,
+      "row": 524
+    },
+    "message": "Do not catch blind exception: `Exception`",
+    "name": "blind-except",
+    "noqa_row": 524,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/blind-except"
+  },
+  {
+    "cell": null,
+    "code": "F541",
+    "end_location": {
+      "column": 109,
+      "row": 640
+    },
+    "filename": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/artlib/checks.py",
+    "fix": {
+      "applicability": "safe",
+      "edits": [
+        {
+          "content": "\"reference object is also linked into an asset collection and would be exported\"",
+          "end_location": {
+            "column": 109,
+            "row": 640
+          },
+          "location": {
+            "column": 28,
+            "row": 640
+          }
+        }
+      ],
+      "message": "Remove extraneous `f` prefix"
+    },
+    "location": {
+      "column": 28,
+      "row": 640
+    },
+    "message": "f-string without any placeholders",
+    "name": "f-string-missing-placeholders",
+    "noqa_row": 640,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/f-string-missing-placeholders"
+  },
+  {
+    "cell": null,
+    "code": "F401",
+    "end_location": {
+      "column": 11,
+      "row": 3
+    },
+    "filename": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/artlib/materials.py",
+    "fix": {
+      "applicability": "safe",
+      "edits": [
+        {
+          "content": "",
+          "end_location": {
+            "column": 1,
+            "row": 4
+          },
+          "location": {
+            "column": 1,
+            "row": 3
+          }
+        }
+      ],
+      "message": "Remove unused import: `bpy`"
+    },
+    "location": {
+      "column": 8,
+      "row": 3
+    },
+    "message": "`bpy` imported but unused",
+    "name": "unused-import",
+    "noqa_row": 3,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/unused-import"
+  },
+  {
+    "cell": null,
+    "code": "BLE001",
+    "end_location": {
+      "column": 21,
+      "row": 334
+    },
+    "filename": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/artlib/materials.py",
+    "fix": null,
+    "location": {
+      "column": 12,
+      "row": 334
+    },
+    "message": "Do not catch blind exception: `Exception`",
+    "name": "blind-except",
+    "noqa_row": 334,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/blind-except"
+  },
+  {
+    "cell": null,
+    "code": "RUF100",
+    "end_location": {
+      "column": 66,
+      "row": 19
+    },
+    "filename": "/Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f/packages/tools/blender/material_mask_selftest.py",
+    "fix": {
+      "applicability": "safe",
+      "edits": [
+        {
+          "content": "",
+          "end_location": {
+            "column": 66,
+            "row": 19
+          },
+          "location": {
+            "column": 52,
+            "row": 19
+          }
+        }
+      ],
+      "message": "Remove unused `noqa` directive"
+    },
+    "location": {
+      "column": 54,
+      "row": 19
+    },
+    "message": "Unused `noqa` directive (non-enabled: `E402`)",
+    "name": "unused-noqa",
+    "noqa_row": 19,
+    "severity": "error",
+    "url": "https://docs.astral.sh/ruff/rules/unused-noqa"
+  }
+]

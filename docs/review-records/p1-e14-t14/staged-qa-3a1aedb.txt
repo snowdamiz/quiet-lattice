@@ -1,0 +1,88 @@
+TASK: P1.E14.T14 — staged/merged verification, Appendix C.2
+STATUS: DONE
+TEST VERDICT: PASS WITH EXPECTED SKIPS. GPU RELEASED after terminal cleanup.
+SUMMARY: Fresh local verification of the exact reviewed three-file Python patch cherry-picked onto the parent checkout. Typecheck, full unit/golden suite, focused stock source/export validation, 34 new controls, 53 nearby controls, 28 CPU pipeline tests, removed-code gate and one full Metal smoke run passed. Repository source/config/assets/docs were not edited by QA. The initial Redis metadata diagnostic exception below prevents claiming that every diagnostic connection used DB7.
+FILES CHANGED: None in the checkout. QA scripts, logs, profiles and evidence were created only under /tmp/space-t14-merged-qa-DdSem0BL. The parent committed documentation while QA ran; these changes are recorded separately.
+
+PIN AND IDENTITY
+tested_head: 3a1aedb1075398ee5ca9ad8476baf6d020b31bbb
+tested_tree: 8e8657adb746ffeadd3316570102acd62708eebf
+parent: 35086896540e90891dded030206ad68f86f93626
+reviewed_head: 515ba1f00810a50b499970b5468ef7bf0af84c32
+reviewed_tree: 6e0fb967b897ecde0777567adac37ab9b59cb68f
+patch_id_merged: 0e9c69a7709089ce22c29a7b84fa7c24d2f9a5be
+patch_id_reviewed: 0e9c69a7709089ce22c29a7b84fa7c24d2f9a5be
+raw_merged_patch_sha256: 09b007ce1e8c38b0ad726c059acdd6fe671f8e48b8ad0f24e32546a8977b01bb
+Raw binary diff equality: true; exact scope 3 Python files, +278/-5. Full protected source equality to reviewed candidate: true.
+Final documentation HEAD: a7975cc6447fe95a322921a6b9898d86b7396e23
+Final documentation tree: 528cedf6fbff82091ceb8c5ccb48a6c936123eee
+Final provenance UTC: 2026-11-07T06:34:07Z
+Final branch: t3/continue-implementation-plan-1
+Final git status: clean
+Changes from tested HEAD are documentation-only: docs/IMPLEMENTATION_PLAN.md, docs/PROGRESS.md, docs/review-records/20261107-animation-native-review-manifest.json, docs/review-records/20261107-source-review-and-recovery-manifest.json, docs/review-records/p1-e05-t02/native-review-01-c44d7a8.txt, docs/review-records/p1-e07-t07/revision-02-bf09bc7.txt, docs/review-records/p1-e07-t14/pilot-worker-2a3a01c.txt, docs/review-records/p1-e08-t09/caller-review-05-eb8563a.txt, docs/review-records/p1-e10-t05/advisory-review-02-83eec91.txt, docs/review-records/p1-e10-t06/worker-2d23ecb.json, docs/review-records/p1-e14-t14/source-review-01-515ba1f.txt
+main was read at 35086896540e90891dded030206ad68f86f93626; QA did not move any ref or submit any merge.
+882 protected tracked runtime/config/tool/payload entries match pinned Git blobs or hydrated LFS SHA256/size before and after. 13,006 installed package file/link entries match before and after. All 9 frozen input-directory entries match, including the 6 actual asset inputs. No .env file was present.
+runtime_digest before == after: 4f90768c6a4c32e3a94ebad0f65b5c9c3d6c12ea63474a7187a94eef8d8521b7
+dependencies_digest before == after: 6ce604fe77b1d138309347920361a9b6c3e8d537d47aa8e186bb0a8df85b71a8
+frozen_digest before == after: 4243709bccdb7d897e5e9c961819391031f8176f6e651000f87359e780021bfc
+Dependency hashing deliberately excludes generated .vite/.vite-temp/.cache/.vitest-cache/.pnpm-task-run-state-v1 directories and .pnpm-workspace-state-v1.json. Generated checkout caches/metadata are not represented as installed package code and were not broadly removed.
+packages/tools/blender/artlib/checks.py SHA256 c5801c626e1a13d413b0c77d1600395bdb3a2878744e31fa0358413b2ebd4056
+packages/tools/blender/artlib/materials.py SHA256 893ffc7721507defa275061284ed817140e0dc2fb74eef6e5d8b8883ebe90ed2
+packages/tools/blender/material_mask_selftest.py SHA256 c9d639c5dd993fa66597178cea9e532e4d2440e158c96dc3f462c9fcc48b6f63
+Per-file manifests: before-provenance.json / after-provenance.json. Frozen asset SHA256 values are also in suite-out/mask-selftest/results.json.
+
+VERIFY: COMMANDS, EXITS, COUNTS AND DEADLINES
+Working directory: /Users/andreyyurlov/.t3/worktrees/space/t3-909360ab
+Node: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node; v22.23.3. pnpm 12.15.0; Vitest 5.0.5; Playwright 1.64.1; Blender 5.2.3 LTS e13b728c6880; KTX 4.4.2. Executable/entrypoint hashes are retained in versions.json, ktx-tool.json and provenance manifests.
+route-proof: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node /tmp/space-t14-merged-qa-DdSem0BL/route-proof.mjs
+  exit 0; UTC 2026-11-07T06:22:59Z -> 2026-11-07T06:22:59Z; outer wall deadline 60 s; group remains after wait: False
+typecheck: pnpm typecheck
+  exit 0; UTC 2026-11-07T06:23:24Z -> 2026-11-07T06:23:31Z; outer wall deadline 300 s; group remains after wait: False
+unit: pnpm test --maxWorkers=2
+  exit 0; UTC 2026-11-07T06:23:35Z -> 2026-11-07T06:24:18Z; outer wall deadline 600 s; group remains after wait: False
+removed: pnpm gate:removed
+  exit 0; UTC 2026-11-07T06:23:24Z -> 2026-11-07T06:23:24Z; outer wall deadline 120 s; group remains after wait: False
+cpu-pipeline: pnpm exec vitest run packages/tools/src/art/ktx.test.ts packages/tools/src/art/meshopt.test.ts packages/tools/src/art/targets.test.ts --maxWorkers=2
+  exit 0; UTC 2026-11-07T06:24:40Z -> 2026-11-07T06:24:40Z; outer wall deadline 180 s; group remains after wait: False
+scoped-eslint: pnpm exec eslint packages/tools/blender/artlib/checks.py packages/tools/blender/artlib/materials.py packages/tools/blender/material_mask_selftest.py
+  exit 0; UTC 2026-11-07T06:25:53Z -> 2026-11-07T06:25:54Z; outer wall deadline 60 s; group remains after wait: False
+smoke: pnpm smoke -- --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=900000 --trace=off --reporter=list,json --output /tmp/space-t14-merged-qa-DdSem0BL/test-results
+  exit 0; UTC 2026-11-07T06:25:06Z -> 2026-11-07T06:33:38Z; outer wall deadline 960 s; group remains after wait: False
+Typecheck: all four packages PASS. Full unit/golden: 212 files / 2700 tests / 0 failures / 0 skips, maxWorkers=2, exit 0. Focused CPU pipeline: 3 files / 28 tests, maxWorkers=2, exit 0.
+Removed-code gate: 10 enforced rules / 14 waiting on replacement tasks, exit 0.
+Scoped ESLint exits 0 with 3 explicit no-configuration/ignored warnings. Prettier --file-info returns ignored=true, inferredParser=null for each changed file. Python lint/format coverage is NOT APPLICABLE with the repository configuration, not a formatting pass. Python ast.parse passed 3/3; git diff --check passed, exit 0.
+python3 /tmp/space-t14-merged-qa-DdSem0BL/launch.py suite — observed exit 0; 600 s finite wall deadline; PID 29492 reaped, process group gone. Actual argv: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /tmp/space-t14-merged-qa-DdSem0BL/suite.py -- /tmp/space-t14-merged-qa-DdSem0BL/suite-out
+python3 /tmp/space-t14-merged-qa-DdSem0BL/launch.py probe — observed exit 0; 600 s finite wall deadline; PID 31275 reaped, process group gone. Actual argv: /Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /tmp/space-t14-merged-qa-DdSem0BL/probe.py -- /tmp/space-t14-merged-qa-DdSem0BL/probe-out
+Both Blender runs used one process at a time, -b --factory-startup -t 2, OMP/OPENBLAS/MKL/NUMEXPR/VECLIB/BLIS/TBB/UV thread env=2, ART_KTX_JOBS=1, empty CUDA_VISIBLE_DEVICES and PYTHONDONTWRITEBYTECODE=1. No art:test, bake, export regeneration or render was run. Selftest-generated scratch fixtures lived under the private TMPDIR; the six frozen source/export inputs were never rewritten. Existing KTX executable in the T05 cache was only read/executed; the T05 active checkout was not written.
+Fresh probe: 3 source + 3 export validate_path results PASS, no override; inputs_unchanged=true, errors=[]. One-argument classification stays procedural; explicit production masks classify the required direct graph as image. Full probe cases and material inventories are in probe-out/probe.json.
+Official new controls: 34/34 PASS; nearby validator assertions: 53/53 PASS; unchanged frozen input hashes. Retained independent review scripts were inspected and copied into this evidence directory, with only target checkout/output/TMPDIR routing changed for the staged run.
+
+FULL SMOKE
+No file selector; ordinary repository src/smoke/run.ts + unchanged hang-aware Playwright harness. One full invocation only; workers=1, retries=0, repeat-each=1, max-failures=1, global-timeout=900000 ms, outer deadline 960 s, trace=off. SMOKE_GL=metal, unique port 63906; fresh output, TMPDIR and profiles. Exact environment is in smoke-run.json.
+Actual count: 41 total / 38 passed / 3 skipped / 0 unexpected / 0 flaky; exit 0. Playwright duration 512086.40499999997 ms describes this run only; no FPS/performance claim.
+SKIP: smoke/cross-engine.spec.ts — world generation in Firefox gives Node’s bits; [{"type": "skip", "description": "Firefox cannot start on this machine: Could not find profile folder.", "location": {"file": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/cross-engine.spec.ts", "line": 74, "column": 12}}]
+SKIP: smoke/harness-hang.spec.ts — a page that never answers; [{"type": "skip", "description": "run by harness.spec.ts", "location": {"file": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/harness-hang.spec.ts", "line": 4, "column": 6}}]
+SKIP: smoke/harness-hang.spec.ts — the next test gets a working browser; [{"type": "skip", "description": "run by harness.spec.ts", "location": {"file": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/packages/tools/src/smoke/harness-hang.spec.ts", "line": 4, "column": 6}}]
+All three outer hang/recovery tests passed. Their intentional nested failure and successor-pass results are the required test behavior, not an outer smoke failure. The full JSON and logs preserve actual outcomes and warnings.
+Chromium launch arguments selected --use-angle=metal and --enable-gpu. Native display-link/Metal cache and other warnings are retained in smoke.log with categorized counts in browser-warnings.json; smoke is not claimed warning-free. Screenshots/results remain in test-results; no historical screenshot cleanup occurred.
+Failure tails: no failing application check. Expected guard-negative exits and exact stderr are preserved in guard-controls.json; no failed smoke run was retried or suppressed.
+
+PRIVATE FIXTURE PROOF AND PROCEDURAL EXCEPTION
+Exact healthy containers: Postgres 66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb, space-t16-pg-20261106, 127.0.0.1:53055->5432; Redis d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4, space-t16-redis-20261106, 127.0.0.1:53058->6379. Identities/health/ports were checked before mutation and after cleanup.
+DB7 initially contained only the previous QA astra:shard:main:world key. The user explicitly authorized claiming this stale key. Its value/fingerprint were retained; no live DB7 application client existed at the claim; the key was deleted, DB7 size 0 was verified, and an exclusive filesystem claim was held until cleanup.
+Coordinator database: astra_t14_merged_qa_20261107062229_2accf154fd0f. The unchanged smoke harness normally asks for astra_smoke_* databases. The preload maps only its child-process SQL CREATE/DROP identifiers and DATABASE_URL/ADMIN_URL paths into fresh astra_t14_merged_qa_20261107062229_<random-hash> names, preserving separate databases per fixture. All claims and actual CREATE/DROP statements are retained. No shared astra database was used by tests.
+guard.cjs is loaded via NODE_OPTIONS before application imports, inherited by harness children and planner workers. It validates actual process routes, rejects defaults, checks the PostgreSQL wire startup user/database and the Redis SELECT at Socket.write, and prevents Redis DB8/default-data commands and global/destructive commands. Six pre-test negative controls prove missing route, DB8 env, ports 55432/56379, raw astra startup, and raw SELECT8 rejection before the forbidden protocol bytes are sent.
+Fresh actual route-proof.json records current_database/current_user/server address/internal port/backend PID and Redis CLIENT INFO db=7 on the real host-mapped endpoints. During smoke, snapshots independently retain real server cwd, lsof connections to 53055/53058, PostgreSQL pg_stat_activity owned database/user, and Redis CLIENT LIST db=7. live-fixture-sessions.jsonl retains repeated live SQL/Redis samples. Planner/harness child processes are covered by 333 pre-import events across 306 PIDs, including 27 worker-thread events; all reported Node v22.23.3. Exactly the six expected negative controls were blocked; no test-time route rejection occurred.
+PROCEDURAL EXCEPTION: the very first server-wide metadata diagnostic was `docker exec space-t16-redis-20261106 redis-cli CLIENT LIST` without -n 7. Redis reported that diagnostic client in its default DB0. It issued no key read/write or reset command and no application import. This did not satisfy the literal no-default-Redis-0 instruction for that single diagnostic connection. All later Redis diagnostics specify -n 7; all application data traffic was guarded to DB7. No DB8 command reached Redis, and DB8 keys/state were never read, deleted or reset.
+
+OWNERSHIP AND TERMINAL CLEANUP
+Preflight found no existing Playwright/capture browser. Three unrelated Blender exports existed; inspected stock bake code explicitly selected CPU. They were left alone. No external process/container/worker state was killed or changed.
+Observed owned process identities: 60; final owned live processes: 0; no manual kills required. Outer pnpm roots and Blender direct children were waited/reaped. Browser launch PIDs and private profile ownership were checked before profile cleanup.
+Harness fixture databases were dropped by their normal teardown; cleanup required zero owned SQL sessions and dropped only the remaining freshly claimed coordinator database. All 11 names are recorded in database-claims/. No owned databases or DB sessions remain.
+Only socket-observed owned Redis DB7 keys were deleted: astra:shard:main:world. Final DB7 size 0, no application DB7 client, claim released. Both exact containers remain running/healthy. Private TMPDIR profiles/caches were removed only after owned processes exited; evidence/results/screenshots were retained.
+GPU explicitly released at 2026-11-07T06:33:46Z after terminal process/profile cleanup.
+
+DECISIONS: Python-only change → no full test:int, as authorized. Standard smoke fixtures still exercised real private PostgreSQL/Redis. Unsupported Python lint/format → explicit N/A with syntax/whitespace checks; no configuration changes. Parent documentation commits → retain tested source pin and prove full runtime/dependency equality separately. Private scratch-name mapping → comply with the required database namespace without editing repository harness files.
+OUT OF SCOPE FOUND: none requiring source changes. The pre-existing direct-graph-only material boundary and optional Firefox availability remain as recorded in the independent source review; this QA does not expand material acceptance.
+LIMITATIONS: local staged/merged verification only. The independent source-review PASS is separate. This is not CI, production/release proof, visual grading, whole-flora acceptance or whole-plan completion. No PR, push, merge or Trunk command was made. No LFS prune, worktree cleanup, asset regeneration or archived-screenshot deletion occurred.
+ARTIFACTS: /tmp/space-t14-merged-qa-DdSem0BL/REPORT.txt; HASH-MANIFEST.json; before/after-provenance.json; patch-identity.json; *-run.json and *.log; guard-controls.json; route-proof.json; route-summary.json; routes.jsonl; live-fixture-sessions.jsonl; during-*-snapshot.json; suite-out/; probe-out/; playwright.json; smoke-summary.json; test-results/; cleanup-final.json; evidence-sha256.json.
