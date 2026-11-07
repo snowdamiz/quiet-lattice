@@ -1,0 +1,631 @@
+{
+  "status": "INCOMPLETE_SEMANTIC_EXPOSURE_NOT_QUALIFIED",
+  "base_commit": "184ac941154bee237dc0a61f83febbbed73f4ba1",
+  "source_sha256": "aabde4a8048f9c791a27b192080f182b97f5407a85676de592e5b9092e58411a",
+  "source_changes": false,
+  "exports_rerun": false,
+  "requirement": "15\u201330% outer plates removed along seams exposing frame; not an area requirement",
+  "plate_count_audit": {
+    "denominator": 243,
+    "counts": {
+      "99_percent_absent": 52,
+      "90_percent_absent": 71,
+      "50_percent_absent": 93
+    },
+    "unchanged": true,
+    "caveat": "Connected components remain plate proxies"
+  },
+  "selected_blocking_candidates": {
+    "Body_husk:7603": {
+      "geometry": {
+        "object": "Body_husk",
+        "component_id": 7603,
+        "faces": 336,
+        "bounds": [
+          [
+            -2.0490472316741943,
+            2.0490472316741943
+          ],
+          [
+            -5.599999904632568,
+            5.849999904632568
+          ],
+          [
+            -0.8799999952316284,
+            -0.1704956293106079
+          ]
+        ],
+        "dimensions": [
+          4.098094463348389,
+          11.449999809265137,
+          0.7095043659210205
+        ],
+        "materials": [
+          "LarkHusk_HuskDark"
+        ],
+        "area": 35.62587059289217
+      },
+      "ray_evidence": {
+        "area": 7.388824020554705,
+        "count": 755,
+        "rays": [
+          {
+            "reference_component": 516,
+            "reference_face": 542,
+            "origin": [
+              -19.22702407836914,
+              -7.403647422790527,
+              24.118974685668945
+            ],
+            "direction": [
+              0.5740497708320618,
+              0.10154131799936295,
+              -0.8125
+            ],
+            "hit": [
+              -1.564676284790039,
+              -4.279426574707031,
+              -0.8800029754638672
+            ],
+            "hit_polygon": 7631
+          },
+          {
+            "reference_component": 516,
+            "reference_face": 571,
+            "origin": [
+              -25.189266204833984,
+              -10.482340812683105,
+              18.291067123413086
+            ],
+            "direction": [
+              0.7952651381492615,
+              0.1998940408229828,
+              -0.5723598599433899
+            ],
+            "hit": [
+              1.4479637145996094,
+              -3.7869343757629395,
+              -0.8799991607666016
+            ],
+            "hit_polygon": 7657
+          },
+          {
+            "reference_component": 688,
+            "reference_face": 692,
+            "origin": [
+              -28.649038314819336,
+              -9.907134056091309,
+              12.529458999633789
+            ],
+            "direction": [
+              0.8982247710227966,
+              0.18839909136295319,
+              -0.3971121311187744
+            ],
+            "hit": [
+              1.6817092895507812,
+              -3.545379638671875,
+              -0.880000114440918
+            ],
+            "hit_polygon": 7672
+          },
+          {
+            "reference_component": 688,
+            "reference_face": 693,
+            "origin": [
+              -28.59067153930664,
+              -10.22962760925293,
+              12.503300666809082
+            ],
+            "direction": [
+              0.896182656288147,
+              0.20092806220054626,
+              -0.3955812454223633
+            ],
+            "hit": [
+              1.7289695739746094,
+              -3.4318313598632812,
+              -0.880000114440918
+            ],
+            "hit_polygon": 7672
+          }
+        ]
+      },
+      "rationale": "Broad surface dimensions and area are inconsistent with a slender individual rib; no material-name inference of frame."
+    },
+    "Body_husk:11770": {
+      "geometry": {
+        "object": "Body_husk",
+        "component_id": 11770,
+        "faces": 15,
+        "bounds": [
+          [
+            3.679021120071411,
+            4.432583808898926
+          ],
+          [
+            -2.9638872146606445,
+            -0.7637634873390198
+          ],
+          [
+            -0.3588138818740845,
+            -0.2881292700767517
+          ]
+        ],
+        "dimensions": [
+          0.7535626888275146,
+          2.2001237273216248,
+          0.07068461179733276
+        ],
+        "materials": [
+          "LarkHusk_HuskDark"
+        ],
+        "area": 1.406551718711853
+      },
+      "ray_evidence": {
+        "area": 1.5879168852401468,
+        "count": 70,
+        "rays": [
+          {
+            "reference_component": 4942,
+            "reference_face": 4998,
+            "origin": [
+              -21.252981185913086,
+              -14.339138984680176,
+              18.76326560974121
+            ],
+            "direction": [
+              0.7430508732795715,
+              0.3522464632987976,
+              -0.5690323710441589
+            ],
+            "hit": [
+              3.697620391845703,
+              -2.5111989974975586,
+              -0.3440399169921875
+            ],
+            "hit_polygon": 11774
+          },
+          {
+            "reference_component": 4942,
+            "reference_face": 4998,
+            "origin": [
+              -21.21593475341797,
+              -14.38296890258789,
+              18.784435272216797
+            ],
+            "direction": [
+              0.7421102523803711,
+              0.3529888391494751,
+              -0.5697993040084839
+            ],
+            "hit": [
+              3.696542739868164,
+              -2.5332117080688477,
+              -0.3436012268066406
+            ],
+            "hit_polygon": 11774
+          },
+          {
+            "reference_component": 10850,
+            "reference_face": 10868,
+            "origin": [
+              29.942485809326172,
+              -7.06521463394165,
+              12.678976058959961
+            ],
+            "direction": [
+              -0.8782448172569275,
+              0.19307966530323029,
+              -0.4375
+            ],
+            "hit": [
+              3.785675048828125,
+              -1.3147130012512207,
+              -0.35110950469970703
+            ],
+            "hit_polygon": 11771
+          },
+          {
+            "reference_component": 10850,
+            "reference_face": 10868,
+            "origin": [
+              25.205020904541016,
+              6.712799549102783,
+              18.932321548461914
+            ],
+            "direction": [
+              -0.7171515226364136,
+              -0.2619026005268097,
+              -0.6458333134651184
+            ],
+            "hit": [
+              3.7958202362060547,
+              -1.105806827545166,
+              -0.347808837890625
+            ],
+            "hit_polygon": 11770
+          }
+        ]
+      },
+      "rationale": "Broad surface dimensions and area are inconsistent with a slender individual rib; no material-name inference of frame."
+    },
+    "Body_husk:9981": {
+      "geometry": {
+        "object": "Body_husk",
+        "component_id": 9981,
+        "faces": 12,
+        "bounds": [
+          [
+            -5.642590522766113,
+            -4.847536563873291
+          ],
+          [
+            -3.238574981689453,
+            -1.5010931491851807
+          ],
+          [
+            -0.2756296992301941,
+            -0.20682398974895477
+          ]
+        ],
+        "dimensions": [
+          0.7950539588928223,
+          1.7374818325042725,
+          0.06880570948123932
+        ],
+        "materials": [
+          "LarkHusk_HuskDark"
+        ],
+        "area": 1.1045360267162323
+      },
+      "ray_evidence": {
+        "area": 0.9907900111347551,
+        "count": 45,
+        "rays": [
+          {
+            "reference_component": 9941,
+            "reference_face": 9959,
+            "origin": [
+              -3.532625913619995,
+              -1.5989989042282104,
+              29.583200454711914
+            ],
+            "direction": [
+              -0.04415887966752052,
+              -0.006451142020523548,
+              -0.9990037679672241
+            ],
+            "hit": [
+              -4.852395534515381,
+              -1.791803240776062,
+              -0.27387428283691406
+            ],
+            "hit_polygon": 9981
+          },
+          {
+            "reference_component": 9941,
+            "reference_face": 9964,
+            "origin": [
+              -3.296948194503784,
+              -2.499345302581787,
+              29.571508407592773
+            ],
+            "direction": [
+              -0.05207127705216408,
+              0.00977860763669014,
+              -0.9985954761505127
+            ],
+            "hit": [
+              -4.853249549865723,
+              -2.207083225250244,
+              -0.27441978454589844
+            ],
+            "hit_polygon": 9982
+          },
+          {
+            "reference_component": 9967,
+            "reference_face": 9971,
+            "origin": [
+              -9.037638664245605,
+              17.059114456176758,
+              21.582063674926758
+            ],
+            "direction": [
+              0.13917119801044464,
+              -0.6659872531890869,
+              -0.7328659296035767
+            ],
+            "hit": [
+              -4.889168739318848,
+              -2.792896270751953,
+              -0.2634925842285156
+            ],
+            "hit_polygon": 9984
+          },
+          {
+            "reference_component": 9987,
+            "reference_face": 9996,
+            "origin": [
+              -3.7563986778259277,
+              -1.9571164846420288,
+              29.59418487548828
+            ],
+            "direction": [
+              -0.046708088368177414,
+              -0.002119006123393774,
+              -0.9989063143730164
+            ],
+            "hit": [
+              -5.152061462402344,
+              -2.0204334259033203,
+              -0.2536792755126953
+            ],
+            "hit_polygon": 9985
+          }
+        ]
+      },
+      "rationale": "Broad surface dimensions and area are inconsistent with a slender individual rib; no material-name inference of frame."
+    },
+    "Body_husk:12123": {
+      "geometry": {
+        "object": "Body_husk",
+        "component_id": 12123,
+        "faces": 12,
+        "bounds": [
+          [
+            4.847536563873291,
+            5.642590522766113
+          ],
+          [
+            -3.238574981689453,
+            -1.5010931491851807
+          ],
+          [
+            -0.2756296992301941,
+            -0.20682398974895477
+          ]
+        ],
+        "dimensions": [
+          0.7950539588928223,
+          1.7374818325042725,
+          0.06880570948123932
+        ],
+        "materials": [
+          "LarkHusk_HuskDark"
+        ],
+        "area": 1.1045360267162323
+      },
+      "ray_evidence": {
+        "area": 0.9330810390105777,
+        "count": 40,
+        "rays": [
+          {
+            "reference_component": 10954,
+            "reference_face": 10972,
+            "origin": [
+              3.5326504707336426,
+              -1.5989965200424194,
+              29.583200454711914
+            ],
+            "direction": [
+              0.04415806382894516,
+              -0.0064512137323617935,
+              -0.9990037679672241
+            ],
+            "hit": [
+              4.852396011352539,
+              -1.791803002357483,
+              -0.27387237548828125
+            ],
+            "hit_polygon": 12123
+          },
+          {
+            "reference_component": 10954,
+            "reference_face": 10977,
+            "origin": [
+              3.298266649246216,
+              -2.4966909885406494,
+              29.571613311767578
+            ],
+            "direction": [
+              0.05202731117606163,
+              0.009690133854746819,
+              -0.9985986351966858
+            ],
+            "hit": [
+              4.853254318237305,
+              -2.2070729732513428,
+              -0.27441978454589844
+            ],
+            "hit_polygon": 12124
+          },
+          {
+            "reference_component": 10980,
+            "reference_face": 10984,
+            "origin": [
+              9.035934448242188,
+              17.054134368896484,
+              21.5869140625
+            ],
+            "direction": [
+              -0.1391487717628479,
+              -0.6659311652183533,
+              -0.7329211831092834
+            ],
+            "hit": [
+              4.88753080368042,
+              -2.7990856170654297,
+              -0.2634601593017578
+            ],
+            "hit_polygon": 12126
+          },
+          {
+            "reference_component": 11000,
+            "reference_face": 11009,
+            "origin": [
+              3.662613868713379,
+              -2.0948455333709717,
+              29.590105056762695
+            ],
+            "direction": [
+              0.0465267077088356,
+              -0.002194466069340706,
+              -0.9989145994186401
+            ],
+            "hit": [
+              5.052980899810791,
+              -2.1604232788085938,
+              -0.2606639862060547
+            ],
+            "hit_polygon": 12124
+          }
+        ]
+      },
+      "rationale": "Broad surface dimensions and area are inconsistent with a slender individual rib; no material-name inference of frame."
+    },
+    "Body_husk:8247": {
+      "geometry": {
+        "object": "Body_husk",
+        "component_id": 8247,
+        "faces": 12,
+        "bounds": [
+          [
+            -1.565999984741211,
+            -0.5339999794960022
+          ],
+          [
+            -0.6000000238418579,
+            0.800000011920929
+          ],
+          [
+            -0.8939999938011169,
+            -0.8740000128746033
+          ]
+        ],
+        "dimensions": [
+          1.0320000052452087,
+          1.4000000357627869,
+          0.019999980926513672
+        ],
+        "materials": [
+          "LarkHusk_HuskDark"
+        ],
+        "area": 1.4464265629649162
+      },
+      "ray_evidence": {
+        "area": 0.8699129886190519,
+        "count": 26,
+        "rays": [
+          {
+            "reference_component": 3576,
+            "reference_face": 3650,
+            "origin": [
+              29.295793533325195,
+              5.675004959106445,
+              11.244836807250977
+            ],
+            "direction": [
+              -0.9139925241470337,
+              -0.18159973621368408,
+              -0.36282116174697876
+            ],
+            "hit": [
+              -1.2349967956542969,
+              -0.3911094665527344,
+              -0.8747549057006836
+            ],
+            "hit_polygon": 8247
+          },
+          {
+            "reference_component": 3576,
+            "reference_face": 3650,
+            "origin": [
+              29.39413070678711,
+              5.618603706359863,
+              11.023653030395508
+            ],
+            "direction": [
+              -0.9160357713699341,
+              -0.1797569841146469,
+              -0.35856103897094727
+            ],
+            "hit": [
+              -1.0014591217041016,
+              -0.34603214263916016,
+              -0.8739986419677734
+            ],
+            "hit_polygon": 8248
+          },
+          {
+            "reference_component": 3576,
+            "reference_face": 3659,
+            "origin": [
+              28.02931785583496,
+              7.424345970153809,
+              13.232969284057617
+            ],
+            "direction": [
+              -0.8782913088798523,
+              -0.21207796037197113,
+              -0.428517609834671
+            ],
+            "hit": [
+              -0.8843822479248047,
+              0.442655086517334,
+              -0.8740015029907227
+            ],
+            "hit_polygon": 8254
+          },
+          {
+            "reference_component": 3576,
+            "reference_face": 3659,
+            "origin": [
+              28.647764205932617,
+              6.994405269622803,
+              12.111668586730957
+            ],
+            "direction": [
+              -0.897557258605957,
+              -0.1983560174703598,
+              -0.393758624792099
+            ],
+            "hit": [
+              -0.9525547027587891,
+              0.45287132263183594,
+              -0.8739995956420898
+            ],
+            "hit_polygon": 8254
+          }
+        ]
+      },
+      "rationale": "Broad surface dimensions and area are inconsistent with a slender individual rib; no material-name inference of frame."
+    }
+  },
+  "visual": {
+    "image": "previews/semantic-overview.png",
+    "inspection": "Dark shoulder cavity and narrow bordering members visible; broad wing backing remains. Overview cannot establish frame exposure across representative missing plates.",
+    "renders": 1,
+    "device": "CPU",
+    "denoising": false
+  },
+  "resource": {
+    "exit": 0,
+    "peak_rss": 1041383424,
+    "seconds": 2.058396084001288
+  },
+  "unfinished": [
+    "Identify authored structural member provenance and classify all missing-plate hit components",
+    "Remove bounded blocking patches and validate all four LODs if required",
+    "Source/export validation and canonical export hash update after geometry change",
+    "Independent blind review, runtime performance, production body and flicker"
+  ],
+  "qualification": "No semantic PASS or overall visual PASS. Diagnostic evidence only; requested complete candidate not achieved.",
+  "evidence_sha256": {
+    "semantic_geometry.py": "7b32d692b87efd7cd882492a390877493be5a155b0acef836ed966f6fa8a9fca",
+    "semantic-geometry.json": "b84c57aee19d4f2c3face85e2ae467e4557b99db5e3eb665aa2a3092fc9afc0e",
+    "semantic_preview.py": "123a623b7e0b28503443d32215413418cf7067a0834730f3e86cf7773da3ad94",
+    "previews/semantic-overview.png": "8f271680902e255d6a45e4022aae8b9e8aaa22737ead277e21e7fbdcc0f44d58",
+    "run_semantic.py": "36c6f5a0b4b67cced1a652ae9a19e1a857490399a53401c7e266adb73013d713"
+  }
+}
