@@ -1,0 +1,107 @@
+{
+  "task": "P1.E12.T02/lark",
+  "head": "928ec63c59b691e0885fae8589c58202ccc432b1",
+  "verdict": "REVISE",
+  "pass_rule": "every criterion >= 4 and mean >= 4.5",
+  "scores": {
+    "design": 3,
+    "silhouette": 4,
+    "proportion": 4,
+    "materials": 3,
+    "detail": 4,
+    "topology": 3,
+    "consistency": 4,
+    "fitness": 3,
+    "placeholder": 4,
+    "performance": 4
+  },
+  "mean": 3.6,
+  "failing": [
+    "design",
+    "materials",
+    "topology",
+    "fitness"
+  ],
+  "notes": {
+    "design": "Rebuild lark_husked to art-bible section 6. Remove 15-30% of outer plates along the shell's own seams so the frame shows, burn the remaining paint to husk black #121416 with rust at fasteners, and scrawl glyph fragments. Noon and open-space show a purple and magenta shell with only the wing lattice opened; the silhouette stays a Lark, which is right, but it does not read as Hollow.",
+    "materials": "Rebake husked Hull, Accent, and Trim off the purple atlas. The material balls and the noon and open-space frames are magenta and purple, and the night frame has no #9FE8DA seam glow. Keep the base pearl and sea-green paint. It stays matte under noon, night, and open space, with grime in the rib grooves and no blown metal. Replace the damaged Glass map. Its ball is a field of white scribbles.",
+    "topology": "Regenerate LOD2 with the shell normals and UVs kept. At the same camera, LOD0 is a continuous scallop and LOD2 breaks into faceted shards, dark holes, and a hotter wing in noon, night, and open space. That faceted read is what the 100 m frame shows. LOD0 wire is even. Triangle chains pass (LOD3 is 2.7%, 2.5%, 2.5% of LOD0).",
+    "fitness": "Fix the open canopy so the glass panes hinge clear of each other. stills/lark_cockpit_open_top.png shows the panes crossing in a bowtie. Add a BAY empty for the single cargo pod. The overlay reports no BAY_*. Hardpoints HP_S_1 and HP_S_2 sit on the wing-root mounts, the side ladder meets the cockpit sill, and the five colliders wrap body, nacelles, and wings."
+  },
+  "consistency_disclosure": "Peer-hull stills (Swift, Kestrel, Mule) were not in the packet. Scored against Compact/Thalune art-bible language and internal base/damaged/husked coherence.",
+  "performance_evidence": {
+    "triangles_lod0": {
+      "lark": 107054,
+      "lark_damaged": 111862,
+      "lark_husked": 117702
+    },
+    "lod3_fraction": {
+      "lark": 0.027,
+      "lark_damaged": 0.025,
+      "lark_husked": 0.025
+    },
+    "size_m_span_length_height": {
+      "lark": [
+        13.52,
+        12.38,
+        4.29
+      ],
+      "lark_damaged": [
+        13.52,
+        12.38,
+        4.49
+      ],
+      "lark_husked": [
+        13.52,
+        12.43,
+        4.29
+      ]
+    },
+    "asset_gpu_ms": {
+      "lark": {
+        "noon-lush": 1.091,
+        "night-exotic": 1.067,
+        "open-space": 1.234
+      },
+      "lark_damaged": {
+        "noon-lush": 1.296,
+        "night-exotic": 1.149,
+        "open-space": 1.297
+      },
+      "lark_husked": {
+        "noon-lush": 1.318,
+        "night-exotic": 1.242,
+        "open-space": 1.354
+      }
+    },
+    "scene_gpu_ms_median": {
+      "lark": {
+        "noon-lush": 22.254,
+        "night-exotic": 27.31,
+        "open-space": 4.009
+      },
+      "lark_damaged": {
+        "noon-lush": 22.488,
+        "night-exotic": 27.284,
+        "open-space": 4.041
+      },
+      "lark_husked": {
+        "noon-lush": 22.375,
+        "night-exotic": 27.417,
+        "open-space": 4.084
+      }
+    },
+    "scene_under_budget": {
+      "noon-lush": false,
+      "night-exotic": false,
+      "open-space": true
+    },
+    "gpu_texture_mb_transcoded": {
+      "lark": 64,
+      "lark_damaged": 128,
+      "lark_husked": 107,
+      "hero_cap": 512
+    }
+  },
+  "pngs_viewed": 49
+}

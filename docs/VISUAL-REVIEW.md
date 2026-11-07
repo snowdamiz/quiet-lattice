@@ -400,6 +400,7 @@ Graded per hull with the "Models and environments" table, each file as a family 
 | 2 | Swift | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 3, topology 3, consistency 3, fitness 4, placeholder 3, performance 4 | 3.4 |
 | 2 | Kestrel | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 4, topology 4, consistency 4, fitness 4, placeholder 3, performance 4 | 3.8 |
 | 2 | Mule | REVISE | design 4, silhouette 4, proportion 4, materials 3, detail 4, topology 4, consistency 4, fitness 3, placeholder 4, performance 4 | 3.8 |
+| 3 | Lark | REVISE | design 3, silhouette 4, proportion 4, materials 3, detail 4, topology 3, consistency 4, fitness 3, placeholder 4, performance 4 | 3.6 |
 
 Round 1, common to all four: wear as uniform noise rather than placed by use; damaged variants indistinguishable from
 the base at gameplay range; LOD0 budgets spent on uniform tessellation of flat plates rather than modelled detail
@@ -409,6 +410,23 @@ grid and misses the calibration's draw-call ask (65 against ≤12); the Swift re
 Kestrel's lattice reads as stick-and-tissue rather than grown chitin; the Mule's form passes (design and silhouette 4)
 but its liveries are swamped by nacre and it lacks BAY_* empties. Artifacts: `assets/renders/{lark,swift,kestrel,mule}_*`,
 `assets/renders/review/hulls/`.
+
+
+### Lark round 3 (shrink-512 promote `928ec63c`, 2026-11-07)
+
+```
+VERDICT: REVISE
+TASK: P1.E12.T02/lark
+SCORES: design 3, silhouette 4, proportion 4, materials 3, detail 4, topology 3, consistency 4, fitness 3, placeholder 4, performance 4 (mean 3.60)
+NOTES:
+- design: Rebuild lark_husked to art-bible section 6. Remove 15-30% of outer plates along the shell's own seams so the frame shows, burn the remaining paint to husk black #121416 with rust at fasteners, and scrawl glyph fragments. Noon and open-space show a purple and magenta shell with only the wing lattice opened; the silhouette stays a Lark, which is right, but it does not read as Hollow.
+- materials: Rebake husked Hull, Accent, and Trim off the purple atlas. The material balls and the noon and open-space frames are magenta and purple, and the night frame has no #9FE8DA seam glow. Keep the base pearl and sea-green paint. It stays matte under noon, night, and open space, with grime in the rib grooves and no blown metal. Replace the damaged Glass map. Its ball is a field of white scribbles.
+- topology: Regenerate LOD2 with the shell normals and UVs kept. At the same camera, LOD0 is a continuous scallop and LOD2 breaks into faceted shards, dark holes, and a hotter wing in noon, night, and open space. That faceted read is what the 100 m frame shows. LOD0 wire is even. Triangle chains pass (LOD3 is 2.7%, 2.5%, 2.5% of LOD0).
+- fitness: Fix the open canopy so the glass panes hinge clear of each other. stills/lark_cockpit_open_top.png shows the panes crossing in a bowtie. Add a BAY empty for the single cargo pod. The overlay reports no BAY_*. Hardpoints HP_S_1 and HP_S_2 sit on the wing-root mounts, the side ladder meets the cockpit sill, and the five colliders wrap body, nacelles, and wings.
+ARTIFACTS: sealed packet `/private/tmp/lark-visual-packet-928ec63c-HATXLh` (INDEX `2680d920…`); seal `/private/tmp/lark-blind-visual-928ec63c-k7m3q` (SEAL sha256 `dc143130…`); retained `docs/review-records/p1-e12-t02/lark-blind-visual-928ec63c/`.
+```
+
+Density gate (≥512 px/m, one 4096 atlas) and SOURCE/CPU PASS on the promoted candidate remain accepted; this round fails visual acceptance only. Peer-hull stills were not in the packet; consistency scored against Compact/Thalune language and internal states. Scene noon/night ms attributed to the planet backdrop; hull GPU 1.07–1.35 ms / 12 draws.
 
 ## P2.E21.T01 Event framework (banner announcement)
 

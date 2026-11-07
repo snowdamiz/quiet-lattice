@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-07T14:58:20.041161+00:00",
+  "verdict": "REVISE",
+  "mean": 3.6,
+  "round": 3,
+  "baseHead": "928ec63c59b691e0885fae8589c58202ccc432b1",
+  "authorized": true,
+  "fixScope": [
+    "Rebuild lark_husked to art-bible \u00a76 (plate loss 15-30% along seams, husk black #121416, rust at fasteners, glyph fragments, #9FE8DA seam glow)",
+    "Rebake husked Hull/Accent/Trim off purple atlas; replace damaged Glass map",
+    "Regenerate LOD2 preserving shell normals/UVs (no faceted shard/dark-hole pop vs LOD0)",
+    "Fix open canopy pane intersection; add BAY_* empty for cargo pod"
+  ],
+  "preserve": [
+    "one 4096 atlas / force_fit_scale=1.0 / min_median >=512 on sealed blend and decoded GLB",
+    "single UVMap / TEXCOORD_0",
+    "base pearl/sea-green matte look that already scored materials notes as keep",
+    "no shared exporter/meshopt/validate/families edits",
+    "no other hulls"
+  ],
+  "bounds": {
+    "blender": "1 process -t 2",
+    "rssGiB": 8,
+    "stageMinutes": 45,
+    "growthGiB": 6,
+    "freeSpaceFloorGiB": 12,
+    "diskNote": "host ~18 GiB free \u2014 delete intermediates aggressively"
+  },
+  "afterFix": "Scoped commit; idle for parent SOURCE/CPU then fresh capture + blind visual. No push/PR/merge/Trunk."
+}

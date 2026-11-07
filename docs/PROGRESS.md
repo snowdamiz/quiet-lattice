@@ -1092,3 +1092,8 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - Metadata retained under `docs/review-records/p1-e12-t02/lark-visual-packet-928ec63c/` (index `20261107-lark-visual-packet-928ec63c.json`); PNGs remain at packet root.
 - Blind visual Cursor/Opus attempt failed (weekly usage); failover to Grok `grok-4.7` on the same sealed packet (no grade produced by the failed attempt).
 
+## 2026-11-07 — Lark blind visual REVISE (round 3); author fix assigned
+
+- **Blind visual REVISE** mean **3.60** on promote `928ec63c` / packet INDEX `2680d920…` (49/49 PNGs viewed; SEAL `dc143130…`). Failing: design (husked not Hollow §6), materials (husked purple atlas; damaged Glass scribbles), topology (LOD2 faceting/holes), fitness (canopy pane cross; missing BAY_*). Passing: silhouette, proportion, detail, consistency (peers absent), placeholder, performance (hull cost; scene ms disclosed as planet).
+- Density ≥512 / SOURCE/CPU PASS / canonical promote remain accepted. Author owns a scoped R3 visual fix under one-atlas density preservation; fresh capture + regrade after delivery. Screenshot cleanup STOPPED. Disk ~18 GiB free — tight bounds. No main/remote/PR/Trunk action.
+- Seal retained under `docs/review-records/p1-e12-t02/lark-blind-visual-928ec63c/` (index `20261107-lark-blind-visual-revise-928ec63c.json`).

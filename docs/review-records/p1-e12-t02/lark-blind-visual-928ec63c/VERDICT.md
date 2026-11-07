@@ -1,0 +1,54 @@
+VERDICT: REVISE
+TASK: P1.E12.T02/lark
+SCORES: design 3, silhouette 4, proportion 4, materials 3, detail 4, topology 3, consistency 4, fitness 3, placeholder 4, performance 4 (mean 3.60)
+NOTES: design: Rebuild lark_husked to art-bible section 6. Remove 15-30% of outer plates along the shell's own seams so the frame shows, burn the remaining paint to husk black #121416 with rust at fasteners, and scrawl glyph fragments. Noon and open-space show a purple and magenta shell with only the wing lattice opened; the silhouette stays a Lark, which is right, but it does not read as Hollow. materials: Rebake husked Hull, Accent, and Trim off the purple atlas. The material balls and the noon and open-space frames are magenta and purple, and the night frame has no #9FE8DA seam glow. Keep the base pearl and sea-green paint. It stays matte under noon, night, and open space, with grime in the rib grooves and no blown metal. Replace the damaged Glass map. Its ball is a field of white scribbles. topology: Regenerate LOD2 with the shell normals and UVs kept. At the same camera, LOD0 is a continuous scallop and LOD2 breaks into faceted shards, dark holes, and a hotter wing in noon, night, and open space. That faceted read is what the 100 m frame shows. LOD0 wire is even. Triangle chains pass (LOD3 is 2.7%, 2.5%, 2.5% of LOD0). fitness: Fix the open canopy so the glass panes hinge clear of each other. stills/lark_cockpit_open_top.png shows the panes crossing in a bowtie. Add a BAY empty for the single cargo pod. The overlay reports no BAY_*. Hardpoints HP_S_1 and HP_S_2 sit on the wing-root mounts, the side ladder meets the cockpit sill, and the five colliders wrap body, nacelles, and wings. consistency: Peer-hull stills for Swift, Kestrel, and Mule were not in this packet. Consistency is scored on Compact and Thalune shell language and on base, damaged, and husked sharing one planform. performance: The hull itself is inside DESIGN 19.2. LOD0 is 107054, 111862, and 117702 triangles. Paired GPU cost is 1.07-1.35 ms. Transcoded textures are 64, 128, and 107 MB against a 512 MB hero cap. The review scene does not hold 60 fps on noon-lush (about 26 ms) or night-exotic (about 33 ms). Open space does (about 4.5 ms). The planet scene carries that cost. The hull adds about 1.2 ms and 12 draws.
+ARTIFACTS:
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/cpu/lark_lark_lark_damaged_materials.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/cpu/lark_lark_lark_damaged_turntable.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/cpu/lark_lark_lark_husked_materials.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/cpu/lark_lark_lark_husked_turntable.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/cpu/lark_lark_materials.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/cpu/lark_lark_turntable.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/far200_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/far_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/far200_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/far_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/night-exotic_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/night-exotic_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/noon-lush_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/noon-lush_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/open-space_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/open-space_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/overlay.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/sheet.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/wireframe_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_damaged/wireframe_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/far200_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/far_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/night-exotic_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/night-exotic_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/noon-lush_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/noon-lush_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/open-space_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/open-space_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/overlay.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/sheet.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/wireframe_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/lark_husked/wireframe_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/night-exotic_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/night-exotic_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/noon-lush_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/noon-lush_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/open-space_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/open-space_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/overlay.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/sheet.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/wireframe_lod0.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/review/hulls/lark/lark/wireframe_lod2.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/stills/lark_boarding_board.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/stills/lark_cockpit_closed_side.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/stills/lark_cockpit_open_q.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/stills/lark_cockpit_open_side.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/stills/lark_cockpit_open_top.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/stills/lark_hardpoint_HP_S_1.png
+/private/tmp/lark-visual-packet-928ec63c-HATXLh/stills/lark_hardpoint_HP_S_2.png
