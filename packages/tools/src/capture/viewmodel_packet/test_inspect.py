@@ -43,15 +43,32 @@ def texture_materials(people):
 
 
 def raw_observations(spec):
-    frames, elapsed = [], 0
-    for index, name in enumerate(n for n in spec["files"] if n.endswith(".png") and n != "sheet.png"):
+    frames, elapsed, frame_number = [], 24 / 60, 25
+    for name in (n for n in spec["files"] if n.endswith(".png") and n != "sheet.png"):
         pose = name.split("-", 1)[1][:-4]
         gap, underwater = pose == "switch-gap", pose == "underwater"
-        dt = 0 if pose in ("raise-0", "overheat") else 0.4
-        elapsed += dt
+        steps, zero_steps = 120, 0
+        if gap:
+            steps, zero_steps = 0, 1
+        elif pose == "switch-settled":
+            steps = 24
+        elif pose.startswith("sway-"):
+            steps += 120
+        elif pose.startswith("raise-"):
+            zero_steps = 2
+            steps += 24 if pose == "raise-0.4" else 0
+        elif pose == "overheat":
+            steps += 180
+            zero_steps = 1
+        elif pose in ("fire", "underwater"):
+            steps += 1
+        dt = 0 if pose in ("switch-gap", "raise-0", "overheat") else 1 / 60
+        for _ in range(steps):
+            elapsed += 1 / 60
+        frame_number += steps + zero_steps
         width = 2520 if name.startswith("21x9") else 1920
         frame = {"file": name, "viewport": [width, 1080], "canvas": [width, 1080],
-                 "frame": index + 1, "dt": dt, "elapsed": elapsed,
+                 "frame": frame_number, "dt": dt, "elapsed": elapsed,
                  "people": spec["people"], "visible": not gap and not underwater,
                  "modelAttached": not gap, "loaderPending": gap,
                  "raise": 0 if gap or underwater or pose == "raise-0" else 1,
@@ -123,6 +140,14 @@ class Packet:
 
     def run(self):
         return inspector.inspect_packet(self.spec, self.output, self.manifest)
+
+    def run_cli(self):
+        manifest = self.root / "manifest.json"
+        manifest.write_text(json.dumps({"files": self.manifest}))
+        args = [sys.executable, "-B", str(HERE / "inspect_packet.py"),
+                "--inventory", str(HERE / "inventory.json"), "--unit", self.spec["id"],
+                "--output", str(self.output), "--manifest", str(manifest)]
+        return subprocess.run(args, capture_output=True, text=True, timeout=20)
 
 
 @contextmanager
@@ -206,7 +231,7 @@ class InspectorTests(unittest.TestCase):
             ("16x9-sway-down.png", "sway", [0, 0.03], "sway did not reach extreme"),
             ("16x9-sway-down.png", "sway", [0, -0.5], "sway out of range"),
             ("16x9-raise-0.png", "raise", 1, "zero raise"),
-            ("16x9-raise-0.png", "dt", 0.1, "frame/time"),
+            ("16x9-raise-0.png", "dt", 0.1, "zero dt/reset"),
             ("16x9-raise-0.4.png", "raise", 0.8, "did not settle"),
             ("16x9-fire.png", "beamVisible", False, "firing/beam"),
             ("16x9-fire.png", "projection", None, "missing projection"),
@@ -584,6 +609,170 @@ class InspectorTests(unittest.TestCase):
             self.assertIn("loader/attachment", failure["primaryFailure"])
             self.assertEqual(failure["evidence"]["observations"]["unknownRaw"], "producer-fact")
             self.assertEqual(result.stdout, "")
+
+    def assert_cli_refused(self, fixture, value, message):
+        result = fixture.run_cli()
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertEqual(result.stdout, "")
+        failure = json.loads(result.stderr)
+        self.assertEqual(failure["status"], "FAIL")
+        self.assertIn(message, failure["primaryFailure"])
+        self.assertEqual(failure["evidence"]["observations"], value)
+
+    def test_cli_all_settled_poses_require_full_raise(self):
+        with packet("view-ixari") as fixture:
+            for frame in fixture.value["frames"]:
+                if frame["raise"] != 1 or "raise-0.4" in frame["file"]:
+                    continue
+                for raised in (0, 0.8):
+                    with self.subTest(file=frame["file"], raised=raised):
+                        value = copy.deepcopy(fixture.value)
+                        value["unknownRaw"] = {"settled": [frame["file"], raised]}
+                        next(f for f in value["frames"] if f["file"] == frame["file"])["raise"] = raised
+                        fixture.write(value)
+                        self.assert_cli_refused(fixture, value, "expected settled raise")
+
+    def test_cli_timed_raise_reconciles_elapsed_frames_and_last_dt(self):
+        with packet("view-ixari") as fixture:
+            for aspect in ("16x9", "21x9"):
+                for label in ("zero-elapsed", "short-duration", "fractional-update-time", "too-few-updates", "too-much-time",
+                              "zero-dt", "duration-as-dt", "wrong-step-dt"):
+                    with self.subTest(aspect=aspect, case=label):
+                        value = copy.deepcopy(fixture.value)
+                        value["unknownRaw"] = {"timing": label}
+                        zero = next(f for f in value["frames"] if f["file"] == f"{aspect}-raise-0.png")
+                        raised = next(f for f in value["frames"] if f["file"] == f"{aspect}-raise-0.4.png")
+                        if label == "zero-elapsed":
+                            raised.update(elapsed=zero["elapsed"], frame=zero["frame"] + 1, dt=0)
+                        elif label == "short-duration":
+                            raised["elapsed"] = zero["elapsed"] + 0.399
+                        elif label == "fractional-update-time":
+                            raised["elapsed"] = zero["elapsed"] + 0.401
+                        elif label == "too-few-updates":
+                            raised.update(elapsed=zero["elapsed"] + 0.4, frame=zero["frame"] + 23)
+                        elif label == "too-much-time":
+                            raised["frame"] = zero["frame"] + 24
+                        else:
+                            raised["dt"] = {"zero-dt": 0, "duration-as-dt": 0.4, "wrong-step-dt": 1 / 30}[label]
+                        fixture.write(value)
+                        self.assert_cli_refused(fixture, value, "24 updates at 1/60")
+
+    def test_cli_all_seven_units_and_extra_cooling_intervals(self):
+        for spec in INVENTORY["units"]:
+            with self.subTest(unit=spec["id"]), packet(spec["id"]) as fixture:
+                variants = [copy.deepcopy(fixture.value)]
+                if spec["kind"] == "view":
+                    value = copy.deepcopy(fixture.value)
+                    extra_steps = 0
+                    for frame in value["frames"]:
+                        if "raise-0.4" in frame["file"]:
+                            extra_steps += 240
+                        frame["frame"] += extra_steps
+                        frame["elapsed"] += extra_steps / 60
+                    variants.append(value)
+                for value in variants:
+                    value["unknownRaw"] = {"positive": "preserve"}
+                    fixture.write(value)
+                    result = fixture.run_cli()
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(result.stderr, "")
+                    decoded = json.loads(result.stdout)
+                    self.assertEqual(decoded["status"], "PASS")
+                    self.assertEqual(decoded[fixture.readout[:-5]], value)
+
+    def test_cli_png_requires_complete_single_zlib_stream_and_critical_order(self):
+        def chunk(kind, data):
+            return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+
+        with packet() as fixture:
+            fixture.value["unknownRaw"] = {"png": ["retain", 17]}
+            fixture.write()
+            target = fixture.output / "16x9-switch-gap.png"
+            original = target.read_bytes()
+            head, tail = original[:33], original[-12:]
+            offset, compressed = 8, b""
+            while offset < len(original):
+                size = struct.unpack_from(">I", original, offset)[0]
+                if original[offset + 4:offset + 8] == b"IDAT":
+                    compressed += original[offset + 8:offset + 8 + size]
+                offset += size + 12
+            idat = chunk(b"IDAT", compressed)
+            palette = chunk(b"PLTE", b"\0\0\0")
+            midpoint = len(compressed) // 2
+            cases = {
+                "missing-adler": (head + chunk(b"IDAT", compressed[:-4]) + tail, "incomplete PNG zlib"),
+                "trailing-idat": (head + chunk(b"IDAT", compressed + b"extra") + tail, "extra PNG zlib"),
+                "second-zlib": (head + chunk(b"IDAT", compressed + zlib.compress(b"extra")) + tail, "extra PNG zlib"),
+                "trailing-idat-chunk": (head + idat + chunk(b"IDAT", b"extra") + tail, "extra PNG zlib"),
+                "duplicate-ihdr": (head + original[8:], "duplicate PNG IHDR"),
+                "unknown-critical": (head + chunk(b"ABCD", b"unknown") + idat + tail, "unknown critical PNG"),
+                "late-unknown-critical": (head + idat + chunk(b"ABCD", b"unknown") + tail, "unknown critical PNG"),
+                "nonconsecutive-idat": (head + chunk(b"IDAT", compressed[:midpoint]) + chunk(b"tEXt", b"key\0value") +
+                                        chunk(b"IDAT", compressed[midpoint:]) + tail, "nonconsecutive PNG IDAT"),
+                "duplicate-plte": (head + palette + palette + idat + tail, "PNG PLTE"),
+                "late-plte": (head + idat + palette + tail, "PNG PLTE"),
+                "empty-plte": (head + chunk(b"PLTE", b"") + idat + tail, "PNG PLTE"),
+                "oversized-plte": (head + chunk(b"PLTE", b"\0" * 771) + idat + tail, "PNG PLTE"),
+                "missing-idat": (head + tail, "missing PNG IDAT"),
+                "duplicate-iend": (head + idat + tail + tail, "after PNG end"),
+                "huge-ihdr": (head[:8] + chunk(b"IHDR", struct.pack(">IIBBBBB", 0x7fffffff, 1080, 8, 2, 0, 0, 0)) +
+                              idat + tail, "wrong PNG dimensions"),
+                "invalid-depth": (head[:8] + chunk(b"IHDR", struct.pack(">IIBBBBB", 1920, 1080, 4, 2, 0, 0, 0)) +
+                                  idat + tail, "RGB/RGBA"),
+                "invalid-interlace": (head[:8] + chunk(b"IHDR", struct.pack(">IIBBBBB", 1920, 1080, 8, 2, 0, 0, 2)) +
+                                      idat + tail, "IHDR format"),
+                "short-scanlines": (head + chunk(b"IDAT", zlib.compress(b"\0")) + tail, "scanline byte count"),
+                "excess-scanlines": (head + chunk(b"IDAT", zlib.compress(b"\0" * ((1920 * 3 + 1) * 1080 + 1))) + tail,
+                                     "scanline byte count"),
+            }
+            for label, (raw, message) in cases.items():
+                with self.subTest(case=label):
+                    target.write_bytes(raw)
+                    fixture.manifest = fixture.manifest_now()
+                    self.assert_cli_refused(fixture, fixture.value, message)
+
+    def test_cli_png_rgb_rgba_depths_interlace_and_split_idat(self):
+        def chunk(kind, data):
+            return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+
+        with packet() as fixture:
+            target = fixture.output / "16x9-switch-gap.png"
+            for mode, color in (("RGB", 2), ("RGBA", 6)):
+                for depth in (8, 16):
+                    pixel = bytes([7, 21, 31, 255][:len(mode)])
+                    if depth == 16:
+                        pixel = b"".join(bytes([channel, channel]) for channel in pixel)
+                    for interlaced in (False, True):
+                        with self.subTest(mode=mode, depth=depth, interlaced=interlaced):
+                            scanlines = bytearray()
+                            # Emit filter-zero rows in PNG's seven Adam7 coordinate passes.
+                            passes = [(range(1920), range(1080))]
+                            if interlaced:
+                                passes = [(range(0, 1920, 8), range(0, 1080, 8)),
+                                          (range(4, 1920, 8), range(0, 1080, 8)),
+                                          (range(0, 1920, 4), range(4, 1080, 8)),
+                                          (range(2, 1920, 4), range(0, 1080, 4)),
+                                          (range(0, 1920, 2), range(2, 1080, 4)),
+                                          (range(1, 1920, 2), range(0, 1080, 2)),
+                                          (range(0, 1920), range(1, 1080, 2))]
+                            for columns, rows in passes:
+                                scanlines.extend((b"\0" + pixel * len(columns)) * len(rows))
+                            data = zlib.compress(scanlines)
+                            header = chunk(b"IHDR", struct.pack(">IIBBBBB", 1920, 1080, depth, color, 0, 0, int(interlaced)))
+                            # A suggested palette and unknown ancillary chunks are legal for truecolor PNG.
+                            raw = b"\x89PNG\r\n\x1a\n" + header + chunk(b"PLTE", b"\0\0\0") + chunk(b"vpAg", b"unknown")
+                            for part in (b"", data[:1], data[1:-2], data[-2:], b""):
+                                raw += chunk(b"IDAT", part)
+                            raw += chunk(b"tEXt", b"source\0synthetic compatibility control") + chunk(b"IEND", b"")
+                            target.write_bytes(raw)
+                            with Image.open(target) as decoded:
+                                decoded.load()
+                                self.assertEqual(decoded.mode, mode)
+                                self.assertEqual(decoded.getpixel((1919, 1079)), tuple([7, 21, 31, 255][:len(mode)]))
+                            fixture.manifest = fixture.manifest_now()
+                            result = fixture.run_cli()
+                            self.assertEqual(result.returncode, 0, result.stderr)
+                            self.assertEqual(json.loads(result.stdout)["status"], "PASS")
 
     def test_cli_result_cap_keeps_all_raw_evidence_and_creates_no_result(self):
         with packet() as fixture:

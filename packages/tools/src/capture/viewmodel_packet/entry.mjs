@@ -131,6 +131,21 @@ export function admit(env = process.env, enabled = ENTRY_ENABLED) {
 
 export async function productionCapture(context, record, cleanups) {
   const { ready, spec, paths } = context;
+  // Observe operations before captureReview's frozen finally can replace their error.
+  function observeOperation(operation) {
+    const failed = (error) => {
+      record.firstCaptureFailure ??= errorFacts(error);
+      throw error;
+    };
+    return function (...args) {
+      try {
+        const value = operation.apply(this, args);
+        return value?.then ? value.catch(failed) : value;
+      } catch (error) {
+        return failed(error);
+      }
+    };
+  }
   const rawWrite = fs.writeFileSync.bind(fs);
   const originalWrite = fs.writeFileSync;
   let attemptedBytes = 0;
@@ -196,15 +211,18 @@ export async function productionCapture(context, record, cleanups) {
     attempt.state = 'launched';
     cleanups.push(() => browser.close());
     const newPage = browser.newPage.bind(browser);
-    browser.newPage = async (options) => {
+    browser.newPage = observeOperation(async (options) => {
       need(!page, 'Only one capture page');
       record.resources.push({ operation: 'browser.newPage', viewport: options.viewport, deviceScaleFactor: 1 });
       page = await newPage({ ...options, deviceScaleFactor: 1 });
+      for (const name of ['on', 'addInitScript', 'goto', 'waitForFunction', 'waitForTimeout', 'setViewportSize', 'route']) {
+        if (typeof page[name] === 'function') page[name] = observeOperation(page[name].bind(page));
+      }
       await page.addInitScript(fixture.installPageFixture);
       if (spec.kind === 'review') {
         const evaluate = page.evaluate.bind(page);
         let instrumented = false;
-        page.evaluate = async (fn, arg) => {
+        page.evaluate = observeOperation(async (fn, arg) => {
           let result;
           try {
             result = await evaluate(fn, arg);
@@ -220,10 +238,10 @@ export async function productionCapture(context, record, cleanups) {
             reviewFacts = await evaluate(() => ({ captures: window.__viewmodelPacket.state.captures, materials: window.__viewmodelPacket.state.materials }));
           }
           return result;
-        };
+        });
       }
       return page;
-    };
+    });
     return browser;
   };
   cleanups.push(() => {

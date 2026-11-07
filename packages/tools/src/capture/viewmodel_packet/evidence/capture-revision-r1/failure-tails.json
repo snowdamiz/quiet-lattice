@@ -1,0 +1,63 @@
+{
+  "lint.txt": {
+    "sha256": "e9589b9bbfa519d5752e6ceaf44b5d76698d0c98785cf868b063c9b1f5c53d0c",
+    "last20lines": [
+      "",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/production.test.mjs",
+      "  89:83  error  'URL' is not defined  no-undef",
+      "",
+      "\u2716 1 problem (1 error, 0 warnings)",
+      ""
+    ]
+  },
+  "focused-units.txt": {
+    "sha256": "95b10c490d7eb9cf607979d52f9181516253386208eb9cdfed71096fed5cb399",
+    "last20lines": [
+      " FAIL  src/Game.test.js [ src/Game.test.js ]",
+      " FAIL  src/exosuit.test.js [ src/exosuit.test.js ]",
+      " FAIL  src/entities/Multitool.materials.test.js [ src/entities/Multitool.materials.test.js ]",
+      " FAIL  src/entities/Multitool.viewmodels.test.js [ src/entities/Multitool.viewmodels.test.js ]",
+      " FAIL  src/entities/hazards.test.js [ src/entities/hazards.test.js ]",
+      " FAIL  src/entities/livelock.test.js [ src/entities/livelock.test.js ]",
+      " FAIL  src/entities/meters.test.js [ src/entities/meters.test.js ]",
+      " FAIL  src/entities/pulseExit.test.js [ src/entities/pulseExit.test.js ]",
+      "Error: UNADMITTED_WRITE:/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/KW32NuFY1oGeaMlgsZAdf/ssr",
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/8]\u23af",
+      "",
+      "",
+      " Test Files  8 failed (8)",
+      "      Tests  no tests",
+      "   Start at  02:16:10",
+      "   Duration  553ms (worker 96%, environment 4%)",
+      "",
+      "    Isolate  8 workers spawned \u00b7 ~54ms startup each (spawn + environment, per file)",
+      "             at least ~376ms faster with isolate: false \u2014 reuses workers across files instead of one per file",
+      ""
+    ]
+  },
+  "decoder/red-regressions/tests.log": {
+    "sha256": "e9517d1c8ca3a45c2422505333be2cc6d383c16b113585b5a3a9a56674e73c2f",
+    "last20lines": [
+      "    self.assert_cli_refused(fixture, fixture.value, message)",
+      "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py\", line 619, in assert_cli_refused",
+      "    self.assertIn(message, failure[\"primaryFailure\"])",
+      "AssertionError: 'scanline byte count' not found in 'InspectionError: OSError: image file is truncated (0 bytes not processed)'",
+      "",
+      "======================================================================",
+      "FAIL: test_cli_png_requires_complete_single_zlib_stream_and_critical_order (decoder_tests.InspectorTests) (case='excess-scanlines')",
+      "----------------------------------------------------------------------",
+      "Traceback (most recent call last):",
+      "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py\", line 722, in test_cli_png_requires_complete_single_zlib_stream_and_critical_order",
+      "    self.assert_cli_refused(fixture, fixture.value, message)",
+      "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_inspect.py\", line 615, in assert_cli_refused",
+      "    self.assertEqual(result.returncode, 1, result.stdout)",
+      "AssertionError: 0 != 1 : {\"valid\":true,\"status\":\"PASS\",\"unit\":\"return-thalune\",\"pngCount\":3,\"observations\":{\"version\":1,\"unit\":\"return-thalune\",\"people\":\"thalune\",\"fromPeople\":\"ulgani\",\"incoming\":{\"people\":\"ulgani\",\"visible\":true,\"modelAttached\":true,\"materials\":[{\"name\":\"Skin\",\"slots\":{\"map\":[2048,2048,12],\"normalMap\":[2048,2048,12],\"roughnessMap\":[2048,2048,12],\"metalnessMap\":[2048,2048,12],\"aoMap\":[2048,2048,12]}},{\"name\":\"VM_ulgani_Tool\",\"slots\":{\"map\":[2048,2048,12],\"normalMap\":[2048,2048,12],\"roughnessMap\":[2048,2048,12],\"metalnessMap\":[2048,2048,12],\"aoMap\":[2048,2048,12],\"emissiveMap\":[2048,2048,12]}}]},\"fixture\":\"offline-dev-first-person\",\"serverAuthority\":false,\"errors\":[],\"frames\":[{\"file\":\"16x9-switch-gap.png\",\"viewport\":[1920,1080],\"canvas\":[1920,1080],\"frame\":26,\"dt\":0,\"elapsed\":0.4,\"people\":\"thalune\",\"visible\":false,\"modelAttached\":false,\"loaderPending\":true,\"raise\":0,\"sway\":[0,0],\"raiseSeconds\":null,\"heat\":0.1,\"overheated\":false,\"firing\":false,\"beamVisible\":false,\"underwater\":false,\"materials\":[]},{\"file\":\"16x9-switch-settled.png\",\"viewport\":[1920,1080],\"canvas\":[1920,1080],\"frame\":50,\"dt\":0.016666666666666666,\"elapsed\":0.8000000000000009,\"people\":\"thalune\",\"visible\":true,\"modelAttached\":true,\"loaderPending\":false,\"raise\":1,\"sway\":[0,0],\"raiseSeconds\":null,\"heat\":0.1,\"overheated\":false,\"firing\":false,\"beamVisible\":false,\"underwater\":false,\"materials\":[{\"name\":\"Skin\",\"slots\":{\"map\":[2048,2048,12],\"normalMap\":[2048,2048,12],\"roughnessMap\":[2048,2048,12],\"metalnessMap\":[2048,2048,12],\"aoMap\":[2048,2048,12]}},{\"name\":\"VM_thalune_Tool\",\"slots\":{\"map\":[2048,2048,12],\"normalMap\":[2048,2048,12],\"roughnessMap\":[2048,2048,12],\"metalnessMap\":[2048,2048,12],\"aoMap\":[2048,2048,12],\"emissiveMap\":[2048,2048,12]}},{\"name\":\"Bio\",\"slots\":{\"map\":[2048,2048,12],\"normalMap\":[2048,2048,12],\"roughnessMap\":[2048,2048,12],\"metalnessMap\":[2048,2048,12],\"aoMap\":[2048,2048,12],\"emissiveMap\":[2048,2048,12]}}]}],\"unknownRaw\":{\"png\":[\"retain\",17]}}}",
+      "",
+      "",
+      "----------------------------------------------------------------------",
+      "Ran 4 tests in 7.278s",
+      "",
+      "FAILED (failures=52)"
+    ]
+  }
+}

@@ -88,7 +88,7 @@ def capture(ready, spec, paths, record):
     evidence = {'helperCalls': [], 'allocations': [], 'released': False}
     record['native'] = evidence
     job = observer = private = admission = None
-    primary = None
+    primary = callback_failure = None
     env = {'PATH': ready['bindings']['path'], 'SMOKE_GL': 'metal', 'DEBUG': 'pw:browser',
            'VIEWMODEL_READY': paths['ready'], 'VIEWMODEL_CONSUMPTION': paths['consumption'],
            'VIEWMODEL_UNIT': spec['id'], 'VIEWMODEL_ENTRY_TOKEN': record['entryToken'],
@@ -105,27 +105,42 @@ def capture(ready, spec, paths, record):
                 evidence['allocations'].append({'operation': 'StationJob', 'path': str(Path(paths['evidence']) / 'job'), 'state': 'attempting'})
                 job.__init__(Path(paths['evidence']) / 'job', argv, ready['bindings']['root'], capture_seconds=600, env=env)
                 evidence['allocations'][-1].update(scratch=str(job.scratch), target=job.target)
-                observer = stages.StageReceipts(job, ready['bindings'], private)
+                helper_ready = {'resolver': {'selectedExecutable': {'path': ready['bindings']['browserBinary']}},
+                                'process_binary_sha256': ready['bindings']['process_binary_sha256']}
+                observer = stages.StageReceipts(job, helper_ready, private)
                 def observe():
-                    # Reserve ceilings are observed native limits, not OS quotas.
-                    evidence['usage'] = {'helperScratch': size(job.scratch), 'job': size(job.out),
-                                         'privateNonprofile': size(private, skip_profiles=True),
-                                         'profiles': sum(size(p) for p in private.glob('playwright_chromiumdev_profile-*'))}
-                    require(evidence['usage']['helperScratch'] <= 64 * MIB, 'Helper log working ceiling')
-                    require(evidence['usage']['job'] <= 16 * MIB, 'Helper metadata working ceiling')
-                    require(evidence['usage']['privateNonprofile'] <= 512 * MIB, 'Private TMP working ceiling')
-                    require(evidence['usage']['profiles'] <= 1024 * MIB, 'Profile working ceiling')
-                    observer.observe()
+                    nonlocal callback_failure
+                    try:
+                        # Retain producer exceptions before StationJob.wait normalizes them.
+                        evidence['usage'] = {'helperScratch': size(job.scratch), 'job': size(job.out),
+                                             'privateNonprofile': size(private, skip_profiles=True),
+                                             'profiles': sum(size(p) for p in private.glob('playwright_chromiumdev_profile-*'))}
+                        require(evidence['usage']['helperScratch'] <= 64 * MIB, 'Helper log working ceiling')
+                        require(evidence['usage']['job'] <= 16 * MIB, 'Helper metadata working ceiling')
+                        require(evidence['usage']['privateNonprofile'] <= 512 * MIB, 'Private TMP working ceiling')
+                        require(evidence['usage']['profiles'] <= 1024 * MIB, 'Profile working ceiling')
+                        observer.observe()
+                    except BaseException as error:
+                        if callback_failure is None:
+                            callback_failure = error
+                            evidence['callbackFailure'] = raw(error)
+                        raise
                 job.start()
                 outcome = job.wait(600, observer=observe)
                 evidence['wait'] = outcome
+                if callback_failure is not None:
+                    evidence.setdefault('secondaryFailures', []).append({
+                        'type': 'HelperWaitOutcome', 'outcome': outcome, 'errors': raw(job.state.get('errors', []))})
+                    raise callback_failure
                 evidence['observation'] = observer.receipt()
                 require(outcome == 'completed', f'Capture did not complete: {outcome}')
                 observer.require_browser()
                 require(job.state['exits'].get('capture') == 0, 'Capture process did not exit 0')
         except BaseException as error:
-            primary = error
-            evidence['primaryFailure'] = raw(error)
+            primary = callback_failure if callback_failure is not None else error
+            evidence['primaryFailure'] = evidence['callbackFailure'] if callback_failure is not None else raw(error)
+            if error is not primary:
+                evidence.setdefault('secondaryFailures', []).append(raw(error))
         # Cleanup gets one finite phase; any interruption stops archive/audit dispatch.
         evidence['phase'] = 'cleanup'
         try:

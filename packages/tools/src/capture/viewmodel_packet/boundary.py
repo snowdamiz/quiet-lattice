@@ -52,11 +52,13 @@ def canonical(path, *, absent=False):
     return path
 
 
-def snapshot(path, cap, expected=None):
+def snapshot(path, cap, expected=None, *, identity=None):
     path = canonical(path)
     require(type(cap) is int and cap >= 0, 'Invalid cap')
     before = path.lstat()
     require(stat.S_ISREG(before.st_mode) and before.st_size <= cap, f'Not a capped regular file: {path}')
+    if identity is not None:
+        require([before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns] == identity, 'Admitted file identity changed')
     fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         opened = os.fstat(fd)

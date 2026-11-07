@@ -6,12 +6,13 @@ import os
 from pathlib import Path
 import secrets
 import signal
+import stat
 import shutil
 import subprocess
 import sys
 
 from boundary import (MIB, canonical, deadline, encoded, exclusive_json, git, json_snapshot,
-                      output_manifest, persist, raw, require, validate_inventory, verify_worktree)
+                      output_manifest, persist, raw, require, snapshot, validate_inventory, verify_worktree)
 import bindings
 
 HERE = Path(__file__).resolve().parent
@@ -128,42 +129,94 @@ def copy_outputs(spec, source, destination, record, label):
     return rows
 
 
+def cache_inventory(paths, cap):
+    """Admit one metadata-only tree before any cache content read."""
+    require(type(cap) is int and cap >= 0, 'Invalid cache cap')
+    total = 0
+    trees = []
+    for name in paths:
+        root = canonical(name)
+        tree = {'path': str(root), 'exists': root.exists(), 'directories': [], 'files': []}
+        trees.append(tree)
+        if not tree['exists']:
+            continue
+        root_stat = root.lstat()
+        require(stat.S_ISDIR(root_stat.st_mode), 'Cache root is not a directory')
+        tree['rootIdentity'] = [root_stat.st_dev, root_stat.st_ino]
+        for leaf in sorted(root.rglob('*')):
+            canonical(leaf)
+            info = leaf.lstat()
+            relative = str(leaf.relative_to(root))
+            if stat.S_ISDIR(info.st_mode):
+                tree['directories'].append({'path': relative, 'identity': [info.st_dev, info.st_ino]})
+            else:
+                require(stat.S_ISREG(info.st_mode), 'Unsupported cache entry')
+                total += info.st_size
+                require(total <= cap, 'Cache snapshot ceiling')
+                tree['files'].append({'path': relative, 'bytes': info.st_size,
+                                      'identity': [info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns]})
+    return {'bytes': total, 'trees': trees}
+
+
+def cache_contents(inventory, cap, event, *, copy_to=None, expected=None):
+    """Every content pass uses the admitted sizes and remaining aggregate allowance."""
+    remaining = cap
+    fingerprints = []
+    for index, tree in enumerate(inventory['trees']):
+        root = Path(tree['path'])
+        target = copy_to / str(index) if copy_to is not None else None
+        if target is not None and tree['exists']:
+            target.mkdir()
+            for row in tree['directories']:
+                (target / row['path']).mkdir()
+        rows = []
+        for row in tree['files']:
+            limit = min(row['bytes'], remaining)
+            attempt = {'path': str(root / row['path']), 'cap': limit, 'bytesRead': None}
+            event.setdefault('reads', []).append(attempt)
+            known = expected[index]['files'].get(row['path']) if expected is not None else None
+            data, digest = snapshot(root / row['path'], limit, known['sha256'] if known else None, identity=row['identity'])
+            attempt['bytesRead'] = len(data)
+            remaining -= len(data)
+            if target is not None:
+                event['attemptedBytes'] += len(data)
+                require(event['attemptedBytes'] <= cap, 'Cache copy ceiling')
+                with (target / row['path']).open('xb') as stream:
+                    stream.write(data)
+            rows.append((row['path'], {'bytes': len(data), 'sha256': digest}))
+        fingerprints.append({'exists': tree['exists'], 'directories': [d['path'] for d in tree['directories']], 'files': dict(rows)})
+    return fingerprints
+
+
+def bounded_caches(paths, cap, event):
+    admitted = cache_inventory(paths, cap)
+    event['admitted'] = admitted
+    event['fingerprints'] = cache_contents(admitted, cap, event)
+    require(cache_inventory(paths, cap) == admitted, 'Cache inventory changed during read')
+    return admitted['bytes']
+
+
 def snapshot_caches(ready, evidence, record):
     with deadline(30):
         destination = evidence / 'cache-before'
         destination.mkdir()
-        total = 0
-        for index, name in enumerate(ready['bindings']['generatedCaches']):
-            path = canonical(name)
-            files = []
-            if path.exists():
-                for leaf in sorted(path.rglob('*')):
-                    canonical(leaf)
-                    if leaf.is_dir(): continue
-                    require(leaf.is_file(), 'Unsupported cache entry')
-                    files.append(leaf)
-            size = sum(p.stat().st_size for p in files)
-            total += size
-            require(total <= 64 * MIB, 'Cache snapshot ceiling')
-            before = bindings.tree_binding(path)
-            event = {'operation': 'cache-snapshot', 'source': name, 'attemptedBytes': 0, 'before': before}
-            record['ledger'].append(event)
-            if path.exists():
-                target = destination / str(index); target.mkdir()
-                for source in files:
-                    from boundary import snapshot
-                    data, _ = snapshot(source, 64 * MIB - (total - size) - event['attemptedBytes'])
-                    event['attemptedBytes'] += len(data)
-                    output = target / source.relative_to(path)
-                    output.parent.mkdir(parents=True, exist_ok=True)
-                    with output.open('xb') as stream: stream.write(data)
-                # Keep empty cache directories in the exact snapshot too.
-                for folder in sorted(p for p in path.rglob('*') if p.is_dir()):
-                    (target / folder.relative_to(path)).mkdir(parents=True, exist_ok=True)
-                after = bindings.tree_binding(path)
-                copied = bindings.tree_binding(target)
-                require(after == before and {k: v for k, v in copied.items() if k != 'path'} == {k: v for k, v in before.items() if k != 'path'}, 'Cache changed during snapshot')
-        record['initialCacheBytes'] = total
+        cap = 64 * MIB
+        paths = ready['bindings']['generatedCaches']
+        event = {'operation': 'cache-snapshot', 'destination': str(destination), 'attemptedBytes': 0}
+        record['ledger'].append(event)
+        admitted = cache_inventory(paths, cap)
+        event['admitted'] = admitted
+        # Hash the exact bytes being copied, not a second generic 512 MiB binding read.
+        fingerprints = cache_contents(admitted, cap, event, copy_to=destination)
+        event['fingerprints'] = fingerprints
+        require(cache_inventory(paths, cap) == admitted, 'Cache inventory changed during snapshot')
+        require(cache_contents(admitted, cap, event, expected=fingerprints) == fingerprints, 'Cache source changed after copy')
+        require(cache_inventory(paths, cap) == admitted, 'Cache inventory changed during reconciliation')
+        copied_paths = [str(destination / str(i)) for i in range(len(paths))]
+        copied = cache_inventory(copied_paths, cap)
+        require(cache_contents(copied, cap, event, expected=fingerprints) == fingerprints, 'Cache copy differs')
+        require(cache_inventory(copied_paths, cap) == copied, 'Cache copy inventory changed')
+        record['initialCacheBytes'] = admitted['bytes']
 
 
 def decode(ready, spec, paths, record, frozen):
@@ -207,7 +260,10 @@ def run_unit(ready, spec, paths, record, *, capture=None, decoder=decode, cache_
         decoder(ready, spec, paths, record, frozen)
         copy_outputs(spec, frozen, evidence / 'verified-copy', record, 'verified-copy')
         output_manifest(spec, Path(paths['output']), record['outputManifest'])
-    cache_bytes = sum(bindings.tree_binding(Path(p))['bytes'] for p in ready['bindings']['generatedCaches'])
+    cache_event = {'operation': 'cache-growth-validation'}
+    record['ledger'].append(cache_event)
+    with deadline(30):
+        cache_bytes = bounded_caches(ready['bindings']['generatedCaches'], record['initialCacheBytes'] + 256 * MIB, cache_event)
     require(cache_bytes - record['initialCacheBytes'] <= 256 * MIB, 'Cache growth ceiling')
     record['cacheBytesAfter'] = cache_bytes
     prior_specs = {s['id']: s for s in plan()['units']}

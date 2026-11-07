@@ -1,0 +1,550 @@
+{
+  "base": "826337c81d17081bc6856506956df4a7d57c8f86",
+  "baseTree": "f8a4074cde50ae56ba633cb1f91ae774505f8bae",
+  "branch": "task/P1-E05-T03",
+  "headBinding": "Future external grant binds the final commit; parent must observe real caller exit 0.",
+  "runtimeEnabled": false,
+  "entryEnabled": false,
+  "allUnitsQualified": false,
+  "unusedPaths": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1/return-thalune",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1/review-ixari",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1/review-thalune",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1/review-ulgani",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1/view-ixari",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1/view-thalune",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-v1/view-ulgani",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-readiness.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-return-thalune.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-return-thalune.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-review-ixari.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-review-ixari.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-review-thalune.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-review-thalune.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-review-ulgani.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-review-ulgani.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-view-ixari.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-view-ixari.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-view-thalune.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-view-thalune.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-view-ulgani.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1-view-ulgani.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1/return-thalune",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1/review-ixari",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1/review-thalune",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1/review-ulgani",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1/view-ixari",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1/view-thalune",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-v1/view-ulgani"
+  ],
+  "unmodifiedPacketHistory": [
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/README.md",
+      "sha256": "c15463d18e805ea56d1965c3c1815c78a77c9148b1a82bcac3469f8ac88faaed",
+      "bytes": 10033
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/REPORT.md",
+      "sha256": "e42a2dcf88a7cd83c4bc7124cb6651b2d56b0ca3690c40ae73a1687b29f9e446",
+      "bytes": 8650
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/audit.py",
+      "sha256": "4dc6e97df81ee9b3352abbf86b38007df30df195e56dbec6e9e5d3096d51f7cd",
+      "bytes": 2452
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/bindings.py",
+      "sha256": "55708366859945fe83fe50550be11a1d43ede427e0eac3db44c448f0caab4b01",
+      "bytes": 7395
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/entry.test.mjs",
+      "sha256": "9a40503652eece4690e3ef76739e3f24620c5f309ecdff3488c7f6390aa81012",
+      "bytes": 5205
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/boundary.log",
+      "sha256": "574fa67736acbc4cb36f603c1b29f2d72b24a7d12ec3aa674af26295d78d3b66",
+      "bytes": 1846
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/commands.jsonl",
+      "sha256": "08f29f9b62dd0212382e05cd329493dd5fcc214b90c5c721e986fb2a87ae67cc",
+      "bytes": 5169
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/entry-resource-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/format.log",
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+      "bytes": 66
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/helpers.log",
+      "sha256": "97fc2bfbb8b71b7d5fd365534eeea4bf8a68c3ab257024fc68fcf9d01b9ca9d5",
+      "bytes": 692
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/inspector.log",
+      "sha256": "16eaa60796410e7f1d3ff1446192aeb2535c15a297962dc075f351b6e3c1198c",
+      "bytes": 1873
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/node-resource-ledger.log",
+      "sha256": "705aa66516a1f707596aec59ca0f65ae334059cd8748f0d289e384f423678739",
+      "bytes": 1402
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/final-controls/node.log",
+      "sha256": "4f0c1583a23fedf8e1a63db74b60ae925fa195df6e7f5501b93c6c33b7af7362",
+      "bytes": 1401
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/freeze.json",
+      "sha256": "dc9294cab41497149e9aaee674b2f3fa684e38d56fa092ce0e245bc33b944087",
+      "bytes": 6037
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/commands.jsonl",
+      "sha256": "51f89daa37fec873e85be62b0ab04773ac37a13e9ffade34d1f1181869979789",
+      "bytes": 5602
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/focused-units.log.gz",
+      "sha256": "bab85732ccf36fc0c397e63f41f7ccd61e9549dbd34064314a50e225a79cbbd9",
+      "bytes": 176
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/format.log",
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+      "bytes": 66
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/node-boundary.log",
+      "sha256": "18dedb0cf2f5134c67bf2f0be801079130ea0298f46aa0929acf3013f6fedb26",
+      "bytes": 1406
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/python-boundary.log",
+      "sha256": "f3e93a693343e07686ed5ff52ddf00fea48e97a11ebc40fd16c1c70ee8fe9967",
+      "bytes": 1389
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/python-helper.log",
+      "sha256": "d4a325b2a899140433d50584ae0f54483aaf671754b5d135b3246b6e4481ebf3",
+      "bytes": 516
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/python-inspector.log",
+      "sha256": "fbb1257500934fce424608b1e66fbd8df677c9ade1e1c10875529bea34878362",
+      "bytes": 1873
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/syntax.json",
+      "sha256": "440ea922b75e61d6cc92f286989079584503b57146dd7918652e2477f73e90d6",
+      "bytes": 223
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-01/typecheck.log",
+      "sha256": "6e18dcc35458e0f596ea57e455d9be952d6afa01eacc2fc49aa69d9a3786a3b6",
+      "bytes": 290
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-02/boundary-final.log",
+      "sha256": "c855a0d95c606e63278df8e0c7c03fc293f6da43ee3f98d09672ba98e2d8ea92",
+      "bytes": 1540
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-02/commands.jsonl",
+      "sha256": "a06a4309c2696f2520d5348c1201b617df63f47782cb7fb2917e4dda5e33ac72",
+      "bytes": 2343
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-02/inspector-extreme-green.log",
+      "sha256": "17326e79d613d07091ebbd691352ab4aa95dff9c90e45a7e9ed7b8f410a5fce9",
+      "bytes": 1873
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-02/inspector-extreme-message-red.log",
+      "sha256": "8b40f0e76f5fada8fdf446cb7fa5ef4c6d10ec20625e3ce4cae547ba1522b326",
+      "bytes": 5425
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/preparation-02/node-final.log",
+      "sha256": "ce250b1c7c0172afe404d98cf3865b4ddde28d9ad936d8b981fd210e73492c7c",
+      "bytes": 1403
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/evidence/protected-hashes.json",
+      "sha256": "09d67b371caa811a47c621d0131870d9541dd2e288315e59a7c4d8416fb19b4e",
+      "bytes": 179615
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/fixture.mjs",
+      "sha256": "856dd81a1238f19f9c1dcc103ce7a2ae5ccddfd9327f1e9ba5eef182d6f6e5a6",
+      "bytes": 14047
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/fixture.test.mjs",
+      "sha256": "c7d2941c6d44f68044ab6f41ccd9714cf4dc6858a2fc8860e00454356b91b93a",
+      "bytes": 2831
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/inventory.json",
+      "sha256": "98958acf95dfdd56eba3b9f86172498f4f60b8d38993046dd4d17d863f1263ae",
+      "bytes": 5356
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/resolve.mjs",
+      "sha256": "b08c88298ffb9485dfe9a81e72ba4f7750c3ed1106f4233e1777f644713bd5b5",
+      "bytes": 1306
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/test_boundary.py",
+      "sha256": "38092c84789d7410ab3aa967920c419e9fd282eec4f457972939deaba53373e3",
+      "bytes": 19074
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/test_native.py",
+      "sha256": "700a08c188ab704bae21cf9b456cd176003377eced3418db8ad4c124d438dfa6",
+      "bytes": 4852
+    },
+    {
+      "path": "packages/tools/src/capture/viewmodel_packet/verify.py",
+      "sha256": "48ae7a88e371b84aab93dacbabaf03898ccffc1783963a784cc0bdaded72dee6",
+      "bytes": 3332
+    }
+  ],
+  "packetFiles": {
+    "README.md": {
+      "bytes": 10033,
+      "sha256": "c15463d18e805ea56d1965c3c1815c78a77c9148b1a82bcac3469f8ac88faaed"
+    },
+    "REPORT.md": {
+      "bytes": 8650,
+      "sha256": "e42a2dcf88a7cd83c4bc7124cb6651b2d56b0ca3690c40ae73a1687b29f9e446"
+    },
+    "audit.py": {
+      "bytes": 2452,
+      "sha256": "4dc6e97df81ee9b3352abbf86b38007df30df195e56dbec6e9e5d3096d51f7cd"
+    },
+    "bindings.py": {
+      "bytes": 7395,
+      "sha256": "55708366859945fe83fe50550be11a1d43ede427e0eac3db44c448f0caab4b01"
+    },
+    "boundary.py": {
+      "bytes": 8931,
+      "sha256": "2644bdfb4538b79c5e5169bdd20501fd18cfb38b75a744898ee1ff9f6aeb8e8d"
+    },
+    "caller.py": {
+      "bytes": 18858,
+      "sha256": "4f574ffe97acd0d4432228f1b7d4615487f5ddd8e0e14529c6af8943c1f07eb8"
+    },
+    "entry.mjs": {
+      "bytes": 12765,
+      "sha256": "aace15af4836c6245c3f996cb05152763028194463854c8b6c419f3e6d940e77"
+    },
+    "entry.test.mjs": {
+      "bytes": 5205,
+      "sha256": "9a40503652eece4690e3ef76739e3f24620c5f309ecdff3488c7f6390aa81012"
+    },
+    "fixture.mjs": {
+      "bytes": 14047,
+      "sha256": "856dd81a1238f19f9c1dcc103ce7a2ae5ccddfd9327f1e9ba5eef182d6f6e5a6"
+    },
+    "fixture.test.mjs": {
+      "bytes": 2831,
+      "sha256": "c7d2941c6d44f68044ab6f41ccd9714cf4dc6858a2fc8860e00454356b91b93a"
+    },
+    "inspect_packet.py": {
+      "bytes": 26224,
+      "sha256": "f51410422b5c36a36f240bead001b7869cddc747dffb008302c945480ff05ee9"
+    },
+    "inventory.json": {
+      "bytes": 5356,
+      "sha256": "98958acf95dfdd56eba3b9f86172498f4f60b8d38993046dd4d17d863f1263ae"
+    },
+    "native.py": {
+      "bytes": 10527,
+      "sha256": "aca89ddcd8ff5c20e600cf4068c1595d55dc77026fc27ae7eaf8e79fab91cc47"
+    },
+    "production.test.mjs": {
+      "bytes": 6280,
+      "sha256": "d04a4d8fcdfa639442537906646581f80172aa7726ea5df7bee719f0aa618944"
+    },
+    "readiness.json": {
+      "bytes": 19753,
+      "sha256": "8d93491254841d1733c8e49e2a59a0c86820d70e1303cbe1c137e11d26aaf85e"
+    },
+    "resolve.mjs": {
+      "bytes": 1306,
+      "sha256": "b08c88298ffb9485dfe9a81e72ba4f7750c3ed1106f4233e1777f644713bd5b5"
+    },
+    "test_boundary.py": {
+      "bytes": 19074,
+      "sha256": "38092c84789d7410ab3aa967920c419e9fd282eec4f457972939deaba53373e3"
+    },
+    "test_inspect.py": {
+      "bytes": 43669,
+      "sha256": "6eef2ef801a1c33588ed07440ddc71ddba484d8bb7e7041c1e543d1eb24397fe"
+    },
+    "test_native.py": {
+      "bytes": 4852,
+      "sha256": "700a08c188ab704bae21cf9b456cd176003377eced3418db8ad4c124d438dfa6"
+    },
+    "test_revision.py": {
+      "bytes": 11315,
+      "sha256": "cb02f659efe72b1bc77a7f874a9f7b0b49bdfd9e4f8a46add5d5a44c31040745"
+    },
+    "verify.py": {
+      "bytes": 3332,
+      "sha256": "48ae7a88e371b84aab93dacbabaf03898ccffc1783963a784cc0bdaded72dee6"
+    }
+  },
+  "sourceDigest": "95303b16dc1256f91b8df979fdf4915a6d5bfae780a0f95bbdab952ea5ee7d8b",
+  "inventory": {
+    "version": 1,
+    "runtimeEnabled": false,
+    "entryEnabled": false,
+    "pngCap": 16777216,
+    "readoutCap": 16384,
+    "metadataCap": 67108864,
+    "snapshotCap": 67108864,
+    "copyCount": 3,
+    "seconds": {
+      "capture": 600,
+      "cleanup": 60,
+      "decoder": 45,
+      "cacheCopy": 30
+    },
+    "reserves": {
+      "metadata": 67108864,
+      "cacheSnapshot": 67108864,
+      "profileWorkingAndArchive": 2147483648,
+      "privateTmpWorkingAndArchive": 1073741824,
+      "helperLogWorkingAndArchive": 134217728,
+      "cacheGrowth": 268435456,
+      "filesystem": 16777216,
+      "safety": 1073741824
+    },
+    "units": [
+      {
+        "id": "review-thalune",
+        "kind": "review",
+        "people": "thalune",
+        "asset": "characters/viewmodels/fp_thalune",
+        "files": [
+          "noon-lush_lod0.png",
+          "noon-lush_lod2.png",
+          "wireframe_lod0.png",
+          "wireframe_lod2.png",
+          "overlay.png",
+          "far_lod2.png",
+          "night-exotic_lod0.png",
+          "night-exotic_lod2.png",
+          "open-space_lod0.png",
+          "open-space_lod2.png",
+          "perf.json",
+          "sheet.png"
+        ],
+        "fromPeople": null,
+        "pngCount": 11,
+        "outputCap": 184565760,
+        "admission": 5402312704,
+        "readoutCap": 16384
+      },
+      {
+        "id": "review-ixari",
+        "kind": "review",
+        "people": "ixari",
+        "asset": "characters/viewmodels/fp_ixari",
+        "files": [
+          "noon-lush_lod0.png",
+          "noon-lush_lod2.png",
+          "wireframe_lod0.png",
+          "wireframe_lod2.png",
+          "overlay.png",
+          "far_lod2.png",
+          "night-exotic_lod0.png",
+          "night-exotic_lod2.png",
+          "open-space_lod0.png",
+          "open-space_lod2.png",
+          "perf.json",
+          "sheet.png"
+        ],
+        "fromPeople": null,
+        "pngCount": 11,
+        "outputCap": 184565760,
+        "admission": 5402312704,
+        "readoutCap": 16384
+      },
+      {
+        "id": "review-ulgani",
+        "kind": "review",
+        "people": "ulgani",
+        "asset": "characters/viewmodels/fp_ulgani",
+        "files": [
+          "noon-lush_lod0.png",
+          "noon-lush_lod2.png",
+          "wireframe_lod0.png",
+          "wireframe_lod2.png",
+          "overlay.png",
+          "far_lod2.png",
+          "night-exotic_lod0.png",
+          "night-exotic_lod2.png",
+          "open-space_lod0.png",
+          "open-space_lod2.png",
+          "perf.json",
+          "sheet.png"
+        ],
+        "fromPeople": null,
+        "pngCount": 11,
+        "outputCap": 184565760,
+        "admission": 5402312704,
+        "readoutCap": 16384
+      },
+      {
+        "id": "view-thalune",
+        "kind": "view",
+        "people": "thalune",
+        "fromPeople": null,
+        "files": [
+          "16x9-neutral.png",
+          "16x9-sway-left.png",
+          "16x9-sway-right.png",
+          "16x9-sway-up.png",
+          "16x9-sway-down.png",
+          "16x9-raise-0.png",
+          "16x9-raise-0.4.png",
+          "16x9-fire.png",
+          "16x9-overheat.png",
+          "16x9-underwater.png",
+          "21x9-neutral.png",
+          "21x9-sway-left.png",
+          "21x9-raise-0.png",
+          "21x9-raise-0.4.png",
+          "21x9-fire.png",
+          "21x9-overheat.png",
+          "21x9-underwater.png",
+          "sheet.png",
+          "observations.json"
+        ],
+        "pngCount": 18,
+        "outputCap": 302022656,
+        "admission": 5754683392,
+        "readoutCap": 32768
+      },
+      {
+        "id": "view-ixari",
+        "kind": "view",
+        "people": "ixari",
+        "fromPeople": "thalune",
+        "files": [
+          "16x9-switch-gap.png",
+          "16x9-switch-settled.png",
+          "16x9-neutral.png",
+          "16x9-sway-left.png",
+          "16x9-sway-right.png",
+          "16x9-sway-up.png",
+          "16x9-sway-down.png",
+          "16x9-raise-0.png",
+          "16x9-raise-0.4.png",
+          "16x9-fire.png",
+          "16x9-overheat.png",
+          "16x9-underwater.png",
+          "21x9-neutral.png",
+          "21x9-sway-left.png",
+          "21x9-raise-0.png",
+          "21x9-raise-0.4.png",
+          "21x9-fire.png",
+          "21x9-overheat.png",
+          "21x9-underwater.png",
+          "sheet.png",
+          "observations.json"
+        ],
+        "pngCount": 20,
+        "outputCap": 335577088,
+        "admission": 5855346688,
+        "readoutCap": 32768
+      },
+      {
+        "id": "view-ulgani",
+        "kind": "view",
+        "people": "ulgani",
+        "fromPeople": "ixari",
+        "files": [
+          "16x9-switch-gap.png",
+          "16x9-switch-settled.png",
+          "16x9-neutral.png",
+          "16x9-sway-left.png",
+          "16x9-sway-right.png",
+          "16x9-sway-up.png",
+          "16x9-sway-down.png",
+          "16x9-raise-0.png",
+          "16x9-raise-0.4.png",
+          "16x9-fire.png",
+          "16x9-overheat.png",
+          "16x9-underwater.png",
+          "21x9-neutral.png",
+          "21x9-sway-left.png",
+          "21x9-raise-0.png",
+          "21x9-raise-0.4.png",
+          "21x9-fire.png",
+          "21x9-overheat.png",
+          "21x9-underwater.png",
+          "sheet.png",
+          "observations.json"
+        ],
+        "pngCount": 20,
+        "outputCap": 335577088,
+        "admission": 5855346688,
+        "readoutCap": 32768
+      },
+      {
+        "id": "return-thalune",
+        "kind": "return",
+        "people": "thalune",
+        "fromPeople": "ulgani",
+        "files": [
+          "16x9-switch-gap.png",
+          "16x9-switch-settled.png",
+          "sheet.png",
+          "observations.json"
+        ],
+        "pngCount": 3,
+        "outputCap": 50348032,
+        "admission": 4999659520,
+        "readoutCap": 16384
+      }
+    ]
+  },
+  "sourceChecks": {
+    "python": 46,
+    "node": 18,
+    "runtimeVitest": 110,
+    "productionErrorSubcases": 12
+  },
+  "limits": "Source/CPU only; inert ports and synthetic PNGs. No native acceptance.",
+  "supplementalTimingControl": "0.401 seconds cannot be generated by the fixed 1/60 or zero-dt fixture; actual CLI red 0 then green 1."
+}

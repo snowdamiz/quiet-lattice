@@ -177,9 +177,11 @@ def image_size(spec, name, stills):
 
 
 def decode_png(raw, expected, name):
-    # Pillow's load skips some chunk CRCs; check the complete container first.
+    # Pillow alone does not require every CRC or a complete, single zlib stream.
     require(raw.startswith(b"\x89PNG\r\n\x1a\n"), f"{name}: invalid PNG signature")
     offset, chunks, ended = 8, 0, False
+    palette, idat_ended, idats = False, False, []
+    scanline_bytes = 0
     while offset < len(raw):
         require(chunks < 4096 and offset + 12 <= len(raw), f"{name}: malformed PNG chunks")
         length = struct.unpack_from(">I", raw, offset)[0]
@@ -187,9 +189,37 @@ def decode_png(raw, expected, name):
         require(end <= len(raw), f"{name}: truncated PNG chunk")
         kind = raw[offset + 4:offset + 8]
         require(chunks != 0 or (kind == b"IHDR" and length == 13), f"{name}: missing PNG IHDR")
+        require(all(65 <= byte <= 90 or 97 <= byte <= 122 for byte in kind) and
+                65 <= kind[2] <= 90, f"{name}: invalid PNG chunk type")
         crc = zlib.crc32(memoryview(raw)[offset + 4:end - 4]) & 0xffffffff
         require(crc == struct.unpack_from(">I", raw, end - 4)[0], f"{name}: PNG CRC mismatch")
         require(kind not in (b"acTL", b"fcTL", b"fdAT"), f"{name}: animated PNG is forbidden")
+        require(kind[0] & 32 or kind in (b"IHDR", b"PLTE", b"IDAT", b"IEND"),
+                f"{name}: unknown critical PNG chunk {kind!r}")
+        if kind == b"IHDR":
+            require(chunks == 0, f"{name}: duplicate PNG IHDR")
+            width, height, depth, color, compression, filtering, interlace = struct.unpack_from(">IIBBBBB", raw, offset + 8)
+            require((width, height) == expected, f"{name}: wrong PNG dimensions: {(width, height)}, expected {expected}")
+            require(color in (2, 6) and depth in (8, 16), f"{name}: expected RGB/RGBA PNG")
+            require(compression == filtering == 0 and interlace in (0, 1), f"{name}: invalid PNG IHDR format")
+            bits = (3 if color == 2 else 4) * depth
+            passes = ([(0, 0, 1, 1)] if interlace == 0 else
+                      [(0, 0, 8, 8), (4, 0, 8, 8), (0, 4, 4, 8), (2, 0, 4, 4),
+                       (0, 2, 2, 4), (1, 0, 2, 2), (0, 1, 1, 2)])
+            for x, y, dx, dy in passes:
+                columns = max(0, (width - x + dx - 1) // dx)
+                rows = max(0, (height - y + dy - 1) // dy)
+                if columns and rows:
+                    scanline_bytes += rows * (1 + (columns * bits + 7) // 8)
+        elif kind == b"PLTE":
+            require(not palette and not idats and 0 < length <= 768 and length % 3 == 0,
+                    f"{name}: invalid/duplicate/late PNG PLTE")
+            palette = True
+        elif kind == b"IDAT":
+            require(not idat_ended, f"{name}: nonconsecutive PNG IDAT")
+            idats.append(memoryview(raw)[offset + 8:end - 4])
+        if idats and kind != b"IDAT":
+            idat_ended = True
         chunks += 1
         offset = end
         if kind == b"IEND":
@@ -197,6 +227,23 @@ def decode_png(raw, expected, name):
             ended = True
             break
     require(ended, f"{name}: missing PNG end")
+    require(idats, f"{name}: missing PNG IDAT")
+    stream, inflated = zlib.decompressobj(), 0
+    for data in idats:
+        while True:
+            limit = min(65536, scanline_bytes - inflated + 1)
+            try:
+                block = stream.decompress(data, limit)
+            except zlib.error as exc:
+                raise OSError(f"{name}: invalid PNG zlib stream: {exc}") from exc
+            inflated += len(block)
+            require(inflated <= scanline_bytes, f"{name}: wrong PNG scanline byte count")
+            require(not stream.unused_data, f"{name}: extra PNG zlib stream/data")
+            data = stream.unconsumed_tail
+            if not data and len(block) < limit:
+                break
+    require(stream.eof, f"{name}: incomplete PNG zlib stream")
+    require(inflated == scanline_bytes, f"{name}: wrong PNG scanline byte count")
     from PIL import Image
 
     with Image.open(io.BytesIO(raw), formats=["PNG"]) as decoded:
@@ -256,6 +303,7 @@ def observations(value, spec, stills):
     frames = value.get("frames")
     require(type(frames) is list and len(frames) == len(stills), "observations: wrong frame count")
     last_frame, last_elapsed = -1, 0
+    previous = None
     for entry, filename in zip(frames, stills):
         require(type(entry) is dict and entry.get("file") == filename, "observations: wrong frame inventory/order")
         require(entry.get("people") == spec["people"], f"{filename}: wrong people")
@@ -287,10 +335,20 @@ def observations(value, spec, stills):
             materials(entry.get("materials"), spec["people"], filename)
         if gap or underwater or pose == "raise-0":
             require(raised == 0, f"{filename}: expected zero raise")
+        elif pose != "raise-0.4":
+            require(abs(raised - 1) <= 1e-6, f"{filename}: expected settled raise")
         if pose == "raise-0":
             require(dt == 0 and number(entry.get("raiseSeconds"), filename) == 0, f"{filename}: raise-0 requires a zero dt/reset frame")
         if pose == "raise-0.4":
             require(abs(raised - 1) <= 1e-6 and abs(number(entry.get("raiseSeconds"), filename) - 0.4) <= 1e-8, f"{filename}: raise did not settle in 0.4s")
+            require(previous is not None and previous["file"] == filename.replace("raise-0.4", "raise-0"),
+                    f"{filename}: missing preceding raise-0 endpoint")
+            duration, updates = elapsed - previous["elapsed"], frame - previous["frame"]
+            # Cooling and zero-dt resets can separate the two saved endpoints.
+            require(duration + 1e-8 >= 24 / 60 and updates >= 24 and
+                    abs(duration * 60 - round(duration * 60)) <= 1e-6 and
+                    duration <= updates / 60 + 1e-8 and abs(dt - 1 / 60) <= 1e-10,
+                    f"{filename}: raise requires 24 updates at 1/60 with consistent elapsed/frame/last dt")
         if pose.startswith("sway-"):
             axis, sign = {"sway-left": (0, -1), "sway-right": (0, 1), "sway-up": (1, 1), "sway-down": (1, -1)}[pose]
             require(abs(sway[axis] * sign - (0.035 if axis == 0 else 0.03)) <= 1e-6, f"{filename}: sway did not reach extreme")
@@ -298,6 +356,7 @@ def observations(value, spec, stills):
             require(heat >= 0.8, f"{filename}: insufficient overheat")
         if fire or "projection" in entry:
             projection(entry.get("projection"), size, filename)
+        previous = entry
 
 
 def perf(value, spec, stills):
