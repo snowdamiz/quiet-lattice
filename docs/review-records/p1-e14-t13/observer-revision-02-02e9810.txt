@@ -1,0 +1,181 @@
+TASK: P1.E14.T13 — bounded SOURCE/CPU R2 revision
+
+STATUS: DONE (this source unit only; fresh independent R3 review remains with the parent).
+
+SUMMARY: Fixed N1 and N2. Raw observer arrays must have their own indexed entries before element validation; fully or partly sparse arrays and inherited substitutes cannot count as completed work. Pass counts increment only for validated records, and fence counts come from validated records. The control result carries the validated preparation inventory. Mixed positive/negative paired gaps take explicit inconclusive precedence, including small gaps inside the similarity band. Zero gaps are neutral: all-zero or one-sign-plus-zero arms may support stable similarity, but a zero can never satisfy the strict observer-cost threshold. No runtime controller or binding was added.
+
+PINS:
+- Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8
+- Branch: codex/task/P1-E14-T13-trace-observer
+- Base: 5d29f46f4bc3a29e027bcca192fbff3d61259176; tree bcc5e0361d7e6111f30fc811d236d6c87963bdba
+- Head: 02e981096574ca7e486958023075d0e52c45062f; tree 6ab14d7ee5f702a45ae479f58837033320a14b89
+- Exactly one new commit. Checked tree equals committed tree; worktree clean.
+- Recovery unchanged: 293a87dff4abf7b4e7a6ac3ce65eae5c6d539ea5. No additional source recovery was needed.
+- Retained branch unchanged: 7fb34e4eeeb320cb591982d524a80abe1842dfc8. Reviewed checkpoint remains 1479d0ebaa79cd546eddfa1e0d6f029c77064af8; retained implementation 907439e9c5984f756a42eb32d0a69631885a84b7.
+
+FILES CHANGED:
+- packages/tools/src/capture/trace-observer-report.ts; blob 5ffeec1562afe436a411e67fa955ee8cd941767a; SHA-256 fe1cce55fc6737a474d3d93fe0661d5b4609ad86d8b9e5ccb644b5dfafe40c2e
+- packages/tools/src/capture/trace-observer.test.ts; blob f19cbf11c55f5570a4deb0cbb90c00aae3a578e0; SHA-256 7aaf5c2f6e654eb2d81e0d978e4b3a3435b481bf509ee0ec07a07a1c6fe488a4
+- packages/tools/src/capture/trace-observer.ts; blob 87eab81c08755f3d74246ca91f5ba1069fde33c9; SHA-256 17c479baf60abefd929e29f42ef54f0b3528b82352dc52a9a580ac99712d74c6
+
+VERIFY:
+- RED before production edits: both minimized dispatch reproducers exited 1. Sparse preflight passes yielded observed / 48 counted passes / zero present entries; sparse jitter and history arrays also yielded observed. The mixed-sign case yielded targeted-workload-next. The unchanged independent script reproduced exactly four mismatches among 64 cases.
+- Added actual-boundary controls were run before the fix: 40 failed, 118 passed. Of the failures, 32 exposed malformed-array acceptance, two exposed mixed-sign classification, and six lacked the newly asserted criterion metadata. The regression tests were only formatted after this RED run.
+- GREEN: 490 tests / 15 files, including every original 332 test and 158 focused controls, maxWorkers=2. Additional controls cover 23 raw-array positions times six faults (138), 12 host-array faults, and eight sign/zero/strict-threshold controls. They exercise the actual dispatcher, owned port replies, retained facts, inventory and stream closure. Faults are all holes, first/last missing indices, explicit undefined/null, and prototype-filled missing entries. structuredClone strips array prototypes at the CPU port boundary; own-index checks also protect direct validation.
+- GREEN: all 64 independent cases matched with unchanged assertions and fixture. Only scratch output paths differ from the original scripts. N1 now rejects at the first malformed boundary with no next control; N2 is inconclusive with mixedSigns:true and similar:false. The minimized mixed-sign script exits 0. The original minimized shape script assumes resolution and does not catch the now-correct rejection, so N1 GREEN uses its same three cases in the rejection-aware independent replay plus the 150 array boundary controls; no fixture or assertion workaround was applied.
+- Both tools/client typechecks and scoped lint/format/diff checks pass. Installed tsx entry import test is included in the 490; browser acquisition is trapped, and both serialized page arms run only in a synthetic VM. Proposal output stays disabled, runtimeAuthorized:false, binding:null, grant:null. --run exits 1 before acquisition.
+- Prior R1/R2 residual inventory/shape gaps are addressed. Prior empty-reason, enum/counter, history parity, additive threshold, host-fact retention and late snapshot protections passed again. Old source algorithms and acceptance rules were not edited.
+- Runtime used for CPU checks: Node v26.12.1, pnpm 12.15.0, Darwin arm64. Tests use injected CPU ports/clocks; no actual GPU or browser measurement is claimed.
+
+Exact commands and exits (all from the pinned worktree):
+```text
+pnpm exec tsx /tmp/p1-e14-t13-r2-fix.mqeddopx/red/finding-shapes.mts  # exit 1
+pnpm exec tsx /tmp/p1-e14-t13-r2-fix.mqeddopx/red/finding-mixed.mts  # exit 1
+pnpm exec tsx /tmp/p1-e14-t13-r2-fix.mqeddopx/red/independent.mts  # exit 1
+pnpm exec vitest run packages/tools/src/capture/trace-observer.test.ts -t 'R2 indexed evidence and decision boundaries' --maxWorkers=2 --no-cache --fsModuleCachePath /tmp/p1-e14-t13-r2-fix.mqeddopx/red/vitest-cache --configLoader runner  # exit 1
+pnpm exec tsx /tmp/p1-e14-t13-r2-fix.mqeddopx/green/finding-mixed.mts  # exit 0
+pnpm exec tsx /tmp/p1-e14-t13-r2-fix.mqeddopx/green/independent.mts  # exit 0
+pnpm exec vitest run packages/tools/src/capture/trace-observer.test.ts -t 'R2 indexed evidence and decision boundaries' --maxWorkers=2 --no-cache --fsModuleCachePath /tmp/p1-e14-t13-r2-fix.mqeddopx/green/vitest-cache --configLoader runner  # exit 0
+pnpm exec vitest run packages/tools/src/capture/browser-work- packages/tools/src/capture/cloud-march- packages/tools/src/capture/trace-observer packages/client/src/dev/native-work-class-probe.test.js packages/client/src/dev/dependent-output.test.js packages/client/src/dev/gpu-completion.test.js packages/client/src/dev/review.test.js --maxWorkers=2 --no-cache --fsModuleCachePath /tmp/p1-e14-t13-r2-fix.mqeddopx/verify/vitest-cache --configLoader runner  # exit 0
+pnpm exec tsc -p packages/tools --noEmit --incremental false  # exit 0
+pnpm exec tsc -p packages/client --noEmit --incremental false  # exit 0
+pnpm exec eslint packages/tools/src/capture/trace-observer-report.ts packages/tools/src/capture/trace-observer.test.ts packages/tools/src/capture/trace-observer.ts  # exit 0
+pnpm exec prettier --check packages/tools/src/capture/trace-observer-report.ts packages/tools/src/capture/trace-observer.test.ts packages/tools/src/capture/trace-observer.ts  # exit 0
+git diff --check  # exit 0
+pnpm exec tsx packages/tools/src/capture/trace-observer.ts --proposal  # exit 0
+pnpm exec tsx packages/tools/src/capture/trace-observer.ts --run  # exit 1
+python3 /tmp/p1-e14-t13-r2-fix.mqeddopx/green/verify-protected.py  # exit 0
+git diff --check 5d29f46f4bc3a29e027bcca192fbff3d61259176 02e981096574ca7e486958023075d0e52c45062f  # exit 0
+git commit -m 'P1.E14.T13: validate indexed observer evidence and mixed gaps'  # exit 0
+python3 /tmp/p1-e14-t13-r2-fix.mqeddopx/verify-source-protection.py  # exit 0
+```
+
+Last 20 lines of expected RED/rejection transcripts:
+
+/tmp/p1-e14-t13-r2-fix.mqeddopx/red/finding-shapes.log
+```text
+  }
+]
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Absent raw evidence elements must never yield observed
+
+3 !== 0
+
+    at <anonymous> (/private/tmp/p1-e14-t13-r2-fix.mqeddopx/red/finding-shapes.mts:14:8) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 3,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.12.1
+```
+
+/tmp/p1-e14-t13-r2-fix.mqeddopx/red/finding-mixed.log
+```text
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Mixed-sign gaps must be inconclusive under the parent-resolved brief
++ actual - expected
+
++ 'targeted-workload-next'
+- 'inconclusive'
+
+    at <anonymous> (/private/tmp/p1-e14-t13-r2-fix.mqeddopx/red/finding-mixed.mts:7:8) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'targeted-workload-next',
+  expected: 'inconclusive',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.12.1
+```
+
+/tmp/p1-e14-t13-r2-fix.mqeddopx/red/independent.log
+```text
+        "preparations": 12,
+        "warmUpFrames": 1080,
+        "frames": 10,
+        "dependentPasses": 48,
+        "preflightFences": 36,
+        "controlFences": 24,
+        "png": 0,
+        "queries": 0,
+        "segments": 6,
+        "bytes": 3364,
+        "reads": 6,
+        "events": 24
+      },
+      "settlement": {
+        "kind": "ports-settled"
+      },
+      "matches": false
+    }
+  ]
+}
+```
+
+/tmp/p1-e14-t13-r2-fix.mqeddopx/red/additional-boundaries.log
+```text
+-   "mixedSigns": false,
+    "similar": false,
+  }
+
+ ❯ src/capture/trace-observer.test.ts:1086:33
+    1084|     }).options);
+    1085|     expect(r.summary?.decision).toBe(decision);
+    1086|     expect(r.summary?.criteria).toMatchObject({ mixedSigns: mixed, sim…
+       |                                 ^
+    1087|     expect(r.summary?.budgetQualified).toBe(false);
+    1088|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/40]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  40 failed | 118 passed | 98 skipped (256)
+   Start at  00:38:43
+   Duration  1.03s (transform 36%, tests 33%, import 30%)
+
+```
+
+/tmp/p1-e14-t13-r2-fix.mqeddopx/verify/disabled-runtime.log
+```text
+Error: Trace observer readiness disabled; only --proposal is supported
+```
+
+DECISIONS:
+- Missing raw array elements → require own indexed records using one local presence predicate alongside existing field validators → iteration methods cannot silently skip missing evidence. No general validation framework.
+- Completed inventory → publish counts only after all required preparation/control records validate → absent records cannot inflate totals. A malformed run can retain the prior valid preparation inventory, but no control is counted.
+- Mixed signs → inconclusive before similarity → follows the selected brief even when all absolute gaps are small. Zero has no positive/negative sign, so it is neutral for similarity and disqualifying for the strict reproducible-gap requirement.
+- Observer cost threshold remains every same-sign abs(gap) > max(onRange, offRange) + 5ms. Both signs at/above threshold, stable-relative-range, empty fences at 20ms and above, incomplete/error and unstable controls remain covered. Neither diagnostic outcome qualifies 16.67ms.
+
+PROTECTED EVIDENCE:
+- protected-source-proof.json records SHA-256 for 39 protected files, including all 32 recovery-manifest files, entire current browser-work-probe/trace, the old report algorithms, Review, Engine/AtmospherePass and orchestration docs. All are unchanged from this revision base. All recovery hashes match; 30 non-additive recovered files remain identical to recovery.
+- green/protected-algorithm-proof.json verifies old protocol bodies against recovery after removing only observer imports/appended code, and standard Review against the original base after removing the three recovered diagnostic methods/import. Engine and AtmospherePass remain identical to the original base.
+- delivery-manifest.json pins unchanged docs/assets/client/server/shared subtree objects. No asset or historical trace payload was read or hydrated. Original review reports/scripts remain hash-identical; all replay output is under this new scratch directory.
+- Historical cloud03 remains FAILED / accepted:false. Offline reclassification remains explicitly not fresh performance evidence. No historical runtime packet was changed.
+
+OUT OF SCOPE FOUND: No new concrete implementation blocker. Native binding, owned process controller/physical settlement, new disabled caller binding, fresh grant, reserved capacity, and independent R3 source review remain later parent-owned gates. Port promise settlement is not physical process settlement; failed unsettled snapshots still have finishedMs:null, and late replies cannot mutate the published snapshot.
+
+ARTIFACTS:
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/report.md (this Appendix C.2 report)
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/results.json (finding status and red/green counts)
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/delivery-manifest.json (exact commit/tree/recovery/clean pins)
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/commands.json (exact command arrays and exits)
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/checked-source.json and checked.patch (tested source hashes/tree/patch)
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/protected-source-proof.json and green/protected-algorithm-proof.json
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/original-sha256.json and original/ (preserved review/script copies)
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/red and /tmp/p1-e14-t13-r2-fix.mqeddopx/green (independent raw synthetic packets, minimized logs and regression outputs)
+- /tmp/p1-e14-t13-r2-fix.mqeddopx/verify (full suite, typecheck, lint, format, disabled CLI and diff outputs)
+
+No actual native/GPU/browser/render/Blender/services/DB/capture/grants/hydration, source asset or authoring workflow changes, orchestration-doc writes, push, PR or merge. Readiness remains disabled. This report makes no visual, budget, deployment or runtime acceptance claim.
