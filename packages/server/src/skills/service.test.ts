@@ -38,6 +38,44 @@ function world(opts: { level?: number; hull?: HullId | null; people?: string; sa
 }
 
 describe('skill service', () => {
+  it('refreshes live eligibility before notifying, retaining purchases and payments for recovery', () => {
+    const { skills, heard } = world();
+    let ranked = true;
+    skills.hooks.meets = () => ranked;
+    skills.grantFragments(ID, 'void', 4);
+    expect(skills.request(ID, 1, { op: 'unlock', node: 'phase' }).error).toBeUndefined();
+    expect(skills.buy(ID, 'phase').ok).toBe(true);
+    expect(skills.request(ID, 2, { op: 'slot', bar: 'ground', index: 0, node: 'phase' }).error).toBeUndefined();
+    const stored = skills.stored(ID)!;
+    heard.length = 0;
+    ranked = false;
+    expect(skills.eligible(ID, 'phase')).toBe(false);
+    // Forced revocation also works in combat, when voluntary slot swaps are refused.
+    skills.hooks.inCombat = () => true;
+    const observed: { current: boolean; eligible: boolean; slot: string | null | undefined }[] = [];
+    skills.subscribe((id, reply) => {
+      observed.push({ current: skills.get(id) === reply.skills.state, eligible: skills.eligible(id, 'phase'), slot: reply.skills.state.slots.ground[0] });
+    });
+    skills.refresh(ID);
+    expect(heard).toHaveLength(1);
+    expect(heard[0]).toMatchObject({ change: 'server', reply: { seq: 2, skills: { met: [] } } });
+    const cleared = skills.stored(ID)!;
+    expect(cleared).toEqual({ ...stored, slots: { ...stored.slots, ground: [null, null, null, null, null, null] } });
+    skills.hooks.inCombat = () => false;
+    expect(skills.request(ID, 3, { op: 'slot', bar: 'ground', index: 0, node: 'phase' }).error).toBe('requirement');
+    expect(skills.unlock(ID, 'drain', { kind: 'trainer', trainer: 'reaches_quartermaster' })).toMatchObject({ ok: false, error: { code: 'requirement' } });
+    ranked = true;
+    skills.refresh(ID);
+    expect(heard.at(-1)!.reply.skills.met).toHaveLength(1);
+    expect(skills.eligible(ID, 'phase')).toBe(true);
+    expect(skills.eligible(ID, 'micro_jump')).toBe(false);
+    expect(skills.stored(ID)).toEqual(cleared);
+    expect(observed).toEqual([
+      { current: true, eligible: false, slot: null },
+      { current: true, eligible: true, slot: null },
+    ]);
+  });
+
   it('puts a character in play with its people’s node, and reads its level and ship live', () => {
     const { skills, progress, ships } = world({ people: 'ixari' });
     expect(skills.view(ID)).toEqual({ state: newSkillState('ixari'), level: 50, shipSlots: 2, met: [], maxTier: SKILL_PHASE.maxTier });

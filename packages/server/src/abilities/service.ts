@@ -26,10 +26,10 @@
 // player's bar is too; `state` never reports one that no longer holds. Effects harm only what `mayHarm` allows.
 import { barOfMode, castCost, cooldownOf, reachOf } from '@astra/shared/abilities';
 import { creatureSphere, modsOfNodes, type ResistanceResult } from '@astra/shared/combat';
-import { getSkillNode } from '@astra/shared/data';
+import { getSkillNode, type Requirement } from '@astra/shared/data';
 import type { HeatDump } from '@astra/shared/meters';
 import { encodeServerMessage, type CastRefusal, type ClientMessage, type FrameId, type GameEvent, type ServerMessage } from '@astra/shared/protocol';
-import { GROUND_SLOTS, type Bar, type SkillState } from '@astra/shared/skills';
+import { GROUND_SLOTS, meetsNodeRequirements, type Bar, type SkillState } from '@astra/shared/skills';
 import { frameKeyOf, tierOfGalaxySystem, type PlanetParams, type Tier } from '@astra/shared/world';
 import { clearSight } from '../combat/sight.ts';
 import { noseOf } from '../combat/gun.ts';
@@ -79,6 +79,8 @@ export interface CastServiceOptions {
   zones: CastZones;
   /** each character's place on the skill web: its bars and owned nodes (`get`) and the hull's working ship slots */
   skills: { get(characterId: string): SkillState | null; shipSlots(characterId: string): number };
+  /** Live standing gates. Without a reader, gated nodes cannot cast; ungated fixture books still work. */
+  meets?: (characterId: string, req: Requirement) => boolean;
   /** heat and Charge: what a cast pays, and what an effect reads and spends beyond it (`CastContext.meters`) */
   meters: {
     addHeat(characterId: string, amount: number, now: number): { ok: boolean };
@@ -137,6 +139,7 @@ interface Timer {
 export class CastService {
   private readonly zones: CastZones;
   private readonly skills: CastServiceOptions['skills'];
+  private readonly meets: NonNullable<CastServiceOptions['meets']>;
   private readonly meters: CastServiceOptions['meters'];
   private readonly now: () => number;
   private readonly book: AbilityBook;
@@ -160,6 +163,7 @@ export class CastService {
   constructor(opts: CastServiceOptions) {
     this.zones = opts.zones;
     this.skills = opts.skills;
+    this.meets = opts.meets ?? (() => false);
     this.meters = opts.meters;
     this.now = opts.now;
     this.book = opts.book ?? abilityBook();
@@ -236,6 +240,8 @@ export class CastService {
     if (msg.slot >= (bar === 'ground' ? GROUND_SLOTS : this.skills.shipSlots(characterId))) return refuse('slot');
     if (!skills.bought.includes(msg.node)) return refuse('not_owned');
     if (skills.slots[bar][msg.slot] !== msg.node) return refuse('not_slotted');
+    // A stale bar cannot authorize a cast after rank loss, even before its skill refresh is delivered.
+    if (!meetsNodeRequirements(msg.node, (req) => this.meets(characterId, req))) return refuse('not_slotted');
     const entry = this.book.get(msg.node);
     if (!entry) return refuse('unknown');
     if (msg.frame !== me.fields.frame) return refuse('frame');
@@ -487,6 +493,7 @@ export class CastService {
     if (!e || barOfMode(e.fields.mode) !== ctx.bar || zone.combat.isDown(ctx.caster)) return false;
     const skills = this.skills.get(characterId);
     if (!skills?.bought.includes(node)) return false;
+    if (!meetsNodeRequirements(node, (req) => this.meets(characterId, req))) return false;
     const working = ctx.bar === 'ground' ? GROUND_SLOTS : this.skills.shipSlots(characterId);
     return skills.slots[ctx.bar].slice(0, working).includes(node);
   }
