@@ -1,0 +1,61 @@
+{
+  "initialCommit": "b761fa1950c85a0814b19f92885b452ae877b505",
+  "fullDiffWhitespace": "FAILED_INHERITED_REVIEW_COPY_EOF_BLANKS",
+  "authoredDiffWhitespace": "PASS",
+  "originalReviewCopyBytesUnchanged": true,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "ff497e5525f8e93c71df67827446d7e426bbc20d",
+        "HEAD"
+      ],
+      "exitCode": 2,
+      "stdout": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/review/REPORT.md:153: new blank line at EOF.\npackages/tools/blender/characters/animations/thalune-run-candidate/revision-13/review/compatible-red.py:38: new blank line at EOF.\npackages/tools/blender/characters/animations/thalune-run-candidate/revision-13/review/guard.py:42: new blank line at EOF.\npackages/tools/blender/characters/animations/thalune-run-candidate/revision-13/review/sink-boundary.py:21: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "ff497e5525f8e93c71df67827446d7e426bbc20d",
+        "HEAD",
+        "--",
+        ".",
+        ":(exclude)packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/review"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "--ignore-path",
+        "/dev/null",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/REPORT-final.md"
+      ],
+      "exitCode": 0,
+      "stdout": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/REPORT-final.md 30ms (unchanged)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/node_modules/prettier/bin/prettier.cjs",
+        "--check",
+        "--ignore-path",
+        "/dev/null",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/REPORT-final.md"
+      ],
+      "exitCode": 0,
+      "stdout": "Checking formatting...\nAll matched files use Prettier code style!\n",
+      "stderr": ""
+    }
+  ]
+}
