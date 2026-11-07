@@ -1,6 +1,6 @@
 // Runs the client's scripted playthrough (packages/client/src/dev/playthrough.js) headless and prints each phase's
 // result: `pnpm --filter @astra/tools exec tsx src/capture/playthrough-run.ts [phase …]`.
-import { pathToFileURL } from 'node:url';
+import { realpathSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 import { glArgs, startVite } from './capture.ts';
 
@@ -75,6 +75,17 @@ export async function runPlaythrough(args = process.argv.slice(2)) {
   return failed ? 1 : 0;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// Node stores a canonical module path on import.meta.filename. argv[1] keeps the
+// path that was invoked, including a symlink or a /tmp alias of /private/tmp.
+function isCliEntry(entry: string | undefined): boolean {
+  if (!entry) return false;
+  try {
+    return realpathSync(entry) === import.meta.filename;
+  } catch {
+    return false;
+  }
+}
+
+if (isCliEntry(process.argv[1])) {
   process.exitCode = await runPlaythrough();
 }
