@@ -1,0 +1,49 @@
+VERDICT: PASS — P1.E14.T10 ADVISORY CORRECTION REVIEW ONLY
+Prior P3 (saved den_nest_1_SculptLOD2 duplicate faces) is FIXED.
+No new blocking finding. No merge, visual grade, or whole-task acceptance.
+
+PROVENANCE
+Reviewed checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-7ae666d1
+Branch: task/P1-E14-T10-dens
+HEAD: ea58f40198e0d8ad9871075acd42825247a98bc7
+HEAD tree: 5862ff2bf3f78af46527fba22d1ee18746d1964e
+Correction base: e72f49005d4597a06aea1389aedeab99248ae6f5
+Base tree: ae7d621577089426309ccd561892fa06ac2db813
+Merge-base equals the correction base.
+git status --porcelain=v1 was empty before and after this review. Asset mtimes and sizes were unchanged (den_nest_1.blend 12420819, den_nest_1.glb 1508936).
+The 14-file delta is exactly the nest blend LFS pointer, manifest source hash/size, refine_nest_lods.py (+4), validate.py (+7), and the ten r4 receipt files. No deletes.
+Historical source PASS at e72f49005 remains historical. This review does not regrade that pass.
+
+PRIOR P3 — FIXED
+The base scratch copy (LFS object 001f57e2…, 12391153 bytes) still has 2869 triangles / 8607 loops on den_nest_1_SculptLOD2. Blender 5.2.3 LTS Mesh.validate(verbose=True, clean_customdata=False) on a copy reports face 1563 duplicating 1562, 2849 duplicating 1561, and 2855 duplicating 2852, returns True, and leaves 2866 faces, 8598 loops, 1385 vertices, 4126 edges. A second validate returns False.
+The saved head blend is that cleanup. Raw foreach_get comparison, not the worker JSON digest, shows the saved LOD2 equals the base mesh with original face indices 1563, 2849, and 2855 and their 9 loops removed, in order. Vertex coordinates, edge vertex indices, remaining loop vertex indices, UV layers, mesh attributes, vertex-group weights, material slots, shape keys, and mesh custom properties match. The other 18 mesh objects match with no faces removed. Object matrices, parents, collection membership, hide flags, markers, material node graphs, packed image SHA-256, units, scene properties, and material user/fake/extra flags match. Scene-level diff count was 0.
+Native validate's "duplicate of 2852" is not the same test as equal vertex-index sets. Index grouping pairs 2855 with 2854, while 1563/1562 and 2849/1561 share vertex indices in a different corner order. The saved deletion is the native validate set, and that set is what the shipped 2866-triangle mesh contains. Removed-face UVs are not an ordered copy of the keeper corners; the remaining corners are the ones compared and preserved.
+
+VALIDATOR AND PRODUCER BEHAVIOR
+Executed the committed validate.py lines 33-39, dedented only so they can run, against scratch copies.
+Old source: AssertionError (path, lod 2, den_nest_1_SculptLOD2, "invalid saved/exported mesh"). The probe was a mesh copy; the original polygon count and vertex-coordinate hash were unchanged.
+Saved source, before and after family validation: the same lines PASS for LOD0, LOD1, LOD2, and LOD3. Family status PASS. Evaluated triangle counts 28828 / 8609 / 2866 / 517.
+Saved GLB: family status PASS and the same lines PASS for all four LOD meshes. Probe did not change the imported meshes.
+The other six source blends expose only LOD0 (their existing family reports list lods [0]). Those LOD0 render meshes PASS the new lines and are unchanged by the probe. This correction does not add saved LODs to them.
+refine_nest_lods.py lines 42-45 call the same validate after triangulation and then clear the triangle cache. One call is sufficient on this mesh: the second call returns False. The authoring script does not assert the return; the validator is what fails closed. A scratch replay of validate plus a temporary use_extra_user=True only during save reproduced the committed blend's measured content. After reopen, RetiredAtlas_den_nest_1 has users 0, use_fake_user False, use_extra_user False. Replay bytes are not identical to the committed blend (12391087 vs 12420819; SHA-256 dd14d805… vs f2240cac…); the measured meshes, materials, images, objects, collections, and units are identical. The committed file itself, opened directly, has the same retired-material flags.
+
+EXPORT BIJECTION
+Recomputed from the scratch copy of the saved blend and the scratch copy of the existing GLB. 2866/2866 oriented triangles, 0 unmatched. Max corner distance 0.0004439726696334843 m. Max active-UV distance 9.824350831096473e-05. Both are inside the claimed ceilings (0.000444 m and 0.000099). Max corner normal angle 1.1225677369095122 degrees is a measurement only, not a shading or visual pass. The GLB was not rewritten. Head and base LFS pointers and the working-tree bytes are SHA-256 6f64b0366bb7090ba5fd61049073d78b8144002af408bdee98c847a938655853, 1508936 bytes.
+
+RECEIPTS AND HISTORICAL BINDINGS
+Manifest diff against the base is only assets[3] den_nest_1 source SHA-256 f2240caccd6c318c796d142f1272f90c29484ff53f02ba0fa06d3bd81f49e5d8 and size 12420819. Manifest SHA-256 256922f14776a2ba35cc8c67aceff7e14268d067630e404f2fd867adcae7e6f9 matches provenance.
+Working-tree blend bytes match that hash and the HEAD LFS pointer. They do not match the base pointer 001f57e2… / 12391153.
+All 98 protected paths match provenance hash and size, exist at both commits with the same Git blob, and have no LFS/worktree mismatch. None of the 14 changed paths is in that set. The protected-set SHA-256 7ba18e79… is the SHA-256 of the canonical JSON object of those path/hash/size records.
+Fresh r4 report hashes match provenance for cleanup.json, validity.json, source-contracts.json, export-contracts.json, sites__den_nest_1.blend.json, and sites__den_nest_1.glb.json.
+previews.json is the same blob at base and head. den_nest_1 sourceSha256 there is still 001f57e2…. The old family report validation/sites__den_nest_1.blend.json is the same blob and still records LOD2 2869. Those bindings are historical. The current family numbers are in nest-lod2-cleanup-e72f490-r4 (LOD2 2866, source hash f2240cac…).
+
+COMMANDS
+python3 -m py_compile was run on refine_nest_lods.py and validate.py: PASS.
+git diff --check e72f49005d4597a06aea1389aedeab99248ae6f5 ea58f40198e0d8ad9871075acd42825247a98bc7: PASS.
+Byte audit: /tmp/P1-E14-T10-correction-review-ea58f40/byte-audit.json
+Blender, one owned process, after observing about 52% memory free and load averages 12.71 12.26 13.36 on 15 CPUs. Other workers' Blender processes were not signaled.
+PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/P1-E14-T10-correction-review-ea58f40/scratch python3 packages/tools/blender/dens/run.py --seconds 480 --log /tmp/P1-E14-T10-correction-review-ea58f40/blender-audit.log -- -P /tmp/P1-E14-T10-correction-review-ea58f40/audit_blend.py
+Owned pid 69713, Blender 5.2.3 LTS, -b -t 2 --factory-startup, 8 GiB RSS ceiling not reached, exit 0. Log ends AUDIT_COMPLETE. Full machine-readable result: blend-audit.json.
+
+LIMITS
+No asset, Git, GPU, render, bake, export regeneration, browser, server, DB, hydration, push, or merge. No broad 220-test rerun; runtime game code is outside this delta. The other six GLBs were not re-imported; their bytes are in the unchanged protected set. This is not a visual grade, texture-load proof, or whole-task merge recommendation.

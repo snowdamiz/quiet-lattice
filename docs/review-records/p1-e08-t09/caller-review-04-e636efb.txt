@@ -1,0 +1,119 @@
+# P1.E08.T09 capture caller — independent SOURCE/CPU R4
+
+**VERDICT: REVISE. Two P2 findings.** The sequential Git correction works for the normal six-unit chain and static adversarial outputs, but the combined predecessor admission boundary does not yet enforce authenticated successful metadata and bounded metadata reads throughout.
+
+This is a fresh independent source/CPU review of the exact three-file correction. It supplies no visual, native, whole-task, release, or merge acceptance. The reported product-source/live-QA result at d688579ad is background, not recertified here. No source edits, commits, PR activity, real grants, native capture/browser/GPU/DB/service launches, or LFS hydration were performed. All created fixtures and reports are under this fresh scratch directory.
+
+## Exact reviewed state
+
+- Checkout: `/Users/andreyyurlov/.t3/worktrees/space/t3-06487465`
+- Branch: `task/P1-E08-T09-current-base`
+- HEAD: `e636efbb1900c6426f3a2586724080b6a132e1bb`
+- Tree: `6cc588b6668c2289d643214f9bc328c3a3553865`
+- Parent: `5821809fddb241273a49d37edc2da435eee2d589`
+- Binary patch SHA256: `f61fe426296df4c31c3abd1f594675f49e186f30d280ec585a841060ad3cd267`
+- Readiness SHA256: `6c14b6cb0b0972ac1e5f80363b83ff5c9bbe910140363fd80a77592c67866705`
+- Initial and final Git status: clean, including all untracked files.
+- Initial/final hashes of all 12,733 present tracked files: identical. Packet copies and four copied helper files match the exact checkout bytes. Product, helpers, assets, docs, ignore rules and frozen dependency pins were not changed by this patch/review.
+- All 48 unique current/parent output, evidence, grant and consumption identities: absent before and after. Runtime remains **DISABLED**.
+
+Evidence: `pins.json`, `source-diff.patch`, `protected-before.json`, `protected-paths.json`, `final-verify.json`. Plan sections 0.3 and 0.9.5 and the T09 task block were read. No new client authority, demo replacement, or product change occurs in this patch. Mandatory visual/native gates remain pending independently of this verdict.
+
+## Findings
+
+### R4-1 — P2: authenticate and validate the same predecessor-result bytes
+
+**Location:** `packages/tools/src/capture/fauna_packet/caller.py:293-308`, combined with the new `verify_worktree` read at **351-353** and dispatch at 368-377.
+
+`grant_gate` authenticates `result.json` with `sha(path)` and then separately reopens it with `read_json(result_path)` without passing the expected hash. The new `verify_worktree` correctly authenticates its own read, but uses that second object only for `raw.outputManifest`; it does not require that object's success/admission fields to be the ones validated by the gate.
+
+The actual main/consume boundary admitted and executed unit 2 even though the exact result bytes referenced by its grant had `checksPassed:false` and a non-null `primaryFailure`:
+
+1. A real first caller process runs the exact main/consume/run_unit/persist bodies with inert capture and decoder ports; the parent observes OS exit 0.
+2. In scratch, the result is altered to a failed receipt before the next grant is hashed. The parent completion uses that actual exit 0 and exact hashes of the now-failed result and unchanged consumption. No exit status is fabricated.
+3. A deterministic filesystem schedule replaces that receipt with the original successful bytes immediately after `sha()` hashes the failed bytes.
+4. `grant_gate` parses the successful replacement and passes its checks. After that real JSON read, the schedule restores the failed bytes.
+5. `verify_worktree` reads the failed bytes, verifies their exact grant hash, and accepts their unchanged artifact manifest. Unit 2 creates consumption/output/evidence, calls the inert allocation/capture/decoder ports, and main returns 0.
+
+All hashes and JSON reads execute their real implementation; hooks only schedule actual scratch-file replacement between those operations. The authenticated result remains failed at the end. This is not merely a failure to detect a harmless formatting change: the successful acceptance fields were never authenticated against the grant. It requires concurrent receipt replacement/corruption; the stable-file controls correctly refuse failed receipts.
+
+**Repro:** `metadata-boundaries.py`, case `authenticated-failed-result-accepted-by-split-read`. Test command exits 0 because it asserts the bad behavior; `metadata-boundaries-results.json` records `secondMainReturn:0`, `boundResultChecksPassed:false`, `consumptionCreated:true`, the exact swap schedule and inert dispatch calls. Fixture retained at `tmp/metadata-race-h86hqjr3`.
+
+**Correction:** Load each predecessor receipt once through a capped read that verifies its expected reference hash over the exact parsed bytes. Validate success/transaction fields and the output manifest from that authenticated result. Apply the same rule to consumption metadata. Reusing the validated object in `verify_worktree`, or independently authenticating and validating every subsequent read, closes the split. The new `read_json(..., expected_sha256=...)` supports the needed primitive already.
+
+**Contract:** explicit review requirement that allowed predecessors are exact hashed successful evidence and failures refuse before allocation/dispatch. The separate hash/parse pattern is inherited from the parent, not a newly introduced R3 regression; the R4 manifest reread leaves this gap open in the now-integrated admission path.
+
+### R4-2 — P2: enforce receipt size limits before hashing predecessor files
+
+**Location:** `packages/tools/src/capture/fauna_packet/caller.py:295-300`, calling the EOF-driven `sha` loop at **47-52** before the guarded JSON read at 56-63.
+
+The new manifest reader is bounded, but admission gets to it only after `grant_gate` fully hashes both predecessor metadata files. An oversized/tampered receipt is therefore read to EOF before any JSON size guard runs. Streaming in 1 MiB blocks limits temporary memory; it does not limit total input bytes or processing time. This phase is also outside the capture/cleanup deadlines.
+
+After an actual first caller OS exit 0, the independent test appends 8 MiB to each metadata type in separate fresh repositories, keeping the original grant hash. Actual second main/consume reads:
+
+- `result.json`: **8,413,681 bytes** before refusing hash drift.
+- consumption JSON: **8,389,847 bytes** before refusing hash drift.
+
+Both exceed `read_json`'s **2,097,152-byte** maximum. The test measures real `Path.open(...).read(n)` returns; no fake oversized stream or large native work is involved. Refusal occurs before allocation in these cases, but only after unbounded input processing. A much larger or growing file extends that work without the stated metadata cap.
+
+**Repro:** `metadata-boundaries.py`, `oversized-result` and `oversized-consumption`; per-read requested/returned sizes and retained fixtures are in `metadata-boundaries-results.json`. Command exit 0 asserts the observed violation.
+
+**Correction:** Use the existing bounded, hash-checking JSON read before semantic checks instead of the separate unbounded `sha(path)` pass. Check size before reading, allow at most maximum+1 bytes to detect growth, hash those bytes, then parse them. Keep output artifact stat/type/cap checks before their reads. This is an inherited admission gap exposed by the explicitly requested R4 bounded-read audit, not a changed memory-allocation budget.
+
+## Sequencing and independent CPU evidence
+
+`sequence-independent.py` builds a fresh real Git repository and commits only its source fixture, ignore file, empty render parent marker and synthetic readiness. It runs **six separate Python caller processes** through exact current main, consume, grant_gate, run_unit, persist, verified_output_paths and Git commands. Capture/decoder/external ownership probes are inert; the unchanged helper archive/audit/deadline function bodies execute with inert command ports. Source/dependency probing is replaced only within this isolated synthetic runtime. Exact current source bindings are checked separately by `check-current.py`.
+
+Every next grant is written after the preceding OS process exits. It contains that observed return code and freshly hashed result/consumption references for every prior unit. The sequence retains one HEAD throughout:
+
+`71bcdc63b5b69bf2d808647bb325a892ffda8394`
+
+Observed counts are **82, 82, 82, 82, 220, 220 = 768 files**. Every process exits 0; every disk receipt remains `accepted:false`, `checksPassed:true`, `AWAITING_CALLER_COMPLETION`. Prior receipt bytes remain unchanged. Git reports individual unignored output files; cumulative counts reach 768 with unchanged HEAD and only `?? assets/renders/ui/...` rows. These are labeled small text fixtures, not pictures or visual evidence. `six-sequence-results.json` contains all actual child argv, exits, hashes, specs and fixture paths.
+
+The original bug was independently reproduced with the exact parent caller obtained via `git show`: after current successful unit 1 leaves 82 files, actual parent `consume` refuses `Worktree is not clean`, before binding probes or allocation. See `reader-controls.py` and `reader-controls-results.json`.
+
+**26 independent negative cases** each begin with a fresh real repository and an actual successful first child process. Every second main/consume refuses before helper/decoder dispatch, consumption, evidence allocation or any new path:
+
+- unrelated and quoted/newline-containing untracked paths;
+- tracked edit, staged edit, staged valid artifact;
+- same-size artifact tamper, missing artifact, extra artifact, ignored extra, extra empty directory;
+- artifact, output-root, frames-directory and output-ancestor symlinks;
+- relative escape, absolute escape, duplicate manifest name;
+- undeclared current-unit and future-unit output;
+- manifest count mismatch, extra row key, image-cap excess, readout-cap excess, boolean byte count;
+- result manifest hash drift and old receipt missing outputManifest.
+
+For malformed-manifest structure cases, the test deliberately refreshes the grant result reference so it reaches structural checks instead of stopping at outer hash drift. No native permission is conveyed by these synthetic grants. See `admission-mutations.py` and `admission-mutations-results.json`.
+
+The new worktree reader itself passed an instrumented check: **one capped JSON read plus 82 artifact reads**, each artifact requested at exact expected size+1. A result replacement between gate completion and manifest reread is refused as `JSON reference drifted`. JSON growth after stat is refused after one maximum+1 sentinel read. These passes narrow the findings to the preceding gate, rather than alleging the new reader is unbounded.
+
+## Prior findings — explicit disposition
+
+| Prior item | R4 disposition | Current evidence |
+|---|---|---|
+| R1 Node final receipt masks primary capture error | **FIXED; no regression** | Actual Node main catch-write/final-write probes preserve PRIMARY_CAPTURE_SENTINEL and ENOSPC separately; stock Node covers combined/all-reporters/setup/unregister too. `entry.mjs:339-376`. |
+| R1 helper assertions drop raw observations | **FIXED; no regression** | Actual helper bodies retain raw launchctl stdout/stderr and unknown fields through archive/terminal assertion and reporting failures. `caller.py:103-174`; r1-python and prior-facts. |
+| R1 broad inspector accepts timestamp/feed contradictions | **FIXED; no regression** | Complete CPU decoder fixtures plus future-feed, missing journal, wrong incoming payload and nonfinite-clock refusals. `inspect.py:107-175`; 28-test stock suite and r1-python. |
+| R2 caught SIGALRM spends timer then continues archive/audit | **FIXED; no regression** | 38 actual SIGALRM/KeyboardInterrupt receipt boundaries; no later helper/decoder action, timer restored, main fails. `caller.py:476-479`, `103-174`, `524-549`. |
+| R2 failed final write leaves accepted:true allowing successor | **Original failure FIXED; no regression** | Eight actual child outcomes, including after-write/close/publication/rename, all sinks, and after-caller-return. Only success is admitted; every retained disk result is provisional. Seven completion/hash mutations refuse. `caller.py:291-308`, `579-600`. R4-1 is a distinct remaining receipt-authentication race, not recurrence of accepted:true publication. |
+| R2 exception normalization loses stdout/stderr/unknown/allocation facts | **FIXED; no regression** | Six actual producer-failure/all-sink cases preserve exact byte payloads, unknown fields and allocation ownership; exact metadata cap after close-error passes. `caller.py:76-100`, `512-521`. |
+| R3 observed successful caller OS exit + result/consumption hashes | **Stable-file contract retained; overall authentication incomplete per R4-1** | Process outcomes and seven reference mutations pass; new six-process chain uses genuine observed OS exits. No disk file substitutes for an OS exit. |
+| Parent sequential Git-admission blocker | **Normal/static sequence FIXED** | Parent RED plus current six-unit GREEN, 26 independent refusals and stock 15-case sequence test. Overall R4 remains REVISE for the two boundary gaps above. |
+
+## Commands, exits and preserved limitations
+
+`COMMANDS.md` lists every executed test command with cwd, environment, log and exit. `*-command.json` files are machine-readable ledgers. Key results:
+
+- Current stock Python: **28/28**, exit 0; current stock Node: **7/7**, exit 0.
+- Unchanged R3 independent process/interruption script against current exact copies: **8 process + 38 abort + 7 grant mutations**, exit 0.
+- Unchanged R3 retained-facts script against current copies: **6 producer cases + exact close-error cap**, exit 0.
+- R1 Python and both independent Node failure controls: exit 0.
+- Six-process chain: exit 0 after correcting one **review-harness-only** private-directory mode error. The initial exit 1, fixture and log are retained as `six-sequence.log`; it is not a source failure. Its real helper correctly refused the initial default 0755 mode. The harness now uses 0700, matching the contract.
+- Independent 26 refusals, parent RED/read-limit controls: exit 0.
+- Metadata findings repro: exit 0 **means reproduced defects**, not product PASS.
+- Actual committed-head `caller.py --check`: exit 0, `CPU_BINDINGS_ONLY`, runtime false, `allSixQualified:false`. At that instant free bytes were 68,779,790,336 and no conflicting task-local cache/Vite owners were found. This is not a runtime reservation or all-six-fit qualification.
+- Final verification and `git diff --check <parent> HEAD`: exit 0.
+
+No budgets/counts changed: correction admission **8,925,528,064** bytes each, broad admission **15,871,295,488** each; 64 MiB controlled metadata total; existing cache-copy and 600s/60s/45s phase limits unchanged. No actual disabled fixture execution was enabled or supplied a real grant. Only isolated scratch configurations had synthetic runtimeEnabled:true with inert ports.
+
+Native helpers, browser/GPU ownership, live capture, visual quality/animation acceptance, full smoke/e2e/DB verification, whole T09 completion and merge readiness remain **NOT QUALIFIED by this review**. The worker's report was used as a map; findings and conclusions above come from the actual diff/contracts and fresh executions. No further subagents were launched.

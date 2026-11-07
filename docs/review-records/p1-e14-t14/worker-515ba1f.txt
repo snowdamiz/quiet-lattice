@@ -1,0 +1,131 @@
+TASK: P1.E14.T14 Imported colour-mask material validation (deps T01, T02).
+STATUS: DONE — bounded implementation and local SOURCE/CPU qualification. Parent fresh review REQUIRED; no merge or visual acceptance.
+SUMMARY: Added export-only, mask-family-only context for the exact Blender glTF image-times-COLOR_0 graph. The connected Mix output must be enabled RGBA; the node must be unmuted, unclamped RGBA MULTIPLY with an enabled, unlinked factor exactly 1. Both colour inputs must be linked. The image branch must be an actual image Color output accepted by the existing image/coordinate tracer. The other branch must be an enabled Vertex Color Color output, unmuted. Every render-mesh user across all variants/LODs must have the same first/imported COLOR_0, active naming-validated mask and rendered mask. Explicit layer names must identify that attribute on every user. No special acceptance for the string Color. Invalid context stays procedural and fails the ordinary export material gate.
+
+PROVENANCE:
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-e0969873
+Branch: task/P1-E14-T14-imported-mask-validation
+Base: 73f51ba436e2a8c4e3828f60439c441db4f7ef38
+Base tree: f24e90e1161094a266e8a4047301b6e0c990662a
+Head: 515ba1f00810a50b499970b5468ef7bf0af84c32
+Head tree: 6e0fb967b897ecde0777567adac37ab9b59cb68f
+Initial app-created branch was t3/imported-mask-validation, renamed before edits to the requested T01 branch, then to T14 on the parent correction. Base is the actual parent local commit, not the separate T05 candidate.
+Commit: P1.E14.T14: validate imported colour-mask material routes. Working tree and index are clean. Only the following three Python files differ; all tracked binary/source assets, family rules, library, authoring, runtime, Review, capture and orchestration files remain unchanged.
+
+FILES CHANGED:
+  packages/tools/blender/artlib/checks.py  sha256 c5801c626e1a13d413b0c77d1600395bdb3a2878744e31fa0358413b2ebd4056
+  packages/tools/blender/artlib/materials.py  sha256 893ffc7721507defa275061284ed817140e0dc2fb74eef6e5d8b8883ebe90ed2
+  packages/tools/blender/material_mask_selftest.py  sha256 c9d639c5dd993fa66597178cea9e532e4d2440e158c96dc3f462c9fcc48b6f63
+
+VERIFY:
+RED: final test bytes against archived base production code: exit 1, 27/34 assertions pass. All three sources PASS. All three GLBs FAIL exclusively for missing maps: base colour (procedural), respectively 4, 6, 3 failures. Three additional legitimate-mask graph positives fail for the same classification; the constant-image control fails its expected uniform-image finding because baseline never recognizes the image channel. Initial 31-case RED: exit 1, 24/31.
+LOCAL FALSE-PASS REPRO: imported pinned stone GLB plus exact df2d05b1 task-local override, using real nodes and full core.run_checks: disabled VALUE output -> image/PASS; valid active VerifiedMask plus black CORNER layer explicitly named Color -> image/PASS. Exit 0 means both bad acceptances reproduced. No production file patched for this repro.
+GREEN: final suite exit 0, 34/34. Actual unchanged 3 sources + 3 compressed GLBs through stock core.validate_path = 6/6 PASS, no task override installed. Full-validator graph controls add active/named/renamed correct-mask PASS and reject partial/near-full/linked factor, disabled VALUE/VECTOR output, muted/clamped/wrong-blend Mix, absent/inactive black/inactive valid named layer, last-user wrong-name/absent/invalid/other-active/other-render mask, absent/constant/literal image, mask Alpha output, procedural image coordinates, missing UV and roughness. Invalid/absent last-user cases must fail both materials and naming. Short mip chain and missing required compression declarations also fail their specific materials/geometry checks. Initial GREEN 31/31 also retained.
+NEARBY REGRESSIONS: 53/53 Blender assertions, exit 0. Existing selftest.test_validator and selftest.test_review_cases ran on scratch synthetic source fixtures for props, creatures, hulls and library. Additional real consumer checks retain UV-local variation/uniform detection, image-times-nonzero-constant, zero multiplier, context-free procedural classification and one-argument trace compatibility.
+PIPELINE: existing packages/tools/src/art/{ktx,meshopt,targets}.test.ts: 3 files / 28 tests PASS, exit 0. Vitest 5.0.5, one worker, no file parallelism; pinned-release network paths use the existing in-process fixtures, no fetch of external assets.
+git diff --check BASE HEAD: exit 0. ast.parse on all three Python sources: PASS. Final test file is byte-identical in the archived-base RED and committed GREEN code.
+
+COMMANDS / EXITS (exact owned subprocess arguments; all run JSONs retain PIDs):
+red: exit 1; reaped=True; process group gone=True
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /Users/andreyyurlov/.t3/worktrees/space/t3-e0969873/packages/tools/blender/material_mask_selftest.py -- --asset-root /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/inputs --report-dir /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/red-reports
+local-red: exit 0; reaped=True; process group gone=True
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/local_repro.py --
+green: exit 0; reaped=True; process group gone=True
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /Users/andreyyurlov/.t3/worktrees/space/t3-e0969873/packages/tools/blender/material_mask_selftest.py -- --asset-root /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/inputs --report-dir /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/green-reports
+green-final: exit 0; reaped=True; process group gone=True
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /Users/andreyyurlov/.t3/worktrees/space/t3-e0969873/packages/tools/blender/material_mask_selftest.py -- --asset-root /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/inputs --report-dir /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/green-final-reports
+regression: exit 0; reaped=True; process group gone=True
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/regressions.py --
+red-final: exit 1; reaped=True; process group gone=True
+/Applications/Blender.app/Contents/MacOS/Blender -b -t 2 --factory-startup --python-exit-code 1 -P /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/baseline/packages/tools/blender/material_mask_selftest.py -- --asset-root /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/inputs --report-dir /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/red-final-reports
+pipeline: exit 0; reaped=True; process group gone=True
+node node_modules/vitest/vitest.mjs run --config /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/vitest.config.mjs --configLoader runner
+
+CPU launch envelope:
+Wrapper: /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/run.py LABEL SCRIPT [arguments]. Each Blender attempt has a new exclusive directory and log; factory startup, -b -t 2, --python-exit-code 1, 600-second wall bound, process-group TERM/KILL/reap cleanup. OMP/OPENBLAS/MKL/NUMEXPR/VECLIB/BLIS/TBB/UV thread limits=2; ART_KTX_JOBS=1, CUDA_VISIBLE_DEVICES empty, PYTHONDONTWRITEBYTECODE=1. Blender 5.2.3 LTS e13b728c6880; KTX binary pinned to the existing T05 node_modules cache at KTX-Software 4.4.2. All Blender runs were sequential. Pipeline wrapper limit 240 seconds, one worker. All owned process groups are gone.
+
+DECISIONS:
+Imported layer identity -> use object context, not a node layer-name allowlist. Installed Blender importer mesh.py creates COLOR_0 first and sets render_color_index=0; pbrMetallicRoughness.py uses that rendered layer for unnamed Vertex Color. Require first/active/rendered identity and the existing mask checker before allowing the shader reference. Explicit renaming of the actual attribute remains valid. This depends on the checked Blender importer convention; it is not a new raw accessor-to-mesh byte-equivalence validator.
+Other consumers -> optional context defaults empty. Source validation, bake planning, export planning and texture/GPU-memory inventory still use their existing context-free MaterialInfo/trace behavior. Only material_set in export mode for a colorMask family supplies context. No family settings, constant/procedural rules, image variation thresholds, mask tolerances, UV/PBR/texture/mip/geometry checks changed.
+Existing mask validity -> reuse naming's _color_mask_problem for every material user; this unit does not replace its existing 95%-of-elements, 0.05 sum tolerance or add a new global mask-domain policy. T05's stronger exact float-mask/geometry association proof remains task-owned.
+Full art:test -> COULD NOT RUN within this brief: the bundled test runs bake/export/render-related operations prohibited here. Relevant validator-only portions and CPU pipeline tests ran; no claim of full export/bake integration qualification.
+
+OUT OF SCOPE FOUND:
+T05 R1–R5 runner, cleanup, evidence/pair provenance remain with the T05 worker. T05 must remove material_trace.install/local monkeypatch when integrating this reviewed shared fix; the old one-argument replacement cannot supply the new validation context. No T05 files were edited. This does not certify source/export content equivalence for arbitrary future pairs, runtime GPU texture upload, native captures, visual grading, T07 integration, full-art acceptance, CI, release or merge.
+Parent plan/progress/decisions not edited. No push, PR, merge, service/DB, grant, GPU, browser, native capture, render, bake, LFS fetch, or regeneration of existing assets.
+
+PINNED SOURCE / EXPORT BYTES:
+All read from /Users/andreyyurlov/.t3/worktrees/space/t3-27d13e0f; verified against commit df2d05b1cc263c04599ab67334187dd807ebe186, including Git LFS OID and size without fetching. Copied into /var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/inputs and made read-only. Total pin bytes: 19543550 (<512 MiB). Original six assets plus source_manifest rehashed unchanged after tests. Pinned override is a historical repro input only.
+assets/blend/flora/non_tree_foliage.blend
+  5e2735723d9b2672c5edfe9e64f5a26fc19cf73f0cce01f2a2acf6c886a39456  2556236 bytes
+assets/blend/flora/non_tree_resources.blend
+  03a9b2775ff05da74df5ad2b5025525b550a49f037a6de982916fb021a5a28e9  6937736 bytes
+assets/blend/flora/non_tree_stone.blend
+  436f7364867d0e1501cd62bb06343bb43a26d1e71163f6d3f1f0b206f35e5e15  4951361 bytes
+packages/client/public/models/flora/non_tree_foliage.glb
+  925a426462a4c539905f5d921fd07a17ecab2aedd59d42c6445b4355abcb766d  1080436 bytes
+packages/client/public/models/flora/non_tree_resources.glb
+  7e777dd8c064c5b7452f50c8e5abf2120fec77d0516b47f39d8af1cfcc4a6725  2119312 bytes
+packages/client/public/models/flora/non_tree_stone.glb
+  a655b28caf4e513a8b5da79ac5195975c6c1094ed3b0fccd5f28d7e84606dff9  1772936 bytes
+assets/renders/flora/t05/source_manifest.json
+  e798e36959f537d30bdd7f5a24aa6bade854f4efb963d78845f4d51e1d345915  123984 bytes
+packages/tools/blender/flora/material_trace.py
+  1e3724015cfacb4d95a6e08ff387391a88fa9ad4a4b105fd961a0b6f6473fdd3  1549 bytes
+
+FAILED LOG TAILS (last 20 lines; expected RED exits):
+red:
+00:26:46 | INFO: Blender create Mesh node rock_0
+00:26:46 | INFO: Blender create Mesh node rock_0
+00:26:46 | INFO: Blender create Mesh node rock_0
+00:26:46 | INFO: Blender create Mesh node rock_0
+00:26:46 | INFO: Blender create Mesh node rock_1
+00:26:46 | INFO: Blender create Mesh node rock_1
+00:26:46 | INFO: Blender create Mesh node rock_1
+00:26:46 | INFO: Blender create Mesh node rock_1
+00:26:46 | INFO: Blender create Mesh node rock_2
+00:26:46 | INFO: Blender create Mesh node rock_2
+00:26:46 | INFO: Blender create Mesh node rock_2
+00:26:46 | INFO: Blender create Mesh node rock_2
+00:26:46 | INFO: Blender create Mesh node rock_3
+00:26:46 | INFO: Blender create Mesh node rock_3
+00:26:46 | INFO: Blender create Mesh node rock_3
+00:26:46 | INFO: Blender create Mesh node rock_3
+00:26:46 | INFO: glTF import finished in 0.06s
+PASS missing_roughness: FAIL expected FAIL
+24/31 controls passed; failures: ['non_tree_foliage_export', 'non_tree_resources_export', 'non_tree_stone_export', 'active_mask', 'named_mask', 'renamed_mask', 'constant_image']
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+red-final:
+00:31:42 | INFO: Blender create Mesh node rock_0
+00:31:42 | INFO: Blender create Mesh node rock_0
+00:31:42 | INFO: Blender create Mesh node rock_0
+00:31:42 | INFO: Blender create Mesh node rock_1
+00:31:42 | INFO: Blender create Mesh node rock_1
+00:31:42 | INFO: Blender create Mesh node rock_1
+00:31:42 | INFO: Blender create Mesh node rock_1
+00:31:42 | INFO: Blender create Mesh node rock_2
+00:31:42 | INFO: Blender create Mesh node rock_2
+00:31:42 | INFO: Blender create Mesh node rock_2
+00:31:42 | INFO: Blender create Mesh node rock_2
+00:31:42 | INFO: Blender create Mesh node rock_3
+00:31:42 | INFO: Blender create Mesh node rock_3
+00:31:42 | INFO: Blender create Mesh node rock_3
+00:31:42 | INFO: Blender create Mesh node rock_3
+00:31:42 | INFO: glTF import finished in 0.07s
+PASS short_mips: FAIL expected FAIL
+PASS optional_compression: FAIL expected FAIL
+27/34 controls passed; failures: ['non_tree_foliage_export', 'non_tree_resources_export', 'non_tree_stone_export', 'active_mask', 'named_mask', 'renamed_mask', 'constant_image']
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+ARTIFACTS:
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/REPORT.txt
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/provenance.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/inputs.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/verified-inputs-after.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/diff.patch
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/red-final-reports/results.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/green-final-reports/results.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/local-red/results.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/regression/results.json
+/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t01-imported-mask-yetfgv41/pipeline/vitest.log
+No renders/captures produced or graded. Parent fresh independent review must assess the exact head above before integration.
