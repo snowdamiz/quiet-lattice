@@ -1,0 +1,72 @@
+{
+  "status": "PASS_THREE_INTENDED_REFUSALS",
+  "count": 3,
+  "commands": [
+    {
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+        "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py",
+        "native-absent-v2",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+        "--execute",
+        "--grant",
+        "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+      ],
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredError": "FileNotFoundError",
+      "subprocessEvents": [],
+      "stdout": "{\"label\": \"native-absent-v2\", \"exitCode\": 1, \"seconds\": 0.35952804202679545, \"subprocessCount\": 0, \"reviewBytes\": 7090405}\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py\", line 33, in <module>\n    try:runpy.run_path(str(target),run_name='__main__')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen runpy>\", line 287, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 263, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 257, in main\n    record=consume(ready,plan,args.grant)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py\", line 92, in consume\n    grant_snapshot=snapshot(grant_path);grant=grant_snapshot['value']\n                   ^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/admission_json.py\", line 14, in snapshot\n    before=path.lstat();facts['before']=dict(mode=before.st_mode,bytes=before.st_size,dev=before.st_dev,ino=before.st_ino)\n           ^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 847, in lstat\n    return self.stat(follow_symlinks=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py\", line 840, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json'\n"
+    },
+    {
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+        "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py",
+        "capture-disabled",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+        "--execute",
+        "--grant",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json"
+      ],
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredError": "SOURCE_ONLY_RUNTIME_DISABLED",
+      "subprocessEvents": [],
+      "stdout": "{\"label\": \"capture-disabled\", \"exitCode\": 1, \"seconds\": 0.02019924996420741, \"subprocessCount\": 0, \"reviewBytes\": 7093792}\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py\", line 33, in <module>\n    try:runpy.run_path(str(target),run_name='__main__')\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen runpy>\", line 287, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 505, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 496, in main\n    record = consume(ready, args.grant)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 84, in consume\n    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 51, in verify_runtime\n    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SOURCE_ONLY_RUNTIME_DISABLED\n"
+    },
+    {
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "-O",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/optimized-cli.py",
+        "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/optimized-v2-events.json"
+      ],
+      "exitCode": 1,
+      "expectedExit": 1,
+      "requiredError": "T02_ASSERTIONS_REQUIRED",
+      "stdout": "",
+      "stderr": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused\n",
+      "events": {
+        "optimize": 1,
+        "launchEvents": [],
+        "argv": [
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py",
+          "--execute",
+          "--grant",
+          "/private/tmp/t02-native189-r12-20261107-t3-11167406-grant.json"
+        ]
+      }
+    }
+  ],
+  "unqualifiedAttempts": [
+    "GREEN/native-absent.stderr: harness import path failure",
+    "GREEN/optimized-refused.command.json: immutable guard swallowed SystemExit text; later instrumented optimized CLI preserves text"
+  ]
+}

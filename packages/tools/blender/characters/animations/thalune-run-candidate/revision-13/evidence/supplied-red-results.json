@@ -1,0 +1,1210 @@
+[
+  {
+    "name": "real-birth",
+    "status": "FAIL",
+    "details": {
+      "accepted": false,
+      "error": {
+        "type": "TypeError",
+        "message": "CohortRSS.__init__() got an unexpected keyword argument 'admit'",
+        "details": {
+          "args": [
+            "CohortRSS.__init__() got an unexpected keyword argument 'admit'"
+          ]
+        }
+      },
+      "observations": [],
+      "children": [],
+      "executableReceipt": {
+        "actualExecutables": {},
+        "observerEvents": []
+      },
+      "scope": "Real identities and ps; fixture-owned membership ledger, no OS coalition creation"
+    }
+  },
+  {
+    "name": "real-departure",
+    "status": "FAIL",
+    "details": {
+      "accepted": false,
+      "error": {
+        "type": "TypeError",
+        "message": "CohortRSS.__init__() got an unexpected keyword argument 'admit'",
+        "details": {
+          "args": [
+            "CohortRSS.__init__() got an unexpected keyword argument 'admit'"
+          ]
+        }
+      },
+      "observations": [],
+      "children": [
+        {
+          "pid": 87084,
+          "exit": 0,
+          "identity": null,
+          "stderr": ""
+        }
+      ],
+      "executableReceipt": {
+        "actualExecutables": {},
+        "observerEvents": []
+      },
+      "scope": "Real identities and ps; fixture-owned membership ledger, no OS coalition creation"
+    }
+  },
+  {
+    "name": "retained-replay",
+    "status": "FAIL",
+    "details": {
+      "accepted": false,
+      "error": {
+        "type": "AssertionError",
+        "message": "RSS cohort birth/departure/duplicate during sample",
+        "details": {
+          "args": [
+            "RSS cohort birth/departure/duplicate during sample"
+          ]
+        }
+      },
+      "observations": [
+        {
+          "monotonic": 286305.378469541,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "coalition_absent": false,
+            "started": 10,
+            "exited": 7,
+            "live": 3
+          },
+          "members": [
+            {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            }
+          ],
+          "before": [
+            {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "51695": 2670592,
+              "51694": 38354944,
+              "51693": 23429120
+            },
+            "syntheticNewMemberRss": true,
+            "unknown": {
+              "keep": 7
+            }
+          },
+          "after": [
+            {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 51704,
+              "ppid": 51694,
+              "pgid": 51694,
+              "birth": [
+                1794050759,
+                100732
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            }
+          ],
+          "kernelAfter": {
+            "coalition_absent": false,
+            "started": 12,
+            "exited": 8,
+            "live": 4
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "RSS cohort birth/departure/duplicate during sample",
+            "details": {
+              "args": [
+                "RSS cohort birth/departure/duplicate during sample"
+              ]
+            }
+          }
+        }
+      ],
+      "historicalExecutable51704": "UNOBSERVED_NOT_RETROACTIVELY_ADMITTED"
+    }
+  },
+  {
+    "name": "cleanup-primary",
+    "status": "FAIL",
+    "details": {
+      "accepted": false,
+      "result": {
+        "status": "HOLD",
+        "primaryFailure": {
+          "type": "TimeoutExpired",
+          "message": "Command '['fixture-ps']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "fixture-ps"
+            ],
+            "timeout": 2,
+            "output": "b'partial\\xff'",
+            "stderr": "b'error\\xfe'",
+            "unknown": {
+              "retained": 17
+            },
+            "args": [
+              [
+                "fixture-ps"
+              ],
+              2
+            ]
+          }
+        },
+        "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+        "runtimeAuthorization": false,
+        "dispatchFailure": {
+          "type": "AssertionError",
+          "message": "",
+          "details": {
+            "args": []
+          }
+        },
+        "terminalAudit": [
+          {
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/receipt.json",
+            "releaseProved": false,
+            "kernel": {
+              "coalition_absent": true,
+              "live": 0,
+              "unknown": 9
+            },
+            "members": [],
+            "births": [],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "inert"
+            ],
+            "registrationExit": 113,
+            "registrationStdout": "",
+            "registrationStderr": "raw",
+            "scratchAbsent": false,
+            "privateTmpAbsent": false,
+            "failure": {
+              "type": "AssertionError",
+              "message": "Owned scratch namespace remains",
+              "details": {
+                "args": [
+                  "Owned scratch namespace remains"
+                ]
+              }
+            }
+          }
+        ],
+        "terminalAuditFailures": [
+          {
+            "type": "AssertionError",
+            "message": "Owned scratch namespace remains",
+            "details": {
+              "args": [
+                "Owned scratch namespace remains"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "AssertionError",
+            "message": "Attempt cleanup remains unproved: /private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/receipt.json",
+            "details": {
+              "args": [
+                "Attempt cleanup remains unproved: /private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/receipt.json"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "TerminalAttemptAccountingFailure",
+            "message": "Every allocation attempt requires its own positive terminal audit",
+            "attempts": 1,
+            "handles": 1,
+            "audits": 1
+          }
+        ],
+        "nativeJobs": 1,
+        "pipelineSeconds": 0.0031272920314222574,
+        "outputInventory": {
+          "normalBytes": 0,
+          "reservedBytes": 0,
+          "files": 0,
+          "reservedFiles": 0,
+          "paths": [],
+          "totalBytes": 0,
+          "complete": true,
+          "enumeration": {
+            "root": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/packet",
+            "complete": true,
+            "directories": [
+              {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/packet",
+                "directories": [],
+                "files": [],
+                "entries": [],
+                "enumerated": true
+              }
+            ]
+          }
+        },
+        "outputBytes": 0,
+        "freeBytesAfter": 22066626560,
+        "terminalReleaseProved": false,
+        "receiptFallbacks": [
+          {
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/receipt.json",
+            "receipt": {
+              "name": "native-189-encode",
+              "primaryFailure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['fixture-ps']' timed out after 2 seconds",
+                "details": {
+                  "cmd": [
+                    "fixture-ps"
+                  ],
+                  "timeout": 2,
+                  "output": "b'partial\\xff'",
+                  "stderr": "b'error\\xfe'",
+                  "unknown": {
+                    "retained": 17
+                  },
+                  "args": [
+                    [
+                      "fixture-ps"
+                    ],
+                    2
+                  ]
+                }
+              },
+              "cleanupFailure": {
+                "type": "AssertionError",
+                "message": "Owned drain did not prove clean release",
+                "details": {
+                  "args": [
+                    "Owned drain did not prove clean release"
+                  ]
+                }
+              },
+              "persistenceFailures": [],
+              "terminal": null,
+              "argv": [
+                "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                "encode",
+                "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/worker-config.json"
+              ],
+              "phase": "start",
+              "privateTmp": {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/private",
+                "admission": {
+                  "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/private"
+                }
+              },
+              "bootstrapPortRestored": true,
+              "actualExecutables": {},
+              "observerEvents": [],
+              "observationFailures": [
+                {
+                  "phase": "resource",
+                  "failure": {
+                    "type": "TimeoutExpired",
+                    "message": "Command '['fixture-ps']' timed out after 2 seconds",
+                    "details": {
+                      "cmd": [
+                        "fixture-ps"
+                      ],
+                      "timeout": 2,
+                      "output": "b'partial\\xff'",
+                      "stderr": "b'error\\xfe'",
+                      "unknown": {
+                        "retained": 17
+                      },
+                      "args": [
+                        [
+                          "fixture-ps"
+                        ],
+                        2
+                      ]
+                    }
+                  }
+                }
+              ],
+              "resourceFailures": [
+                {
+                  "type": "TimeoutExpired",
+                  "message": "Command '['fixture-ps']' timed out after 2 seconds",
+                  "details": {
+                    "cmd": [
+                      "fixture-ps"
+                    ],
+                    "timeout": 2,
+                    "output": "b'partial\\xff'",
+                    "stderr": "b'error\\xfe'",
+                    "unknown": {
+                      "retained": 17
+                    },
+                    "args": [
+                      [
+                        "fixture-ps"
+                      ],
+                      2
+                    ]
+                  }
+                }
+              ],
+              "outcome": "observer_failed",
+              "exits": {},
+              "secondaryFailures": [
+                {
+                  "type": "AssertionError",
+                  "message": "",
+                  "details": {
+                    "args": []
+                  }
+                }
+              ],
+              "ownedAllocation": {
+                "out": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/owned-job",
+                "scratch": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/owned-job/scratch",
+                "target": "inert",
+                "coalition_id": "123"
+              },
+              "drain": {
+                "exits": {},
+                "errors": [
+                  "TimeoutExpired: Command '['fixture-ps']' timed out after 2 seconds"
+                ],
+                "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+                "stage": "native-189-encode",
+                "readiness_sha256": "53d312273f618f040ddc4829fa6e1820895bcbab3a38b1b192dc350f8f3ac001",
+                "drained": true,
+                "clean": false,
+                "remaining": [],
+                "kernel_terminal": {
+                  "coalition_absent": true,
+                  "live": 0
+                },
+                "unknownDrain": {
+                  "kept": true
+                }
+              },
+              "drainMembers": [],
+              "drainKernel": {
+                "coalition_absent": true,
+                "live": 0,
+                "unknown": 9
+              },
+              "releaseAudits": []
+            }
+          }
+        ],
+        "jobs": [
+          {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/receipt.json",
+            "sha256": "e759ef85f6a2e33cbd485fd961fed4b3b84d9b2d4436fb4291e9714d697e0dab"
+          }
+        ],
+        "terminalPersistenceFailures": [],
+        "terminalDelivery": {
+          "proof": {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/result.json",
+            "status": "written",
+            "sha256": "9ccd446ed4186225ae48b995c4f55d2190528bd4fcec6b899334a1ca0df15223",
+            "bytes": 8736
+          },
+          "packet": {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/packet/integration-result.json",
+            "status": "written",
+            "completeObservations": true,
+            "sha256": "80387e82a04d02cc9c972e1744a80548072ed8ffa80175e7ee46873be1744455",
+            "bytes": 8834
+          },
+          "completeObservationsPersisted": true,
+          "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+        }
+      },
+      "receipt": {
+        "name": "native-189-encode",
+        "primaryFailure": {
+          "type": "TimeoutExpired",
+          "message": "Command '['fixture-ps']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "fixture-ps"
+            ],
+            "timeout": 2,
+            "output": "b'partial\\xff'",
+            "stderr": "b'error\\xfe'",
+            "unknown": {
+              "retained": 17
+            },
+            "args": [
+              [
+                "fixture-ps"
+              ],
+              2
+            ]
+          }
+        },
+        "cleanupFailure": {
+          "type": "AssertionError",
+          "message": "Owned drain did not prove clean release",
+          "details": {
+            "args": [
+              "Owned drain did not prove clean release"
+            ]
+          }
+        },
+        "persistenceFailures": [],
+        "terminal": null,
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+          "encode",
+          "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/worker-config.json"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/private",
+          "admission": {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/private"
+          }
+        },
+        "bootstrapPortRestored": true,
+        "actualExecutables": {},
+        "observerEvents": [],
+        "observationFailures": [
+          {
+            "phase": "resource",
+            "failure": {
+              "type": "TimeoutExpired",
+              "message": "Command '['fixture-ps']' timed out after 2 seconds",
+              "details": {
+                "cmd": [
+                  "fixture-ps"
+                ],
+                "timeout": 2,
+                "output": "b'partial\\xff'",
+                "stderr": "b'error\\xfe'",
+                "unknown": {
+                  "retained": 17
+                },
+                "args": [
+                  [
+                    "fixture-ps"
+                  ],
+                  2
+                ]
+              }
+            }
+          }
+        ],
+        "resourceFailures": [
+          {
+            "type": "TimeoutExpired",
+            "message": "Command '['fixture-ps']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "fixture-ps"
+              ],
+              "timeout": 2,
+              "output": "b'partial\\xff'",
+              "stderr": "b'error\\xfe'",
+              "unknown": {
+                "retained": 17
+              },
+              "args": [
+                [
+                  "fixture-ps"
+                ],
+                2
+              ]
+            }
+          }
+        ],
+        "outcome": "observer_failed",
+        "exits": {},
+        "secondaryFailures": [
+          {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          }
+        ],
+        "ownedAllocation": {
+          "out": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/owned-job",
+          "scratch": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/cleanup/proof/jobs/native-189-encode/owned-job/scratch",
+          "target": "inert",
+          "coalition_id": "123"
+        },
+        "drain": {
+          "exits": {},
+          "errors": [
+            "TimeoutExpired: Command '['fixture-ps']' timed out after 2 seconds"
+          ],
+          "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+          "stage": "native-189-encode",
+          "readiness_sha256": "53d312273f618f040ddc4829fa6e1820895bcbab3a38b1b192dc350f8f3ac001",
+          "drained": true,
+          "clean": false,
+          "remaining": [],
+          "kernel_terminal": {
+            "coalition_absent": true,
+            "live": 0
+          },
+          "unknownDrain": {
+            "kept": true
+          }
+        },
+        "drainMembers": [],
+        "drainKernel": {
+          "coalition_absent": true,
+          "live": 0,
+          "unknown": 9
+        },
+        "releaseAudits": []
+      },
+      "events": [
+        "start",
+        "drain"
+      ]
+    }
+  },
+  {
+    "name": "cleanup-new-error",
+    "status": "PASS",
+    "details": {
+      "accepted": false,
+      "result": {
+        "status": "HOLD",
+        "primaryFailure": {
+          "type": "TimeoutExpired",
+          "message": "Command '['fixture-ps']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "fixture-ps"
+            ],
+            "timeout": 2,
+            "output": "b'partial\\xff'",
+            "stderr": "b'error\\xfe'",
+            "unknown": {
+              "retained": 17
+            },
+            "args": [
+              [
+                "fixture-ps"
+              ],
+              2
+            ]
+          }
+        },
+        "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+        "runtimeAuthorization": false,
+        "dispatchFailure": {
+          "type": "AssertionError",
+          "message": "",
+          "details": {
+            "args": []
+          }
+        },
+        "terminalAudit": [
+          {
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/receipt.json",
+            "releaseProved": false,
+            "kernel": {
+              "coalition_absent": true,
+              "live": 0,
+              "unknown": 9
+            },
+            "members": [],
+            "births": [],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "inert"
+            ],
+            "registrationExit": 113,
+            "registrationStdout": "",
+            "registrationStderr": "raw",
+            "scratchAbsent": false,
+            "privateTmpAbsent": false,
+            "failure": {
+              "type": "AssertionError",
+              "message": "Owned scratch namespace remains",
+              "details": {
+                "args": [
+                  "Owned scratch namespace remains"
+                ]
+              }
+            }
+          }
+        ],
+        "terminalAuditFailures": [
+          {
+            "type": "AssertionError",
+            "message": "Owned scratch namespace remains",
+            "details": {
+              "args": [
+                "Owned scratch namespace remains"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "AssertionError",
+            "message": "Attempt cleanup remains unproved: /private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/receipt.json",
+            "details": {
+              "args": [
+                "Attempt cleanup remains unproved: /private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/receipt.json"
+              ]
+            },
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/receipt.json"
+          },
+          {
+            "type": "TerminalAttemptAccountingFailure",
+            "message": "Every allocation attempt requires its own positive terminal audit",
+            "attempts": 1,
+            "handles": 1,
+            "audits": 1
+          }
+        ],
+        "nativeJobs": 1,
+        "pipelineSeconds": 0.0028359160060063004,
+        "outputInventory": {
+          "normalBytes": 0,
+          "reservedBytes": 0,
+          "files": 0,
+          "reservedFiles": 0,
+          "paths": [],
+          "totalBytes": 0,
+          "complete": true,
+          "enumeration": {
+            "root": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/packet",
+            "complete": true,
+            "directories": [
+              {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/packet",
+                "directories": [],
+                "files": [],
+                "entries": [],
+                "enumerated": true
+              }
+            ]
+          }
+        },
+        "outputBytes": 0,
+        "freeBytesAfter": 22066626560,
+        "terminalReleaseProved": false,
+        "receiptFallbacks": [
+          {
+            "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/receipt.json",
+            "receipt": {
+              "name": "native-189-encode",
+              "primaryFailure": {
+                "type": "TimeoutExpired",
+                "message": "Command '['fixture-ps']' timed out after 2 seconds",
+                "details": {
+                  "cmd": [
+                    "fixture-ps"
+                  ],
+                  "timeout": 2,
+                  "output": "b'partial\\xff'",
+                  "stderr": "b'error\\xfe'",
+                  "unknown": {
+                    "retained": 17
+                  },
+                  "args": [
+                    [
+                      "fixture-ps"
+                    ],
+                    2
+                  ]
+                }
+              },
+              "cleanupFailure": {
+                "type": "AssertionError",
+                "message": "Owned drain did not prove clean release",
+                "details": {
+                  "args": [
+                    "Owned drain did not prove clean release"
+                  ]
+                }
+              },
+              "persistenceFailures": [],
+              "terminal": null,
+              "argv": [
+                "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+                "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+                "encode",
+                "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/worker-config.json"
+              ],
+              "phase": "start",
+              "privateTmp": {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/private",
+                "admission": {
+                  "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/private"
+                }
+              },
+              "bootstrapPortRestored": true,
+              "actualExecutables": {},
+              "observerEvents": [],
+              "observationFailures": [
+                {
+                  "phase": "resource",
+                  "failure": {
+                    "type": "TimeoutExpired",
+                    "message": "Command '['fixture-ps']' timed out after 2 seconds",
+                    "details": {
+                      "cmd": [
+                        "fixture-ps"
+                      ],
+                      "timeout": 2,
+                      "output": "b'partial\\xff'",
+                      "stderr": "b'error\\xfe'",
+                      "unknown": {
+                        "retained": 17
+                      },
+                      "args": [
+                        [
+                          "fixture-ps"
+                        ],
+                        2
+                      ]
+                    }
+                  }
+                }
+              ],
+              "resourceFailures": [
+                {
+                  "type": "TimeoutExpired",
+                  "message": "Command '['fixture-ps']' timed out after 2 seconds",
+                  "details": {
+                    "cmd": [
+                      "fixture-ps"
+                    ],
+                    "timeout": 2,
+                    "output": "b'partial\\xff'",
+                    "stderr": "b'error\\xfe'",
+                    "unknown": {
+                      "retained": 17
+                    },
+                    "args": [
+                      [
+                        "fixture-ps"
+                      ],
+                      2
+                    ]
+                  }
+                }
+              ],
+              "outcome": "observer_failed",
+              "exits": {},
+              "secondaryFailures": [
+                {
+                  "type": "AssertionError",
+                  "message": "",
+                  "details": {
+                    "args": []
+                  }
+                }
+              ],
+              "ownedAllocation": {
+                "out": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/owned-job",
+                "scratch": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/owned-job/scratch",
+                "target": "inert",
+                "coalition_id": "123"
+              },
+              "drain": {
+                "exits": {},
+                "errors": [
+                  "TimeoutExpired: Command '['fixture-ps']' timed out after 2 seconds",
+                  "NEW_DRAIN_ERROR"
+                ],
+                "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+                "stage": "native-189-encode",
+                "readiness_sha256": "53d312273f618f040ddc4829fa6e1820895bcbab3a38b1b192dc350f8f3ac001",
+                "drained": true,
+                "clean": false,
+                "remaining": [],
+                "kernel_terminal": {
+                  "coalition_absent": true,
+                  "live": 0
+                },
+                "unknownDrain": {
+                  "kept": true
+                }
+              },
+              "drainMembers": [],
+              "drainKernel": {
+                "coalition_absent": true,
+                "live": 0,
+                "unknown": 9
+              },
+              "releaseAudits": []
+            }
+          }
+        ],
+        "jobs": [
+          {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/receipt.json",
+            "sha256": "fec974bee7ca3ed20a96fd3c26b28031913d32e0c0f62b663ba05e9d669aa1d4"
+          }
+        ],
+        "terminalPersistenceFailures": [],
+        "terminalDelivery": {
+          "proof": {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/result.json",
+            "status": "written",
+            "sha256": "345e66a06b12f025f62909263acf00c39e3f55a9edb010e98be13bae301fd82f",
+            "bytes": 8799
+          },
+          "packet": {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/packet/integration-result.json",
+            "status": "written",
+            "completeObservations": true,
+            "sha256": "bc1e94b204f38e3b6823a9f05e66794ad853d9fc758fe09113e8d47155600479",
+            "bytes": 8897
+          },
+          "completeObservationsPersisted": true,
+          "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+        }
+      },
+      "receipt": {
+        "name": "native-189-encode",
+        "primaryFailure": {
+          "type": "TimeoutExpired",
+          "message": "Command '['fixture-ps']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "fixture-ps"
+            ],
+            "timeout": 2,
+            "output": "b'partial\\xff'",
+            "stderr": "b'error\\xfe'",
+            "unknown": {
+              "retained": 17
+            },
+            "args": [
+              [
+                "fixture-ps"
+              ],
+              2
+            ]
+          }
+        },
+        "cleanupFailure": {
+          "type": "AssertionError",
+          "message": "Owned drain did not prove clean release",
+          "details": {
+            "args": [
+              "Owned drain did not prove clean release"
+            ]
+          }
+        },
+        "persistenceFailures": [],
+        "terminal": null,
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+          "encode",
+          "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/worker-config.json"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/private",
+          "admission": {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/private"
+          }
+        },
+        "bootstrapPortRestored": true,
+        "actualExecutables": {},
+        "observerEvents": [],
+        "observationFailures": [
+          {
+            "phase": "resource",
+            "failure": {
+              "type": "TimeoutExpired",
+              "message": "Command '['fixture-ps']' timed out after 2 seconds",
+              "details": {
+                "cmd": [
+                  "fixture-ps"
+                ],
+                "timeout": 2,
+                "output": "b'partial\\xff'",
+                "stderr": "b'error\\xfe'",
+                "unknown": {
+                  "retained": 17
+                },
+                "args": [
+                  [
+                    "fixture-ps"
+                  ],
+                  2
+                ]
+              }
+            }
+          }
+        ],
+        "resourceFailures": [
+          {
+            "type": "TimeoutExpired",
+            "message": "Command '['fixture-ps']' timed out after 2 seconds",
+            "details": {
+              "cmd": [
+                "fixture-ps"
+              ],
+              "timeout": 2,
+              "output": "b'partial\\xff'",
+              "stderr": "b'error\\xfe'",
+              "unknown": {
+                "retained": 17
+              },
+              "args": [
+                [
+                  "fixture-ps"
+                ],
+                2
+              ]
+            }
+          }
+        ],
+        "outcome": "observer_failed",
+        "exits": {},
+        "secondaryFailures": [
+          {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          }
+        ],
+        "ownedAllocation": {
+          "out": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/owned-job",
+          "scratch": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red/new-error/proof/jobs/native-189-encode/owned-job/scratch",
+          "target": "inert",
+          "coalition_id": "123"
+        },
+        "drain": {
+          "exits": {},
+          "errors": [
+            "TimeoutExpired: Command '['fixture-ps']' timed out after 2 seconds",
+            "NEW_DRAIN_ERROR"
+          ],
+          "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+          "stage": "native-189-encode",
+          "readiness_sha256": "53d312273f618f040ddc4829fa6e1820895bcbab3a38b1b192dc350f8f3ac001",
+          "drained": true,
+          "clean": false,
+          "remaining": [],
+          "kernel_terminal": {
+            "coalition_absent": true,
+            "live": 0
+          },
+          "unknownDrain": {
+            "kept": true
+          }
+        },
+        "drainMembers": [],
+        "drainKernel": {
+          "coalition_absent": true,
+          "live": 0,
+          "unknown": 9
+        },
+        "releaseAudits": []
+      },
+      "events": [
+        "start",
+        "drain"
+      ]
+    }
+  }
+]

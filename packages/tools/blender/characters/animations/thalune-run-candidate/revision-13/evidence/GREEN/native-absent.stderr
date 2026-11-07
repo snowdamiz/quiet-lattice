@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py", line 33, in <module>
+    try:runpy.run_path(str(target),run_name='__main__')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189.py", line 4, in <module>
+    from assertion_guard import require_assertions
+ModuleNotFoundError: No module named 'assertion_guard'

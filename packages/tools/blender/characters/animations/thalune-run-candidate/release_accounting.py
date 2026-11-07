@@ -130,7 +130,8 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
                       ('freeBytesAfter',lambda:shutil.disk_usage(HERE).free)]:
         try:result[name]=read()
         except BaseException as error:errors.append({**error_receipt(error),'observation':name})
-    result['terminalReleaseProved']=not errors and accounted
+    result['terminalReleaseAuditProved']=not errors and accounted
+    result['terminalReleaseProved']=False
     if errors:
         result['status']='HOLD'
         if result['primaryFailure'] is None:result['primaryFailure']={'type':'TerminalAuditFailure','message':'Terminal resource release unproved; see terminalAuditFailures'}
@@ -154,6 +155,7 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
         proof_reference={'path':str(proof/'result.json'),'sha256':hashlib.sha256(actual).hexdigest(),'bytes':len(actual)}
         delivery['proof'].update(status='written',**proof_reference)
         delivery['completeObservationsPersisted']=True
+        result['terminalReleaseProved']=result['terminalReleaseAuditProved']
     except BaseException as error:delivery_failure(result,'proof',error)
     try:
         delivery['packet']['status']='attempting'
@@ -165,4 +167,5 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
         delivery['packet'].update(status='written',completeObservations=complete,sha256=hashlib.sha256(actual).hexdigest(),bytes=len(actual))
         delivery['completeObservationsPersisted']|=complete
     except BaseException as error:delivery_failure(result,'packet',error)
+    result['terminalReleaseProved']=result['terminalReleaseAuditProved'] and delivery['completeObservationsPersisted']
     return result

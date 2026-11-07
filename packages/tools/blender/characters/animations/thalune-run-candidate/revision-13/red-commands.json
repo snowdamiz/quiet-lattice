@@ -1,0 +1,76 @@
+[
+  {
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/guard.py",
+      "both",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-boundary.py",
+      "both"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "stdout": "{\"label\": \"both\", \"exitCode\": 1, \"seconds\": 0.10404720902442932, \"subprocessCount\": 0, \"reviewBytes\": 42541}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/guard.py",
+      "proof",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-boundary.py",
+      "proof"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdout": "{\"label\": \"proof\", \"exitCode\": 0, \"seconds\": 0.08573670801706612, \"subprocessCount\": 0, \"reviewBytes\": 80848}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/guard.py",
+      "packet",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-boundary.py",
+      "packet"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdout": "{\"label\": \"packet\", \"exitCode\": 0, \"seconds\": 0.08364979200996459, \"subprocessCount\": 0, \"reviewBytes\": 118896}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/guard.py",
+      "supplied-red",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-12/red-source.py",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/supplied-red"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "stdout": "{\"label\": \"supplied-red\", \"exitCode\": 1, \"seconds\": 0.0985361670027487, \"subprocessCount\": 1, \"reviewBytes\": 214582}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-13/cpu-port.py",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/guard.py",
+      "compatible-red",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/compatible-red.py"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "stdout": "{\"label\": \"compatible-red\", \"exitCode\": 1, \"seconds\": 0.11542137496871874, \"subprocessCount\": 4, \"reviewBytes\": 319861}\n",
+    "stderr": ""
+  }
+]

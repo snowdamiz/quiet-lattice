@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/private/tmp/t02-r13-terminal-kyrij2wd/GREEN/guard.py", line 33, in <module>
+    try:runpy.run_path(str(target),run_name='__main__')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 505, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 496, in main
+    record = consume(ready, args.grant)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 84, in consume
+    admitted=verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py", line 51, in verify_runtime
+    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SOURCE_ONLY_RUNTIME_DISABLED

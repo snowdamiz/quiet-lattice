@@ -1,0 +1,448 @@
+{
+  "accepted": true,
+  "result": {
+    "status": "HOLD",
+    "primaryFailure": {
+      "type": "TimeoutExpired",
+      "message": "Command '['fixture-ps']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "fixture-ps"
+        ],
+        "timeout": 2,
+        "output": "b'partial\\xff'",
+        "stderr": "b'error\\xfe'",
+        "unknown": {
+          "retained": 17
+        },
+        "args": [
+          [
+            "fixture-ps"
+          ],
+          2
+        ]
+      }
+    },
+    "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+    "runtimeAuthorization": false,
+    "dispatchFailure": {
+      "type": "AssertionError",
+      "message": "",
+      "details": {
+        "args": []
+      }
+    },
+    "terminalAudit": [
+      {
+        "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/receipt.json",
+        "releaseProved": true,
+        "kernel": {
+          "coalition_absent": true,
+          "live": 0,
+          "unknown": 9
+        },
+        "members": [],
+        "births": [],
+        "registrationArgv": [
+          "/bin/launchctl",
+          "print",
+          "inert"
+        ],
+        "registrationExit": 113,
+        "registrationStdout": "",
+        "registrationStderr": "raw",
+        "scratchAbsent": true,
+        "privateTmpAbsent": true
+      }
+    ],
+    "terminalAuditFailures": [],
+    "nativeJobs": 1,
+    "pipelineSeconds": 0.004231124999932945,
+    "outputInventory": {
+      "normalBytes": 0,
+      "reservedBytes": 0,
+      "files": 0,
+      "reservedFiles": 0,
+      "paths": [],
+      "totalBytes": 0,
+      "complete": true,
+      "enumeration": {
+        "root": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/packet",
+        "complete": true,
+        "directories": [
+          {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/packet",
+            "directories": [],
+            "files": [],
+            "entries": [],
+            "enumerated": true
+          }
+        ]
+      }
+    },
+    "outputBytes": 0,
+    "freeBytesAfter": 22066626560,
+    "terminalReleaseProved": true,
+    "receiptFallbacks": [],
+    "jobs": [
+      {
+        "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/receipt.json",
+        "sha256": "6a22e8ff8d6a3e0c0b959e449c7ea57e8fa9c98682fe2da6a0c12bcf6d7d17fe"
+      }
+    ],
+    "terminalPersistenceFailures": [
+      {
+        "type": "OSError",
+        "message": "INDEPENDENT_TERMINAL_SINK_FAILURE",
+        "details": {
+          "args": [
+            "INDEPENDENT_TERMINAL_SINK_FAILURE"
+          ],
+          "errno": null,
+          "filename": null,
+          "filename2": null
+        },
+        "sink": "proof"
+      },
+      {
+        "type": "OSError",
+        "message": "INDEPENDENT_TERMINAL_SINK_FAILURE",
+        "details": {
+          "args": [
+            "INDEPENDENT_TERMINAL_SINK_FAILURE"
+          ],
+          "errno": null,
+          "filename": null,
+          "filename2": null
+        },
+        "sink": "packet"
+      }
+    ],
+    "terminalDelivery": {
+      "proof": {
+        "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/result.json",
+        "status": "failed"
+      },
+      "packet": {
+        "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/packet/integration-result.json",
+        "status": "failed"
+      },
+      "completeObservationsPersisted": false,
+      "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+    }
+  },
+  "receipt": {
+    "name": "native-189-encode",
+    "primaryFailure": {
+      "type": "TimeoutExpired",
+      "message": "Command '['fixture-ps']' timed out after 2 seconds",
+      "details": {
+        "cmd": [
+          "fixture-ps"
+        ],
+        "timeout": 2,
+        "output": "b'partial\\xff'",
+        "stderr": "b'error\\xfe'",
+        "unknown": {
+          "retained": 17
+        },
+        "args": [
+          [
+            "fixture-ps"
+          ],
+          2
+        ]
+      }
+    },
+    "cleanupFailure": null,
+    "persistenceFailures": [],
+    "terminal": {
+      "kernel": {
+        "coalition_absent": true,
+        "live": 0,
+        "unknown": 9
+      },
+      "registrationAbsent": true,
+      "scratchAndTmpAbsent": true,
+      "audit": {
+        "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/receipt.json",
+        "releaseProved": true,
+        "kernel": {
+          "coalition_absent": true,
+          "live": 0,
+          "unknown": 9
+        },
+        "members": [],
+        "births": [],
+        "registrationArgv": [
+          "/bin/launchctl",
+          "print",
+          "inert"
+        ],
+        "registrationExit": 113,
+        "registrationStdout": "",
+        "registrationStderr": "raw",
+        "scratchAbsent": true,
+        "privateTmpAbsent": true
+      }
+    },
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+      "encode",
+      "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/worker-config.json"
+    ],
+    "phase": "start",
+    "privateTmp": {
+      "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/private",
+      "admission": {
+        "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/private"
+      }
+    },
+    "bootstrapPortRestored": true,
+    "actualExecutables": {},
+    "observerEvents": [],
+    "observationFailures": [
+      {
+        "phase": "resource",
+        "failure": {
+          "type": "TimeoutExpired",
+          "message": "Command '['fixture-ps']' timed out after 2 seconds",
+          "details": {
+            "cmd": [
+              "fixture-ps"
+            ],
+            "timeout": 2,
+            "output": "b'partial\\xff'",
+            "stderr": "b'error\\xfe'",
+            "unknown": {
+              "retained": 17
+            },
+            "args": [
+              [
+                "fixture-ps"
+              ],
+              2
+            ]
+          }
+        }
+      }
+    ],
+    "resourceFailures": [
+      {
+        "type": "TimeoutExpired",
+        "message": "Command '['fixture-ps']' timed out after 2 seconds",
+        "details": {
+          "cmd": [
+            "fixture-ps"
+          ],
+          "timeout": 2,
+          "output": "b'partial\\xff'",
+          "stderr": "b'error\\xfe'",
+          "unknown": {
+            "retained": 17
+          },
+          "args": [
+            [
+              "fixture-ps"
+            ],
+            2
+          ]
+        }
+      }
+    ],
+    "outcome": "observer_failed",
+    "exits": {},
+    "secondaryFailures": [
+      {
+        "type": "AssertionError",
+        "message": "",
+        "details": {
+          "args": []
+        }
+      }
+    ],
+    "ownedAllocation": {
+      "out": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/owned-job",
+      "scratch": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/owned-job/scratch",
+      "target": "inert",
+      "coalition_id": "123"
+    },
+    "errorsBeforeDrain": [
+      "TimeoutExpired: Command '['fixture-ps']' timed out after 2 seconds"
+    ],
+    "drain": {
+      "exits": {},
+      "errors": [
+        "TimeoutExpired: Command '['fixture-ps']' timed out after 2 seconds"
+      ],
+      "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+      "stage": "native-189-encode",
+      "readiness_sha256": "53d312273f618f040ddc4829fa6e1820895bcbab3a38b1b192dc350f8f3ac001",
+      "drained": true,
+      "clean": false,
+      "remaining": [],
+      "kernel_terminal": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "unknownDrain": {
+        "kept": true
+      }
+    },
+    "drainMembers": [],
+    "drainKernel": {
+      "coalition_absent": true,
+      "live": 0,
+      "unknown": 9
+    },
+    "drainBirths": [],
+    "inventoryObservations": [],
+    "profiles": {
+      "all_absent": true
+    },
+    "cache": {
+      "all_bytes_preserved": true,
+      "namespace_removed": true
+    },
+    "taskRelease": null,
+    "archiveInventory": {
+      "bytes": 4178,
+      "entries": [
+        {
+          "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/native",
+          "mode": 16877,
+          "bytes": 64
+        },
+        {
+          "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/owned-job",
+          "mode": 16877,
+          "bytes": 96
+        },
+        {
+          "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/worker-config.json",
+          "mode": 33188,
+          "bytes": 1810
+        },
+        {
+          "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/receipt.json",
+          "mode": 33188,
+          "bytes": 2343
+        },
+        {
+          "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/owned-job/profile_release.json",
+          "mode": 33188,
+          "bytes": 25
+        }
+      ],
+      "enumeration": {
+        "root": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode",
+        "complete": true,
+        "directories": [
+          {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode",
+            "directories": [
+              "native",
+              "owned-job"
+            ],
+            "files": [
+              "worker-config.json",
+              "receipt.json"
+            ],
+            "entries": [
+              {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/worker-config.json",
+                "mode": 33188,
+                "dev": 16777232,
+                "ino": 490203097,
+                "bytes": 1810,
+                "uid": 501
+              },
+              {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/native",
+                "mode": 16877,
+                "dev": 16777232,
+                "ino": 490203096,
+                "bytes": 64,
+                "uid": 501
+              },
+              {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/owned-job",
+                "mode": 16877,
+                "dev": 16777232,
+                "ino": 490203101,
+                "bytes": 96,
+                "uid": 501
+              },
+              {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/receipt.json",
+                "mode": 33188,
+                "dev": 16777232,
+                "ino": 490203104,
+                "bytes": 2343,
+                "uid": 501
+              }
+            ],
+            "enumerated": true
+          },
+          {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/native",
+            "directories": [],
+            "files": [],
+            "entries": [],
+            "enumerated": true
+          },
+          {
+            "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/owned-job",
+            "directories": [],
+            "files": [
+              "profile_release.json"
+            ],
+            "entries": [
+              {
+                "path": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/owned-job/profile_release.json",
+                "mode": 33188,
+                "dev": 16777232,
+                "ino": 490203105,
+                "bytes": 25,
+                "uid": 501
+              }
+            ],
+            "enumerated": true
+          }
+        ]
+      },
+      "complete": true
+    },
+    "archiveBytesObservedAfterRelease": 4178,
+    "releaseAudits": [
+      {
+        "attemptPath": "/private/tmp/t02-r13-terminal-kyrij2wd/RED/sink-both/proof/jobs/native-189-encode/receipt.json",
+        "releaseProved": true,
+        "kernel": {
+          "coalition_absent": true,
+          "live": 0,
+          "unknown": 9
+        },
+        "members": [],
+        "births": [],
+        "registrationArgv": [
+          "/bin/launchctl",
+          "print",
+          "inert"
+        ],
+        "registrationExit": 113,
+        "registrationStdout": "",
+        "registrationStderr": "raw",
+        "scratchAbsent": true,
+        "privateTmpAbsent": true
+      }
+    ]
+  },
+  "events": [
+    "start",
+    "drain",
+    "archive",
+    "private-release"
+  ]
+}

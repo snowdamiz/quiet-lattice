@@ -1,0 +1,55 @@
+{
+  "verdict": "REVISE",
+  "scope": "INDEPENDENT_SOURCE_CPU_ONLY",
+  "head": "ff497e5525f8e93c71df67827446d7e426bbc20d",
+  "tree": "5eccd017f148fbedc6b1fc751fb16ea7fcc1c660",
+  "base": "ddce6731b1fd465a1160d2f1e49813ff6f8c626c",
+  "baseTree": "48da9aed7d28ed5901676496d7cc2ee0db6d7809",
+  "findings": [
+    {
+      "id": "C2-R12-F1",
+      "severity": "P2",
+      "location": "release_accounting.py:133,147-168; caller.py:378-405",
+      "summary": "Both final summary writes can fail after successful receipts, leaving terminalReleaseProved=true with completeObservationsPersisted=false.",
+      "reproduction": "terminal-both-fail.command.json",
+      "exitCode": 1,
+      "primaryPreserved": true,
+      "nativeJobsInert": 1,
+      "validatorDispatched": false
+    },
+    {
+      "id": "C2-R12-F2",
+      "severity": "P2",
+      "location": "revision-12/rss-controls.py:60; revision-12/red-source.py:6-13; revision-12/REPORT.md:77-79",
+      "summary": "The sealed base replay's real-birth/departure fail at construction on unsupported admit=, not at RSS behavior.",
+      "reproduction": "exact-red-supplied.command.json",
+      "independentCompatibleReplay": "exact-red-compatible.command.json"
+    }
+  ],
+  "suppliedControlsPassed": 142,
+  "breakdown": {
+    "new": 54,
+    "retained": 66,
+    "admission": 22
+  },
+  "protectedPriorRows": 1368,
+  "retainedAttempt2Rows": 50,
+  "prospectiveAbsent": 11,
+  "harmlessChildrenExitedAndAbsent": 7,
+  "currentCapacityAdmission": false,
+  "native189Qualification": false,
+  "historicalFullSnapshot": "FAILED_THREE_PNPM_TASK_STATE_DEVIATIONS_RETAINED",
+  "requiredReserveBytes": 22066626560,
+  "rssBytes": 8589934592,
+  "report": "/private/tmp/t02-independent-c2-r12-hsKJ8v8Q/REPORT.md",
+  "reportSha256": "4967706982a94910ed7acf3fca554c2ad3963ae9cf1bad2ba9be70a45c512df1",
+  "result": "/private/tmp/t02-independent-c2-r12-hsKJ8v8Q/review-result.json",
+  "resultSha256": "fccb7b54eb87410e6a3da475037597e58b794c6544848e0d91b530b3643b28ad",
+  "commands": "/private/tmp/t02-independent-c2-r12-hsKJ8v8Q/commands.json",
+  "commandsSha256": "005c5afca6715f2e0ab3b633b6a55866fb8d62d30e8fd18197b8ced8be573e89",
+  "manifest": "/private/tmp/t02-independent-c2-r12-hsKJ8v8Q/artifact-hashes.json",
+  "manifestSha256": "5adc4c341d8ffb6b4a0b2c7e075bb1c3b238d4efc8288925cf0331d81f668580",
+  "sealedEvidenceFiles": 579,
+  "sealedEvidenceBytes": 5843586,
+  "sealedUtc": "2026-11-07T12:10:57.046954+00:00"
+}

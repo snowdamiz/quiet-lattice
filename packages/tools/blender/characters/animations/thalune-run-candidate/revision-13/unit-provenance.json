@@ -1,0 +1,54 @@
+{
+  "branch": "codex/task/P1-E05-T02-thalune-reel-candidate",
+  "originalBase": "e1ed4752805ee92be561db81910ee1bc1a87b1d9",
+  "combinedLibraryHead": "afb3921ae59616ab5b555b771cd9dc1a914d78f2",
+  "combinedLibraryTree": "ac859db599e124c7d91d462e329deae5b9d91e37",
+  "donors": [
+    "07768bf14fce30c1e78db6750f44d8fbd561f4b5",
+    "83b145e9d6dc845aa6c7706ada69019fc813b202"
+  ],
+  "originalRecoveries": 21,
+  "additionalEarlierRecoveries": 2,
+  "retainedAnimationBranch": "49ae87cbdb8671f7988b1bed4358d49d4cdc6b58",
+  "base": "ff497e5525f8e93c71df67827446d7e426bbc20d",
+  "baseTree": "5eccd017f148fbedc6b1fc751fb16ea7fcc1c660",
+  "revision": "13",
+  "recoveriesAdded": [],
+  "sourceHashes": {
+    "caller.py": "88bc0597e720200bf616832e6c8aa6340a05bc32210a3adfc6b9aa2fcb37ef6b",
+    "resource_admission.py": "c7aaef015715712dc92149b35a55f0bdd4b58f9f8d9f3f241df2b509614ddd31",
+    "native189.py": "85c2d26eb82004405f4a572803110a2a5d712b1a68e0e3344e1ee5b709b9047c",
+    "rgb-primary.py": "b829e7fc8ddff9d12b367040b6b0df9603279d027588db075530800946bc7d96",
+    "native189_producer.py": "85cf0106b3f5274a65f5222626c2f6ab59b5283139abcb910b126b24d4a8364d",
+    "release_accounting.py": "d2c7a641642fc8c588b93a3536fd7a76fdd4e64e00023090f6782cc686fa81b0"
+  },
+  "readinessSha256": "b3df11c94dd6ebfe2a7da561d20e5a79812eb87e43de23dfdb65b202015809d5",
+  "candidateSha256": "803af330c64ba7bc953ad5fcd8237993fe75d89a61cbd3c36a245276b9abbd53",
+  "planSha256": "3586236af42894a4a36c88361db4049abb0990f86ce2327ead482552ebf8ad70",
+  "runtimeBindingsSha256": "728f5c138f7fd0a374d49e6074fdd4f82256c07c8feb2511538699aa20884199",
+  "nativeFixtureAuthorization": true,
+  "runtimeAuthorization": false,
+  "currentSourceReview": "PENDING_FRESH_PARENT_REVIEW",
+  "priorReview": {
+    "verdict": "REVISE",
+    "report": "/private/tmp/t02-independent-c2-r12-hsKJ8v8Q/REPORT.md",
+    "findings": [
+      "C2-R12-F1",
+      "C2-R12-F2"
+    ],
+    "historicalSealedRed": "Two constructor TypeErrors plus two genuine old failures; erroneous four-failure claim preserved and corrected only in revision-13"
+  },
+  "counts": {
+    "supplied": 142,
+    "sinkMatrix": 41,
+    "exactReviewerGreen": 3,
+    "currentSourcePassingExecutions": 186,
+    "oldBaseMilestones": 5,
+    "cliRefusals": 3
+  },
+  "newNativeExecutions": 0,
+  "currentCapacityAdmission": false,
+  "reserveBytes": 22066626560,
+  "rssBytes": 8589934592,
+  "reviewReportSha256": "4967706982a94910ed7acf3fca554c2ad3963ae9cf1bad2ba9be70a45c512df1"
+}
