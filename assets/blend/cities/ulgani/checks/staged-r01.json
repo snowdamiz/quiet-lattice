@@ -1,0 +1,339 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".",
+    ":(exclude)assets/blend/cities/ulgani/attempts/**/output.log",
+    ":(exclude)assets/blend/cities/ulgani/checks/*.txt"
+  ],
+  "exit": 2,
+  "output": "assets/blend/cities/ulgani/source-contract-measurements.failed-partial.txt:137: trailing whitespace.\n+      \"surfaceAreaSquareMetres\": \n",
+  "ownedFileCount": 519,
+  "exactLFSIndexIdentity": [
+    {
+      "path": "assets/blend/cities/ulgani_anchor.blend",
+      "sha256": "eafc062e422cfa96ac8488f53b7d2083d9091c91a552a13bc6498d5b284ca5e3",
+      "bytes": 9754336
+    },
+    {
+      "path": "assets/blend/cities/ulgani_civic.blend",
+      "sha256": "9a1d4056428142a0ab01dde166a6ef60381a024b17e07dc213da1eb3343d18de",
+      "bytes": 8602851
+    },
+    {
+      "path": "assets/blend/cities/ulgani_kit.blend",
+      "sha256": "00743f8ac3b48e5bbd1784fa16cc96c71b6a3c592d1df17cab6a72781aeee05a",
+      "bytes": 5966989
+    },
+    {
+      "path": "assets/blend/cities/ulgani_landmarks.blend",
+      "sha256": "60b76c3b183cb6988f86cbd99b1c3176bb0db623baa30e695fc423f7359c3934",
+      "bytes": 8783408
+    },
+    {
+      "path": "assets/blend/cities/ulgani_low.blend",
+      "sha256": "f2ef844735f9fed2457879c1a1f9662b1d3d829761adba69db4b419dff7065b1",
+      "bytes": 5367800
+    },
+    {
+      "path": "assets/blend/cities/ulgani_mid.blend",
+      "sha256": "dd0513776b5261faccf93792056305525e80c943fcc3c40ce9137e21239c2204",
+      "bytes": 6939170
+    },
+    {
+      "path": "assets/blend/cities/ulgani_props.blend",
+      "sha256": "f717a0ed46f34454b84006abeed44df74629a23d8f8ea97341d66e788c73f98c",
+      "bytes": 2016109
+    },
+    {
+      "path": "assets/blend/cities/ulgani_tall.blend",
+      "sha256": "9959d0c7397d5eb58571f47056f31525c086b0968185762ed3268dea964efc33",
+      "bytes": 10296029
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_1024_material_atlas.png",
+      "sha256": "29eca9de86da182c82422601b81f58909abd1c89f11bb0869fedc4a90b88399b",
+      "bytes": 300751
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_2048_material_atlas.png",
+      "sha256": "2854678072156662f0b1cb97d18d3557775877ebcdca034f90f275713e9ad172",
+      "bytes": 302326
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_4096_material_atlas.png",
+      "sha256": "81219ceaf0da8061a377e7f98ffceae6cf928d4d851ffebc41b1d9c638a3dc0d",
+      "bytes": 301531
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_belost_assembly_cpu.png",
+      "sha256": "e2ca29536069b8508fb8bcd74428896dc4b82e175dbad89e965a4efff58b93f9",
+      "bytes": 1940846
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_bench_lod0_turntable.png",
+      "sha256": "3f89ef3d557c0a5e6666fb551ee8e03330237c95d0a4c73631426209dd4026c5",
+      "bytes": 461123
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_board_lod0_turntable.png",
+      "sha256": "58f5b73ad4964470536d486e01fc876fcc90d67d62c3607fe13afcb960e65e29",
+      "bytes": 462215
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_bridge_long_lod0_turntable.png",
+      "sha256": "0d685da6b9b6c05821489f75224a444707c4c0fc749f5262c25dd0ef50d48fe7",
+      "bytes": 361398
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_bridge_short_lod0_turntable.png",
+      "sha256": "b8e16d4ea73c1db855fef158846ae84dc96bec732f3e52902e2c31168cbeaefb",
+      "bytes": 425013
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_bridge_turn_lod0_turntable.png",
+      "sha256": "9607013b23c6d644f7ab90c1f42ebcd7b0945d861e4bb9a166bd5ed5e5b68466",
+      "bytes": 400731
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_cap_half_lod0_turntable.png",
+      "sha256": "8293f0a406201026621f9fb54625795b92e9efa4ec1940f2bd3c0f6711ba8277",
+      "bytes": 449261
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_cap_shelter_lod0_turntable.png",
+      "sha256": "ca99eb3ecd0d22567d3b66491d128efc6cd49692c03f01624960516f9c88abd7",
+      "bytes": 485665
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_cap_shelter_lod2_turntable.png",
+      "sha256": "64c631f1601283b9a3dabebd4bdbf3fa1b2a62b55881a6659b1149aff0bd70c9",
+      "bytes": 484017
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_chorus_listener_lod0_turntable.png",
+      "sha256": "29db73fdba2eb32fee657c54f5eb82d8c25b4ae8e1c8800f02fd78631bfb47e6",
+      "bytes": 623975
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_city_master_lod0_turntable.png",
+      "sha256": "2ca15777205256b4ce803fbbe05f825759c0149da4d71aed3a65743e71d29c4d",
+      "bytes": 741451
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_compact_lod0_turntable.png",
+      "sha256": "f0c4a5bfd2c31a74d02bf856359274b579a6e2ebc7687f741ec0fd05763d6fac",
+      "bytes": 724555
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_gate_lod0_turntable.png",
+      "sha256": "20678de7ac942949c3c8a9094e119cd86af83790572e77465343654bb900c5f4",
+      "bytes": 473992
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_great_cap_landmark_lod0_turntable.png",
+      "sha256": "6bdc093a1dc8121510322b8863b729e3b4dc1499219c54419c6518c1be700e68",
+      "bytes": 498998
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_lamp_lod0_turntable.png",
+      "sha256": "99ea0d803decd3bc9b86b47d4d125f5e373a6a816cd31ee695db2cf46df54d36",
+      "bytes": 403232
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_low_0_lod0_turntable.png",
+      "sha256": "99790cb7d2004759354bea24a909b11e492c776635234f53cd1c0668719f9590",
+      "bytes": 676484
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_low_1_lod0_turntable.png",
+      "sha256": "8a34f16ffad0e23372be43fb0b9f51c8f4662883f75d6e1e4b66668f34a60ec3",
+      "bytes": 650127
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_low_2_lod0_turntable.png",
+      "sha256": "3030ec5da86edd21d656a74e2eb0ce7acafb2520839c9935e15e0caf158e86b1",
+      "bytes": 682817
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_low_3_lod0_turntable.png",
+      "sha256": "da2f92ad1910cc673eedd827ba23fb31d5f00080a9a1ac8c939508d441d5952f",
+      "bytes": 736049
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_market_lod0_turntable.png",
+      "sha256": "ebb154c577bb49c37d979b9c5a42e4012e3caa381e36b57dadedbd2a2295cbdd",
+      "bytes": 612996
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_mid_0_lod0_turntable.png",
+      "sha256": "e815a7e33f2469f4ca461ef820b4bd7c34a0722eecf1f4d67ed8f21e252b87d6",
+      "bytes": 697718
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_mid_1_lod0_turntable.png",
+      "sha256": "52818b7012b3e21892f71ff185900b18c6a4b886eab5d8e1ba7c1715060188d3",
+      "bytes": 631446
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_mid_2_lod0_turntable.png",
+      "sha256": "bc92fa6b121a76edeb6f335f1f52e282d7159777af09b733e3ef6fe5c2756d95",
+      "bytes": 528221
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_mid_3_lod0_turntable.png",
+      "sha256": "a06c3d0d1c6b933c286bcc4976250a674d1d648055fb83e859fd010961c812e4",
+      "bytes": 507911
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_planter_lod0_turntable.png",
+      "sha256": "f4499ef44adf689e7e324cc8706a66758c072bc9477728e95dd5f273b4ccb3f5",
+      "bytes": 630250
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_plaza_lod0_turntable.png",
+      "sha256": "f2e04ac62634e665f1bf8a9b8fcdf7a3ed831a713df061ee30d69c3362bd00e8",
+      "bytes": 473805
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_ring_joint_lod0_turntable.png",
+      "sha256": "f4e29d1138fc5bacb139b6685d7ae00916d0326d15133e5739a6afc9e2261cad",
+      "bytes": 430387
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_ring_shelf_lod0_turntable.png",
+      "sha256": "e9b3185ade40846279389bd165c202bb9ccf15f37f67b214edbab9c08bfe0363",
+      "bytes": 370254
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_root_island_landmark_lod0_turntable.png",
+      "sha256": "60b5b08846fdff5cb0231b132fac9572d8a1f7e94c4b353cfc19362ccec62875",
+      "bytes": 478508
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_root_island_landmark_lod2_turntable.png",
+      "sha256": "4b7d93d18e529757761dfe2d52541cb1f5e08bce1ff1b0a51a241afde4bc1c44",
+      "bytes": 479027
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_salvage_lod0_turntable.png",
+      "sha256": "ca78803a29e24155066304286a5521e149cc803d3bc53bbb047dcb15cb5e9d9f",
+      "bytes": 516307
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_shipyard_lod0_turntable.png",
+      "sha256": "8a9d03034ab35d9842722c1f02c286a37c99bc35684a36880facd88eade3f83e",
+      "bytes": 469516
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_shore_walk_lod0_turntable.png",
+      "sha256": "20f003c0f010244f2dbba624b0d7ed20eba4736b73cf4fef15974fc96448c669",
+      "bytes": 520248
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_stall_lod0_turntable.png",
+      "sha256": "6f6ea702194d8092ab91251f50dda74e4c5d77a09a31ddee1ea91fa2e4525018",
+      "bytes": 536705
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_tall_0_lod0_turntable.png",
+      "sha256": "af9c7b09847d2132d72e40c26e3cf5971692821560c1fdffd570f6cae676656d",
+      "bytes": 379889
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_tall_1_lod0_turntable.png",
+      "sha256": "f43e65858b8db4e778322b908158618cf37d7b5593a79a50df9c6a35377a5cbd",
+      "bytes": 376559
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_tall_2_lod0_turntable.png",
+      "sha256": "2fe4cb96501935cd6fa2e5d220a0c266fa14044f26a5d643dbcdf03c5867979a",
+      "bytes": 357277
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_tall_3_lod0_turntable.png",
+      "sha256": "121ddfc007703620baacfca672a7ba51febbaf8f3eab5d76e06661b749e7cfb1",
+      "bytes": 355390
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_tall_3_lod2_turntable.png",
+      "sha256": "422f3ed56be5897c139dcca4a3b2fe4c5c15e12e1b1ccdc55c0cb16e24cfc477",
+      "bytes": 353038
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_terminal_lod0_turntable.png",
+      "sha256": "2bfe9e2232c1aeb5e2c20663dd961183e25484071ca027daf534cc35a158fee2",
+      "bytes": 560152
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_wall_corner_lod0_turntable.png",
+      "sha256": "3938a0dd9be51a8e2f33d459c127f46b2621a0354bd851d22cbbd90c2253b459",
+      "bytes": 435504
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_wall_lod0_turntable.png",
+      "sha256": "14b14257d6a15c70018c262d7c63976572ea9fd3b99db38e8f230b243b734dca",
+      "bytes": 423090
+    },
+    {
+      "path": "assets/renders/cities/ulgani-cpu/ulgani_wayfinding_lod0_turntable.png",
+      "sha256": "cfc1b3d7fed3f79ded68c328d3ad99d68bdf31bdec7110ad4cfce377cbcfe2c7",
+      "bytes": 482974
+    },
+    {
+      "path": "assets/renders/cities/ulgani-iteration/ulgani_low_0_lod0_turntable.png",
+      "sha256": "b1dd387b12d9bbf098bd2dcb641a2513c5f3bee584163d2eb77e5627860d69e2",
+      "bytes": 959096
+    },
+    {
+      "path": "assets/renders/cities/ulgani-iteration2/ulgani_low_1_lod0_turntable.png",
+      "sha256": "56100ba452136d4212f3012223e2a97049ec9d263776899e926a21950464dc3b",
+      "bytes": 892425
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_anchor.glb",
+      "sha256": "acc3f4f97c754ef55bb27f69045937d54413f5100d8425f157b213b0f7f8f4b3",
+      "bytes": 2466044
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_civic.glb",
+      "sha256": "b990e9b889011cb448d50492c8f191e66cc67c808e8fbaca091dbb2accc3b011",
+      "bytes": 3028284
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_kit.glb",
+      "sha256": "5532150f6572a4d216eaea3aff2110c79d1412cd62430d0e35c08d04a648ef61",
+      "bytes": 1749572
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_landmarks.glb",
+      "sha256": "50df784c753042e6963f645cf52efcdaf175df6b4b4ed3cc5cf6c92a21e49592",
+      "bytes": 2099760
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_low.glb",
+      "sha256": "3dc6c37853cc2c65f77ba3718d8c4d86d18df12f42a499650c15d99feb12aa1a",
+      "bytes": 1766204
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_mid.glb",
+      "sha256": "37c8ca97b2213bb94631a357f075613da4c36f06fd8f6500661bc49325298f61",
+      "bytes": 2342668
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_props.glb",
+      "sha256": "8634270aaedb9a100560fc8dfa3baaa4d3dcf738aac29bb106c3c73342ad33e0",
+      "bytes": 623576
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sha256": "d25b68a5aefbd25c16a48d05c51faf6e78c8f00efd33385edc61ecce1bc96876",
+      "bytes": 3412164
+    }
+  ],
+  "preservedOutputLogs": 99,
+  "ownership": "PASS; no changed path outside authorized ownership"
+}

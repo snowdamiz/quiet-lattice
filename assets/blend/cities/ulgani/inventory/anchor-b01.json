@@ -1,0 +1,126 @@
+{
+  "source": "assets/blend/cities/ulgani_anchor.blend",
+  "sha256": "eafc062e422cfa96ac8488f53b7d2083d9091c91a552a13bc6498d5b284ca5e3",
+  "assets": [
+    {
+      "id": "ulgani_root_island_landmark",
+      "title": "Belost Root Island",
+      "role": "anchor",
+      "class": "hero",
+      "anchorStoneHeight": 48,
+      "lake": "external lake composition/terrain belongs to T01; no water collider",
+      "bounds": [
+        [
+          -78.02983856201172,
+          -68.00676727294922,
+          -4.033991813659668
+        ],
+        [
+          78.05529022216797,
+          67.88422393798828,
+          48.18000030517578
+        ]
+      ],
+      "height": 52.21399211883545,
+      "footprintRadius": 78.05798700872589,
+      "lodTriangles": [
+        108800,
+        32640,
+        10880,
+        3808
+      ],
+      "lodNodes": [
+        "ulgani_root_island_landmark_LOD0",
+        "ulgani_root_island_landmark_LOD1",
+        "ulgani_root_island_landmark_LOD2",
+        "ulgani_root_island_landmark_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -66,
+            0.18
+          ],
+          "to": [
+            0,
+            -5,
+            0.18
+          ],
+          "width": 4,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Interact_Anchor_ulgani_root_island_landmark",
+          "position": [
+            0,
+            -5,
+            1.38
+          ],
+          "properties": {
+            "service_role": "recall_anchor",
+            "dispatch": "T01_T02_T08_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_root_island_landmark",
+          "position": [
+            0,
+            -4,
+            1.8
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.65,
+            "distance": 10
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_root_island_landmark_Threshold-1",
+        "COL_ulgani_root_island_landmark_Threshold1",
+        "COL_ulgani_root_island_landmark_Deck0",
+        "COL_ulgani_root_island_landmark_Deck1",
+        "COL_ulgani_root_island_landmark_Deck2",
+        "COL_ulgani_root_island_landmark_Deck3",
+        "COL_ulgani_root_island_landmark_Deck4",
+        "COL_ulgani_root_island_landmark_Deck5",
+        "COL_ulgani_root_island_landmark_Deck6",
+        "COL_ulgani_root_island_landmark_Deck7",
+        "COL_ulgani_root_island_landmark_Deck8",
+        "COL_ulgani_root_island_landmark_Deck9",
+        "COL_ulgani_root_island_landmark_Deck10",
+        "COL_ulgani_root_island_landmark_Deck11",
+        "COL_ulgani_root_island_landmark_IslandRoot0",
+        "COL_ulgani_root_island_landmark_IslandRoot1",
+        "COL_ulgani_root_island_landmark_IslandRoot2",
+        "COL_ulgani_root_island_landmark_IslandRoot3",
+        "COL_ulgani_root_island_landmark_IslandRoot4",
+        "COL_ulgani_root_island_landmark_IslandRoot5",
+        "COL_ulgani_root_island_landmark_IslandRoot6",
+        "COL_ulgani_root_island_landmark_IslandRoot7",
+        "COL_ulgani_root_island_landmark_IslandRoot8",
+        "COL_ulgani_root_island_landmark_IslandRoot9",
+        "COL_ulgani_root_island_landmark_IslandRoot10",
+        "COL_ulgani_root_island_landmark_IslandRoot11",
+        "COL_ulgani_root_island_landmark_IslandRoot12",
+        "COL_ulgani_root_island_landmark_IslandRoot13",
+        "COL_ulgani_root_island_landmark_IslandRoot14",
+        "COL_ulgani_root_island_landmark_IslandRoot15",
+        "COL_ulgani_root_island_landmark_IslandRoot16",
+        "COL_ulgani_root_island_landmark_IslandRoot17",
+        "COL_ulgani_root_island_landmark_IslandRoot18",
+        "COL_ulgani_root_island_landmark_IslandRoot19",
+        "COL_ulgani_root_island_landmark_IslandRoot20",
+        "COL_ulgani_root_island_landmark_IslandRoot21",
+        "COL_ulgani_root_island_landmark_IslandRoot22",
+        "COL_ulgani_root_island_landmark_IslandRoot23",
+        "COL_ulgani_root_island_landmark_AnchorBladeNeg1",
+        "COL_ulgani_root_island_landmark_AnchorBlade1"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1001 @@
+{
+  "source": "assets/blend/cities/ulgani_low.blend",
+  "sourceSHA256": "ea4ce7580f84ec6280a9d31278bfbee6ee5737068bed556eab10532583996904",
+  "assets": [
+    {
+      "source": {
+        "id": "ulgani_low_0",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 17592,
+            "vertices": 10278,
+            "corners": 35696,
+            "bounds": [
+              [
+                -7.41700553894043,
+                -6.540205478668213,
+                0.0
+              ],
+              [
+                7.104578971862793,
+                6.60689640045166,
+                6.999959468841553
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999145521791,
+            "geometryHash": "8bf29672f07aa14044b78da8d6bbda1462b5935789fc1751ba4621e22db325b9"
+          },
+          {
+            "triangles": 5277,
+            "vertices": 3611,
+            "corners": 15831,
+            "bounds": [
+              [
+                -7.4193949699401855,
+                -6.540324687957764,
+                0.0
+              ],
+              [
+                7.104578971862793,
+                6.60689640045166,
+                6.999941825866699
+              ]
+            ],
+            "uvMin": [
+              0.006245759315788746,
+              0.011877860873937607
+            ],
+            "uvMax": [
+              0.9929014444351196,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999144092907,
+            "geometryHash": "39f3c6ef8bc7a68adafd2d0672dc0b3b51c624a7a6b6fca0d10da5f380eb660f"
+          },
+          {
+            "triangles": 1759,
+            "vertices": 1533,
+            "corners": 5277,
+            "bounds": [
+              [
+                -7.471503257751465,
+                -6.615700721740723,
+                0.0
+              ],
+              [
+                7.104578971862793,
+                6.60689640045166,
+                7.0027546882629395
+              ]
+            ],
+            "uvMin": [
+              0.001965334638953209,
+              0.014932584948837757
+            ],
+            "uvMax": [
+              0.9928008317947388,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.999999925418323,
+            "geometryHash": "97d1502314a4e45e96cc4f17afc24026c95648ad52fa72a70bcd8d114641a2f7"
+          },
+          {
+            "triangles": 614,
+            "vertices": 819,
+            "corners": 1842,
+            "bounds": [
+              [
+                -7.466672897338867,
+                -6.5950093269348145,
+                0.0
+              ],
+              [
+                7.104578971862793,
+                6.60689640045166,
+                7.053593158721924
+              ]
+            ],
+            "uvMin": [
+              0.005868181120604277,
+              0.015048207715153694
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999268605533,
+            "geometryHash": "eb13e7ea23b7c0e659e53932ee89d8cf18da9a4f6e915f1ce171e1749677caba"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_low_0",
+            "position": [
+              -3.8499999046325684,
+              -3.575000047683716,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_low_0",
+            "position": [
+              3.8499999046325684,
+              3.575000047683716,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 39,
+          "triangles": 1040,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.17737753689289093,
+          "nearestSurfaceP95": 0.09930568598210805
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -6.5,
+                0.18
+              ],
+              "to": [
+                0,
+                6.5,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 4,
+              "examples": [
+                [
+                  1.35,
+                  -6.5,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -6.5,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -6.5,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  6.5,
+                  0.18
+                ]
+              ]
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 6,
+              "examples": [
+                [
+                  1.35,
+                  -6.5,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -6.5,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -6.5,
+                  0.18
+                ],
+                [
+                  1.35,
+                  6.5,
+                  0.18
+                ],
+                [
+                  0.0,
+                  6.5,
+                  0.18
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_low_1",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 17648,
+            "vertices": 10312,
+            "corners": 35864,
+            "bounds": [
+              [
+                -8.43411636352539,
+                -7.546391010284424,
+                0.0
+              ],
+              [
+                9.201136589050293,
+                7.623342037200928,
+                8.999947547912598
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999168897143,
+            "geometryHash": "5828e21c13f33f25895be9b3ffd2f7c39eede39a60cac7ea04405eab2c3739a9"
+          },
+          {
+            "triangles": 5293,
+            "vertices": 3627,
+            "corners": 15879,
+            "bounds": [
+              [
+                -8.437089920043945,
+                -7.546544075012207,
+                0.0
+              ],
+              [
+                9.201136589050293,
+                7.623342037200928,
+                8.99992847442627
+              ]
+            ],
+            "uvMin": [
+              0.006018415093421936,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9929583072662354,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999142107011,
+            "geometryHash": "46ae4bea8b2470d0c5b648b5f179dcb889ccd7cfba5e04db9f1ce81c8d5e9a0c"
+          },
+          {
+            "triangles": 1764,
+            "vertices": 1532,
+            "corners": 5292,
+            "bounds": [
+              [
+                -8.500822067260742,
+                -7.590628623962402,
+                0.0
+              ],
+              [
+                9.186249732971191,
+                7.623342037200928,
+                9.009614944458008
+              ]
+            ],
+            "uvMin": [
+              0.004148968029767275,
+              0.014993802644312382
+            ],
+            "uvMax": [
+              0.9928502440452576,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999269532309,
+            "geometryHash": "e7500683b51a2fcb0434e070af545e51a01c637f04d2d3dccc4a3df289637578"
+          },
+          {
+            "triangles": 617,
+            "vertices": 829,
+            "corners": 1851,
+            "bounds": [
+              [
+                -8.494585037231445,
+                -7.588228225708008,
+                0.0
+              ],
+              [
+                9.365081787109375,
+                7.623342037200928,
+                9.016867637634277
+              ]
+            ],
+            "uvMin": [
+              0.0061755310744047165,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999251197037,
+            "geometryHash": "83d71b27d36cfce35efb61e5ecc6dcf0271336d59a2c3203fe46b30b89c548f1"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_low_1",
+            "position": [
+              -4.510000228881836,
+              -4.125,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_low_1",
+            "position": [
+              4.510000228881836,
+              4.125,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 39,
+          "triangles": 1040,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.17748431861400604,
+          "nearestSurfaceP95": 0.10545169897377488
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -7.5,
+                0.18
+              ],
+              "to": [
+                0,
+                7.5,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 4,
+              "examples": [
+                [
+                  1.35,
+                  -7.5,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -7.5,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -7.5,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  7.5,
+                  0.18
+                ]
+              ]
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 6,
+              "examples": [
+                [
+                  1.35,
+                  -7.5,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -7.5,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -7.5,
+                  0.18
+                ],
+                [
+                  1.35,
+                  7.5,
+                  0.18
+                ],
+                [
+                  0.0,
+                  7.5,
+                  0.18
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_low_2",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 17592,
+            "vertices": 10278,
+            "corners": 35696,
+            "bounds": [
+              [
+                -7.980235576629639,
+                -6.640823841094971,
+                0.0
+              ],
+              [
+                10.044181823730469,
+                6.708540916442871,
+                10.9999361038208
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999149312114,
+            "geometryHash": "eb773a667028361a7f7a674dd48f88bdc0e4bfd6b1c7edd6713ae4e289f370b6"
+          },
+          {
+            "triangles": 5276,
+            "vertices": 3614,
+            "corners": 15828,
+            "bounds": [
+              [
+                -7.983417510986328,
+                -6.6409735679626465,
+                0.0
+              ],
+              [
+                10.042984962463379,
+                6.708540916442871,
+                10.999922752380371
+              ]
+            ],
+            "uvMin": [
+              0.006125093437731266,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9928891062736511,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999167601695,
+            "geometryHash": "c7a09007810629c40d87b8f76f27d6b764dcc77631f863e371f6679b4f319419"
+          },
+          {
+            "triangles": 1759,
+            "vertices": 1525,
+            "corners": 5277,
+            "bounds": [
+              [
+                -8.033956527709961,
+                -6.714601039886475,
+                0.0
+              ],
+              [
+                10.029065132141113,
+                6.708541393280029,
+                11.004765510559082
+              ]
+            ],
+            "uvMin": [
+              -0.022731730714440346,
+              0.014689157716929913
+            ],
+            "uvMax": [
+              0.992793083190918,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999198987964,
+            "geometryHash": "9eca4a174d521ed2f74abbc547f8156f4dfb7b69e7f76af912e48ef094189be1"
+          },
+          {
+            "triangles": 615,
+            "vertices": 834,
+            "corners": 1845,
+            "bounds": [
+              [
+                -8.098366737365723,
+                -6.733575344085693,
+                0.0
+              ],
+              [
+                10.178364753723145,
+                6.708541393280029,
+                11.011212348937988
+              ]
+            ],
+            "uvMin": [
+              0.0062102098017930984,
+              0.014689157716929913
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999282267981,
+            "geometryHash": "73a525e68ab92ba4df847e4157e104183986bc1b7614e2d60dfa8b89d8666745"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_low_2",
+            "position": [
+              -4.400000095367432,
+              -3.630000114440918,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_low_2",
+            "position": [
+              4.400000095367432,
+              3.630000114440918,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 39,
+          "triangles": 1040,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.17734147608280182,
+          "nearestSurfaceP95": 0.10080428980290877
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -6.6,
+                0.18
+              ],
+              "to": [
+                0,
+                6.6,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 4,
+              "examples": [
+                [
+                  1.35,
+                  -6.6,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -6.6,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -6.6,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  6.6,
+                  0.18
+                ]
+              ]
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 6,
+              "examples": [
+                [
+                  1.35,
+                  -6.6,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -6.6,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -6.6,
+                  0.18
+                ],
+                [
+                  1.35,
+                  6.6,
+                  0.18
+                ],
+                [
+                  0.0,
+                  6.6,
+                  0.18
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_low_3",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 17592,
+            "vertices": 10278,
+            "corners": 35696,
+            "bounds": [
+              [
+                -8.915318489074707,
+                -8.049483299255371,
+                0.0
+              ],
+              [
+                12.50059986114502,
+                8.13156509399414,
+                12.999924659729004
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.999999914206758,
+            "geometryHash": "63f299618b812937c965c15d04e0de54eb0035ab76cad533a60d11172eee8b3b"
+          },
+          {
+            "triangles": 5276,
+            "vertices": 3625,
+            "corners": 15828,
+            "bounds": [
+              [
+                -8.915318489074707,
+                -8.049666404724121,
+                0.0
+              ],
+              [
+                12.499178886413574,
+                8.13156509399414,
+                12.999906539916992
+              ]
+            ],
+            "uvMin": [
+              0.002126691397279501,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9929003715515137,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999145832724,
+            "geometryHash": "b6b06ea03a5b8dc7888a844b7e33564dd8b0b0af5908e48aa3af628dcc124ee2"
+          },
+          {
+            "triangles": 1758,
+            "vertices": 1524,
+            "corners": 5274,
+            "bounds": [
+              [
+                -8.915318489074707,
+                -8.095784187316895,
+                0.0
+              ],
+              [
+                12.482720375061035,
+                8.131566047668457,
+                13.013145446777344
+              ]
+            ],
+            "uvMin": [
+              -0.002693740651011467,
+              0.014735126867890358
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999161568192,
+            "geometryHash": "d7edfd47ced494fb75556b6d7c5e9a38815f6d8bc7dd6668aacd750ac917cadc"
+          },
+          {
+            "triangles": 615,
+            "vertices": 831,
+            "corners": 1845,
+            "bounds": [
+              [
+                -8.915318489074707,
+                -8.214532852172852,
+                0.0
+              ],
+              [
+                12.480607986450195,
+                8.131566047668457,
+                13.054524421691895
+              ]
+            ],
+            "uvMin": [
+              -0.010970380157232285,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9849998950958252
+            ],
+            "normalLengthMin": 0.9999999235526584,
+            "geometryHash": "2eabe20e8bc391bd1ac5116988e8ed2b04eb19729e1b277026f866568f15d2a1"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_low_3",
+            "position": [
+              -4.949999809265137,
+              -4.400000095367432,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_low_3",
+            "position": [
+              4.949999809265137,
+              4.400000095367432,
+              3.299999952316284
+            ],
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 39,
+          "triangles": 1040,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.17446556687355042,
+          "nearestSurfaceP95": 0.10228252075612536
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -8,
+                0.18
+              ],
+              "to": [
+                0,
+                8,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 4,
+              "examples": [
+                [
+                  1.35,
+                  -8.0,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -8.0,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -8.0,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  8.0,
+                  0.18
+                ]
+              ]
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 6,
+              "examples": [
+                [
+                  1.35,
+                  -8.0,
+                  0.18
+                ],
+                [
+                  0.0,
+                  -8.0,
+                  0.18
+                ],
+                [
+                  -1.35,
+                  -8.0,
+                  0.18
+                ],
+                [
+                  1.35,
+                  8.0,
+                  0.18
+                ],
+                [
+                  0.0,
+                  8.0,
+                  0.18
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "failures": [
+    "stock source validation",
+    "ulgani_low_0: source collision clearance/support",
+    "ulgani_low_0: source visual clearance/support",
+    "ulgani_low_1: source collision clearance/support",
+    "ulgani_low_1: source visual clearance/support",
+    "ulgani_low_2: source collision clearance/support",
+    "ulgani_low_2: source visual clearance/support",
+    "ulgani_low_3: source collision clearance/support",
+    "ulgani_low_3: source visual clearance/support"
+  ],
+  "packedImages": [
+    {
+      "name": "Ulgani_2048_BaseColor",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "b47e4018cf9eccae1eaff9c9f9b39c6b4c49c0863b29a705a2fd51e99cf96fed",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_2048_Emissive",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "cd31d9d03c350b8815f7113bb48a9a8f8e1e361ca4651dc43fde3a8faaaa42fa",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_2048_Normal",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "0ee1d553b2ebc1acf5a25c4deaa0855d91c3aec2468a76e86d48f9f72f1c89ce",
+      "colorspace": "Non-Color"
+    },
+    {
+      "name": "Ulgani_2048_ORM",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "e0fdafdba49de44b5479345876b2cb44aac663d243609cd3685ee0614f8f17c8",
+      "colorspace": "Non-Color"
+    }
+  ],
+  "sourceMaterials": [
+    {
+      "name": "Ulgani_PaintedAtlas_2048",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "Ulgani_2048_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "Ulgani_2048_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "Ulgani_2048_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "Ulgani_2048_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "Ulgani_2048_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "image",
+          "image": "Ulgani_2048_Emissive",
+          "component": null
+        }
+      }
+    }
+  ],
+  "status": "FAIL"
+}

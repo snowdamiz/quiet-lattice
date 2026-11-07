@@ -1,0 +1,117 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ulgani/author.py",
+    "--",
+    "--group",
+    "low",
+    "--receipt",
+    "assets/blend/cities/ulgani/inventory/low-a02.json"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "author-low-a02",
+    "seconds": 600,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "packages/tools/blender/cities/ulgani/author.py",
+      "--",
+      "--group",
+      "low",
+      "--receipt",
+      "assets/blend/cities/ulgani/inventory/low-a02.json"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794031345.9356768,
+  "preflight": {
+    "time": 1794031345.9499462,
+    "load": [
+      22.6376953125,
+      37.982421875,
+      33.93798828125
+    ],
+    "memoryFreePercent": 53,
+    "diskFreeBytes": 57367724032
+  },
+  "samples": [
+    {
+      "time": 1794031345.964638,
+      "load": [
+        22.6376953125,
+        37.982421875,
+        33.93798828125
+      ],
+      "memoryFreePercent": 53,
+      "diskFreeBytes": 57367719936
+    },
+    {
+      "time": 1794031355.974529,
+      "load": [
+        20.58203125,
+        37.04248046875,
+        33.65185546875
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 57401892864
+    },
+    {
+      "time": 1794031365.983733,
+      "load": [
+        18.560546875,
+        36.06884765625,
+        33.345703125
+      ],
+      "memoryFreePercent": 55,
+      "diskFreeBytes": 57396609024
+    }
+  ],
+  "pid": 70207,
+  "pgid": 70207,
+  "peakGroupRSSKiB": 887584,
+  "wallSeconds": 3.101245249970816,
+  "remainingGroup": [],
+  "exit": 0,
+  "error": null,
+  "ended": 1794031369.118689,
+  "postflight": {
+    "time": 1794031369.1225548,
+    "load": [
+      17.39453125,
+      35.5361328125,
+      33.17333984375
+    ],
+    "memoryFreePercent": 55,
+    "diskFreeBytes": 57389281280
+  },
+  "failureTail": []
+}

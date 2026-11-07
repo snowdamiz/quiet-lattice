@@ -1,0 +1,248 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ulgani_tall.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T06:23:51Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ulgani_tall_0",
+      "variants": [
+        {
+          "id": "ulgani_tall_0",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 50502,
+            "1": 15149,
+            "2": 5049,
+            "3": 1767
+          },
+          "implicitLods": false,
+          "dims": [
+            21.326,
+            18.55,
+            174.702
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "variants": [
+        {
+          "id": "ulgani_tall_1",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 55937,
+            "1": 16781,
+            "2": 5593,
+            "3": 1957
+          },
+          "implicitLods": false,
+          "dims": [
+            26.317,
+            21.702,
+            224.81
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "variants": [
+        {
+          "id": "ulgani_tall_2",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 53859,
+            "1": 16156,
+            "2": 5384,
+            "3": 1885
+          },
+          "implicitLods": false,
+          "dims": [
+            25.72,
+            18.82,
+            276.955
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_2048"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "variants": [
+        {
+          "id": "ulgani_tall_3",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 59800,
+            "1": 17940,
+            "2": 5979,
+            "3": 2093
+          },
+          "implicitLods": false,
+          "dims": [
+            27.607,
+            23.194,
+            333.112
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_2048"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_tall.blend",
+          "message": "4 variant(s) in 4 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_tall_0",
+          "message": "LOD0 50,502 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_tall_1",
+          "message": "LOD0 55,937 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_tall_2",
+          "message": "LOD0 53,859 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_tall_3",
+          "message": "LOD0 59,800 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_tall_0",
+          "message": "50,502 > 15,149 > 5,049 > 1,767 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_tall_1",
+          "message": "55,937 > 16,781 > 5,593 > 1,957 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_tall_2",
+          "message": "53,859 > 16,156 > 5,384 > 1,885 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_tall_3",
+          "message": "59,800 > 17,940 > 5,979 > 2,093 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Ulgani_PaintedAtlas_2048",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ulgani_tall_0",
+          "message": "longest side 174.70 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_tall_1",
+          "message": "longest side 224.81 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_tall_2",
+          "message": "longest side 276.96 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_tall_3",
+          "message": "longest side 333.11 m within 1-400 m"
+        }
+      ]
+    }
+  ]
+}

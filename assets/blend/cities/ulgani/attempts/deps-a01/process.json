@@ -1,0 +1,79 @@
+{
+  "command": [
+    "pnpm",
+    "install",
+    "--offline",
+    "--frozen-lockfile",
+    "--ignore-scripts"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "deps-a01",
+    "seconds": 180,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 60,
+    "stale": [],
+    "command": [
+      "pnpm",
+      "install",
+      "--offline",
+      "--frozen-lockfile",
+      "--ignore-scripts"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794030679.244559,
+  "preflight": {
+    "time": 1794030679.248456,
+    "load": [
+      15.5732421875,
+      17.87744140625,
+      17.20556640625
+    ],
+    "memoryFreePercent": 60,
+    "diskFreeBytes": 60952346624
+  },
+  "samples": [
+    {
+      "time": 1794030679.2515142,
+      "load": [
+        15.5732421875,
+        17.87744140625,
+        17.20556640625
+      ],
+      "memoryFreePercent": 60,
+      "diskFreeBytes": 60952342528
+    }
+  ],
+  "pid": 84121,
+  "pgid": 84121,
+  "peakGroupRSSKiB": 240,
+  "wallSeconds": 1.0302587920450605,
+  "remainingGroup": [],
+  "exit": 0,
+  "error": null,
+  "ended": 1794030680.310556,
+  "postflight": {
+    "time": 1794030680.314303,
+    "load": [
+      15.5732421875,
+      17.87744140625,
+      17.20556640625
+    ],
+    "memoryFreePercent": 59,
+    "diskFreeBytes": 60945358848
+  },
+  "failureTail": []
+}

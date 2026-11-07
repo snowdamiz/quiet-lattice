@@ -1,0 +1,18 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".",
+    ":(exclude)assets/blend/cities/ulgani/attempts/**/output.log",
+    ":(exclude)assets/blend/cities/ulgani/checks/*.txt",
+    ":(exclude)assets/blend/cities/ulgani/source-contract-measurements.failed-partial.txt"
+  ],
+  "exit": 0,
+  "output": "",
+  "existingTrackedFilesChanged": [],
+  "verifiedLibrarySHA256": "33cdd8b1be446e6a1c5dc7f908090b27701d99c3248770ad337e3a7f7cd5210c",
+  "exclusionReason": "Raw immutable output logs, check output and the preserved failed JSON serialization fragment retain their original whitespace. The prior staged-r01.json records that expected failure."
+}

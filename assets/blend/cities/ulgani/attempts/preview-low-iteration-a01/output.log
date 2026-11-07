@@ -1,0 +1,26 @@
+00:00.352  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/assets/blend/cities/ulgani_low.blend"
+/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preview.py:40: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  scene.world=bpy.data.worlds.new('CPUPreviewWorld'); scene.world.use_nodes=True
+00:01.220  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+00:02.098  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+00:02.807  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+00:03.509  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+00:04.331  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+00:05.163  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+00:05.888  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+00:06.703  render           | Saved: '/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/ulgani-cpu-frame-g1rwgwsw/single.png'
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preview.py", line 91, in <module>
+    main()
+    ~~~~^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preview.py", line 79, in main
+    artifacts.append({'asset':variant.id,'lod':a.lod,'path':str(output.relative_to(ROOT)),
+                                                                ~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Applications/Blender.app/Contents/Resources/5.2/python/lib/python3.13/pathlib/_local.py", line 385, in relative_to
+    raise ValueError(f"{str(self)!r} is not in the subpath of {str(other)!r}")
+ValueError: 'assets/renders/cities/ulgani-iteration/ulgani_low_0_lod0_turntable.png' is not in the subpath of '/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d'
+
+Error: script failed, file: 'packages/tools/blender/cities/ulgani/preview.py', exiting.
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

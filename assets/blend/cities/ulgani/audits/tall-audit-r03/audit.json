@@ -1,0 +1,2594 @@
+{
+  "source": "assets/blend/cities/ulgani_tall.blend",
+  "sourceSHA256": "9959d0c7397d5eb58571f47056f31525c086b0968185762ed3268dea964efc33",
+  "assets": [
+    {
+      "source": {
+        "id": "ulgani_tall_0",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 50502,
+            "vertices": 29366,
+            "surfaceVertices": 29366,
+            "unusedVertices": 0,
+            "corners": 102578,
+            "bounds": [
+              [
+                -10.380877494812012,
+                -9.274999618530273,
+                -0.18319585919380188
+              ],
+              [
+                10.945061683654785,
+                9.274999618530273,
+                174.5191192626953
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999141742809,
+            "geometryHash": "6b366e47d18218a931b196a4a46f693d91601cbe9c0c6fe2dfe05116f3e84367"
+          },
+          {
+            "triangles": 15149,
+            "vertices": 10030,
+            "surfaceVertices": 10030,
+            "unusedVertices": 0,
+            "corners": 45447,
+            "bounds": [
+              [
+                -10.374662399291992,
+                -9.274999618530273,
+                -0.16194282472133636
+              ],
+              [
+                10.945061683654785,
+                9.274999618530273,
+                174.55166625976562
+              ]
+            ],
+            "uvMin": [
+              -0.007565543055534363,
+              0.014982222579419613
+            ],
+            "uvMax": [
+              1.0388051271438599,
+              0.9850101470947266
+            ],
+            "normalLengthMin": 0.9999999139119494,
+            "geometryHash": "2a0ef8d352bdb06414d7e961b161bbcae7f9b65ad91195890eb3bf8ae9ec61b7"
+          },
+          {
+            "triangles": 5049,
+            "vertices": 4104,
+            "surfaceVertices": 4060,
+            "unusedVertices": 44,
+            "corners": 15147,
+            "bounds": [
+              [
+                -10.421130180358887,
+                -9.274999618530273,
+                -0.10517653077840805
+              ],
+              [
+                10.934882164001465,
+                9.274999618530273,
+                174.5945587158203
+              ]
+            ],
+            "uvMin": [
+              -0.03463307023048401,
+              0.014863921329379082
+            ],
+            "uvMax": [
+              1.0130054950714111,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999149777129,
+            "geometryHash": "21fbad1511c9e2d8bf443e1bd5e06ced0956e374c26c89d9099b4a91ac6bc938"
+          },
+          {
+            "triangles": 1767,
+            "vertices": 2087,
+            "surfaceVertices": 1929,
+            "unusedVertices": 158,
+            "corners": 5301,
+            "bounds": [
+              [
+                -10.412064552307129,
+                -9.274999618530273,
+                0.0
+              ],
+              [
+                11.055274963378906,
+                9.274999618530273,
+                174.9267120361328
+              ]
+            ],
+            "uvMin": [
+              0.0013018723111599684,
+              0.01499901246279478
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.0,
+            "geometryHash": "1b1c1b508ef92671a48f99a4968607a3d2f54ac5d15445b9fcc1857ab0e95630"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_0",
+            "position": [
+              -5.389999866485596,
+              -4.826250076293945,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_0",
+            "position": [
+              5.389999866485596,
+              4.826250076293945,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 91,
+          "triangles": 2112,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.5794563293457031,
+          "nearestSurfaceP95": 0.21107273921370506
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -8.775,
+                0.18
+              ],
+              "to": [
+                0,
+                8.775,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "decoded": {
+        "id": "ulgani_tall_0",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 50502,
+            "vertices": 29782,
+            "surfaceVertices": 29782,
+            "unusedVertices": 0,
+            "corners": 151506,
+            "bounds": [
+              [
+                -10.381216485642426,
+                -9.277078464655517,
+                -0.183197021484375
+              ],
+              [
+                10.9454006744852,
+                9.277078464655517,
+                174.5191192626953
+              ]
+            ],
+            "uvMin": [
+              0.007507438771426678,
+              0.015014886856079102
+            ],
+            "uvMax": [
+              0.9924925565719604,
+              0.9849851131439209
+            ],
+            "normalLengthMin": 0.9999998930022312,
+            "geometryHash": "a2734d75e741dbe73dcb6294afb0f7cc939eda1fd973db5841c4569b85a0007a"
+          },
+          {
+            "triangles": 15149,
+            "vertices": 10344,
+            "surfaceVertices": 10344,
+            "unusedVertices": 0,
+            "corners": 45447,
+            "bounds": [
+              [
+                -10.378798137619697,
+                -9.277678068426951,
+                -0.1619415283203125
+              ],
+              [
+                10.94919742198249,
+                9.277678068426951,
+                174.55166625976562
+              ]
+            ],
+            "uvMin": [
+              -0.007565543055534363,
+              0.014982223510742188
+            ],
+            "uvMax": [
+              1.0388051271438599,
+              0.9850101470947266
+            ],
+            "normalLengthMin": 0.9999998889525432,
+            "geometryHash": "2dc53d6945c6ec328f6a779552f847b5cfe6e482f8273df1468f00013b78816e"
+          },
+          {
+            "triangles": 5049,
+            "vertices": 4379,
+            "surfaceVertices": 4379,
+            "unusedVertices": 0,
+            "corners": 15147,
+            "bounds": [
+              [
+                -10.416938666509509,
+                -9.276941528118527,
+                -0.1051788330078125
+              ],
+              [
+                10.930690650152087,
+                9.276941528118527,
+                174.5945587158203
+              ]
+            ],
+            "uvMin": [
+              -0.03463307023048401,
+              0.014863908290863037
+            ],
+            "uvMax": [
+              1.0130054950714111,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999998890179228,
+            "geometryHash": "00d6924d047d493f66af1f498aba5a38bbda4657b6d9d170d778bfb5ad743b97"
+          },
+          {
+            "triangles": 1765,
+            "vertices": 2219,
+            "surfaceVertices": 2219,
+            "unusedVertices": 0,
+            "corners": 5295,
+            "bounds": [
+              [
+                -10.408785173245349,
+                -9.278317694998293,
+                0.0
+              ],
+              [
+                11.051995584317126,
+                9.278317694998293,
+                174.9267120361328
+              ]
+            ],
+            "uvMin": [
+              0.001281757839024067,
+              0.015014886856079102
+            ],
+            "uvMax": [
+              0.9924925565719604,
+              0.9849851131439209
+            ],
+            "normalLengthMin": 0.9999998890463254,
+            "geometryHash": "d05945eee9b753738ccc09381661c6eadd7b2429f0772b46217c6b3e3cd1da58"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_0",
+            "position": [
+              -5.389999866485596,
+              -4.826250076293945,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0008708977838978171,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_0",
+            "position": [
+              5.389999866485596,
+              4.826250076293945,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0010539068607613444,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 91,
+          "triangles": 2112,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.583077609539032,
+          "nearestSurfaceP95": 0.2135816141963005
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -8.775,
+                0.18
+              ],
+              "to": [
+                0,
+                8.775,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "preservation": [
+        {
+          "lod": 0,
+          "position": {
+            "max": 0.01052410714328289,
+            "p99": 0.008542667143046856,
+            "mean": 0.005187524620289618
+          },
+          "sourceToExportPosition": {
+            "max": 0.01052410714328289,
+            "p99": 0.008549592318013307,
+            "mean": 0.005204128251702761
+          },
+          "positionTolerance": 0.02700573782151163,
+          "uv": {
+            "max": 0.04616899139273539,
+            "p99": 4.2748260500945676e-05,
+            "mean": 7.411703497594058e-05
+          },
+          "normalVector": {
+            "max": 1.3423094731637673,
+            "p99": 0.015088669117377941,
+            "mean": 0.007756655842197457
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.04616899139273539,
+              "p99": 4.2748260500945676e-05,
+              "mean": 7.411703497594058e-05
+            },
+            "normalVector": {
+              "max": 1.3423094731637673,
+              "p99": 0.015088669117377941,
+              "mean": 0.007756655842197457
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 50502,
+          "exportTriangles": 50502,
+          "sourceVertices": 29366,
+          "exportVertices": 29782,
+          "sourceSurfaceVertices": 29366,
+          "exportSurfaceVertices": 29782,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 1,
+          "position": {
+            "max": 0.010238909162580967,
+            "p99": 0.008625410627573727,
+            "mean": 0.005197594712635741
+          },
+          "sourceToExportPosition": {
+            "max": 0.010238909162580967,
+            "p99": 0.008625867236405607,
+            "mean": 0.005185575903347365
+          },
+          "positionTolerance": 0.027007324865255644,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 9.882855724076022e-09
+          },
+          "normalVector": {
+            "max": 0.018268199423138308,
+            "p99": 0.014883857252177885,
+            "mean": 0.006255414299821088
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 9.882855724076022e-09
+            },
+            "normalVector": {
+              "max": 0.018268199423138308,
+              "p99": 0.014883857252177885,
+              "mean": 0.006255414299821088
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 15149,
+          "exportTriangles": 15149,
+          "sourceVertices": 10030,
+          "exportVertices": 10344,
+          "sourceSurfaceVertices": 10030,
+          "exportSurfaceVertices": 10344,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 2,
+          "position": {
+            "max": 0.009888139553368092,
+            "p99": 0.008510869443416596,
+            "mean": 0.0051038315820950714
+          },
+          "sourceToExportPosition": {
+            "max": 0.009888139553368092,
+            "p99": 0.008548576766625043,
+            "mean": 0.005090956479366043
+          },
+          "positionTolerance": 0.027005902584536882,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 1.0187305215405041e-08
+          },
+          "normalVector": {
+            "max": 0.8623924998605486,
+            "p99": 0.014816517063068723,
+            "mean": 0.006411674248019508
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 1.0187305215405041e-08
+            },
+            "normalVector": {
+              "max": 0.8623924998605486,
+              "p99": 0.014816517063068723,
+              "mean": 0.006411674248019508
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 5049,
+          "exportTriangles": 5049,
+          "sourceVertices": 4104,
+          "exportVertices": 4379,
+          "sourceSurfaceVertices": 4060,
+          "exportSurfaceVertices": 4379,
+          "unusedSourceVertices": 44
+        },
+        {
+          "lod": 3,
+          "position": {
+            "max": 0.009285000152885914,
+            "p99": 0.008668243493884812,
+            "mean": 0.0051296588109299174
+          },
+          "sourceToExportPosition": {
+            "max": 0.009285000152885914,
+            "p99": 0.008555966615676881,
+            "mean": 0.0049488665856505
+          },
+          "positionTolerance": 0.027042146539544183,
+          "uv": {
+            "max": 5.3888355461646726e-05,
+            "p99": 4.624548203477951e-05,
+            "mean": 2.4109102584866402e-05
+          },
+          "normalVector": {
+            "max": 0.999999943912395,
+            "p99": 0.01405033661367642,
+            "mean": 0.006373353570895232
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 5.3888355461646726e-05,
+              "p99": 4.624548203477951e-05,
+              "mean": 2.4109102584866402e-05
+            },
+            "normalVector": {
+              "max": 0.999999943912395,
+              "p99": 0.01405033661367642,
+              "mean": 0.006373353570895232
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 1767,
+          "exportTriangles": 1765,
+          "sourceVertices": 2087,
+          "exportVertices": 2219,
+          "sourceSurfaceVertices": 1929,
+          "exportSurfaceVertices": 2219,
+          "unusedSourceVertices": 158
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "ulgani_tall_1",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 55937,
+            "vertices": 32489,
+            "surfaceVertices": 32489,
+            "unusedVertices": 0,
+            "corners": 113443,
+            "bounds": [
+              [
+                -12.891162872314453,
+                -11.076594352722168,
+                -0.18359357118606567
+              ],
+              [
+                13.42570972442627,
+                10.625,
+                224.6265869140625
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999140653187,
+            "geometryHash": "72c70389bbc455864e8fae368afb61febc54af63779e5d94d4254dd3ace0924f"
+          },
+          {
+            "triangles": 16781,
+            "vertices": 11060,
+            "surfaceVertices": 11060,
+            "unusedVertices": 0,
+            "corners": 50343,
+            "bounds": [
+              [
+                -12.9072904586792,
+                -11.082107543945312,
+                -0.16233734786510468
+              ],
+              [
+                13.42166519165039,
+                10.625,
+                224.64613342285156
+              ]
+            ],
+            "uvMin": [
+              -0.009420439600944519,
+              0.014958484098315239
+            ],
+            "uvMax": [
+              0.9942426681518555,
+              0.9850189089775085
+            ],
+            "normalLengthMin": 0.999999913707166,
+            "geometryHash": "f3606cca1875228735474e4740afd7defb302570503514b1d25b58c548090792"
+          },
+          {
+            "triangles": 5593,
+            "vertices": 4537,
+            "surfaceVertices": 4464,
+            "unusedVertices": 73,
+            "corners": 16779,
+            "bounds": [
+              [
+                -12.968904495239258,
+                -11.101518630981445,
+                -0.21042215824127197
+              ],
+              [
+                13.420706748962402,
+                10.625,
+                224.614013671875
+              ]
+            ],
+            "uvMin": [
+              -0.025241481140255928,
+              0.01477131713181734
+            ],
+            "uvMax": [
+              1.0519734621047974,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999175525015,
+            "geometryHash": "cee9cbcc117244d0ce55abe38c4bf94874c0a3843ab7cdf2061fd6e111e414d6"
+          },
+          {
+            "triangles": 1957,
+            "vertices": 2313,
+            "surfaceVertices": 2072,
+            "unusedVertices": 241,
+            "corners": 5871,
+            "bounds": [
+              [
+                -12.916033744812012,
+                -11.073604583740234,
+                0.0
+              ],
+              [
+                13.645211219787598,
+                10.625,
+                225.12246704101562
+              ]
+            ],
+            "uvMin": [
+              0.003237109864130616,
+              0.013719900511205196
+            ],
+            "uvMax": [
+              1.0107765197753906,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999220543995,
+            "geometryHash": "6a015431b6b5f74fe9ac4cf1a1aed26d202e996d3e3897623c275a198e2604e3"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_1",
+            "position": [
+              -6.314000129699707,
+              -5.568749904632568,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_1",
+            "position": [
+              6.314000129699707,
+              5.568749904632568,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 92,
+          "triangles": 2464,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.5794118046760559,
+          "nearestSurfaceP95": 0.21057316362857817
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -10.125,
+                0.18
+              ],
+              "to": [
+                0,
+                10.125,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "decoded": {
+        "id": "ulgani_tall_1",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 55937,
+            "vertices": 32905,
+            "surfaceVertices": 32905,
+            "unusedVertices": 0,
+            "corners": 167811,
+            "bounds": [
+              [
+                -12.891878764654393,
+                -11.079696501908984,
+                -0.18359375
+              ],
+              [
+                13.42642561676621,
+                10.628102149186816,
+                224.6265869140625
+              ]
+            ],
+            "uvMin": [
+              0.007507438771426678,
+              0.015014886856079102
+            ],
+            "uvMax": [
+              0.9924925565719604,
+              0.9849851131439209
+            ],
+            "normalLengthMin": 0.9999998801691578,
+            "geometryHash": "dcc0e8a536bdeb7a1deec7021953edc3528ce179261c20af3f9aa7d65ea304f0"
+          },
+          {
+            "triangles": 16781,
+            "vertices": 11374,
+            "surfaceVertices": 11374,
+            "unusedVertices": 0,
+            "corners": 50343,
+            "bounds": [
+              [
+                -12.90186478967371,
+                -11.082370587269907,
+                -0.1623382568359375
+              ],
+              [
+                13.4162395226449,
+                10.625263043324594,
+                224.64613342285156
+              ]
+            ],
+            "uvMin": [
+              -0.009420439600944519,
+              0.014958500862121582
+            ],
+            "uvMax": [
+              0.9942426681518555,
+              0.9850189089775085
+            ],
+            "normalLengthMin": 0.9999998879776452,
+            "geometryHash": "cccddfd01e4732dda0c17f892b2c06959b4ddb1256b94501682bfd8712ac487c"
+          },
+          {
+            "triangles": 5593,
+            "vertices": 4786,
+            "surfaceVertices": 4786,
+            "unusedVertices": 0,
+            "corners": 16779,
+            "bounds": [
+              [
+                -12.961530506804479,
+                -11.106568911951854,
+                -0.210418701171875
+              ],
+              [
+                13.413332760527624,
+                10.630050280970408,
+                224.614013671875
+              ]
+            ],
+            "uvMin": [
+              -0.025241481140255928,
+              0.014771342277526855
+            ],
+            "uvMax": [
+              1.0519734621047974,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999133207289,
+            "geometryHash": "dd335147c2147bda7b3357b2aebe252e2eace267772a29b5fa25fedc2ba188ca"
+          },
+          {
+            "triangles": 1955,
+            "vertices": 2360,
+            "surfaceVertices": 2360,
+            "unusedVertices": 0,
+            "corners": 5865,
+            "bounds": [
+              [
+                -12.909028191684115,
+                -11.065797283777897,
+                0.0
+              ],
+              [
+                13.638205666659701,
+                10.617192700037663,
+                225.12246704101562
+              ]
+            ],
+            "uvMin": [
+              0.003237109864130616,
+              0.013719916343688965
+            ],
+            "uvMax": [
+              1.0107765197753906,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999998923405833,
+            "geometryHash": "f1c5b7871d452d078c88d38f418a73c1bac8232aeb2f66281990f8789f7b8731"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_1",
+            "position": [
+              -6.314000129699707,
+              -5.568749904632568,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0024276585318148136,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_1",
+            "position": [
+              6.314000129699707,
+              5.568749904632568,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.003521297127008438,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 92,
+          "triangles": 2464,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.5791620016098022,
+          "nearestSurfaceP95": 0.21016246303915975
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -10.125,
+                0.18
+              ],
+              "to": [
+                0,
+                10.125,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "preservation": [
+        {
+          "lod": 0,
+          "position": {
+            "max": 0.012966375797986984,
+            "p99": 0.01111108139157295,
+            "mean": 0.006739567895919627
+          },
+          "sourceToExportPosition": {
+            "max": 0.012966375797986984,
+            "p99": 0.011119024828076363,
+            "mean": 0.006753961317272445
+          },
+          "positionTolerance": 0.03469805225802088,
+          "uv": {
+            "max": 0.04893863994554959,
+            "p99": 4.4010495708581646e-05,
+            "mean": 0.00010205736052779378
+          },
+          "normalVector": {
+            "max": 1.371347356536159,
+            "p99": 0.015308202132258022,
+            "mean": 0.008583561689282109
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.04893863994554959,
+              "p99": 4.4010495708581646e-05,
+              "mean": 0.00010205736052779378
+            },
+            "normalVector": {
+              "max": 1.371347356536159,
+              "p99": 0.015308202132258022,
+              "mean": 0.008583561689282109
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 55937,
+          "exportTriangles": 55937,
+          "sourceVertices": 32489,
+          "exportVertices": 32905,
+          "sourceSurfaceVertices": 32489,
+          "exportSurfaceVertices": 32905,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 1,
+          "position": {
+            "max": 0.013041961006820202,
+            "p99": 0.01107545097358525,
+            "mean": 0.006742564468153453
+          },
+          "sourceToExportPosition": {
+            "max": 0.013041961006820202,
+            "p99": 0.011087504057213662,
+            "mean": 0.006730788639074745
+          },
+          "positionTolerance": 0.034698088069072056,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 1.0114903512099638e-08
+          },
+          "normalVector": {
+            "max": 1.3932690232060758,
+            "p99": 0.014749798777338449,
+            "mean": 0.006677912228838995
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 1.0114903512099638e-08
+            },
+            "normalVector": {
+              "max": 1.3932690232060758,
+              "p99": 0.014749798777338449,
+              "mean": 0.006677912228838995
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 16781,
+          "exportTriangles": 16781,
+          "sourceVertices": 11060,
+          "exportVertices": 11374,
+          "sourceSurfaceVertices": 11060,
+          "exportSurfaceVertices": 11374,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 2,
+          "position": {
+            "max": 0.013312287628650665,
+            "p99": 0.011009228974580764,
+            "mean": 0.006718741699997659
+          },
+          "sourceToExportPosition": {
+            "max": 0.013312287628650665,
+            "p99": 0.011036966256797313,
+            "mean": 0.006814401269275224
+          },
+          "positionTolerance": 0.034701852465931576,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 1.0337963655002211e-08
+          },
+          "normalVector": {
+            "max": 0.018337634405703233,
+            "p99": 0.014453805532163935,
+            "mean": 0.006173636409873075
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 1.0337963655002211e-08
+            },
+            "normalVector": {
+              "max": 0.018337634405703233,
+              "p99": 0.014453805532163935,
+              "mean": 0.006173636409873075
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 5593,
+          "exportTriangles": 5593,
+          "sourceVertices": 4537,
+          "exportVertices": 4786,
+          "sourceSurfaceVertices": 4464,
+          "exportSurfaceVertices": 4786,
+          "unusedSourceVertices": 73
+        },
+        {
+          "lod": 3,
+          "position": {
+            "max": 0.012420205399394035,
+            "p99": 0.01093382854014635,
+            "mean": 0.007071589749460345
+          },
+          "sourceToExportPosition": {
+            "max": 0.012420205399394035,
+            "p99": 0.010938519621267915,
+            "mean": 0.006907595640554499
+          },
+          "positionTolerance": 0.034749454133816006,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 9.72799378791022e-09
+          },
+          "normalVector": {
+            "max": 0.01831428511529469,
+            "p99": 0.013704165076191625,
+            "mean": 0.0057918683493230596
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 9.72799378791022e-09
+            },
+            "normalVector": {
+              "max": 0.01831428511529469,
+              "p99": 0.013704165076191625,
+              "mean": 0.0057918683493230596
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 1957,
+          "exportTriangles": 1955,
+          "sourceVertices": 2313,
+          "exportVertices": 2360,
+          "sourceSurfaceVertices": 2072,
+          "exportSurfaceVertices": 2360,
+          "unusedSourceVertices": 241
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "ulgani_tall_2",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 53859,
+            "vertices": 31325,
+            "surfaceVertices": 31325,
+            "unusedVertices": 0,
+            "corners": 109473,
+            "bounds": [
+              [
+                -11.680411338806152,
+                -9.40999984741211,
+                -0.18337008357048035
+              ],
+              [
+                14.039889335632324,
+                9.40999984741211,
+                276.77203369140625
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.99999991373352,
+            "geometryHash": "ad67cb08a3c13b82f00e6f3e0ff600ef012af95b8479759afa3edefc398f32bc"
+          },
+          {
+            "triangles": 16156,
+            "vertices": 10651,
+            "surfaceVertices": 10651,
+            "unusedVertices": 0,
+            "corners": 48468,
+            "bounds": [
+              [
+                -11.675553321838379,
+                -9.40999984741211,
+                -0.1620662361383438
+              ],
+              [
+                14.03342056274414,
+                9.40999984741211,
+                276.79248046875
+              ]
+            ],
+            "uvMin": [
+              -0.06756611168384552,
+              -0.030903160572052002
+            ],
+            "uvMax": [
+              0.9928868412971497,
+              0.9850218892097473
+            ],
+            "normalLengthMin": 0.9999999159568782,
+            "geometryHash": "5596d66506054afc90d4394310c1d8905d32f3d2082b45b094b060dcf26a75e2"
+          },
+          {
+            "triangles": 5384,
+            "vertices": 4357,
+            "surfaceVertices": 4299,
+            "unusedVertices": 58,
+            "corners": 16152,
+            "bounds": [
+              [
+                -11.708700180053711,
+                -9.40999984741211,
+                -0.10692727565765381
+              ],
+              [
+                14.03342056274414,
+                9.40999984741211,
+                276.7376403808594
+              ]
+            ],
+            "uvMin": [
+              -0.08972376585006714,
+              0.014734002761542797
+            ],
+            "uvMax": [
+              1.0747548341751099,
+              0.9850332140922546
+            ],
+            "normalLengthMin": 0.99999992182076,
+            "geometryHash": "4428b1cdeeb5203c4a7292da04fb664db3f2ad14e5ba1f254dd45e09f3906250"
+          },
+          {
+            "triangles": 1885,
+            "vertices": 2211,
+            "surfaceVertices": 2049,
+            "unusedVertices": 162,
+            "corners": 5655,
+            "bounds": [
+              [
+                -11.613938331604004,
+                -9.40999984741211,
+                -0.043661318719387054
+              ],
+              [
+                14.30664348602295,
+                9.40999984741211,
+                277.12017822265625
+              ]
+            ],
+            "uvMin": [
+              0.0014806524850428104,
+              0.014999551698565483
+            ],
+            "uvMax": [
+              1.044346570968628,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999281079394,
+            "geometryHash": "36f55b4aa38b8920bc150537b2f410946c1f6b5365ee6e3624b6f71aaf457703"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_2",
+            "position": [
+              -6.159999847412109,
+              -4.9004998207092285,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_2",
+            "position": [
+              6.159999847412109,
+              4.9004998207092285,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 94,
+          "triangles": 2504,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.5769954323768616,
+          "nearestSurfaceP95": 0.2107955738902092
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -8.91,
+                0.18
+              ],
+              "to": [
+                0,
+                8.91,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "decoded": {
+        "id": "ulgani_tall_2",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 53859,
+            "vertices": 31741,
+            "surfaceVertices": 31741,
+            "unusedVertices": 0,
+            "corners": 161577,
+            "bounds": [
+              [
+                -11.684610998305175,
+                -9.415825300143865,
+                -0.183380126953125
+              ],
+              [
+                14.044088995131347,
+                9.415825300143865,
+                276.77203369140625
+              ]
+            ],
+            "uvMin": [
+              0.007507438771426678,
+              0.015014886856079102
+            ],
+            "uvMax": [
+              0.9924925565719604,
+              0.9849851131439209
+            ],
+            "normalLengthMin": 0.9999998870296354,
+            "geometryHash": "5943c854b11b4cd6dbcc3caaf490adf12755d03952bdabbb243e7f1f464b4eb5"
+          },
+          {
+            "triangles": 16156,
+            "vertices": 10965,
+            "surfaceVertices": 10965,
+            "unusedVertices": 0,
+            "corners": 48468,
+            "bounds": [
+              [
+                -11.668471689270973,
+                -9.415796249441996,
+                -0.162078857421875
+              ],
+              [
+                14.026338930176735,
+                9.415796249441996,
+                276.79248046875
+              ]
+            ],
+            "uvMin": [
+              -0.06756611168384552,
+              -0.030903100967407227
+            ],
+            "uvMax": [
+              0.9928868412971497,
+              0.9850218892097473
+            ],
+            "normalLengthMin": 0.9999998840999847,
+            "geometryHash": "77d47714cb972bde69bfc148bae5bc06fbdf79558898710e3256e254f1a4b898"
+          },
+          {
+            "triangles": 5384,
+            "vertices": 4614,
+            "surfaceVertices": 4614,
+            "unusedVertices": 0,
+            "corners": 16152,
+            "bounds": [
+              [
+                -11.713738638098107,
+                -9.412057009101432,
+                -0.10693359375
+              ],
+              [
+                14.038459020788537,
+                9.412057009101432,
+                276.7376403808594
+              ]
+            ],
+            "uvMin": [
+              -0.08972376585006714,
+              0.014734029769897461
+            ],
+            "uvMax": [
+              1.0747548341751099,
+              0.9850332140922546
+            ],
+            "normalLengthMin": 0.9999998902235536,
+            "geometryHash": "382e967249856cf0e79354a1d44748d8d1014fd6bf95eef966b554e82e8c4de3"
+          },
+          {
+            "triangles": 1883,
+            "vertices": 2339,
+            "surfaceVertices": 2339,
+            "unusedVertices": 0,
+            "corners": 5649,
+            "bounds": [
+              [
+                -11.61226481480196,
+                -9.40599382501091,
+                -0.043670654296875
+              ],
+              [
+                14.304969969220906,
+                9.40599382501091,
+                277.12017822265625
+              ]
+            ],
+            "uvMin": [
+              0.0014806524850428104,
+              0.014999568462371826
+            ],
+            "uvMax": [
+              1.044346570968628,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999998863660186,
+            "geometryHash": "562cedfe5e64fe480662b26ef11ba2439cb5a371ce96a987967e01de58d18231"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_2",
+            "position": [
+              -6.159999847412109,
+              -4.9004998207092285,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0014221466844901443,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_2",
+            "position": [
+              6.159999847412109,
+              4.9004998207092285,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0021452754735946655,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 94,
+          "triangles": 2504,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.5805092453956604,
+          "nearestSurfaceP95": 0.20858088806271552
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -8.91,
+                0.18
+              ],
+              "to": [
+                0,
+                8.91,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 21
+            }
+          }
+        ]
+      },
+      "preservation": [
+        {
+          "lod": 0,
+          "position": {
+            "max": 0.016309065744280815,
+            "p99": 0.013455453142523766,
+            "mean": 0.008224394575860237
+          },
+          "sourceToExportPosition": {
+            "max": 0.016309065744280815,
+            "p99": 0.013440812341868875,
+            "mean": 0.0082524325799495
+          },
+          "positionTolerance": 0.0425415230923345,
+          "uv": {
+            "max": 0.04898358184043075,
+            "p99": 4.2748260500945676e-05,
+            "mean": 9.294751842806155e-05
+          },
+          "normalVector": {
+            "max": 1.3973399713977577,
+            "p99": 0.015473293947620523,
+            "mean": 0.008546234948370816
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.04898358184043075,
+              "p99": 4.2748260500945676e-05,
+              "mean": 9.294751842806155e-05
+            },
+            "normalVector": {
+              "max": 1.3973399713977577,
+              "p99": 0.015473293947620523,
+              "mean": 0.008546234948370816
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 53859,
+          "exportTriangles": 53859,
+          "sourceVertices": 31325,
+          "exportVertices": 31741,
+          "sourceSurfaceVertices": 31325,
+          "exportSurfaceVertices": 31741,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 1,
+          "position": {
+            "max": 0.015881016850471497,
+            "p99": 0.013367735818028454,
+            "mean": 0.008099008350290367
+          },
+          "sourceToExportPosition": {
+            "max": 0.015881016850471497,
+            "p99": 0.013402219861745834,
+            "mean": 0.008170851015918825
+          },
+          "positionTolerance": 0.042541233733473655,
+          "uv": {
+            "max": 5.960464477539063e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 9.56310027698543e-09
+          },
+          "normalVector": {
+            "max": 1.0849605201430392,
+            "p99": 0.014681308049810118,
+            "mean": 0.006308017128596855
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 5.960464477539063e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 9.56310027698543e-09
+            },
+            "normalVector": {
+              "max": 1.0849605201430392,
+              "p99": 0.014681308049810118,
+              "mean": 0.006308017128596855
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 16156,
+          "exportTriangles": 16156,
+          "sourceVertices": 10651,
+          "exportVertices": 10965,
+          "sourceSurfaceVertices": 10651,
+          "exportSurfaceVertices": 10965,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 2,
+          "position": {
+            "max": 0.015264065004885197,
+            "p99": 0.013511764835566282,
+            "mean": 0.00820713552771131
+          },
+          "sourceToExportPosition": {
+            "max": 0.015264065004885197,
+            "p99": 0.013512636870145795,
+            "mean": 0.008172884217343091
+          },
+          "positionTolerance": 0.04252502818243902,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 9.838738001296283e-09
+          },
+          "normalVector": {
+            "max": 0.019187894789474573,
+            "p99": 0.01503730839678041,
+            "mean": 0.006165057576144119
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 9.838738001296283e-09
+            },
+            "normalVector": {
+              "max": 0.019187894789474573,
+              "p99": 0.01503730839678041,
+              "mean": 0.006165057576144119
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 5384,
+          "exportTriangles": 5384,
+          "sourceVertices": 4357,
+          "exportVertices": 4614,
+          "sourceSurfaceVertices": 4299,
+          "exportSurfaceVertices": 4614,
+          "unusedSourceVertices": 58
+        },
+        {
+          "lod": 3,
+          "position": {
+            "max": 0.01461402140557766,
+            "p99": 0.013161650449037549,
+            "mean": 0.008081645639580422
+          },
+          "sourceToExportPosition": {
+            "max": 0.01461402140557766,
+            "p99": 0.013202148340642452,
+            "mean": 0.008237890048395013
+          },
+          "positionTolerance": 0.04257594987757445,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 8.444881614361597e-09
+          },
+          "normalVector": {
+            "max": 0.016635497825640107,
+            "p99": 0.013957677686527397,
+            "mean": 0.005798845541099502
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 8.444881614361597e-09
+            },
+            "normalVector": {
+              "max": 0.016635497825640107,
+              "p99": 0.013957677686527397,
+              "mean": 0.005798845541099502
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 1885,
+          "exportTriangles": 1883,
+          "sourceVertices": 2211,
+          "exportVertices": 2339,
+          "sourceSurfaceVertices": 2049,
+          "exportSurfaceVertices": 2339,
+          "unusedSourceVertices": 162
+        }
+      ]
+    },
+    {
+      "source": {
+        "id": "ulgani_tall_3",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 59800,
+            "vertices": 34522,
+            "surfaceVertices": 34522,
+            "unusedVertices": 0,
+            "corners": 179400,
+            "bounds": [
+              [
+                -13.140462875366211,
+                -11.894192695617676,
+                -0.18377596139907837
+              ],
+              [
+                14.466682434082031,
+                11.300000190734863,
+                332.9286804199219
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.999999914654801,
+            "geometryHash": "9edc3b19a5e32d1fef64528c30d58a2b845f68b53bf72a7e034aa99d97005846"
+          },
+          {
+            "triangles": 17940,
+            "vertices": 11782,
+            "surfaceVertices": 11782,
+            "unusedVertices": 0,
+            "corners": 53820,
+            "bounds": [
+              [
+                -13.13595962524414,
+                -11.901439666748047,
+                -0.1625060886144638
+              ],
+              [
+                14.461339950561523,
+                11.30000114440918,
+                332.95123291015625
+              ]
+            ],
+            "uvMin": [
+              -0.09639044106006622,
+              -0.0005353689193725586
+            ],
+            "uvMax": [
+              1.1046808958053589,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999162032407,
+            "geometryHash": "2442596b2c01c50320e259cfd849150fd3d7aa32bda735d36b53166fdec8e3b3"
+          },
+          {
+            "triangles": 5979,
+            "vertices": 4797,
+            "surfaceVertices": 4712,
+            "unusedVertices": 85,
+            "corners": 17937,
+            "bounds": [
+              [
+                -13.171460151672363,
+                -11.929622650146484,
+                -0.21040135622024536
+              ],
+              [
+                14.4612455368042,
+                11.30000114440918,
+                332.8955993652344
+              ]
+            ],
+            "uvMin": [
+              -0.1064220666885376,
+              0.014798559248447418
+            ],
+            "uvMax": [
+              1.1643544435501099,
+              0.9850282073020935
+            ],
+            "normalLengthMin": 0.9999999160862889,
+            "geometryHash": "9e739e883ba73f8b06af0d99c14904e320eca1c02320601039414886c7df1a95"
+          },
+          {
+            "triangles": 2093,
+            "vertices": 2475,
+            "surfaceVertices": 2198,
+            "unusedVertices": 277,
+            "corners": 6279,
+            "bounds": [
+              [
+                -13.07925796508789,
+                -12.096969604492188,
+                0.0
+              ],
+              [
+                14.66677188873291,
+                11.295140266418457,
+                333.32647705078125
+              ]
+            ],
+            "uvMin": [
+              -0.010321994312107563,
+              0.014997560530900955
+            ],
+            "uvMax": [
+              1.006255865097046,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.999999918776757,
+            "geometryHash": "ce1d929e8ce20e9bae9b4d1b6ef2382b3c52085ee31502a1f11d7696ca631658"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_3",
+            "position": [
+              -6.929999828338623,
+              -5.940000057220459,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_3",
+            "position": [
+              6.929999828338623,
+              5.940000057220459,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 94,
+          "triangles": 2836,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.5786651968955994,
+          "nearestSurfaceP95": 0.21075161397457123
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -10.8,
+                0.18
+              ],
+              "to": [
+                0,
+                10.8,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "decoded": {
+        "id": "ulgani_tall_3",
+        "class": "building",
+        "lods": [
+          {
+            "triangles": 59800,
+            "vertices": 34938,
+            "surfaceVertices": 34938,
+            "unusedVertices": 0,
+            "corners": 179400,
+            "bounds": [
+              [
+                -13.142448767034239,
+                -11.886445321330143,
+                -0.18377685546875
+              ],
+              [
+                14.468668325750059,
+                11.29225281644733,
+                332.9286804199219
+              ]
+            ],
+            "uvMin": [
+              0.007507438771426678,
+              0.015014886856079102
+            ],
+            "uvMax": [
+              0.9924925565719604,
+              0.9849851131439209
+            ],
+            "normalLengthMin": 0.0,
+            "geometryHash": "b75aad8f1cf93f762a2622441a1b9099747e15b019da09cc7f7f04d5db9cdf1a"
+          },
+          {
+            "triangles": 17940,
+            "vertices": 12096,
+            "surfaceVertices": 12096,
+            "unusedVertices": 0,
+            "corners": 53820,
+            "bounds": [
+              [
+                -13.142921504271271,
+                -11.910445813198976,
+                -0.162506103515625
+              ],
+              [
+                14.468301829588654,
+                11.309007290860109,
+                332.95123291015625
+              ]
+            ],
+            "uvMin": [
+              -0.09639044106006622,
+              -0.0005353689193725586
+            ],
+            "uvMax": [
+              1.1046808958053589,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.999999915102598,
+            "geometryHash": "8b82399f4982149374657628c400ffbd18a739dab832df27603f72307fcf7498"
+          },
+          {
+            "triangles": 5979,
+            "vertices": 5031,
+            "surfaceVertices": 5031,
+            "unusedVertices": 0,
+            "corners": 17937,
+            "bounds": [
+              [
+                -13.160397721587742,
+                -11.924267149762954,
+                -0.21038818359375
+              ],
+              [
+                14.450183106719578,
+                11.29464564402565,
+                332.8955993652344
+              ]
+            ],
+            "uvMin": [
+              -0.1064220666885376,
+              0.014798581600189209
+            ],
+            "uvMax": [
+              1.1643544435501099,
+              0.9850282073020935
+            ],
+            "normalLengthMin": 0.999999908273202,
+            "geometryHash": "ead57f95b8b03bafba6f6731af4ac14d9ac5062f254f984c5dbcd31c059c89ae"
+          },
+          {
+            "triangles": 2091,
+            "vertices": 2487,
+            "surfaceVertices": 2487,
+            "unusedVertices": 0,
+            "corners": 6273,
+            "bounds": [
+              [
+                -13.081706592174896,
+                -12.099436614756996,
+                0.0
+              ],
+              [
+                14.669220515819916,
+                11.297607276683266,
+                333.32647705078125
+              ]
+            ],
+            "uvMin": [
+              -0.010321994312107563,
+              0.014997541904449463
+            ],
+            "uvMax": [
+              1.006255865097046,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999148445399,
+            "geometryHash": "428e23c73b8f7c358eef0c36bca1ca092e3c3c4ae2425ebc37964ca50c4fdedf"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_tall_3",
+            "position": [
+              -6.929999828338623,
+              -5.940000057220459,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.0015788209857419133,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_tall_3",
+            "position": [
+              6.929999828338623,
+              5.940000057220459,
+              3.299999952316284
+            ],
+            "nearestVisualSurface": 0.003104105358943343,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.55,
+              "distance": 9
+            }
+          }
+        ],
+        "collision": {
+          "objects": 94,
+          "triangles": 2836,
+          "maxObjectTriangles": 352,
+          "nearestSurfaceMax": 0.5851226449012756,
+          "nearestSurfaceP95": 0.20537072420120234
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -10.8,
+                0.18
+              ],
+              "to": [
+                0,
+                10.8,
+                0.18
+              ],
+              "width": 3,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 24
+            }
+          }
+        ]
+      },
+      "preservation": [
+        {
+          "lod": 0,
+          "position": {
+            "max": 0.019507844001054764,
+            "p99": 0.016014125067740675,
+            "mean": 0.009845490237152055
+          },
+          "sourceToExportPosition": {
+            "max": 0.019507844001054764,
+            "p99": 0.016046035047620536,
+            "mean": 0.009898983801793656
+          },
+          "positionTolerance": 0.05112895289589445,
+          "uv": {
+            "max": 0.054245657926195234,
+            "p99": 4.259437173628942e-05,
+            "mean": 6.567497570340336e-05
+          },
+          "normalVector": {
+            "max": 1.326098752862463,
+            "p99": 0.014806260987702836,
+            "mean": 0.007731657028506912
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.054245657926195234,
+              "p99": 4.259437173628942e-05,
+              "mean": 6.567497570340336e-05
+            },
+            "normalVector": {
+              "max": 1.326098752862463,
+              "p99": 0.014806260987702836,
+              "mean": 0.007731657028506912
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 59800,
+          "exportTriangles": 59800,
+          "sourceVertices": 34522,
+          "exportVertices": 34938,
+          "sourceSurfaceVertices": 34522,
+          "exportSurfaceVertices": 34938,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 1,
+          "position": {
+            "max": 0.018996940925717354,
+            "p99": 0.016080911364406345,
+            "mean": 0.009893351282454643
+          },
+          "sourceToExportPosition": {
+            "max": 0.018996940925717354,
+            "p99": 0.016123401001095772,
+            "mean": 0.009899865964860338
+          },
+          "positionTolerance": 0.05112910028741176,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 1.0259014795545041e-08
+          },
+          "normalVector": {
+            "max": 1.3406121216255635,
+            "p99": 0.014290077908048857,
+            "mean": 0.006296567076754005
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 1.0259014795545041e-08
+            },
+            "normalVector": {
+              "max": 1.3406121216255635,
+              "p99": 0.014290077908048857,
+              "mean": 0.006296567076754005
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 17940,
+          "exportTriangles": 17940,
+          "sourceVertices": 11782,
+          "exportVertices": 12096,
+          "sourceSurfaceVertices": 11782,
+          "exportSurfaceVertices": 12096,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 2,
+          "position": {
+            "max": 0.019234327599406242,
+            "p99": 0.01615734696388244,
+            "mean": 0.009937311743992903
+          },
+          "sourceToExportPosition": {
+            "max": 0.019234327599406242,
+            "p99": 0.016165811605751527,
+            "mean": 0.009997580487049637
+          },
+          "positionTolerance": 0.05112866959408615,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 9.847761393457364e-09
+          },
+          "normalVector": {
+            "max": 0.018272652232075356,
+            "p99": 0.014975018595726641,
+            "mean": 0.006251427136263543
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 9.847761393457364e-09
+            },
+            "normalVector": {
+              "max": 0.018272652232075356,
+              "p99": 0.014975018595726641,
+              "mean": 0.006251427136263543
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 5979,
+          "exportTriangles": 5979,
+          "sourceVertices": 4797,
+          "exportVertices": 5031,
+          "sourceSurfaceVertices": 4712,
+          "exportSurfaceVertices": 5031,
+          "unusedSourceVertices": 85
+        },
+        {
+          "lod": 3,
+          "position": {
+            "max": 0.01802670583128929,
+            "p99": 0.01622568443417549,
+            "mean": 0.00993919596160737
+          },
+          "sourceToExportPosition": {
+            "max": 0.01802670583128929,
+            "p99": 0.01630839087069035,
+            "mean": 0.009698249952846653
+          },
+          "positionTolerance": 0.05116526995074924,
+          "uv": {
+            "max": 2.9802322387695312e-08,
+            "p99": 2.9802322387695312e-08,
+            "mean": 9.113539971747354e-09
+          },
+          "normalVector": {
+            "max": 0.019872933483336516,
+            "p99": 0.01339167946374019,
+            "mean": 0.00573359957424102
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 2.9802322387695312e-08,
+              "p99": 2.9802322387695312e-08,
+              "mean": 9.113539971747354e-09
+            },
+            "normalVector": {
+              "max": 0.019872933483336516,
+              "p99": 0.01339167946374019,
+              "mean": 0.00573359957424102
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 2093,
+          "exportTriangles": 2091,
+          "sourceVertices": 2475,
+          "exportVertices": 2487,
+          "sourceSurfaceVertices": 2198,
+          "exportSurfaceVertices": 2487,
+          "unusedSourceVertices": 277
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "packedImages": [
+    {
+      "name": "Ulgani_2048_BaseColor",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "34789e9a7e8e0d9bcd00249083e730f44429965d21d161c9845d6fc1e85cdb7c",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_2048_Emissive",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "8c19cabdc8c17f4e4e01fe4654cf76c0fa8231c18c5cd16f6ce9b132bf50057d",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_2048_Normal",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "aa8faa49bce74fb97c66ff3cf4e488b16044ef4fb08aae415d49f3cf43b0fa27",
+      "colorspace": "Non-Color"
+    },
+    {
+      "name": "Ulgani_2048_ORM",
+      "size": [
+        2048,
+        2048
+      ],
+      "packed": true,
+      "packedSHA256": "e0fdafdba49de44b5479345876b2cb44aac663d243609cd3685ee0614f8f17c8",
+      "colorspace": "Non-Color"
+    }
+  ],
+  "sourceMaterials": [
+    {
+      "name": "Ulgani_PaintedAtlas_2048",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "Ulgani_2048_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "Ulgani_2048_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "Ulgani_2048_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "Ulgani_2048_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "Ulgani_2048_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "image",
+          "image": "Ulgani_2048_Emissive",
+          "component": null
+        }
+      }
+    }
+  ],
+  "export": "packages/client/public/models/cities/ulgani_tall.glb",
+  "exportSHA256": "d25b68a5aefbd25c16a48d05c51faf6e78c8f00efd33385edc61ecce1bc96876",
+  "exportBytes": 3412164,
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_mesh_quantization",
+    "KHR_texture_basisu"
+  ],
+  "materialRoutes": [
+    {
+      "name": "Ulgani_PaintedAtlas_2048",
+      "extras": {
+        "macro_variation": true,
+        "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+        "atlas_regions": "chitin,membrane,cap,gill,root,walk,basalt,spore",
+        "occlusion_method": "painted joint and growth-fold occlusion; no exporter rebake"
+      },
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 3
+        }
+      },
+      "emissiveFactor": [
+        0.6499999761581421,
+        0.6499999761581421,
+        0.6499999761581421
+      ],
+      "emissiveTexture": {
+        "index": 1
+      },
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 3
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.5600000023841858
+        }
+      }
+    }
+  ],
+  "textures": [
+    [
+      {
+        "index": 0,
+        "name": "Ulgani_2048_Emissive",
+        "slots": [
+          "emissive"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 2048,
+          "height": 2048,
+          "levels": 12,
+          "fullChain": true,
+          "supercompression": "BasisLZ",
+          "codec": "ETC1S",
+          "srgb": true
+        },
+        "bytes": 43131
+      },
+      {
+        "index": 1,
+        "name": "Ulgani_2048_Normal",
+        "slots": [
+          "normal"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 2048,
+          "height": 2048,
+          "levels": 12,
+          "fullChain": true,
+          "supercompression": "Zstandard",
+          "codec": "UASTC",
+          "srgb": false
+        },
+        "bytes": 165985
+      },
+      {
+        "index": 2,
+        "name": "Ulgani_2048_ORM",
+        "slots": [
+          "metallicRoughness",
+          "occlusion"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 2048,
+          "height": 2048,
+          "levels": 12,
+          "fullChain": true,
+          "supercompression": "BasisLZ",
+          "codec": "ETC1S",
+          "srgb": false
+        },
+        "bytes": 58772
+      },
+      {
+        "index": 3,
+        "name": "Ulgani_2048_BaseColor",
+        "slots": [
+          "baseColor"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 2048,
+          "height": 2048,
+          "levels": 12,
+          "fullChain": true,
+          "supercompression": "BasisLZ",
+          "codec": "ETC1S",
+          "srgb": true
+        },
+        "bytes": 221229
+      }
+    ],
+    [
+      "EXT_meshopt_compression",
+      "KHR_mesh_quantization",
+      "KHR_texture_basisu"
+    ]
+  ],
+  "paintedMapPreservation": [
+    {
+      "material": "Ulgani_PaintedAtlas_2048",
+      "channel": "baseColor",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0049620927311480045,
+      "p99AbsoluteError": 0.015686288475990295,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.0941176563501358,
+      "sourceMax": 0.9333333969116211,
+      "decodedMin": 0.062745101749897,
+      "decodedMax": 0.9372549653053284
+    },
+    {
+      "material": "Ulgani_PaintedAtlas_2048",
+      "channel": "roughness",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.004763398319482803,
+      "p99AbsoluteError": 0.019607841968536377,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.38823533058166504,
+      "sourceMax": 0.7647059559822083,
+      "decodedMin": 0.35686275362968445,
+      "decodedMax": 0.7568628191947937
+    },
+    {
+      "material": "Ulgani_PaintedAtlas_2048",
+      "channel": "metallic",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 5.882353434571996e-05,
+      "p99AbsoluteError": 0.0,
+      "maxAbsoluteError": 0.007843137718737125,
+      "sourceMin": 0.0,
+      "sourceMax": 0.0,
+      "decodedMin": 0.0,
+      "decodedMax": 0.007843137718737125
+    },
+    {
+      "material": "Ulgani_PaintedAtlas_2048",
+      "channel": "normal",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.000383115402655676,
+      "p99AbsoluteError": 0.011764705181121826,
+      "maxAbsoluteError": 0.05490198731422424,
+      "sourceMin": 0.21176472306251526,
+      "sourceMax": 1.0,
+      "decodedMin": 0.21176472306251526,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "Ulgani_PaintedAtlas_2048",
+      "channel": "occlusion",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.005923856049776077,
+      "p99AbsoluteError": 0.027450978755950928,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.6705882549285889,
+      "sourceMax": 0.9411765336990356,
+      "decodedMin": 0.7098039388656616,
+      "decodedMax": 0.9490196704864502
+    },
+    {
+      "material": "Ulgani_PaintedAtlas_2048",
+      "channel": "emissive",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.00013278865662869066,
+      "p99AbsoluteError": 0.003921568393707275,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.0,
+      "sourceMax": 0.7960785031318665,
+      "decodedMin": 0.0,
+      "decodedMax": 0.7960785031318665
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,271 @@
+{
+  "source": "assets/blend/cities/ulgani_anchor.blend",
+  "sourceSHA256": "eafc062e422cfa96ac8488f53b7d2083d9091c91a552a13bc6498d5b284ca5e3",
+  "assets": [
+    {
+      "source": {
+        "id": "ulgani_root_island_landmark",
+        "class": "hero",
+        "lods": [
+          {
+            "triangles": 108800,
+            "vertices": 60125,
+            "corners": 216000,
+            "bounds": [
+              [
+                -78.02983856201172,
+                -68.00676727294922,
+                -4.033991813659668
+              ],
+              [
+                78.05529022216797,
+                67.88422393798828,
+                48.18000030517578
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999143278874,
+            "geometryHash": "b5997150ab788180e8c05d6dd007e065783974f03f0ebc5c8e1b7b13cbe22961"
+          },
+          {
+            "triangles": 32640,
+            "vertices": 19345,
+            "corners": 97920,
+            "bounds": [
+              [
+                -78.02952575683594,
+                -68.00416564941406,
+                -4.031578540802002
+              ],
+              [
+                78.05529022216797,
+                67.88422393798828,
+                48.18000030517578
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014970235526561737
+            ],
+            "uvMax": [
+              0.9928957223892212,
+              0.9850008487701416
+            ],
+            "normalLengthMin": 0.9999999148902962,
+            "geometryHash": "595ca467050b8d9b9b9c8197bbca6bd581171ef942171ad4b5c222e18d40d68b"
+          },
+          {
+            "triangles": 10880,
+            "vertices": 7089,
+            "corners": 32640,
+            "bounds": [
+              [
+                -78.02952575683594,
+                -68.01737976074219,
+                -4.01677131652832
+              ],
+              [
+                78.05579376220703,
+                67.88422393798828,
+                48.180782318115234
+              ]
+            ],
+            "uvMin": [
+              0.007204725407063961,
+              0.014938595704734325
+            ],
+            "uvMax": [
+              0.9928957223892212,
+              0.9850142002105713
+            ],
+            "normalLengthMin": 0.9999999142348507,
+            "geometryHash": "a31f6b5cb8addfefb8887690bd5bb399689fae92abc61eb3e27e908a90856ce1"
+          },
+          {
+            "triangles": 3808,
+            "vertices": 3053,
+            "corners": 11424,
+            "bounds": [
+              [
+                -78.0269546508789,
+                -67.92012786865234,
+                -4.086429119110107
+              ],
+              [
+                78.05386352539062,
+                67.88231658935547,
+                48.17897033691406
+              ]
+            ],
+            "uvMin": [
+              0.00672834413126111,
+              0.015053723007440567
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000739097595
+            ],
+            "normalLengthMin": 0.9999999144947224,
+            "geometryHash": "61276cac9cb3a3f7c2fd1e68af0cd76fd2a3c161bc7143290800562972517cd7"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Interact_Anchor_ulgani_root_island_landmark",
+            "position": [
+              0.0,
+              -5.0,
+              1.3799999952316284
+            ],
+            "nearestVisualSurface": 0.9848101735115051,
+            "properties": {
+              "service_role": "recall_anchor",
+              "dispatch": "T01_T02_T08_pending"
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_root_island_landmark",
+            "position": [
+              0.0,
+              -4.0,
+              1.7999999523162842
+            ],
+            "nearestVisualSurface": 1.6763806343078613e-08,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.65,
+              "distance": 10
+            }
+          }
+        ],
+        "collision": {
+          "objects": 40,
+          "triangles": 2560,
+          "maxObjectTriangles": 116,
+          "nearestSurfaceMax": 1.3542838096618652,
+          "nearestSurfaceP95": 0.7612935692071915
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -66,
+                0.18
+              ],
+              "to": [
+                0,
+                -5,
+                0.18
+              ],
+              "width": 4,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "failures": [],
+  "packedImages": [
+    {
+      "name": "Ulgani_4096_BaseColor",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "410fa1c8eec88a2f2f41dd7488902e44693449135db653100ff5d9261a72b589",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_4096_Emissive",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "20ba158a29ef0702adea3451928583fa7d99724fc3b2b1074f2cc6ef02548416",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_4096_Normal",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "01326d01f97fa4d151fa8da2e0d752fe2a80134805c9bf4808e8b19d2111bde3",
+      "colorspace": "Non-Color"
+    },
+    {
+      "name": "Ulgani_4096_ORM",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "95930d59cf2491eda7dd672f76b37a7b473b2a61bf0640492f4a465262519192",
+      "colorspace": "Non-Color"
+    }
+  ],
+  "sourceMaterials": [
+    {
+      "name": "Ulgani_PaintedAtlas_4096",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "Ulgani_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "Ulgani_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "Ulgani_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "Ulgani_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "Ulgani_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "image",
+          "image": "Ulgani_4096_Emissive",
+          "component": null
+        }
+      }
+    }
+  ],
+  "status": "PASS"
+}

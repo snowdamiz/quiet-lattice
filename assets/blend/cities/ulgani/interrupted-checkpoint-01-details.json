@@ -1,0 +1,55 @@
+{
+  "stockSourceResults": [
+    {
+      "path": "assets/blend/cities/ulgani/audits/anchor-source-audit-b01/stock-source.json",
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/audits/civic-source-audit-b01/stock-source.json",
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/audits/kit-source-audit-b01/stock-source.json",
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/audits/landmarks-source-audit-b01/stock-source.json",
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/audits/low-source-audit-b01/stock-source.json",
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/audits/mid-source-audit-b01/stock-source.json",
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/audits/props-source-audit-b01/stock-source.json",
+      "status": "PASS",
+      "failures": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/audits/tall-source-audit-b01/stock-source.json",
+      "status": "FAIL",
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "ulgani_tall_3",
+          "message": "LOD0 has 60,713 triangles, over the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    }
+  ],
+  "customAuditStatus": "COULD_NOT_COMPLETE",
+  "customAuditFailure": "audit.py:157 uses `for k in o`; Blender Object is not iterable. Restore iteration over o.keys() with a scoped SIM118 suppression, then rerun in fresh attempt directories.",
+  "ownedProcessStatus": "No matching lane processes observed after interruption; all eight b01 audit receipts report empty remainingGroup.",
+  "exportStatus": "NOT_RUN",
+  "commitStatus": "NOT_COMMITTED"
+}

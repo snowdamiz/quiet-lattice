@@ -1,0 +1,155 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/audit.py",
+    "--",
+    "--group",
+    "low",
+    "--inventory",
+    "assets/blend/cities/ulgani/inventory/low-b01.json",
+    "--out",
+    "assets/blend/cities/ulgani/audits/low-audit-r01"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "audit-low-r01",
+    "seconds": 1200,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/audit.py",
+      "--",
+      "--group",
+      "low",
+      "--inventory",
+      "assets/blend/cities/ulgani/inventory/low-b01.json",
+      "--out",
+      "assets/blend/cities/ulgani/audits/low-audit-r01"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "OIDN_NUM_THREADS": "2",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794033355.9539661,
+  "preflight": {
+    "time": 1794033355.957334,
+    "load": [
+      7.826171875,
+      10.68994140625,
+      16.23681640625
+    ],
+    "memoryFreePercent": 62,
+    "diskFreeBytes": 46083633152
+  },
+  "samples": [
+    {
+      "time": 1794033355.9633229,
+      "load": [
+        7.826171875,
+        10.68994140625,
+        16.23681640625
+      ],
+      "memoryFreePercent": 62,
+      "diskFreeBytes": 46083624960
+    }
+  ],
+  "toolSHA256": {
+    "packages/tools/blender/cities/ulgani/audit.py": "147fa92ddad3d0d57147b741205319475a07c0ab11233b33d76866894a5e3244",
+    "packages/tools/blender/cities/ulgani/author.py": "2a9923f41236254e03041d159c80a891e92b91cba25c66e35d50968728c7a178",
+    "packages/tools/blender/cities/ulgani/context_sheets.py": "b2b219bf0391a14113367bd44cf8683038b9483c03a30d26f15eb2ba265f3b1b",
+    "packages/tools/blender/cities/ulgani/ktx_cpu.py": "5a6ec707df6fb939eee423ae92acc7ccebaec86b57dd48e413959e9a964151e1",
+    "packages/tools/blender/cities/ulgani/negative_controls.py": "4b1c0de022ab534f67be29c29922aeb582467d763d70acae87f7ea712a36d8b9",
+    "packages/tools/blender/cities/ulgani/patch_saved_budget.py": "eaee19b3a519276ba3a21e6c6579e419eb339232c0d6768016742bc8e5f5acb2",
+    "packages/tools/blender/cities/ulgani/patch_saved_clearance.py": "75bacb60a69a406e9e10e2304e509e09f659f711a73090ff33406bdd39f05755",
+    "packages/tools/blender/cities/ulgani/pipeline.py": "220f7d3fa97a284917d42de2433ca81767319c2164b1c760c92fe564d75647e0",
+    "packages/tools/blender/cities/ulgani/preview.py": "722edbd07b20037623a088aa1471df91e27bac5d5f399587c122b4501a463366",
+    "packages/tools/blender/cities/ulgani/run.py": "608fdaa21c8086924f8ccf41a549046d31a075beffe5d8b1f9ba9df6bd861c04",
+    "packages/tools/blender/cities/ulgani/test_tools.py": "be627b04f269795b7bea447d9bbab519b644a2bbb35fc847b4965472e55bb2a6",
+    "packages/tools/blender/families.json": "2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d",
+    "packages/tools/blender/export_cities.py": "b14f2ee68f0ab1910864ce6c41619b27d09ebeb2469808f037ccf96ee87c2f56",
+    "packages/tools/blender/validate.py": "d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704"
+  },
+  "scratchDirectory": "/tmp/ulgani-phs0b5pb",
+  "launchToolSHA256": {
+    "packages/tools/blender/cities/ulgani/audit.py": "147fa92ddad3d0d57147b741205319475a07c0ab11233b33d76866894a5e3244",
+    "packages/tools/blender/cities/ulgani/author.py": "2a9923f41236254e03041d159c80a891e92b91cba25c66e35d50968728c7a178",
+    "packages/tools/blender/cities/ulgani/context_sheets.py": "b2b219bf0391a14113367bd44cf8683038b9483c03a30d26f15eb2ba265f3b1b",
+    "packages/tools/blender/cities/ulgani/ktx_cpu.py": "5a6ec707df6fb939eee423ae92acc7ccebaec86b57dd48e413959e9a964151e1",
+    "packages/tools/blender/cities/ulgani/negative_controls.py": "4b1c0de022ab534f67be29c29922aeb582467d763d70acae87f7ea712a36d8b9",
+    "packages/tools/blender/cities/ulgani/patch_saved_budget.py": "eaee19b3a519276ba3a21e6c6579e419eb339232c0d6768016742bc8e5f5acb2",
+    "packages/tools/blender/cities/ulgani/patch_saved_clearance.py": "75bacb60a69a406e9e10e2304e509e09f659f711a73090ff33406bdd39f05755",
+    "packages/tools/blender/cities/ulgani/pipeline.py": "220f7d3fa97a284917d42de2433ca81767319c2164b1c760c92fe564d75647e0",
+    "packages/tools/blender/cities/ulgani/preview.py": "722edbd07b20037623a088aa1471df91e27bac5d5f399587c122b4501a463366",
+    "packages/tools/blender/cities/ulgani/run.py": "608fdaa21c8086924f8ccf41a549046d31a075beffe5d8b1f9ba9df6bd861c04",
+    "packages/tools/blender/cities/ulgani/test_tools.py": "be627b04f269795b7bea447d9bbab519b644a2bbb35fc847b4965472e55bb2a6"
+  },
+  "pid": 89587,
+  "pgid": 89587,
+  "peakGroupRSSKiB": 650464,
+  "wallSeconds": 8.243937916995492,
+  "remainingGroup": [],
+  "scratchRemovedBytes": 0,
+  "removedStale": [],
+  "exit": 1,
+  "error": null,
+  "ended": 1794033364.2324638,
+  "postflight": {
+    "time": 1794033364.235661,
+    "load": [
+      7.46484375,
+      10.5185546875,
+      16.11083984375
+    ],
+    "memoryFreePercent": 63,
+    "diskFreeBytes": 46077288448
+  },
+  "failureTail": [
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib1_4Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib1_5Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib1_6Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib1_7Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_0Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_1Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_2Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_3Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_4Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_5Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_6Mesh",
+    "01:35:58 | INFO: Blender create Mesh node COL_ulgani_low_3_UpperRib2_7Mesh",
+    "01:35:58 | INFO: Blender create Mesh node ulgani_low_3_Surface0Mesh",
+    "01:35:58 | INFO: Blender create Mesh node ulgani_low_3_Surface0Mesh",
+    "01:35:58 | INFO: Blender create Mesh node ulgani_low_3_Surface0Mesh",
+    "01:35:58 | INFO: Blender create Mesh node ulgani_low_3_Surface0Mesh",
+    "01:35:58 | INFO: glTF import finished in 0.20s",
+    "PASS  packages/client/public/models/cities/ulgani_low.glb",
+    "FAIL ['ulgani_low_0 LOD2: position preservation', 'ulgani_low_0 LOD3: position preservation', 'ulgani_low_0: export collision clearance/support', 'ulgani_low_1 LOD2: position preservation', 'ulgani_low_1 LOD3: position preservation', 'ulgani_low_1: export collision clearance/support', 'ulgani_low_2 LOD2: position preservation', 'ulgani_low_2 LOD3: position preservation', 'ulgani_low_2: export collision clearance/support', 'ulgani_low_3 LOD2: position preservation', 'ulgani_low_3 LOD3: position preservation', 'ulgani_low_3: export collision clearance/support']",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)"
+  ]
+}

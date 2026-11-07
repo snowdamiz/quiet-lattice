@@ -1,0 +1,394 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ulgani/author.py",
+    "--",
+    "--group",
+    "low",
+    "--receipt",
+    "assets/blend/cities/ulgani/inventory/low-a01.json"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "author-low-a01",
+    "seconds": 600,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "packages/tools/blender/cities/ulgani/author.py",
+      "--",
+      "--group",
+      "low",
+      "--receipt",
+      "assets/blend/cities/ulgani/inventory/low-a01.json"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794031025.789302,
+  "preflight": {
+    "time": 1794031025.799385,
+    "load": [
+      52.3408203125,
+      57.6376953125,
+      36.3076171875
+    ],
+    "memoryFreePercent": 52,
+    "diskFreeBytes": 53849550848
+  },
+  "samples": [
+    {
+      "time": 1794031025.816308,
+      "load": [
+        52.3408203125,
+        57.6376953125,
+        36.3076171875
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 53849550848
+    },
+    {
+      "time": 1794031035.828066,
+      "load": [
+        48.5888671875,
+        56.64794921875,
+        36.20458984375
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 53756633088
+    },
+    {
+      "time": 1794031045.8443708,
+      "load": [
+        48.41455078125,
+        56.35888671875,
+        36.34130859375
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 53685182464
+    },
+    {
+      "time": 1794031055.854681,
+      "load": [
+        46.6337890625,
+        55.7197265625,
+        36.34814453125
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 53637824512
+    },
+    {
+      "time": 1794031065.878737,
+      "load": [
+        44.6142578125,
+        55.0009765625,
+        36.31982421875
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 53637828608
+    },
+    {
+      "time": 1794031075.8853528,
+      "load": [
+        39.96142578125,
+        53.66552734375,
+        36.064453125
+      ],
+      "memoryFreePercent": 45,
+      "diskFreeBytes": 53578313728
+    },
+    {
+      "time": 1794031085.900086,
+      "load": [
+        36.6904296875,
+        52.50830078125,
+        35.85888671875
+      ],
+      "memoryFreePercent": 48,
+      "diskFreeBytes": 53516185600
+    },
+    {
+      "time": 1794031095.9310021,
+      "load": [
+        36.02001953125,
+        51.83447265625,
+        35.8134765625
+      ],
+      "memoryFreePercent": 43,
+      "diskFreeBytes": 53421346816
+    },
+    {
+      "time": 1794031105.938675,
+      "load": [
+        38.5498046875,
+        51.85546875,
+        36.00830078125
+      ],
+      "memoryFreePercent": 42,
+      "diskFreeBytes": 53354287104
+    },
+    {
+      "time": 1794031115.945895,
+      "load": [
+        36.15869140625,
+        50.90478515625,
+        35.85546875
+      ],
+      "memoryFreePercent": 42,
+      "diskFreeBytes": 53333180416
+    },
+    {
+      "time": 1794031125.969725,
+      "load": [
+        33.4140625,
+        49.8359375,
+        35.65185546875
+      ],
+      "memoryFreePercent": 39,
+      "diskFreeBytes": 53198905344
+    },
+    {
+      "time": 1794031135.979219,
+      "load": [
+        31.3388671875,
+        48.8525390625,
+        35.46875
+      ],
+      "memoryFreePercent": 40,
+      "diskFreeBytes": 53079130112
+    },
+    {
+      "time": 1794031145.9979,
+      "load": [
+        37.84619140625,
+        49.62548828125,
+        35.896484375
+      ],
+      "memoryFreePercent": 40,
+      "diskFreeBytes": 51681120256
+    },
+    {
+      "time": 1794031156.0188942,
+      "load": [
+        38.34033203125,
+        49.328125,
+        35.9501953125
+      ],
+      "memoryFreePercent": 42,
+      "diskFreeBytes": 51397857280
+    },
+    {
+      "time": 1794031166.055098,
+      "load": [
+        35.01123046875,
+        48.24755859375,
+        35.72265625
+      ],
+      "memoryFreePercent": 46,
+      "diskFreeBytes": 51276562432
+    },
+    {
+      "time": 1794031176.074371,
+      "load": [
+        33.298828125,
+        47.44775390625,
+        35.5849609375
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 51269201920
+    },
+    {
+      "time": 1794031186.101752,
+      "load": [
+        33.4345703125,
+        47.0185546875,
+        35.5712890625
+      ],
+      "memoryFreePercent": 45,
+      "diskFreeBytes": 50590154752
+    },
+    {
+      "time": 1794031196.109343,
+      "load": [
+        36.125,
+        47.109375,
+        35.73486328125
+      ],
+      "memoryFreePercent": 44,
+      "diskFreeBytes": 49900601344
+    },
+    {
+      "time": 1794031206.118289,
+      "load": [
+        38.5908203125,
+        47.27099609375,
+        35.9248046875
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 49810026496
+    },
+    {
+      "time": 1794031216.129817,
+      "load": [
+        40.14599609375,
+        47.3515625,
+        36.08740234375
+      ],
+      "memoryFreePercent": 50,
+      "diskFreeBytes": 51129643008
+    },
+    {
+      "time": 1794031226.139071,
+      "load": [
+        38.576171875,
+        46.79248046875,
+        36.02099609375
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 50765115392
+    },
+    {
+      "time": 1794031236.1490948,
+      "load": [
+        35.091796875,
+        45.77783203125,
+        35.78662109375
+      ],
+      "memoryFreePercent": 46,
+      "diskFreeBytes": 50601381888
+    },
+    {
+      "time": 1794031246.15869,
+      "load": [
+        32.18798828125,
+        44.79833984375,
+        35.55517578125
+      ],
+      "memoryFreePercent": 44,
+      "diskFreeBytes": 50369232896
+    },
+    {
+      "time": 1794031256.171089,
+      "load": [
+        32.0498046875,
+        44.34521484375,
+        35.501953125
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 49589432320
+    },
+    {
+      "time": 1794031266.181927,
+      "load": [
+        33.47314453125,
+        44.25,
+        35.5712890625
+      ],
+      "memoryFreePercent": 46,
+      "diskFreeBytes": 49167437824
+    },
+    {
+      "time": 1794031276.1905842,
+      "load": [
+        30.37939453125,
+        43.23583984375,
+        35.31298828125
+      ],
+      "memoryFreePercent": 45,
+      "diskFreeBytes": 49293377536
+    },
+    {
+      "time": 1794031286.200682,
+      "load": [
+        28.5107421875,
+        42.4189453125,
+        35.11572265625
+      ],
+      "memoryFreePercent": 48,
+      "diskFreeBytes": 51246620672
+    },
+    {
+      "time": 1794031296.212357,
+      "load": [
+        25.978515625,
+        41.4169921875,
+        34.84521484375
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 51408277504
+    },
+    {
+      "time": 1794031306.223391,
+      "load": [
+        24.16845703125,
+        40.51513671875,
+        34.60107421875
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 54260215808
+    },
+    {
+      "time": 1794031316.2349849,
+      "load": [
+        22.2490234375,
+        39.560546875,
+        34.33056640625
+      ],
+      "memoryFreePercent": 48,
+      "diskFreeBytes": 55116812288
+    },
+    {
+      "time": 1794031326.239857,
+      "load": [
+        20.6728515625,
+        38.65234375,
+        34.0693359375
+      ],
+      "memoryFreePercent": 53,
+      "diskFreeBytes": 56157491200
+    }
+  ],
+  "remainingGroup": [],
+  "removedStale": [],
+  "exit": 1,
+  "error": "RuntimeError('capacity gate: load >19, free memory <25%, or disk <8GiB')",
+  "ended": 1794031326.239918,
+  "postflight": {
+    "time": 1794031326.243093,
+    "load": [
+      20.6728515625,
+      38.65234375,
+      34.0693359375
+    ],
+    "memoryFreePercent": 53,
+    "diskFreeBytes": 56157474816
+  },
+  "failureTail": []
+}

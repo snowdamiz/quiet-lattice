@@ -1,0 +1,413 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/audit.py",
+    "--",
+    "--group",
+    "mid",
+    "--inventory",
+    "assets/blend/cities/ulgani/inventory/mid-a01.json",
+    "--out",
+    "assets/blend/cities/ulgani/audits/mid-source-audit-a01",
+    "--source-only"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "source-audit-mid-a01",
+    "seconds": 1200,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/audit.py",
+      "--",
+      "--group",
+      "mid",
+      "--inventory",
+      "assets/blend/cities/ulgani/inventory/mid-a01.json",
+      "--out",
+      "assets/blend/cities/ulgani/audits/mid-source-audit-a01",
+      "--source-only"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794031887.58415,
+  "preflight": {
+    "time": 1794031887.591988,
+    "load": [
+      19.515625,
+      18.67138671875,
+      24.45068359375
+    ],
+    "memoryFreePercent": 52,
+    "diskFreeBytes": 52640329728
+  },
+  "samples": [
+    {
+      "time": 1794031887.60461,
+      "load": [
+        19.515625,
+        18.67138671875,
+        24.45068359375
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 52640522240
+    },
+    {
+      "time": 1794031897.616074,
+      "load": [
+        23.0009765625,
+        19.45361328125,
+        24.66064453125
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 52522274816
+    },
+    {
+      "time": 1794031907.736945,
+      "load": [
+        33.56103515625,
+        21.77392578125,
+        25.419921875
+      ],
+      "memoryFreePercent": 50,
+      "diskFreeBytes": 52442980352
+    },
+    {
+      "time": 1794031917.753104,
+      "load": [
+        43.97021484375,
+        24.37060546875,
+        26.296875
+      ],
+      "memoryFreePercent": 50,
+      "diskFreeBytes": 51802476544
+    },
+    {
+      "time": 1794031927.766915,
+      "load": [
+        48.68896484375,
+        26.03515625,
+        26.865234375
+      ],
+      "memoryFreePercent": 50,
+      "diskFreeBytes": 51494526976
+    },
+    {
+      "time": 1794031937.8223,
+      "load": [
+        51.8369140625,
+        27.4501953125,
+        27.35693359375
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 51051126784
+    },
+    {
+      "time": 1794031947.849229,
+      "load": [
+        61.921875,
+        30.41455078125,
+        28.40966796875
+      ],
+      "memoryFreePercent": 45,
+      "diskFreeBytes": 50914619392
+    },
+    {
+      "time": 1794031957.862849,
+      "load": [
+        61.96240234375,
+        31.44189453125,
+        28.79638671875
+      ],
+      "memoryFreePercent": 44,
+      "diskFreeBytes": 50839031808
+    },
+    {
+      "time": 1794031967.8782778,
+      "load": [
+        72.1435546875,
+        34.6611328125,
+        29.9716796875
+      ],
+      "memoryFreePercent": 44,
+      "diskFreeBytes": 50757124096
+    },
+    {
+      "time": 1794031977.895224,
+      "load": [
+        75.70849609375,
+        36.67578125,
+        30.7421875
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 50644037632
+    },
+    {
+      "time": 1794031987.908454,
+      "load": [
+        75.06396484375,
+        37.822265625,
+        31.21826171875
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 50503770112
+    },
+    {
+      "time": 1794031997.9267142,
+      "load": [
+        80.45703125,
+        40.212890625,
+        32.14404296875
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 50522267648
+    },
+    {
+      "time": 1794032007.9600809,
+      "load": [
+        82.93603515625,
+        42.07958984375,
+        32.9013671875
+      ],
+      "memoryFreePercent": 48,
+      "diskFreeBytes": 50391855104
+    },
+    {
+      "time": 1794032017.9785159,
+      "load": [
+        81.96826171875,
+        43.23974609375,
+        33.42138671875
+      ],
+      "memoryFreePercent": 45,
+      "diskFreeBytes": 50294099968
+    },
+    {
+      "time": 1794032028.008984,
+      "load": [
+        83.5263671875,
+        44.8583984375,
+        34.11083984375
+      ],
+      "memoryFreePercent": 43,
+      "diskFreeBytes": 49913163776
+    },
+    {
+      "time": 1794032038.025572,
+      "load": [
+        81.11328125,
+        45.61865234375,
+        34.50634765625
+      ],
+      "memoryFreePercent": 48,
+      "diskFreeBytes": 49862500352
+    },
+    {
+      "time": 1794032048.043205,
+      "load": [
+        75.03515625,
+        45.49609375,
+        34.5927734375
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 49789173760
+    },
+    {
+      "time": 1794032058.052877,
+      "load": [
+        68.68408203125,
+        45.1025390625,
+        34.57958984375
+      ],
+      "memoryFreePercent": 53,
+      "diskFreeBytes": 49725378560
+    },
+    {
+      "time": 1794032068.065058,
+      "load": [
+        61.88427734375,
+        44.41015625,
+        34.4560546875
+      ],
+      "memoryFreePercent": 46,
+      "diskFreeBytes": 49643360256
+    },
+    {
+      "time": 1794032078.08449,
+      "load": [
+        57.48779296875,
+        44.0361328125,
+        34.43896484375
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 49525108736
+    },
+    {
+      "time": 1794032088.0920599,
+      "load": [
+        53.7353515625,
+        43.69921875,
+        34.4326171875
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 49406685184
+    },
+    {
+      "time": 1794032098.104074,
+      "load": [
+        47.6708984375,
+        42.72265625,
+        34.193359375
+      ],
+      "memoryFreePercent": 53,
+      "diskFreeBytes": 49405173760
+    },
+    {
+      "time": 1794032108.111843,
+      "load": [
+        42.74951171875,
+        41.84033203125,
+        33.97998046875
+      ],
+      "memoryFreePercent": 54,
+      "diskFreeBytes": 49403244544
+    },
+    {
+      "time": 1794032118.125231,
+      "load": [
+        37.10546875,
+        40.66015625,
+        33.65283203125
+      ],
+      "memoryFreePercent": 53,
+      "diskFreeBytes": 49513287680
+    },
+    {
+      "time": 1794032128.134377,
+      "load": [
+        34.20263671875,
+        39.92822265625,
+        33.47509765625
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 49508487168
+    },
+    {
+      "time": 1794032138.1435368,
+      "load": [
+        30.70849609375,
+        38.99169921875,
+        33.2177734375
+      ],
+      "memoryFreePercent": 51,
+      "diskFreeBytes": 49506742272
+    },
+    {
+      "time": 1794032148.153753,
+      "load": [
+        27.2099609375,
+        37.970703125,
+        32.9228515625
+      ],
+      "memoryFreePercent": 52,
+      "diskFreeBytes": 49443676160
+    },
+    {
+      "time": 1794032158.158008,
+      "load": [
+        26.1455078125,
+        37.40625,
+        32.7822265625
+      ],
+      "memoryFreePercent": 47,
+      "diskFreeBytes": 49291763712
+    },
+    {
+      "time": 1794032168.166964,
+      "load": [
+        24.49560546875,
+        36.6708984375,
+        32.57421875
+      ],
+      "memoryFreePercent": 49,
+      "diskFreeBytes": 49288458240
+    },
+    {
+      "time": 1794032178.176209,
+      "load": [
+        21.8916015625,
+        35.71044921875,
+        32.28076171875
+      ],
+      "memoryFreePercent": 50,
+      "diskFreeBytes": 49295405056
+    },
+    {
+      "time": 1794032188.185508,
+      "load": [
+        19.76171875,
+        34.7978515625,
+        31.99658203125
+      ],
+      "memoryFreePercent": 51,
+      "diskFreeBytes": 49229971456
+    }
+  ],
+  "toolSHA256": {
+    "packages/tools/blender/cities/ulgani/audit.py": "c307c9e8c941be3978b6c968c47e04cb307c559f3e6be32e44e25970e0d18969",
+    "packages/tools/blender/cities/ulgani/author.py": "cf8b0a0d7e0944094862ecbd735137c576f7326529d836cd3af51a6335ea1757",
+    "packages/tools/blender/cities/ulgani/ktx_cpu.py": "a59a0573632f12d34c7e91845714a20e285d4a256f1d545007568a6459736543",
+    "packages/tools/blender/cities/ulgani/negative_controls.py": "0ddd6e600fbe0c8c804f722ff47d358cb38d3b076161dd6db538b98277e062ce",
+    "packages/tools/blender/cities/ulgani/pipeline.py": "dbf2f5972ecd53fcfc4208304d54aab42044e904c865b79a55cec590da85c4a1",
+    "packages/tools/blender/cities/ulgani/preview.py": "dd662005ebc836257ed30447f9bf3804bb0a56afaeb787e10e2daa0a82872d7e",
+    "packages/tools/blender/cities/ulgani/run.py": "8f25bf63c2e7b66c7b371775e719051b634030b048d000d5e037d960cd05fbb0",
+    "packages/tools/blender/cities/ulgani/test_tools.py": "0afc9429d061ae16cee2c749f333fe0f86e7b57b7e8f197447acef3a8a222aa8",
+    "packages/tools/blender/families.json": "2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d",
+    "packages/tools/blender/export_cities.py": "b14f2ee68f0ab1910864ce6c41619b27d09ebeb2469808f037ccf96ee87c2f56",
+    "packages/tools/blender/validate.py": "d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704"
+  },
+  "remainingGroup": [],
+  "removedStale": [],
+  "exit": 1,
+  "error": "RuntimeError('capacity gate: load >19, free memory <25%, or disk <8GiB')",
+  "ended": 1794032188.1856089,
+  "postflight": {
+    "time": 1794032188.188763,
+    "load": [
+      19.76171875,
+      34.7978515625,
+      31.99658203125
+    ],
+    "memoryFreePercent": 51,
+    "diskFreeBytes": 49229787136
+  },
+  "failureTail": []
+}

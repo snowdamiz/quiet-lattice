@@ -1,0 +1,20 @@
+{
+  "fetchCommand": "pnpm exec tsx -e import ensureKtx; ensureKtx(process.cwd(), {})",
+  "fetchExit": 0,
+  "release": "KTX-Software-4.4.2-Darwin-arm64.pkg",
+  "verifiedReleaseSHA256": "500bd8f9d63358c3f3a0d83b724c8574436a72c37dc0e4bad90ec1ca38032c3c",
+  "version": "ktx version: v4.4.2",
+  "files": [
+    {
+      "path": "node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      "sha256": "abd30109cbf84859b2f34951f7967e801111abadaac588468d98ed075100ad37",
+      "bytes": 2041776
+    },
+    {
+      "path": "node_modules/.cache/ktx-software-4.4.2/lib/libktx.4.dylib",
+      "sha256": "bd26f0747b7a800384b7b3c9221dafeb3943ef565a560ab98238cade597c0947",
+      "bytes": 2493744
+    }
+  ],
+  "threadPolicy": "task-local proxy serializes all codec invocations and rewrites encoder --threads to 2"
+}

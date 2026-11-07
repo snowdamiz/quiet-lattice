@@ -1,0 +1,2330 @@
+{
+  "source": "assets/blend/cities/ulgani_kit.blend",
+  "sha256": "00743f8ac3b48e5bbd1784fa16cc96c71b6a3c592d1df17cab6a72781aeee05a",
+  "assets": [
+    {
+      "id": "ulgani_wall",
+      "title": "Woven Boundary",
+      "role": "wall",
+      "class": "kit",
+      "bounds": [
+        [
+          -9.263404846191406,
+          -0.266400009393692,
+          -0.06156797707080841
+        ],
+        [
+          9.596389770507812,
+          0.3700142204761505,
+          6.2701096534729
+        ]
+      ],
+      "height": 6.331677630543709,
+      "footprintRadius": 9.596389770507812,
+      "lodTriangles": [
+        8396,
+        2518,
+        839,
+        293
+      ],
+      "lodNodes": [
+        "ulgani_wall_LOD0",
+        "ulgani_wall_LOD1",
+        "ulgani_wall_LOD2",
+        "ulgani_wall_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_wall",
+          "position": [
+            -9.0,
+            0.0,
+            4.5
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_wall_Stem0",
+        "COL_ulgani_wall_Stem1",
+        "COL_ulgani_wall_Panel1",
+        "COL_ulgani_wall_Stem2",
+        "COL_ulgani_wall_Panel2",
+        "COL_ulgani_wall_Stem3",
+        "COL_ulgani_wall_Panel3",
+        "COL_ulgani_wall_Stem4",
+        "COL_ulgani_wall_Panel4",
+        "COL_ulgani_wall_Stem5",
+        "COL_ulgani_wall_Panel5",
+        "COL_ulgani_wall_Stem6",
+        "COL_ulgani_wall_Panel6",
+        "COL_ulgani_wall_Stem7",
+        "COL_ulgani_wall_Panel7",
+        "COL_ulgani_wall_Stem8",
+        "COL_ulgani_wall_Panel8"
+      ]
+    },
+    {
+      "id": "ulgani_wall_corner",
+      "title": "Turning Boundary",
+      "role": "wall_corner",
+      "class": "kit",
+      "bounds": [
+        [
+          -9.263404846191406,
+          -0.266400009393692,
+          -0.06765739619731903
+        ],
+        [
+          9.596389770507812,
+          4.316400051116943,
+          6.267560958862305
+        ]
+      ],
+      "height": 6.335218355059624,
+      "footprintRadius": 10.42919448308456,
+      "lodTriangles": [
+        8396,
+        2518,
+        838,
+        292
+      ],
+      "lodNodes": [
+        "ulgani_wall_corner_LOD0",
+        "ulgani_wall_corner_LOD1",
+        "ulgani_wall_corner_LOD2",
+        "ulgani_wall_corner_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_wall_corner",
+          "position": [
+            -9.0,
+            0.0,
+            4.5
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_wall_corner_Stem0",
+        "COL_ulgani_wall_corner_Stem1",
+        "COL_ulgani_wall_corner_Panel1",
+        "COL_ulgani_wall_corner_Stem2",
+        "COL_ulgani_wall_corner_Panel2",
+        "COL_ulgani_wall_corner_Stem3",
+        "COL_ulgani_wall_corner_Panel3",
+        "COL_ulgani_wall_corner_Stem4",
+        "COL_ulgani_wall_corner_Panel4",
+        "COL_ulgani_wall_corner_Stem5",
+        "COL_ulgani_wall_corner_Panel5",
+        "COL_ulgani_wall_corner_Stem6",
+        "COL_ulgani_wall_corner_Panel6",
+        "COL_ulgani_wall_corner_Stem7",
+        "COL_ulgani_wall_corner_Panel7",
+        "COL_ulgani_wall_corner_Stem8",
+        "COL_ulgani_wall_corner_Panel8"
+      ]
+    },
+    {
+      "id": "ulgani_gate",
+      "title": "Open Gill Gate",
+      "role": "gate",
+      "class": "kit",
+      "bounds": [
+        [
+          -7.836577892303467,
+          -3.7464351654052734,
+          -0.051380157470703125
+        ],
+        [
+          8.54925537109375,
+          3.454880714416504,
+          8.64482593536377
+        ]
+      ],
+      "height": 8.696206092834473,
+      "footprintRadius": 8.557188594015694,
+      "lodTriangles": [
+        13472,
+        4040,
+        1346,
+        471
+      ],
+      "lodNodes": [
+        "ulgani_gate_LOD0",
+        "ulgani_gate_LOD1",
+        "ulgani_gate_LOD2",
+        "ulgani_gate_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            0,
+            0
+          ],
+          "width": 6.4,
+          "height": 5.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -4,
+            0
+          ],
+          "to": [
+            0,
+            4,
+            0
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Interact_Gate_ulgani_gate",
+          "position": [
+            -3.4000000953674316,
+            -1.0,
+            1.2000000476837158
+          ],
+          "properties": {
+            "dispatch": "T01_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_gate",
+          "position": [
+            -7.0,
+            0.0,
+            4.5
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_gate_Stem0",
+        "COL_ulgani_gate_Stem1",
+        "COL_ulgani_gate_Panel1",
+        "COL_ulgani_gate_Stem2",
+        "COL_ulgani_gate_Stem6",
+        "COL_ulgani_gate_Stem7",
+        "COL_ulgani_gate_Panel7",
+        "COL_ulgani_gate_Stem8",
+        "COL_ulgani_gate_Panel8",
+        "COL_ulgani_gate_Lintel"
+      ]
+    },
+    {
+      "id": "ulgani_bridge_short",
+      "title": "Braided Footbridge",
+      "role": "bridge_short",
+      "class": "kit",
+      "deckWidth": 5,
+      "railHeight": 1.05,
+      "bounds": [
+        [
+          -3.2920360565185547,
+          -9.073333740234375,
+          -1.2683442831039429
+        ],
+        [
+          3.2920360565185547,
+          9.073333740234375,
+          1.4618592262268066
+        ]
+      ],
+      "height": 2.7302035093307495,
+      "footprintRadius": 9.593113141087176,
+      "lodTriangles": [
+        9384,
+        2814,
+        937,
+        326
+      ],
+      "lodNodes": [
+        "ulgani_bridge_short_LOD0",
+        "ulgani_bridge_short_LOD1",
+        "ulgani_bridge_short_LOD2",
+        "ulgani_bridge_short_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0.0,
+            -9.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -6.75,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -6.75,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -4.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -4.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -2.25,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -2.25,
+            0.18
+          ],
+          "to": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            2.25,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            2.25,
+            0.18
+          ],
+          "to": [
+            0.0,
+            4.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            4.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            6.75,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            6.75,
+            0.18
+          ],
+          "to": [
+            0.0,
+            9.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_bridge_short",
+          "position": [
+            -2.5,
+            -5.760000228881836,
+            1.2000000476837158
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_bridge_short_Deck0",
+        "COL_ulgani_bridge_short_Deck1",
+        "COL_ulgani_bridge_short_Deck2",
+        "COL_ulgani_bridge_short_Deck3",
+        "COL_ulgani_bridge_short_Deck4",
+        "COL_ulgani_bridge_short_Deck5",
+        "COL_ulgani_bridge_short_Deck6",
+        "COL_ulgani_bridge_short_Deck7",
+        "COL_ulgani_bridge_short_Deck8",
+        "COL_ulgani_bridge_short_Deck9",
+        "COL_ulgani_bridge_short_Deck10",
+        "COL_ulgani_bridge_short_Deck11",
+        "COL_ulgani_bridge_short_Deck12",
+        "COL_ulgani_bridge_short_Deck13",
+        "COL_ulgani_bridge_short_Deck14",
+        "COL_ulgani_bridge_short_Deck15",
+        "COL_ulgani_bridge_short_Deck16",
+        "COL_ulgani_bridge_short_Deck17",
+        "COL_ulgani_bridge_short_Deck18",
+        "COL_ulgani_bridge_short_Deck19",
+        "COL_ulgani_bridge_short_Deck20",
+        "COL_ulgani_bridge_short_Deck21",
+        "COL_ulgani_bridge_short_Deck22",
+        "COL_ulgani_bridge_short_Deck23",
+        "COL_ulgani_bridge_short_Deck24",
+        "COL_ulgani_bridge_short_Deck25",
+        "COL_ulgani_bridge_short_Deck26",
+        "COL_ulgani_bridge_short_Deck27",
+        "COL_ulgani_bridge_short_Deck28",
+        "COL_ulgani_bridge_short_Deck29",
+        "COL_ulgani_bridge_short_Deck30",
+        "COL_ulgani_bridge_short_Deck31",
+        "COL_ulgani_bridge_short_Rail-1_0",
+        "COL_ulgani_bridge_short_Rail-1_1",
+        "COL_ulgani_bridge_short_Rail-1_2",
+        "COL_ulgani_bridge_short_Rail-1_3",
+        "COL_ulgani_bridge_short_Rail-1_4",
+        "COL_ulgani_bridge_short_Rail-1_5",
+        "COL_ulgani_bridge_short_Rail-1_6",
+        "COL_ulgani_bridge_short_Rail-1_7",
+        "COL_ulgani_bridge_short_Rail1_0",
+        "COL_ulgani_bridge_short_Rail1_1",
+        "COL_ulgani_bridge_short_Rail1_2",
+        "COL_ulgani_bridge_short_Rail1_3",
+        "COL_ulgani_bridge_short_Rail1_4",
+        "COL_ulgani_bridge_short_Rail1_5",
+        "COL_ulgani_bridge_short_Rail1_6",
+        "COL_ulgani_bridge_short_Rail1_7"
+      ]
+    },
+    {
+      "id": "ulgani_bridge_long",
+      "title": "Lake Root Crossing",
+      "role": "bridge_long",
+      "class": "kit",
+      "deckWidth": 6,
+      "railHeight": 1.05,
+      "bounds": [
+        [
+          -3.792038679122925,
+          -22.066600799560547,
+          -1.2683838605880737
+        ],
+        [
+          3.792038679122925,
+          22.066600799560547,
+          1.461859107017517
+        ]
+      ],
+      "height": 2.730242967605591,
+      "footprintRadius": 22.32634894558664,
+      "lodTriangles": [
+        9384,
+        2813,
+        938,
+        326
+      ],
+      "lodNodes": [
+        "ulgani_bridge_long_LOD0",
+        "ulgani_bridge_long_LOD1",
+        "ulgani_bridge_long_LOD2",
+        "ulgani_bridge_long_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0.0,
+            -22.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -16.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -16.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -11.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -11.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -5.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -5.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            5.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            5.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            11.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            11.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            16.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            16.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            22.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_bridge_long",
+          "position": [
+            -3.0,
+            -14.079999923706055,
+            1.2000000476837158
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_bridge_long_Deck0",
+        "COL_ulgani_bridge_long_Deck1",
+        "COL_ulgani_bridge_long_Deck2",
+        "COL_ulgani_bridge_long_Deck3",
+        "COL_ulgani_bridge_long_Deck4",
+        "COL_ulgani_bridge_long_Deck5",
+        "COL_ulgani_bridge_long_Deck6",
+        "COL_ulgani_bridge_long_Deck7",
+        "COL_ulgani_bridge_long_Deck8",
+        "COL_ulgani_bridge_long_Deck9",
+        "COL_ulgani_bridge_long_Deck10",
+        "COL_ulgani_bridge_long_Deck11",
+        "COL_ulgani_bridge_long_Deck12",
+        "COL_ulgani_bridge_long_Deck13",
+        "COL_ulgani_bridge_long_Deck14",
+        "COL_ulgani_bridge_long_Deck15",
+        "COL_ulgani_bridge_long_Deck16",
+        "COL_ulgani_bridge_long_Deck17",
+        "COL_ulgani_bridge_long_Deck18",
+        "COL_ulgani_bridge_long_Deck19",
+        "COL_ulgani_bridge_long_Deck20",
+        "COL_ulgani_bridge_long_Deck21",
+        "COL_ulgani_bridge_long_Deck22",
+        "COL_ulgani_bridge_long_Deck23",
+        "COL_ulgani_bridge_long_Deck24",
+        "COL_ulgani_bridge_long_Deck25",
+        "COL_ulgani_bridge_long_Deck26",
+        "COL_ulgani_bridge_long_Deck27",
+        "COL_ulgani_bridge_long_Deck28",
+        "COL_ulgani_bridge_long_Deck29",
+        "COL_ulgani_bridge_long_Deck30",
+        "COL_ulgani_bridge_long_Deck31",
+        "COL_ulgani_bridge_long_Rail-1_0",
+        "COL_ulgani_bridge_long_Rail-1_1",
+        "COL_ulgani_bridge_long_Rail-1_2",
+        "COL_ulgani_bridge_long_Rail-1_3",
+        "COL_ulgani_bridge_long_Rail-1_4",
+        "COL_ulgani_bridge_long_Rail-1_5",
+        "COL_ulgani_bridge_long_Rail-1_6",
+        "COL_ulgani_bridge_long_Rail-1_7",
+        "COL_ulgani_bridge_long_Rail1_0",
+        "COL_ulgani_bridge_long_Rail1_1",
+        "COL_ulgani_bridge_long_Rail1_2",
+        "COL_ulgani_bridge_long_Rail1_3",
+        "COL_ulgani_bridge_long_Rail1_4",
+        "COL_ulgani_bridge_long_Rail1_5",
+        "COL_ulgani_bridge_long_Rail1_6",
+        "COL_ulgani_bridge_long_Rail1_7"
+      ]
+    },
+    {
+      "id": "ulgani_bridge_turn",
+      "title": "Turning Root Crossing",
+      "role": "bridge_turn",
+      "class": "kit",
+      "deckWidth": 5,
+      "railHeight": 1.05,
+      "bounds": [
+        [
+          -3.1076807975769043,
+          -12.22826862335205,
+          -1.2683649063110352
+        ],
+        [
+          8.114274978637695,
+          12.22826862335205,
+          1.4618592262268066
+        ]
+      ],
+      "height": 2.730224132537842,
+      "footprintRadius": 12.60804430943061,
+      "lodTriangles": [
+        9384,
+        2813,
+        938,
+        326
+      ],
+      "lodNodes": [
+        "ulgani_bridge_turn_LOD0",
+        "ulgani_bridge_turn_LOD1",
+        "ulgani_bridge_turn_LOD2",
+        "ulgani_bridge_turn_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0.0,
+            -12.0,
+            0.18
+          ],
+          "to": [
+            1.913417161825449,
+            -9.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            1.913417161825449,
+            -9.0,
+            0.18
+          ],
+          "to": [
+            3.5355339059327373,
+            -6.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            3.5355339059327373,
+            -6.0,
+            0.18
+          ],
+          "to": [
+            4.619397662556434,
+            -3.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            4.619397662556434,
+            -3.0,
+            0.18
+          ],
+          "to": [
+            5.0,
+            0.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            5.0,
+            0.0,
+            0.18
+          ],
+          "to": [
+            4.619397662556434,
+            3.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            4.619397662556434,
+            3.0,
+            0.18
+          ],
+          "to": [
+            3.5355339059327378,
+            6.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            3.5355339059327378,
+            6.0,
+            0.18
+          ],
+          "to": [
+            1.9134171618254494,
+            9.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            1.9134171618254494,
+            9.0,
+            0.18
+          ],
+          "to": [
+            6.123233995736766e-16,
+            12.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_bridge_turn",
+          "position": [
+            0.17913398146629333,
+            -7.679999828338623,
+            1.2000000476837158
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_bridge_turn_Deck0",
+        "COL_ulgani_bridge_turn_Deck1",
+        "COL_ulgani_bridge_turn_Deck2",
+        "COL_ulgani_bridge_turn_Deck3",
+        "COL_ulgani_bridge_turn_Deck4",
+        "COL_ulgani_bridge_turn_Deck5",
+        "COL_ulgani_bridge_turn_Deck6",
+        "COL_ulgani_bridge_turn_Deck7",
+        "COL_ulgani_bridge_turn_Deck8",
+        "COL_ulgani_bridge_turn_Deck9",
+        "COL_ulgani_bridge_turn_Deck10",
+        "COL_ulgani_bridge_turn_Deck11",
+        "COL_ulgani_bridge_turn_Deck12",
+        "COL_ulgani_bridge_turn_Deck13",
+        "COL_ulgani_bridge_turn_Deck14",
+        "COL_ulgani_bridge_turn_Deck15",
+        "COL_ulgani_bridge_turn_Deck16",
+        "COL_ulgani_bridge_turn_Deck17",
+        "COL_ulgani_bridge_turn_Deck18",
+        "COL_ulgani_bridge_turn_Deck19",
+        "COL_ulgani_bridge_turn_Deck20",
+        "COL_ulgani_bridge_turn_Deck21",
+        "COL_ulgani_bridge_turn_Deck22",
+        "COL_ulgani_bridge_turn_Deck23",
+        "COL_ulgani_bridge_turn_Deck24",
+        "COL_ulgani_bridge_turn_Deck25",
+        "COL_ulgani_bridge_turn_Deck26",
+        "COL_ulgani_bridge_turn_Deck27",
+        "COL_ulgani_bridge_turn_Deck28",
+        "COL_ulgani_bridge_turn_Deck29",
+        "COL_ulgani_bridge_turn_Deck30",
+        "COL_ulgani_bridge_turn_Deck31",
+        "COL_ulgani_bridge_turn_Rail-1_0",
+        "COL_ulgani_bridge_turn_Rail-1_1",
+        "COL_ulgani_bridge_turn_Rail-1_2",
+        "COL_ulgani_bridge_turn_Rail-1_3",
+        "COL_ulgani_bridge_turn_Rail-1_4",
+        "COL_ulgani_bridge_turn_Rail-1_5",
+        "COL_ulgani_bridge_turn_Rail-1_6",
+        "COL_ulgani_bridge_turn_Rail-1_7",
+        "COL_ulgani_bridge_turn_Rail1_0",
+        "COL_ulgani_bridge_turn_Rail1_1",
+        "COL_ulgani_bridge_turn_Rail1_2",
+        "COL_ulgani_bridge_turn_Rail1_3",
+        "COL_ulgani_bridge_turn_Rail1_4",
+        "COL_ulgani_bridge_turn_Rail1_5",
+        "COL_ulgani_bridge_turn_Rail1_6",
+        "COL_ulgani_bridge_turn_Rail1_7"
+      ]
+    },
+    {
+      "id": "ulgani_cap_shelter",
+      "title": "Street Rain Cap",
+      "role": "cap_shelter",
+      "class": "kit",
+      "canopyClearance": 13,
+      "placement": "separate canopy coverage, not residential footprint scaling",
+      "bounds": [
+        [
+          -25.4688777923584,
+          -24.619430541992188,
+          -0.7840660214424133
+        ],
+        [
+          27.78508186340332,
+          22.703500747680664,
+          19.115087509155273
+        ]
+      ],
+      "height": 19.899153530597687,
+      "footprintRadius": 27.890342376379554,
+      "lodTriangles": [
+        12432,
+        3729,
+        1243,
+        435
+      ],
+      "lodNodes": [
+        "ulgani_cap_shelter_LOD0",
+        "ulgani_cap_shelter_LOD1",
+        "ulgani_cap_shelter_LOD2",
+        "ulgani_cap_shelter_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -23,
+            0
+          ],
+          "to": [
+            0,
+            23,
+            0
+          ],
+          "width": 16,
+          "height": 8
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_cap_shelter",
+          "position": [
+            18.719999313354492,
+            0.0,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_cap_shelter",
+          "position": [
+            12.359999656677246,
+            14.341381072998047,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_cap_shelter",
+          "position": [
+            -12.359999656677246,
+            14.341381072998047,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore3_ulgani_cap_shelter",
+          "position": [
+            -18.719999313354492,
+            2.02801519846895e-15,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore4_ulgani_cap_shelter",
+          "position": [
+            -12.359999656677246,
+            -14.341381072998047,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore5_ulgani_cap_shelter",
+          "position": [
+            12.359999656677246,
+            -14.341381072998047,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_cap_shelter_Column0",
+        "COL_ulgani_cap_shelter_Column1",
+        "COL_ulgani_cap_shelter_Column2",
+        "COL_ulgani_cap_shelter_Column3",
+        "COL_ulgani_cap_shelter_Column4",
+        "COL_ulgani_cap_shelter_Column5",
+        "COL_ulgani_cap_shelter_HighCap"
+      ]
+    },
+    {
+      "id": "ulgani_cap_half",
+      "title": "Market Edge Cap",
+      "role": "cap_half",
+      "class": "kit",
+      "canopyClearance": 13,
+      "placement": "separate canopy coverage, not residential footprint scaling",
+      "bounds": [
+        [
+          -25.4688777923584,
+          -17.12656021118164,
+          -0.7827088832855225
+        ],
+        [
+          27.78508186340332,
+          15.793740272521973,
+          19.115087509155273
+        ]
+      ],
+      "height": 19.897796392440796,
+      "footprintRadius": 27.83607048630651,
+      "lodTriangles": [
+        12432,
+        3728,
+        1243,
+        435
+      ],
+      "lodNodes": [
+        "ulgani_cap_half_LOD0",
+        "ulgani_cap_half_LOD1",
+        "ulgani_cap_half_LOD2",
+        "ulgani_cap_half_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -16,
+            0
+          ],
+          "to": [
+            0,
+            16,
+            0
+          ],
+          "width": 16,
+          "height": 8
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_cap_half",
+          "position": [
+            18.719999313354492,
+            0.0,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_cap_half",
+          "position": [
+            12.359999656677246,
+            9.97661304473877,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_cap_half",
+          "position": [
+            -12.359999656677246,
+            9.97661304473877,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore3_ulgani_cap_half",
+          "position": [
+            -18.719999313354492,
+            1.4107930894748186e-15,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore4_ulgani_cap_half",
+          "position": [
+            -12.359999656677246,
+            -9.97661304473877,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore5_ulgani_cap_half",
+          "position": [
+            12.359999656677246,
+            -9.97661304473877,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_cap_half_Column0",
+        "COL_ulgani_cap_half_Column1",
+        "COL_ulgani_cap_half_Column2",
+        "COL_ulgani_cap_half_Column3",
+        "COL_ulgani_cap_half_Column4",
+        "COL_ulgani_cap_half_Column5",
+        "COL_ulgani_cap_half_HighCap"
+      ]
+    },
+    {
+      "id": "ulgani_ring_shelf",
+      "title": "Ring Promenade",
+      "role": "ring_shelf",
+      "class": "kit",
+      "ringRadius": 100,
+      "arcRadians": 0.42,
+      "deckWidth": 12,
+      "bounds": [
+        [
+          -22.247516632080078,
+          -8.731718063354492,
+          -0.8595906496047974
+        ],
+        [
+          22.228395462036133,
+          6.594205856323242,
+          0.18000000715255737
+        ]
+      ],
+      "height": 1.0395906567573547,
+      "footprintRadius": 22.66562499728174,
+      "lodTriangles": [
+        9900,
+        2969,
+        990,
+        346
+      ],
+      "lodNodes": [
+        "ulgani_ring_shelf_LOD0",
+        "ulgani_ring_shelf_LOD1",
+        "ulgani_ring_shelf_LOD2",
+        "ulgani_ring_shelf_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            -20.845989984609954,
+            -2.1969085275851796,
+            0.18
+          ],
+          "to": [
+            -16.72108424827043,
+            -1.407883978675855,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.20845988392829895,
+            0.9780309200286865,
+            0.0
+          ],
+          "toAcross": [
+            -0.16721084713935852,
+            0.9859211444854736,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -16.72108424827043,
+            -1.407883978675855,
+            0.18
+          ],
+          "to": [
+            -12.566686854972925,
+            -0.7927503582069306,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.16721084713935852,
+            0.9859211444854736,
+            0.0
+          ],
+          "toAcross": [
+            -0.12566685676574707,
+            0.9920725226402283,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -12.566686854972925,
+            -0.7927503582069306,
+            0.18
+          ],
+          "to": [
+            -8.39012508451408,
+            -0.3525926023852435,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.12566685676574707,
+            0.9920725226402283,
+            0.0
+          ],
+          "toAcross": [
+            -0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -8.39012508451408,
+            -0.3525926023852435,
+            0.18
+          ],
+          "to": [
+            -4.198765308904787,
+            -0.0881870353623384,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ],
+          "toAcross": [
+            -0.04198765009641647,
+            0.9991180896759033,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -4.198765308904787,
+            -0.0881870353623384,
+            0.18
+          ],
+          "to": [
+            -2.7755575615628914e-15,
+            0.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.04198765009641647,
+            0.9991180896759033,
+            0.0
+          ],
+          "toAcross": [
+            -2.7755575615628914e-17,
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -2.7755575615628914e-15,
+            0.0,
+            0.18
+          ],
+          "to": [
+            4.198765308904787,
+            -0.0881870353623384,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -2.7755575615628914e-17,
+            1.0,
+            0.0
+          ],
+          "toAcross": [
+            0.04198765009641647,
+            0.9991180896759033,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            4.198765308904787,
+            -0.0881870353623384,
+            0.18
+          ],
+          "to": [
+            8.39012508451408,
+            -0.3525926023852435,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.04198765009641647,
+            0.9991180896759033,
+            0.0
+          ],
+          "toAcross": [
+            0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            8.39012508451408,
+            -0.3525926023852435,
+            0.18
+          ],
+          "to": [
+            12.566686854972922,
+            -0.7927503582069306,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ],
+          "toAcross": [
+            0.12566685676574707,
+            0.9920725226402283,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            12.566686854972922,
+            -0.7927503582069306,
+            0.18
+          ],
+          "to": [
+            16.721084248270426,
+            -1.407883978675855,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.12566685676574707,
+            0.9920725226402283,
+            0.0
+          ],
+          "toAcross": [
+            0.16721084713935852,
+            0.9859211444854736,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            16.721084248270426,
+            -1.407883978675855,
+            0.18
+          ],
+          "to": [
+            20.845989984609954,
+            -2.1969085275851796,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.16721084713935852,
+            0.9859211444854736,
+            0.0
+          ],
+          "toAcross": [
+            0.20845988392829895,
+            0.9780309200286865,
+            0.0
+          ]
+        }
+      ],
+      "markers": [],
+      "colliders": [
+        "COL_ulgani_ring_shelf_Deck0",
+        "COL_ulgani_ring_shelf_Deck1",
+        "COL_ulgani_ring_shelf_Deck2",
+        "COL_ulgani_ring_shelf_Deck3",
+        "COL_ulgani_ring_shelf_Deck4",
+        "COL_ulgani_ring_shelf_Deck5",
+        "COL_ulgani_ring_shelf_Deck6",
+        "COL_ulgani_ring_shelf_Deck7",
+        "COL_ulgani_ring_shelf_Deck8",
+        "COL_ulgani_ring_shelf_Deck9"
+      ]
+    },
+    {
+      "id": "ulgani_ring_joint",
+      "title": "Ring Landing",
+      "role": "ring_joint",
+      "class": "kit",
+      "ringRadius": 70,
+      "arcRadians": 0.28,
+      "deckWidth": 12,
+      "bounds": [
+        [
+          -10.711359024047852,
+          -7.301570415496826,
+          -0.7841997742652893
+        ],
+        [
+          10.722963333129883,
+          6.59562873840332,
+          0.18000000715255737
+        ]
+      ],
+      "height": 0.9641997814178467,
+      "footprintRadius": 12.244927522916152,
+      "lodTriangles": [
+        9900,
+        2970,
+        990,
+        345
+      ],
+      "lodNodes": [
+        "ulgani_ring_joint_LOD0",
+        "ulgani_ring_joint_LOD1",
+        "ulgani_ring_joint_LOD2",
+        "ulgani_ring_joint_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            -9.768018025096554,
+            -0.684880265115396,
+            0.18
+          ],
+          "to": [
+            -7.823619450589964,
+            -0.4385812487097809,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.13954311609268188,
+            0.9902159571647644,
+            0.0
+          ],
+          "toAcross": [
+            -0.11176598817110062,
+            0.9937345385551453,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -7.823619450589964,
+            -0.4385812487097809,
+            0.18
+          ],
+          "to": [
+            -5.873087559159857,
+            -0.24681482166967328,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.11176598817110062,
+            0.9937345385551453,
+            0.0
+          ],
+          "toAcross": [
+            -0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -5.873087559159857,
+            -0.24681482166967328,
+            0.18
+          ],
+          "to": [
+            -3.9179514679028826,
+            -0.1097313190515905,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ],
+          "toAcross": [
+            -0.05597073584794998,
+            0.9984323978424072,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -3.9179514679028826,
+            -0.1097313190515905,
+            0.18
+          ],
+          "to": [
+            -1.959743903372527,
+            -0.027438207300178874,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.05597073584794998,
+            0.9984323978424072,
+            0.0
+          ],
+          "toAcross": [
+            -0.02799634076654911,
+            0.9996080994606018,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            -1.959743903372527,
+            -0.027438207300178874,
+            0.18
+          ],
+          "to": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            -0.02799634076654911,
+            0.9996080994606018,
+            0.0
+          ],
+          "toAcross": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "to": [
+            1.959743903372529,
+            -0.027438207300178874,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "toAcross": [
+            0.02799634076654911,
+            0.9996080994606018,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            1.959743903372529,
+            -0.027438207300178874,
+            0.18
+          ],
+          "to": [
+            3.9179514679028844,
+            -0.1097313190515905,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.02799634076654911,
+            0.9996080994606018,
+            0.0
+          ],
+          "toAcross": [
+            0.05597073584794998,
+            0.9984323978424072,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            3.9179514679028844,
+            -0.1097313190515905,
+            0.18
+          ],
+          "to": [
+            5.873087559159858,
+            -0.24681482166967328,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.05597073584794998,
+            0.9984323978424072,
+            0.0
+          ],
+          "toAcross": [
+            0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            5.873087559159858,
+            -0.24681482166967328,
+            0.18
+          ],
+          "to": [
+            7.823619450589966,
+            -0.4385812487097809,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.08390124887228012,
+            0.996474027633667,
+            0.0
+          ],
+          "toAcross": [
+            0.11176598817110062,
+            0.9937345385551453,
+            0.0
+          ]
+        },
+        {
+          "from": [
+            7.823619450589966,
+            -0.4385812487097809,
+            0.18
+          ],
+          "to": [
+            9.768018025096554,
+            -0.684880265115396,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            0.11176598817110062,
+            0.9937345385551453,
+            0.0
+          ],
+          "toAcross": [
+            0.13954311609268188,
+            0.9902159571647644,
+            0.0
+          ]
+        }
+      ],
+      "markers": [],
+      "colliders": [
+        "COL_ulgani_ring_joint_Deck0",
+        "COL_ulgani_ring_joint_Deck1",
+        "COL_ulgani_ring_joint_Deck2",
+        "COL_ulgani_ring_joint_Deck3",
+        "COL_ulgani_ring_joint_Deck4",
+        "COL_ulgani_ring_joint_Deck5",
+        "COL_ulgani_ring_joint_Deck6",
+        "COL_ulgani_ring_joint_Deck7",
+        "COL_ulgani_ring_joint_Deck8",
+        "COL_ulgani_ring_joint_Deck9"
+      ]
+    },
+    {
+      "id": "ulgani_lamp",
+      "title": "Gill Lantern",
+      "role": "lamp",
+      "class": "kit",
+      "bounds": [
+        [
+          -0.7073752284049988,
+          -0.9652805328369141,
+          -0.07844151556491852
+        ],
+        [
+          1.6232481002807617,
+          0.9177199006080627,
+          4.2129106521606445
+        ]
+      ],
+      "height": 4.291352167725563,
+      "footprintRadius": 1.623252408937668,
+      "lodTriangles": [
+        5856,
+        1755,
+        584,
+        204
+      ],
+      "lodNodes": [
+        "ulgani_lamp_LOD0",
+        "ulgani_lamp_LOD1",
+        "ulgani_lamp_LOD2",
+        "ulgani_lamp_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_lamp",
+          "position": [
+            0.4000000059604645,
+            0.0,
+            3.4000000953674316
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.65,
+            "distance": 10
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_lamp_Stem"
+      ]
+    },
+    {
+      "id": "ulgani_shore_walk",
+      "title": "Shore Walk Segment",
+      "role": "shore_walk",
+      "class": "kit",
+      "deckWidth": 8,
+      "railHeight": 1.05,
+      "bounds": [
+        [
+          -4.792031764984131,
+          -6.107402801513672,
+          -1.268288254737854
+        ],
+        [
+          4.792031764984131,
+          6.107402801513672,
+          1.461859107017517
+        ]
+      ],
+      "height": 2.730147361755371,
+      "footprintRadius": 7.657433676406394,
+      "lodTriangles": [
+        9384,
+        2814,
+        938,
+        326
+      ],
+      "lodNodes": [
+        "ulgani_shore_walk_LOD0",
+        "ulgani_shore_walk_LOD1",
+        "ulgani_shore_walk_LOD2",
+        "ulgani_shore_walk_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0.0,
+            -6.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -4.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -4.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -3.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -3.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            -1.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            -1.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            0.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            1.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            1.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            3.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            3.0,
+            0.18
+          ],
+          "to": [
+            0.0,
+            4.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "from": [
+            0.0,
+            4.5,
+            0.18
+          ],
+          "to": [
+            0.0,
+            6.0,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2,
+          "fromAcross": [
+            1,
+            0,
+            0
+          ],
+          "toAcross": [
+            1,
+            0,
+            0
+          ]
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_shore_walk",
+          "position": [
+            -4.0,
+            -3.8399999141693115,
+            1.2000000476837158
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_shore_walk_Deck0",
+        "COL_ulgani_shore_walk_Deck1",
+        "COL_ulgani_shore_walk_Deck2",
+        "COL_ulgani_shore_walk_Deck3",
+        "COL_ulgani_shore_walk_Deck4",
+        "COL_ulgani_shore_walk_Deck5",
+        "COL_ulgani_shore_walk_Deck6",
+        "COL_ulgani_shore_walk_Deck7",
+        "COL_ulgani_shore_walk_Deck8",
+        "COL_ulgani_shore_walk_Deck9",
+        "COL_ulgani_shore_walk_Deck10",
+        "COL_ulgani_shore_walk_Deck11",
+        "COL_ulgani_shore_walk_Deck12",
+        "COL_ulgani_shore_walk_Deck13",
+        "COL_ulgani_shore_walk_Deck14",
+        "COL_ulgani_shore_walk_Deck15",
+        "COL_ulgani_shore_walk_Deck16",
+        "COL_ulgani_shore_walk_Deck17",
+        "COL_ulgani_shore_walk_Deck18",
+        "COL_ulgani_shore_walk_Deck19",
+        "COL_ulgani_shore_walk_Deck20",
+        "COL_ulgani_shore_walk_Deck21",
+        "COL_ulgani_shore_walk_Deck22",
+        "COL_ulgani_shore_walk_Deck23",
+        "COL_ulgani_shore_walk_Deck24",
+        "COL_ulgani_shore_walk_Deck25",
+        "COL_ulgani_shore_walk_Deck26",
+        "COL_ulgani_shore_walk_Deck27",
+        "COL_ulgani_shore_walk_Deck28",
+        "COL_ulgani_shore_walk_Deck29",
+        "COL_ulgani_shore_walk_Deck30",
+        "COL_ulgani_shore_walk_Deck31",
+        "COL_ulgani_shore_walk_Rail-1_0",
+        "COL_ulgani_shore_walk_Rail-1_1",
+        "COL_ulgani_shore_walk_Rail-1_2",
+        "COL_ulgani_shore_walk_Rail-1_3",
+        "COL_ulgani_shore_walk_Rail-1_4",
+        "COL_ulgani_shore_walk_Rail-1_5",
+        "COL_ulgani_shore_walk_Rail-1_6",
+        "COL_ulgani_shore_walk_Rail-1_7",
+        "COL_ulgani_shore_walk_Rail1_0",
+        "COL_ulgani_shore_walk_Rail1_1",
+        "COL_ulgani_shore_walk_Rail1_2",
+        "COL_ulgani_shore_walk_Rail1_3",
+        "COL_ulgani_shore_walk_Rail1_4",
+        "COL_ulgani_shore_walk_Rail1_5",
+        "COL_ulgani_shore_walk_Rail1_6",
+        "COL_ulgani_shore_walk_Rail1_7"
+      ]
+    }
+  ]
+}

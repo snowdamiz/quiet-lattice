@@ -1,0 +1,103 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ulgani/audit.py",
+    "--",
+    "--group",
+    "low",
+    "--inventory",
+    "assets/blend/cities/ulgani/inventory/low-a04.json",
+    "--out",
+    "assets/blend/cities/ulgani/audits/low-source-a02",
+    "--source-only"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "audit-low-source-a02",
+    "seconds": 300,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "packages/tools/blender/cities/ulgani/audit.py",
+      "--",
+      "--group",
+      "low",
+      "--inventory",
+      "assets/blend/cities/ulgani/inventory/low-a04.json",
+      "--out",
+      "assets/blend/cities/ulgani/audits/low-source-a02",
+      "--source-only"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794031572.4259589,
+  "preflight": {
+    "time": 1794031572.4295309,
+    "load": [
+      11.64501953125,
+      23.849609375,
+      28.62744140625
+    ],
+    "memoryFreePercent": 57,
+    "diskFreeBytes": 56833982464
+  },
+  "samples": [
+    {
+      "time": 1794031572.4331698,
+      "load": [
+        11.64501953125,
+        23.849609375,
+        28.62744140625
+      ],
+      "memoryFreePercent": 57,
+      "diskFreeBytes": 56833982464
+    }
+  ],
+  "pid": 93025,
+  "pgid": 93025,
+  "peakGroupRSSKiB": 525552,
+  "wallSeconds": 2.063645666989032,
+  "remainingGroup": [],
+  "exit": 0,
+  "error": null,
+  "ended": 1794031574.5267122,
+  "postflight": {
+    "time": 1794031574.530792,
+    "load": [
+      11.64501953125,
+      23.849609375,
+      28.62744140625
+    ],
+    "memoryFreePercent": 57,
+    "diskFreeBytes": 56835940352
+  },
+  "failureTail": []
+}

@@ -1,0 +1,116 @@
+{
+  "task": "P1.E10.T07",
+  "status": "INTERRUPTED_INCOMPLETE",
+  "time": 1794032473.2792609,
+  "base": "f9d9cbe2e4b629a14063c9a933c331f213826906",
+  "tree": "4bd792cd9d7cffb9ac6bc8a86dce3781ed502efd",
+  "branch": "task/P1-E10-T07-ulgani-belost",
+  "committed": false,
+  "sourceFiles": [
+    {
+      "path": "assets/blend/cities/ulgani_anchor.blend",
+      "sha256": "eafc062e422cfa96ac8488f53b7d2083d9091c91a552a13bc6498d5b284ca5e3",
+      "bytes": 9754336
+    },
+    {
+      "path": "assets/blend/cities/ulgani_civic.blend",
+      "sha256": "2056e24f22db0259247760d0ae96be2b80cc8a7a6cca8f254960eb84bc2cf06e",
+      "bytes": 8594790
+    },
+    {
+      "path": "assets/blend/cities/ulgani_kit.blend",
+      "sha256": "eb332713d9c58b969dd61482c509c18ef7ec5be41d5ba714099c93f0b62f26c8",
+      "bytes": 5960688
+    },
+    {
+      "path": "assets/blend/cities/ulgani_landmarks.blend",
+      "sha256": "60b76c3b183cb6988f86cbd99b1c3176bb0db623baa30e695fc423f7359c3934",
+      "bytes": 8783408
+    },
+    {
+      "path": "assets/blend/cities/ulgani_low.blend",
+      "sha256": "f2ef844735f9fed2457879c1a1f9662b1d3d829761adba69db4b419dff7065b1",
+      "bytes": 5367800
+    },
+    {
+      "path": "assets/blend/cities/ulgani_mid.blend",
+      "sha256": "dd0513776b5261faccf93792056305525e80c943fcc3c40ce9137e21239c2204",
+      "bytes": 6939170
+    },
+    {
+      "path": "assets/blend/cities/ulgani_props.blend",
+      "sha256": "a5dc15e78b57f790a811d34e418c38f0a791aef92bdab7626e6361d112193d5c",
+      "bytes": 2015138
+    },
+    {
+      "path": "assets/blend/cities/ulgani_tall.blend",
+      "sha256": "896d1281a4dd5b2b19a8357335509caf610147a66cde42dd2b0377c0e98dd73c",
+      "bytes": 9808185
+    }
+  ],
+  "sourceAudits": [],
+  "processReceipts": [
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-anchor-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-civic-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-kit-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-landmarks-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-low-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-mid-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-props-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    },
+    {
+      "path": "assets/blend/cities/ulgani/attempts/source-audit-tall-b01/process.json",
+      "exit": 1,
+      "remainingGroup": []
+    }
+  ],
+  "observedOwnedProcesses": [],
+  "exportFiles": [],
+  "previewFiles": [
+    {
+      "path": "assets/renders/cities/ulgani-iteration/ulgani_low_0_lod0_turntable.png",
+      "sha256": "b1dd387b12d9bbf098bd2dcb641a2513c5f3bee584163d2eb77e5627860d69e2",
+      "bytes": 959096
+    },
+    {
+      "path": "assets/renders/cities/ulgani-iteration2/ulgani_low_1_lod0_turntable.png",
+      "sha256": "56100ba452136d4212f3012223e2a97049ec9d263776899e926a21950464dc3b",
+      "bytes": 892425
+    }
+  ],
+  "previewBytes": 1851521,
+  "remaining": [
+    "Correct current saved-source audit failures, including tall_3 LOD0 60713 above 60000 building budget.",
+    "Complete exact stock exports, decoded geometry/UV/normal/material/marker audit and negative controls.",
+    "Produce and inspect final CPU preview inventory; current two images are preserved earlier iterations.",
+    "Finish Appendix C.2 report and commit owned results."
+  ],
+  "boundaries": "No browser, Metal, GPU/native capture, services/DB, push, PR or merge. Parent owns native grading and T01 integration."
+}

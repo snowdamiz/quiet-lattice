@@ -1,0 +1,74 @@
+{
+  "commands": [
+    {
+      "command": [
+        "uvx",
+        "--offline",
+        "ruff",
+        "check",
+        "packages/tools/blender/cities/ulgani"
+      ],
+      "exit": 0,
+      "seconds": 0.09095120429992676,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r03-0.txt",
+      "failureTail": []
+    },
+    {
+      "command": [
+        "uvx",
+        "--offline",
+        "ruff",
+        "format",
+        "--check",
+        "packages/tools/blender/cities/ulgani"
+      ],
+      "exit": 0,
+      "seconds": 0.02597808837890625,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r03-1.txt",
+      "failureTail": []
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "packages/tools/blender/cities/ulgani",
+        "-p",
+        "test_*.py"
+      ],
+      "exit": 0,
+      "seconds": 5.672655820846558,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r03-2.txt",
+      "failureTail": []
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "packages/tools/blender/cities/ulgani/decode_meshopt.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.026584148406982422,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r03-3.txt",
+      "failureTail": []
+    }
+  ],
+  "pythonAST": "PASS",
+  "allMetadataJSON": "PASS",
+  "freeOwnedLocks": [
+    ".lane.lock",
+    ".codec.lock"
+  ],
+  "resourceSnapshot": {
+    "time": 1794034611.91138,
+    "load": [
+      9.12451171875,
+      9.94873046875,
+      11.28759765625
+    ],
+    "memoryFreePercent": 62,
+    "diskFreeBytes": 36833230848
+  }
+}

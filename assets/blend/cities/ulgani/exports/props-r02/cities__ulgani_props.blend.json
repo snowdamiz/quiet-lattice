@@ -1,0 +1,334 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ulgani_props.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T06:32:06Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ulgani_stall",
+      "variants": [
+        {
+          "id": "ulgani_stall",
+          "class": "prop",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5428,
+            "1": 1628,
+            "2": 542,
+            "3": 189
+          },
+          "implicitLods": false,
+          "dims": [
+            4.397,
+            2.879,
+            3.142
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_1024"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_terminal",
+      "variants": [
+        {
+          "id": "ulgani_terminal",
+          "class": "prop",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5236,
+            "1": 1569,
+            "2": 523,
+            "3": 182
+          },
+          "implicitLods": false,
+          "dims": [
+            1.564,
+            0.359,
+            1.644
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_1024"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_bench",
+      "variants": [
+        {
+          "id": "ulgani_bench",
+          "class": "prop",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 4416,
+            "1": 1323,
+            "2": 441,
+            "3": 154
+          },
+          "implicitLods": false,
+          "dims": [
+            2.41,
+            0.813,
+            1.142
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_1024"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_planter",
+      "variants": [
+        {
+          "id": "ulgani_planter",
+          "class": "prop",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 9960,
+            "1": 2987,
+            "2": 995,
+            "3": 348
+          },
+          "implicitLods": false,
+          "dims": [
+            2.045,
+            1.647,
+            1.512
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_1024"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_wayfinding",
+      "variants": [
+        {
+          "id": "ulgani_wayfinding",
+          "class": "prop",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 6716,
+            "1": 2013,
+            "2": 670,
+            "3": 234
+          },
+          "implicitLods": false,
+          "dims": [
+            2.8,
+            0.359,
+            2.807
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_1024"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_board",
+      "variants": [
+        {
+          "id": "ulgani_board",
+          "class": "prop",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 5236,
+            "1": 1569,
+            "2": 522,
+            "3": 182
+          },
+          "implicitLods": false,
+          "dims": [
+            1.568,
+            0.359,
+            2.807
+          ],
+          "materials": [
+            "Ulgani_PaintedAtlas_1024"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_props.blend",
+          "message": "6 variant(s) in 6 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_stall",
+          "message": "LOD0 5,428 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani_terminal",
+          "message": "LOD0 5,236 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani_bench",
+          "message": "LOD0 4,416 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani_planter",
+          "message": "LOD0 9,960 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani_wayfinding",
+          "message": "LOD0 6,716 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "ulgani_board",
+          "message": "LOD0 5,236 triangles within the prop budget 2,000-10,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_stall",
+          "message": "5,428 > 1,628 > 542 > 189 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_terminal",
+          "message": "5,236 > 1,569 > 523 > 182 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_bench",
+          "message": "4,416 > 1,323 > 441 > 154 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_planter",
+          "message": "9,960 > 2,987 > 995 > 348 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_wayfinding",
+          "message": "6,716 > 2,013 > 670 > 234 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_board",
+          "message": "5,236 > 1,569 > 522 > 182 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Ulgani_PaintedAtlas_1024",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ulgani_stall",
+          "message": "longest side 4.40 m within 0.05-6 m"
+        },
+        {
+          "subject": "ulgani_terminal",
+          "message": "longest side 1.64 m within 0.05-6 m"
+        },
+        {
+          "subject": "ulgani_bench",
+          "message": "longest side 2.41 m within 0.05-6 m"
+        },
+        {
+          "subject": "ulgani_planter",
+          "message": "longest side 2.04 m within 0.05-6 m"
+        },
+        {
+          "subject": "ulgani_wayfinding",
+          "message": "longest side 2.81 m within 0.05-6 m"
+        },
+        {
+          "subject": "ulgani_board",
+          "message": "longest side 2.81 m within 0.05-6 m"
+        }
+      ]
+    }
+  ]
+}

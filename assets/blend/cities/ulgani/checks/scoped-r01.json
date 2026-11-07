@@ -1,0 +1,45 @@
+[
+  {
+    "command": [
+      "uvx",
+      "--offline",
+      "ruff",
+      "check",
+      "packages/tools/blender/cities/ulgani"
+    ],
+    "exit": 0,
+    "seconds": 0.08241105079650879,
+    "output": "assets/blend/cities/ulgani/checks/scoped-r01-0.txt",
+    "failureTail": []
+  },
+  {
+    "command": [
+      "uvx",
+      "--offline",
+      "ruff",
+      "format",
+      "--check",
+      "packages/tools/blender/cities/ulgani"
+    ],
+    "exit": 0,
+    "seconds": 0.045232295989990234,
+    "output": "assets/blend/cities/ulgani/checks/scoped-r01-1.txt",
+    "failureTail": []
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "packages/tools/blender/cities/ulgani",
+      "-p",
+      "test_*.py"
+    ],
+    "exit": 0,
+    "seconds": 5.7703940868377686,
+    "output": "assets/blend/cities/ulgani/checks/scoped-r01-2.txt",
+    "failureTail": []
+  }
+]

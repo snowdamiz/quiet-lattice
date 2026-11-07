@@ -1,0 +1,97 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ulgani/author.py",
+    "--",
+    "--group",
+    "low",
+    "--receipt",
+    "assets/blend/cities/ulgani/inventory/low-a03.json"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "author-low-a03",
+    "seconds": 600,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "packages/tools/blender/cities/ulgani/author.py",
+      "--",
+      "--group",
+      "low",
+      "--receipt",
+      "assets/blend/cities/ulgani/inventory/low-a03.json"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794031423.301881,
+  "preflight": {
+    "time": 1794031423.3072152,
+    "load": [
+      12.81005859375,
+      31.23095703125,
+      31.71875
+    ],
+    "memoryFreePercent": 58,
+    "diskFreeBytes": 57332846592
+  },
+  "samples": [
+    {
+      "time": 1794031423.311172,
+      "load": [
+        12.81005859375,
+        31.23095703125,
+        31.71875
+      ],
+      "memoryFreePercent": 58,
+      "diskFreeBytes": 57332846592
+    }
+  ],
+  "pid": 73895,
+  "pgid": 73895,
+  "peakGroupRSSKiB": 894688,
+  "wallSeconds": 3.096226000052411,
+  "remainingGroup": [],
+  "exit": 0,
+  "error": null,
+  "ended": 1794031426.4347148,
+  "postflight": {
+    "time": 1794031426.438591,
+    "load": [
+      12.4248046875,
+      30.84521484375,
+      31.57958984375
+    ],
+    "memoryFreePercent": 58,
+    "diskFreeBytes": 57321848832
+  },
+  "failureTail": []
+}

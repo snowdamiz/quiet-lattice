@@ -1,0 +1,109 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "packages/tools/blender/cities/ulgani/audit.py",
+    "--",
+    "--group",
+    "low",
+    "--inventory",
+    "assets/blend/cities/ulgani/inventory/low-a03.json",
+    "--out",
+    "assets/blend/cities/ulgani/audits/low-source-a01",
+    "--source-only"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "audit-low-source-a01",
+    "seconds": 300,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "packages/tools/blender/cities/ulgani/audit.py",
+      "--",
+      "--group",
+      "low",
+      "--inventory",
+      "assets/blend/cities/ulgani/inventory/low-a03.json",
+      "--out",
+      "assets/blend/cities/ulgani/audits/low-source-a01",
+      "--source-only"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794031460.9954188,
+  "preflight": {
+    "time": 1794031460.999289,
+    "load": [
+      12.37451171875,
+      29.04833984375,
+      30.90087890625
+    ],
+    "memoryFreePercent": 55,
+    "diskFreeBytes": 57267630080
+  },
+  "samples": [
+    {
+      "time": 1794031461.003497,
+      "load": [
+        12.37451171875,
+        29.04833984375,
+        30.90087890625
+      ],
+      "memoryFreePercent": 55,
+      "diskFreeBytes": 57267625984
+    }
+  ],
+  "pid": 77367,
+  "pgid": 77367,
+  "peakGroupRSSKiB": 507408,
+  "wallSeconds": 2.063066750008147,
+  "remainingGroup": [],
+  "removedStale": [],
+  "exit": 1,
+  "error": null,
+  "ended": 1794031463.093987,
+  "postflight": {
+    "time": 1794031463.0982232,
+    "load": [
+      12.82470703125,
+      28.86474609375,
+      30.8251953125
+    ],
+    "memoryFreePercent": 53,
+    "diskFreeBytes": 57258471424
+  },
+  "failureTail": [
+    "00:00.520  blend            | Read blend: \"/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/assets/blend/cities/ulgani_low.blend\"",
+    "FAIL  assets/blend/cities/ulgani_low.blend  (1 failure)",
+    "FAIL ['stock source validation', 'ulgani_low_0: source collision clearance/support', 'ulgani_low_0: source visual clearance/support', 'ulgani_low_1: source collision clearance/support', 'ulgani_low_1: source visual clearance/support', 'ulgani_low_2: source collision clearance/support', 'ulgani_low_2: source visual clearance/support', 'ulgani_low_3: source collision clearance/support', 'ulgani_low_3: source visual clearance/support']",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)"
+  ]
+}

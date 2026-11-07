@@ -1,0 +1,70 @@
+{
+  "commands": [
+    {
+      "command": [
+        "uvx",
+        "--offline",
+        "ruff",
+        "check",
+        "packages/tools/blender/cities/ulgani"
+      ],
+      "exit": 0,
+      "seconds": 0.04190182685852051,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r02-0.txt",
+      "failureTail": []
+    },
+    {
+      "command": [
+        "uvx",
+        "--offline",
+        "ruff",
+        "format",
+        "--check",
+        "packages/tools/blender/cities/ulgani"
+      ],
+      "exit": 0,
+      "seconds": 0.033354997634887695,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r02-1.txt",
+      "failureTail": []
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "packages/tools/blender/cities/ulgani",
+        "-p",
+        "test_*.py"
+      ],
+      "exit": 0,
+      "seconds": 5.818789005279541,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r02-2.txt",
+      "failureTail": []
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "packages/tools/blender/cities/ulgani/decode_meshopt.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.039968013763427734,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r02-3.txt",
+      "failureTail": []
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 0.04658102989196777,
+      "output": "assets/blend/cities/ulgani/checks/scoped-r02-4.txt",
+      "failureTail": []
+    }
+  ],
+  "pythonAST": "PASS"
+}

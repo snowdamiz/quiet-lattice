@@ -1,0 +1,951 @@
+{
+  "source": "assets/blend/cities/ulgani_props.blend",
+  "sourceSHA256": "a5dc15e78b57f790a811d34e418c38f0a791aef92bdab7626e6361d112193d5c",
+  "assets": [
+    {
+      "source": {
+        "id": "ulgani_stall",
+        "class": "prop",
+        "lods": [
+          {
+            "triangles": 5428,
+            "vertices": 3176,
+            "corners": 10784,
+            "bounds": [
+              [
+                -2.101691722869873,
+                -1.3515474796295166,
+                -0.03485694155097008
+              ],
+              [
+                2.294949531555176,
+                1.5274542570114136,
+                3.107590675354004
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999246382474,
+            "geometryHash": "2ee330c4c4db779cc87061056632b78456fb8bb68362df6c8265dec8402ff639"
+          },
+          {
+            "triangles": 1628,
+            "vertices": 1132,
+            "corners": 4884,
+            "bounds": [
+              [
+                -2.110471248626709,
+                -1.3515474796295166,
+                -0.034878574311733246
+              ],
+              [
+                2.2937793731689453,
+                1.5423041582107544,
+                3.111567497253418
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014900275506079197
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999151038765,
+            "geometryHash": "dcf08ff6587a61d1f69c67ff728b7229aaf271a14d45a1509a6c5523eae08810"
+          },
+          {
+            "triangles": 542,
+            "vertices": 501,
+            "corners": 1626,
+            "bounds": [
+              [
+                -2.126633644104004,
+                -1.3517295122146606,
+                -0.02653137780725956
+              ],
+              [
+                2.3062329292297363,
+                1.5557328462600708,
+                3.134158134460449
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014687351882457733
+            ],
+            "uvMax": [
+              0.9931684732437134,
+              0.9851719737052917
+            ],
+            "normalLengthMin": 0.9999999260665889,
+            "geometryHash": "1d5079b2115a39c561098ee7a59b28e1595c1b745d07c03eb70f7732a0d34548"
+          },
+          {
+            "triangles": 189,
+            "vertices": 264,
+            "corners": 567,
+            "bounds": [
+              [
+                -2.105984926223755,
+                -1.4088306427001953,
+                -0.016125960275530815
+              ],
+              [
+                2.3224711418151855,
+                1.5565524101257324,
+                3.1420414447784424
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014298882335424423
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9744529724121094
+            ],
+            "normalLengthMin": 0.9999999363210066,
+            "geometryHash": "367fd601cc17ee4baddaee0938d69b01f226221b204585d8b81fbb5f3f94a3aa"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Interact_Apothecary_ulgani_stall",
+            "position": [
+              0.0,
+              -1.2000000476837158,
+              1.2000000476837158
+            ],
+            "nearestVisualSurface": 0.9308600425720215,
+            "properties": {
+              "service_role": "npc:apothecary",
+              "dispatch": "T01_T02_pending"
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_stall",
+            "position": [
+              0.0,
+              0.10000000149011612,
+              2.549999952316284
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.35,
+              "distance": 5
+            }
+          }
+        ],
+        "collision": {
+          "objects": 3,
+          "triangles": 36,
+          "maxObjectTriangles": 12,
+          "nearestSurfaceMax": 0.25771576166152954,
+          "nearestSurfaceP95": 0.2541885808110237
+        },
+        "walkRoutes": []
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_terminal",
+        "class": "prop",
+        "lods": [
+          {
+            "triangles": 5236,
+            "vertices": 2911,
+            "corners": 11132,
+            "bounds": [
+              [
+                -0.7443922162055969,
+                -0.18140000104904175,
+                -0.09382215887308121
+              ],
+              [
+                0.8200082778930664,
+                0.17759999632835388,
+                1.5500082969665527
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.999999923773174,
+            "geometryHash": "ea0c115a338305096da491c62d45c04bbe2030b3dc18963233406e76c589d098"
+          },
+          {
+            "triangles": 1569,
+            "vertices": 934,
+            "corners": 4707,
+            "bounds": [
+              [
+                -0.7443922162055969,
+                -0.18140000104904175,
+                -0.09382215887308121
+              ],
+              [
+                0.819075882434845,
+                0.17759999632835388,
+                1.5513908863067627
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999162835929,
+            "geometryHash": "de02a82aa3088d5994dd3dadfcd36400fb09b9be9eaf023afb148451e199d1b2"
+          },
+          {
+            "triangles": 523,
+            "vertices": 341,
+            "corners": 1569,
+            "bounds": [
+              [
+                -0.7408908605575562,
+                -0.17793524265289307,
+                -0.08522400259971619
+              ],
+              [
+                0.817540168762207,
+                0.17821048200130463,
+                1.5591012239456177
+              ]
+            ],
+            "uvMin": [
+              0.00716734491288662,
+              0.014883603900671005
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999247188718,
+            "geometryHash": "a920265911b6b7400a93a51b1f8b4201251a0c8d4abadd3a05476e6a68f81bd0"
+          },
+          {
+            "triangles": 182,
+            "vertices": 145,
+            "corners": 546,
+            "bounds": [
+              [
+                -0.7221251726150513,
+                -0.17923076450824738,
+                -0.06255234777927399
+              ],
+              [
+                0.8177063465118408,
+                0.1752614825963974,
+                1.554948091506958
+              ]
+            ],
+            "uvMin": [
+              0.007305353879928589,
+              0.014883603900671005
+            ],
+            "uvMax": [
+              0.9786839485168457,
+              0.9851946830749512
+            ],
+            "normalLengthMin": 0.9999999300395783,
+            "geometryHash": "448fead8b795a12eb7cce20b87c7c08dd9363afce368b49e026738a0cd3f1c79"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Interact_terminal_ulgani_terminal",
+            "position": [
+              0.0,
+              -1.100000023841858,
+              1.2000000476837158
+            ],
+            "nearestVisualSurface": 0.918613612651825,
+            "properties": {
+              "service_role": "trade",
+              "dispatch": "T01_T02_pending"
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_terminal",
+            "position": [
+              0.0,
+              -0.10000000149011612,
+              1.2599999904632568
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.25,
+              "distance": 4
+            }
+          }
+        ],
+        "collision": {
+          "objects": 2,
+          "triangles": 24,
+          "maxObjectTriangles": 12,
+          "nearestSurfaceMax": 0.27520930767059326,
+          "nearestSurfaceP95": 0.275202177464962
+        },
+        "walkRoutes": []
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_bench",
+        "class": "prop",
+        "lods": [
+          {
+            "triangles": 4416,
+            "vertices": 2367,
+            "corners": 8724,
+            "bounds": [
+              [
+                -1.2052184343338013,
+                -0.33320000767707825,
+                -0.11456222087144852
+              ],
+              [
+                1.2052184343338013,
+                0.48001185059547424,
+                1.027504324913025
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.4925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999246392608,
+            "geometryHash": "38243a4ac45f7772c68050114fcff2ce16e6e383407c540e46c2aff0f8df41e0"
+          },
+          {
+            "triangles": 1323,
+            "vertices": 734,
+            "corners": 3969,
+            "bounds": [
+              [
+                -1.2052184343338013,
+                -0.33320000767707825,
+                -0.11456222087144852
+              ],
+              [
+                1.2052184343338013,
+                0.4793860614299774,
+                1.0292298793792725
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.49250003695487976,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999274506479,
+            "geometryHash": "1c0e3a470ae96ba56ffa3aa9af5972824dc06aff4daf9d5cbe2f8cf8e56a3109"
+          },
+          {
+            "triangles": 441,
+            "vertices": 258,
+            "corners": 1323,
+            "bounds": [
+              [
+                -1.2039390802383423,
+                -0.33327314257621765,
+                -0.09092574566602707
+              ],
+              [
+                1.2047231197357178,
+                0.4819444417953491,
+                1.025374174118042
+              ]
+            ],
+            "uvMin": [
+              0.007499998901039362,
+              0.014969220384955406
+            ],
+            "uvMax": [
+              0.49250003695487976,
+              0.9854621887207031
+            ],
+            "normalLengthMin": 0.9999999271365385,
+            "geometryHash": "4cf351546e02b267205d69f32cbc60b76ebd0df43614641096a291970fcd3d28"
+          },
+          {
+            "triangles": 154,
+            "vertices": 98,
+            "corners": 462,
+            "bounds": [
+              [
+                -1.2018846273422241,
+                -0.329947829246521,
+                -0.07248426228761673
+              ],
+              [
+                1.2021962404251099,
+                0.4930482506752014,
+                1.030640959739685
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014927644282579422
+            ],
+            "uvMax": [
+              0.4925000071525574,
+              0.9853925108909607
+            ],
+            "normalLengthMin": 0.999999971694486,
+            "geometryHash": "3f184289b45ec4106b913dafb0672084d90bc110aedc2a3751d25bdaf2e8e41c"
+          }
+        ],
+        "markers": [],
+        "collision": {
+          "objects": 2,
+          "triangles": 24,
+          "maxObjectTriangles": 12,
+          "nearestSurfaceMax": 0.10453388839960098,
+          "nearestSurfaceP95": 0.10453388839960098
+        },
+        "walkRoutes": []
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_planter",
+        "class": "prop",
+        "lods": [
+          {
+            "triangles": 9960,
+            "vertices": 5859,
+            "corners": 19704,
+            "bounds": [
+              [
+                -1.0002964735031128,
+                -0.8198622465133667,
+                0.0
+              ],
+              [
+                1.0444592237472534,
+                0.8268205523490906,
+                1.5118591785430908
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999234786621,
+            "geometryHash": "1e0663f59e65b3befebf889243c15af2731f191afda084f049905caa9c44f850"
+          },
+          {
+            "triangles": 2987,
+            "vertices": 2029,
+            "corners": 8961,
+            "bounds": [
+              [
+                -0.9981399178504944,
+                -0.8206883668899536,
+                0.0
+              ],
+              [
+                1.0427535772323608,
+                0.8249999284744263,
+                1.5119740962982178
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9858635663986206
+            ],
+            "normalLengthMin": 0.9999999182911126,
+            "geometryHash": "e0d3eee67253aadb0d9117a09407e7681fe66005a17cee2e2b6cc1493355554a"
+          },
+          {
+            "triangles": 995,
+            "vertices": 879,
+            "corners": 2985,
+            "bounds": [
+              [
+                -0.9873267412185669,
+                -0.8280498385429382,
+                0.0
+              ],
+              [
+                1.0072414875030518,
+                0.8204008936882019,
+                1.5007134675979614
+              ]
+            ],
+            "uvMin": [
+              0.00537971593439579,
+              0.015025811269879341
+            ],
+            "uvMax": [
+              0.992901623249054,
+              0.9852340817451477
+            ],
+            "normalLengthMin": 0.9999999266943109,
+            "geometryHash": "86ee715c77362424478389db8d37a4ab29001d3f1cc02342f78e0a6635cab0a6"
+          },
+          {
+            "triangles": 348,
+            "vertices": 477,
+            "corners": 1044,
+            "bounds": [
+              [
+                -0.9838745594024658,
+                -0.8371737003326416,
+                0.0
+              ],
+              [
+                1.0388972759246826,
+                0.7644973993301392,
+                1.5007134675979614
+              ]
+            ],
+            "uvMin": [
+              0.003912969492375851,
+              0.015573237091302872
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9852340817451477
+            ],
+            "normalLengthMin": 0.999999924321182,
+            "geometryHash": "87485ac3b3601c13532bad680ae37e9c46d2b89a5987a2c2dcf7fbfffedd7d70"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_planter",
+            "position": [
+              0.0,
+              0.0,
+              1.25
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.22,
+              "distance": 3
+            }
+          }
+        ],
+        "collision": {
+          "objects": 1,
+          "triangles": 12,
+          "maxObjectTriangles": 12,
+          "nearestSurfaceMax": 0.18930913507938385,
+          "nearestSurfaceP95": 0.18695632964372635
+        },
+        "walkRoutes": []
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_wayfinding",
+        "class": "prop",
+        "lods": [
+          {
+            "triangles": 6716,
+            "vertices": 3743,
+            "corners": 14348,
+            "bounds": [
+              [
+                -1.399999976158142,
+                -0.18140000104904175,
+                -0.056784600019454956
+              ],
+              [
+                1.399999976158142,
+                0.17759999632835388,
+                2.7500083446502686
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999159714208,
+            "geometryHash": "f9f1cdb427275c394377e9a9eb51eaf57a6c6ea3ddfc4459e14844e24ce576be"
+          },
+          {
+            "triangles": 2013,
+            "vertices": 1201,
+            "corners": 6039,
+            "bounds": [
+              [
+                -1.399999976158142,
+                -0.18140000104904175,
+                -0.056784600019454956
+              ],
+              [
+                1.399999976158142,
+                0.17759999632835388,
+                2.7513906955718994
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850144386291504
+            ],
+            "normalLengthMin": 0.9999999206210086,
+            "geometryHash": "435f663e25b7a497dcaaa75b13019abb53f01fd64a161199139dc7d33d40cdc4"
+          },
+          {
+            "triangles": 670,
+            "vertices": 438,
+            "corners": 2010,
+            "bounds": [
+              [
+                -1.3991163969039917,
+                -0.17738087475299835,
+                -0.056042782962322235
+              ],
+              [
+                1.3990806341171265,
+                0.17193637788295746,
+                2.7520925998687744
+              ]
+            ],
+            "uvMin": [
+              0.007167352829128504,
+              0.014941921457648277
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850082397460938
+            ],
+            "normalLengthMin": 0.9999999250038368,
+            "geometryHash": "151f9bffc2baa6f0c3a1ab1ce5a182534bd511174d0a38a6822a8811e028615e"
+          },
+          {
+            "triangles": 234,
+            "vertices": 185,
+            "corners": 702,
+            "bounds": [
+              [
+                -1.3991163969039917,
+                -0.17761532962322235,
+                -0.04515467956662178
+              ],
+              [
+                1.3990806341171265,
+                0.15259453654289246,
+                2.762883186340332
+              ]
+            ],
+            "uvMin": [
+              0.0073053594678640366,
+              0.014987058937549591
+            ],
+            "uvMax": [
+              0.9909793138504028,
+              0.9850007891654968
+            ],
+            "normalLengthMin": 0.9999999306953636,
+            "geometryHash": "8e0a58b90fd1950bdacfa2fa466b79a0e51e1bcacdbed792ce410bb41aa4b0a2"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Light_Spore0_ulgani_wayfinding",
+            "position": [
+              0.0,
+              -0.10000000149011612,
+              2.3399999141693115
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.25,
+              "distance": 4
+            }
+          }
+        ],
+        "collision": {
+          "objects": 2,
+          "triangles": 24,
+          "maxObjectTriangles": 12,
+          "nearestSurfaceMax": 0.2895963191986084,
+          "nearestSurfaceP95": 0.2895931899547577
+        },
+        "walkRoutes": []
+      }
+    },
+    {
+      "source": {
+        "id": "ulgani_board",
+        "class": "prop",
+        "lods": [
+          {
+            "triangles": 5236,
+            "vertices": 2911,
+            "corners": 11132,
+            "bounds": [
+              [
+                -0.7481120228767395,
+                -0.18140000104904175,
+                -0.056784600019454956
+              ],
+              [
+                0.8200082778930664,
+                0.17759999632835388,
+                2.7500083446502686
+              ]
+            ],
+            "uvMin": [
+              0.007499999832361937,
+              0.014999999664723873
+            ],
+            "uvMax": [
+              0.9925000071525574,
+              0.9850000143051147
+            ],
+            "normalLengthMin": 0.9999999159714208,
+            "geometryHash": "478199605cdc2068e35a2042932dc2277205f26631311ef17503c27dc36b81ae"
+          },
+          {
+            "triangles": 1569,
+            "vertices": 937,
+            "corners": 4707,
+            "bounds": [
+              [
+                -0.7481120228767395,
+                -0.18140000104904175,
+                -0.056784600019454956
+              ],
+              [
+                0.8183503746986389,
+                0.17759999632835388,
+                2.7513906955718994
+              ]
+            ],
+            "uvMin": [
+              0.007499999366700649,
+              0.014999998733401299
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850144386291504
+            ],
+            "normalLengthMin": 0.9999999267262907,
+            "geometryHash": "380498ec9b12abd070380bbe1bffddee04f4f69cd4bc8bd75a8003a263a5f615"
+          },
+          {
+            "triangles": 522,
+            "vertices": 341,
+            "corners": 1566,
+            "bounds": [
+              [
+                -0.7490984201431274,
+                -0.17738087475299835,
+                -0.056042782962322235
+              ],
+              [
+                0.8174934387207031,
+                0.17193637788295746,
+                2.7587156295776367
+              ]
+            ],
+            "uvMin": [
+              0.007167365401983261,
+              0.014941921457648277
+            ],
+            "uvMax": [
+              0.9925000667572021,
+              0.9850082397460938
+            ],
+            "normalLengthMin": 0.9999999258662123,
+            "geometryHash": "23f9470ed84274b557e1cb93541bc84817cd53c9dbcb09b54ca38f6e5072ed20"
+          },
+          {
+            "triangles": 182,
+            "vertices": 146,
+            "corners": 546,
+            "bounds": [
+              [
+                -0.7230792045593262,
+                -0.17761532962322235,
+                -0.04515467956662178
+              ],
+              [
+                0.8336529731750488,
+                0.15259453654289246,
+                2.762883186340332
+              ]
+            ],
+            "uvMin": [
+              0.007305367849767208,
+              0.014987058937549591
+            ],
+            "uvMax": [
+              0.9909793138504028,
+              0.9850007891654968
+            ],
+            "normalLengthMin": 0.9999999306953636,
+            "geometryHash": "0f554a4fb8ee4e56978c8951b7250f0470bd05f2f83097fad0431aa0a9e6dec3"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Interact_board_ulgani_board",
+            "position": [
+              0.0,
+              -1.100000023841858,
+              1.2000000476837158
+            ],
+            "nearestVisualSurface": 1.0062224864959717,
+            "properties": {
+              "service_role": "board:belost",
+              "dispatch": "T01_T02_pending"
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_board",
+            "position": [
+              0.0,
+              -0.10000000149011612,
+              2.3399999141693115
+            ],
+            "nearestVisualSurface": 0.0,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.25,
+              "distance": 4
+            }
+          }
+        ],
+        "collision": {
+          "objects": 2,
+          "triangles": 24,
+          "maxObjectTriangles": 12,
+          "nearestSurfaceMax": 0.2895963191986084,
+          "nearestSurfaceP95": 0.2895931899547577
+        },
+        "walkRoutes": []
+      }
+    }
+  ],
+  "failures": [],
+  "packedImages": [
+    {
+      "name": "Ulgani_1024_BaseColor",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "packedSHA256": "9c769bcfb7c2558e85bdf4cd83981e5a624daad89c135c24e54fdb6c82e207e0",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_1024_Emissive",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "packedSHA256": "efca4ea6d09f7ceed701f1d058f2fe38a2db86e8b5425338fc47765de9dbc216",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "Ulgani_1024_Normal",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "packedSHA256": "9092ded1edc6910b02284d9aaaa71e7bebd9546cbb6e808de0f8cbbf936276cb",
+      "colorspace": "Non-Color"
+    },
+    {
+      "name": "Ulgani_1024_ORM",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "packedSHA256": "5e07d044d0666730a8bf06899ff7550a6dfa6bb2ada626dc255c93207679c562",
+      "colorspace": "Non-Color"
+    }
+  ],
+  "sourceMaterials": [
+    {
+      "name": "Ulgani_PaintedAtlas_1024",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "Ulgani_1024_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "Ulgani_1024_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "Ulgani_1024_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "Ulgani_1024_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "Ulgani_1024_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "image",
+          "image": "Ulgani_1024_Emissive",
+          "component": null
+        }
+      }
+    }
+  ],
+  "status": "PASS"
+}
