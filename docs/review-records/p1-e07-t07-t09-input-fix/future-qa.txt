@@ -1,0 +1,43 @@
+FUTURE QA AFTER INPUT CORRECTION — NOT EXECUTED HERE.
+Source HEAD 613bf7274eff4bfc35f8d85b2ccb3eb3c2e7be11
+Source tree 0d27b06cb5968fbb3bf7c6107bacc4146c122800
+
+The parent must obtain fresh independent source review, a NEW one-shot execution ticket and serial GPU admission for these exact source bytes. The previously consumed ticket and claim 20261107_074400_42380301 from /private/tmp/space-symbiotic-live-next-5lftum9v must NOT be reused. That actual live attempt failed during admin setup before Bond work; its packet remains unchanged. Do not automatically retry. This source correction grants no runtime permission.
+
+Use the parent's currently qualified private route/native process guard and supervisor, with canonical /private/tmp paths and a fresh exclusive output/profile/temp root. The exact command below remains direct pinned Node plus installed Playwright; no Corepack or package download is needed. It was qualified here by discovery ONLY. Parent must verify the final environment, current service identities and the new SQL/Redis claim before the single runtime command. Both clients must reach authoritative docked, landed, then living foot states through ship teleport and real F input before companion work. Before F for EACH client and the later owner S, the new source brings that page forward, clicks the existing visible Resume control when unlocked, and waits for actual focus/locked/enabled input. Native gesture acceptance is still unproved. The 63b6130 R3 source review was REVISE; do not launch a ticket bound to that pin. Require fresh review and rebind all source/guard/ticket receipts to the descendant commit containing this report and its exact tree. No assertion may be relaxed to get past a setup or runtime failure.
+
+Before running:
+1. Freshly verify the existing private Postgres/Redis service identities, healthy state and loopback mappings 53055->5432 and 53058->6379. Prior reports name space-t16-pg-20261106 and space-t16-redis-20261106; these names are historical evidence, not current admission. Do not start/reset/stop shared services.
+2. Generate a NEW SYMBIOTIC_QA_CLAIM (12–32 lowercase alphanumeric/underscore characters, e.g. current UTC YYYYMMDD_HHMMSS + '_' + eight fresh random hex characters). Require no database named astra_symbiotic_smoke_${SYMBIOTIC_QA_CLAIM}, no application clients in Redis8 and an empty Redis8.
+3. Atomically acquire Redis8 with this Lua operation (no flush):
+   if redis.call('DBSIZE') ~= 0 then return 0 end
+   return redis.call('SET', KEYS[1], ARGV[1], 'NX') and 1 or 0
+   KEYS[1] = qa:owner:${SYMBIOTIC_QA_CLAIM}; ARGV[1] = ${SYMBIOTIC_QA_CLAIM}.
+   Require result1, then CREATE the new exact database as astra through the private53055 admin route. Record both claim receipts. A conflict is a stop, not an excuse to reuse/delete an existing fixture. If creation fails, release only an unchanged marker still exclusively owned by this claim.
+4. The parent creates an exclusive mode0700 QA_OUT and fresh QA_OUT/tmp. Keep output, browser profile and compiler caches under that unique root. Prepare the current parent's fail-closed route guard (QA_ROUTE_GUARD), configured for exactly this fresh SQL namespace/astra at53055 and Redis8/marker at53058. Clear inherited application routing and use only the environment below. The new beforeAll independently rechecks actual DB identity/emptiness and Redis claim before migration.
+5. Launch the following EXACT command under the parent's owned-process supervisor (450 s outer deadline, 20 s TERM/KILL+verified-exit drain; retain actual descendant/profile/listener identities). A failed or timed-out run is not automatically retried. Both fixture and global timeout must remain finite.
+
+cd /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+export PATH=/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:$PATH
+: "${SYMBIOTIC_QA_CLAIM:?Fresh claim required before execution}"
+export SYMBIOTIC_QA_CLAIM
+: "${QA_OUT:?Fresh exclusive output directory required}"
+: "${QA_ROUTE_GUARD:?Parent private route guard required}"
+export DATABASE_URL="postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_${SYMBIOTIC_QA_CLAIM}"
+export REDIS_URL=redis://127.0.0.1:53058/8
+export NODE_OPTIONS="--import \"${QA_ROUTE_GUARD}\""
+export TMPDIR="${QA_OUT}/tmp"
+export PLAYWRIGHT_JSON_OUTPUT_FILE="${QA_OUT}/playwright.json"
+export CI=1 SMOKE_GL=metal DEBUG=pw:browser
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/node_modules/@playwright/test/cli.js test --config packages/tools/src/smoke/symbiotic.config.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=420000 --trace=off --reporter=list,json --output "${QA_OUT}/results"
+
+Expected required inventory: 1 test / 1 file, no skip. Two contexts/pages; eight successful-stage PNG attachments maximum, one JSON evidence attachment, server log. Preserve partial/failure outputs. No recording/raw frame sequence.
+
+Cleanup, even after timeout, under the same outer owner:
+- Drain recorded application/browser descendants; verify exact identities, no listeners, no SQL/Redis application sessions, and absence of the recorded browser profile. Do not signal by broad process name or PID alone. A browser may outlive the runner's process group; inspect its recorded descendant cohort too.
+- Verify the exact fresh SQL namespace and Redis marker again. Drop only that namespace after application sessions are gone. Inventory Redis8 keys, correlate them with this fresh run/shard, atomically recheck marker/keyset and DEL only the explicit proven-owned list. No FLUSHDB/FLUSHALL, Redis7 touch or unknown-key deletion. Keep ownership/report a hold if uncertain.
+- Prove DB absence, Redis8 marker/key cleanup, no owned clients/processes/listeners, original containers still healthy, and unchanged source/protected artifact hashes. Preserve PNGs, JSON, logs and route/process receipts. Remove only this run's disposable profile/compiler/temp files after archiving receipts. Existing screenshots/caches/fixtures remain untouched.
+
+Limits: No database/Redis claim, service inspection, route-guard runtime, browser launch or cleanup was performed during source preparation. The exact current service state, successful admission, teardown and gameplay assertions still require the parent's authorized live run. This command is not a live PASS. The parent must schedule it after fresh source review and a new GPU ticket/claim; the consumed previous ticket/claim must not be reused.
+
+Input admission bounds: focused/playing wait10s, actual Resume click10s, enabled/locked/no-pause wait10s per keyboard phase; existing F wait10s and S movement wait15s retain finally key-up. All remain inside existing test/global/outer limits. The two historical unknown-URL DNS errors are not filtered. The next authorized launch should retain failed-request URLs through the parent diagnostics to settle attribution; no external network permission is implied here.

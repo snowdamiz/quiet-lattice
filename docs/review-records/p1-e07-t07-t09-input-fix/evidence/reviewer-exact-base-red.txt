@@ -1,0 +1,45 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ ../../../../../../private/tmp/symbiotic-input-fix-t1639bh8/reviewer-base-input.test.ts (14 tests | 1 failed | 13 skipped) 24ms
+   ↓ actual selected arena and owned movement (9)
+     ↓ selects historical system31/body7 and real dry patch with shared gear height
+     ↓ owner actual Game exit geometry accepted and owned ship retained
+     ↓ observer actual Game exit geometry accepted and owned ship retained
+     ↓ replays exact persisted cross-system foot refusal
+     ↓ accepts real docked restoration at destination
+     ↓ rejects foot restoration with no parked ship
+     ↓ rejects foot restoration with parked ship in wrong frame
+     ↓ rejects illegal landed height
+     ↓ rejects disembark teleport far from own exit anchor
+   ❯ KeyF liveness at real input consumer (5)
+     ↓ online startGame leaves input unlocked
+     ↓ current fixture KeyF block cannot disembark unlocked online client and releases key
+     ↓ positive control exact same KeyF block disembarks after normal input admission
+     ↓ holding F while disabled then admitting input does not recreate consumed key edge
+     × assert intended new setup reaches foot from real online initial input state (RED) 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-input-fix-t1639bh8/reviewer-base-input.test.ts > KeyF liveness at real input consumer > assert intended new setup reaches foot from real online initial input state (RED)
+Error: CPU bounded wait: predicate never became true
+ ❯ Object.waitForFunction ../../../../../../private/tmp/symbiotic-input-fix-t1639bh8/reviewer-base-input.test.ts:80:9
+     78|  const page={keyboard:{down:async()=>key('keydown'),up:async()=>key('k…
+     79|   for(let i=0;i<4;i++)if(fn(source))return;
+     80|   throw Error('CPU bounded wait: predicate never became true');
+       |         ^
+     81|  }};
+     82|  return {g,input,page,calls};
+ ❯ until ../../../../../../private/tmp/symbiotic-input-fix-t1639bh8/reviewer-base-input.test.ts:28:9
+ ❯ eval ../../../../../../private/tmp/symbiotic-input-fix-t1639bh8/reviewer-base-input.test.ts:88:16
+ ❯ ../../../../../../private/tmp/symbiotic-input-fix-t1639bh8/reviewer-base-input.test.ts:133:42
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 skipped (14)
+   Start at  03:33:49
+   Duration  921ms (import 56%, transform 41%, tests 3%)
+
+JSON report written to /private/tmp/symbiotic-input-fix-t1639bh8/reviewer-exact-base-red.json

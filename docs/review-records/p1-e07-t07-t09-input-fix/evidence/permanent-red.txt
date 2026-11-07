@@ -1,0 +1,31 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+(node:66143) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+Replace `const THREE = require("three")` with `import * as THREE from "three"`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ |@astra/tools| src/smoke/symbiotic-private.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts [ packages/tools/src/smoke/symbiotic-private.test.ts ]
+Error: Missing real method Game.js:exitShip
+ ❯ method src/smoke/symbiotic-private.test.ts:454:70
+    452|   const cls = source.statements.find(isClassDeclaration);
+    453|   const member = cls?.members.find((m) => isMethodDeclaration(m) && m.…
+    454|   if (!member || !isMethodDeclaration(member) || !member.body) throw n…
+       |                                                                      ^
+    455|   return { source, member, text: member.getText(source) };
+    456| }
+ ❯ src/smoke/symbiotic-private.test.ts:460:113
+ ❯ src/smoke/symbiotic-private.test.ts:460:102
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  03:26:13
+   Duration  451ms (worker 98%, environment 2%)
+
+JSON report written to /private/tmp/symbiotic-input-fix-t1639bh8/permanent-red.json

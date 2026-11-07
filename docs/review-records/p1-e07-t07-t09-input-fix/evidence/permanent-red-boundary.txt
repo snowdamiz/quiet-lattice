@@ -1,0 +1,119 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ |@astra/tools| src/smoke/symbiotic-private.test.ts (49 tests | 4 failed | 44 skipped) 44ms
+   ↓ Symbiotic smoke private routes (no connections) (8)
+     ↓ keeps the exact preclaimed namespace and Redis8
+     ↓ refuses missing, default or differently owned routes: {}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:55432/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521?host=elsewhere","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/7"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:56379/8"}
+   ↓ R1 online lifecycle (8)
+     ↓ passes borrowed routes to migration and never creates/drops them
+     ↓ preserves the primary setup failure when server termination fails
+     ↓ closes the created handle after listen fails and preserves listen error identity
+     ↓ retains listen failure plus both owned stop errors
+     ↓ attempts all owned cleanup after Vite close fails (synchronous=false)
+     ↓ attempts all owned cleanup after Vite close fails (synchronous=true)
+     ↓ cleans only its own scratch database after migration fails
+     ↓ retains both bounded close failures and attempts KILL after TERM timeout
+   ↓ R1 live lifecycle predicates (22)
+     ↓ accepts only the fresh identified live observer/enemy control
+     ↓ rejects corpse plus missing observer
+     ↓ rejects missing observer
+     ↓ rejects dead observer
+     ↓ rejects different observer identity
+     ↓ rejects different observer frame
+     ↓ rejects different observer kind
+     ↓ rejects dead enemy
+     ↓ rejects enemy corpse mode
+     ↓ rejects different enemy species
+     ↓ rejects different enemy frame
+     ↓ rejects different enemy kind
+     ↓ rejects stale snapshot
+     ↓ rejects disconnected observer
+     ↓ rejects owner retained
+     ↓ rejects companion snapshot retained
+     ↓ rejects companion remote retained
+     ↓ rejects companion instance retained
+     ↓ accepts a living target with actual source-attributed health loss
+     ↓ rejects health loss with no companion hit
+     ↓ rejects attack phase without health loss
+     ↓ rejects a corpse after a credited killing hit
+   ↓ live arena setup respects owned ship authority (6)
+     ↓ reproduces the live cross-system foot rejection at the real persistence pose check
+     ↓ moves owner across systems in a restorable ship pose
+     ↓ moves observer across systems in a restorable ship pose
+     ↓ lands owner with an owned ship that remains restorable after disembarking
+     ↓ lands observer with an owned ship that remains restorable after disembarking
+     ↓ does not hide a refused admin placement
+   ❯ real UI admission before fixture keyboard input (5)
+     × resumes initially unlocked owner through the actual UI before F 21ms
+     × resumes initially unlocked observer through the actual UI before F 7ms
+     × still rejects a failed gesture without sending F 8ms
+     × still rejects missing focus or a lock event without sending F 4ms
+     ✓ releases F and rejects if admitted input never reaches foot 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > real UI admission before fixture keyboard input > resumes initially unlocked owner through the actual UI before F
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > real UI admission before fixture keyboard input > resumes initially unlocked observer through the actual UI before F
+Error: CPU bounded wait: predicate never became true
+ ❯ Object.waitForFunction src/smoke/symbiotic-private.test.ts:563:15
+    561|         activate();
+    562|         for (let i = 0; i < 4; i++) if (fn(source)) return;
+    563|         throw new Error('CPU bounded wait: predicate never became true…
+       |               ^
+    564|       },
+    565|     };
+ ❯ until src/smoke/symbiotic-private.test.ts:582:10
+ ❯ eval src/smoke/symbiotic-private.test.ts:582:10
+ ❯ src/smoke/symbiotic-private.test.ts:591:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > real UI admission before fixture keyboard input > still rejects a failed gesture without sending F
+AssertionError: expected [Function] to throw error including 'Resume click refused' but got 'CPU bounded wait: predicate never bec…'
+
+Expected: "Resume click refused"
+Received: "CPU bounded wait: predicate never became true"
+
+ ❯ src/smoke/symbiotic-private.test.ts:598:26
+    596|   it('still rejects a failed gesture without sending F', async () => {
+    597|     const c = inputClients().client('owner'); c.behavior.clickError = …
+    598|     await expect(runF(c)).rejects.toThrow('Resume click refused');
+       |                          ^
+    599|     expect(c.calls.some((s) => s.startsWith('down:'))).toBe(false);
+    600|     expect(c.game.mode).toBe('ship');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > real UI admission before fixture keyboard input > still rejects missing focus or a lock event without sending F
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/smoke/symbiotic-private.test.ts:606:58
+    604|       const c = inputClients().client('owner'); c.behavior[failure] = …
+    605|       await expect(runF(c)).rejects.toThrow('predicate never became tr…
+    606|       expect(c.calls.some((s) => s.startsWith('down:'))).toBe(false);
+       |                                                          ^
+    607|       expect(c.game.mode).toBe('ship');
+    608|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed | 44 skipped (49)
+   Start at  03:26:42
+   Duration  491ms (import 61%, transform 28%, tests 10%)
+
+JSON report written to /private/tmp/symbiotic-input-fix-t1639bh8/permanent-red-boundary.json

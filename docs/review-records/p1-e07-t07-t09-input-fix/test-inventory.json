@@ -1,0 +1,1990 @@
+{
+  "prior": 389,
+  "current": 396,
+  "added": 7,
+  "missing": [],
+  "retained": [
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: a correction ignores one in a frame this system does not have, and one on the title",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: a correction is taken re-expressed in the frame the client is in, never in the server's",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: a correction moves a walker and leaves it looking where its player looks",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: a ship with plating refills and is rebuilt to its own capacities a destroyed ship comes back with its full shield and hull",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: a ship with plating refills and is rebuilt to its own capacities docking tops the shield up to the ship\u2019s maximum, not to 100",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) asks the server to analyze the drawn creature in the crosshair, within 70 m along the aim from the camera",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) asks the server, numbering the session\u2019s requests from 1 and stamping its world time; nothing before the welcome",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) calls the species by the name its first finder gave it, when it has one",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) labels a species in the codex as such once the server has said so, and still sends E: a known analysis counts for a quest step",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) lets First Jobs\u2019 analyze step be advanced by a species analysed earlier in the session",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) marks a species the server calls known, not only a new one, and reads the banner\u2019s Bond with the owned nodes",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) offers nothing with no creature in the sights, and analyzes nothing offline",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: analysis (P1.E08.T04) shows the server\u2019s answer: the species as the codex holds it and the XP, known, or why not",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) carries the server\u2019s pose on from a later input of the dropped trajectory, not the offset again",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) counts a correction only once it is taken",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) drops a refused pulse drive and carries the server\u2019s pose on at its velocity",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) ends a correction heard twice where one leaves it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) keeps a ship that left the pulse drive on its engines, at its own speed, where the server still holds it on the drive",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) places the character as a welcome does where the server holds it in a mode it cannot take in its stride",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) puts a teleport just after a correction for a refused mode where the server put the character, at rest",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) puts an operator\u2019s teleport just after a correction where the server put the character",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) replays the motion since the corrected input from the server\u2019s pose, the ship drawn on from where it was",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) shows a correction further than a blend can explain as the jump it is, the chase camera put back behind",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) takes a correction it never heard from the snapshot that shows it, and nothing from one that agrees",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: rewinding to a correction (P1.E04.T03) takes the server\u2019s velocity from a correction that drops the drive for an input sent before engaging it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the online objective line announces a new step from the server, not a count moving on the same step",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the world clock catches up up to a second behind at no more than twice the pace, never in a step",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the world clock eases toward the server clock, the render clock advancing by the frames alone",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the world clock never goes back and never runs more than 0.25 s ahead, however fast frames are stepped",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the world clock never steps back: an estimate a second or more behind the world clock only holds it still",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the world clock runs with the frames on the title and in the sandbox (no server)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the world clock starts at the server time on the first welcome, the render clock carrying on where it was",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: the world clock steps forward to the server clock after the frame loop stopped for a minute, and inputs carry the stepped time",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player a refused session token is forgotten",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player after the welcome: back to the title, which shows why",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player before the welcome: the sign-in hears why, and the game lets the connection go",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player builds the exo-suit from the character\u2019s people and the bought nodes of each skill view the server sends",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player ignores the closing of a connection it has replaced",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player leaves the world: the socket closes and the page starts over, with the notice for the title",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player says the connection is down for as long as it is, once in the world",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a closed connection sends the player takes the initial authoritative Charge before any ship frame, and changes its listener with the connection",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a welcome places the character a reconnect cancels an unfinished warp animation and its stale arrival callback",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a welcome places the character a reconnect in another system's zone goes there, as on a first join",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a welcome places the character a reconnect in the same system and one of its frames keeps the pose the client has, and its clock",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a welcome places the character a reconnect while out between the stars brings the system back first",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a welcome places the character a reconnect with a pose in none of the client\u2019s frames is placed from the server",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where a welcome places the character first join: the zone system, the pose and play begin; only that system is visited",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where the Edge stands (P2.E22.T02) forgets the Edge when the connection is let go",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where the Edge stands (P2.E22.T02) reads the dark stations from the server and keeps the night flag its own",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "Game: where the Edge stands (P2.E22.T02) stands at its default out of the world, and follows each world message the server sends",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/Game.test.js",
+      "name": "the cast keys casts the ground bar on 1\u20136 on foot and the hull\u2019s ship slots in flight; nothing landed, docked or on the pulse drive",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn builds the same animals on every client: a species\u2019 body comes from the shared list, not from anything local",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn draws each creature the snapshots name as an instance of its species\u2019 rig, where it is placed through its frame",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn drops a flyer the server calls dead from where it flew to the ground, turned over",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn grows its instances past their first capacity as the herds grow",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn is solid to a walking player, and picks the creature in the crosshair by the hit sphere the server tests by",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn keeps no herd of its own: with no snapshots about, a camera on a world with fauna draws nothing",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn keeps the creatures already written when a species outgrows its room partway through a frame",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn lays a creature first seen already dead on its side at once, without playing its fall",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn passes over a creature plainly off the ray without making its sphere",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn puts a creature the server calls dead on its side where it fell, and a flyer\u2019s down to the ground",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn reads the gait off how fast the creature is drawn moving: standing, walking and running, and flapping always",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn shows a creature only while the snapshots name it, and not one from another world",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna: the server\u2019s herds, drawn turns a creature toward the heading the server gives, never faster than 270\u00b0/s, and keeps its heading once it is dead",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna\u2019s displayed hit anchor expires old feedback across a record replacement and same-ID redraw before the next HUD update",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna\u2019s displayed hit anchor expires old feedback across a session reset and same-ID redraw before the next HUD update",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna\u2019s displayed hit anchor invalidates anchors when a record leaves, is culled, is replaced or reset, and republishes through its current frame",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna\u2019s displayed hit anchor keeps a live killing blow on the actual falling flyer instance at 1920\u00d71080, with rewards and offscreen expiry",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna\u2019s displayed hit anchor keeps a live killing blow on the actual falling flyer instance at 2520\u00d71080, with rewards and offscreen expiry",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna\u2019s displayed hit anchor the new flyer still consumes a replay death and actual CombatFeed kill on the falling instance at 1920\u00d71080",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/gameplay/Fauna.test.js",
+      "name": "Fauna\u2019s displayed hit anchor the new flyer still consumes a replay death and actual CombatFeed kill on the falling instance at 2520\u00d71080",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/net/abilities.test.js",
+      "name": "the client\u2019s abilities casts what the server says is in a slot, numbered from 1, and nothing from an empty slot or past the hull\u2019s",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/net/abilities.test.js",
+      "name": "the client\u2019s abilities plays the effect registered for a cast seen, its end for a toggle going off, and nothing for a node without one",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/net/abilities.test.js",
+      "name": "the client\u2019s abilities shows the server\u2019s cooldowns on the clock they run on, its toggles, a cast on its way and a refusal for a while",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/net/abilities.test.js",
+      "name": "the client\u2019s abilities starts over on a welcome: no bars, cooldowns or numbering carried into the new session",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/net/abilities.test.js",
+      "name": "the target an entity cast names is the living entity of a kind it takes, in its frame and reach, nearest the aim",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/net/abilities.test.js",
+      "name": "the target an entity cast names with the creatures the client draws ignores the mobs in the store once it is given the drawn ones, and still reads other entities from the store",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/net/abilities.test.js",
+      "name": "the target an entity cast names with the creatures the client draws names a creature by where it is drawn, not by where the snapshots last put it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: following Net ingests each snapshot Net applies (without the player itself), and starts over on a welcome",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: frames of reference blends a ship crossing out of the Waystation\u2019s sphere into its world\u2019s frame instead of jumping",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: frames of reference keeps an entity on its moon as the moon is drawn now, though its snapshots are a tenth of a second old",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: frames of reference meets a crossing client whose clock a hitch left behind the server\u2019s with a slide, not a jump",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: jumps drops a blend under way when a cut comes due: the entity stands where the cut put it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: jumps shows a change too large to blend as the jump it is: a ship held after its snapshots stopped, which moved on",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: late snapshots blends a late snapshot in where extrapolating went astray",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: the edge of a planet\u2019s sphere blends a ship leaving the home systems\u2019 fastest-moving sphere for the system\u2019s frame, its client\u2019s clock lagging",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows follows players, ships and creatures (not the player itself, walkers, props or loot) and shows those it can draw",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows forgets every frame it held when the system changes (a warp)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows keeps a pilot picked up out to 1.05 \u00d7 its reach and 0.5 s past it, and picks it up again only within it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows lets an entity go once the render time passes the snapshot it left",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows lets entities go as they leave, those in another system\u2019s frames too, keeping none it no longer hears of",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows marks the other pilots\u2019 ships a ship\u2019s sensors pick up: within their range \u00d7 the ship\u2019s signature, by name, nearest first",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows picks a boosting pilot up twice as far off, and one in cover (a belt, a ring, a nebula) half as far",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/remote/RemoteEntities.test.js",
+      "name": "RemoteEntities: what it follows and shows shows nothing in a frame of another system (the player is not in the zone\u2019s system)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the ability bar\u2019s countdown shows whole seconds from ten up and tenths under, never a lone digit a key could be read as",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs applies the same first-draw rule to the heat arc",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs counts a jump as a cast\u2019s cost when the cast\u2019s answer comes the frame after it, and draws no chunk for any other",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs eases a cast\u2019s small cost of heat on, the new chunk drawn bright from the old level to the tip until it lands",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs eases a chunk of heat on, following the meter as it cools meanwhile",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs eases a jump from empty and red onto its value, fast then settling, in its new colours at once",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs lands as it turns on after resting off, and tweens small changes from frame to frame",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs takes a cast\u2019s Charge off over the same ease, the cost draining bright from the tip down to the new level",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the gauge arcs turned on at 58 draw 58 at once, not red, the sheen waiting a frame",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises drains expired and detached numbers, bounds a burst, and keeps an old removal timer from touching a newer number",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises expires a number when its target becomes not drawn",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises expires a number when its target becomes offscreen",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises expires a number when its target becomes removed",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises follows a visible target during a turn, then expires live numbers before they can sit over unrelated scenery at 1920\u00d71080",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises follows a visible target during a turn, then expires live numbers before they can sit over unrelated scenery at 2520\u00d71080",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises keeps a visible killing blow on a drawn corpse, while a suppressed kill still pays its rewards and a blow still flashes",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises pops in over about a tenth of a second, scaled up and fading in, then rises and fades out",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises puts a third line under an analysis banner and keeps system and docking banners to two",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises raises a number over the creature it hit and suppresses hits without a visible target at 1920\u00d71080",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises raises a number over the creature it hit and suppresses hits without a visible target at 2520\u00d71080",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises shows what a frame of kills paid as one toast of each kind, not one per kill",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises stacks a number against any live one it would touch, whichever creature or lane that one is for",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises stacks a number turned to another creature against the one just hit, and leaves a number below it alone",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises stacks the numbers on one creature as a column that climbs, none sitting on another, kills included",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "the numbers a hit raises starts a fresh column when the numbers before have gone, and gives each creature its own",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "where a hit number rises nowhere for a creature that is not drawn, behind the camera or off the screen",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/ui/HUD.test.js",
+      "name": "where a hit number rises over the head of the creature the hit landed on, as it is drawn",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/universe/Universe.test.js",
+      "name": "keeps a buffered inertial pose at the same galactic place across draw-origin rebases",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/universe/Universe.test.js",
+      "name": "world tiers keeps the player pad reserved before real traffic attaches during a tier rebuild in foot mode",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/universe/Universe.test.js",
+      "name": "world tiers keeps the player pad reserved before real traffic attaches during a tier rebuild in ship mode",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/universe/Universe.test.js",
+      "name": "world tiers rebuilds a changed tier and drops stale preparation without moving the ship, walker or camera",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/client/src/universe/Universe.test.js",
+      "name": "world tiers uses the first world message for the first playable system build",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/eligibility.test.ts",
+      "name": "live cast eligibility ends an active toggle on rank loss through cast, once, and permits recovery",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/eligibility.test.ts",
+      "name": "live cast eligibility ends an active toggle on rank loss through notification, once, and permits recovery",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/eligibility.test.ts",
+      "name": "live cast eligibility ends an active toggle on rank loss through step, once, and permits recovery",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/eligibility.test.ts",
+      "name": "live cast eligibility fails closed for gated fixture abilities without a requirement reader",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/eligibility.test.ts",
+      "name": "live cast eligibility refuses a stale gated slot using the latest standing before paying or starting a cooldown",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "Call contact follows caster visibility hits only caster-visible fauna in hidden_event",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "Call contact follows caster visibility hits only caster-visible fauna in same_event",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "Call contact follows caster visibility hits only caster-visible fauna in shared",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "Call contact follows caster visibility hits only caster-visible fauna in split_event",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "Call never turns shared-herd control into player or companion damage",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "cast retirement through real skill-service notifications dismisses an analysed flyer before a Big Game rebuy can hide eligibility loss",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "cast retirement through real skill-service notifications dismisses an analysed quad_heavy before a Big Game rebuy can hide eligibility loss",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "cast retirement through real skill-service notifications preserves Bond and Regrow through an unrelated purchase and refund",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "cast retirement through real skill-service notifications retires Bond when the real service removes its ownership",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "cast retirement through real skill-service notifications retires Call control before a refund and rebuy between fauna ticks",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "cast retirement through real skill-service notifications retires Regrow when the real service removes its ownership",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: flare then sear retains one burn after revoking first",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: flare then sear retains one burn after revoking none",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: flare then sear retains one burn after revoking second",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: flare then sear retains one burn after revoking unrelated",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: sear then flare retains one burn after revoking first",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: sear then flare retains one burn after revoking none",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: sear then flare retains one burn after revoking second",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/retirement.test.ts",
+      "name": "shared burn: sear then flare retains one burn after revoking unrelated",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic production effects Bond tames an analysed creature, follows the owner and strikes a hostile through combat",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic production effects Regrow caps actual suit health at its maximum",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic production effects Regrow heals self by 40 over six seconds",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic production effects Repair Drones consumes Charge and repairs the authoritative hull in flight",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic production effects Spore poisons a creature and heals the caster inside its cloud",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic production effects Symbiont Hull increases max shield and regenerates 7.5/s after six seconds unhit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Big Game alone expands Bond to an analysed flyer",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Big Game alone expands Bond to an analysed quad_heavy",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond is dismissed on death and cannot resume",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond is dismissed on disconnect and cannot resume",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond is dismissed on phase_return and cannot resume",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond is dismissed on refund and cannot resume",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond is dismissed on suit_recovery and cannot resume",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond is dismissed on world_return and cannot resume",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond protects its player-owned companion from ability control as well as damage",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Bond refuses unanalysed and stale replacements without spending or dismissing the old companion",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Call cannot contact a hidden target and stops driving after a phase departure and return",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Call moves the real herd through the aim point and deals one contact hit per target",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow cannot heal across caster disconnect",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow cannot heal across caster phase_return",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow cannot heal across caster suit_recovery",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow cannot heal across caster world_return",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow cannot heal an old recipient after phase_return",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow cannot heal an old recipient after suit_recovery",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow cannot heal an old recipient after world_return",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow heals a party ally by exactly 40 and refuses a stranger before paying heat",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow refuses an ally who is aboard without paying or starting a cooldown",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow refuses an ally who is down without paying or starting a cooldown",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Regrow refuses an ally who is hidden without paying or starting a cooldown",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Repair Drones caps the authoritative hull at its maximum",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Repair Drones lasts 20 seconds and costs 15 Charge",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Repair Drones stops on landing and cannot restart on takeoff without a new cast",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Spore stays at the cast point, heals allies inside it and expires",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries Symbiont Hull retunes the real shield maximum without granting a free refill",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries a dead companion leaves the sim and never attacks again",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries baseline shield regen is 5/s after six unhit seconds; each real hit restarts the delay and max caps it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries companion strikes taunt on the existing threat table and never hurt players or player companions",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/symbiotic.test.ts",
+      "name": "Symbiotic target, timing and lifecycle boundaries the parked ship regenerates while its owner is on foot; suit damage does not count as a shield hit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Flare bursts the 60\u00b0 cone, 12 m: those inside it take the burst, those outside its angle or range do not",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Flare costs 30 heat and runs a 12 s cooldown (DESIGN 9.3)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Flare does not ignite what the burst killed, nor anything in the safe zone, nor through the ground",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Flare ignites again once the burn has ended",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Flare ignites those it hits for 4 s: the burn adds its power for the whole of them, in ticks, and ends",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Flare shares one burn with a Sear: the later end, the greater power, and no tick twice",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Flare shows who burns: the creature carries the status while it lasts, only for this caster, and not after",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance arcs with Chain to a second creature its full reach past a first at the far end of the beam",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance arcs with Chain to a second creature within 8 m of the first for half, and to none farther or past one",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance does not arc without Chain",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance follows the look the client last sent with its input, not the aim it was cast with",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance hurts nothing behind the ground, the nearest creature on the line included, and hurts it again when the line clears",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance hurts nothing in the Waystation\u2019s safe zone",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance hurts the creature along the look by the beam time that fired, N.lance.dps a second of it, and nothing else",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance is a toggle on the beam: on with a cast, paying no heat of its own (the beam\u2019s 32 a second is the meters\u2019), off with the next",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance keeps hitting what is ahead of the eye after its caster has walked away from where the toggle went on",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance reaches 30 m and no further, hits the nearest creature on the line only, and stops at the ground",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance reads the nodes its caster owns now, not those it owned when the toggle went on",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Lance stops hurting once it is toggled off",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Sear burns on while the creature runs, a creature hurt by the burn dies of it, and each caster burns its own",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Sear costs 20 heat, has an 8 s cooldown and takes a creature within 30 m, refusing a missing target",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Sear is refused, and costs nothing, on a target that may not be harmed",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Sear marks it to burn for 8 s, with no blow of its own",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Vent costs no heat and runs an 18 s cooldown (DESIGN 9.3)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Vent dumps all the heat and hurts those within its radius by the heat that went, N.vent.damagePerHeat for each",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Vent hurts more the hotter the caster was, and nothing at all when cool",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "Vent is refused in the lockout, where no ability is cast, and spares those behind the ground",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "burns ends with its caster\u2019s leaving play: a Flare after the return burns its whole time, none of the lost Sear\u2019s left over",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "burns runs one tick loop to a status, however it was put there: a burn removed and lit again does not tick twice",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "burns stops for good when its damage is refused: a target that comes back out of a safe zone is not alight again",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "burns stops when its target leaves the caster\u2019s phase view, as when it leaves the safe zone",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "cast retirement across phase departure leaves a fresh Flare burn running when an expired Sear producer loses ownership",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "cast retirement across phase departure retires Lance toggle state with the context after phase departure/return",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "cast retirement across phase departure starts a fresh Sear burn after the retired burn cooldown ends",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/abilities/thermal.test.ts",
+      "name": "the ground not planned yet refuses an area cast busy, costing nothing, as an entity cast is",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/admin/place.test.ts",
+      "name": "teleport placements docks at the Waystation",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/admin/place.test.ts",
+      "name": "teleport placements puts a ship in orbit above a body or out from the Waystation",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/admin/place.test.ts",
+      "name": "teleport placements refuses frames the system does not have",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/admin/place.test.ts",
+      "name": "teleport placements stands a character on the drawn ground of a rocky body, on foot",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/admin/place.test.ts",
+      "name": "teleport placements takes a position in the frame as metres, in a ship unless a mode is given",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "contribution and rewards counts the health each member\u2019s hits took from its own instance\u2019s enemies, and pays by share, not the last hitter",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "contribution and rewards credits objective points to a member, and pays for the waves cleared when time runs out",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "contribution and rewards does not count a player an instance expired on with no wave cleared as paid: it paid nothing, and the player may take part again",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "contribution and rewards ends an instance everyone has left, paying for what they cleared, and lets its occurrence run on",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "contribution and rewards ends with its only instance won: its players back in the shared world, and nobody placed in it after",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "contribution and rewards pays presence nothing on its own, and an idle player does not grow the pool",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "event-owned hostile conversion consumes a final enemy once for one objective point, unchanged HP and no kill rewards",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "event-owned hostile conversion does not credit an old companion again after dismiss across two waves",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "event-owned hostile conversion does not credit an old companion again after replace across two waves",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "event-owned hostile conversion pays only the cleared wave on expiry and dismisses the phase-bound companion without kill credit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "event-owned hostile conversion refuses another phase\u2019s enemy before conversion or objective credit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "instances and presence scaling puts 15 players in an instance of 12 and one of 3, each scaled by its own count",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "instances and presence scaling scales a lone player\u2019s instance to level 1: its waves and their health are the base",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "one occurrence, one instance, one payout does not count a wave cleared when its creatures\u2019 cell falls asleep with nobody near: the cell stays loaded",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "one occurrence, one instance, one payout keeps a player its instance paid out of the occurrence, by a call for aid into another instance as by walking in",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "one occurrence, one instance, one payout puts a player who left its instance back in that one, never in another, and has only that one pay it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "one occurrence, one instance, one payout skips a window that began before the service did (a restart), so nobody is paid for it twice, and runs the next",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "the schedule runs an event in a system of its tiers with players: announced to every session there, then started",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "the schedule runs nothing in a zone without players",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/events/service.test.ts",
+      "name": "the schedule waits for its world\u2019s ground to be planned before announcing it, and drops an event no world can host",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "a hazard death is decided by the server drops the rest of the stretch it died in, and can die again only once the meters run down again",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "a hazard death is decided by the server is decided for life support at zero as for hazard protection",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "a hazard death is decided by the server is decided once by a single long stretch, as by the many short ones that make it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "a hazard death is decided by the server is not decided in a station or aboard, at zero",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "a hazard death is decided by the server is not decided while a refill keeps the meter up",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "a hazard death is decided by the server puts the character down when its health runs out at zero, with no client input after the first",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "health through combat\u2019s suit vitals does not put the character in combat",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "health through combat\u2019s suit vitals is lost at 4/s while a meter is at zero, from the moment it reached it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "health through combat\u2019s suit vitals is neither lost nor regained in a station or aboard",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "health through combat\u2019s suit vitals is regained after a refill ends it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "health through combat\u2019s suit vitals is regained at 1.5/s while both hold, and not past the suit\u2019s health",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "health through combat\u2019s suit vitals spends no supplies scheduled after the actual death of an already injured walker",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes a mild world\u2019s mist drains above its line and nowhere below it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes a world\u2019s own hazard drains it where its ship hazard says nothing (a frozen world: strength 1)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes boarding from a hazard tops it up",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes does not drain the offline interval before a restored walker is authoritatively placed",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes does not move aboard a ship, which tops it up",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes drains and decides death after restoring on foot even if the client never sends its first input",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes drains \u00d71.4 at night, by the star below the horizon",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes hazard protection drains by a acid hazard (strength 3 at 5 dps) 0.6 a second per unit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes hazard protection drains by a cryo hazard (strength 2.5 at 5 dps) 0.6 a second per unit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes hazard protection drains by a heat hazard (strength 9 at 5 dps) 0.6 a second per unit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes hazard protection drains by a pressure hazard (strength 6 at 5 dps) 0.6 a second per unit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes hazard protection drains by a radiation hazard (strength 3.5 at 5 dps) 0.6 a second per unit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes hazard protection drains by a storm hazard (strength 1.5 at 5 dps) 0.6 a second per unit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes is saved with the rest and comes back as it was left",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes life support drains 0.35/s on a world with nothing hard on the suit, and hazard protection holds full",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes refills inside a station, 5/s and 10/s",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes refreshes desert [ 'heat_shroud' ] conditions across day to night without another input",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes refreshes frozen [ 'cold_blood' ] conditions across night to day without another input",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes refreshes frozen [] conditions across night to day without another input",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes regains where nothing is hard, 2/s",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes runs on the server\u2019s clock whether or not inputs come, and the same however they are spread",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "life support and hazard protection drain from the place the server believes stands still while the character is away, and runs from its first input",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory Cartridge Recycler: the refill restores 60",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory a crafted cartridge first, one item, restoring 60 (80 with Cartridge Recycler)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory accounts for an entire 400000000000-second interval after more than 32 refills, including exhaustion and death",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory accounts for an entire 500-second interval after more than 32 refills, including exhaustion and death",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory an oxygen cartridge refills life support",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory batches the schema-maximum cartridge stock into one inventory transaction without truncating elapsed time",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory refills as many times as a long stretch needs, each taking 10",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory refills nothing in a station or where the meter regains by itself, and a refill is told with a toast",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory refills nothing without enough: fewer than 10 raw units, or none",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory spends all refills needed beyond 32 when the character stays supplied",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory spends what the server holds, not what a client claims: the inventory changes as one pushed state",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory takes 10 raw oxygen for life support too",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "refills spend the character\u2019s real inventory takes 10 raw sodium at the line and restores 40, at the moment it was crossed",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "suit health in combat\u2019s vitals touches only a player on foot that is not down",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Cold Blood: none at night on a frozen world, the plain drain by day",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Deep Diver: a crushing world\u2019s hazard \u00f73",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Hazard Weave: 40% slower, after the night\u2019s \u00d71.4",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Heat Shroud: none by day on a desert world, the plain drain at night and on a frozen one",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Second Lung: life support drains 30% slower",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Second Skin: nothing drops below 20 out of combat, and drains on in combat",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Thick Hide multiplies Hazard Weave instead of replacing it",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build Thick Hide: hazard protection drains 30% slower",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build a build bought mid-session takes effect from then",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "the build the Ulgani\u2019s perk: none on a toxic world, the plain drain on another",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "what the client is told both meters are in the view and the save",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/meters/suit.test.ts",
+      "name": "what the client is told is pushed as the suit moves, not every instant, and at once when a meter reaches zero",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/zones/regen.test.ts",
+      "name": "shield clock when reusing a sleeping zone does not count source regeneration a second time after a real follow handoff ([ 'symbiont_hull' ])",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/zones/regen.test.ts",
+      "name": "shield clock when reusing a sleeping zone does not count source regeneration a second time after a real follow handoff ([])",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/zones/regen.test.ts",
+      "name": "shield clock when reusing a sleeping zone keeps the six second delay for a fresh hit before a sleeping zone first ticks",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/zones/wake.test.ts",
+      "name": "R2 wake before overdue scheduled advance control: a wake after scheduled catch-up keeps a fresh hazard hit unrecovered",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/zones/wake.test.ts",
+      "name": "R2 wake before overdue scheduled advance does not rewind the newly woken zone clock",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/zones/wake.test.ts",
+      "name": "R2 wake before overdue scheduled advance fresh catch-up hazard damage retains the six-second regen delay after a valid ascent",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/server/src/zones/wake.test.ts",
+      "name": "a real post-wake hazard and an explicitly older hit cannot shorten a new attack delay",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed catches the flora's demo yield table and mined sets but not a comment that says mined",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed every shipped rule names a real plan task",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed fails when a done task left its demo code behind, including a migrated .ts file",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed flags rules that name a task missing from the plan",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed passes once the demo code is gone",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed passes while replacement tasks are open",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed reads task statuses from the plan",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/gates/removed.test.ts",
+      "name": "gate:removed stops a herd spawner in any client file once P1.E08.T09 is done, not only in Fauna.js",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs account.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs boot.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs compressed.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs cross-engine.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs cutscene-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs cutscene.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs den-pad.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs edge.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs fauna-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs finds the specs",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs handoff-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs harness-hang.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs harness.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs mining-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs movement-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs prediction-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs remote-markers.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs remote-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs review.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs social-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-imports.test.ts",
+      "name": "smoke specs symbiotic-online.spec.ts takes test from the harness",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates accepts a living target with actual source-attributed health loss",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates accepts only the fresh identified live observer/enemy control",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects a corpse after a credited killing hit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects attack phase without health loss",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects companion instance retained",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects companion remote retained",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects companion snapshot retained",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects corpse plus missing observer",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects dead enemy",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects dead observer",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects different enemy frame",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects different enemy kind",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects different enemy species",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects different observer frame",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects different observer identity",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects different observer kind",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects disconnected observer",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects enemy corpse mode",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects health loss with no companion hit",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects missing observer",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects owner retained",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 live lifecycle predicates rejects stale snapshot",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle attempts all owned cleanup after Vite close fails (synchronous=false)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle attempts all owned cleanup after Vite close fails (synchronous=true)",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle cleans only its own scratch database after migration fails",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle closes the created handle after listen fails and preserves listen error identity",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle passes borrowed routes to migration and never creates/drops them",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle preserves the primary setup failure when server termination fails",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle retains both bounded close failures and attempts KILL after TERM timeout",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "R1 online lifecycle retains listen failure plus both owned stop errors",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) keeps the exact preclaimed namespace and Redis8",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) refuses missing, default or differently owned routes: {\"SYMBIOTIC_QA_CLAIM\":\"\",\"DATABASE_URL\":\"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521\",\"REDIS_URL\":\"redis://127.0.0.1:53058/8\"}",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) refuses missing, default or differently owned routes: {\"SYMBIOTIC_QA_CLAIM\":\"20261107_2a0b7521\",\"DATABASE_URL\":\"postgres://astra:astra@127.0.0.1:53055/astra\",\"REDIS_URL\":\"redis://127.0.0.1:53058/8\"}",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) refuses missing, default or differently owned routes: {\"SYMBIOTIC_QA_CLAIM\":\"20261107_2a0b7521\",\"DATABASE_URL\":\"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521\",\"REDIS_URL\":\"redis://127.0.0.1:53058/7\"}",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) refuses missing, default or differently owned routes: {\"SYMBIOTIC_QA_CLAIM\":\"20261107_2a0b7521\",\"DATABASE_URL\":\"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521\",\"REDIS_URL\":\"redis://127.0.0.1:56379/8\"}",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) refuses missing, default or differently owned routes: {\"SYMBIOTIC_QA_CLAIM\":\"20261107_2a0b7521\",\"DATABASE_URL\":\"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521?host=elsewhere\",\"REDIS_URL\":\"redis://127.0.0.1:53058/8\"}",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) refuses missing, default or differently owned routes: {\"SYMBIOTIC_QA_CLAIM\":\"20261107_2a0b7521\",\"DATABASE_URL\":\"postgres://astra:astra@127.0.0.1:55432/astra_symbiotic_smoke_20261107_2a0b7521\",\"REDIS_URL\":\"redis://127.0.0.1:53058/8\"}",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "Symbiotic smoke private routes (no connections) refuses missing, default or differently owned routes: {}",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "live arena setup respects owned ship authority does not hide a refused admin placement",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "live arena setup respects owned ship authority lands observer with an owned ship that remains restorable after disembarking",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "live arena setup respects owned ship authority lands owner with an owned ship that remains restorable after disembarking",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "live arena setup respects owned ship authority moves observer across systems in a restorable ship pose",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "live arena setup respects owned ship authority moves owner across systems in a restorable ship pose",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "live arena setup respects owned ship authority reproduces the live cross-system foot rejection at the real persistence pose check",
+      "status": "passed"
+    }
+  ],
+  "addedTests": [
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "real UI admission before fixture keyboard input reacquires owner input after observer F, sends S, and still rejects missing server movement",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "real UI admission before fixture keyboard input rejects failed owner reacquisition before sending S",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "real UI admission before fixture keyboard input releases F and rejects if admitted input never reaches foot",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "real UI admission before fixture keyboard input resumes initially unlocked observer through the actual UI before F",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "real UI admission before fixture keyboard input resumes initially unlocked owner through the actual UI before F",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "real UI admission before fixture keyboard input still rejects a failed gesture without sending F",
+      "status": "passed"
+    },
+    {
+      "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-private.test.ts",
+      "name": "real UI admission before fixture keyboard input still rejects missing focus or a lock event without sending F",
+      "status": "passed"
+    }
+  ]
+}

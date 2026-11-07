@@ -1,0 +1,15 @@
+{
+  "retainedErrors": [
+    "bond0f3f537b7f: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+    "bondc17e34f648: Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+  ],
+  "source": "playwright.json symbiotic-evidence attachment",
+  "packetProvidesFailedUrl": false,
+  "sandbox": "(version 1)\n(allow default)\n(deny file-write*)\n(allow file-write* (subpath \"/private/tmp/space-symbiotic-live-next-5lftum9v\") (literal \"/dev/null\"))\n(deny network*)\n(allow network* (remote ip \"localhost:*\") (local ip \"localhost:*\") (subpath \"/private/tmp/space-symbiotic-live-next-5lftum9v/tmp\"))\n(deny network-outbound (remote ip \"localhost:5432\"))\n(deny network-outbound (remote ip \"localhost:6379\"))\n(deny network-outbound (remote ip \"localhost:55432\"))\n(deny network-outbound (remote ip \"localhost:56379\"))\n",
+  "externalClientUrls": [
+    "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />",
+    "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />",
+    "<link href=\"https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Michroma&display=swap\" rel=\"stylesheet\" />"
+  ],
+  "conclusion": "Loopback-only sandbox plus external Google Fonts requests is a plausible cause, not established per-request attribution. URLs absent; no network/native run performed. No errors filtered or source/harness network policy changed."
+}

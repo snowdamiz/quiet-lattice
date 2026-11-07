@@ -1,0 +1,35 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ✓ |@astra/client| src/Game.test.js (51 tests) 34ms
+ ✓ |@astra/client| src/gameplay/Fauna.test.js (20 tests) 149ms
+ ✓ |@astra/client| src/remote/RemoteEntities.test.js (16 tests) 41ms
+ ✓ |@astra/client| src/ui/HUD.test.js (27 tests) 13ms
+ ✓ |@astra/client| src/net/abilities.test.js (7 tests) 4ms
+ ✓ |@astra/client| src/universe/Universe.test.js (5 tests) 12ms
+ ✓ |@astra/server| src/events/service.test.ts (20 tests) 3705ms
+   ✓ contribution and rewards (6)
+     ✓ credits objective points to a member, and pays for the waves cleared when time runs out 311ms
+   ✓ one occurrence, one instance, one payout (4)
+     ✓ puts a player who left its instance back in that one, never in another, and has only that one pay it 3210ms
+ ✓ |@astra/server| src/meters/suit.test.ts (60 tests) 122ms
+ ✓ |@astra/server| src/abilities/thermal.test.ts (35 tests) 76ms
+ ✓ |@astra/server| src/abilities/symbiotic.test.ts (38 tests) 173ms
+ ✓ |@astra/server| src/abilities/retirement.test.ts (19 tests) 130ms
+ ✓ |@astra/server| src/admin/place.test.ts (5 tests) 26ms
+ ✓ |@astra/server| src/zones/wake.test.ts (4 tests) 102ms
+ ✓ |@astra/server| src/abilities/eligibility.test.ts (5 tests) 17ms
+ ✓ |@astra/server| src/zones/regen.test.ts (3 tests) 28ms
+ ✓ |@astra/tools| src/smoke/symbiotic-private.test.ts (51 tests) 126ms
+ ✓ |@astra/tools| src/gates/removed.test.ts (8 tests) 8ms
+ ✓ |@astra/tools| src/smoke/harness-imports.test.ts (22 tests) 5ms
+
+ Test Files  18 passed (18)
+      Tests  396 passed (396)
+   Start at  03:31:06
+   Duration  9.28s (tests 56%, import 23%, transform 20%)
+
+    Isolate  18 workers spawned · ~43ms startup each (spawn + environment, per file)
+             at least ~732ms faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to /private/tmp/symbiotic-input-fix-t1639bh8/focused-cpu.json
